@@ -39,18 +39,12 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
         ['className', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['style', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['icss', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['tag', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['htmlProps', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['shadowProps', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['plugin', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['dangerousRenderWrapperNode', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['controller', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['children', () => v2 ?? v1],
-
-        // normal props
-        [() => isFunction(v1) && isFunction(v2) && v1 !== v2, () => mergeFunction(v1 as AnyFn, v2 as AnyFn)],
-        [() => isArray(v1) && isArray(v2) && v1 !== v2, () => (v1 as any[]).concat(v2)],
-        [() => isObject(v1) && isObject(v2) && v1 !== v2, () => mergeProps(v1, v2)] // if v1 and v2 are react node, it will be a disaster // TODO: fix this
       ],
       v2 ?? v1
     )

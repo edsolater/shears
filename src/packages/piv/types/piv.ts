@@ -10,8 +10,15 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
    */
   as?: (props: object) => JSX.Element // assume a function return ReactNode is a Component
 
-  /** it can hold some small logic scripts. only trigger once, if you need update frequently, please use `domRef`*/
+  /**
+   * it can hold some small logic scripts. only trigger once, if you need update frequently, please use `domRef`
+   * if it's in shadow props, it will merge with exist props
+   */
   ref?: MayArray<CRef<any> | null | undefined>
+
+  /**
+   * if it's in shadow props, it will merge with exist props
+   */
   class?: MayArray<ClassName | undefined>
   onClick?: (utils: {
     ev: MouseEvent & {
@@ -20,9 +27,22 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
     }
     el: HTMLElementTagNameMap[TagName]
   }) => void
+
+  /**
+   * if it's in shadow props, it will merge with exist props
+   */
   icss?: ICSS
+
+  /**
+   * if it's in shadow props, it will merge with exist props
+   */
   style?: MayArray<JSX.HTMLAttributes<any>['style'] | undefined>
+
+  /**
+   * if it's in shadow props, it will merge with exist props
+   */
   htmlProps?: MayArray<JSX.IntrinsicElements[TagName extends {} ? TagName : any] | undefined>
+  
   children?: JSXElement
 
   /** special: every kit baseon <Piv> should support this prop */

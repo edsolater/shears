@@ -4,13 +4,14 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
+    "noImplicitAny": false,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "paths":{
+    "paths": {
       "@edsolater/piv": ["./src/packages/piv/index.ts"],
-      "@edsolater/pivkit": ["./src/packages/pivkit/index.ts"],
+      "@edsolater/pivkit": ["./src/packages/pivkit/index.ts"]
     },
     "types": ["vite/client", "@testing-library/jest-dom"]
   }

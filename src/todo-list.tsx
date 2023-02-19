@@ -31,7 +31,7 @@ export const TodoList = () => {
         </button>
         <Button
           onClick={() => {
-            setCount((n) => n + 1)
+            setCount(count() + 1)
           }}
         >
           count: {count()}
