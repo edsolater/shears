@@ -1,14 +1,16 @@
-import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { flap, getKeys, isValuedArray, MayArray, MayFn, shrinkFn, unified } from '@edsolater/fnkit'
 import {
-  addDefaultPivProps,
   compressICSSToObj,
   CRef,
+  desymbolizeProps,
   ICSS,
   KitProps,
   mergeProps,
-  pickPropProperty,
   Piv,
-  useKitProps
+  symbolizeProps,
+  toGettersObj,
+  useKitProps,
+  getPropsKeys
 } from '@edsolater/piv'
 import { createMemo, JSX } from 'solid-js'
 import { createRef } from '../hooks/createRef'
@@ -73,28 +75,29 @@ export type ButtonProps = KitProps<{
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
   const componentThemeProps = useGlobalKitTheme<ButtonProps>(Button.name)
-
-  const otherButtonProps = addDefaultPivProps(rawProps, componentThemeProps)
+  const { validators, ...otherButtonProps } = symbolizeProps(rawProps, { defaultProps: componentThemeProps })
+  console.log('otherButtonProps: ', otherButtonProps)
 
   /* ------------------------------- validation ------------------------------- */
-  const validators = pickPropProperty(otherButtonProps, 'validators')
 
-  const failedValidator = createMemo(
-    () =>
-      (isValuedArray(validators()) || validators()
-        ? flap(validators()!).find(({ should }) => !shrinkFn(should))
-        : undefined) ?? {}
+  const failedValidator = createMemo(() =>
+    isValuedArray(validators()) || validators()
+      ? flap(validators()!).find(({ should }) => !shrinkFn(should))
+      : undefined
   )
 
-  const mergedProps = mergeProps(otherButtonProps, failedValidator().fallbackProps)
+  const mergedProps = toGettersObj(
+    () => mergeProps(desymbolizeProps(otherButtonProps), failedValidator()?.fallbackProps),
+    getPropsKeys(otherButtonProps, failedValidator()?.fallbackProps)
+  )
 
-  const isActive = failedValidator()?.forceActive || (!failedValidator() && !mergedProps.disabled)
-  const disabled = !isActive
-  console.log('disabled: ', disabled)
+  const isActive = createMemo(() => failedValidator()?.forceActive || (!failedValidator() && !mergedProps.disabled))
+  const isDisabled = createMemo(() => !isActive())
 
   /* ------------------------------ detail props ------------------------------ */
   const [props, pivProps] = useKitProps(mergedProps)
-
+  console.log('mergedPropwws: ', mergedProps)
+  console.log('props: ', props)
   const {
     mainColor = cssColors.buttonPrimaryColor,
     mainTextColor = props.variant === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
@@ -145,7 +148,7 @@ export function Button(rawProps: ButtonProps) {
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
       shadowProps={pivProps}
-      onClick={(...args) => !disabled && props.onClick?.(...args)}
+      onClick={(...args) => !isDisabled && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
         { transition: `200ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
@@ -162,7 +165,7 @@ export function Button(rawProps: ButtonProps) {
           userSelect: 'none',
           width: 'max-content'
         },
-        disabled && {
+        isDisabled() && {
           opacity: shrinkFn(disableOpacity, [mergedProps]),
           cursor: 'not-allowed'
         },
