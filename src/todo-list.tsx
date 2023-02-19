@@ -1,3 +1,5 @@
+import { Piv } from '@edsolater/piv'
+import { Button } from '@edsolater/pivkit'
 import { createSignal, For } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
@@ -6,6 +8,7 @@ type Todo = { id: number; text: string; completed: boolean }
 export const TodoList = () => {
   let input!: HTMLInputElement
 
+  const [count, setCount] = createSignal(0)
   const [todos, setTodos] = createStore<Todo[]>([])
   const addTodo = (text: string) => {
     setTodos(todos.length, { id: todos.length, text, completed: false })
@@ -13,7 +16,6 @@ export const TodoList = () => {
   const toggleTodo = (id: number) => {
     setTodos(id, 'completed', (c) => !c)
   }
-
   return (
     <>
       <div>
@@ -27,6 +29,15 @@ export const TodoList = () => {
         >
           Add Todo
         </button>
+        <Button
+          onClick={() => {
+            setCount((n) => n + 1)
+          }}
+        >
+          count: {count()}
+        </Button>
+        <Piv shadowProps={{ icss: { color: count() % 2 ? 'crimson' : 'dodgerblue' } }}>hello</Piv>
+        <Piv icss={{ color: count() % 2 ? 'crimson' : 'dodgerblue' }}>hello</Piv>
       </div>
       <For each={todos}>
         {(todo) => {
