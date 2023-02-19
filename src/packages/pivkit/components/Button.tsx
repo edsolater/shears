@@ -75,8 +75,9 @@ export type ButtonProps = KitProps<{
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
   const componentThemeProps = useGlobalKitTheme<ButtonProps>(Button.name)
-  const { validators, ...otherButtonProps } = symbolizeProps(rawProps, { defaultProps: componentThemeProps })
-  console.log('otherButtonProps: ', otherButtonProps)
+  const { validators, ...normalProps } = symbolizeProps(rawProps, {
+    defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, componentThemeProps]
+  })
 
   /* ------------------------------- validation ------------------------------- */
 
@@ -87,17 +88,15 @@ export function Button(rawProps: ButtonProps) {
   )
 
   const mergedProps = toGettersObj(
-    () => mergeProps(desymbolizeProps(otherButtonProps), failedValidator()?.fallbackProps),
-    getPropsKeys(otherButtonProps, failedValidator()?.fallbackProps)
+    () => mergeProps(desymbolizeProps(normalProps), failedValidator()?.fallbackProps),
+    getPropsKeys(normalProps, failedValidator()?.fallbackProps)
   )
 
   const isActive = createMemo(() => failedValidator()?.forceActive || (!failedValidator() && !mergedProps.disabled))
   const isDisabled = createMemo(() => !isActive())
 
   /* ------------------------------ detail props ------------------------------ */
-  const [props, pivProps] = useKitProps(mergedProps)
-  console.log('mergedPropwws: ', mergedProps)
-  console.log('props: ', props)
+  const [props, pivProps] = useKitProps(mergedProps) // FIXME logic is bug
   const {
     mainColor = cssColors.buttonPrimaryColor,
     mainTextColor = props.variant === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
@@ -124,25 +123,25 @@ export function Button(rawProps: ButtonProps) {
     md: '10px 16px',
     sm: '8px 16px',
     xs: '2px 6px'
-  }[props.size ?? 'md']
+  }[props.size]
   const cssFontSize = {
     lg: 16,
     md: 16,
     sm: 14,
     xs: 12
-  }[props.size ?? 'md']
+  }[props.size]
   const cssBorderRadius = {
     lg: 12,
     md: 8,
     sm: 8,
     xs: 4
-  }[props.size ?? 'md']
+  }[props.size]
   const cssOutlineWidth = {
     lg: 2,
     md: 2,
     sm: 1,
     xs: 0.5
-  }[props.size ?? 'md']
+  }[props.size]
   return (
     <Piv<'button'>
       class={Button.name}
@@ -151,7 +150,7 @@ export function Button(rawProps: ButtonProps) {
       onClick={(...args) => !isDisabled && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
-        { transition: `200ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
+        { transition: `50ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
         { border: 'none' }, // initialize
         { color: shrinkFn(mainTextColor, [mergedProps]) }, // light mode
         {
@@ -175,17 +174,16 @@ export function Button(rawProps: ButtonProps) {
           borderRadius: cssBorderRadius,
           fontWeight: 500
         },
-        !props.variant ||
-          (props.variant === 'solid' && {
-            backgroundColor: shrinkFn(mainColor, [mergedProps]),
-            ':hover': {
-              filter: 'brightness(95%)'
-            },
-            ':active': {
-              transform: 'scale(0.96)',
-              filter: 'brightness(90%)'
-            }
-          }),
+        (!props.variant || props.variant === 'solid') && {
+          backgroundColor: shrinkFn(mainColor, [mergedProps]),
+          ':hover': {
+            filter: 'brightness(95%)'
+          },
+          ':active': {
+            transform: 'scale(0.98)',
+            filter: 'brightness(90%)'
+          }
+        },
         props.variant === 'outline' && {
           background: cssColors.transparent,
           outline: `${cssOutlineWidth} solid ${mainColor}`,
