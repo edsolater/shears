@@ -1,16 +1,16 @@
-import { flap, getKeys, isValuedArray, MayArray, MayFn, shrinkFn, unified } from '@edsolater/fnkit'
+import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import {
   compressICSSToObj,
   CRef,
   desymbolizeProps,
+  getPropsKeys,
   ICSS,
   KitProps,
   mergeProps,
   Piv,
   symbolizeProps,
   toGettersObj,
-  useKitProps,
-  getPropsKeys
+  useKitProps
 } from '@edsolater/piv'
 import { createMemo, JSX } from 'solid-js'
 import { createRef } from '../hooks/createRef'

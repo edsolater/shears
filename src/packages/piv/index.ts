@@ -10,6 +10,7 @@ export * from './utils/prop-builders/addDefaultProps'
 export * from './utils/prop-builders/makeSignalToGetters'
 export * from './utils/prop-builders/pickPropProperty'
 export * from './utils/prop-builders/symbolizeProps'
+export * from './utils/prop-builders/desymbolizeProps'
 export * from './utils/prop-builders/toGettersObj'
 export * from './utils/prop-builders/getPropsKeys'
 
