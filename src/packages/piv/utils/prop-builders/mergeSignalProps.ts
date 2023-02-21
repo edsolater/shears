@@ -1,4 +1,4 @@
-import { flap, mergeObjectsWithConfigs, parallelSwitch, shakeNil } from '@edsolater/fnkit'
+import { AnyFn, flap, mergeObjectsWithConfigs, parallelSwitch, shakeNil } from '@edsolater/fnkit'
 import { ValidProps } from '../../types/tools'
 import { mergeRefs } from './mergeRefs'
 import { SignalizeProps } from './signalizeProps'
@@ -44,14 +44,14 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
       [
         // special div props
         ['domRef', () => (v1 && v2 ? () => mergeRefs(v1(), v2()) : v1 ?? v2)],
-        ['className', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['style', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['icss', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['htmlProps', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['shadowProps', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['plugin', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['dangerousRenderWrapperNode', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
-        ['controller', () => (v1 && v2 ? () => [v1, v2].flat() : v1 ?? v2)],
+        ['className', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['style', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['icss', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['htmlProps', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['shadowProps', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['plugin', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['dangerousRenderWrapperNode', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['controller', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['children', () => v2 ?? v1]
       ],
       v2 ?? v1
@@ -60,3 +60,12 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
   // @ts-ignore
   return mergedResult
 }
+
+type GetReturn<F extends AnyFn | undefined> = F extends AnyFn ? ReturnType<F> : undefined
+
+type MergeData<T1, T2> = T1 & T2 extends never ? T2 : T1
+type MergeOneSignalProps<P1 extends AnyFn | undefined, P2 extends AnyFn | undefined> = () => GetReturn<P1> &
+  GetReturn<P2>
+
+type C = { icss:  { position: 'relative' } } & { icss: { display: 'flex' } }
+type D = C['icss']['display']
