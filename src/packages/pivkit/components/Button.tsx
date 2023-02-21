@@ -71,18 +71,17 @@ export type ButtonProps = KitProps<{
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
   const { validators, ...normalProps } = signalizeProps(rawProps, {
-    defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, useGlobalKitTheme<ButtonProps>(Button.name)]
+    defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, useGlobalKitTheme<ButtonProps>('Button')]
   })
 
   /* ------------------------------- validation ------------------------------- */
-
   const failedTestValidator = createMemo(() =>
     isValuedArray(validators()) || validators()
       ? flap(validators()!).find(({ should }) => !shrinkFn(should))
       : undefined
   )
 
-  const mergedProps = mergeSignalProps([normalProps, failedTestValidator()?.fallbackProps])
+  const mergedProps = mergeSignalProps(normalProps, failedTestValidator()?.fallbackProps)
 
   const isActive = createMemo(
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled())
