@@ -2,13 +2,13 @@ import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit
 import {
   compressICSSToObj,
   CRef,
-  desymbolizeProps,
+  designalizeProps,
   getPropsKeys,
   ICSS,
   KitProps,
   mergeProps,
   Piv,
-  symbolizeProps,
+  signalizeProps,
   toGettersObj,
   useKitProps
 } from '@edsolater/piv'
@@ -75,28 +75,31 @@ export type ButtonProps = KitProps<{
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
   const componentThemeProps = useGlobalKitTheme<ButtonProps>(Button.name)
-  const { validators, ...normalProps } = symbolizeProps(rawProps, {
+  const { validators, ...normalProps } = signalizeProps(rawProps, {
     defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, componentThemeProps]
   })
 
   /* ------------------------------- validation ------------------------------- */
 
-  const failedValidator = createMemo(() =>
+  const failedTestValidator = createMemo(() =>
     isValuedArray(validators()) || validators()
       ? flap(validators()!).find(({ should }) => !shrinkFn(should))
       : undefined
   )
 
   const mergedProps = toGettersObj(
-    () => mergeProps(desymbolizeProps(normalProps), failedValidator()?.fallbackProps),
-    getPropsKeys(normalProps, failedValidator()?.fallbackProps)
+    () => mergeProps(designalizeProps(normalProps), failedTestValidator()?.fallbackProps),
+    getPropsKeys(normalProps, failedTestValidator()?.fallbackProps)
   )
 
-  const isActive = createMemo(() => failedValidator()?.forceActive || (!failedValidator() && !mergedProps.disabled))
+  const isActive = createMemo(
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
+  )
+
   const isDisabled = createMemo(() => !isActive())
 
   /* ------------------------------ detail props ------------------------------ */
-  const [props, pivProps] = useKitProps(mergedProps) // FIXME logic is bug
+  const [props, pivProps] = useKitProps(mergedProps) // FIXME logic is bug, because pivPorps also export Button's props
   const {
     mainColor = cssColors.buttonPrimaryColor,
     mainTextColor = props.variant === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
