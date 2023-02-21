@@ -2,14 +2,12 @@ import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit
 import {
   compressICSSToObj,
   CRef,
-  designalizeProps,
-  getPropsKeys,
   ICSS,
   KitProps,
-  mergeProps,
+  mergeSignalProps,
   Piv,
+  SignalizeProps,
   signalizeProps,
-  toGettersObj,
   useKitProps
 } from '@edsolater/piv'
 import { createMemo, JSX } from 'solid-js'
@@ -36,20 +34,18 @@ export type ButtonProps = KitProps<{
    * @default 'md'
    */
   size?: 'xs' | 'sm' | 'md' | 'lg'
-
   /**
    * !only for app's uikit <Button>
    * button's mean  color (apply to all variant of button)
    * default {@link cssColors.buttonPrimaryColor } when in darkMode
    */
   theme?: {
-    mainColor?: MayFn<CSSColorString, [props: Readonly<Omit<ButtonProps, 'theme'>>]>
-    mainTextColor?: MayFn<CSSColorString, [props: Readonly<Omit<ButtonProps, 'theme'>>]>
-    contentGap?: MayFn<CSSStyle['gap'], [props: Readonly<Omit<ButtonProps, 'theme'>>]>
-    disableOpacity?: MayFn<CSSStyle['opacity'], [props: Readonly<Omit<ButtonProps, 'theme'>>]>
-    cssProps?: MayFn<ICSS, [props: Readonly<Omit<ButtonProps, 'theme'>>]>
+    mainColor?: MayFn<CSSColorString, [props: SignalizeProps<Omit<ButtonProps, 'theme' | 'validators'>>]>
+    mainTextColor?: MayFn<CSSColorString, [props: SignalizeProps<Omit<ButtonProps, 'theme' | 'validators'>>]>
+    contentGap?: MayFn<CSSStyle['gap'], [props: SignalizeProps<Omit<ButtonProps, 'theme' | 'validators'>>]>
+    disableOpacity?: MayFn<CSSStyle['opacity'], [props: SignalizeProps<Omit<ButtonProps, 'theme' | 'validators'>>]>
+    cssProps?: MayFn<ICSS, [props: SignalizeProps<Omit<ButtonProps, 'theme' | 'validators'>>]>
   }
-
   /** a short cut for validator */
   disabled?: boolean
   /** must all condition passed */
@@ -59,7 +55,7 @@ export type ButtonProps = KitProps<{
     // used in "connect wallet" button, it's order is over props: disabled
     forceActive?: boolean
     /**  items are button's setting which will apply when corresponding validator has failed */
-    fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
+    fallbackProps?: SignalizeProps<Omit<ButtonProps, 'validators' | 'disabled'>>
   }>
   /** normally, it's an icon  */
   prefix?: MayFn<JSX.Element, [utils: ButtonStatus]>
@@ -74,9 +70,8 @@ export type ButtonProps = KitProps<{
  */
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
-  const componentThemeProps = useGlobalKitTheme<ButtonProps>(Button.name)
   const { validators, ...normalProps } = signalizeProps(rawProps, {
-    defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, componentThemeProps]
+    defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, useGlobalKitTheme<ButtonProps>(Button.name)]
   })
 
   /* ------------------------------- validation ------------------------------- */
@@ -87,26 +82,23 @@ export function Button(rawProps: ButtonProps) {
       : undefined
   )
 
-  const mergedProps = toGettersObj(
-    () => mergeProps(designalizeProps(normalProps), failedTestValidator()?.fallbackProps),
-    getPropsKeys(normalProps, failedTestValidator()?.fallbackProps)
-  )
+  const mergedProps = mergeSignalProps([normalProps, failedTestValidator()?.fallbackProps])
 
   const isActive = createMemo(
-    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled())
   )
 
-  const isDisabled = createMemo(() => !isActive())
+  const isDisabled = () => !isActive()
 
   /* ------------------------------ detail props ------------------------------ */
   const [props, pivProps] = useKitProps(mergedProps) // FIXME logic is bug, because pivPorps also export Button's props
   const {
     mainColor = cssColors.buttonPrimaryColor,
-    mainTextColor = props.variant === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
+    mainTextColor = props.variant() === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
     contentGap = 4,
     disableOpacity = 0.3,
     cssProps
-  } = props.theme ?? {}
+  } = props.theme() ?? {}
 
   const [ref, setRef] = createRef<HTMLButtonElement>()
 
@@ -126,31 +118,31 @@ export function Button(rawProps: ButtonProps) {
     md: '10px 16px',
     sm: '8px 16px',
     xs: '2px 6px'
-  }[props.size]
+  }[props.size()]
   const cssFontSize = {
     lg: 16,
     md: 16,
     sm: 14,
     xs: 12
-  }[props.size]
+  }[props.size()]
   const cssBorderRadius = {
     lg: 12,
     md: 8,
     sm: 8,
     xs: 4
-  }[props.size]
+  }[props.size()]
   const cssOutlineWidth = {
     lg: 2,
     md: 2,
     sm: 1,
     xs: 0.5
-  }[props.size]
+  }[props.size()]
   return (
     <Piv<'button'>
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
       shadowProps={pivProps}
-      onClick={(...args) => !isDisabled && props.onClick?.(...args)}
+      onClick={(...args) => !isDisabled && props.onClick()?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
         { transition: `50ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
@@ -177,7 +169,7 @@ export function Button(rawProps: ButtonProps) {
           borderRadius: cssBorderRadius,
           fontWeight: 500
         },
-        (!props.variant || props.variant === 'solid') && {
+        (!props.variant() || props.variant() === 'solid') && {
           backgroundColor: shrinkFn(mainColor, [mergedProps]),
           ':hover': {
             filter: 'brightness(95%)'
@@ -187,12 +179,12 @@ export function Button(rawProps: ButtonProps) {
             filter: 'brightness(90%)'
           }
         },
-        props.variant === 'outline' && {
+        props.variant() === 'outline' && {
           background: cssColors.transparent,
           outline: `${cssOutlineWidth} solid ${mainColor}`,
           outlineOffset: `-${cssOutlineWidth}`
         },
-        props.variant === 'text' && {
+        props.variant() === 'text' && {
           ':hover': {
             backgroundColor: opacityCSSColor(shrinkFn(mainColor, [mergedProps]), 0.15)
           }
@@ -201,9 +193,9 @@ export function Button(rawProps: ButtonProps) {
       ]}
       ref={setRef}
     >
-      {shrinkFn(props.prefix, [innerStatus])}
-      {props.children}
-      {shrinkFn(props.suffix, [innerStatus])}
+      {shrinkFn(props.prefix(), [innerStatus])}
+      {props.children()}
+      {shrinkFn(props.suffix(), [innerStatus])}
     </Piv>
   )
 }

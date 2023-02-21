@@ -29,7 +29,7 @@ export function signalizeProps<T extends object, X extends Partial<T>[]>(
   const result = isArray(options?.defaultProps)
     ? mergeProps(...options?.defaultProps!, props)
     : (mergeProps(options?.defaultProps, props) as SignalizeProps<T>)
-  const signalized = new Proxy(result, {
+  const signalized = new Proxy(result, { // result contain keys info 
     get: (target, p, receiver) => (() => Reflect.get(target, p, receiver)) ?? (() => {})
   }) as any
   return signalized

@@ -5,6 +5,7 @@ export * from './utils/classname'
 export * from './utils/icss'
 
 export * from './utils/prop-builders/mergeProps'
+export * from './utils/prop-builders/mergeSignalProps'
 export * from './utils/prop-builders/mergeRefs'
 export * from './utils/prop-builders/addDefaultProps'
 export * from './utils/prop-builders/makeSignalToGetters'
