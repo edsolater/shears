@@ -23,7 +23,7 @@
     "vitest": "^0.28.5"
   },
   "dependencies": {
-    "@edsolater/fnkit": "^0.1.13",
+    "@edsolater/fnkit": "^0.1.14",
     "@emotion/css": "^11.10.6",
     "solid-js": "^1.6.11"
   }

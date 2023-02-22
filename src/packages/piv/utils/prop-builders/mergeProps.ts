@@ -34,9 +34,8 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
         ['plugin', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['dangerousRenderWrapperNode', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
         ['controller', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['children', () => v2 ?? v1]
       ],
-      v2 ?? v1
+      v1 && v2 ? () => v2() ?? v1() : v2 ?? v1
     )
   })
   // @ts-ignore

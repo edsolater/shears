@@ -11,7 +11,7 @@ import {
   signalizeProps,
   useKitProps
 } from '@edsolater/piv'
-import { createMemo, JSX } from 'solid-js'
+import { createMemo, JSX, mergeProps } from 'solid-js'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { useStatusRef } from '../hooks/useStatusRef'
@@ -56,7 +56,7 @@ export type ButtonProps = KitProps<{
     // used in "connect wallet" button, it's order is over props: disabled
     forceActive?: boolean
     /**  items are button's setting which will apply when corresponding validator has failed */
-    fallbackProps?: SignalizeProps<Omit<ButtonProps, 'validators' | 'disabled'>>
+    fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
   }>
   /** normally, it's an icon  */
   prefix?: MayFn<JSX.Element, [utils: ButtonStatus]>
@@ -71,21 +71,20 @@ export type ButtonProps = KitProps<{
  */
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
-  const { validators, ...normalProps } = signalizeProps(rawProps, {
+  const normalProps = signalizeProps(rawProps, {
     defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, useGlobalKitTheme<ButtonProps>('Button')]
   })
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
-    isValuedArray(validators()) || validators()
-      ? flap(validators()!).find(({ should }) => !shrinkFn(should))
+    isValuedArray(normalProps.validators?.()) || normalProps.validators?.()
+      ? flap(normalProps.validators?.()!).find(({ should }) => !shrinkFn(should))
       : undefined
   )
 
-  const mergedProps = mergeSignalProps(normalProps, failedTestValidator()?.fallbackProps)
-
+  const mergedProps = mergeSignalProps(normalProps, signalizeProps(failedTestValidator()?.fallbackProps))
   const isActive = createMemo(
-    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled())
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled?.())
   )
 
   const isDisabled = () => !isActive()
@@ -100,7 +99,7 @@ export function Button(rawProps: ButtonProps) {
     contentGap = 4,
     disableOpacity = 0.3,
     cssProps
-  } = props.theme() ?? {}
+  } = props.theme?.() ?? {}
 
   const [ref, setRef] = createRef<HTMLButtonElement>()
 
@@ -144,7 +143,7 @@ export function Button(rawProps: ButtonProps) {
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
       shadowProps={gettersProps(pivProps)}
-      onClick={(...args) => !isDisabled && props.onClick()?.(...args)}
+      onClick={(...args) => !isDisabled && props.onClick?.()?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
         { transition: `50ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
@@ -195,9 +194,9 @@ export function Button(rawProps: ButtonProps) {
       ]}
       ref={setRef}
     >
-      {shrinkFn(props.prefix(), [innerStatus])}
-      {props.children()}
-      {shrinkFn(props.suffix(), [innerStatus])}
+      {shrinkFn(props.prefix?.(), [innerStatus])}
+      {props.children?.()}
+      {shrinkFn(props.suffix?.(), [innerStatus])}
     </Piv>
   )
 }
