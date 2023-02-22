@@ -87,10 +87,8 @@ export function Button(rawProps: ButtonProps) {
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled?.())
   )
 
-  const isDisabled = () => !isActive()
-
   /* ------------------------------ detail props ------------------------------ */
-  const props = useKitProps(mergedProps) // FIXME logic is bug, because pivPorps also export Button's props
+  const props = useKitProps(mergedProps, { isSignalsProps: true }) // FIXME logic is bug, because pivPorps also export Button's props
   const pivProps = props
 
   const {
@@ -143,7 +141,7 @@ export function Button(rawProps: ButtonProps) {
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
       shadowProps={gettersProps(pivProps)}
-      onClick={(...args) => !isDisabled && props.onClick?.()?.(...args)}
+      onClick={(...args) => isActive() && props.onClick?.()?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
         { transition: `50ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
@@ -160,7 +158,7 @@ export function Button(rawProps: ButtonProps) {
           userSelect: 'none',
           width: 'max-content'
         },
-        isDisabled() && {
+        !isActive() && {
           opacity: shrinkFn(disableOpacity, [mergedProps]),
           cursor: 'not-allowed'
         },

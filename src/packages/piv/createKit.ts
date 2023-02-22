@@ -48,18 +48,19 @@ export type KitProps<
   NonNullable<O['plugin']>
 >
 export type CreateKitOptions<T, Status extends ValidStatus = {}> = {
-  name: string
+  name?: string
+  isSignalsProps?: boolean
   initStatus?: Status
   defaultProps?: Omit<T, 'children'>
   plugin?: MayArray<Plugin<any>>
 }
 
-export function useKitProps<P extends SignalizeProps<ValidProps>, Status extends ValidStatus = {}>(
+export function useKitProps<P extends SignalizeProps<ValidProps> | ValidProps, Status extends ValidStatus = {}>(
   props: P,
-  options?: CreateKitOptions<GettersProps<P>, Status>
+  options?: CreateKitOptions<P extends SignalizeProps<ValidProps> ? GettersProps<P> : P, Status>
 ): Omit<P, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
-    gettersProps(props),
+    options?.isSignalsProps ? gettersProps(props) : props,
     (props) =>
       mergePluginReturnedProps({
         plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
