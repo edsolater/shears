@@ -5,13 +5,14 @@ import {
   gettersProps,
   ICSS,
   KitProps,
+  mergeProps,
   mergeSignalProps,
   Piv,
-  SignalizeProps,
   signalizeProps,
   useKitProps
 } from '@edsolater/piv'
-import { createMemo, JSX, mergeProps } from 'solid-js'
+import { createMemo, JSX } from 'solid-js'
+import { SignalizeProps } from '../../piv/types/tools'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { useStatusRef } from '../hooks/useStatusRef'
@@ -72,7 +73,7 @@ export type ButtonProps = KitProps<{
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
   const props = useKitProps(rawProps, {
-    defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, useGlobalKitTheme<ButtonProps>('Button')]
+    defaultProps: mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
   })
   const pivProps = props
 
@@ -82,12 +83,11 @@ export function Button(rawProps: ButtonProps) {
       ? flap(props.validators?.()!).find(({ should }) => !shrinkFn(should))
       : undefined
   )
-
   const mergedProps = mergeSignalProps(props, signalizeProps(failedTestValidator()?.fallbackProps))
+  
   const isActive = createMemo(
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled?.())
   )
-
 
   const {
     mainColor = cssColors.buttonPrimaryColor,

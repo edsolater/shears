@@ -1,4 +1,4 @@
-import { MayDeepArray, pipe, flapDeep, hasProperty, MayArray, flap } from '@edsolater/fnkit'
+import { MayDeepArray, pipe, flapDeep, hasProperty, MayArray, flap, AddDefaultProperties } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, SignalizeProps, ValidProps, ValidStatus } from './types/tools'
@@ -47,18 +47,23 @@ export type KitProps<
   NonNullable<O['htmlPropsTagName']>,
   NonNullable<O['plugin']>
 >
-export type CreateKitOptions<T, Status extends ValidStatus = {}> = {
+
+export type CreateKitOptions<T, Status extends ValidStatus = {}, DefaultProps extends Partial<T> = {}> = {
   name?: string
   isSignalsProps?: boolean
   initStatus?: Status
-  defaultProps?: MayArray<Omit<T, 'children'>>
+  defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
 }
 
-export function useKitProps<GetterProps extends ValidProps, Status extends ValidStatus = {}>(
+export function useKitProps<
+  GetterProps extends ValidProps,
+  Status extends ValidStatus = {},
+  DefaultProps extends Partial<GetterProps> = {}
+>(
   props: GetterProps,
-  options?: CreateKitOptions<GetterProps, Status>
-): Omit<SignalizeProps<GetterProps>, 'plugin' | 'shadowProps'> {
+  options?: CreateKitOptions<GetterProps, Status, DefaultProps>
+): Omit<SignalizeProps<AddDefaultProperties<GetterProps, DefaultProps>>, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
     options?.isSignalsProps ? gettersProps(props) : props,
     (props) =>

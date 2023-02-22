@@ -1,4 +1,4 @@
-import { ValidProps } from '@edsolater/piv/src/types/tools'
+import { ValidProps } from '@edsolater/piv'
 import { JSX } from 'solid-js/jsx-runtime'
 
 /**

@@ -1,7 +1,6 @@
 import { AnyFn, flap, mergeObjectsWithConfigs, parallelSwitch, shakeNil } from '@edsolater/fnkit'
-import { ValidProps } from '../../types/tools'
+import { SignalizeProps, ValidProps } from '../../types/tools'
 import { mergeRefs } from './mergeRefs'
-import { SignalizeProps } from './signalizeProps'
 
 // TODO: mergeSignalProps should have right type tools, current is wrong
 

@@ -19,3 +19,4 @@ export * from './utils/prop-handlers/shallowProps'
 
 export * from './types/piv'
 export * from './types/plugin'
+export * from './types/tools'
