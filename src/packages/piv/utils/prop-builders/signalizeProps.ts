@@ -1,7 +1,6 @@
 import { AddDefaultProperties, isArray } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
-
-export type SignalizeProps<T extends object | undefined> = { [K in keyof T]: () => T[K] }
+import { SignalizeProps } from '../../types/tools'
 
 export function signalizeProps<T extends object | undefined, U extends Partial<T>>(
   props: T,

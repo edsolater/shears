@@ -15,3 +15,5 @@ export type ExtendsProps<
   Omit<P3, keyof P1 | keyof P2> &
   Omit<P4, keyof P1 | keyof P2 | keyof P3> &
   Omit<P5, keyof P1 | keyof P2 | keyof P3 | keyof P4>
+
+  export type SignalizeProps<T extends object | undefined> = { [K in keyof T]: () => T[K] }

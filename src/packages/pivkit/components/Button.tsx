@@ -71,29 +71,27 @@ export type ButtonProps = KitProps<{
  */
 export function Button(rawProps: ButtonProps) {
   /* ---------------------------------- props --------------------------------- */
-  const normalProps = signalizeProps(rawProps, {
+  const props = useKitProps(rawProps, {
     defaultProps: [{ variant: 'solid', size: 'md' } satisfies ButtonProps, useGlobalKitTheme<ButtonProps>('Button')]
   })
+  const pivProps = props
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
-    isValuedArray(normalProps.validators?.()) || normalProps.validators?.()
-      ? flap(normalProps.validators?.()!).find(({ should }) => !shrinkFn(should))
+    isValuedArray(props.validators?.()) || props.validators?.()
+      ? flap(props.validators?.()!).find(({ should }) => !shrinkFn(should))
       : undefined
   )
 
-  const mergedProps = mergeSignalProps(normalProps, signalizeProps(failedTestValidator()?.fallbackProps))
+  const mergedProps = mergeSignalProps(props, signalizeProps(failedTestValidator()?.fallbackProps))
   const isActive = createMemo(
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled?.())
   )
 
-  /* ------------------------------ detail props ------------------------------ */
-  const props = useKitProps(mergedProps, { isSignalsProps: true }) // FIXME logic is bug, because pivPorps also export Button's props
-  const pivProps = props
 
   const {
     mainColor = cssColors.buttonPrimaryColor,
-    mainTextColor = props.variant() === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
+    mainTextColor = mergedProps.variant() === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
     contentGap = 4,
     disableOpacity = 0.3,
     cssProps

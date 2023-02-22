@@ -1,9 +1,9 @@
-import { MayDeepArray, pipe, flapDeep, hasProperty, MayArray } from '@edsolater/fnkit'
+import { MayDeepArray, pipe, flapDeep, hasProperty, MayArray, flap } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
 import { CRef, PivProps } from './types/piv'
-import { ExtendsProps, ValidProps, ValidStatus } from './types/tools'
+import { ExtendsProps, SignalizeProps, ValidProps, ValidStatus } from './types/tools'
 import { gettersProps, GettersProps } from './utils/prop-builders/gettersProps'
-import { signalizeProps, SignalizeProps } from './utils/prop-builders/signalizeProps'
+import { signalizeProps } from './utils/prop-builders/signalizeProps'
 import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './utils/prop-handlers/plugin'
 import { handleShadowProps } from './utils/prop-handlers/shallowProps'
 
@@ -24,7 +24,7 @@ type KitPropsCore<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
       shadowProps?: MayArray<Partial<Props>> // component must merged before `<Div>`
-      defaultStatus?: ValidStatus
+      forceStatus?: ValidStatus
       // -------- additional --------
       // auto inject status to it
       componentStatusRef?: CRef<Status>
@@ -51,14 +51,14 @@ export type CreateKitOptions<T, Status extends ValidStatus = {}> = {
   name?: string
   isSignalsProps?: boolean
   initStatus?: Status
-  defaultProps?: Omit<T, 'children'>
+  defaultProps?: MayArray<Omit<T, 'children'>>
   plugin?: MayArray<Plugin<any>>
 }
 
-export function useKitProps<P extends SignalizeProps<ValidProps> | ValidProps, Status extends ValidStatus = {}>(
-  props: P,
-  options?: CreateKitOptions<P extends SignalizeProps<ValidProps> ? GettersProps<P> : P, Status>
-): Omit<P, 'plugin' | 'shadowProps'> {
+export function useKitProps<GetterProps extends ValidProps, Status extends ValidStatus = {}>(
+  props: GetterProps,
+  options?: CreateKitOptions<GetterProps, Status>
+): Omit<SignalizeProps<GetterProps>, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
     options?.isSignalsProps ? gettersProps(props) : props,
     (props) =>
@@ -66,7 +66,7 @@ export function useKitProps<P extends SignalizeProps<ValidProps> | ValidProps, S
         plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
         props
       }), // defined-time
-    (props) => mergeProps(options?.defaultProps ?? {}, props, { className: options?.name }), // defined-time
+    (props) => mergeProps(...flap(options?.defaultProps ?? {}), props, { className: options?.name }), // defined-time
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
   )
