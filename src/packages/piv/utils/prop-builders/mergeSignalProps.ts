@@ -66,6 +66,3 @@ type GetReturn<F extends AnyFn | undefined> = F extends AnyFn ? ReturnType<F> : 
 type MergeData<T1, T2> = T1 & T2 extends never ? T2 : T1
 type MergeOneSignalProps<P1 extends AnyFn | undefined, P2 extends AnyFn | undefined> = () => GetReturn<P1> &
   GetReturn<P2>
-
-type C = { icss:  { position: 'relative' } } & { icss: { display: 'flex' } }
-type D = C['icss']['display']

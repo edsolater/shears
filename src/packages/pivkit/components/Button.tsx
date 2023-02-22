@@ -2,6 +2,7 @@ import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit
 import {
   compressICSSToObj,
   CRef,
+  gettersProps,
   ICSS,
   KitProps,
   mergeSignalProps,
@@ -90,7 +91,9 @@ export function Button(rawProps: ButtonProps) {
   const isDisabled = () => !isActive()
 
   /* ------------------------------ detail props ------------------------------ */
-  const [props, pivProps] = useKitProps(mergedProps) // FIXME logic is bug, because pivPorps also export Button's props
+  const props = useKitProps(mergedProps) // FIXME logic is bug, because pivPorps also export Button's props
+  const pivProps = props
+
   const {
     mainColor = cssColors.buttonPrimaryColor,
     mainTextColor = props.variant() === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
@@ -140,7 +143,7 @@ export function Button(rawProps: ButtonProps) {
     <Piv<'button'>
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
-      shadowProps={pivProps}
+      shadowProps={gettersProps(pivProps)}
       onClick={(...args) => !isDisabled && props.onClick()?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[

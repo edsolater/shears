@@ -29,13 +29,13 @@ export const TodoList = () => {
         >
           Add Todo
         </button>
-        <Button
+        {/* <Button
           onClick={() => {
             setCount(count() + 1)
           }}
         >
           count: {count()}
-        </Button>
+        </Button> */}
         <Piv shadowProps={{ icss: { color: count() % 2 ? 'crimson' : 'dodgerblue' } }}>hello</Piv>
         <Piv icss={{ color: count() % 2 ? 'crimson' : 'dodgerblue' }}>hello</Piv>
       </div>

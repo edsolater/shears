@@ -1,5 +1,5 @@
 import { flapDeep, MayDeepArray, omit } from '@edsolater/fnkit'
-import { JSX } from 'solid-js/jsx-runtime'
+import { JSX } from 'solid-js'
 import { PivProps } from '../../types/piv'
 import { mergeProps } from '../prop-builders/mergeProps'
 

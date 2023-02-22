@@ -1,7 +1,21 @@
-import { flapDeep, omit } from '@edsolater/fnkit'
+import { flap, omit } from '@edsolater/fnkit'
 import { createComponent, JSX, JSXElement } from 'solid-js'
 import { PivProps } from './types/piv'
 import { parsePivPropsToCoreProps } from './utils/prop-builders/parsePivPropsToCoreProps'
+
+export const pivPropsNames = [
+  'as',
+  'children',
+  'class',
+  'dangerousRenderWrapperNode',
+  'htmlProps',
+  'icss',
+  'onClick',
+  'plugin',
+  'ref',
+  'shadowProps',
+  'style'
+] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <TagName extends keyof HTMLElementTagNameMap = 'div'>(props: PivProps<TagName>) => {
   // const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
@@ -26,7 +40,7 @@ function handleNormalPivProps(
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any>): JSXElement {
-  return flapDeep(props.dangerousRenderWrapperNode).reduce(
+  return flap(props.dangerousRenderWrapperNode).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
     createComponent(props.as ?? Piv, omit(props, 'dangerousRenderWrapperNode'))
   )

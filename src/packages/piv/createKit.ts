@@ -1,7 +1,9 @@
-import { MayDeepArray, pipe, flapDeep } from '@edsolater/fnkit'
+import { MayDeepArray, pipe, flapDeep, hasProperty, MayArray } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, ValidProps, ValidStatus } from './types/tools'
+import { gettersProps, GettersProps } from './utils/prop-builders/gettersProps'
+import { signalizeProps, SignalizeProps } from './utils/prop-builders/signalizeProps'
 import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './utils/prop-handlers/plugin'
 import { handleShadowProps } from './utils/prop-handlers/shallowProps'
 
@@ -20,8 +22,8 @@ type KitPropsCore<
   Omit<GetPluginProps<Plugins>, keyof Props | 'plugin' | 'shadowProps'> &
   Omit<
     {
-      plugin?: MayDeepArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: MayDeepArray<Partial<Props>> // component must merged before `<Div>`
+      plugin?: MayArray<Plugin<any /* too difficult to type */>>
+      shadowProps?: MayArray<Partial<Props>> // component must merged before `<Div>`
       defaultStatus?: ValidStatus
       // -------- additional --------
       // auto inject status to it
@@ -37,7 +39,7 @@ export type KitProps<
     extendsProp?: ValidProps
     status?: ValidStatus
     htmlPropsTagName?: keyof HTMLElementTagNameMap
-    plugin?: MayDeepArray<Plugin<any>>
+    plugin?: MayArray<Plugin<any>>
   } = {}
 > = KitPropsCore<
   ExtendsProps<P, NonNullable<O['extendsProp']>>,
@@ -49,30 +51,25 @@ export type CreateKitOptions<T, Status extends ValidStatus = {}> = {
   name: string
   initStatus?: Status
   defaultProps?: Omit<T, 'children'>
-  plugin?: MayDeepArray<Plugin<any>>
+  plugin?: MayArray<Plugin<any>>
 }
 
-type WithDivChildren<
-  Props extends ValidProps,
-  TagName extends keyof HTMLElementTagNameMap = 'div'
-> = 'children' extends keyof Props ? Props : Props & Pick<PivProps<TagName>, 'children'>
-
-export function useKitProps<Props extends ValidProps, Status extends ValidStatus = {}>(
-  props: Props,
-  options?: CreateKitOptions<Props, Status>
-): [componentProps: WithDivChildren<Props, 'div'>, pivProps: PivProps] {
-  const mergedProps = pipe(
-    props,
+export function useKitProps<P extends SignalizeProps<ValidProps>, Status extends ValidStatus = {}>(
+  props: P,
+  options?: CreateKitOptions<GettersProps<P>, Status>
+): Omit<P, 'plugin' | 'shadowProps'> {
+  const mergedGettersProps = pipe(
+    gettersProps(props),
     (props) =>
       mergePluginReturnedProps({
-        plugin: options?.plugin ? sortPluginByPriority(options.plugin) : options?.plugin,
+        plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
         props
       }), // defined-time
     (props) => mergeProps(options?.defaultProps ?? {}, props, { className: options?.name }), // defined-time
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
-  ) as any
-  return [mergedProps /* <-- FIX THIS TYPE */, mergedProps]
+  )
+  return signalizeProps(mergedGettersProps) as any
 }
 
 function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {

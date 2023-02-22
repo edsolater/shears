@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@edsolater/fnkit': ^0.1.12
+  '@edsolater/fnkit': ^0.1.13
   '@emotion/css': ^11.10.6
   '@solidjs/testing-library': ^0.6.1
   '@testing-library/jest-dom': ^5.16.5
@@ -15,7 +15,7 @@ specifiers:
   vitest: ^0.28.5
 
 dependencies:
-  '@edsolater/fnkit': 0.1.12
+  '@edsolater/fnkit': 0.1.13
   '@emotion/css': 11.10.6
   solid-js: 1.6.11
 
@@ -352,8 +352,8 @@ packages:
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
 
-  /@edsolater/fnkit/0.1.12:
-    resolution: {integrity: sha512-ajNTn2aCrityGaD6oqGhVbspWMjwhsipgbIJ8ZYbArzgrTcD72kVaFvF24tPCEOzQ4KBuTaPfb2201VQ25uGOg==}
+  /@edsolater/fnkit/0.1.13:
+    resolution: {integrity: sha512-WFt1g+u8A8MVT9BfvbPghggUOOG/ZhS0YQzJt/18v+1/q+h3d4qPMkQkHr6Pkz3bCkMlnrog8cBd2uD0Zuqvsg==}
     dev: false
 
   /@emotion/babel-plugin/11.10.6:
