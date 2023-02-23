@@ -25,6 +25,9 @@
   "dependencies": {
     "@edsolater/fnkit": "^0.1.14",
     "@emotion/css": "^11.10.6",
-    "solid-js": "^1.6.11"
+    "@solana/web3.js": "^1.73.2",
+    "buffer": "^6.0.3",
+    "solid-js": "^1.6.11",
+    "test-raydium-sdk-v2": "0.0.68-alpha"
   }
 }

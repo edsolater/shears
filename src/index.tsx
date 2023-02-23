@@ -1,6 +1,5 @@
 import { render } from 'solid-js/web'
-
-import { TodoList } from './todo-list'
+import { App } from './app/raydium-s2/pages/App'
 
 const root = document.getElementById('root')
 
@@ -10,4 +9,4 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
   )
 }
 
-render(() => <TodoList />, root!)
+render(() => <App />, root!)
