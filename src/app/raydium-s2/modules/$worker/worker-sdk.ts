@@ -26,9 +26,8 @@ function registMessageReceiver<T = any>(description: WorkerDescription, onMessag
   callbackMap.set(description, onMessage)
 }
 
-registMessageReceiver('query token info', async (data) => {
+registMessageReceiver('sdk tokens', async (data) => {
   const raydium = await getRaydiumSDKRoot()
   const allTokens = raydium.token.allTokens
-  console.log('sdk allTokens: ', allTokens)
-  return 'hello from sdk-thread'
+  return allTokens
 })

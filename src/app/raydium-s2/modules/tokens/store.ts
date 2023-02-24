@@ -1,18 +1,14 @@
 import { createStore } from 'solid-js/store'
 import { TokenJson } from 'test-raydium-sdk-v2'
-import { getRaydiumSDKRoot } from '../$root/utils/getRaydiumSDKRoot'
+import { getTokens } from '../$worker/worker-receiver'
 
 type TokenStore = {
-  $inited: boolean
+  $hasInited: boolean
+  $loading: boolean
   allTokens: TokenJson[]
 }
 
-const defaultTokenStore = { $inited: false, allTokens: [] } satisfies TokenStore
-
-/** async */
-export async function getRaydiumSDKTokens() {
-  return getRaydiumSDKRoot().then((sdk) => sdk.token.allTokens)
-}
+const defaultTokenStore = { $hasInited: false, $loading: false, allTokens: [] } satisfies TokenStore
 
 /**
  * @todo it's should be a context. thus, `useContext(sdkToken)` is better to read.
@@ -20,16 +16,17 @@ export async function getRaydiumSDKTokens() {
 export function useSDKToken() {
   const [store, setStore] = createStore<TokenStore>(defaultTokenStore)
   const initLoadTokens = async () => {
-    const allTokens = await getRaydiumSDKTokens()
-    setStore({ $inited: true, allTokens })
+    setStore({ $loading: true })
+    const allTokens = await getTokens()
+    setStore({ $hasInited: true, $loading: false, allTokens })
   }
   const allTokens = () => {
-    if (!store.$inited) {
+    if (!store.$hasInited && !store.$loading) {
       initLoadTokens()
     }
     return store.allTokens
   }
 
   const setAllTokens = (newTokens: TokenJson[]) => setStore({ allTokens: newTokens })
-  return { allTokens, setAllTokens, tokensCount: () => allTokens().length }
+  return { allTokens, setAllTokens, tokensCount: () => allTokens().length, isLoading: () => store.$loading }
 }

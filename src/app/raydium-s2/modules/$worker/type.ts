@@ -3,4 +3,4 @@ export type WorkerMessage<T = any> = {
   data: T
 }
 
-export type WorkerDescription = 'query token info'
+export type WorkerDescription = 'sdk tokens'

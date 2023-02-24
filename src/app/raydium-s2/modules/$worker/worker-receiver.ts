@@ -1,9 +1,10 @@
 import MyWorker from './worker-sdk?worker'
 import { WorkerMessage, WorkerDescription } from './type'
+import { TokenJson } from 'test-raydium-sdk-v2'
 
 const worker = new MyWorker()
 
-function postMessage<R = any>(description: WorkerDescription, data: any): Promise<R> {
+function queryWebWorker<R = any>(description: WorkerDescription, data?: any): Promise<R> {
   return new Promise((resolve) => {
     worker.postMessage({ description, data })
     const messageHandler = (ev: MessageEvent<any>): void => {
@@ -17,7 +18,7 @@ function postMessage<R = any>(description: WorkerDescription, data: any): Promis
   })
 }
 
-export function getInfo() {
-  return postMessage('query token info', 'hello from main-thread').then((r) => console.log('main-thread: ', r))
+export function getTokens() {
+  console.log('1: ', 1)
+  return queryWebWorker<TokenJson[]>('sdk tokens')
 }
-
