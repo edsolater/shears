@@ -1,6 +1,4 @@
-import {
-  ALL_PROGRAM_ID, API_URLS
-} from 'test-raydium-sdk-v2'
+import { ALL_PROGRAM_ID, API_URLS } from 'test-raydium-sdk-v2'
 
 export const urlConfigs = API_URLS
 
