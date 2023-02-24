@@ -26,7 +26,11 @@ export function useSDKToken() {
     }
     return store.allTokens
   }
-
   const setAllTokens = (newTokens: TokenJson[]) => setStore({ allTokens: newTokens })
-  return { allTokens, setAllTokens, tokensCount: () => allTokens().length, isLoading: () => store.$loading }
+  return {
+    allTokens,
+    setAllTokens,
+    tokensCount: () => allTokens().length,
+    isLoading: () => store.$loading
+  }
 }
