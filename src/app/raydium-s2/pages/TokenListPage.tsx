@@ -1,6 +1,6 @@
 import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv/Piv'
-import { useSDKToken } from '../features/$root/storeUtils'
+import { useSDKToken } from '../app-modules/tokens/store'
 
 export function TokenListPage() {
   const { allTokens, tokensCount } = useSDKToken()

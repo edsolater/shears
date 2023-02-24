@@ -1,6 +1,6 @@
 import { createStore } from 'solid-js/store'
 import { TokenJson } from 'test-raydium-sdk-v2'
-import { getRaydiumSDKRoot } from './utils/getRaydiumSDKRoot'
+import { getRaydiumSDKRoot } from '../$root/utils/getRaydiumSDKRoot'
 
 type TokenStore = {
   $inited: boolean
