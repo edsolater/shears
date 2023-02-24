@@ -1,13 +1,12 @@
 import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv/Piv'
 import { useSDKToken } from '../app-modules/tokens/store'
-import MyWorker from '../app-modules/worker?worker'
+import { getInfo } from '../app-modules/worker-receiver'
 
 export function TokenListPage() {
   const { allTokens, tokensCount } = useSDKToken()
   createEffect(() => console.log('allTokens', allTokens()))
-  const worker = new MyWorker()
-  worker.postMessage('hello')
+  getInfo()
   return (
     <div>
       <Piv icss={{ fontSize: '2em' }}>TokenListPage</Piv>
