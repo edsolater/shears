@@ -1,9 +1,9 @@
 import MyWorker from './worker-sdk?worker'
-import { WorkerMessage } from './type'
+import { WorkerMessage, WorkerDescription } from './type'
 
 const worker = new MyWorker()
 
-function postMessage<R = any>(description: string, data: any): Promise<R> {
+function postMessage<R = any>(description: WorkerDescription, data: any): Promise<R> {
   return new Promise((resolve) => {
     worker.postMessage({ description, data })
     const messageHandler = (ev: MessageEvent<any>): void => {
@@ -18,5 +18,6 @@ function postMessage<R = any>(description: string, data: any): Promise<R> {
 }
 
 export function getInfo() {
-  return postMessage('getInfo', 'hello from main-thread').then((r) => console.log('main-thread: ', r))
+  return postMessage('query token info', 'hello from main-thread').then((r) => console.log('main-thread: ', r))
 }
+

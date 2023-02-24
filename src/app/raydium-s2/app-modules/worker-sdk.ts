@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import { WorkerMessage } from './type'
+import { WorkerDescription, WorkerMessage } from './type'
 
 const callbackMap = new Map<string, (data: any) => any>()
 
@@ -21,10 +21,10 @@ function initMessageReceiver() {
 // only need to regist once
 initMessageReceiver()
 
-function registMessageReceiver<T = any>(description: string, onMessage: (data: T) => any) {
+function registMessageReceiver<T = any>(description: WorkerDescription, onMessage: (data: T) => any) {
   callbackMap.set(description, onMessage)
 }
-registMessageReceiver('getInfo', (data) => {
+registMessageReceiver('query token info', (data) => {
   console.log('sdk-thread:  ', data)
   return 'hello from sdk-thread'
 })
