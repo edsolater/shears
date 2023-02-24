@@ -6,11 +6,6 @@ import { getConnection } from './getConnection'
 /** async */
 export function getRaydiumSDKRoot(
   options: RaydiumLoadParams = { connection: getConnection(), urlConfigs: urlConfigs }
-  ) {
-    return LazyPromise.resolve(() => Raydium.load(options))
-  }
-  
-  /** async */
-export function getRaydiumSDKTokens() {
-  return getRaydiumSDKRoot().then((sdk) => sdk.token.allTokens)
+) {
+  return LazyPromise.resolve(() => Raydium.load(options))
 }
