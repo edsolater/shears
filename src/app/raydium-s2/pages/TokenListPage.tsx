@@ -1,6 +1,6 @@
 import { Piv } from '../../../packages/piv/Piv'
-import { useSDKToken } from '../modules/tokens/store-tokens'
-import { useWalletAdapter } from '../modules/tokens/store-wallet'
+import { useSDKToken } from '../modules/tokens/store_tokens'
+import { useWalletAdapter } from '../modules/tokens/store_wallet'
 
 export function TokenListPage() {
   const { allTokens, tokensCount, isLoading } = useSDKToken()

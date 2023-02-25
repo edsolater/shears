@@ -1,4 +1,4 @@
-import MyWorker from './worker-sdk?worker'
+import MyWorker from './worker_sdk?worker'
 import { WorkerMessage, WorkerDescription } from './type'
 import { TokenJson } from 'test-raydium-sdk-v2'
 
