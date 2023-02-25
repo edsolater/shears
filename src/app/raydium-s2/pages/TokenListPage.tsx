@@ -7,7 +7,7 @@ export function TokenListPage() {
   const {} = useWalletAdapter()
   return (
     <div>
-      <Piv icss={{ fontSize: '2em' }}>TokenListPage</Piv>
+      <Piv icss={{ fontSize: '2em' }}>TokenListPage </Piv>
       <Piv>token count: {isLoading() ? '(loading)' : tokensCount()}</Piv>
     </div>
   )
