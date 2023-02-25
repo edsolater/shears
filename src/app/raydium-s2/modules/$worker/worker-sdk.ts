@@ -26,6 +26,7 @@ function registMessageReceiver<T = any>(description: WorkerDescription, onMessag
   callbackMap.set(description, onMessage)
 }
 
+//TODO: should move to /tokens
 registMessageReceiver('sdk tokens', async (data) => {
   const raydium = await getRaydiumSDKRoot()
   const allTokens = raydium.token.allTokens

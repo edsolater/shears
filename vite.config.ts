@@ -10,6 +10,11 @@ export default defineConfig({
   server: {
     port: 3000
   },
+  define: {
+    'process.env': {
+      NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+    }
+  },
   test: {
     environment: 'jsdom',
     globals: true,

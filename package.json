@@ -25,7 +25,10 @@
   "dependencies": {
     "@edsolater/fnkit": "^0.1.14",
     "@emotion/css": "^11.10.6",
+    "@solana/wallet-adapter-base": "^0.9.22",
+    "@solana/wallet-adapter-wallets": "^0.19.15",
     "@solana/web3.js": "^1.73.2",
+    "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "solid-js": "^1.6.11",
     "test-raydium-sdk-v2": "0.0.68-alpha"

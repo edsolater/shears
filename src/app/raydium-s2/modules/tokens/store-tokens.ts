@@ -12,6 +12,7 @@ const defaultTokenStore = { $hasInited: false, $loading: false, allTokens: [] } 
 
 /**
  * @todo it's should be a context. thus, `useContext(sdkToken)` is better to read.
+ * solidjs store
  */
 export function useSDKToken() {
   const [store, setStore] = createStore<TokenStore>(defaultTokenStore)
