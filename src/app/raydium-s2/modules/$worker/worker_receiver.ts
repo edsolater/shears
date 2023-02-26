@@ -19,6 +19,6 @@ function queryWebWorker<R = any>(description: WorkerDescription, data?: any): Pr
 }
 
 //TODO: should move to `/tokens`
-export function getTokens() {
+export function getSDKTokens() {
   return queryWebWorker<TokenJson[]>('sdk tokens')
 }
