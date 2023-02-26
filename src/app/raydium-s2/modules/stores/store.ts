@@ -1,4 +1,9 @@
 import { createContextStore } from '@edsolater/pivkit'
-import { defaultTokenStore, initAllTokens } from './store_tokens'
+import { defaultPairsStore, initAllPairs, PairsStore } from './store_pairs'
+import { defaultTokenStore, initAllTokens, TokenStore } from './store_tokens'
 
-export const [DataStoreProvider, useDataStore] = createContextStore(defaultTokenStore, { onFirstAccess: [initAllTokens] })
+const mergedDefaultStore = { ...defaultTokenStore, ...defaultPairsStore }
+type MergedStore = TokenStore & PairsStore
+export const [DataStoreProvider, useDataStore] = createContextStore<MergedStore>(mergedDefaultStore, {
+  onFirstAccess: [initAllTokens, initAllPairs]
+})

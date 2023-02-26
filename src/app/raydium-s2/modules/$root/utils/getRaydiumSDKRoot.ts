@@ -7,5 +7,10 @@ import { getConnection } from './getConnection'
 export function getRaydiumSDKRoot(
   options: RaydiumLoadParams = { connection: getConnection(), urlConfigs: urlConfigs }
 ) {
-  return LazyPromise.resolve(() => Raydium.load(options))
+  return LazyPromise.resolve(() => {
+    console.log('start')
+    return Raydium.load(options)
+  })
 }
+
+export const raydiumPromise = getRaydiumSDKRoot()

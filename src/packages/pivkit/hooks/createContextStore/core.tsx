@@ -20,7 +20,7 @@ export function createContextStore<T extends Record<string, any>>(
   defaultValue?: T,
   options?: {
     name?: string;
-    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T, keyof T>; }[];
+    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T, any>; }[];
     onChange?: { propertyName: keyof T; cb: OnChangeCallback<T, keyof T>; }[];
   }
 ): [
