@@ -1,10 +1,10 @@
-import { Provider } from '../modules/tokens/store_tokens'
+import { DataStoreProvider } from '../modules/tokens/store'
 import { TokenListPage } from './TokenListPage'
 
 export function App() {
   return (
-    <Provider>
+    <DataStoreProvider>
       <TokenListPage />
-    </Provider>
+    </DataStoreProvider>
   )
 }

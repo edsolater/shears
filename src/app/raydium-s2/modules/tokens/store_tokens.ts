@@ -1,24 +1,22 @@
-import { createContextStore, createOnFirstAccessCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback } from '@edsolater/pivkit'
 import { TokenJson } from 'test-raydium-sdk-v2'
 import { getSDKTokens } from '../$worker/worker_receiver'
 
 type TokenStore = {
-  hasInited: boolean
-  isLoading: boolean
+  hasInitedTokenList: boolean
+  isTokenLoading: boolean
   allTokens: TokenJson[]
 }
 
-const defaultTokenStore = { hasInited: false, isLoading: false, allTokens: [] } as TokenStore
+export const defaultTokenStore = { hasInitedTokenList: false, isTokenLoading: false, allTokens: [] } as TokenStore
 
-const initAllTokens = createOnFirstAccessCallback<TokenStore, 'allTokens'>(
+export const initAllTokens = createOnFirstAccessCallback<TokenStore, 'allTokens'>(
   'allTokens',
-  async (_, { setIsLoading, setHasInited, setAllTokens }) => {
-    setIsLoading(true)
+  async (_, { setIsTokenLoading, setHasInitedTokenList, setAllTokens }) => {
+    setIsTokenLoading(true)
     const allTokens = await getSDKTokens()
-    setHasInited(true)
-    setIsLoading(false)
+    setHasInitedTokenList(true)
+    setIsTokenLoading(false)
     setAllTokens(allTokens)
   }
 )
-
-export const [Provider, useSDKToken] = createContextStore(defaultTokenStore, { onFirstAccess: [initAllTokens] })
