@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
-import './polyfill'
-import { getRaydiumSDKRoot } from '../$root/utils/getRaydiumSDKRoot'
+import './polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 import { WorkerDescription, WorkerMessage } from './type'
+import '../stores/store_tokens_webworker_utils'
 
 const callbackMap = new Map<string, (data: any) => any | Promise<any>>()
 
@@ -10,10 +10,7 @@ function initMessageReceiver() {
     const description = ev.data.description
     const data = ev.data.data
     const targetOnMessage = callbackMap.get(description)
-    if (!targetOnMessage) {
-      console.warn(`unknown message: ${description}`, data)
-      return
-    }
+    if (!targetOnMessage) return
     const returnData = await targetOnMessage(data)
     globalThis.postMessage({ description, data: returnData } as WorkerMessage)
   })
@@ -22,13 +19,9 @@ function initMessageReceiver() {
 // only need to regist once in the worker thread
 initMessageReceiver()
 
-function registMessageReceiver<T = any>(description: WorkerDescription, onMessage: (data: T) => any | Promise<any>) {
+export function registMessageReceiver<T = any>(
+  description: WorkerDescription,
+  onMessage: (data: T) => any | Promise<any>
+) {
   callbackMap.set(description, onMessage)
 }
-
-//TODO: should move to /tokens
-registMessageReceiver('sdk tokens', async (data) => {
-  const raydium = await getRaydiumSDKRoot()
-  const allTokens = raydium.token.allTokens
-  return allTokens
-})

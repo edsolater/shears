@@ -1,10 +1,9 @@
+import { WorkerDescription, WorkerMessage } from './type'
 import MyWorker from './worker_sdk?worker'
-import { WorkerMessage, WorkerDescription } from './type'
-import { TokenJson } from 'test-raydium-sdk-v2'
 
 const worker = new MyWorker()
 
-function queryWebWorker<R = any>(description: WorkerDescription, data?: any): Promise<R> {
+export function queryWebWorker<R = any>(description: WorkerDescription, data?: any): Promise<R> {
   return new Promise((resolve) => {
     worker.postMessage({ description, data })
     const messageHandler = (ev: MessageEvent<any>): void => {
@@ -16,9 +15,4 @@ function queryWebWorker<R = any>(description: WorkerDescription, data?: any): Pr
     }
     worker.addEventListener('message', messageHandler)
   })
-}
-
-//TODO: should move to `/tokens`
-export function getSDKTokens() {
-  return queryWebWorker<TokenJson[]>('sdk tokens')
 }

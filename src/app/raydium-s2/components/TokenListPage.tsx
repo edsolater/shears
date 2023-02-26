@@ -1,6 +1,6 @@
 import { Piv } from '../../../packages/piv/Piv'
-import { useWalletAdapter } from '../modules/tokens/store_wallet'
-import { useDataStore } from '../modules/tokens/store'
+import { useWalletAdapter } from '../modules/stores/store_wallet'
+import { useDataStore } from '../modules/stores/store'
 
 export function TokenListPage() {
   const { allTokens, isTokenLoading } = useDataStore()
