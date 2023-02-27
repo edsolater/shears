@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 import './polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { regist as pairRegist } from '../stores/store_pairs_webworker'
-import { regist as tokenRegist } from '../stores/store_tokens_webworker'
+import { regist as pairRegist } from '../stores/store-pairs_webworker'
+import { regist as tokenRegist } from '../stores/store-tokens_webworker'
 import { WorkerDescription, WorkerMessage } from './type'
 
 const callbackMap = new Map<string, (data: any) => any | Promise<any>>()
@@ -21,9 +21,9 @@ function initMessageReceiver() {
 // only need to regist once in the worker thread
 initMessageReceiver()
 
-export function registMessageReceiver<T = any>(
+export function registMessageReceiver<D = any>(
   description: WorkerDescription,
-  onMessage: (data: T) => any | Promise<any>
+  onMessage: (data: D) => any | Promise<any>
 ) {
   callbackMap.set(description, onMessage)
 }

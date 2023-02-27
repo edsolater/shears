@@ -1,6 +1,6 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
 import { TokenJson } from 'test-raydium-sdk-v2'
-import { queryWebWorker } from '../$worker/worker_receiver'
+import { queryWebWorker } from '../webworker/worker_receiver'
 
 export type TokenStore = {
   tokenListState: 'before-init' | 'loaded'

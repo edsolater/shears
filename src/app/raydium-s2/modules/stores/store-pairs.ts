@@ -1,6 +1,7 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
 import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
-import { queryWebWorker } from '../$worker/worker_receiver'
+import { queryWebWorker } from '../webworker/worker_receiver'
+import { FetchPairsOptions } from './store-pairs_type'
 
 export type PairsStore = {
   pairsState: 'before-init' | 'loaded'
@@ -21,5 +22,7 @@ export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allAPIPairs
   }
 )
 function fetchPairInfoInMainThread() {
-  return queryWebWorker<ApiJsonPairInfo[]>('fetch raydium pair info')
+  return queryWebWorker<ApiJsonPairInfo[], FetchPairsOptions>('fetch raydium pair info', { force: false })
 }
+
+
