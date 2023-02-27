@@ -1,5 +1,5 @@
-import { Piv, useKitProps } from '@edsolater/piv'
-import { For } from 'solid-js'
+import { Piv, signalizeProps, useKitProps } from '@edsolater/piv'
+import { Accessor, createEffect, For, JSX } from 'solid-js'
 import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
 
 export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
@@ -8,7 +8,17 @@ export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
 
   return (
     <Piv>
-      <For each={props.infos()}>{(info) => <Piv>{info.name}</Piv>}</For>
+      <For each={props.infos()}>
+        {(info) => {
+          const { name, ammId } = signalizeProps(info)
+          createEffect(() => console.log('ammId', ammId()))
+          return (
+            <Piv>
+              {name()} {ammId()}
+            </Piv>
+          )
+        }}
+      </For>
     </Piv>
   )
 }
