@@ -1,32 +1,24 @@
 import { isArray, isFunction, isObject, map } from '@edsolater/fnkit'
 import { SignalizeProps } from '../../types/tools'
 
+// can only convert primary object literal or array type
 export function signalizeProps<T extends object | undefined>(props: T): SignalizeProps<NonNullable<T>> {
   const signalized = new Proxy(props ?? {}, {
     // result contain keys info
     get: (target, p, receiver) => {
-      if (p in target) {
-        const value = Reflect.get(target, p, receiver)
-        if (isFunction(value)) return value
-        if (
-          isObject(value) &&
-          'constructor' in value &&
-          unwrapableObjectConstructors.includes(value['constructor'] as any /* no need type check here */)
-        )
-          return value
-        if (isArray(value)) {
-          return Array.from(
-            value,
-            (_, idx) => new Proxy({}, { get: (_, property) => () => target[p][idx]?.[property] })
-          )
-        }
-        if (isObject(value)) return map(value, signalizeProps)
-        return () => value
+      const onlyCheckType = Reflect.get(target, p, receiver)
+      if (isObject(onlyCheckType)) {
+        if (isFunction(onlyCheckType)) return onlyCheckType
+        if (isArray(onlyCheckType)) return map(onlyCheckType, signalizeProps)
+        if (isObjectLiteral(onlyCheckType)) return Object.assign(onlyCheckType, map(onlyCheckType, signalizeProps))
+        return onlyCheckType // other objects
       }
-      return () => {}
+      return () => Reflect.get(target, p, receiver) // must access directly, but don't know why🤯🤯🤯🤯
     }
   }) as any
   return signalized
 }
 
-const unwrapableObjectConstructors = [Date, Error, RegExp]
+function isObjectLiteral(v: unknown): v is object {
+  return isObject(v) && 'constructor' in v && v['constructor'] === Object
+}
