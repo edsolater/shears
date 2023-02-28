@@ -14,7 +14,12 @@ export function signalizeProps<T extends object | undefined>(props: T): Signaliz
           unwrapableObjectConstructors.includes(value['constructor'] as any /* no need type check here */)
         )
           return value
-        if (isArray(value)) return map(value, signalizeProps)
+        if (isArray(value)) {
+          return Array.from(
+            value,
+            (_, idx) => new Proxy({}, { get: (_, property) => () => target[p][idx]?.[property] })
+          )
+        }
         if (isObject(value)) return map(value, signalizeProps)
         return () => value
       }
