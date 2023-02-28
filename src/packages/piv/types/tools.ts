@@ -1,3 +1,5 @@
+import { AnyFn } from '@edsolater/fnkit'
+
 export type ValidProps = Record<string, Exclude<any, Promise<any>>>
 export type ValidStatus = object
 
@@ -16,4 +18,19 @@ export type ExtendsProps<
   Omit<P4, keyof P1 | keyof P2 | keyof P3> &
   Omit<P5, keyof P1 | keyof P2 | keyof P3 | keyof P4>
 
-export type SignalizeProps<T extends object | undefined> = { [K in keyof T]: () => T[K] }
+  
+/**
+ * recursively
+ * we use signal to make reading code clearer, as getter is magic, it's confusing in large APP, so
+ *
+ * object literal or array type will inner be signal, not container
+ */
+export type SignalizeProps<T extends object | undefined> = {
+  [K in keyof T]: T[K] extends AnyFn | BuildInObjectType
+    ? T[K]
+    : T[K] extends unknown[] | object
+    ? SignalizeProps<T[K]>
+    : () => T[K]
+}
+
+type BuildInObjectType = Date | Error | RegExp

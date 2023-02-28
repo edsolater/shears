@@ -1,41 +1,27 @@
-import { AddDefaultProperties, isArray } from '@edsolater/fnkit'
-import { mergeProps } from 'solid-js'
+import { isArray, isFunction, isObject, map } from '@edsolater/fnkit'
 import { SignalizeProps } from '../../types/tools'
 
-export function signalizeProps<T extends object | undefined, U extends Partial<T>>(
-  props: T,
-  options?: { defaultProps?: U }
-): SignalizeProps<AddDefaultProperties<NonNullable<T>, U>>
-export function signalizeProps<T extends object | undefined, U extends Partial<T>, W extends Partial<T>>(
-  props: T,
-  options?: { defaultProps?: [U, W] }
-): SignalizeProps<AddDefaultProperties<NonNullable<T>, U & W>>
-export function signalizeProps<
-  T extends object | undefined,
-  U extends Partial<T>,
-  W extends Partial<T>,
-  X extends Partial<T>
->(props: T, options?: { defaultProps?: [U, W, X] }): SignalizeProps<AddDefaultProperties<NonNullable<T>, U & W & X>>
-export function signalizeProps<
-  T extends object | undefined,
-  U extends Partial<T>,
-  W extends Partial<T>,
-  X extends Partial<T>,
-  Y extends Partial<T>
->(
-  props: T,
-  options?: { defaultProps?: [U, W, X, Y] }
-): SignalizeProps<AddDefaultProperties<NonNullable<T>, U & W & X & Y>>
-export function signalizeProps<T extends object | undefined, X extends Partial<T>[]>(
-  props: T,
-  options?: { defaultProps?: X }
-): SignalizeProps<AddDefaultProperties<NonNullable<T>, X[number]>> {
-  const hasAddDefaulted = isArray(options?.defaultProps)
-    ? mergeProps(...options?.defaultProps!, props)
-    : (mergeProps(options?.defaultProps, props) as SignalizeProps<T>)
-  const signalized = new Proxy(hasAddDefaulted, {
+export function signalizeProps<T extends object | undefined>(props: T): SignalizeProps<NonNullable<T>> {
+  const signalized = new Proxy(props ?? {}, {
     // result contain keys info
-    get: (target, p, receiver) => (p in target ? () => Reflect.get(target, p, receiver) : () => {})
+    get: (target, p, receiver) => {
+      if (p in target) {
+        const value = Reflect.get(target, p, receiver)
+        if (isFunction(value)) return value
+        if (
+          isObject(value) &&
+          'constructor' in value &&
+          unwrapableObjectConstructors.includes(value['constructor'] as any /* no need type check here */)
+        )
+          return value
+        if (isArray(value)) return map(value, signalizeProps)
+        if (isObject(value)) return map(value, signalizeProps)
+        return () => value
+      }
+      return () => {}
+    }
   }) as any
   return signalized
 }
+
+const unwrapableObjectConstructors = [Date, Error, RegExp]
