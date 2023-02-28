@@ -1,4 +1,5 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
+import { reconcile } from 'solid-js/store'
 import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
 import { queryWebWorker } from '../webworker/worker_receiver'
 import { FetchPairsOptions } from './store-pairs_type'
@@ -13,15 +14,17 @@ export const defaultPairsStore: PairsStore = { pairsState: 'before-init', isPair
 
 export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allAPIPairs'>(
   'allAPIPairs',
-  async (_, { setPairsState, setIsPairsLoading, setAllAPIPairs }) => {
+  async (_, { setPairsState, setIsPairsLoading, setAllAPIPairs, setStore }) => {
     setIsPairsLoading(true)
-    const allTokens = await fetchPairInfoInMainThread()
+    const allAPIPairs = await fetchPairInfoInMainThread()
     setPairsState('loaded')
     setIsPairsLoading(false)
-    setAllAPIPairs(allTokens.slice(0,2))
+    setAllAPIPairs(allAPIPairs.slice(0, 2))
     let count = 0
+    const clonedAllAPIPairs = structuredClone(allAPIPairs)
     setInterval(() => {
-      setAllAPIPairs(allTokens.slice(0,2).map((i) => ({ ...i, name: i.name + count })))
+      const newPairs = clonedAllAPIPairs.slice(0, 2).map((i) => ({ ...i, name: i.name + count }))
+      setStore('allAPIPairs', reconcile(newPairs))
       count++
     }, 1000)
   }

@@ -1,4 +1,5 @@
 import { ShakeNever } from '@edsolater/fnkit'
+import { SetStoreFunction } from 'solid-js/store'
 
 export type Store<T extends Record<string, any>> = ShakeNever<
   {
@@ -9,6 +10,8 @@ export type Store<T extends Record<string, any>> = ShakeNever<
       : K extends `set${string}`
       ? never
       : (dispatcher: ((newValue: T[K], prevValue?: T[K]) => T[K]) | T[K]) => T[K]
+  } & {
+    setStore: SetStoreFunction<T>
   }
 >
 
@@ -17,7 +20,6 @@ export type OnFirstAccessCallback<T extends Record<string, any>, K extends keyof
   value: T[K],
   store: Store<T>
 ) => void
-
 
 // callback in createContextStore
 export type OnChangeCallback<T extends Record<string, any>, K extends keyof T> = (
