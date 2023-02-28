@@ -8,7 +8,7 @@ import {
   mergeProps,
   mergeSignalProps,
   Piv,
-  signalizeProps,
+  signalize,
   useKitProps
 } from '@edsolater/piv'
 import { createMemo, JSX } from 'solid-js'
@@ -83,7 +83,7 @@ export function Button(rawProps: ButtonProps) {
       ? flap(props.validators?.()!).find(({ should }) => !shrinkFn(should))
       : undefined
   )
-  const mergedProps = mergeSignalProps(props, signalizeProps(failedTestValidator()?.fallbackProps))
+  const mergedProps = mergeSignalProps(props, signalize(failedTestValidator()?.fallbackProps))
   
   const isActive = createMemo(
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled?.())

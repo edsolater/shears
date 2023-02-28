@@ -3,7 +3,7 @@ import { mergeProps } from 'solid-js'
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, SignalizeProps, ValidProps, ValidStatus } from './types/tools'
 import { gettersProps } from './utils/prop-builders/gettersProps'
-import { signalizeProps } from './utils/prop-builders/signalizeProps'
+import { signalize } from './utils/prop-builders/signalize'
 import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './utils/prop-handlers/plugin'
 import { handleShadowProps } from './utils/prop-handlers/shallowProps'
 
@@ -75,7 +75,7 @@ export function useKitProps<
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
   )
-  return signalizeProps(mergedGettersProps) as any
+  return signalize(mergedGettersProps) as any
 }
 
 function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
