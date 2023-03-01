@@ -30,5 +30,5 @@ export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allAPIPairs
   }
 )
 function fetchPairInfoInMainThread() {
-  return queryWebWorker<ApiJsonPairInfo[], FetchPairsOptions>('fetch raydium pair info', { force: false })
+  return queryWebWorker<ApiJsonPairInfo[], FetchPairsOptions>('fetch raydium pairs info', { force: false })
 }

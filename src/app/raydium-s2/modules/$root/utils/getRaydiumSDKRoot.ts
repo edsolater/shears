@@ -1,13 +1,16 @@
-import { LazyPromise } from '@edsolater/fnkit'
 import { Raydium, RaydiumLoadParams } from 'test-raydium-sdk-v2'
-import { urlConfigs } from './config'
+import { urlConfigs as defaultUrlConfigs } from './config'
 import { getConnection } from './getConnection'
 
+let raydium: Promise<Raydium>
 /** async */
 export function getRaydiumSDKRoot(
-  options: RaydiumLoadParams = { connection: getConnection(), urlConfigs: urlConfigs }
+  { connection = getConnection(), urlConfigs = defaultUrlConfigs, ...otherOptions }: Partial<RaydiumLoadParams> = {
+    connection: getConnection()
+  }
 ) {
-  return LazyPromise.resolve(() => Raydium.load(options))
+  if (!raydium) {
+    raydium = Raydium.load({ connection, urlConfigs, ...otherOptions })
+  }
+  return raydium
 }
-
-export const raydiumPromise = getRaydiumSDKRoot()

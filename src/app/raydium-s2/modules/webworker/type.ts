@@ -3,4 +3,4 @@ export type WorkerMessage<T = any> = {
   data: T
 }
 
-export type WorkerDescription = 'fetch raydium supported tokens' | 'fetch raydium pair info'
+export type WorkerDescription = 'fetch raydium supported tokens' | 'fetch raydium pairs info' | 'fetch raydium farms info'

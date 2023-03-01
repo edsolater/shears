@@ -1,10 +1,11 @@
 import { Piv } from '../../../packages/piv/Piv'
 import { useDataStore } from '../modules/stores/store'
 import { useWalletAdapter } from '../modules/stores/store-wallet'
+import { FarmPanel } from './Farms/Panel'
 import { PairsPanel } from './Pairs/Panel'
 
 export function AppContentPage() {
-  const { allTokens, isTokenLoading, allAPIPairs, isPairsLoading } = useDataStore()
+  const { allTokens, isTokenLoading, allAPIPairs, isPairsLoading, allFarmJsonInfos } = useDataStore()
   const {} = useWalletAdapter()
 
   return (
@@ -13,6 +14,7 @@ export function AppContentPage() {
       <Piv>token count: {isTokenLoading() ? '(loading)' : allTokens().length}</Piv>
       <Piv>pair count: {isPairsLoading() ? '(loading)' : allAPIPairs().length}</Piv>
       <PairsPanel infos={allAPIPairs()} />
+      <FarmPanel infos={allFarmJsonInfos()} />
     </div>
   )
 }

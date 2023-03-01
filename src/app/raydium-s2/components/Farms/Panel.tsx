@@ -1,9 +1,9 @@
 import { Piv, signalize, useKitProps } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
+import { FarmPoolJsonInfo } from 'test-raydium-sdk-v2'
 
-export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
+export function FarmPanel(rawProps: { infos: FarmPoolJsonInfo[] }) {
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -26,10 +26,10 @@ export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
         overflow: 'hidden'
       }}
     >
-      <Piv icss={{ fontSize: '2em' }}>Pools</Piv>
+      <Piv icss={{ fontSize: '2em' }}>Farms</Piv>
       <For each={props.infos()}>
         {(infos) => {
-          const { name, ammId } = signalize(infos)
+          const { name, version } = signalize(infos)
           return (
             <Piv
               icss={{
@@ -41,7 +41,7 @@ export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
             >
               <Piv>{name()}</Piv>
               <Show when={!isWidthSmall()}>
-                <Piv>{ammId()}</Piv>
+                <Piv>{version()}</Piv>
               </Show>
             </Piv>
           )
