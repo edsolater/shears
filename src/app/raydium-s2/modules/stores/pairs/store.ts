@@ -1,7 +1,7 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
 import { reconcile } from 'solid-js/store'
 import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
-import { queryWebWorker } from '../../webworker/worker_receiver'
+import { queryWebWorker } from '../webworker/worker_receiver'
 import { FetchPairsOptions } from './types/type'
 
 export type PairsStore = {

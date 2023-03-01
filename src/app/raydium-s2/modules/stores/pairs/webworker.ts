@@ -1,5 +1,5 @@
 import { getRaydiumSDKRoot } from '../common/utils/getRaydiumSDKRoot'
-import { registMessageReceiver } from '../../webworker/worker_sdk'
+import { registMessageReceiver } from '../webworker/worker_sdk'
 import { FetchPairsOptions } from './types/type'
 
 export function registInWorker() {

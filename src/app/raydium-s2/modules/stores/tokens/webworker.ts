@@ -1,7 +1,7 @@
 import { getRaydiumSDKRoot } from '../common/utils/getRaydiumSDKRoot'
-import { registMessageReceiver } from '../../webworker/worker_sdk'
+import { registMessageReceiver } from '../webworker/worker_sdk'
 
-export function regist() {
+export function registInWorker() {
   registMessageReceiver('fetch raydium supported tokens', async () => {
     const raydium = await getRaydiumSDKRoot()
     return raydium.token.allTokens
