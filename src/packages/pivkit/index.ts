@@ -1,5 +1,4 @@
 export * from './components/Button'
-export * from './components/Container'
 
 export * from './hooks/createRef'
 export * from './hooks/createStatusRef'
