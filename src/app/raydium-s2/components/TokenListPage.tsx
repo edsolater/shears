@@ -1,8 +1,8 @@
 import { Piv } from '../../../packages/piv/Piv'
 import { useDataStore } from '../modules/stores/store'
 import { useWalletAdapter } from '../modules/stores/store-wallet'
-import { FarmPanel } from './Farms/Panel'
-import { PairsPanel } from './Pairs/Panel'
+import { FarmPanel } from './FarmsPanel'
+import { PairsPanel } from './PairsPanel'
 
 export function AppContentPage() {
   const { allTokens, isTokenLoading, allAPIPairs, isPairsLoading, allFarmJsonInfos } = useDataStore()
