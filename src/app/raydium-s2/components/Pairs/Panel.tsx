@@ -10,7 +10,7 @@ export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[]; containerWidth?
   return (
     <Piv
       icss={{
-        border: '2px solid dodgerblue',
+        outline: '2px solid dodgerblue',
         borderRadius: 4,
         display: 'flex',
         flexDirection: 'column',
