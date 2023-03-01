@@ -13,7 +13,7 @@ export function AppContentPage() {
       <Piv icss={{ fontSize: '2em' }}>AppContentPage</Piv>
       <Piv>token count: {isTokenLoading() ? '(loading)' : allTokens().length}</Piv>
       <Piv>pair count: {isPairsLoading() ? '(loading)' : allAPIPairs().length}</Piv>
-      <Container>
+      <Container icss={{ width: 'fit-content', resize: 'both', overflow: 'hidden' }}>
         {({ width, height }) => (
           <PairsPanel infos={allAPIPairs()} containerHeight={height()} containerWidth={width()} />
         )}
@@ -21,5 +21,3 @@ export function AppContentPage() {
     </div>
   )
 }
-
-

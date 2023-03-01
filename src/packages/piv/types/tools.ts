@@ -18,7 +18,6 @@ export type ExtendsProps<
   Omit<P4, keyof P1 | keyof P2 | keyof P3> &
   Omit<P5, keyof P1 | keyof P2 | keyof P3 | keyof P4>
 
-  
 /**
  * recursively
  * we use signal to make reading code clearer, as getter is magic, it's confusing in large APP, so
@@ -26,11 +25,5 @@ export type ExtendsProps<
  * object literal or array type will inner be signal, not container
  */
 export type SignalizeProps<T extends object | undefined> = {
-  [K in keyof T]: T[K] extends AnyFn | BuildInObjectType
-    ? T[K]
-    : T[K] extends unknown[] | object
-    ? SignalizeProps<T[K]>
-    : () => T[K]
+  [K in keyof T]: T[K] extends AnyFn ? T[K] : () => T[K]
 }
-
-type BuildInObjectType = Date | Error | RegExp
