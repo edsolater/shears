@@ -1,0 +1,51 @@
+import {
+  BackpackWalletAdapter,
+  BitKeepWalletAdapter,
+  BitpieWalletAdapter,
+  BraveWalletAdapter,
+  CloverWalletAdapter,
+  Coin98WalletAdapter,
+  CoinbaseWalletAdapter,
+  CoinhubWalletAdapter,
+  ExodusWalletAdapter,
+  GlowWalletAdapter,
+  LedgerWalletAdapter,
+  MathWalletAdapter,
+  PhantomWalletAdapter,
+  SafePalWalletAdapter,
+  SlopeWalletAdapter,
+  SolflareWalletAdapter,
+  SolletExtensionWalletAdapter,
+  SolletWalletAdapter,
+  SolongWalletAdapter,
+  TokenPocketWalletAdapter,
+  TorusWalletAdapter,
+  TrustWalletAdapter
+} from '@solana/wallet-adapter-wallets';
+import { WalletAdapterInterface } from '../types/type';
+
+
+export const supportedWallets: WalletAdapterInterface[] = [
+  { adapter: new PhantomWalletAdapter() },
+  { adapter: new TrustWalletAdapter() },
+  { adapter: new SolflareWalletAdapter() },
+  { adapter: new SolletWalletAdapter() },
+  { adapter: new TorusWalletAdapter() },
+  { adapter: new LedgerWalletAdapter() },
+  { adapter: new SolletExtensionWalletAdapter() },
+  { adapter: new MathWalletAdapter() },
+  { adapter: new TokenPocketWalletAdapter() },
+  { adapter: new CoinbaseWalletAdapter() },
+  { adapter: new SolongWalletAdapter() },
+  { adapter: new Coin98WalletAdapter() },
+  { adapter: new SafePalWalletAdapter() },
+  { adapter: new SlopeWalletAdapter() },
+  { adapter: new BitpieWalletAdapter() },
+  { adapter: new GlowWalletAdapter() },
+  { adapter: new BitKeepWalletAdapter() },
+  { adapter: new ExodusWalletAdapter() },
+  { adapter: new CloverWalletAdapter() },
+  { adapter: new CoinhubWalletAdapter() },
+  { adapter: new BackpackWalletAdapter() },
+  { adapter: new BraveWalletAdapter() }
+];

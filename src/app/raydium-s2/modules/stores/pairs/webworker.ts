@@ -1,8 +1,8 @@
-import { getRaydiumSDKRoot } from '../$root/utils/getRaydiumSDKRoot'
-import { registMessageReceiver } from '../webworker/worker_sdk'
-import { FetchPairsOptions } from './store-pairs_type'
+import { getRaydiumSDKRoot } from '../common/utils/getRaydiumSDKRoot'
+import { registMessageReceiver } from '../../webworker/worker_sdk'
+import { FetchPairsOptions } from './types/type'
 
-export function regist() {
+export function registInWorker() {
   registMessageReceiver<FetchPairsOptions>('fetch raydium pairs info', async (data) => {
     const raydium = await getRaydiumSDKRoot()
     await raydium.liquidity.loadPairs({ forceUpdate: data.force })

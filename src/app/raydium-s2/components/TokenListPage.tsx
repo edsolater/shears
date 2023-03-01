@@ -1,6 +1,6 @@
 import { Piv } from '../../../packages/piv/Piv'
-import { useDataStore } from '../modules/stores/store'
-import { useWalletAdapter } from '../modules/stores/store-wallet'
+import { useDataStore } from '../modules/stores'
+import { useWalletAdapter } from '../modules/stores/wallet/store'
 import { FarmPanel } from './FarmsPanel'
 import { PairsPanel } from './PairsPanel'
 

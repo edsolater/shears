@@ -3,7 +3,7 @@ import { resultCache } from './jFetchCache'
 
 export type JFetchCoreOptions = RequestInit & {
   /** if still within cache fresh time, use cache. */
-  cacheMaxAcceptDuraction?: number
+  cacheFreshTime?: number
 }
 const defaultCacheFreshTime = 1000 // 1 second
 
@@ -38,7 +38,7 @@ export async function jFetchCoreWithCache(
 
   const shouldUseCache = canJFetchUseCache({
     key,
-    cacheFreshDuraction: options?.cacheMaxAcceptDuraction ?? defaultCacheFreshTime
+    cacheFreshDuraction: options?.cacheFreshTime ?? defaultCacheFreshTime
   })
 
   if (shouldUseCache) return resultCache.get(key)!.rawText
