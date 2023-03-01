@@ -19,11 +19,11 @@ export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allAPIPairs
     const allAPIPairs = await fetchPairInfoInMainThread()
     setPairsState('loaded')
     setIsPairsLoading(false)
-    setAllAPIPairs(allAPIPairs.slice(0, 2))
+    setAllAPIPairs(allAPIPairs.slice(0, 8))
     let count = 0
     const clonedAllAPIPairs = structuredClone(allAPIPairs)
     setInterval(() => {
-      const newPairs = clonedAllAPIPairs.slice(0, 2).map((i) => ({ ...i, name: i.name + count }))
+      const newPairs = clonedAllAPIPairs.slice(0, 8).map((i) => ({ ...i, name: i.name + count }))
       setStore('allAPIPairs', reconcile(newPairs))
       count++
     }, 1000)
