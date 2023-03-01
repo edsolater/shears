@@ -1,10 +1,12 @@
 import { Piv, useKitProps } from '@edsolater/piv'
-import { createEffect, For } from 'solid-js'
+import { createEffect, createMemo, For, Show } from 'solid-js'
 import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
 
-export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
+export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[]; containerWidth?: number; containerHeight?: number }) {
   const props = useKitProps(rawProps)
   const pivProps = props
+  const isHeightSmall = createMemo(() => (props.containerHeight?.() ?? Infinity) < 500)
+  const isWidthSmall = createMemo(() => (props.containerWidth?.() ?? Infinity) < 800)
   return (
     <Piv
       icss={{
@@ -23,13 +25,15 @@ export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
           <Piv
             icss={{
               display: 'grid',
-              gridTemplateColumns: '150px 500px',
+              gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
               paddingBlock: 4,
               ':nth-child(2n)': { background: '#8080802e' }
             }}
           >
             <Piv>{name()}</Piv>
-            <Piv>{ammId()}</Piv>
+            <Show when={!isWidthSmall()}>
+              <Piv>{ammId()}</Piv>
+            </Show>
           </Piv>
         )}
       </For>
