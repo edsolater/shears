@@ -3,6 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 // import { ENDPOINT, MAINNET_PROGRAM_ID, RAYDIUM_MAINNET } from '@raydium-io/raydium-sdk'
 import toPubString from './pub'
 
+//#region ------------------- 💩 temporary fix -------------------
 const TEMPORARY_RAYDIUM_MAINNET = {
   // since directly import RAYDIUM_MAINNET from '@raydium-io/raydium-sdk' will cause error
   time: '/v2/main/chain/time',
@@ -40,6 +41,8 @@ const TEMPORARY_MAINNET_PROGRAM_ID = {
   CLMM: new PublicKey('CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK')
 }
 const TEMPORARY_ENDPOINT = 'https://api.raydium.io' // since directly import ENDPOINT from '@raydium-io/raydium-sdk' will cause error
+
+//#endregion
 
 const apiTailUrls = TEMPORARY_RAYDIUM_MAINNET
 const apiBase = TEMPORARY_ENDPOINT
