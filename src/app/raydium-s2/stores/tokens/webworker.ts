@@ -1,9 +1,10 @@
-import { getRaydiumSDKRoot } from '../common/utils/getRaydiumSDKRoot'
 import { registMessageReceiver } from '../common/webworker/worker_sdk'
+import { fetchTokenJsonFile, handleRaydiumTokenJsonFile } from './utils/fetchTokenJsonInfo'
+import { FetchRaydiumTokenOptions } from './types/type'
 
 export function registInWorker() {
-  registMessageReceiver('fetch raydium supported tokens', async () => {
-    const raydium = await getRaydiumSDKRoot()
-    return raydium.token.allTokens
+  registMessageReceiver<FetchRaydiumTokenOptions>('fetch raydium supported tokens', async (options) => {
+    // TODO: currently only mainnet raydium token list was supported
+    return fetchTokenJsonFile(options).then((res) => res && handleRaydiumTokenJsonFile(res))
   })
 }

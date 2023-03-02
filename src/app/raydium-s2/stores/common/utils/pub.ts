@@ -1,6 +1,6 @@
 import { isArray, isObject, isString, map, tryCatch } from '@edsolater/fnkit'
+import { PublicKeyish } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
-import { PublicKeyish } from 'test-raydium-sdk-v2'
 
 const mintCache = new WeakMap<PublicKey, string>()
 

@@ -1,7 +1,7 @@
 import { ApiFarmApr } from "@raydium-io/raydium-sdk"
 
 export type FetchFarmsOptions = {
-  apiUrl: string
+  url: string
   force?: boolean
   owner?: string
 }

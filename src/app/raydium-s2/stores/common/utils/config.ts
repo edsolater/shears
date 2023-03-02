@@ -1,9 +1,12 @@
 import { map } from '@edsolater/fnkit'
-import { ALL_PROGRAM_ID, API_URLS } from 'test-raydium-sdk-v2'
+import { ENDPOINT, MAINNET_PROGRAM_ID, RAYDIUM_MAINNET } from '@raydium-io/raydium-sdk'
+import toPubString from './pub'
 
-const apiTailUrls = API_URLS
-const apiBase = 'https://api.raydium.io/v2'
+const apiTailUrls = RAYDIUM_MAINNET
+const apiBase = ENDPOINT
 
-export const appApiUrls = map(apiTailUrls, (url) => apiBase + url)
-export const appProgramId = ALL_PROGRAM_ID
+export const appApiUrls = map(apiTailUrls, (url) => apiBase + url) as {
+  [key in keyof typeof apiTailUrls]: `${typeof apiBase}${typeof apiTailUrls[key]}`
+}
+export const appProgramId = map(MAINNET_PROGRAM_ID, toPubString)
 export const appRpcEndpointUrl = 'https://rpc.asdf1234.win'

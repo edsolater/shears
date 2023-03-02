@@ -1,7 +1,7 @@
 import { Piv, signalize, useKitProps } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { FarmPoolJsonInfo } from 'test-raydium-sdk-v2'
+import { FarmPoolJsonInfo } from '../stores/farms/types/type'
 
 export function FarmPanel(rawProps: { infos: FarmPoolJsonInfo[] }) {
   // -------- determine size  --------

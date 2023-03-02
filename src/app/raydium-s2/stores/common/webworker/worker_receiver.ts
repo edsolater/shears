@@ -3,7 +3,7 @@ import MyWorker from './worker_sdk?worker'
 
 const worker = new MyWorker()
 
-export function queryWebWorker<R = any, D = any>(description: WorkerDescription, data?: D): Promise<R> {
+export function queryWebWorker<R = any, D = any>(description: WorkerDescription, data?: D): Promise<R | undefined> {
   return new Promise((resolve) => {
     worker.postMessage({ description, data })
     const messageHandler = (ev: MessageEvent<any>): void => {

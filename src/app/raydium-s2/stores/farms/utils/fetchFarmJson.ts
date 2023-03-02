@@ -1,9 +1,8 @@
 import { jFetch } from '@edsolater/jfetch'
 import { FarmPoolJsonInfo, FarmPoolsJsonFile } from '../types/type'
 
-export async function fetchFarmJsonInfos(options: { apiUrl: string }): Promise<FarmPoolJsonInfo[] | undefined> {
-  console.log('Fetch: ', options.apiUrl)
-  const result = await jFetch<FarmPoolsJsonFile>(options.apiUrl, { cacheFreshTime: 5 * 60 * 1000 })
+export async function fetchFarmJsonInfo(options: { url: string }): Promise<FarmPoolJsonInfo[] | undefined> {
+  const result = await fetchFarmJsonFile(options)
   if (!result) return undefined
   return [
     ...(result.stake.map((i) => ({ ...i, category: 'stake' })) ?? []),
@@ -11,4 +10,8 @@ export async function fetchFarmJsonInfos(options: { apiUrl: string }): Promise<F
     ...(result.fusion.map((i) => ({ ...i, category: 'fusion' })) ?? []),
     ...(result.ecosystem.map((i) => ({ ...i, category: 'ecosystem' })) ?? [])
   ] as FarmPoolJsonInfo[]
+}
+
+function fetchFarmJsonFile(options: { url: string }) {
+  return jFetch<FarmPoolsJsonFile>(options.url, { cacheFreshTime: 5 * 60 * 1000 })
 }

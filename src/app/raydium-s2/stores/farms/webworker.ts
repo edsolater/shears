@@ -1,7 +1,7 @@
 import { registMessageReceiver } from '../common/webworker/worker_sdk'
-import { fetchFarmJsonInfos } from './utils/fetchFarmJsonInfos'
 import { FetchFarmsOptions } from './types/type'
+import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 
 export function registInWorker() {
-  registMessageReceiver<FetchFarmsOptions>('fetch raydium farms info', (data) => fetchFarmJsonInfos(data))
+  registMessageReceiver<FetchFarmsOptions>('fetch raydium farms info', (data) => fetchFarmJsonInfo(data))
 }

@@ -24,6 +24,7 @@
     "vitest": "^0.28.5"
   },
   "dependencies": {
+    "@colors/colors": "^1.5.0",
     "@edsolater/fnkit": "^0.1.14",
     "@emotion/css": "^11.10.6",
     "@raydium-io/raydium-sdk": "1.2.0-beta.7",

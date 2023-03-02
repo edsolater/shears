@@ -1,9 +1,9 @@
 import { Piv, signalize, useKitProps } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { ApiJsonPairInfo } from 'test-raydium-sdk-v2'
+import { JsonPairItemInfo } from '../stores/pairs/types/type'
 
-export function PairsPanel(rawProps: { infos: ApiJsonPairInfo[] }) {
+export function PairsPanel(rawProps: { infos: JsonPairItemInfo[] }) {
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)

@@ -1,8 +1,7 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
-import { FarmPoolJsonInfo } from 'test-raydium-sdk-v2'
 import { appApiUrls } from '../common/utils/config'
 import { queryWebWorker } from '../common/webworker/worker_receiver'
-import { FetchFarmsOptions } from './types/type'
+import { FarmPoolJsonInfo, FetchFarmsOptions } from './types/type'
 
 export type FarmsStore = {
   farmsState: 'before-init' | 'loaded'
@@ -21,9 +20,9 @@ export const initAllFarms = createOnFirstAccessCallback<FarmsStore, 'allFarmJson
     console.log('allFarmJsonInfos: ', allFarmJsonInfos)
     setFarmsState('loaded')
     setIsFarmsLoading(false)
-    setAllFarmJsonInfos(allFarmJsonInfos.slice(0, 8))
+    allFarmJsonInfos && setAllFarmJsonInfos(allFarmJsonInfos.slice(0, 8))
   }
 )
 function queryFarmInfo() {
-  return queryWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>('fetch raydium farms info', { apiUrl: appApiUrls.FARMS })
+  return queryWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>('fetch raydium farms info', { url: appApiUrls.farmInfo })
 }
