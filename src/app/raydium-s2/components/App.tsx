@@ -1,4 +1,4 @@
-import { DataStoreProvider } from '../modules/stores'
+import { DataStoreProvider } from '../stores'
 import { AppContentPage } from './TokenListPage'
 
 export function App() {
