@@ -14,7 +14,7 @@ export function AppContentPage() {
       <Piv>token count: {isTokenLoading() ? '(loading)' : allTokens().length}</Piv>
       <Piv>pair count: {isPairsLoading() ? '(loading)' : allAPIPairs().length}</Piv>
       <PairsPanel infos={allAPIPairs()} />
-      <FarmPanel infos={allFarmJsonInfos()} />
+      <FarmPanel  />
     </div>
   )
 }

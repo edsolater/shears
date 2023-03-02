@@ -1,17 +1,16 @@
-import { Piv, signalize, useKitProps } from '@edsolater/piv'
+import { Piv, signalize } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { FarmPoolJsonInfo } from '../stores/farms/types/type'
+import { useDataStore } from '../stores'
 
-export function FarmPanel(rawProps: { infos: FarmPoolJsonInfo[] }) {
+export function FarmPanel() {
+  const { allFarmJsonInfos } = useDataStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
-  const props = useKitProps(rawProps)
-  const pivProps = props
   return (
     <Piv
       ref={setRef}
@@ -27,7 +26,7 @@ export function FarmPanel(rawProps: { infos: FarmPoolJsonInfo[] }) {
       }}
     >
       <Piv icss={{ fontSize: '2em' }}>Farms</Piv>
-      <For each={props.infos()}>
+      <For each={allFarmJsonInfos()}>
         {(infos) => {
           const { symbol, version } = signalize(infos)
           return (

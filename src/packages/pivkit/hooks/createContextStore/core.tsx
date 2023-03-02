@@ -1,7 +1,6 @@
 import { AnyFn, isFunction, isString, uncapitalize } from '@edsolater/fnkit'
-import { createContext, createEffect, JSXElement, mergeProps, splitProps, useContext } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { OnFirstAccessCallback, OnChangeCallback, Store } from './type'
+import { OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 
 function toCallbackMap<F extends AnyFn>(pairs: { propertyName: string | number | symbol; cb: F }[] = []) {
   const map = new Map<string, F[] | undefined>()
@@ -13,25 +12,15 @@ function toCallbackMap<F extends AnyFn>(pairs: { propertyName: string | number |
   })
   return map
 }
-/** proxy with additional set* and onChange* methods */
 
-export function createContextStore<T extends Record<string, any>>(
+/** CORE */
+export function createProxiedStore<T extends Record<string, any>>(
   defaultValue?: T,
   options?: {
-    name?: string
     onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T, any> }[]
     onChange?: { propertyName: keyof T; cb: OnChangeCallback<T, keyof T> }[]
   }
-): [
-  Provider: (
-    props: {
-      children?: JSXElement
-    } & Partial<T>
-  ) => JSXElement,
-  useStore: () => Store<T>
-] {
-  const Context = createContext(defaultValue ?? ({} as T), { name: options?.name })
-
+): Store<T> {
   const onFirstAccessCallbackMap = new Map(toCallbackMap(options?.onFirstAccess))
   const onChangeCallbackMap = new Map(toCallbackMap(options?.onChange))
 
@@ -78,17 +67,5 @@ export function createContextStore<T extends Record<string, any>>(
     }
   }) as Store<T>
 
-  const Provider = (props: { children?: JSXElement } & Partial<T>) => {
-    const [childrenProps, otherProps] = splitProps(props, ['children'])
-    createEffect(() => setRawStore(mergeProps(defaultValue, otherProps)))
-    return (
-      <Context.Provider value={proxiedStore as unknown as any /* noneed to check type here */}>
-        {childrenProps.children}
-      </Context.Provider>
-    )
-  }
-
-  const useStore = () => useContext(Context) as unknown as Store<T> /* noneed to check type here */
-
-  return [Provider, useStore]
+  return proxiedStore
 }

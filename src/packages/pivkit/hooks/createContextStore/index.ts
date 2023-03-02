@@ -1,3 +1,5 @@
 export * from './core'
+export * from './createContextStore'
+export * from './createGlobalStore'
 export * from './utils/createCallback'
 export * from './type'
