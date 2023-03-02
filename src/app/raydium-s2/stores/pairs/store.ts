@@ -7,24 +7,24 @@ import { FetchPairsOptions, JsonPairItemInfo } from './types/type'
 export type PairsStore = {
   pairsState: 'before-init' | 'loaded'
   isPairsLoading: boolean
-  allAPIPairs: JsonPairItemInfo[]
+  allPairJsonInfos: JsonPairItemInfo[]
 }
 
-export const defaultPairsStore: PairsStore = { pairsState: 'before-init', isPairsLoading: false, allAPIPairs: [] }
+export const defaultPairsStore: PairsStore = { pairsState: 'before-init', isPairsLoading: false, allPairJsonInfos: [] }
 
-export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allAPIPairs'>(
-  'allAPIPairs',
-  async (_, { setPairsState, setIsPairsLoading, setAllAPIPairs, setStore }) => {
+export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allPairJsonInfos'>(
+  'allPairJsonInfos',
+  async (_, { setPairsState, setIsPairsLoading, setAllPairJsonInfos, setStore }) => {
     setIsPairsLoading(true)
-    const allAPIPairs = await fetchPairInfoInMainThread()
+    const allPairJsonInfos = await fetchPairInfoInMainThread()
     setPairsState('loaded')
     setIsPairsLoading(false)
-    allAPIPairs && setAllAPIPairs(allAPIPairs.slice(0, 8))
+    allPairJsonInfos && setAllPairJsonInfos(allPairJsonInfos.slice(0, 8))
     let count = 0
-    const clonedAllAPIPairs = structuredClone(allAPIPairs)
+    const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
     setInterval(() => {
-      const newPairs = clonedAllAPIPairs?.slice(0, 8).map((i) => ({ ...i, name: i.name + count }))
-      newPairs && setStore('allAPIPairs', reconcile(newPairs))
+      const newPairs = clonedAllPairJsonInfos?.slice(0, 8).map((i) => ({ ...i, name: i.name + count }))
+      newPairs && setStore('allPairJsonInfos', reconcile(newPairs))
       count++
     }, 1000)
   }

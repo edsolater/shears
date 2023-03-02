@@ -1,17 +1,16 @@
-import { Piv, signalize, useKitProps } from '@edsolater/piv'
+import { Piv, signalize } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { JsonPairItemInfo } from '../stores/pairs/types/type'
+import { useDataStore } from '../stores'
 
-export function PairsPanel(rawProps: { infos: JsonPairItemInfo[] }) {
+export function PairsPanel() {
+  const { allPairJsonInfos } = useDataStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
-  const props = useKitProps(rawProps)
-  const pivProps = props
   return (
     <Piv
       ref={setRef}
@@ -27,7 +26,7 @@ export function PairsPanel(rawProps: { infos: JsonPairItemInfo[] }) {
       }}
     >
       <Piv icss={{ fontSize: '2em' }}>Pools</Piv>
-      <For each={props.infos()}>
+      <For each={allPairJsonInfos()}>
         {(infos) => {
           const { name, ammId } = signalize(infos)
           return (
