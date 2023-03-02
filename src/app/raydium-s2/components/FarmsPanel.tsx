@@ -29,7 +29,7 @@ export function FarmPanel(rawProps: { infos: FarmPoolJsonInfo[] }) {
       <Piv icss={{ fontSize: '2em' }}>Farms</Piv>
       <For each={props.infos()}>
         {(infos) => {
-          const { name, version } = signalize(infos)
+          const { symbol, version } = signalize(infos)
           return (
             <Piv
               icss={{
@@ -39,7 +39,7 @@ export function FarmPanel(rawProps: { infos: FarmPoolJsonInfo[] }) {
                 ':nth-child(2n)': { background: '#8080802e' }
               }}
             >
-              <Piv>{name()}</Piv>
+              <Piv>{symbol()}</Piv>
               <Show when={!isWidthSmall()}>
                 <Piv>{version()}</Piv>
               </Show>

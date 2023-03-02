@@ -1,4 +1,4 @@
-import { registMessageReceiver } from '../webworker/worker_sdk'
+import { registMessageReceiver } from '../common/webworker/worker_sdk'
 import { fetchFarmJsonInfos } from './utils/fetchFarmJsonInfos'
 import { FetchFarmsOptions } from './types/type'
 

@@ -20,12 +20,12 @@ export type FarmPoolAprJsonInfo = ApiFarmApr
 
 export interface FarmPoolJsonInfo {
   id: string
+  symbol: string
   lpMint: string
   lpVault: string
 
   baseMint: string
   quoteMint: string
-  name: string
 
   version: number
   programId: string
@@ -39,7 +39,7 @@ export interface FarmPoolJsonInfo {
   rewardPeriodMax?: number // v6 '7-90 days's     90 * 24 * 60 * 60 seconds
   rewardPeriodExtend?: number // v6 'end before 72h's    72 * 60 * 60 seconds
 
-  local: boolean // only if it is in localstorage(create just by user)
+  local?: boolean // only if it is in localstorage(create just by user)
   category: 'stake' | 'raydium' | 'fusion' | 'ecosystem' // add by UI for unify the interface
 }
 

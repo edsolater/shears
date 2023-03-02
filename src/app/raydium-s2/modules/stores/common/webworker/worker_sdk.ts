@@ -1,9 +1,9 @@
 /// <reference lib="webworker" />
 import './polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { registInWorker as pairRegist } from '../pairs/webworker'
-import { registInWorker as tokenRegist } from '../tokens/webworker'
-import { registInWorker as farmRegist } from '../farms/webworker'
+import { registInWorker as pairRegist } from '../../pairs/webworker'
+import { registInWorker as tokenRegist } from '../../tokens/webworker'
+import { registInWorker as farmRegist } from '../../farms/webworker'
 import { WorkerDescription, WorkerMessage } from './type'
 
 const callbackMap = new Map<string, (data: any) => any | Promise<any>>()

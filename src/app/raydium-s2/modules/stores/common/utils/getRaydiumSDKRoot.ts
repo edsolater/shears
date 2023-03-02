@@ -1,5 +1,5 @@
 import { Raydium, RaydiumLoadParams } from 'test-raydium-sdk-v2'
-import { urlConfigs as defaultUrlConfigs } from './config'
+import { appApiUrls as defaultUrlConfigs } from './config'
 import { getConnection } from './getConnection'
 
 let raydium: Promise<Raydium>

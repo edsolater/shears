@@ -1,8 +1,7 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
-import { reconcile } from 'solid-js/store'
 import { FarmPoolJsonInfo } from 'test-raydium-sdk-v2'
-import { urlConfigs } from '../common/utils/config'
-import { queryWebWorker } from '../webworker/worker_receiver'
+import { appApiUrls } from '../common/utils/config'
+import { queryWebWorker } from '../common/webworker/worker_receiver'
 import { FetchFarmsOptions } from './types/type'
 
 export type FarmsStore = {
@@ -26,5 +25,5 @@ export const initAllFarms = createOnFirstAccessCallback<FarmsStore, 'allFarmJson
   }
 )
 function queryFarmInfo() {
-  return queryWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>('fetch raydium farms info', { apiUrl: urlConfigs.FARMS })
+  return queryWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>('fetch raydium farms info', { apiUrl: appApiUrls.FARMS })
 }
