@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@colors/colors": "^1.5.0",
-    "@edsolater/fnkit": "^0.1.14",
+    "@edsolater/fnkit": "^0.1.18",
     "@emotion/css": "^11.10.6",
     "@raydium-io/raydium-sdk": "1.2.0-beta.7",
     "@solana/wallet-adapter-base": "^0.9.22",

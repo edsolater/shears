@@ -16,6 +16,11 @@ export type Store<T extends Record<string, any>> = {
     setStore: SetStoreFunction<T>
   }
 
+export type DefaultStoreValue<T extends Record<string, any>> = (
+  /** only work in property method */
+  store: Store<T>
+) => Partial<T>
+
 // callback in createContextStore
 export type OnFirstAccessCallback<T extends Record<string, any>> = (store: Store<T>) => void
 

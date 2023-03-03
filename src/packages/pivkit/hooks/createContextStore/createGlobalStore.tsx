@@ -1,11 +1,11 @@
 import { createGlobalHook } from '../createGlobalHook'
 import { createProxiedStore } from './core'
-import { OnChangeCallback, OnFirstAccessCallback, Store } from './type'
+import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 
 export function createGlobalStore<T extends Record<string, any>>(
-  defaultValue?: T,
+  defaultValue?: DefaultStoreValue<T>,
   options?: {
-    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T, any> }[]
+    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T> }[]
     onChange?: { propertyName: keyof T; cb: OnChangeCallback<T, keyof T> }[]
   }
 ): () => Store<T> {

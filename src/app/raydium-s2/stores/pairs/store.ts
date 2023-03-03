@@ -1,4 +1,4 @@
-import { createOnFirstAccessCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback, createStoreDefaultState } from '@edsolater/pivkit'
 import { reconcile } from 'solid-js/store'
 import { appApiUrls } from '../common/utils/config'
 import { queryWebWorker } from '../common/webworker/worker_receiver'
@@ -10,9 +10,13 @@ export type PairsStore = {
   allPairJsonInfos: JsonPairItemInfo[]
 }
 
-export const defaultPairsStore: PairsStore = { pairsState: 'before-init', isPairsLoading: false, allPairJsonInfos: [] }
+export const defaultPairsStore = createStoreDefaultState<PairsStore>(() => ({
+  pairsState: 'before-init',
+  isPairsLoading: false,
+  allPairJsonInfos: []
+}))
 
-export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allPairJsonInfos'>(
+export const initAllPairs = createOnFirstAccessCallback<PairsStore>(
   'allPairJsonInfos',
   async ({ setPairsState, setIsPairsLoading, setAllPairJsonInfos, setStore }) => {
     setIsPairsLoading(true)

@@ -1,4 +1,4 @@
-import { createOnFirstAccessCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback, createStoreDefaultState } from '@edsolater/pivkit'
 import { appApiUrls } from '../common/utils/config'
 import { queryWebWorker } from '../common/webworker/worker_receiver'
 import { FetchRaydiumTokenOptions, Token, TokenMessageData } from './types/type'
@@ -9,9 +9,13 @@ export type TokenStore = {
   allTokens: Token[]
 }
 
-export const defaultTokenStore = { tokenListState: 'before-init', isTokenLoading: false, allTokens: [] } as TokenStore
+export const defaultTokenStore = createStoreDefaultState<TokenStore>(() => ({
+  tokenListState: 'before-init',
+  isTokenLoading: false,
+  allTokens: []
+}))
 
-export const initAllTokens = createOnFirstAccessCallback<TokenStore, 'allTokens'>(
+export const initAllTokens = createOnFirstAccessCallback<TokenStore>(
   'allTokens',
   async ({ setIsTokenLoading, setTokenListState, setAllTokens }) => {
     setIsTokenLoading(true)

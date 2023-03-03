@@ -1,12 +1,12 @@
 import { createContext, createEffect, JSXElement, mergeProps, splitProps, useContext } from 'solid-js'
-import { OnFirstAccessCallback, OnChangeCallback, Store } from './type'
+import { OnFirstAccessCallback, OnChangeCallback, Store, DefaultStoreValue } from './type'
 import { createProxiedStore } from './core'
 
 export function createContextStore<T extends Record<string, any>>(
-  defaultValue?: T,
+  defaultValue?: DefaultStoreValue<T>,
   options?: {
     name?: string
-    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T, any> }[]
+    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T> }[]
     onChange?: { propertyName: keyof T; cb: OnChangeCallback<T, keyof T> }[]
   }
 ): [
@@ -21,7 +21,9 @@ export function createContextStore<T extends Record<string, any>>(
   const Context = createContext(defaultValue ?? ({} as T), { name: options?.name })
   const Provider = (props: { children?: JSXElement } & Partial<T>) => {
     const [childrenProps, otherProps] = splitProps(props, ['children'])
-    createEffect(() => proxiedStore.setStore(mergeProps(defaultValue, otherProps)))
+    createEffect(() =>
+      proxiedStore.setStore(mergeProps(defaultValue?.(proxiedStore), otherProps) as any /* no need check type */)
+    )
     return (
       <Context.Provider value={proxiedStore as unknown as any /* noneed to check type here */}>
         {childrenProps.children}
