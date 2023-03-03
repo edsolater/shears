@@ -9,12 +9,15 @@ export type FarmsStore = {
   allFarmJsonInfos: FarmPoolJsonInfo[]
 }
 
-export const defaultFarmsStore: FarmsStore = { farmsState: 'before-init', isFarmsLoading: false, allFarmJsonInfos: [] }
+export const defaultFarmsStore: Partial<FarmsStore> = {
+  farmsState: 'before-init',
+  isFarmsLoading: false,
+  allFarmJsonInfos: []
+}
 
-export const initAllFarms = createOnFirstAccessCallback<FarmsStore, 'allFarmJsonInfos'>(
+export const initAllFarms = createOnFirstAccessCallback<FarmsStore>(
   'allFarmJsonInfos',
-  async (_, { setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos, setStore }) => {
-    console.log('23: ', 23)
+  async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos }) => {
     setIsFarmsLoading(true)
     const allFarmJsonInfos = await queryFarmInfo()
     console.log('allFarmJsonInfos: ', allFarmJsonInfos)
@@ -23,6 +26,7 @@ export const initAllFarms = createOnFirstAccessCallback<FarmsStore, 'allFarmJson
     allFarmJsonInfos && setAllFarmJsonInfos(allFarmJsonInfos.slice(0, 8))
   }
 )
+
 function queryFarmInfo() {
   return queryWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>('fetch raydium farms info', { url: appApiUrls.farmInfo })
 }

@@ -13,7 +13,7 @@ export const defaultTokenStore = { tokenListState: 'before-init', isTokenLoading
 
 export const initAllTokens = createOnFirstAccessCallback<TokenStore, 'allTokens'>(
   'allTokens',
-  async (_, { setIsTokenLoading, setTokenListState, setAllTokens }) => {
+  async ({ setIsTokenLoading, setTokenListState, setAllTokens }) => {
     setIsTokenLoading(true)
     const allTokens = await queryToken()
     setTokenListState('loaded')

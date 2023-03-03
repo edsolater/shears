@@ -17,8 +17,8 @@ function toCallbackMap<F extends AnyFn>(pairs: { propertyName: string | number |
 export function createProxiedStore<T extends Record<string, any>>(
   defaultValue?: T,
   options?: {
-    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T, any> }[]
-    onChange?: { propertyName: keyof T; cb: OnChangeCallback<T, keyof T> }[]
+    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T> }[]
+    onChange?: { propertyName: keyof T; cb: OnChangeCallback<T> }[]
   }
 ): Store<T> {
   const onFirstAccessCallbackMap = new Map(toCallbackMap(options?.onFirstAccess))
@@ -26,13 +26,13 @@ export function createProxiedStore<T extends Record<string, any>>(
 
   function invokeOnInitGets(propertyName: string, value: any, store: Store<T>) {
     onFirstAccessCallbackMap.get(propertyName)?.forEach((cb) => {
-      cb(value, store)
+      cb(store)
     })
     onFirstAccessCallbackMap.delete(propertyName) // it's init, so sould delete eventually
   }
   function invokeOnChanges(propertyName: string, newValue: any, prevValue: any, store: Store<T>) {
     onChangeCallbackMap.get(propertyName)?.forEach((cb) => {
-      cb(newValue, prevValue, store)
+      cb(newValue,prevValue, store)
     })
   }
 

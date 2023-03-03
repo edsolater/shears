@@ -14,7 +14,7 @@ export const defaultPairsStore: PairsStore = { pairsState: 'before-init', isPair
 
 export const initAllPairs = createOnFirstAccessCallback<PairsStore, 'allPairJsonInfos'>(
   'allPairJsonInfos',
-  async (_, { setPairsState, setIsPairsLoading, setAllPairJsonInfos, setStore }) => {
+  async ({ setPairsState, setIsPairsLoading, setAllPairJsonInfos, setStore }) => {
     setIsPairsLoading(true)
     const allPairJsonInfos = await fetchPairInfoInMainThread()
     setPairsState('loaded')
