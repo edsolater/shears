@@ -1,12 +1,14 @@
 import { Piv } from '../../../packages/piv/Piv'
-import { useDataStore } from '../stores'
+import { usePairStore } from '../stores/pairs/store'
+import { useTokenStore } from '../stores/tokens/store'
 import { useWalletAdapter } from '../stores/wallet/store'
 import { FarmPanel } from './FarmsPanel'
 import { PairsPanel } from './PairsPanel'
 
 export function AppContentPage() {
-  const { allTokens, isTokenLoading, allPairJsonInfos, isPairsLoading } = useDataStore()
+  const { allPairJsonInfos, isPairsLoading } = usePairStore()
   const {} = useWalletAdapter()
+  const { allTokens, isTokenLoading } = useTokenStore()
 
   return (
     <div>

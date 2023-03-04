@@ -1,10 +1,10 @@
 import { Piv, signalize } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { useDataStore } from '../stores'
+import { usePairStore } from '../stores/pairs/store'
 
 export function PairsPanel() {
-  const { allPairJsonInfos } = useDataStore()
+  const { allPairJsonInfos } = usePairStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)

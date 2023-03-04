@@ -22,7 +22,7 @@ import {
   TorusWalletAdapter,
   TrustWalletAdapter
 } from '@solana/wallet-adapter-wallets';
-import { WalletAdapterInterface } from '../types/type';
+import { WalletAdapterInterface } from './type';
 
 
 export const supportedWallets: WalletAdapterInterface[] = [

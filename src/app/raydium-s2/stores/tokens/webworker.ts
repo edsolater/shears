@@ -1,5 +1,5 @@
 import { registMessageReceiver } from '../common/webworker/worker_sdk'
-import { fetchTokenJsonFile, handleRaydiumTokenJsonFile } from './utils/fetchTokenJsonInfo'
+import { fetchTokenJsonFile, handleRaydiumTokenJsonFile } from './fetchTokenJson'
 import { FetchRaydiumTokenOptions } from './type'
 
 export function registInWorker() {

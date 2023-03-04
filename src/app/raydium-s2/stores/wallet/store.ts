@@ -1,10 +1,10 @@
 import { assert, isString } from '@edsolater/fnkit'
 import { createStore } from 'solid-js/store'
 import toPubString from '../common/utils/pub'
-import { autoConnectWallet } from './utils/autoConnectWallet'
-import { defaultWalletStore } from './configs/defaultWalletStore'
-import { supportedWallets } from "./configs/supportedWallets"
-import { WalletAdapterInterface, WalletsNames, WalletStore } from './types/type'
+import { autoConnectWallet } from './autoConnectWallet'
+import { defaultWalletStore } from './defaultWalletStore'
+import { supportedWallets } from "./supportedWallets"
+import { WalletAdapterInterface, WalletsNames, WalletStore } from './type'
 
 /**
  * solidjs store

@@ -1,5 +1,5 @@
 import { supportedWallets } from './supportedWallets'
-import { WalletsNames, WalletStore } from '../types/type'
+import { WalletsNames, WalletStore } from './type'
 
 export const defaultWalletStore = {
   $hasInited: false,

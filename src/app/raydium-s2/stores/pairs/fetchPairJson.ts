@@ -1,5 +1,5 @@
 import { jFetch } from '@edsolater/jfetch'
-import { JsonPairItemInfo } from '../types/type'
+import { JsonPairItemInfo } from './type'
 
 export async function fetchPairJsonInfo(options: { url: string }) {
   const pairJsonInfo = await jFetch<JsonPairItemInfo[]>(options.url, {
