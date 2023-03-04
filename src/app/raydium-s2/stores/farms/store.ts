@@ -2,7 +2,7 @@ import { createOnFirstAccessCallback, createStoreDefaultState } from '@edsolater
 import { batch } from 'solid-js'
 import { appApiUrls } from '../common/utils/config'
 import { queryWebWorker } from '../common/webworker/worker_receiver'
-import { FarmPoolJsonInfo, FetchFarmsOptions } from './types/type'
+import { FarmPoolJsonInfo, FetchFarmsOptions } from './type'
 
 export type FarmsStore = {
   farmsState: 'before-init' | 'loaded'

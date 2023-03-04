@@ -1,7 +1,7 @@
 import { createOnFirstAccessCallback, createStoreDefaultState } from '@edsolater/pivkit'
 import { appApiUrls } from '../common/utils/config'
 import { queryWebWorker } from '../common/webworker/worker_receiver'
-import { FetchRaydiumTokenOptions, Token, TokenMessageData } from './types/type'
+import { FetchRaydiumTokenOptions, Token, TokenMessageData } from './type'
 
 export type TokenStore = {
   tokenListState: 'before-init' | 'loaded'

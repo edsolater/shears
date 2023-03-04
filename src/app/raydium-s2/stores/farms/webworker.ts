@@ -1,5 +1,5 @@
 import { registMessageReceiver } from '../common/webworker/worker_sdk'
-import { FetchFarmsOptions } from './types/type'
+import { FetchFarmsOptions } from './type'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 
 export function registInWorker() {

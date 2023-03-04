@@ -1,5 +1,5 @@
 import { jFetch } from '@edsolater/jfetch'
-import { FarmPoolJsonInfo, FarmPoolsJsonFile } from '../types/type'
+import { FarmPoolJsonInfo, FarmPoolsJsonFile } from '../type'
 
 export async function fetchFarmJsonInfo(options: { url: string }): Promise<FarmPoolJsonInfo[] | undefined> {
   const result = await fetchFarmJsonFile(options)

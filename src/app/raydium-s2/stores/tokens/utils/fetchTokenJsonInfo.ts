@@ -1,5 +1,5 @@
 import { jFetch } from '@edsolater/jfetch'
-import { RaydiumTokenListJsonFile, TokenMessageData } from '../types/type'
+import { RaydiumTokenListJsonFile, TokenMessageData } from '../type'
 
 export function fetchTokenJsonFile(options: { url: string }) {
   return jFetch<RaydiumTokenListJsonFile>(options.url, {
