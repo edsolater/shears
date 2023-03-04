@@ -5,7 +5,7 @@ import { FarmPanel } from './FarmsPanel'
 import { PairsPanel } from './PairsPanel'
 
 export function AppContentPage() {
-  const { allTokens, isTokenLoading, allPairJsonInfos, isPairsLoading, allFarmJsonInfos } = useDataStore()
+  const { allTokens, isTokenLoading, allPairJsonInfos, isPairsLoading } = useDataStore()
   const {} = useWalletAdapter()
 
   return (
@@ -13,8 +13,8 @@ export function AppContentPage() {
       <Piv icss={{ fontSize: '2em' }}>AppContentPage</Piv>
       <Piv>token count: {isTokenLoading() ? '(loading)' : allTokens().length}</Piv>
       <Piv>pair count: {isPairsLoading() ? '(loading)' : allPairJsonInfos().length}</Piv>
-      <PairsPanel  />
-      <FarmPanel  />
+      <PairsPanel />
+      <FarmPanel />
     </div>
   )
 }

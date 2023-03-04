@@ -25,10 +25,13 @@ export function createProxiedStore<T extends Record<string, any>>(
   const onChangeCallbackMap = new Map(toCallbackMap(options?.onChange))
 
   function invokeOnInitGets(propertyName: string, value: any, store: Store<T>) {
-    onFirstAccessCallbackMap.get(propertyName)?.forEach((cb) => {
-      cb(store)
-    })
-    onFirstAccessCallbackMap.delete(propertyName) // it's init, so sould delete eventually
+    if (onFirstAccessCallbackMap.has(propertyName)) {
+      const callbacks = onFirstAccessCallbackMap.get(propertyName)
+      onFirstAccessCallbackMap.delete(propertyName) // it's init, so sould delete eventually
+      callbacks?.forEach((cb) => {
+        Promise.resolve().then(() => cb(store)) // invoke in microtask to speed up
+      })
+    }
   }
   function invokeOnChanges(propertyName: string, newValue: any, prevValue: any, store: Store<T>) {
     onChangeCallbackMap.get(propertyName)?.forEach((cb) => {

@@ -7,25 +7,20 @@ export type FarmsStore = {
   farmsState: 'before-init' | 'loaded'
   isFarmsLoading: boolean
   allFarmJsonInfos: FarmPoolJsonInfo[]
-  change(): void
 }
 
-export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(({ farmsState }) => ({
+export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(() => ({
   farmsState: 'before-init',
   isFarmsLoading: false,
-  allFarmJsonInfos: [],
-  change() {
-    console.log('1: ', 1)
-    console.log('farmsState: ', farmsState())
-  }
+  allFarmJsonInfos: []
 }))
 
 export const initAllFarms = createOnFirstAccessCallback<FarmsStore>(
   'allFarmJsonInfos',
-  async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos, change }) => {
+  async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos }) => {
+    console.log('1: ', 1)
     setIsFarmsLoading(true)
     const allFarmJsonInfos = await queryFarmInfo()
-    change()
     setFarmsState('loaded')
     setIsFarmsLoading(false)
     allFarmJsonInfos && setAllFarmJsonInfos(allFarmJsonInfos.slice(0, 8))
