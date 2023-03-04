@@ -7,7 +7,7 @@ type StoreSetter<T> = (dispatcher: ((newValue: T, prevValue?: T) => T) | T) => P
 export type Store<T extends Record<string, any>> = {
   [K in keyof T]: T[K] extends AnyFn ? T[K] : StoreAccessor<T[K]>
 } & ShakeNever<{
-  [K in keyof T as `set${Capitalize<K & string>}`]: T[K] extends AnyFn
+  [K in keyof T as `set${Capitalize<K & string>}`]-?: T[K] extends AnyFn
     ? never
     : K extends `set${string}`
     ? never

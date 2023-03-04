@@ -1,6 +1,7 @@
 import toPubString from '../common/utils/pub';
 import { WalletAdapterInterface } from './type';
-import { findWalletAdapter, connectWallet } from './store';
+import { connectWallet } from "./connectWallet";
+import { findWalletAdapter } from "./findWalletAdapter";
 
 export async function autoConnectWallet(cbs?: {
   onLoadSuccess?(utils: { owner: string; adapterInterface: WalletAdapterInterface; }): void;

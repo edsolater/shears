@@ -1,63 +1,34 @@
-import { assert, isString } from '@edsolater/fnkit'
-import { createStore } from 'solid-js/store'
+import { assert } from '@edsolater/fnkit'
+import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
 import toPubString from '../common/utils/pub'
-import { autoConnectWallet } from './autoConnectWallet'
-import { defaultWalletStore } from './defaultWalletStore'
-import { supportedWallets } from "./supportedWallets"
-import { WalletAdapterInterface, WalletsNames, WalletStore } from './type'
+import { connectWallet } from './connectWallet'
+import { initWalletAccess } from './initWalletAccess'
+import { supportedWallets } from './supportedWallets'
+import { WalletAdapterInterface } from './type'
 
-/**
- * solidjs store
- */
-export function useWalletAdapter() {
-  const [store, setStore] = createStore<WalletStore>(defaultWalletStore)
-  autoConnectWallet({
-    onLoadSuccess: ({ owner, adapterInterface }) => {
-      setStore({ $hasInited: true, connected: true, owner, currentWallet: adapterInterface })
-    },
-    onBeforeInit: () => {
-      setStore({ $hasInited: false })
-    },
-    onAfterInit: () => {
-      setStore({ $hasInited: true })
-    }
-  })
+export type WalletStore = {
+  $hasInited: boolean
+  connected: boolean
+  currentWallet?: WalletAdapterInterface
+  wallets: WalletAdapterInterface[]
+  owner?: string
+  connect(wallet: WalletAdapterInterface): Promise<void>
+}
 
-  function connectWithStoreChange(wallet: WalletAdapterInterface | WalletsNames) {
-    connectWallet(wallet, {
-      onConnect: ({ adapterInterface }) => {
-        assert(adapterInterface.adapter.publicKey, 'Wallet connected failed')
-        setStore({
-          connected: true,
-          owner: toPubString(adapterInterface.adapter.publicKey),
-          currentWallet: adapterInterface
-        })
-      }
+export const defaultWalletStore = createStoreDefaultState<WalletStore>((store) => ({
+  $hasInited: false,
+  connected: false,
+  wallets: supportedWallets,
+  connect: async (wallet) => {
+    connectWallet(wallet).then(() => {
+      assert(wallet.adapter.publicKey, 'Wallet connected failed')
+      store.setConnected(true)
+      store.setOwner(toPubString(wallet.adapter.publicKey))
+      store.setCurrentWallet(wallet)
     })
   }
-  return {
-    connected: () => store.connected,
-    currentWallet: () => store.currentWallet,
-    owner: () => store.owner,
-    wallets: () => store.wallets,
-    connect: connectWithStoreChange
-  }
-}
+}))
 
-export function findWalletAdapter(name: string) {
-  return supportedWallets.find((wallet) => wallet.adapter.name.toLowerCase() === name.toLowerCase())
-}
-
-export function connectWallet(
-  wallet: WalletAdapterInterface | WalletsNames,
-  cbs?: {
-    onConnect?: (utils: { adapterInterface: WalletAdapterInterface }) => void
-  }
-) {
-  const innerWallet = isString(wallet) ? findWalletAdapter(wallet) : wallet
-  assert(innerWallet, 'Wallet not found')
-  return innerWallet.adapter.connect().then((...r) => {
-    cbs?.onConnect?.({ adapterInterface: innerWallet })
-    return r
-  })
-}
+export const useWalletStore = createGlobalStore<WalletStore>(defaultWalletStore, {
+  onFirstAccess: [initWalletAccess] /* TODO: onStoreInit not onFirstAccess */
+})

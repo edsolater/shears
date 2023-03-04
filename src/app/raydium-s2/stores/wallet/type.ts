@@ -27,13 +27,7 @@ import {
 export type WalletAdapterInterface = {
   adapter: WalletAdapter
 }
-export type WalletStore = {
-  $hasInited: boolean
-  connected: boolean
-  currentWallet?: WalletAdapterInterface
-  wallets: WalletAdapterInterface[]
-  owner?: string
-}
+
 export type WalletsNames =
   | PhantomWalletAdapter['name']
   | TrustWalletAdapter['name']

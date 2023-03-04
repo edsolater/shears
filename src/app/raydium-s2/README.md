@@ -28,9 +28,10 @@
 ## wallet
 
 - [type](stores/wallet/type.ts)
-- [[config] defaultWalletStore](./stores/wallet/defaultWalletStore.ts)
 - [[config] supportedWallets](stores/wallet/supportedWallets.ts)
 - [[util] autoConnectWallet](stores/wallet/autoConnectWallet.ts)
+- [[util] findWalletAdapter](stores/wallet/findWalletAdapter.ts)
+- [[store-util] initWalletAccess](stores/wallet/initWalletAccess.ts)
 - [store](stores/wallet/store.ts)
 
 # Templates for easy ctrl-C/V ([template](template))
