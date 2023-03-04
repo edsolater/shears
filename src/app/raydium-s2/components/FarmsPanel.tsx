@@ -11,7 +11,7 @@ export function FarmPanel() {
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
-  createEffect(() => console.log('isFarmsLoading', isFarmsLoading()))
+  // createEffect(() => console.log('isFarmsLoading', isFarmsLoading()))
   return (
     <Piv
       ref={setRef}

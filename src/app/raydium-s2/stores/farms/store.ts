@@ -1,4 +1,5 @@
 import { createOnFirstAccessCallback, createStoreDefaultState } from '@edsolater/pivkit'
+import { batch } from 'solid-js'
 import { appApiUrls } from '../common/utils/config'
 import { queryWebWorker } from '../common/webworker/worker_receiver'
 import { FarmPoolJsonInfo, FetchFarmsOptions } from './types/type'
@@ -18,7 +19,6 @@ export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(() => ({
 export const initAllFarms = createOnFirstAccessCallback<FarmsStore>(
   'allFarmJsonInfos',
   async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos, isFarmsLoading }) => {
-    console.log('1: ', 1)
     setIsFarmsLoading(true)
     setIsFarmsLoading(false)
     setIsFarmsLoading(true)
@@ -26,7 +26,6 @@ export const initAllFarms = createOnFirstAccessCallback<FarmsStore>(
     setIsFarmsLoading(true)
     setIsFarmsLoading(false)
     setIsFarmsLoading(true)
-    console.log('end setting')
     const allFarmJsonInfos = await queryFarmInfo()
     setFarmsState('loaded')
     setIsFarmsLoading(false)

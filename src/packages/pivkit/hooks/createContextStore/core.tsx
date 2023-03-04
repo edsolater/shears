@@ -1,6 +1,6 @@
 import { AnyFn, isFunction, isString, uncapitalize } from '@edsolater/fnkit'
 import { createStore } from 'solid-js/store'
-import { asyncInvoke } from './utils/asyncInvoke';
+import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 
 function toCallbackMap<F extends AnyFn>(pairs: { propertyName: string | number | symbol; cb: F }[] = []) {
@@ -51,17 +51,20 @@ export function createProxiedStore<T extends Record<string, any>>(
 
         if (targetType === 'setter') {
           const propertyName = uncapitalize((p as string).slice('set'.length))
-          return (dispatch: ((newValue: unknown, prevValue?: unknown) => unknown) | unknown) => {
-            return asyncInvoke(() => {
-              const prevValue = Reflect.get(rawStore, propertyName, receiver)
-              const newValue = isFunction(dispatch) ? dispatch(prevValue) : dispatch
-              if (prevValue === newValue) return // no need to update store with the same value
-              invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
-              console.log('3: ', propertyName, 3)
-              setRawStore({ [propertyName]: newValue })
-              return newValue
-            })
-          }
+          return (dispatch: ((newValue: unknown, prevValue?: unknown) => unknown) | unknown) => asyncInvoke(
+            () => {
+              const prevValue = Reflect.get(rawStore, propertyName, receiver);
+              const newValue = isFunction(dispatch) ? dispatch(prevValue) : dispatch;
+              if (prevValue === newValue)
+                return; // no need to update store with the same value
+              invokeOnChanges(propertyName, newValue, prevValue, proxiedStore);
+              setRawStore({ [propertyName]: newValue });
+              return newValue;
+            },
+            {
+              key: propertyName
+            }
+          )
         }
 
         if (targetType === 'getter(methods)') {
