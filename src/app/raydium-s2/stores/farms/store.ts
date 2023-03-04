@@ -17,9 +17,16 @@ export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(() => ({
 
 export const initAllFarms = createOnFirstAccessCallback<FarmsStore>(
   'allFarmJsonInfos',
-  async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos }) => {
+  async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos, isFarmsLoading }) => {
     console.log('1: ', 1)
     setIsFarmsLoading(true)
+    setIsFarmsLoading(false)
+    setIsFarmsLoading(true)
+    setIsFarmsLoading(false)
+    setIsFarmsLoading(true)
+    setIsFarmsLoading(false)
+    setIsFarmsLoading(true)
+    console.log('end setting')
     const allFarmJsonInfos = await queryFarmInfo()
     setFarmsState('loaded')
     setIsFarmsLoading(false)

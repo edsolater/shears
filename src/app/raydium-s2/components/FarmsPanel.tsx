@@ -1,16 +1,17 @@
 import { Piv, signalize } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
-import { createMemo, For, Show } from 'solid-js'
+import { createEffect, createMemo, For, Show } from 'solid-js'
 import { useDataStore } from '../stores'
 
 export function FarmPanel() {
-  const { allFarmJsonInfos } = useDataStore()
+  const { allFarmJsonInfos, isFarmsLoading } = useDataStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
+  createEffect(() => console.log('isFarmsLoading', isFarmsLoading()))
   return (
     <Piv
       ref={setRef}
