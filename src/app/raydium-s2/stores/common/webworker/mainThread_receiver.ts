@@ -1,14 +1,14 @@
 import { isFunction } from '@edsolater/fnkit'
 import { WorkerDescription, WorkerMessage } from './type'
-import MyWorker from './worker_sdk?worker'
+import SDKWorker from './worker_sdk?worker'
 
-const worker = new MyWorker()
+const worker = new SDKWorker()
 
-export type QueryCallback<ResultData = any> = (data: ResultData) => void | ((newData: ResultData) => void) /* clean fn */;
+export type WebworkerSubscribeCallback<ResultData = any> = (data: ResultData) => void | ((newData: ResultData) => void) /* clean fn */;
 
-export function queryWebWorker<ResultData = any, PostOptions = any>(
+export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   message: { description: WorkerDescription; payload?: PostOptions },
-  callback?: QueryCallback<ResultData>
+  callback?: WebworkerSubscribeCallback<ResultData>
 ): void {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
   worker.postMessage(message)

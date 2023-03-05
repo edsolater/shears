@@ -1,13 +1,13 @@
 import { createOnFirstAccessCallback } from '@edsolater/pivkit'
 import { reconcile } from 'solid-js/store'
-import { queryPairJson } from './mainThread'
+import { getPairJson } from './mainThread'
 import { PairsStore } from './store'
 
 export const initAllPairs = createOnFirstAccessCallback<PairsStore>(
   'allPairJsonInfos',
   async ({ setPairsState, setIsPairsLoading, setAllPairJsonInfos, setStore }) => {
     setIsPairsLoading(true)
-    queryPairJson((allPairJsonInfos) => {
+    getPairJson((allPairJsonInfos) => {
       setPairsState('loaded')
       setIsPairsLoading(false)
       allPairJsonInfos && setAllPairJsonInfos(allPairJsonInfos.slice(0, 8))

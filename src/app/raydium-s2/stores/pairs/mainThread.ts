@@ -1,9 +1,9 @@
 import { appApiUrls } from '../common/utils/config'
-import { QueryCallback, queryWebWorker } from '../common/webworker/mainThread_receiver'
+import { WebworkerSubscribeCallback, subscribeWebWorker } from '../common/webworker/mainThread_receiver'
 import { FetchPairsOptions, JsonPairItemInfo } from './type'
 
-export function queryPairJson(cb: QueryCallback<JsonPairItemInfo[]>) {
-  return queryWebWorker<JsonPairItemInfo[], FetchPairsOptions>(
+export function getPairJson(cb: WebworkerSubscribeCallback<JsonPairItemInfo[]>) {
+  return subscribeWebWorker<JsonPairItemInfo[], FetchPairsOptions>(
     {
       description: 'fetch raydium pairs info',
       payload: {
