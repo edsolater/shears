@@ -3,14 +3,12 @@ import { initAllFarms } from './initAllFarms'
 import { FarmPoolJsonInfo } from './type'
 
 export type FarmsStore = {
-  farmsState: 'before-init' | 'loaded'
-  isFarmsLoading: boolean
+  isFarmJsonsLoading: boolean
   allFarmJsonInfos: FarmPoolJsonInfo[]
 }
 
 export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(() => ({
-  farmsState: 'before-init',
-  isFarmsLoading: false,
+  isFarmJsonsLoading: false,
   allFarmJsonInfos: []
 }))
 

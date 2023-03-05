@@ -4,14 +4,14 @@ import { createMemo, For, Show } from 'solid-js'
 import { useFarmStore } from '../stores/farms/store'
 
 export function FarmPanel() {
-  const { allFarmJsonInfos, isFarmsLoading } = useFarmStore()
+  const { allFarmJsonInfos, isFarmJsonsLoading } = useFarmStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
-  // createEffect(() => console.log('isFarmsLoading', isFarmsLoading()))
+  // createEffect(() => console.log('isFarmJsonsLoading', isFarmJsonsLoading()))
   return (
     <Piv
       ref={setRef}
