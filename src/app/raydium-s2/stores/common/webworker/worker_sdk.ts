@@ -11,10 +11,10 @@ const callbackMap = new Map<string, (data: any) => any | Promise<any>>()
 function initMessageReceiver() {
   globalThis.addEventListener('message', async (ev) => {
     const description = ev.data.description
-    const data = ev.data.data
+    const payload = ev.data.payload
     const targetOnMessage = callbackMap.get(description)
     if (!targetOnMessage) return
-    const returnData = await targetOnMessage(data)
+    const returnData = await targetOnMessage(payload)
     globalThis.postMessage({ description, data: returnData } as WorkerMessage)
   })
 }
