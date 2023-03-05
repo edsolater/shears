@@ -1,4 +1,4 @@
-import { assert } from '@edsolater/fnkit'
+import { assert, handleFnReturnValue } from '@edsolater/fnkit'
 import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
 import toPubString from '../common/utils/pub'
 import { connectWallet } from './connectWallet'
@@ -19,14 +19,14 @@ export const defaultWalletStore = createStoreDefaultState<WalletStore>((store) =
   $hasInited: false,
   connected: false,
   wallets: supportedWallets,
-  connect: async (wallet) => {
-    connectWallet(wallet).then(() => {
+  connect: handleFnReturnValue(connectWallet, (r, [wallet]) =>
+    r.then(() => {
       assert(wallet.adapter.publicKey, 'Wallet connected failed')
       store.setConnected(true)
       store.setOwner(toPubString(wallet.adapter.publicKey))
       store.setCurrentWallet(wallet)
     })
-  }
+  )
 }))
 
 export const useWalletStore = createGlobalStore<WalletStore>(defaultWalletStore, {
