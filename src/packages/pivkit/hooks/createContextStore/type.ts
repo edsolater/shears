@@ -24,6 +24,8 @@ export type DefaultStoreValue<T extends Record<string, any>> = (
 // callback in createContextStore
 export type OnFirstAccessCallback<T extends Record<string, any>> = (store: Store<T>) => void
 
+export type OnStoreInitCallback<T extends Record<string, any>> = (store: Store<T>) => void
+
 // callback in createContextStore
 export type OnChangeCallback<T extends Record<string, any>, K extends keyof T = keyof T> = (
   value: T[K],

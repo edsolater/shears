@@ -1,14 +1,12 @@
 import { createContext, createEffect, JSXElement, mergeProps, splitProps, useContext } from 'solid-js'
-import { OnFirstAccessCallback, OnChangeCallback, Store, DefaultStoreValue } from './type'
-import { createProxiedStore } from './core'
+import { createProxiedStore, CreateProxiedStoreCallbacks } from './core'
+import { DefaultStoreValue, Store } from './type'
 
 export function createContextStore<T extends Record<string, any>>(
   defaultValue?: DefaultStoreValue<T>,
   options?: {
     name?: string
-    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T> }[]
-    onChange?: { propertyName: keyof T; cb: OnChangeCallback<T, keyof T> }[]
-  }
+  } & CreateProxiedStoreCallbacks<T>
 ): [
   Provider: (
     props: {

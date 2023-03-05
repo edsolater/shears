@@ -1,9 +1,8 @@
-import { createOnFirstAccessCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback, createOnStoreInitCallback } from '@edsolater/pivkit'
 import { TokenStore } from './store'
 import { getTokenJsonInfo } from './mainThread'
 
-export const initAllTokens = createOnFirstAccessCallback<TokenStore>(
-  'allTokens',
+export const initAllTokens = createOnStoreInitCallback<TokenStore>(
   async ({ setIsTokenLoading, setTokenListState, setAllTokens }) => {
     setIsTokenLoading(true)
     getTokenJsonInfo((allTokens) => {

@@ -14,13 +14,22 @@ function toCallbackMap<F extends AnyFn>(pairs: { propertyName: string | number |
   return map
 }
 
+export type CreateProxiedStoreCallbacks<T extends Record<string, any>> = {
+  onStoreInit?: { cb: (store: Store<T>) => void }[]
+  onFirstAccess?: {
+    propertyName: keyof T
+    cb: OnFirstAccessCallback<T>
+  }[]
+  onChange?: {
+    propertyName: keyof T
+    cb: OnChangeCallback<T>
+  }[]
+}
+
 /** CORE */
 export function createProxiedStore<T extends Record<string, any>>(
   defaultValue?: DefaultStoreValue<T>,
-  options?: {
-    onFirstAccess?: { propertyName: keyof T; cb: OnFirstAccessCallback<T> }[]
-    onChange?: { propertyName: keyof T; cb: OnChangeCallback<T> }[]
-  }
+  options?: CreateProxiedStoreCallbacks<T>
 ): Store<T> {
   const onFirstAccessCallbackMap = new Map(toCallbackMap(options?.onFirstAccess))
   const onChangeCallbackMap = new Map(toCallbackMap(options?.onChange))
@@ -51,20 +60,20 @@ export function createProxiedStore<T extends Record<string, any>>(
 
         if (targetType === 'setter') {
           const propertyName = uncapitalize((p as string).slice('set'.length))
-          return (dispatch: ((newValue: unknown, prevValue?: unknown) => unknown) | unknown) => asyncInvoke(
-            () => {
-              const prevValue = Reflect.get(rawStore, propertyName, receiver);
-              const newValue = isFunction(dispatch) ? dispatch(prevValue) : dispatch;
-              if (prevValue === newValue)
-                return; // no need to update store with the same value
-              invokeOnChanges(propertyName, newValue, prevValue, proxiedStore);
-              setRawStore({ [propertyName]: newValue });
-              return newValue;
-            },
-            {
-              key: propertyName
-            }
-          )
+          return (dispatch: ((newValue: unknown, prevValue?: unknown) => unknown) | unknown) =>
+            asyncInvoke(
+              () => {
+                const prevValue = Reflect.get(rawStore, propertyName, receiver)
+                const newValue = isFunction(dispatch) ? dispatch(prevValue) : dispatch
+                if (prevValue === newValue) return // no need to update store with the same value
+                invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
+                setRawStore({ [propertyName]: newValue })
+                return newValue
+              },
+              {
+                key: propertyName
+              }
+            )
         }
 
         if (targetType === 'getter(methods)') {
@@ -79,6 +88,9 @@ export function createProxiedStore<T extends Record<string, any>>(
     }
   ) as Store<T>
   const [rawStore, setRawStore] = createStore(defaultValue?.(proxiedStore))
+
+  // invoke onStoreInit callbacks
+  options?.onStoreInit?.forEach(({ cb }) => cb(proxiedStore))
 
   return proxiedStore
 }

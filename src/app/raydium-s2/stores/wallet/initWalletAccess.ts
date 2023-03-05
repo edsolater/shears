@@ -1,10 +1,9 @@
-import { createOnFirstAccessCallback } from '@edsolater/pivkit';
+import { createOnFirstAccessCallback, createOnStoreInitCallback } from '@edsolater/pivkit';
 import { autoConnectWallet } from './autoConnectWallet';
 import { WalletStore } from './store';
 
 /** store-utils */
-export const initWalletAccess = createOnFirstAccessCallback<WalletStore>(
-  'owner',
+export const initWalletAccess = createOnStoreInitCallback<WalletStore>(
   async ({ set$hasInited, setConnected, setOwner, setCurrentWallet }) => {
     autoConnectWallet({
       onLoadSuccess: ({ owner, adapterInterface }) => {

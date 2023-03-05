@@ -1,10 +1,9 @@
-import { createOnFirstAccessCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback, createOnStoreInitCallback } from '@edsolater/pivkit'
 import { getFarmJson } from './mainThread'
 import { FarmsStore } from './store'
 
-export const initAllFarms = createOnFirstAccessCallback<FarmsStore>(
-  'allFarmJsonInfos',
-  async ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos }) => {
+export const initAllFarms = createOnStoreInitCallback<FarmsStore>(
+  ({ setFarmsState, setIsFarmsLoading, setAllFarmJsonInfos }) => {
     setIsFarmsLoading(true)
     getFarmJson((allFarmJsonInfos) => {
       setFarmsState('loaded')
