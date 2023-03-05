@@ -14,4 +14,4 @@ export const defaultTokenStore = createStoreDefaultState<TokenStore>(() => ({
   allTokens: []
 }))
 
-export const useTokenStore = createGlobalStore<TokenStore>(defaultTokenStore, { onStoreInit: [initAllTokens] })
+export const useTokenStore = createGlobalStore<TokenStore>(defaultTokenStore, { onInit: [initAllTokens] })
