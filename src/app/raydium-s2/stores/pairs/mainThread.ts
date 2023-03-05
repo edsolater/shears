@@ -1,5 +1,5 @@
 import { appApiUrls } from '../common/utils/config'
-import { QueryCallback, queryWebWorker } from '../common/webworker/worker_receiver'
+import { QueryCallback, queryWebWorker } from '../common/webworker/mainThread_receiver'
 import { FetchPairsOptions, JsonPairItemInfo } from './type'
 
 export function queryPairJson(cb: QueryCallback<JsonPairItemInfo[]>) {
