@@ -5,14 +5,14 @@
  * @returns
  */
 export function toGettersFromAccessor<T extends object>(getAccessorOfObj: () => T, objKeys: (keyof T)[]): T {
-  const tempObj = objKeys ? Object.fromEntries(objKeys.map((key) => [key, undefined])) : {};
-  let obj: T | undefined = undefined;
+  const tempObj = objKeys ? Object.fromEntries(objKeys.map((key) => [key, undefined])) : {}
+  let obj: T | undefined = undefined
   return new Proxy(tempObj, {
     get: (target, p, receiver) => {
       if (!obj) {
-        obj = getAccessorOfObj();
+        obj = getAccessorOfObj()
       }
-      return Reflect.get(obj, p, receiver);
+      return Reflect.get(obj, p, receiver)
     }
-  }) as T;
+  }) as T
 }

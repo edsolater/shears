@@ -42,7 +42,7 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
    * if it's in shadow props, it will merge with exist props
    */
   htmlProps?: MayArray<JSX.IntrinsicElements[TagName extends {} ? TagName : any] | undefined>
-  
+
   children?: JSXElement
 
   /** special: every kit baseon <Piv> should support this prop */

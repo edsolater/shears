@@ -105,9 +105,12 @@ export function createProxiedStore<T extends Record<string, any>>(
     callbacks.push(cb as OnChangeCallback<T>)
     onChangeCallbackMap.set(key, callbacks)
     return {
-      abort(){
+      abort() {
         const callbacks = onChangeCallbackMap.get(key) ?? []
-        onChangeCallbackMap.set(key, callbacks.filter((callback) => callback !== cb))
+        onChangeCallbackMap.set(
+          key,
+          callbacks.filter((callback) => callback !== cb)
+        )
       }
     }
   }

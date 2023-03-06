@@ -17,7 +17,7 @@ export function createContextStore<T extends Record<string, any>>(
   rawStore: T,
   onPropertyChange: <K extends keyof T>(key: K, cb: OnChangeCallback<T, K>) => { abort(): void }
 ] {
-  const [proxiedStore ,rawStore, onPropertyChange] = createProxiedStore(defaultValue, options)
+  const [proxiedStore, rawStore, onPropertyChange] = createProxiedStore(defaultValue, options)
   const Context = createContext(defaultValue ?? ({} as T), { name: options?.name })
   const Provider = (props: { children?: JSXElement } & Partial<T>) => {
     const [childrenProps, otherProps] = splitProps(props, ['children'])

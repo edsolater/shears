@@ -21,9 +21,8 @@ import {
   TokenPocketWalletAdapter,
   TorusWalletAdapter,
   TrustWalletAdapter
-} from '@solana/wallet-adapter-wallets';
-import { WalletAdapterInterface } from './type';
-
+} from '@solana/wallet-adapter-wallets'
+import { WalletAdapterInterface } from './type'
 
 export const supportedWallets: WalletAdapterInterface[] = [
   { adapter: new PhantomWalletAdapter() },
@@ -48,4 +47,4 @@ export const supportedWallets: WalletAdapterInterface[] = [
   { adapter: new CoinhubWalletAdapter() },
   { adapter: new BackpackWalletAdapter() },
   { adapter: new BraveWalletAdapter() }
-];
+]

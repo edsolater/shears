@@ -24,12 +24,11 @@ export function registInWorker() {
         owner: toPub(owner),
         config: { commitment: 'confirmed' }
       },
-      { jsonInfos:cachedFarmJsons }
+      { jsonInfos: cachedFarmJsons }
     )
     console.log('sdkParsedInfos: ', sdkParsedInfos)
   })
 }
-
 
 /** and state info  */
 export async function getSdkParsedFarmInfo(

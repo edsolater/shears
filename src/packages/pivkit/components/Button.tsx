@@ -84,7 +84,7 @@ export function Button(rawProps: ButtonProps) {
       : undefined
   )
   const mergedProps = mergeSignalProps(props, signalize(failedTestValidator()?.fallbackProps))
-  
+
   const isActive = createMemo(
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled?.())
   )
