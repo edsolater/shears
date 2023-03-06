@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "dev": "vite",
+    "dev": "vite --host",
     "build": "vite build",
     "serve": "vite preview",
     "test": "vitest",
@@ -16,8 +16,8 @@
   "devDependencies": {
     "@solidjs/testing-library": "^0.6.1",
     "@testing-library/jest-dom": "^5.16.5",
-    "@types/testing-library__jest-dom": "^5.14.5",
     "@types/bn.js": "^5.1.1",
+    "@types/testing-library__jest-dom": "^5.14.5",
     "jsdom": "^21.1.0",
     "typescript": "^4.9.5",
     "vite": "^4.1.4",
@@ -33,6 +33,7 @@
     "@solana/wallet-adapter-base": "^0.9.22",
     "@solana/wallet-adapter-wallets": "^0.19.15",
     "@solana/web3.js": "^1.73.3",
+    "@solidjs/router": "^0.7.0",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
