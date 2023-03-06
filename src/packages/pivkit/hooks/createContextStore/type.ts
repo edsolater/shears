@@ -31,4 +31,4 @@ export type OnChangeCallback<T extends Record<string, any>, K extends keyof T = 
   value: T[K],
   prevValue: T[K] | undefined,
   store: Store<T>
-) => void
+) => void | (() => void) /* clean function */

@@ -1,9 +1,23 @@
-import { ApiFarmApr } from "@raydium-io/raydium-sdk"
+import { UnionCover } from '@edsolater/fnkit'
+import BN from 'bn.js'
+import {
+  ApiFarmApr,
+  FarmFetchMultipleInfoReturnItem,
+  FarmStateV3,
+  FarmStateV5,
+  FarmStateV6,
+  SplAccount
+} from '@raydium-io/raydium-sdk'
+import { Connection, PublicKey } from '@solana/web3.js'
 
-export type FetchFarmsOptions = {
+export type FetchFarmsJsonPayloads = {
   url: string
   force?: boolean
-  owner?: string
+}
+
+export type FetchFarmsSDKInfoPayloads = {
+  rpcUrl: string
+  owner: string
 }
 
 export interface FarmAPIRewardInfo {
@@ -50,4 +64,42 @@ export type FarmPoolsJsonFile = {
   raydium: Omit<FarmPoolJsonInfo, 'category'>[]
   fusion: Omit<FarmPoolJsonInfo, 'category'>[]
   ecosystem: Omit<FarmPoolJsonInfo, 'category'>[]
+}
+
+export type SdkParsedFarmInfo = UnionCover<
+  FarmPoolJsonInfo,
+  SdkParsedFarmInfoBase &
+    ({ version: 6; state: FarmStateV6 } | { version: 3; state: FarmStateV3 } | { version: 5; state: FarmStateV5 })
+> & { jsonInfo: FarmPoolJsonInfo; fetchedMultiInfo: FarmFetchMultipleInfoReturnItem }
+
+type SdkParsedFarmInfoBase = {
+  jsonInfo: FarmPoolJsonInfo
+  id: PublicKey
+  lpMint: PublicKey
+  programId: PublicKey
+  authority: PublicKey
+  lpVault: SplAccount
+  rewardInfos: APIRewardInfo[]
+  /** only when user have deposited and connected wallet */
+  ledger?: {
+    id: PublicKey
+    owner: PublicKey
+    state: BN
+    deposited: BN
+    rewardDebts: BN[]
+  }
+  /** only when user have deposited and connected wallet */
+  wrapped?: {
+    pendingRewards: BN[]
+  }
+}
+
+interface APIRewardInfo {
+  rewardMint: string
+  rewardVault: string
+  rewardOpenTime: number
+  rewardEndTime: number
+  rewardPerSecond: string | number
+  rewardSender?: string
+  rewardType: 'Standard SPL' | 'Option tokens'
 }

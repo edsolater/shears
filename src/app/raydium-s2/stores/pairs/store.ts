@@ -14,4 +14,4 @@ export const defaultPairsStore = createStoreDefaultState<PairsStore>(() => ({
   allPairJsonInfos: []
 }))
 
-export const usePairStore = createGlobalStore<PairsStore>(defaultPairsStore, { onInit: [initAllPairs] })
+export const [usePairStore] = createGlobalStore<PairsStore>(defaultPairsStore, { onInit: [initAllPairs] })

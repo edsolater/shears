@@ -1,9 +1,10 @@
-import { appApiUrls } from '../common/utils/config'
-import { WebworkerSubscribeCallback, subscribeWebWorker } from '../common/webworker/mainThread_receiver'
-import { FarmPoolJsonInfo, FetchFarmsOptions } from './type'
+import { appApiUrls, appRpcEndpointUrl } from '../common/utils/config'
+import { subscribeWebWorker, WebworkerSubscribeCallback } from '../common/webworker/mainThread_receiver'
+import { onWalletPropertyChange } from '../wallet/store'
+import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads } from './type'
 
 export function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJsonInfo[]>) {
-  return subscribeWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>(
+  return subscribeWebWorker<FarmPoolJsonInfo[], FetchFarmsJsonPayloads>(
     {
       description: 'fetch raydium farms info',
       payload: { url: appApiUrls.farmInfo }
@@ -12,12 +13,16 @@ export function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJso
   )
 }
 
-export function getFarmSDKInfoListFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJsonInfo[]>) {
-  return subscribeWebWorker<FarmPoolJsonInfo[], FetchFarmsOptions>(
-    {
-      description: 'parse raydium farms info sdk list',
-      payload: { url: appApiUrls.farmInfo } // TODO <-- get owner info here
-    },
-    cb
-  )
+export function getFarmSDKInfosFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJsonInfo[]>) {
+  onWalletPropertyChange('owner', (owner) => {
+    if (!owner) return
+    const { abort } = subscribeWebWorker<FarmPoolJsonInfo[], FetchFarmsSDKInfoPayloads>(
+      {
+        description: 'parse raydium farms info sdk list',
+        payload: { owner: owner, rpcUrl: appRpcEndpointUrl }
+      },
+      cb
+    )
+    return abort
+  })
 }

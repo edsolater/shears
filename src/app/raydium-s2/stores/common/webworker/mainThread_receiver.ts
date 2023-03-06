@@ -4,12 +4,14 @@ import SDKWorker from './worker_sdk?worker'
 
 const worker = new SDKWorker()
 
-export type WebworkerSubscribeCallback<ResultData = any> = (data: ResultData) => void | ((newData: ResultData) => void) /* clean fn */;
+export type WebworkerSubscribeCallback<ResultData = any> = (
+  data: ResultData
+) => void | ((newData: ResultData) => void) /* clean fn */
 
 export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   message: { description: WorkerDescription; payload?: PostOptions },
   callback?: WebworkerSubscribeCallback<ResultData>
-): void {
+): { abort(): void } {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
   worker.postMessage(message)
   const messageHandler = (ev: MessageEvent<any>): void => {
@@ -21,4 +23,5 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
     }
   }
   worker.addEventListener('message', messageHandler)
+  return { abort: () => worker.removeEventListener('message', messageHandler) }
 }

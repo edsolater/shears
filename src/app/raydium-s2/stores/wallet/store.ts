@@ -29,6 +29,6 @@ export const defaultWalletStore = createStoreDefaultState<WalletStore>((store) =
   )
 }))
 
-export const useWalletStore = createGlobalStore<WalletStore>(defaultWalletStore, {
+export const [useWalletStore, rawWalletStore, onWalletPropertyChange] = createGlobalStore<WalletStore>(defaultWalletStore, {
   onInit: [initWalletAccess] /* TODO: onStoreInit not onFirstAccess */
 })
