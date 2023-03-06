@@ -5,6 +5,7 @@ import { JSXElement } from 'solid-js'
 import { usePairStore } from '../stores/pairs/store'
 import { useTokenStore } from '../stores/tokens/store'
 import { useWalletStore } from '../stores/wallet/store'
+import { routePath } from './App'
 
 export function Home() {
   const { allPairJsonInfos, isPairsLoading } = usePairStore()
@@ -22,8 +23,8 @@ export function Home() {
         <Piv>pair count: {isPairsLoading() ? '(loading)' : allPairJsonInfos().length}</Piv>
         <Piv>
           nav:
-          <RouteLink href='/farms'>Farms</RouteLink>
-          <RouteLink href='/pools'>Pools</RouteLink>
+          <RouteLink href={routePath.farms}>Farms</RouteLink>
+          <RouteLink href={routePath.pools}>Pools</RouteLink>
         </Piv>
       </Box>
     </div>
