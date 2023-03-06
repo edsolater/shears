@@ -5,15 +5,13 @@ type StoreAccessor<T> = () => T
 type StoreSetter<T> = (dispatcher: ((newValue: T, prevValue?: T) => T) | T) => Promise<T>
 
 export type Store<T extends Record<string, any>> = T &
-  ShakeNever<
-    {
-      [K in keyof T as `set${Capitalize<K & string>}`]-?: T[K] extends AnyFn
-        ? never
-        : K extends `set${string}`
-        ? never
-        : StoreSetter<T[K]>
-    }
-  > & {
+  ShakeNever<{
+    [K in keyof T as `set${Capitalize<K & string>}`]-?: T[K] extends AnyFn
+      ? never
+      : K extends `set${string}`
+      ? never
+      : StoreSetter<T[K]>
+  }> & {
     setStore: SetStoreFunction<T>
   }
 

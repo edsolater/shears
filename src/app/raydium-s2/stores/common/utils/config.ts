@@ -48,7 +48,7 @@ const apiTailUrls = TEMPORARY_RAYDIUM_MAINNET
 const apiBase = TEMPORARY_ENDPOINT
 
 export const appApiUrls = map(apiTailUrls, (url) => apiBase + url) as {
-  [key in keyof typeof apiTailUrls]: `${typeof apiBase}${typeof apiTailUrls[key]}`
+  [key in keyof typeof apiTailUrls]: `${typeof apiBase}${(typeof apiTailUrls)[key]}`
 }
 export const appProgramId = map(TEMPORARY_MAINNET_PROGRAM_ID, toPubString)
 export const appRpcEndpointUrl = 'https://rpc.asdf1234.win'
