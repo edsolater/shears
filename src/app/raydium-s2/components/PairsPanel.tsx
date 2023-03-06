@@ -27,24 +27,21 @@ export function PairsPanel() {
     >
       <Piv icss={{ fontSize: '2em' }}>Pools</Piv>
       <For each={pairStore.allPairJsonInfos}>
-        {(infos) => {
-          const { name, ammId } = signalize(infos)
-          return (
-            <Piv
-              icss={{
-                display: 'grid',
-                gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                paddingBlock: 4,
-                ':nth-child(2n)': { background: '#8080802e' }
-              }}
-            >
-              <Piv>{name()}</Piv>
-              <Show when={!isWidthSmall()}>
-                <Piv>{ammId()}</Piv>
-              </Show>
-            </Piv>
-          )
-        }}
+        {(info) => (
+          <Piv
+            icss={{
+              display: 'grid',
+              gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
+              paddingBlock: 4,
+              ':nth-child(2n)': { background: '#8080802e' }
+            }}
+          >
+            <Piv>{info.name}</Piv>
+            <Show when={!isWidthSmall()}>
+              <Piv>{info.ammId}</Piv>
+            </Show>
+          </Piv>
+        )}
       </For>
     </Piv>
   )

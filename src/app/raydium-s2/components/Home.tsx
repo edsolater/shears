@@ -5,7 +5,7 @@ import { JSXElement } from 'solid-js'
 import { usePairStore } from '../stores/pairs/store'
 import { useTokenStore } from '../stores/tokens/store'
 import { useWalletStore } from '../stores/wallet/store'
-import { routePath } from './App'
+import { routePath } from "./routes"
 
 export function Home() {
   const pairStore = usePairStore()

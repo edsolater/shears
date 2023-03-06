@@ -28,7 +28,7 @@ export function FarmPanel() {
     >
       <Piv icss={{ fontSize: '2em' }}>Farms</Piv>
       <For each={farmStore.allFarmJsonInfos}>
-        {(infos) => (
+        {(info) => (
           <Piv
             icss={{
               display: 'grid',
@@ -37,9 +37,9 @@ export function FarmPanel() {
               ':nth-child(2n)': { background: '#8080802e' }
             }}
           >
-            <Piv>{infos.symbol}</Piv>
+            <Piv>{info.symbol}</Piv>
             <Show when={!isWidthSmall()}>
-              <Piv>{infos.version}</Piv>
+              <Piv>{info.version}</Piv>
             </Show>
           </Piv>
         )}
