@@ -50,7 +50,6 @@ export type KitProps<
 
 export type CreateKitOptions<T, Status extends ValidStatus = {}, DefaultProps extends Partial<T> = {}> = {
   name?: string
-  isSignalsProps?: boolean
   initStatus?: Status
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
@@ -63,9 +62,9 @@ export function useKitProps<
 >(
   props: GetterProps,
   options?: CreateKitOptions<GetterProps, Status, DefaultProps>
-): Omit<SignalizeProps<AddDefaultProperties<GetterProps, DefaultProps>>, 'plugin' | 'shadowProps'> {
+): Omit<AddDefaultProperties<GetterProps, DefaultProps>, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
-    options?.isSignalsProps ? gettersProps(props) : props,
+    props,
     (props) =>
       mergePluginReturnedProps({
         plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
@@ -75,7 +74,7 @@ export function useKitProps<
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
   )
-  return signalize(mergedGettersProps) as any
+  return mergedGettersProps as any
 }
 
 function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {

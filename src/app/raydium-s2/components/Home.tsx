@@ -1,5 +1,5 @@
 import { Piv } from '@edsolater/piv'
-import { Box } from '@edsolater/pivkit'
+import { Box, Button } from '@edsolater/pivkit'
 import { useNavigate } from '@solidjs/router'
 import { JSXElement } from 'solid-js'
 import { usePairStore } from '../stores/pairs/store'
@@ -32,5 +32,5 @@ export function Home() {
 }
 function RouteLink(props: { href: string; children?: JSXElement }) {
   const navigate = useNavigate()
-  return <Piv onClick={() => navigate(props.href)}>{props.children}</Piv>
+  return <Button onClick={() => navigate(props.href)}>{props.children}</Button>
 }
