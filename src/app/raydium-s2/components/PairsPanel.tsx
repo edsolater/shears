@@ -4,7 +4,7 @@ import { createMemo, For, Show } from 'solid-js'
 import { usePairStore } from '../stores/pairs/store'
 
 export function PairsPanel() {
-  const { allPairJsonInfos } = usePairStore()
+  const pairStore = usePairStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -26,7 +26,7 @@ export function PairsPanel() {
       }}
     >
       <Piv icss={{ fontSize: '2em' }}>Pools</Piv>
-      <For each={allPairJsonInfos()}>
+      <For each={pairStore.allPairJsonInfos}>
         {(infos) => {
           const { name, ammId } = signalize(infos)
           return (

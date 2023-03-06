@@ -8,9 +8,9 @@ import { useWalletStore } from '../stores/wallet/store'
 import { routePath } from './App'
 
 export function Home() {
-  const { allPairJsonInfos, isPairsLoading } = usePairStore()
-  const { owner } = useWalletStore()
-  const { allTokens, isTokenLoading } = useTokenStore()
+  const pairStore = usePairStore()
+  const walletStore = useWalletStore()
+  const tokenStore = useTokenStore()
   return (
     <div>
       <Box icss={{ display: 'grid', marginBlock: 16, placeContent: 'center' }}>
@@ -18,9 +18,9 @@ export function Home() {
       </Box>
       <Box icss={{ margin: 8 }}>
         {/* info */}
-        <Piv>token count: {isTokenLoading() ? '(loading)' : allTokens().length}</Piv>
-        <Piv>current owner: {owner?.()}</Piv>
-        <Piv>pair count: {isPairsLoading() ? '(loading)' : allPairJsonInfos().length}</Piv>
+        <Piv>token count: {tokenStore.isTokenLoading ? '(loading)' : tokenStore.allTokens.length}</Piv>
+        <Piv>current owner: {walletStore.owner}</Piv>
+        <Piv>pair count: {pairStore.isPairsLoading ? '(loading)' : pairStore.allPairJsonInfos.length}</Piv>
         <Piv>
           nav:
           <RouteLink href={routePath.farms}>Farms</RouteLink>

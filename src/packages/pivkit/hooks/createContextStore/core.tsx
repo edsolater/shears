@@ -85,12 +85,8 @@ export function createProxiedStore<T extends Record<string, any>>(
         }
 
         if (targetType === 'getter(methods)') {
-          return (...args) => {
-            const propertyName = p as string
-            const newValue = Reflect.get(rawStore, propertyName, receiver)
-            invokeOnInitGets(propertyName, newValue, proxiedStore)
-            return isFunction(newValue) ? newValue(...args) : newValue
-          }
+          const propertyName = p as string
+          return Reflect.get(rawStore, propertyName, receiver)
         }
       }
     }
