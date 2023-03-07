@@ -12,9 +12,10 @@ const initFarmJson = createOnStoreInitCallback<FarmsStore>(({ setIsFarmJsonsLoad
 
 const initFarmSDK = createOnStoreInitCallback<FarmsStore>(({ setIsFarmSDKsLoading, setAllFarmSDKInfos }) => {
   setIsFarmSDKsLoading(true)
-  getFarmSDKInfosFromWorker((allFarmJsonInfos) => {
+  getFarmSDKInfosFromWorker((allFarmSDKInfos) => {
+    console.log('allFarmSDKInfos: ', allFarmSDKInfos)
     setIsFarmSDKsLoading(false)
-    allFarmJsonInfos && setAllFarmSDKInfos(allFarmJsonInfos.slice(0, 8))
+    allFarmSDKInfos && setAllFarmSDKInfos(allFarmSDKInfos.slice(0, 8))
   })
 })
 

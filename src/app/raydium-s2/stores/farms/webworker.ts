@@ -1,6 +1,6 @@
 import { createSubscribable } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
-import { jsonInfo2PoolKeys } from '../../modules/sdkTools/jsonInfo2PoolKeys'
+import { jsonInfo2PoolKeys } from '../../utils/sdkTools/jsonInfo2PoolKeys'
 import { getConnection } from '../common/utils/getConnection'
 import { toPub } from '../common/utils/pub'
 import { registMessageReceiver } from '../common/webworker/worker_sdk'
@@ -35,6 +35,7 @@ export function registInWorker() {
         )
         // if (sdkParsedInfos.length) return abort
         console.log('sdkParsedInfos: ', sdkParsedInfos)
+        resolve(sdkParsedInfos)
       })
       onCleanUp(abort)
     }

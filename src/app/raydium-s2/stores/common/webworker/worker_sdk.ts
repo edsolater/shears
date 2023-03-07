@@ -6,6 +6,7 @@ import { registInWorker as tokenRegist } from '../../tokens/webworker'
 import { registInWorker as farmRegist } from '../../farms/webworker'
 import { WorkerDescription, WorkerMessage } from './type'
 import { invoke } from '../../../../../packages/fnkit/invoke'
+import { encode } from '../../../utils/structure-clone/encode'
 
 type onMessage<D> = (utils: { payload: D; onCleanUp(cleanFn: () => void): void; resolve(value: any): void }) => void
 
@@ -44,7 +45,8 @@ function initMessageReceiver() {
     invokePrevCleanUps(onMessage)
     invoke(onMessage, { payload, onCleanUp, resolve: promiseResolve! })
     returnValueMap.get(onMessage)?.then((returnData) => {
-      globalThis.postMessage({ description, data: returnData } as WorkerMessage)
+      const encodedData = encode(returnData)
+      globalThis.postMessage({ description, data: encodedData } as WorkerMessage)
     })
   })
 }

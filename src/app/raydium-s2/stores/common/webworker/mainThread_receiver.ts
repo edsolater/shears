@@ -1,4 +1,8 @@
 import { isFunction } from '@edsolater/fnkit'
+import { PublicKey } from '@solana/web3.js'
+import { decode } from '../../../utils/structure-clone/decode'
+import { encode } from '../../../utils/structure-clone/encode'
+import { toPub } from '../utils/pub'
 import { WorkerDescription, WorkerMessage } from './type'
 import SDKWorker from './worker_sdk?worker'
 
@@ -17,8 +21,9 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
     if (body.description === message.description) {
-      if (isFunction(cleanFn)) cleanFn(body.data)
-      const newCleanFn = callback?.(body.data)
+      const decodedData = decode(body.data)
+      if (isFunction(cleanFn)) cleanFn(decodedData)
+      const newCleanFn = callback?.(decodedData)
       cleanFn = newCleanFn
     }
   }
