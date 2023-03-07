@@ -1,25 +1,28 @@
 import { isArray, isObject, isObjectLiteral, isPrimitive, map } from '@edsolater/fnkit'
 import { PublicKey } from '@solana/web3.js'
 import toPubString from '../../stores/common/utils/pub'
+import { createEncodedObject } from './createEncodedObject'
 import { EncodedObject } from './type'
 
 export function encode(data: unknown): any {
   if (isPrimitive(data)) return data
   if (isObjectLiteral(data) || isArray(data)) {
     return map(data, (v) => (isObject(v) ? encodeClasses(v) : v))
-  } else {
-    return data
   }
+  return data
 }
 
 function encodeClasses(data: object): any {
-  return isPublicKey(data) ? encodePublicky(data) : encode(data)
+  const encodeRule = isObject(data) ? encodeClassRule.find((rule) => data instanceof rule.class) : undefined
+  if (!encodeRule) return encode(data)
+  return encodeRule.encodeFn(data as any /* force */)
 }
 
-function isPublicKey(data: any): data is PublicKey {
-  return data instanceof PublicKey
-}
+export const encodeClassRule: EncodeRuleItem[] = [
+  { class: PublicKey, encodeFn: (rawData: PublicKey) => createEncodedObject('PublicKey', toPubString(rawData)) }
+]
 
-function encodePublicky(data: PublicKey): EncodedObject<string> {
-  return { _type: 'Publickey', _info: toPubString(data) }
+export type EncodeRuleItem = {
+  class: { new (...args: any[]): any }
+  encodeFn: (rawData: any) => EncodedObject<any>
 }

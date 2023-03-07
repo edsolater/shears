@@ -10,12 +10,20 @@ export function decode(data: unknown): any {
 }
 
 function decodeClasses(data: object): any {
-  return isEncodedPublicKey(data) ? decodePublicky(data) : decode(data)
+  const targetRule = isEncodedObject(data) ? decodeRules.find((rule) => rule.name === data._type) : undefined
+  if (!targetRule) return decode(data)
+  return targetRule.decodeFn(data as EncodedObject<any> /* force */)
 }
 
-function isEncodedPublicKey(data: any): data is EncodedObject<string> {
-  return isObject(data) && data._type === 'Publickey'
+function isEncodedObject(data: any): data is EncodedObject<any> {
+  return isObject(data) && '_type' in data && '_info' in data
 }
-function decodePublicky(data: EncodedObject<string>): PublicKey {
-  return toPub(data._info)
+
+export const decodeRules: DecodeRuleItem[] = [
+  { name: 'PublicKey', decodeFn: (encodedData: EncodedObject<string>) => toPub(encodedData._info) }
+]
+
+export type DecodeRuleItem = {
+  name: string
+  decodeFn: (encodedData: EncodedObject<any>) => any
 }
