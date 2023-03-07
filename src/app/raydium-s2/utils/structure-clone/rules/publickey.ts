@@ -1,13 +1,15 @@
 import { PublicKey } from '@solana/web3.js'
+import { wrapToLazyObject } from '../../../../../packages/fnkit/wrapToLazyObject'
 import toPubString, { toPub } from '../../../stores/common/utils/pub'
 import { addTransportRule } from '../addTransportRule'
 import { createEncodedObject } from '../createEncodedObject'
 import { EncodedObject } from '../type'
 
-export const rulesAction = () =>
+export const addRule = () =>
   addTransportRule({
-    name: 'PublicKey',
-    class: PublicKey,
+    isTargetInstance: (data) => data instanceof PublicKey,
     encodeFn: (rawData: PublicKey) => createEncodedObject('PublicKey', toPubString(rawData)),
-    decodeFn: (encodedData: EncodedObject<string>) => toPub(encodedData._info)
+
+    name: 'PublicKey',
+    decodeFn: (encodedData: EncodedObject<string>): PublicKey => wrapToLazyObject(() => toPub(encodedData._info))
   })
