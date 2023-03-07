@@ -17,36 +17,38 @@ export function registInWorker() {
 
   registMessageReceiver<FetchFarmsSDKInfoPayloads>('parse raydium farms info sdk list', async ({ rpcUrl, owner }) => {
     const connection = getConnection(rpcUrl)
+    console.log('cachedFarmJsons: ', cachedFarmJsons)
     // TEMPLY don't use
-    // const sdkParsedInfos = await getSdkParsedFarmInfo(
-    //   {
-    //     connection,
-    //     pools: cachedFarmJsons.map(jsonInfo2PoolKeys),
-    //     owner: toPub(owner),
-    //     config: { commitment: 'confirmed' }
-    //   },
-    //   { jsonInfos: cachedFarmJsons }
-    // )
-    // console.log('sdkParsedInfos: ', sdkParsedInfos)
+    const sdkParsedInfos = await getSdkParsedFarmInfo(
+      {
+        connection,
+        pools: cachedFarmJsons.map(jsonInfo2PoolKeys),
+        owner: toPub(owner),
+        config: { commitment: 'confirmed' }
+      },
+      { jsonInfos: cachedFarmJsons }
+    )
+    console.log('sdkParsedInfos: ', sdkParsedInfos)
   })
 }
 
 /** and state info  */
-// export async function getSdkParsedFarmInfo(
-//   options: FarmFetchMultipleInfoParams,
-//   payload: {
-//     jsonInfos: FarmPoolJsonInfo[]
-//   }
-// ): Promise<SdkParsedFarmInfo[]> {
-//   const rawInfos = await Farm.fetchMultipleInfoAndUpdate(options)
-//   const result = options.pools.map((pool, idx) => {
-//     return {
-//       ...payload.jsonInfos[idx],
-//       ...pool,
-//       ...rawInfos[String(pool.id)],
-//       fetchedMultiInfo: rawInfos[String(pool.id)],
-//       jsonInfo: payload.jsonInfos[idx]
-//     } as unknown as SdkParsedFarmInfo
-//   })
-//   return result
-// }
+export async function getSdkParsedFarmInfo(
+  options: FarmFetchMultipleInfoParams,
+  payload: {
+    jsonInfos: FarmPoolJsonInfo[]
+  }
+): Promise<SdkParsedFarmInfo[]> {
+  const rawInfos = await Farm.fetchMultipleInfoAndUpdate(options)
+  console.log('rawInfos: ', rawInfos )
+  const result = options.pools.map((pool, idx) => {
+    return {
+      ...payload.jsonInfos[idx],
+      ...pool,
+      ...rawInfos[String(pool.id)],
+      fetchedMultiInfo: rawInfos[String(pool.id)],
+      jsonInfo: payload.jsonInfos[idx]
+    } as unknown as SdkParsedFarmInfo
+  })
+  return result
+}
