@@ -1,8 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@colors/colors': ^1.5.0
-  '@edsolater/fnkit': ^0.1.20
+  '@edsolater/fnkit': ^0.1.22
   '@emotion/css': ^11.10.6
   '@raydium-io/raydium-sdk': 1.3.0-beta.1
   '@solana/wallet-adapter-base': ^0.9.22
@@ -27,8 +26,7 @@ specifiers:
   vitest: ^0.29.2
 
 dependencies:
-  '@colors/colors': 1.5.0
-  '@edsolater/fnkit': 0.1.20
+  '@edsolater/fnkit': 0.1.22
   '@emotion/css': 11.10.6
   '@raydium-io/raydium-sdk': 1.3.0-beta.1
   '@solana/wallet-adapter-base': 0.9.22_@solana+web3.js@1.73.3
@@ -411,11 +409,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@colors/colors/1.5.0:
-    resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
-    engines: {node: '>=0.1.90'}
-    dev: false
-
   /@cspotcode/source-map-support/0.8.1:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
@@ -423,8 +416,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: false
 
-  /@edsolater/fnkit/0.1.20:
-    resolution: {integrity: sha512-elLBKwOeODIJWnk4iwFVcWCwN1CQ34GdK6TXRNI/AewAiXjwJaNQUSgzCpGQfqN4qhdfSsOuZIUKy0Pge370GQ==}
+  /@edsolater/fnkit/0.1.22:
+    resolution: {integrity: sha512-0A6dDA/sr01UK3Jf11Ihjx06kPzyNfpNigwPW1P5Egqq6iXIliVycVmmme8gGSmxeogr+hman5jnxs8gmkaQFA==}
     dev: false
 
   /@emotion/babel-plugin/11.10.6:

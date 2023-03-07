@@ -1,40 +1,44 @@
-import { registMessageReceiver } from '../common/webworker/worker_sdk'
-import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from './type'
-import { fetchFarmJsonInfo } from './fetchFarmJson'
-import { getConnection } from '../common/utils/getConnection'
+import { createSubscribable } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
-import { toPub } from '../common/utils/pub'
-import { createSubscribable } from '../../../../packages/fnkit/createSubscribable'
 import { jsonInfo2PoolKeys } from '../../modules/sdkTools/jsonInfo2PoolKeys'
+import { getConnection } from '../common/utils/getConnection'
+import { toPub } from '../common/utils/pub'
+import { registMessageReceiver } from '../common/webworker/worker_sdk'
+import { fetchFarmJsonInfo } from './fetchFarmJson'
+import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from './type'
 
 const [cachedFarmJsons$, setCachedFarmJsons] = createSubscribable<FarmPoolJsonInfo[]>([])
 
 export function registInWorker() {
-  registMessageReceiver<FetchFarmsJsonPayloads>('fetch raydium farms info', (payload) =>
+  registMessageReceiver<FetchFarmsJsonPayloads>('fetch raydium farms info', ({ payload, resolve }) =>
     fetchFarmJsonInfo(payload).then((infos) => {
       setCachedFarmJsons(infos ?? [])
-      return infos
+      resolve(infos)
     })
   )
 
-  registMessageReceiver<FetchFarmsSDKInfoPayloads>('parse raydium farms info sdk list', async ({ rpcUrl, owner }) => {
-    const connection = getConnection(rpcUrl)
-    const { abort } = cachedFarmJsons$.subscribe(async (cachedFarmJsons) => {
-      console.log('cachedFarmJsons: ', cachedFarmJsons)
-      if (!cachedFarmJsons?.length) return
-      const sdkParsedInfos = await getSdkParsedFarmInfo(
-        {
-          connection,
-          pools: cachedFarmJsons.map(jsonInfo2PoolKeys),
-          owner: toPub(owner),
-          config: { commitment: 'confirmed' }
-        },
-        { jsonInfos: cachedFarmJsons }
-      )
-      // if (sdkParsedInfos.length) return abort
-      console.log('sdkParsedInfos: ', sdkParsedInfos)
-    })
-  })
+  registMessageReceiver<FetchFarmsSDKInfoPayloads>(
+    'parse raydium farms info sdk list',
+    async ({ payload: { rpcUrl, owner }, resolve, onCleanUp }) => {
+      const connection = getConnection(rpcUrl)
+      const { abort } = cachedFarmJsons$.subscribe(async (cachedFarmJsons) => {
+        console.log('cachedFarmJsons: ', cachedFarmJsons)
+        if (!cachedFarmJsons?.length) return
+        const sdkParsedInfos = await getSdkParsedFarmInfo(
+          {
+            connection,
+            pools: cachedFarmJsons.map(jsonInfo2PoolKeys),
+            owner: toPub(owner),
+            config: { commitment: 'confirmed' }
+          },
+          { jsonInfos: cachedFarmJsons }
+        )
+        // if (sdkParsedInfos.length) return abort
+        console.log('sdkParsedInfos: ', sdkParsedInfos)
+      })
+      onCleanUp(abort)
+    }
+  )
 }
 
 /** and state info  */
