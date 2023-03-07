@@ -54,7 +54,7 @@ function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
       const original = Reflect.get(target, propertyKey, receiver)
       const bindedOriginal = isFunction(original) ? original.bind(target) : original
       if (propertyKey === ('set' as keyof Map<any, any>)) {
-        return async (...args) => {
+        return async (...args: any[]) => {
           const [key, cacheItem] = args as [ResourceUrl, JFetchCacheItem]
           const plainRawText = await cacheItem.rawText
           if (!plainRawText) return

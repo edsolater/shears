@@ -1,6 +1,7 @@
 import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { compressICSSToObj, CRef, ICSS, KitProps, mergeProps, Piv, useKitProps } from '@edsolater/piv'
 import { createMemo, JSX } from 'solid-js'
+import { Nullable } from 'vitest'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { useStatusRef } from '../hooks/useStatusRef'
@@ -83,7 +84,7 @@ export function Button(rawProps: ButtonProps) {
     contentGap = 4,
     disableOpacity = 0.3,
     cssProps
-  } = props.theme ?? {}
+  } = props.theme ?? ({} as NonNullable<ButtonProps['theme']>)
 
   const [ref, setRef] = createRef<HTMLButtonElement>()
 

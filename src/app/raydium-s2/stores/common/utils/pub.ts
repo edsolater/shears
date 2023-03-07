@@ -41,9 +41,3 @@ export function tryToPub<T>(v: T): T | PublicKey {
 export function recordPubString(...args: Parameters<typeof toPubString>): void {
   toPubString(...args)
 }
-
-export function ToPubPropertyValue(obj: unknown) {
-  if (!isObject(obj)) return tryToPub(obj)
-  if (isArray(obj)) return obj.map((i) => ToPubPropertyValue(i))
-  return map(obj, (v) => ToPubPropertyValue(v))
-}

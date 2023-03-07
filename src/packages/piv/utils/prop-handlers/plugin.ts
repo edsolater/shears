@@ -51,10 +51,10 @@ export function createWrapperNodePlugin<T>(
     name?: string
   }
 ): Plugin<T> {
-  function pluginMiddleware(addtionalProps) {
+  function pluginMiddleware(addtionalProps: any) {
     return createWrapperNodePlugin((node, props) => createrFn(node, mergeProps(addtionalProps, props)), options)
   }
-  pluginMiddleware.getProps = (props) => ({ dangerousRenderWrapperNode: (node) => createrFn(node, props) })
+  pluginMiddleware.getProps = (props: any) => ({ dangerousRenderWrapperNode: (node: any) => createrFn(node, props) })
   return pluginMiddleware
 }
 
@@ -82,10 +82,10 @@ export function createPlugin<T>(
     name?: string
   }
 ): Plugin<T> {
-  function pluginMiddleware(addtionalProps) {
+  function pluginMiddleware(addtionalProps: any) {
     return createPlugin((props) => createrFn(mergeProps(addtionalProps, props)), options)
   }
-  pluginMiddleware.getProps = (props) => createrFn(props)
+  pluginMiddleware.getProps = (props: any) => createrFn(props)
   pluginMiddleware.priority = options?.priority
 
   return pluginMiddleware

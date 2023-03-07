@@ -1,3 +1,5 @@
+import { isFunction } from '@edsolater/fnkit'
+
 export type GettersProps<T extends object> = {
   [K in keyof T]: T[K] extends () => infer F ? F : undefined
 }
@@ -13,7 +15,9 @@ export function gettersProps<T extends object>(props: T): GettersProps<T> {
       acc[key] = {
         enumerable: true,
         get() {
-          return props[key]?.()
+          //@ts-expect-error no need type check
+          const v = props[key] 
+          return v?.()
         }
       }
       return acc
