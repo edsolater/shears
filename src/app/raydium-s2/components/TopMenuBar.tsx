@@ -1,6 +1,6 @@
 import { Piv } from '@edsolater/piv'
 import { Box, Image } from '@edsolater/pivkit'
-import { Link } from '../uikit/Link'
+import { Link } from './Link'
 
 /**
  * have navbar(route bar) toggle button and wallet connect button

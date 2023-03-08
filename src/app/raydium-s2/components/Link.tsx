@@ -9,9 +9,9 @@ export function Link(props: { href: string; boxWrapper?: boolean; innerRoute?: b
       icss={{ textDecoration: 'none', transition: '150ms' }}
       as={(parsedPivProps) =>
         props.innerRoute ? (
-          <a {...parsedPivProps} href={props.href} rel='nofollow noopener noreferrer' target='_blank' />
-        ) : (
           <span {...parsedPivProps} />
+        ) : (
+          <a {...parsedPivProps} href={props.href} rel='nofollow noopener noreferrer' target='_blank' />
         )
       }
       shadowProps={props}
