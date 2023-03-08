@@ -1,4 +1,4 @@
-import { Button, createToggle } from '@edsolater/pivkit'
+import { Button, createToggle, RowItem } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import { getWalletAdapter } from '../stores/wallet/getWalletAdapter'
 import { useWalletStore } from '../stores/wallet/store'
