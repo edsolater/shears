@@ -13,11 +13,11 @@ export function TopMenuBar(props: { barTitle?: string; onOpenMenu?: () => void }
   return (
     <Piv<'nav'>
       icss={{ userSelect: 'none', color: 'white', padding: '16px 48px', transition: '150ms' }}
-      as={(parsedPivProps) => <button {...parsedPivProps} />}
+      as={(parsedPivProps) => <nav {...parsedPivProps} />}
     >
       <Box icss={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link href='/' innerRoute>
-          <Image icss={{ cursor: 'pointer' }} src='/logo/logo-with-text.svg' />
+          <Image icss={{ cursor: 'pointer' }} src='/raydium-logo-with-text.svg' />
         </Link>
 
         {/* <Row className='gap-8 items-center'>

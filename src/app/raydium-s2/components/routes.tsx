@@ -1,7 +1,7 @@
 import { RouteDefinition } from '@solidjs/router'
-import { FarmPanel } from './pages/Farms'
-import { Home } from './pages/Home'
-import { PairsPanel } from './pages/Pairs'
+import { FarmPanel } from '../pages/Farms'
+import { Home } from '../pages/Home'
+import { PairsPanel } from '../pages/Pairs'
 
 export const routePath = {
   pools: '/pools',

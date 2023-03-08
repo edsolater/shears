@@ -1,17 +1,16 @@
-import { Piv } from '@edsolater/piv'
+import { Piv, signalize } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { useFarmStore } from '../../stores/farms/store'
+import { usePairStore } from '../stores/pairs/store'
 
-export function FarmPanel() {
-  const farmStore = useFarmStore()
+export function PairsPanel() {
+  const pairStore = usePairStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
-  // createEffect(() => console.log('isFarmJsonsLoading', isFarmJsonsLoading()))
   return (
     <Piv
       ref={setRef}
@@ -26,8 +25,8 @@ export function FarmPanel() {
         overflow: 'hidden'
       }}
     >
-      <Piv icss={{ fontSize: '2em' }}>Farms</Piv>
-      <For each={farmStore.allFarmJsonInfos}>
+      <Piv icss={{ fontSize: '2em' }}>Pools</Piv>
+      <For each={pairStore.allPairJsonInfos}>
         {(info) => (
           <Piv
             icss={{
@@ -37,9 +36,9 @@ export function FarmPanel() {
               ':nth-child(2n)': { background: '#8080802e' }
             }}
           >
-            <Piv>{info.symbol}</Piv>
+            <Piv>{info.name}</Piv>
             <Show when={!isWidthSmall()}>
-              <Piv>{info.version}</Piv>
+              <Piv>{info.ammId}</Piv>
             </Show>
           </Piv>
         )}
