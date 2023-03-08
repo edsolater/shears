@@ -7,7 +7,7 @@ import { useTokenStore } from '../stores/tokens/store'
 import { useWalletStore } from '../stores/wallet/store'
 import { Link } from '../uikit/Link'
 import { NavBar } from '../components/NavBar'
-import { routePath } from '../components/routes'
+import { routePath } from '../routes/routes'
 
 export function Home() {
   const pairStore = usePairStore()
@@ -15,10 +15,6 @@ export function Home() {
   const tokenStore = useTokenStore()
   return (
     <div>
-      <Box icss={{ display: 'grid', marginBlock: 16, placeContent: 'center' }}>
-        <Piv icss={{ fontSize: '2em' }}>Raydium-S2</Piv>
-      </Box>
-
       <NavBar />
 
       <Box icss={{ margin: 8 }}>

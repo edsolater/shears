@@ -1,4 +1,4 @@
-import { registMessageReceiver } from '../common/webworker/worker_sdk'
+import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { FetchPairsOptions } from './type'
 import { fetchPairJsonInfo } from './fetchPairJson'
 

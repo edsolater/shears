@@ -1,6 +1,6 @@
 import { Router } from '@solidjs/router'
 import { render } from 'solid-js/web'
-import { App } from './app/raydium-s2/components/App'
+import { App } from './app/raydium-s2/routes/App'
 
 const root = document.getElementById('root')
 

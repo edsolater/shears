@@ -1,5 +1,5 @@
 import { appApiUrls, appRpcEndpointUrl } from '../common/utils/config'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../common/webworker/mainThread_receiver'
+import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { onWalletPropertyChange } from '../wallet/store'
 import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads } from './type'
 

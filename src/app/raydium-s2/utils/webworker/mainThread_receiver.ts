@@ -1,5 +1,5 @@
 import { isFunction } from '@edsolater/fnkit'
-import { decode } from '../../../utils/structure-clone/decode'
+import { decode } from '../structure-clone/decode'
 import { WorkerDescription, WorkerMessage } from './type'
 import SDKWorker from './worker_sdk?worker'
 

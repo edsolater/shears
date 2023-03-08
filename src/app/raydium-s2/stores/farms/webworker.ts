@@ -3,7 +3,7 @@ import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { jsonInfo2PoolKeys } from '../../utils/sdkTools/jsonInfo2PoolKeys'
 import { getConnection } from '../common/utils/getConnection'
 import { toPub } from '../common/utils/pub'
-import { registMessageReceiver } from '../common/webworker/worker_sdk'
+import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from './type'
 

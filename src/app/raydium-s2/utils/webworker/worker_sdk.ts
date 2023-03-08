@@ -1,12 +1,12 @@
 /// <reference lib="webworker" />
 import './polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { registInWorker as pairRegist } from '../../pairs/webworker'
-import { registInWorker as tokenRegist } from '../../tokens/webworker'
-import { registInWorker as farmRegist } from '../../farms/webworker'
+import { registInWorker as pairRegist } from '../../stores/pairs/webworker'
+import { registInWorker as tokenRegist } from '../../stores/tokens/webworker'
+import { registInWorker as farmRegist } from '../../stores/farms/webworker'
 import { WorkerDescription, WorkerMessage } from './type'
-import { invoke } from '../../../../../packages/fnkit/invoke'
-import { encode } from '../../../utils/structure-clone/encode'
+import { invoke } from '../../../../packages/fnkit/invoke'
+import { encode } from '../structure-clone/encode'
 
 type onMessage<D> = (utils: { payload: D; onCleanUp(cleanFn: () => void): void; resolve(value: any): void }) => void
 
