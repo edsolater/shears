@@ -1,6 +1,7 @@
 import { Piv } from '@edsolater/piv'
 import { Box, Image } from '@edsolater/pivkit'
 import { Link } from './Link'
+import { WalletWidget } from './WalletWidget';
 
 /**
  * have navbar(route bar) toggle button and wallet connect button
@@ -17,9 +18,9 @@ export function TopMenuBar(props: { barTitle?: string; onOpenMenu?: () => void }
           <Image icss={{ cursor: 'pointer' }} src='/raydium-logo-with-text.svg' />
         </Link>
 
+        <WalletWidget />
         {/* <Row className='gap-8 items-center'>
               <MessageBoardWidget />
-              <WalletWidget />
             </Row> */}
       </Box>
     </Piv>
