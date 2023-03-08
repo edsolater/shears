@@ -15,8 +15,8 @@ import { handleShadowProps } from './utils/prop-handlers/shallowProps'
 type KitPropsCore<
   Props extends ValidProps,
   Status extends ValidStatus,
-  TagName extends keyof HTMLElementTagNameMap,
-  Plugins extends MayDeepArray<Plugin<any>>
+  Plugins extends MayDeepArray<Plugin<any>>,
+  TagName extends keyof HTMLElementTagNameMap = 'div'
 > = Props &
   Omit<PivProps<TagName>, keyof Props | 'plugin' | 'shadowProps'> &
   Omit<GetPluginProps<Plugins>, keyof Props | 'plugin' | 'shadowProps'> &
@@ -38,16 +38,15 @@ export type KitProps<
   O extends {
     extendsProp?: ValidProps
     status?: ValidStatus
-    htmlPropsTagName?: keyof HTMLElementTagNameMap
     plugin?: MayArray<Plugin<any>>
+    htmlPropsTagName?: keyof HTMLElementTagNameMap
   } = {}
 > = KitPropsCore<
   ExtendsProps<P, NonNullable<O['extendsProp']>>,
   NonNullable<O['status']>,
-  NonNullable<O['htmlPropsTagName']>,
-  NonNullable<O['plugin']>
+  NonNullable<O['plugin']>,
+  NonNullable<unknown extends O['htmlPropsTagName'] ? 'div' : O['htmlPropsTagName']>
 >
-
 export type CreateKitOptions<T, Status extends ValidStatus = {}, DefaultProps extends Partial<T> = {}> = {
   name?: string
   initStatus?: Status
