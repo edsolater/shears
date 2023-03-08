@@ -1,7 +1,7 @@
 import toPubString from '../common/utils/pub'
 import { WalletAdapterInterface } from './type'
 import { connectWallet } from './connectWallet'
-import { findWalletAdapter } from './findWalletAdapter'
+import { getWalletAdapter } from './getWalletAdapter'
 
 export async function autoConnectWallet(cbs?: {
   onLoadSuccess?(utils: { owner: string; adapterInterface: WalletAdapterInterface }): void
@@ -9,7 +9,7 @@ export async function autoConnectWallet(cbs?: {
   onAfterInit?(): void
 }) {
   cbs?.onBeforeInit?.()
-  const phantomWallet = findWalletAdapter('phantom')
+  const phantomWallet = getWalletAdapter('phantom')
   if (!phantomWallet) {
     throw new Error('Phantom wallet not found')
   }

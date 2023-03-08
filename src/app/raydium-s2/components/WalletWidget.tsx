@@ -1,5 +1,7 @@
-import { createToggle } from '@edsolater/pivkit'
+import { Button, createToggle } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
+import { getWalletAdapter } from '../stores/wallet/getWalletAdapter'
+import { useWalletStore } from '../stores/wallet/store'
 
 /** this should be used in ./Navbar.tsx */
 export function WalletWidget() {
@@ -9,7 +11,17 @@ export function WalletWidget() {
     if (isCopied()) delayOff()
   })
 
-  return null
+  const walletStore = useWalletStore()
+
+  return (
+    <Button
+      onClick={() =>
+        walletStore.connected ? walletStore.disconnect() : walletStore.connect(getWalletAdapter('Phantom'))
+      }
+    >
+      {walletStore.owner}
+    </Button>
+  )
   // const { owner: publicKey, disconnect, connected } = useWallet()
   // // const { owner: publicKey, disconnect, connected } = useWallet()
 
