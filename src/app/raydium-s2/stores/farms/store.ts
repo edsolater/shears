@@ -1,5 +1,5 @@
 import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
-import { initAllFarms } from './initAllFarms'
+import { initFarmJson, initFarmSDK } from './initAllFarms'
 import { FarmPoolJsonInfo } from './type'
 
 export type FarmsStore = {
@@ -16,4 +16,4 @@ export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(() => ({
   allFarmSDKInfos: []
 }))
 
-export const [useFarmStore] = createGlobalStore<FarmsStore>(defaultFarmsStore, { onInit: initAllFarms })
+export const [useFarmStore] = createGlobalStore<FarmsStore>(defaultFarmsStore, { onInit: [initFarmJson, initFarmSDK] })

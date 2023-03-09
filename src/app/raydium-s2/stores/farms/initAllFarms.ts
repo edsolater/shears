@@ -2,21 +2,18 @@ import { createOnStoreInitCallback } from '@edsolater/pivkit'
 import { getFarmJsonFromWorker, getFarmSDKInfosFromWorker } from './mainThread'
 import { FarmsStore } from './store'
 
-const initFarmJson = createOnStoreInitCallback<FarmsStore>(({ setIsFarmJsonsLoading, setAllFarmJsonInfos }) => {
+export const initFarmJson = createOnStoreInitCallback<FarmsStore>(({ setIsFarmJsonsLoading, setAllFarmJsonInfos }) => {
   setIsFarmJsonsLoading(true)
   getFarmJsonFromWorker((allFarmJsonInfos) => {
     setIsFarmJsonsLoading(false)
-    allFarmJsonInfos && setAllFarmJsonInfos(allFarmJsonInfos.slice(0, 8))
+    allFarmJsonInfos && setAllFarmJsonInfos(allFarmJsonInfos)
   })
 })
 
-const initFarmSDK = createOnStoreInitCallback<FarmsStore>(({ setIsFarmSDKsLoading, setAllFarmSDKInfos }) => {
+export const initFarmSDK = createOnStoreInitCallback<FarmsStore>(({ setIsFarmSDKsLoading, setAllFarmSDKInfos }) => {
   setIsFarmSDKsLoading(true)
   getFarmSDKInfosFromWorker((allFarmSDKInfos) => {
-    console.log('allFarmSDKInfos: ', allFarmSDKInfos)
     setIsFarmSDKsLoading(false)
-    allFarmSDKInfos && setAllFarmSDKInfos(allFarmSDKInfos.slice(0, 8))
+    allFarmSDKInfos && setAllFarmSDKInfos(allFarmSDKInfos)
   })
 })
-
-export const initAllFarms = [initFarmJson, initFarmSDK]

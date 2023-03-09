@@ -15,22 +15,17 @@ export function FarmPanel() {
   // createEffect(() => console.log('isFarmJsonsLoading', isFarmJsonsLoading()))
   return (
     <Piv>
-      <NavBar />
+      <NavBar barTitle='Farms' />
 
       <Piv
         ref={setRef}
         icss={{
-          boxShadow: 'inset 0 0 0px 2px dodgerblue',
           borderRadius: 4,
           display: 'flex',
           flexDirection: 'column',
-          gap: 4,
-          width: 'fit-content',
-          resize: 'both',
-          overflow: 'hidden'
+          gap: 4
         }}
       >
-        <Piv icss={{ fontSize: '2em' }}>Farms</Piv>
         <For each={farmStore.allFarmJsonInfos}>
           {(info) => (
             <Piv

@@ -1,5 +1,7 @@
-import { TopMenuBar } from './TopMenuBar'
+import { TopMenuBar, TopMenuBarProps } from './TopMenuBar'
 
-export function NavBar(props: { barTitle?: string; onOpenMenu?: () => void }) {
-  return <TopMenuBar />
+export type NavBarProps = TopMenuBarProps
+
+export function NavBar(props: NavBarProps) {
+  return <TopMenuBar {...props} />
 }

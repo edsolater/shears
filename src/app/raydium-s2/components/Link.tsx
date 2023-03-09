@@ -6,7 +6,7 @@ export function Link(props: { href: string; boxWrapper?: boolean; innerRoute?: b
   const navigate = useNavigate()
   return (
     <Piv<'a'>
-      icss={{ textDecoration: 'none', transition: '150ms' }}
+      icss={{ textDecoration: 'none', transition: '150ms', cursor:'pointer' }}
       as={(parsedPivProps) =>
         props.innerRoute ? (
           <span {...parsedPivProps} />

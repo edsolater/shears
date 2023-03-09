@@ -18,6 +18,7 @@ export function WalletWidget() {
       onClick={() =>
         walletStore.connected ? walletStore.disconnect() : walletStore.connect(getWalletAdapter('Phantom'))
       }
+      // TODO: onHover : change text
       icss={{ width: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
     >
       {walletStore.connected ? walletStore.owner : 'Connect Wallet'}

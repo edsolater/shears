@@ -1,5 +1,5 @@
 import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
-import { initAllPairs } from './initAllPairs'
+import { initPairJson } from './initAllPairs'
 import { JsonPairItemInfo } from './type'
 
 export type PairsStore = {
@@ -14,4 +14,4 @@ export const defaultPairsStore = createStoreDefaultState<PairsStore>(() => ({
   allPairJsonInfos: []
 }))
 
-export const [usePairStore] = createGlobalStore<PairsStore>(defaultPairsStore, { onInit: [initAllPairs] })
+export const [usePairStore] = createGlobalStore<PairsStore>(defaultPairsStore, { onInit: [initPairJson] })
