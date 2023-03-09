@@ -1,24 +1,26 @@
 import { AnyFn } from '@edsolater/fnkit'
-import { RowItem, RowItemProps } from '@edsolater/pivkit'
+import { Icon, IconProps, RowItem, RowItemProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import copyToClipboard from '../../../packages/domkit/copyToClipboard'
 import { KitProps, useKitProps } from '../../../packages/piv/createKit'
+import { Piv } from '../../../packages/piv/Piv'
+import { PivProps } from '../../../packages/piv/types/piv'
 import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
 
 type AddressItemProps = KitProps<
   {
+    publicKey: string
+    showDigitCount?: number | 'all'
+    addressType?: 'token' | 'account'
+
     canCopy?: boolean
     showCopyIcon?: boolean
     canExternalLink?: boolean
     /** default sm */
-    // iconSize?: IconProps['size']
-    className?: string
-    textClassName?: string
-    iconClassName?: string
-    publicKey: string
-    showDigitCount?: number | 'all'
-    addressType?: 'token' | 'account'
-    iconRowClassName?: string
+    iconSize?: IconProps['size']
+    iconSrc?:IconProps['src']
+    iconProps?: IconProps
+    iconRowProps?: PivProps
     onCopied?(text: string): void // TODO: imply it
   },
   { extendsProp: RowItemProps }
@@ -28,7 +30,7 @@ type AddressItemProps = KitProps<
  * base on {@link RowItem}
  */
 export function AddressItem(rawProps: AddressItemProps) {
-  const props = useKitProps(rawProps)
+  const props = useKitProps(rawProps, { defaultProps: { iconSize: 'sm' } })
 
   const [isCopied, { delayOff, on }] = createToggle(false, { delay: 400 })
 
@@ -44,35 +46,34 @@ export function AddressItem(rawProps: AddressItemProps) {
         .then(() => props.onCopied?.(props.publicKey))
   }
 
-  if (!props.publicKey) return null
   return null
+
+  // const externalSuffix = (
+  //   <Piv icss={{ gap: 4, marginLeft: 12 }} shadowProps={props.iconRowProps}>
+  //     {props.showCopyIcon ? (
+  //       <Icon
+  //         size={props.iconSize}
+  //         shadowProps={props.iconProps}
+  //         // className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
+  //         // heroIconName='clipboard-copy'
+  //         src='https://img.icons8.com/material-rounded/24/null/new-by-copy.png'
+  //         onClick={({ ev }) => handleClickCopy(ev)}
+  //       />
+  //     ) : null}
+  //     {props.canExternalLink ? (
+  //       <LinkExplorer hrefDetail={`${publicKey}`} type={addressType}>
+  //         <Icon
+  //           size={iconSize}
+  //           heroIconName='external-link'
+  //           className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
+  //         />
+  //       </LinkExplorer>
+  //     ) : null}
+  //   </Piv>
+  // )
+
   // return (
-  //   <RowItem
-  //     shadowProps={props}
-  //     suffix={
-  //       props.canCopy || props.canExternalLink ? (
-  //         <Row className={twMerge(`${iconSize === 'xs' ? 'gap-0.5 ml-1.5' : 'gap-1 ml-3'}`, iconRowClassName)}>
-  //           {showCopyIcon ? (
-  //             <Icon
-  //               size={iconSize}
-  //               className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
-  //               heroIconName='clipboard-copy'
-  //               onClick={({ ev }) => handleClickCopy(ev)}
-  //             />
-  //           ) : null}
-  //           {canExternalLink ? (
-  //             <LinkExplorer hrefDetail={`${publicKey}`} type={addressType}>
-  //               <Icon
-  //                 size={iconSize}
-  //                 heroIconName='external-link'
-  //                 className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
-  //               />
-  //             </LinkExplorer>
-  //           ) : null}
-  //         </Row>
-  //       ) : null
-  //     }
-  //   >
+  //   <RowItem shadowProps={props} suffix={props.canCopy || props.canExternalLink ? externalSuffix : null}>
   //     <div title={toPubString(publicKey)} className='relative' onClick={(ev) => canCopy && handleClickCopy(ev)}>
   //       <div className={`${isCopied ? 'opacity-10' : 'opacity-100'} transition`}>
   //         {showDigitCount === 'all'
