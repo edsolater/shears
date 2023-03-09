@@ -28,19 +28,27 @@ export function FarmPanel() {
       >
         <For each={farmStore.allFarmJsonInfos}>
           {(info) => (
-            <Piv
-              icss={{
-                display: 'grid',
-                gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                paddingBlock: 4,
-                ':nth-child(2n)': { background: '#8080802e' }
-              }}
-            >
-              <Piv>{info.symbol}</Piv>
-              <Show when={!isWidthSmall()}>
-                <Piv>{info.version}</Piv>
-              </Show>
-            </Piv>
+            <>
+              <details>
+                <summary>
+                  <Piv
+                    icss={{
+                      display: 'inline-grid',
+                      gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
+                      paddingBlock: 4,
+                      ':nth-child(2n)': { background: '#8080802e' }
+                    }}
+                  >
+                    <Piv>{info.symbol}</Piv>
+                    <Show when={!isWidthSmall()}>
+                      <Piv>{info.version}</Piv>
+                    </Show>
+                  </Piv>
+                </summary>
+
+                <Piv>{info.symbol} farm's detail here</Piv>
+              </details>
+            </>
           )}
         </For>
       </Piv>
