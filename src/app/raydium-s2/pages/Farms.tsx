@@ -35,13 +35,14 @@ export function FarmPanel() {
                     icss={{
                       display: 'inline-grid',
                       gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                      paddingBlock: 4,
+                      paddingBlock: 6,
                       ':nth-child(2n)': { background: '#8080802e' }
                     }}
                   >
                     <Piv>{info.symbol}</Piv>
+                    <Piv>{info.baseMint}</Piv>
                     <Show when={!isWidthSmall()}>
-                      <Piv>{info.version}</Piv>
+                      {/* <Piv>{info.version}</Piv> */}
                     </Show>
                   </Piv>
                 </summary>

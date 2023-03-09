@@ -32,7 +32,7 @@ export function TopMenuBar(props: TopMenuBarProps) {
 
         {/* tabs */}
         <Box icss={{ display: 'flex', gap: 16 }}>
-          <Link href='/farms' innerRoute>
+          <Link href='/farms' innerRoute /* TODO: active style */>
             Farms
           </Link>
           <Link href='/pools' innerRoute>
