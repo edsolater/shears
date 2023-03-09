@@ -10,7 +10,7 @@ body {
     'Segoe UI Symbol';
   font-feature-settings: 'ss04', 'tnum' 1;
   color: var(--primary);
-  background-color: rgb(8, 13, 31);
+  background-color: var(--bg-border);
 }
 :root {
   font-size: 16px;
@@ -32,12 +32,6 @@ input[type='number']::-webkit-inner-spin-button {
 input[type='number'] {
   -moz-appearance: textfield;
 } */
-
-/* Temp make headlessui not conflict with other z-index */
-/* TODO: remove headlessui dependence */
-#headlessui-portal-root {
-  isolation: isolate;
-}
 
 @media (min-width: 1000px) {
   ::-webkit-scrollbar {

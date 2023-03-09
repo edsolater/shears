@@ -28,49 +28,51 @@ type AddressItemProps = KitProps<
 
 /**
  * base on {@link RowItem}
+ * @todo it should be a props:plugin 
  */
 export function AddressItem(rawProps: AddressItemProps) {
   const props = useKitProps(rawProps, { defaultProps: { iconSize: 'sm' } })
 
-  const [isCopied, { delayOff, on }] = createToggle(false, { delay: 400 })
+  const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })
 
   createEffect(() => {
-    if (isCopied()) delayOff()
+    if (isCopied()) delayOffCopyState()
   })
 
   const handleClickCopy = (ev: { stopPropagation: AnyFn }) => {
     ev.stopPropagation()
     if (!isCopied)
       copyToClipboard(props.publicKey)
-        .then(on)
+        .then(turnOnCopyState)
         .then(() => props.onCopied?.(props.publicKey))
   }
 
   return null
-
+  
   // const externalSuffix = (
   //   <Piv icss={{ gap: 4, marginLeft: 12 }} shadowProps={props.iconRowProps}>
   //     {props.showCopyIcon ? (
   //       <Icon
-  //         size={props.iconSize}
-  //         shadowProps={props.iconProps}
-  //         // className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
-  //         // heroIconName='clipboard-copy'
-  //         src='https://img.icons8.com/material-rounded/24/null/new-by-copy.png'
-  //         onClick={({ ev }) => handleClickCopy(ev)}
+  //       size={props.iconSize}
+  //       shadowProps={props.iconProps}
+  //       // className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
+  //       // heroIconName='clipboard-copy'
+  //       src='https://img.icons8.com/material-rounded/24/null/new-by-copy.png'
+  //       onClick={({ ev }) => handleClickCopy(ev)}
   //       />
-  //     ) : null}
+  //       ) : null}
   //     {props.canExternalLink ? (
   //       <LinkExplorer hrefDetail={`${publicKey}`} type={addressType}>
   //         <Icon
   //           size={iconSize}
   //           heroIconName='external-link'
   //           className={twMerge('clickable text-[#ABC4FF]', iconClassName)}
-  //         />
+  //           />
   //       </LinkExplorer>
   //     ) : null}
   //   </Piv>
   // )
+  
 
   // return (
   //   <RowItem shadowProps={props} suffix={props.canCopy || props.canExternalLink ? externalSuffix : null}>

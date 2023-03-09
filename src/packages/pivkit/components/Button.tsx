@@ -1,6 +1,6 @@
 import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { compressICSSToObj, CRef, ICSS, KitProps, mergeProps, Piv, useKitProps } from '@edsolater/piv'
-import { createMemo, JSX } from 'solid-js'
+import { children, createMemo, JSX } from 'solid-js'
 import { Nullable } from 'vitest'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
@@ -28,10 +28,10 @@ export type ButtonProps = KitProps<{
   /**
    * !only for app's uikit <Button>
    * button's mean  color (apply to all variant of button)
-   * default {@link cssColors.buttonPrimaryColor } when in darkMode
+   * default {@link cssColors.button_bg_primary } when in darkMode
    */
   theme?: {
-    mainColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+    mainBgColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
     mainTextColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
     contentGap?: MayFn<CSSStyle['gap'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
     disableOpacity?: MayFn<CSSStyle['opacity'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
@@ -79,8 +79,8 @@ export function Button(rawProps: ButtonProps) {
   )
 
   const {
-    mainColor = cssColors.buttonPrimaryColor,
-    mainTextColor = mergedProps.variant === 'solid' ? 'white' : shrinkFn(mainColor, [mergedProps]),
+    mainBgColor = cssColors.button_bg_primary,
+    mainTextColor = cssColors.button_text_primary,
     contentGap = 4,
     disableOpacity = 0.3,
     cssProps
@@ -157,7 +157,7 @@ export function Button(rawProps: ButtonProps) {
           fontWeight: 500
         },
         (!props.variant || props.variant === 'solid') && {
-          backgroundColor: shrinkFn(mainColor, [mergedProps]),
+          backgroundColor: shrinkFn(mainBgColor, [mergedProps]),
           ':hover': {
             filter: 'brightness(95%)'
           },
@@ -168,12 +168,12 @@ export function Button(rawProps: ButtonProps) {
         },
         props.variant === 'outline' && {
           background: cssColors.transparent,
-          outline: `${cssOutlineWidth} solid ${mainColor}`,
+          outline: `${cssOutlineWidth} solid ${mainBgColor}`,
           outlineOffset: `-${cssOutlineWidth}`
         },
         props.variant === 'text' && {
           ':hover': {
-            backgroundColor: opacityCSSColor(shrinkFn(mainColor, [mergedProps]), 0.15)
+            backgroundColor: opacityCSSColor(shrinkFn(mainBgColor, [mergedProps]), 0.15)
           }
         },
         compressICSSToObj(shrinkFn(cssProps, [mergedProps]))
@@ -187,9 +187,11 @@ export function Button(rawProps: ButtonProps) {
   )
 }
 
+
+
 /**
  * @todo TEMP, currently force it, should use NPM css color utils
  */
 export function opacityCSSColor(cssColor: CSSColorString, /* 0~1 */ opacity: number) {
-  return cssColor === cssColors.buttonPrimaryColor ? '#7c859826' /* 0.15 */ : `${cssColor}${opacity}` //TODO: temp
+  return cssColor === cssColors.button_bg_primary ? '#7c859826' /* 0.15 */ : `${cssColor}${opacity}` //TODO: temp
 }

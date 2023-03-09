@@ -23,5 +23,7 @@ export const cssColors = {
 
   opacityGray: '#6767675e' as CSSColorString,
   /** use for dark mode button default  color */
-  buttonPrimaryColor: tailwindPaletteColors.indigo600
+  // theme:solid
+  button_bg_primary: tailwindPaletteColors.gray300,
+  button_text_primary: tailwindPaletteColors.gray700
 } as const

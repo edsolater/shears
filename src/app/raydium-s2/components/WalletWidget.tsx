@@ -1,4 +1,4 @@
-import { Button, createToggle, RowItem } from '@edsolater/pivkit'
+import { Button, createToggle } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import { getWalletAdapter } from '../stores/wallet/getWalletAdapter'
 import { useWalletStore } from '../stores/wallet/store'
@@ -18,8 +18,9 @@ export function WalletWidget() {
       onClick={() =>
         walletStore.connected ? walletStore.disconnect() : walletStore.connect(getWalletAdapter('Phantom'))
       }
+      icss={{ width: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
     >
-      {walletStore.owner}
+      {walletStore.connected ? walletStore.owner : 'Connect Wallet'}
     </Button>
   )
   // const { owner: publicKey, disconnect, connected } = useWallet()

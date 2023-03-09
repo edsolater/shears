@@ -10,7 +10,7 @@ import { WalletWidget } from './WalletWidget';
 export function TopMenuBar(props: { barTitle?: string; onOpenMenu?: () => void }) {
   return (
     <Piv<'nav'>
-      icss={{ userSelect: 'none', color: 'white', padding: '16px 48px', transition: '150ms' }}
+      icss={{ userSelect: 'none',  padding: '16px 48px', transition: '150ms' }}
       as={(parsedPivProps) => <nav {...parsedPivProps} />}
     >
       <Box icss={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

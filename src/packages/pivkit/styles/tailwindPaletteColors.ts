@@ -1,3 +1,4 @@
+// https://tailwindcss.com/docs/customizing-colors
 export const tailwindPaletteColors = {
   slate50: '#f8fafc',
   slate100: '#f1f5f9',

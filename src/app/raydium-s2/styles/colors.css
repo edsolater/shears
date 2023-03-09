@@ -1,7 +1,9 @@
 /* For the darkmode, or tailwindcss urgly and tedious `:dark` */
 :root {
-  --primary: #e3e3e3;
+  --primary: black;
   --secondary: #bebebe;
+
+  --bg-border: white;
 
   --style-color-fuchsia: #da2eef;
   --style-color-blue: #2b6aff;
@@ -11,12 +13,11 @@
   --text-home-page-primary: hsl(0deg, 0%, 100%);
   --text-home-page-secondary: hsl(222deg, 100%, 84%);
 
-  --ground-color-light-solid: hsla(227, 25%, 34%, 0.95);
-  --ground-color-light: rgba(57, 65, 106, 0.8);
-  --ground-color-slim: hsla(230, 65%, 15%, 0.54); /* bonsai main color */
-  --ground-color: #161c3982;
-  --ground-color-dark: hsl(230deg 43% 15% / 60%);
-  --ground-color-dark-solid: hsla(230, 43%, 16%, 0.9);
+  --bg-light-solid: hsla(227, 25%, 34%, 0.95);
+  --bg-light: rgba(57, 65, 106, 0.8);
+  --bg-slim: hsla(230, 65%, 15%, 0.54); /* bonsai main color */
+  --bg-dark: hsl(230deg 43% 15% / 60%);
+  --bg-dark-solid: hsla(230, 43%, 16%, 0.9);
 
   --pop-over-bg-low: hsla(187, 25%, 34%, 0.75);
   --pop-over-bg-high: #1e2848ab; /* for <Drawer> and <Dialog> */
