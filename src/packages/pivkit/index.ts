@@ -4,6 +4,7 @@ export * from './components/Text'
 export * from './components/Image'
 export * from './components/Icon'
 export * from './components/RowItem'
+export * from './components/Collapse'
 
 export * from './hooks/createRef'
 export * from './hooks/createStatusRef'

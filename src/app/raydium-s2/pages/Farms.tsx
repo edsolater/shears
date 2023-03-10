@@ -1,6 +1,6 @@
 import { Piv } from '../../../packages/piv'
 import { createMemo, For, Show } from 'solid-js'
-import { createRef, useElementSize } from '../../../packages/pivkit'
+import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { NavBar } from '../components/NavBar'
 import { useFarmStore } from '../stores/farms/store'
@@ -30,28 +30,25 @@ export function FarmPanel() {
       >
         <For each={farmStore.allFarmJsonInfos}>
           {(info) => (
-            <>
-              <details>
-                <summary>
-                  <Piv
-                    icss={{
-                      display: 'inline-grid',
-                      gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                      paddingBlock: 6,
-                      ':nth-child(2n)': { background: '#8080802e' }
-                    }}
-                  >
-                    <Piv>{info.symbol}</Piv>
-                    <Piv>{info.baseMint}</Piv>
-                    <Show when={!isWidthSmall()}>
-                      {/* <Piv>{info.version}</Piv> */}
-                    </Show>
-                  </Piv>
-                </summary>
-
+            <Collapse>
+              <Collapse.Face>
+                <Piv
+                  icss={{
+                    display: 'inline-grid',
+                    gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
+                    paddingBlock: 6,
+                    ':nth-child(2n)': { background: '#8080802e' }
+                  }}
+                >
+                  <Piv>{info.symbol}</Piv>
+                  <Piv>{info.baseMint}</Piv>
+                  <Show when={!isWidthSmall()}>{/* <Piv>{info.version}</Piv> */}</Show>
+                </Piv>
+              </Collapse.Face>
+              <Collapse.Content>
                 <Piv>{info.symbol} farm's detail here</Piv>
-              </details>
-            </>
+              </Collapse.Content>
+            </Collapse>
           )}
         </For>
       </Piv>
