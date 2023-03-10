@@ -1,5 +1,5 @@
 export type TokenMessageData = {
-  tokens: Token[]
+  tokens: Map<string, Token>
   blacklist: string[]
 }
 

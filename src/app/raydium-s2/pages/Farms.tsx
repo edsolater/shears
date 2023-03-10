@@ -1,9 +1,10 @@
 import { Piv } from '../../../packages/piv'
 import { createMemo, For, Show } from 'solid-js'
-import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
+import { Collapse, createRef, Image, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { NavBar } from '../components/NavBar'
 import { useFarmStore } from '../stores/farms/store'
+import { getToken } from '../stores/tokens/store'
 
 export function FarmPanel() {
   const farmStore = useFarmStore()
@@ -41,10 +42,11 @@ export function FarmPanel() {
                       ':nth-child(2n)': { background: '#8080802e' }
                     }}
                   >
-                    <Piv>{status.isOpen ? 'open' : 'closed'}</Piv>
+                    {/* <Piv>{status.isOpen ? 'open' : 'closed'}</Piv> */}
+                    <Image src={getToken(info.baseMint)?.icon} icss={{width: 24, height:24}}/>
+                    <Image src={getToken(info.quoteMint)?.icon} icss={{width: 24, height:24}}/>
                     <Piv>{info.symbol}</Piv>
-                    <Piv>{info.baseMint}</Piv>
-                    <Show when={!isWidthSmall()}>
+                    <Show when={status.isOpen}>
                       <Piv>{info.version}</Piv>
                     </Show>
                   </Piv>
