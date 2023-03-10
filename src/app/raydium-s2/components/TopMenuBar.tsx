@@ -1,4 +1,4 @@
-import { Piv } from '@edsolater/piv'
+import { Piv } from '../../../packages/piv'
 import { Show } from 'solid-js'
 import { Box, Image, Text } from '../../../packages/pivkit'
 import { Link } from './Link'

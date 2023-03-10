@@ -1,4 +1,4 @@
-import { KitProps, Piv, PivProps } from '@edsolater/piv'
+import { KitProps, Piv, PivProps } from '../../../packages/piv'
 
 export type BoxProps = KitProps<{}>
 

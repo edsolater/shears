@@ -1,4 +1,4 @@
-import { KitProps, Piv, useKitProps } from '@edsolater/piv'
+import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 import { JSXElement } from 'solid-js'
 
 export type RowItemProps = KitProps<{

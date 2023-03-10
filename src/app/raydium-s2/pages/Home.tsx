@@ -1,4 +1,4 @@
-import { Piv } from '@edsolater/piv'
+import { Piv } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'

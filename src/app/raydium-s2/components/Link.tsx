@@ -1,4 +1,4 @@
-import { Piv } from '@edsolater/piv'
+import { Piv } from '../../../packages/piv'
 import { useNavigate } from '@solidjs/router'
 import { JSXElement } from 'solid-js'
 

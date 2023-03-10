@@ -1,4 +1,4 @@
-import { Piv } from '@edsolater/piv'
+import { Piv } from '../../../packages/piv'
 import { createMemo, For, Show } from 'solid-js'
 import { createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
