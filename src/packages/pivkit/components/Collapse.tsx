@@ -9,13 +9,18 @@ type CollapseProps = KitProps<
     open?: boolean
     defaultOpen?: boolean
     collapseDirection?: 'down' | 'up'
+    /**
+     * when it's not summary, `<Collapse>` will not render as `<details>` but only `<Piv>`
+     */
+    onlyContent?: boolean
     onOpen?(): void
     onClose?(): void
     onToggle?(): void
   },
-  { htmlPropsTagName: 'details' }
+  { htmlPropsTagName: 'details' | 'div' }
 >
 type CollapseStatus = {
+  readonly contentOnlyMode: boolean
   readonly isOpen: boolean
   open(): void
   close(): void
@@ -35,6 +40,9 @@ export function Collapse(rawProps: CollapseProps) {
   })
 
   const status = {
+    get contentOnlyMode() {
+      return Boolean(props.onlyContent)
+    },
     get isOpen() {
       return innerOpen()
     },
@@ -45,7 +53,11 @@ export function Collapse(rawProps: CollapseProps) {
   }
   return (
     <CollapseContext.Provider value={status}>
-      <Piv<'details'> as={(parsedPivProps) => <details {...parsedPivProps} />} shadowProps={props} onClick={toggle} />
+      <Piv<'details' | 'div'>
+        as={props.onlyContent ? undefined : (parsedPivProps) => <details {...parsedPivProps} />}
+        shadowProps={props}
+        onClick={toggle}
+      />
     </CollapseContext.Provider>
   )
 }
@@ -61,10 +73,10 @@ type CollapseFaceProps = KitProps<
 
 export function CollapseFace(rawProps: CollapseFaceProps) {
   const props = useKitProps(rawProps)
-  const collapseStatus = useContext(CollapseContext)
+  const status = useContext(CollapseContext)
   return (
     <Piv<'summary'> as={(parsedPivProps) => <summary {...parsedPivProps} />} shadowProps={props}>
-      {shrinkFn(props.children, [collapseStatus])}
+      {shrinkFn(props.children, [status])}
     </Piv>
   )
 }
@@ -75,8 +87,8 @@ type CollapseContentProps = KitProps<{
 
 export function CollapseContent(rawProps: CollapseContentProps) {
   const props = useKitProps(rawProps)
-  const collapseStatus = useContext(CollapseContext)
-  return <Piv shadowProps={props}>{shrinkFn(props.children, [collapseStatus])}</Piv>
+  const status = useContext(CollapseContext)
+  return <Piv shadowProps={props}>{shrinkFn(props.children, [status])}</Piv>
 }
 
 Collapse.Face = CollapseFace

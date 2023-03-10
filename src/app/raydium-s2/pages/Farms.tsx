@@ -27,10 +27,10 @@ export function FarmPanel() {
           '> :nth-child(2n)': { background: tailwindPaletteColors.gray50 }
         }}
       >
-        <For each={farmStore.allFarmJsonInfos}>
+        <For each={farmStore.allFarmJsonInfos.slice(0, 8)}>
           {(info) => (
-            <Collapse>
-              <Collapse.Face>
+            <Collapse onlyContent>
+              <Collapse.Content>
                 {(status) => (
                   <Piv
                     icss={{
@@ -41,16 +41,18 @@ export function FarmPanel() {
                       ':nth-child(2n)': { background: '#8080802e' }
                     }}
                   >
-                    <Piv>{status.isOpen ? 'open':'closed'}</Piv>
+                    <Piv>{status.isOpen ? 'open' : 'closed'}</Piv>
                     <Piv>{info.symbol}</Piv>
                     <Piv>{info.baseMint}</Piv>
-                    <Show when={!isWidthSmall()}>{/* <Piv>{info.version}</Piv> */}</Show>
+                    <Show when={!isWidthSmall()}>
+                      <Piv>{info.version}</Piv>
+                    </Show>
                   </Piv>
                 )}
-              </Collapse.Face>
-              <Collapse.Content>
-                <Piv>{info.symbol} farm's detail here</Piv>
               </Collapse.Content>
+              {/* <Collapse.Content>
+                <Piv>{info.symbol} farm's detail here</Piv>
+              </Collapse.Content> */}
             </Collapse>
           )}
         </For>
