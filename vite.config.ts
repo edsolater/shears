@@ -3,15 +3,15 @@
 
 import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
-import path from 'path'
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  plugins: [solidPlugin()],
+  plugins: [solidPlugin(), VitePWA({ registerType: 'autoUpdate' })],
   server: {
     port: 3000
   },
   resolve: {
-    conditions: ['development', 'browser'],
+    conditions: ['development', 'browser']
   },
   define: {
     'process.env': {
