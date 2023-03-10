@@ -3,12 +3,21 @@
 
 import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
-import tsconfigPaths from 'vite-tsconfig-paths'
+import path from 'path'
 
 export default defineConfig({
-  plugins: [solidPlugin(), tsconfigPaths()],
+  plugins: [solidPlugin()],
   server: {
     port: 3000
+  },
+  resolve: {
+    conditions: ['development', 'browser'],
+    alias: {
+      '@edsolater/piv': path.resolve(__dirname, './src/packages/piv'),
+      '@edsolater/pivkit': path.resolve(__dirname, './src/packages/pivkit'),
+      '@edsolater/jfetch': path.resolve(__dirname, './src/packages/jFetch'),
+      '@edsolater/domkit': path.resolve(__dirname, './src/packages/domkit')
+    }
   },
   define: {
     'process.env': {
@@ -29,8 +38,5 @@ export default defineConfig({
   },
   build: {
     target: 'esnext'
-  },
-  resolve: {
-    conditions: ['development', 'browser']
   }
 })
