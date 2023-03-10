@@ -1,6 +1,6 @@
 import { Piv } from '@edsolater/piv'
-import { Box, Image, Text } from '@edsolater/pivkit'
 import { Show } from 'solid-js'
+import { Box, Image, Text } from '../../../packages/pivkit'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
 

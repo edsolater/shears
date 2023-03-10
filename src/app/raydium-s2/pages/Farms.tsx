@@ -1,7 +1,6 @@
 import { Piv } from '@edsolater/piv'
-import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
-import { cssColors } from '../../../packages/pivkit/styles/cssColors'
+import { createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { NavBar } from '../components/NavBar'
 import { useFarmStore } from '../stores/farms/store'

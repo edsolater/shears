@@ -12,12 +12,6 @@ export default defineConfig({
   },
   resolve: {
     conditions: ['development', 'browser'],
-    alias: {
-      '@edsolater/piv': path.resolve(__dirname, './src/packages/piv'),
-      '@edsolater/pivkit': path.resolve(__dirname, './src/packages/pivkit'),
-      '@edsolater/jfetch': path.resolve(__dirname, './src/packages/jFetch'),
-      '@edsolater/domkit': path.resolve(__dirname, './src/packages/domkit')
-    }
   },
   define: {
     'process.env': {

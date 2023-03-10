@@ -9,12 +9,6 @@
     "esModuleInterop": true,
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
-    "paths": {
-      "@edsolater/piv": ["./src/packages/piv/index.ts"],
-      "@edsolater/pivkit": ["./src/packages/pivkit/index.ts"],
-      "@edsolater/domkit": ["./src/packages/domkit/index.ts"],
-      "@edsolater/jfetch": ["./src/packages/jFetch/index.ts"]
-    },
     "types": ["vite/client", "@testing-library/jest-dom"]
   }
 }

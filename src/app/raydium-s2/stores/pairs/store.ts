@@ -1,4 +1,4 @@
-import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
+import { createGlobalStore, createStoreDefaultState } from '../../../../packages/pivkit'
 import { initPairJson } from './initAllPairs'
 import { JsonPairItemInfo } from './type'
 

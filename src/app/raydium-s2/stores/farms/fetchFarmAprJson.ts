@@ -1,4 +1,4 @@
-import { jFetch } from '@edsolater/jfetch'
+import { jFetch } from '../../../../packages/jFetch'
 import { FarmPoolAprJsonInfo } from './type'
 
 export async function fetchFarmAprJsonFile(options: {

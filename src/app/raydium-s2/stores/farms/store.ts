@@ -1,4 +1,4 @@
-import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
+import { createStoreDefaultState, createGlobalStore } from '../../../../packages/pivkit'
 import { initFarmJson, initFarmSDK } from './initAllFarms'
 import { FarmPoolJsonInfo } from './type'
 

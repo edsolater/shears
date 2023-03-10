@@ -1,4 +1,4 @@
-import { createOnFirstAccessCallback, createOnStoreInitCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback, createOnStoreInitCallback } from '../../../../packages/pivkit'
 import { TokenStore } from './store'
 import { getTokenJsonInfo } from './mainThread'
 

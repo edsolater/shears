@@ -1,7 +1,10 @@
 import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
-import { compressICSSToObj, CRef, ICSS, KitProps, mergeProps, Piv, useKitProps } from '@edsolater/piv'
-import { children, createMemo, JSX } from 'solid-js'
-import { Nullable } from 'vitest'
+import { createMemo, JSX } from 'solid-js'
+import { mergeProps } from '../../piv'
+import { KitProps, useKitProps } from '../../piv/createKit'
+import { Piv } from '../../piv/Piv'
+import { CRef } from '../../piv/types/piv'
+import { ICSS, compressICSSToObj } from '../../piv/utils/icss'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { useStatusRef } from '../hooks/useStatusRef'
@@ -186,8 +189,6 @@ export function Button(rawProps: ButtonProps) {
     </Piv>
   )
 }
-
-
 
 /**
  * @todo TEMP, currently force it, should use NPM css color utils

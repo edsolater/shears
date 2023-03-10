@@ -1,5 +1,5 @@
 import { assert } from '@edsolater/fnkit'
-import { createGlobalStore, createStoreDefaultState } from '@edsolater/pivkit'
+import { createGlobalStore, createStoreDefaultState } from '../../../../packages/pivkit'
 import toPubString from '../common/utils/pub'
 import { connectWallet } from './connectWallet'
 import { disconnectWallet } from './disconnectWallet'

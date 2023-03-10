@@ -1,10 +1,9 @@
 import { AnyFn } from '@edsolater/fnkit'
-import { Icon, IconProps, RowItem, RowItemProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import copyToClipboard from '../../../packages/domkit/copyToClipboard'
 import { KitProps, useKitProps } from '../../../packages/piv/createKit'
-import { Piv } from '../../../packages/piv/Piv'
 import { PivProps } from '../../../packages/piv/types/piv'
+import { IconProps, RowItemProps } from '../../../packages/pivkit'
 import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
 
 type AddressItemProps = KitProps<

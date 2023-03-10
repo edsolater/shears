@@ -1,4 +1,4 @@
-import { jFetch } from '@edsolater/jfetch'
+import { jFetch } from '../../../../packages/jFetch'
 import { JsonPairItemInfo } from './type'
 
 export async function fetchPairJsonInfo(options: { url: string }) {

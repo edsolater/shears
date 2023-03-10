@@ -1,4 +1,4 @@
-import { createOnStoreInitCallback } from '@edsolater/pivkit'
+import { createOnStoreInitCallback } from '../../../../packages/pivkit'
 import { getFarmJsonFromWorker, getFarmSDKInfosFromWorker } from './mainThread'
 import { FarmsStore } from './store'
 

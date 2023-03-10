@@ -1,6 +1,6 @@
-import { Piv, signalize } from '@edsolater/piv'
-import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
+import { Piv } from '../../../packages/piv'
+import { createRef, useElementSize } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { usePairStore } from '../stores/pairs/store'
 

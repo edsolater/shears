@@ -1,4 +1,4 @@
-import { createOnStoreInitCallback } from '@edsolater/pivkit'
+import { createOnStoreInitCallback } from '../../../../packages/pivkit'
 import { getPairJson } from './mainThread'
 import { PairsStore } from './store'
 

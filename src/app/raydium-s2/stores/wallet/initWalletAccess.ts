@@ -1,4 +1,4 @@
-import { createOnFirstAccessCallback, createOnStoreInitCallback } from '@edsolater/pivkit'
+import { createOnFirstAccessCallback, createOnStoreInitCallback } from '../../../../packages/pivkit'
 import { autoConnectWallet } from './autoConnectWallet'
 import { WalletStore } from './store'
 

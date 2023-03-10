@@ -1,4 +1,4 @@
-import { jFetch } from '@edsolater/jfetch'
+import { jFetch } from '../../../../packages/jFetch'
 import { RaydiumTokenListJsonFile, TokenMessageData } from './type'
 
 /**

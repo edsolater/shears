@@ -9,7 +9,7 @@ export async function autoConnectWallet(cbs?: {
   onAfterInit?(): void
 }) {
   cbs?.onBeforeInit?.()
-  const phantomWallet = getWalletAdapter('phantom')
+  const phantomWallet = getWalletAdapter('Phantom')
   if (!phantomWallet) {
     throw new Error('Phantom wallet not found')
   }

@@ -1,4 +1,4 @@
-import { KitProps, Piv, useKitProps } from '@edsolater/piv'
+import { KitProps, Piv, useKitProps } from "../../piv"
 
 export type IconProps = KitProps<{
   name?: string

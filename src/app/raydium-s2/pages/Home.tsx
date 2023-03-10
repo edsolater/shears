@@ -1,13 +1,11 @@
 import { Piv } from '@edsolater/piv'
-import { Box, Button } from '@edsolater/pivkit'
-import { useNavigate } from '@solidjs/router'
-import { JSXElement } from 'solid-js'
-import { usePairStore } from '../stores/pairs/store'
-import { useTokenStore } from '../stores/tokens/store'
-import { useWalletStore } from '../stores/wallet/store'
+import { Box } from '../../../packages/pivkit'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'
 import { routePath } from '../routes/routes'
+import { usePairStore } from '../stores/pairs/store'
+import { useTokenStore } from '../stores/tokens/store'
+import { useWalletStore } from '../stores/wallet/store'
 
 export function Home() {
   const pairStore = usePairStore()
