@@ -1,6 +1,8 @@
 import { Piv } from '@edsolater/piv'
 import { createRef, useElementSize } from '@edsolater/pivkit'
 import { createMemo, For, Show } from 'solid-js'
+import { cssColors } from '../../../packages/pivkit/styles/cssColors'
+import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { NavBar } from '../components/NavBar'
 import { useFarmStore } from '../stores/farms/store'
 
@@ -23,7 +25,8 @@ export function FarmPanel() {
           borderRadius: 4,
           display: 'flex',
           flexDirection: 'column',
-          gap: 4
+          gap: 2,
+          '> :nth-child(2n)': { background: tailwindPaletteColors.gray50 }
         }}
       >
         <For each={farmStore.allFarmJsonInfos}>
