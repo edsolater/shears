@@ -2,6 +2,8 @@ import { createGlobalStore, createStoreDefaultState } from '../../../../packages
 import { initAllTokens } from './initAllTokens'
 import { Token } from './type'
 
+// 💡 maybe atom-like not store will be easier to compose
+
 export type TokenStore = {
   tokenListState: 'before-init' | 'loaded'
   isTokenLoading: boolean
@@ -21,6 +23,6 @@ export const [useTokenStore, rawTokenStore] = createGlobalStore<TokenStore>(defa
 /**
  * @todo should link to a proxy that may return when token is aviliable in future
  */
-export function getToken(mint: string) {
-  return rawTokenStore.allTokens.get(mint)
+export function getToken(mint: string | undefined) {
+  return rawTokenStore.allTokens.get(mint ?? '')
 }

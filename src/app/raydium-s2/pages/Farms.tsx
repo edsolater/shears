@@ -1,10 +1,14 @@
 import { Piv } from '../../../packages/piv'
 import { createMemo, For, Show } from 'solid-js'
-import { Collapse, createRef, Image, useElementSize } from '../../../packages/pivkit'
+import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { NavBar } from '../components/NavBar'
 import { useFarmStore } from '../stores/farms/store'
-import { getToken } from '../stores/tokens/store'
+import { FarmPoolJsonInfo } from '../stores/farms/type'
+import { CoinAvatar } from '../components/CoinAvatar'
+
+const icssSmoothBoxShadow =
+  '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export function FarmPanel() {
   const farmStore = useFarmStore()
@@ -21,31 +25,29 @@ export function FarmPanel() {
       <Piv
         ref={setRef}
         icss={{
-          borderRadius: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
+          display: 'grid',
+          paddingInline: 32,
+          gridTemplateColumns: 'repeat(2, minmax(300px, 1fr))',
+          gap: 16,
           '> :nth-child(2n)': { background: tailwindPaletteColors.gray50 }
         }}
       >
-        <For each={farmStore.allFarmJsonInfos.slice(0, 8)}>
+        <For each={farmStore.allFarmJsonInfos}>
           {(info) => (
             <Collapse onlyContent>
               <Collapse.Content>
                 {(status) => (
                   <Piv
                     icss={{
-                      display: 'inline-grid',
-                      gridTemplateColumns: isWidthSmall() ? '120px' : 'auto 150px 500px',
-                      gap: 32,
-                      paddingBlock: 6,
-                      ':nth-child(2n)': { background: '#8080802e' }
+                      padding: 6,
+                      borderRadius: 4,
+                      boxShadow: icssSmoothBoxShadow
                     }}
                   >
-                    {/* <Piv>{status.isOpen ? 'open' : 'closed'}</Piv> */}
-                    <Image src={getToken(info.baseMint)?.icon} icss={{width: 24, height:24}}/>
-                    <Image src={getToken(info.quoteMint)?.icon} icss={{width: 24, height:24}}/>
+                    <CoinAvatar tokenMint={info.baseMint} />
+                    <CoinAvatar tokenMint={info.quoteMint} />
                     <Piv>{info.symbol}</Piv>
+                    <Piv>{info.category}</Piv>
                     <Show when={status.isOpen}>
                       <Piv>{info.version}</Piv>
                     </Show>
@@ -62,3 +64,5 @@ export function FarmPanel() {
     </Piv>
   )
 }
+
+
