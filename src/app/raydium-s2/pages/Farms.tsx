@@ -17,7 +17,6 @@ export function FarmPanel() {
   return (
     <Piv>
       <NavBar barTitle='Farms' />
-
       <Piv
         ref={setRef}
         icss={{
@@ -32,18 +31,22 @@ export function FarmPanel() {
           {(info) => (
             <Collapse>
               <Collapse.Face>
-                <Piv
-                  icss={{
-                    display: 'inline-grid',
-                    gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                    paddingBlock: 6,
-                    ':nth-child(2n)': { background: '#8080802e' }
-                  }}
-                >
-                  <Piv>{info.symbol}</Piv>
-                  <Piv>{info.baseMint}</Piv>
-                  <Show when={!isWidthSmall()}>{/* <Piv>{info.version}</Piv> */}</Show>
-                </Piv>
+                {(status) => (
+                  <Piv
+                    icss={{
+                      display: 'inline-grid',
+                      gridTemplateColumns: isWidthSmall() ? '120px' : 'auto 150px 500px',
+                      gap: 32,
+                      paddingBlock: 6,
+                      ':nth-child(2n)': { background: '#8080802e' }
+                    }}
+                  >
+                    <Piv>{status.isOpen ? 'open':'closed'}</Piv>
+                    <Piv>{info.symbol}</Piv>
+                    <Piv>{info.baseMint}</Piv>
+                    <Show when={!isWidthSmall()}>{/* <Piv>{info.version}</Piv> */}</Show>
+                  </Piv>
+                )}
               </Collapse.Face>
               <Collapse.Content>
                 <Piv>{info.symbol} farm's detail here</Piv>

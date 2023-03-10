@@ -17,10 +17,10 @@ type CollapseProps = KitProps<
 >
 type CollapseStatus = {
   readonly isOpen: boolean
-  open: () => void
-  close: () => void
-  toggle: () => void
-  set: (toOpen: boolean) => void
+  open(): void
+  close(): void
+  toggle(): void
+  set(toOpen: boolean): void
 }
 
 const CollapseContext = createContext<CollapseStatus>({} as CollapseStatus, { name: 'CollapseStatus' })
@@ -45,11 +45,10 @@ export function Collapse(rawProps: CollapseProps) {
   }
   return (
     <CollapseContext.Provider value={status}>
-      <Piv<'details'> as={(parsedPivProps) => <details {...parsedPivProps} />} {...props} />
+      <Piv<'details'> as={(parsedPivProps) => <details {...parsedPivProps} />} shadowProps={props} onClick={toggle} />
     </CollapseContext.Provider>
   )
 }
-
 
 type CollapseFaceProps = KitProps<
   {
@@ -64,7 +63,7 @@ export function CollapseFace(rawProps: CollapseFaceProps) {
   const props = useKitProps(rawProps)
   const collapseStatus = useContext(CollapseContext)
   return (
-    <Piv<'summary'> as={(parsedPivProps) => <summary {...parsedPivProps} />} {...props}>
+    <Piv<'summary'> as={(parsedPivProps) => <summary {...parsedPivProps} />} shadowProps={props}>
       {shrinkFn(props.children, [collapseStatus])}
     </Piv>
   )
@@ -77,9 +76,8 @@ type CollapseContentProps = KitProps<{
 export function CollapseContent(rawProps: CollapseContentProps) {
   const props = useKitProps(rawProps)
   const collapseStatus = useContext(CollapseContext)
-  return <Piv {...props}>{shrinkFn(props.children, [collapseStatus])}</Piv>
+  return <Piv shadowProps={props}>{shrinkFn(props.children, [collapseStatus])}</Piv>
 }
-
 
 Collapse.Face = CollapseFace
 Collapse.Content = CollapseContent
