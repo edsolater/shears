@@ -8,14 +8,14 @@ export type TextProps = KitProps<{
  * if for layout , don't render important content in Box
  */
 export function Text(rawProps: TextProps) {
-  const [props, pivProps] = useKitProps(rawProps)
+  const props = useKitProps(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv
       icss={{
         display: props.inline ? 'inline-block' : undefined
       }}
-      shadowProps={pivProps}
+      shadowProps={props}
       class={Text.name}
     />
   )

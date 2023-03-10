@@ -10,10 +10,10 @@ export type RowItemProps = KitProps<{
  * if for layout , don't render important content in Box
  */
 export function RowItem(rawProps: RowItemProps) {
-  const [props, pivProps] = useKitProps(rawProps)
+  const props = useKitProps(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (
-    <Piv shadowProps={pivProps} icss={{ display: 'flex', alignItems: 'center' }}>
+    <Piv shadowProps={props} icss={{ display: 'flex', alignItems: 'center' }}>
       {props.prefix}
       <Piv icss={{ flex: 1 }}>{props.children}</Piv>
       {props.suffix}
