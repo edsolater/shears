@@ -16,4 +16,4 @@ export const defaultFarmsStore = createStoreDefaultState<FarmsStore>(() => ({
   allFarmSDKInfos: []
 }))
 
-export const [useFarmStore] = createGlobalStore<FarmsStore>(defaultFarmsStore, { onInit: [initFarmJson, initFarmSDK] })
+export const [useFarmStore] = createGlobalStore<FarmsStore>(defaultFarmsStore, { onInit: [initFarmJson, initFarmSDK], })

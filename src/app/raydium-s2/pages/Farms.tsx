@@ -1,17 +1,16 @@
-import { Piv } from '../../../packages/piv'
 import { createMemo, For, Show } from 'solid-js'
+import { Piv } from '../../../packages/piv'
 import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
-import { NavBar } from '../components/NavBar'
-import { useFarmStore } from '../stores/farms/store'
-import { FarmPoolJsonInfo } from '../stores/farms/type'
 import { CoinAvatar } from '../components/CoinAvatar'
+import { NavBar } from '../components/NavBar'
+import { useFarmJsonAtom } from '../stores/farms/farmJsonAtom'
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export function FarmPanel() {
-  const farmStore = useFarmStore()
+  const farmJsonAtom = useFarmJsonAtom()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -32,7 +31,7 @@ export function FarmPanel() {
           '> :nth-child(2n)': { background: tailwindPaletteColors.gray50 }
         }}
       >
-        <For each={farmStore.allFarmJsonInfos}>
+        <For each={farmJsonAtom.infos}>
           {(info) => (
             <Collapse onlyContent>
               <Collapse.Content>
