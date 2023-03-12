@@ -1,27 +1,26 @@
-import { Button, createToggle } from '../../../packages/pivkit'
 import { createEffect } from 'solid-js'
+import { Button, createToggle } from '../../../packages/pivkit'
+import { useWalletAtom } from '../atoms/wallet/atom'
 import { getWalletAdapter } from '../atoms/wallet/getWalletAdapter'
-import { useWalletStore } from '../atoms/wallet/store'
 
 /** this should be used in ./Navbar.tsx */
 export function WalletWidget() {
+  const walletAtom = useWalletAtom()
+  
   const [isCopied, { delayOff, on }] = createToggle()
 
   createEffect(() => {
     if (isCopied()) delayOff()
   })
 
-  const walletStore = useWalletStore()
 
   return (
     <Button
-      onClick={() =>
-        walletStore.connected ? walletStore.disconnect() : walletStore.connect(getWalletAdapter('Phantom'))
-      }
+      onClick={() => (walletAtom.connected ? walletAtom.disconnect() : walletAtom.connect(getWalletAdapter('Phantom')))}
       // TODO: onHover : change text
       icss={{ width: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
     >
-      {walletStore.connected ? walletStore.owner : 'Connect Wallet'}
+      {walletAtom.connected ? walletAtom.owner : 'Connect Wallet'}
     </Button>
   )
   // const { owner: publicKey, disconnect, connected } = useWallet()
