@@ -1,12 +1,10 @@
 import { Numberish } from '@edsolater/fnkit'
 import { createEffect, createSignal } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
-import { appApiUrls } from '../../stores/common/utils/config'
+import { appApiUrls } from '../../utils/common/config'
 import {
-  FetchRaydiumTokenPriceOptions,
-  Token,
-  TokenPriceWorkerData
-} from '../../types/atoms/type'
+  Token} from '../tokenList/type'
+import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from "./type"
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { TokenListAtom, useTokenListAtom } from '../tokenList/atom'
 

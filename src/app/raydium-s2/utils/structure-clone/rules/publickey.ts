@@ -1,6 +1,6 @@
 import { PublicKey } from '@solana/web3.js'
 import { wrapToLazyObject } from '../../../../../packages/fnkit/wrapToLazyObject'
-import toPubString, { toPub } from '../../../stores/common/utils/pub'
+import toPubString, { toPub } from '../../common/pub'
 import { addTransportRule } from '../addTransportRule'
 import { createEncodedObject } from '../createEncodedObject'
 import { EncodedObject } from '../type'

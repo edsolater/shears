@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
-import { appApiUrls } from '../../stores/common/utils/config'
+import { appApiUrls } from '../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { FetchPairsOptions, JsonPairItemInfo } from './type'
 

@@ -1,5 +1,5 @@
 import { listToJSMap } from '@edsolater/fnkit'
-import { FetchRaydiumTokenPriceOptions } from '../../types/atoms/type'
+import { FetchRaydiumTokenPriceOptions } from "./type"
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { fetchTokenPrices } from './fetchTokenPrices'
 

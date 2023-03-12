@@ -1,6 +1,4 @@
-import { Numberish } from '@edsolater/fnkit'
 
-// -------- Token --------
 export type TokenWorkerData = {
   tokens: Map<string, Token>
   blacklist: string[]
@@ -9,17 +7,6 @@ export type TokenWorkerData = {
 export type FetchRaydiumTokenListOptions = {
   url: string
   force?: boolean
-}
-
-// -------- Token Price --------
-export type TokenPriceWorkerData = {
-  prices: Map<string, Numberish>
-}
-
-/** in fact, it has both raydium price and coingecko price */
-export type FetchRaydiumTokenPriceOptions = {
-  url: string
-  tokens: Map<string, Token>
 }
 
 export interface RaydiumTokenListJsonFile {

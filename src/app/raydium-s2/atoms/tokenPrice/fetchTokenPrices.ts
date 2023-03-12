@@ -1,6 +1,6 @@
 import { map, mapEntry, Numberish, shakeFalsy, shakeNil } from '@edsolater/fnkit';
 import { jFetch } from '../../../../packages/jFetch';
-import { Token } from '../../types/atoms/type';
+import { Token } from '../tokenList/type';
 import { parallelAsyncTasks } from '../../../../packages/fnkit/parallelAsyncTasks';
 import { recordToMap } from '../../../../packages/fnkit/recordToMap';
 

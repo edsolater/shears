@@ -1,7 +1,7 @@
 import { Button, createToggle } from '../../../packages/pivkit'
 import { createEffect } from 'solid-js'
-import { getWalletAdapter } from '../stores/wallet/getWalletAdapter'
-import { useWalletStore } from '../stores/wallet/store'
+import { getWalletAdapter } from '../atoms/wallet/getWalletAdapter'
+import { useWalletStore } from '../atoms/wallet/store'
 
 /** this should be used in ./Navbar.tsx */
 export function WalletWidget() {

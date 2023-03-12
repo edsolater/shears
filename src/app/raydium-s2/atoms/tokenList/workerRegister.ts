@@ -1,6 +1,6 @@
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { fetchTokenJsonFile } from './fetchTokenJson'
-import { FetchRaydiumTokenListOptions } from '../../types/atoms/type'
+import { FetchRaydiumTokenListOptions } from './type'
 
 export function registInWorker() {
   registMessageReceiver<FetchRaydiumTokenListOptions>(
