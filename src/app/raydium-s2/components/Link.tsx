@@ -1,12 +1,18 @@
-import { Piv } from '../../../packages/piv'
 import { useNavigate } from '@solidjs/router'
-import { JSXElement } from 'solid-js'
+import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 
-export function Link(props: { href: string; boxWrapper?: boolean; innerRoute?: boolean; children?: JSXElement }) {
+export type LinkProps = KitProps<{
+  href?: string
+  boxWrapper?: boolean
+  innerRoute?: boolean
+}>
+
+export function Link(rawProps: LinkProps) {
+  const props = useKitProps(rawProps)
   const navigate = useNavigate()
   return (
     <Piv<'a'>
-      icss={{ textDecoration: 'none', transition: '150ms', cursor:'pointer' }}
+      icss={{ textDecoration: 'none', transition: '150ms', cursor: 'pointer' }}
       as={(parsedPivProps) =>
         props.innerRoute ? (
           <span {...parsedPivProps} />
@@ -15,7 +21,7 @@ export function Link(props: { href: string; boxWrapper?: boolean; innerRoute?: b
         )
       }
       shadowProps={props}
-      onClick={() => props.innerRoute && navigate(props.href)}
+      onClick={() => props.innerRoute && props.href && navigate(props.href)}
     />
   )
 }

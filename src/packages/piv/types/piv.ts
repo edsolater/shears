@@ -46,7 +46,7 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
   children?: JSXElement
 
   /** special: every kit baseon <Piv> should support this prop */
-  shadowProps?: MayArray<PivShadowProps<Omit<PivProps<any>, 'children'>>>
+  shadowProps?: MayArray<PivShadowProps<PivProps<any>>>
 
   /** special: every kit baseon <Piv> should support this prop */
   plugin?: MayArray<PivPlugin<any>>
