@@ -1,7 +1,7 @@
 import { createEffect, createSignal } from 'solid-js'
 import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { appRpcEndpointUrl } from '../stores/common/utils/config'
-import { FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from '../stores/farms/type'
+import { FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from './farmJsonUtils/type'
 import { onWalletPropertyChange } from '../stores/wallet/store'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../utils/webworker/mainThread_receiver'
 
