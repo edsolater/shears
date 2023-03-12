@@ -2,7 +2,7 @@
 import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
 import { registInWorker as pairRegist } from '../../stores/pairs/webworker'
-import { registInWorker as tokenRegist } from '../../stores/tokens/webworker'
+import { registInWorker as tokenRegist } from '../../atoms/tokenListUtils/webworkerRegister'
 import { registInWorker as tokenPriceRegist } from '../../atoms/tokenPriceWorkerUtils'
 import { registInWorker as farmRegist } from '../../stores/farms/webworker'
 

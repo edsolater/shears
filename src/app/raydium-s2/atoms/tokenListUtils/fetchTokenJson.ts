@@ -4,13 +4,14 @@ import { RaydiumTokenListJsonFile, Token, TokenWorkerData } from '../../types/at
 /**
  * used in webworker
  */
-export function fetchTokenJsonFile(options: { url: string }) {
-  return jFetch<RaydiumTokenListJsonFile>(options.url, {
+export async function fetchTokenJsonFile(options: { url: string }) {
+  const res = await jFetch<RaydiumTokenListJsonFile>(options.url, {
     cacheFreshTime: 5 * 60 * 1000
   })
+  return res && handleRaydiumTokenJsonFile(res)
 }
 
-export function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerData {
+function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerData {
   const tokens = [
     ...((res.official.map((t) => [t.mint, { ...t, is: 'raydium-official' }]) ?? []) as [string, Token][]),
     ...((res.unOfficial.map((t) => [t.mint, { ...t, is: 'raydium-unofficial' }]) ?? []) as [string, Token][]),
