@@ -1,5 +1,5 @@
-import { jFetch } from '../../../../packages/jFetch'
-import { JsonPairItemInfo } from './type'
+import { jFetch } from '../../../../../packages/jFetch'
+import { JsonPairItemInfo } from '../type'
 
 export async function fetchPairJsonInfo(options: { url: string }) {
   const pairJsonInfo = await jFetch<JsonPairItemInfo[]>(options.url, {

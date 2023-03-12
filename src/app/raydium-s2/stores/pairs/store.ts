@@ -1,51 +1,38 @@
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal, Setter } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
+import { loadData } from './methods/loadPairs'
 import { FetchPairsOptions, JsonPairItemInfo } from './type'
 
-export const usePairsStore = createCachedGlobalHook(() => {
+export type PairsStore = {
+  // for extract method
+  $setters: {
+    setIsLoading: Setter<boolean>
+    setPairsInfos: Setter<JsonPairItemInfo[]>
+  }
+  readonly infos: JsonPairItemInfo[]
+  readonly isLoading: boolean
+  refetch(): void
+}
+
+export const usePairsStore = createCachedGlobalHook((): PairsStore => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [pairsInfos, setPairsInfos] = createSignal<JsonPairItemInfo[]>([])
-  function loadData() {
-    setIsLoading(true)
-    getPairJson((allPairJsonInfos) => {
-      setIsLoading(false)
-      allPairJsonInfos && setPairsInfos(allPairJsonInfos.slice(0,200))
-      // let count = 0
-      // const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
-      // const timeoutId = setInterval(() => {
-      //   const newPairs = clonedAllPairJsonInfos?.slice(0, 8).map((i) => ({ ...i, name: i.name + count }))
-      //   newPairs && setStore('allPairJsonInfos', reconcile(newPairs))
-      //   count++
-      // }, 1000)
-      // return () => clearInterval(timeoutId)
-    })
-  }
-  loadData()
+  createEffect(loadData)
   const store = {
+    $setters: {
+      setIsLoading,
+      setPairsInfos
+    },
     get infos() {
       return pairsInfos()
     },
     get isLoading() {
       return isLoading()
     },
-    refetch() {
-      loadData()
-    }
+    refetch: loadData
   }
   return store
 })
 
-export function getPairJson(cb: WebworkerSubscribeCallback<JsonPairItemInfo[]>) {
-  return subscribeWebWorker<JsonPairItemInfo[], FetchPairsOptions>(
-    {
-      description: 'fetch raydium pairs info',
-      payload: {
-        url: appApiUrls.pairs,
-        force: false
-      }
-    },
-    cb
-  )
-}

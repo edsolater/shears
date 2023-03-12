@@ -1,36 +1,35 @@
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal, Setter } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../utils/common/config'
 import { FetchRaydiumTokenListOptions, Token, TokenWorkerData } from './type'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
+import { loadTokens } from './methods/loadTokens'
 
 export type TokenListStore = {
-  
+  // for extract method
+  $setters: {
+    setIsLoading: Setter<boolean>
+    setAllTokens: Setter<Map<string, Token>>
+  }
   isLoading: boolean
   allTokens: Map<string, Token>
 }
-
 /**
  * token related type is in
  * {@link Token}
  */
 export const useTokenListStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
-  const [allTokens, setAllTokens] = createSignal<Map<string, Token>>(new Map())
+  const [allTokens, setAllTokens] = createSignal<TokenListStore['allTokens']>(new Map())
 
-  // init data
-  function loadData() {
-    setIsLoading(true)
-    getTokenJsonInfo((allTokens) => {
-      setIsLoading(false)
-      allTokens?.tokens && setAllTokens(allTokens.tokens)
-    })
-  }
-
-  loadData()
+  createEffect(loadTokens)
 
   // store
   const store: TokenListStore = {
+    $setters: {
+      setIsLoading,
+      setAllTokens
+    },
     get allTokens() {
       return allTokens()
     },
@@ -41,7 +40,7 @@ export const useTokenListStore = createCachedGlobalHook(() => {
   return store
 })
 
-const getTokenJsonInfo = (cb: WebworkerSubscribeCallback<TokenWorkerData>) =>
+export const getTokenJsonInfo = (cb: WebworkerSubscribeCallback<TokenWorkerData>) =>
   subscribeWebWorker<TokenWorkerData, FetchRaydiumTokenListOptions>(
     {
       description: 'fetch raydium supported tokens',
