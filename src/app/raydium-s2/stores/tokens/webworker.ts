@@ -1,9 +1,9 @@
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { fetchTokenJsonFile, handleRaydiumTokenJsonFile } from './fetchTokenJson'
-import { FetchRaydiumTokenOptions } from './type'
+import { FetchRaydiumTokenListOptions } from '../../types/atoms/type'
 
 export function registInWorker() {
-  registMessageReceiver<FetchRaydiumTokenOptions>(
+  registMessageReceiver<FetchRaydiumTokenListOptions>(
     'fetch raydium supported tokens',
     async ({ payload: options, resolve }) => {
       // TODO: currently only mainnet raydium token list was supported

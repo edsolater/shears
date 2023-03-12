@@ -1,4 +1,3 @@
-import { MayEnum } from '@edsolater/fnkit'
 
 export type WorkerMessage<T = any> = {
   description: string
@@ -10,3 +9,4 @@ export type WorkerDescription =
   | 'fetch raydium pairs info'
   | 'fetch raydium farms info'
   | 'parse raydium farms info sdk list'
+  | 'get raydium token prices'

@@ -1,9 +1,11 @@
 /// <reference lib="webworker" />
-import './polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
 import { registInWorker as pairRegist } from '../../stores/pairs/webworker'
 import { registInWorker as tokenRegist } from '../../stores/tokens/webworker'
+import { registInWorker as tokenPriceRegist } from '../../atoms/tokenPriceWorkerUtils'
 import { registInWorker as farmRegist } from '../../stores/farms/webworker'
+
 import { WorkerDescription, WorkerMessage } from './type'
 import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
@@ -59,5 +61,6 @@ export function registMessageReceiver<D = any>(description: WorkerDescription, o
 }
 
 tokenRegist()
+tokenPriceRegist()
 pairRegist()
 farmRegist()

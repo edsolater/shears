@@ -1,6 +1,6 @@
 import { createGlobalStore, createStoreDefaultState } from '../../../../packages/pivkit'
 import { initAllTokens } from './initAllTokens'
-import { Token } from './type'
+import { Token } from '../../types/atoms/type'
 
 // 💡 maybe atom-like not store will be easier to compose
 
@@ -19,10 +19,3 @@ export const defaultTokenStore = createStoreDefaultState<TokenStore>(() => ({
 export const [useTokenStore, rawTokenStore] = createGlobalStore<TokenStore>(defaultTokenStore, {
   onInit: [initAllTokens]
 })
-
-/**
- * @todo should link to a proxy that may return when token is aviliable in future
- */
-export function getToken(mint: string | undefined) {
-  return rawTokenStore.allTokens.get(mint ?? '')
-}

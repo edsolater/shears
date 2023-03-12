@@ -1,12 +1,13 @@
 import { createEffect, createSignal } from 'solid-js'
 import { createGlobalHook } from '../../../packages/pivkit'
-import { getFarmJsonFromWorker } from '../stores/farms/mainThread'
-import { FarmPoolJsonInfo } from '../stores/farms/type'
+import { appApiUrls } from '../stores/common/utils/config'
+import { FarmPoolJsonInfo, FetchFarmsJsonPayloads } from '../stores/farms/type'
+import { subscribeWebWorker, WebworkerSubscribeCallback } from '../utils/webworker/mainThread_receiver'
 
 export const useFarmJsonAtom = createGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmPoolJsonInfo[]>([])
-  function fetchAndLoad() {
+  function loadData() {
     setIsLoading(true)
     console.log('fetched in farm json Atrom')
     getFarmJsonFromWorker((allFarmJsonInfos) => {
@@ -14,7 +15,7 @@ export const useFarmJsonAtom = createGlobalHook(() => {
       allFarmJsonInfos && setFarmJsonInfos(allFarmJsonInfos)
     })
   }
-  fetchAndLoad()
+  loadData()
   const atom = {
     get infos() {
       return farmJsonInfos()
@@ -23,8 +24,18 @@ export const useFarmJsonAtom = createGlobalHook(() => {
       return isLoading()
     },
     refetch() {
-      fetchAndLoad()
+      loadData()
     }
   }
   return atom
 })
+
+function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJsonInfo[]>) {
+  return subscribeWebWorker<FarmPoolJsonInfo[], FetchFarmsJsonPayloads>(
+    {
+      description: 'fetch raydium farms info',
+      payload: { url: appApiUrls.farmInfo }
+    },
+    cb
+  )
+}

@@ -1,7 +1,7 @@
 import { KitProps, useKitProps } from '../../../packages/piv'
 import { Image, ImageProps } from '../../../packages/pivkit'
-import { getToken } from '../stores/tokens/store'
-import { Token } from '../stores/tokens/type'
+import { getToken } from "../stores/tokens/getToken"
+import { Token } from '../types/atoms/type'
 
 type CoinAvatarProps = KitProps<
   {

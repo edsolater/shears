@@ -13,7 +13,6 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   message: { description: WorkerDescription; payload?: PostOptions },
   callback?: WebworkerSubscribeCallback<ResultData>
 ): { abort(): void } {
-
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
   worker.postMessage(message)
   const messageHandler = (ev: MessageEvent<any>): void => {
@@ -25,6 +24,7 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
       cleanFn = newCleanFn
     }
   }
+  // TODO: this will regist multi time, only need regist one time d
   worker.addEventListener('message', messageHandler)
   return { abort: () => worker.removeEventListener('message', messageHandler) }
 }

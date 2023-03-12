@@ -1,5 +1,5 @@
 import { jFetch } from '../../../../packages/jFetch'
-import { RaydiumTokenListJsonFile, Token, TokenMessageData } from './type'
+import { RaydiumTokenListJsonFile, Token, TokenWorkerData } from '../../types/atoms/type'
 
 /**
  * used in webworker
@@ -10,7 +10,7 @@ export function fetchTokenJsonFile(options: { url: string }) {
   })
 }
 
-export function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenMessageData {
+export function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerData {
   const tokens = [
     ...((res.official.map((t) => [t.mint, { ...t, is: 'raydium-official' }]) ?? []) as [string, Token][]),
     ...((res.unOfficial.map((t) => [t.mint, { ...t, is: 'raydium-unofficial' }]) ?? []) as [string, Token][]),
