@@ -12,24 +12,21 @@ export type WalletStore = {
   $hasInited: boolean
   connected: boolean
   currentWallet?: WalletAdapterInterface
-  wallets: WalletAdapterInterface[]
   owner?: string
   connect(wallet: WalletAdapterInterface): Promise<void>
   disconnect(): Promise<void>
 }
-
 
 /**
  * token related type is in
  * {@link Token}
  */
 
-export const useWalletAtom = createCachedGlobalHook(() => {
+export const useWalletStore = createCachedGlobalHook(() => {
   const [$hasInited, set$hasInited] = createSignal(false)
   const [connected, setConnected] = createSignal(false)
   const [currentWallet, setCurrentWallet] = createSignal<WalletAdapterInterface>()
   const owner = createMemo(() => toPubString(currentWallet()?.adapter.publicKey ?? undefined) || undefined)
-
 
   createEffect(() => {
     autoConnectWallet({
@@ -64,8 +61,8 @@ export const useWalletAtom = createCachedGlobalHook(() => {
       : Promise.resolve()
   }
 
-  // atom
-  const atom: WalletAtom = {
+  // store
+  const store: WalletStore = {
     get $hasInited() {
       return $hasInited()
     },
@@ -81,15 +78,5 @@ export const useWalletAtom = createCachedGlobalHook(() => {
     connect,
     disconnect
   }
-  return atom
+  return store
 })
-
-type WalletAtom = {
-  $hasInited: boolean
-  connected: boolean
-  currentWallet?: WalletAdapterInterface
-  owner?: string
-  connect(wallet: WalletAdapterInterface): Promise<void>
-  disconnect(): Promise<void>
-}
-

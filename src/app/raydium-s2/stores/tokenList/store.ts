@@ -10,7 +10,7 @@ import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webw
  * {@link Token} 
  */
 
-export const useTokenListAtom = createCachedGlobalHook(() => {
+export const useTokenListStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [allTokens, setAllTokens] = createSignal<Map<string, Token>>(new Map())
 
@@ -25,8 +25,8 @@ export const useTokenListAtom = createCachedGlobalHook(() => {
 
   loadData()
 
-  // atom
-  const atom: TokenListAtom = {
+  // store
+  const store: TokenListStore = {
     get allTokens() {
       return allTokens()
     },
@@ -34,10 +34,10 @@ export const useTokenListAtom = createCachedGlobalHook(() => {
       return isLoading()
     }
   }
-  return atom
+  return store
 })
 
-export type TokenListAtom = {
+export type TokenListStore = {
   isLoading: boolean
   allTokens: Map<string, Token>
 }

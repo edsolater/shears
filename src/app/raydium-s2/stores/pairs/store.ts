@@ -4,7 +4,7 @@ import { appApiUrls } from '../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { FetchPairsOptions, JsonPairItemInfo } from './type'
 
-export const usePairsAtom = createCachedGlobalHook(() => {
+export const usePairsStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [pairsInfos, setPairsInfos] = createSignal<JsonPairItemInfo[]>([])
   function loadData() {
@@ -23,7 +23,7 @@ export const usePairsAtom = createCachedGlobalHook(() => {
     })
   }
   loadData()
-  const atom = {
+  const store = {
     get infos() {
       return pairsInfos()
     },
@@ -34,7 +34,7 @@ export const usePairsAtom = createCachedGlobalHook(() => {
       loadData()
     }
   }
-  return atom
+  return store
 })
 
 export function getPairJson(cb: WebworkerSubscribeCallback<JsonPairItemInfo[]>) {

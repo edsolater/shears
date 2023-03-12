@@ -6,31 +6,31 @@ import {
   Token} from '../tokenList/type'
 import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from "./type"
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
-import { TokenListAtom, useTokenListAtom } from '../tokenList/atom'
+import { TokenListStore, useTokenListStore } from '../tokenList/store'
 
 /**
  * token related type is in
  * {@link Token}
  */
 
-export const useTokenPriceAtom = createCachedGlobalHook(() => {
+export const useTokenPriceStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [prices, setPrices] = createSignal<Map<string, Numberish>>(new Map())
 
-  const tokenListAtom = useTokenListAtom()
+  const tokenListStore = useTokenListStore()
 
   createEffect(() => {
-    if (tokenListAtom.allTokens.size > 0) {
+    if (tokenListStore.allTokens.size > 0) {
       setIsLoading(true)
-      getTokenPriceInfo(tokenListAtom.allTokens, (workerResult) => {
+      getTokenPriceInfo(tokenListStore.allTokens, (workerResult) => {
         setIsLoading(false)
         workerResult?.prices && setPrices(workerResult.prices)
       })
     }
   })
 
-  // atom
-  const atom: TokenPriceAtom = {
+  // store
+  const store: TokenPriceStore = {
     get prices() {
       return prices()
     },
@@ -38,15 +38,15 @@ export const useTokenPriceAtom = createCachedGlobalHook(() => {
       return isLoading()
     }
   }
-  return atom
+  return store
 })
 
-type TokenPriceAtom = {
+type TokenPriceStore = {
   isLoading: boolean
   prices: Map<string, Numberish>
 }
 
-const getTokenPriceInfo = (tokens: TokenListAtom['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
+const getTokenPriceInfo = (tokens: TokenListStore['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
   subscribeWebWorker<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
     {
       description: 'get raydium token prices',

@@ -1,25 +1,25 @@
 import { Piv } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
-import { usePairsAtom } from '../atoms/pairs/atom'
-import { useTokenListAtom } from '../atoms/tokenList/atom'
-import { useWalletAtom } from '../atoms/wallet/atom'
+import { usePairsStore } from '../stores/pairs/store'
+import { useTokenListStore } from '../stores/tokenList/store'
+import { useWalletStore } from '../stores/wallet/store'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'
 import { routePath } from './routes'
 
 export function Home() {
-  const pairAtom =usePairsAtom()
-  const walletAtom = useWalletAtom()
-  const tokenListAtom = useTokenListAtom()
+  const pairStore =usePairsStore()
+  const walletStore = useWalletStore()
+  const tokenListStore = useTokenListStore()
   return (
     <div>
       <NavBar />
 
       <Box icss={{ margin: 8 }}>
         {/* info */}
-        <Piv>token count: {tokenListAtom.isLoading ? '(loading)' : tokenListAtom.allTokens.size}</Piv>
-        <Piv>current owner: {walletAtom.owner}</Piv>
-        <Piv>pair count: {pairAtom.isLoading ? '(loading)' : pairAtom.infos.length}</Piv>
+        <Piv>token count: {tokenListStore.isLoading ? '(loading)' : tokenListStore.allTokens.size}</Piv>
+        <Piv>current owner: {walletStore.owner}</Piv>
+        <Piv>pair count: {pairStore.isLoading ? '(loading)' : pairStore.infos.length}</Piv>
         <Piv>
           nav:
           <Link innerRoute href={routePath.farms}>

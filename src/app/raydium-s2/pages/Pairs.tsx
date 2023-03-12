@@ -2,10 +2,10 @@ import { createMemo, For, Show } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { createRef, useElementSize } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
-import { usePairsAtom } from '../atoms/pairs/atom'
+import { usePairsStore } from '../stores/pairs/store'
 
 export function PairsPanel() {
-  const pairsAtom = usePairsAtom()
+  const pairsStore = usePairsStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -25,7 +25,7 @@ export function PairsPanel() {
           gap: 4
         }}
       >
-        <For each={pairsAtom.infos}>
+        <For each={pairsStore.infos}>
           {(info) => (
             <Piv
               icss={{

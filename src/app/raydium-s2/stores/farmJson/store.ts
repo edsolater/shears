@@ -4,7 +4,7 @@ import { appApiUrls } from '../../utils/common/config'
 import { FarmPoolJsonInfo, FetchFarmsJsonPayloads } from './type'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 
-export const useFarmJsonAtom = createCachedGlobalHook(() => {
+export const useFarmJsonStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmPoolJsonInfo[]>([])
   function loadData() {
@@ -16,7 +16,7 @@ export const useFarmJsonAtom = createCachedGlobalHook(() => {
     })
   }
   loadData()
-  const atom = {
+  const store = {
     get infos() {
       return farmJsonInfos()
     },
@@ -27,7 +27,7 @@ export const useFarmJsonAtom = createCachedGlobalHook(() => {
       loadData()
     }
   }
-  return atom
+  return store
 })
 
 function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJsonInfo[]>) {

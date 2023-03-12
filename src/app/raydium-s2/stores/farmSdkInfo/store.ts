@@ -3,16 +3,16 @@ import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { appRpcEndpointUrl } from '../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from '../farmJson/type'
-import { useWalletAtom, WalletStore } from '../wallet/atom'
+import { useWalletStore, WalletStore } from '../wallet/store'
 
-export const useFarmSdkInfoAtom = createCachedGlobalHook(() => {
+export const useFarmSdkInfoStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
-  const walletAtom = useWalletAtom()
+  const walletStore = useWalletStore()
   const [farmSdkInfoInfos, setFarmSdkInfoInfos] = createSignal<SdkParsedFarmInfo[]>([])
 
   function loadData() {
     setIsLoading(true)
-    const subscription = getFarmSDKInfosFromWorker(walletAtom.owner, (allFarmSDKInfos) => {
+    const subscription = getFarmSDKInfosFromWorker(walletStore.owner, (allFarmSDKInfos) => {
       setIsLoading(false)
       allFarmSDKInfos && setFarmSdkInfoInfos(allFarmSDKInfos)
     })
@@ -20,7 +20,7 @@ export const useFarmSdkInfoAtom = createCachedGlobalHook(() => {
   }
   createEffect(loadData)
   
-  const atom = {
+  const store = {
     get infos() {
       return farmSdkInfoInfos()
     },
@@ -31,7 +31,7 @@ export const useFarmSdkInfoAtom = createCachedGlobalHook(() => {
       loadData()
     }
   }
-  return atom
+  return store
 })
 
 export function getFarmSDKInfosFromWorker(
