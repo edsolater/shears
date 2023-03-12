@@ -1,5 +1,5 @@
-import toPubString from '../../utils/common/pub'
-import { WalletAdapterInterface } from './type'
+import toPubString from '../../../utils/common/pub';
+import { WalletAdapterInterface } from '../type';
 import { connectWallet } from './connectWallet'
 import { getWalletAdapter } from './getWalletAdapter'
 

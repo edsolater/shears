@@ -4,12 +4,16 @@ import { appApiUrls } from '../../utils/common/config'
 import { FetchRaydiumTokenListOptions, Token, TokenWorkerData } from './type'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 
+export type TokenListStore = {
+  
+  isLoading: boolean
+  allTokens: Map<string, Token>
+}
 
 /**
  * token related type is in
- * {@link Token} 
+ * {@link Token}
  */
-
 export const useTokenListStore = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [allTokens, setAllTokens] = createSignal<Map<string, Token>>(new Map())
@@ -36,11 +40,6 @@ export const useTokenListStore = createCachedGlobalHook(() => {
   }
   return store
 })
-
-export type TokenListStore = {
-  isLoading: boolean
-  allTokens: Map<string, Token>
-}
 
 const getTokenJsonInfo = (cb: WebworkerSubscribeCallback<TokenWorkerData>) =>
   subscribeWebWorker<TokenWorkerData, FetchRaydiumTokenListOptions>(

@@ -1,4 +1,4 @@
-import { useTokenListStore } from './store'
+import { useTokenListStore } from '../store'
 
 /**
  * @todo should link to a proxy that may return when token is aviliable in future

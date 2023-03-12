@@ -1,5 +1,5 @@
-import { jFetch } from '../../../../packages/jFetch'
-import { RaydiumTokenListJsonFile, Token, TokenWorkerData } from './type'
+import { jFetch } from '../../../../../packages/jFetch'
+import { RaydiumTokenListJsonFile, Token, TokenWorkerData } from '../type'
 
 /**
  * used in webworker

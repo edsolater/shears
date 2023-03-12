@@ -1,18 +1,27 @@
-import { assert } from '@edsolater/fnkit'
-import { createEffect, createMemo, createSignal } from 'solid-js'
+import { createEffect, createMemo, createSignal, Setter } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import toPubString from '../../utils/common/pub'
 import { Token } from '../tokenList/type'
-import { autoConnectWallet } from './autoConnectWallet'
-import { connectWallet } from './connectWallet'
-import { disconnectWallet } from './disconnectWallet'
 import { WalletAdapterInterface } from './type'
+import { connect } from './methods/connect'
+import { disconnect } from './methods/disconnect'
+import { initlyConnectPhantom } from './methods/initlyConnectPhantom'
 
 export type WalletStore = {
-  $hasInited: boolean
+  // for extract method
+  $setters: {
+    setHasInited: Setter<boolean>
+    setConnected: Setter<boolean>
+    setCurrentWallet: Setter<WalletAdapterInterface | undefined>
+  }
+
+  // data
+  hasInited: boolean
   connected: boolean
   currentWallet?: WalletAdapterInterface
   owner?: string
+
+  // methods
   connect(wallet: WalletAdapterInterface): Promise<void>
   disconnect(): Promise<void>
 }
@@ -21,50 +30,20 @@ export type WalletStore = {
  * token related type is in
  * {@link Token}
  */
-
 export const useWalletStore = createCachedGlobalHook(() => {
-  const [$hasInited, set$hasInited] = createSignal(false)
+  const [hasInited, setHasInited] = createSignal(false)
   const [connected, setConnected] = createSignal(false)
   const [currentWallet, setCurrentWallet] = createSignal<WalletAdapterInterface>()
-  const owner = createMemo(() => toPubString(currentWallet()?.adapter.publicKey ?? undefined) || undefined)
-
-  createEffect(() => {
-    autoConnectWallet({
-      onLoadSuccess: ({ adapterInterface }) => {
-        set$hasInited(true)
-        setConnected(true)
-        setCurrentWallet(adapterInterface)
-      },
-      onBeforeInit: () => {
-        set$hasInited(false)
-      },
-      onAfterInit: () => {
-        set$hasInited(true)
-      }
-    })
-  })
-
-  async function connect(wallet: WalletAdapterInterface) {
-    return connectWallet(wallet).then(() => {
-      assert(wallet.adapter.publicKey, 'Wallet connected failed')
-      setConnected(true)
-      setCurrentWallet(wallet)
-    })
-  }
-
-  async function disconnect() {
-    return currentWallet()
-      ? disconnectWallet(currentWallet()!).then(() => {
-          setConnected(false)
-          setCurrentWallet(undefined)
-        })
-      : Promise.resolve()
-  }
-
-  // store
+  const owner = createMemo(() => toPubString(currentWallet()?.adapter.publicKey))
+  createEffect(initlyConnectPhantom)
   const store: WalletStore = {
-    get $hasInited() {
-      return $hasInited()
+    $setters: {
+      setHasInited,
+      setConnected,
+      setCurrentWallet
+    },
+    get hasInited() {
+      return hasInited()
     },
     get connected() {
       return connected()
@@ -75,8 +54,8 @@ export const useWalletStore = createCachedGlobalHook(() => {
     get owner() {
       return owner()
     },
-    connect,
-    disconnect
+    connect: connect,
+    disconnect: disconnect
   }
   return store
 })

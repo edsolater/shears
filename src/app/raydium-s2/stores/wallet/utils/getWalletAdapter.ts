@@ -1,5 +1,5 @@
-import { supportedWallets } from './supportedWallets'
-import { WalletsNames } from './type'
+import { supportedWallets } from '../constants/supportedWallets'
+import { WalletsNames } from '../type'
 
 /**
  * util function

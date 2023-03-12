@@ -1,4 +1,4 @@
-import { WalletAdapterInterface } from './type'
+import { WalletAdapterInterface } from '../type'
 
 /** util function
  * @see https://github.dev/solana-labs/wallet-adapter/tree/master/packages/core/base

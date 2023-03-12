@@ -1,12 +1,15 @@
-import { isArray, isObject, isString, map, tryCatch } from '@edsolater/fnkit'
+import { isString, tryCatch } from '@edsolater/fnkit'
 import { PublicKeyish } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
 
 const mintCache = new WeakMap<PublicKey, string>()
 
 //TODO: no token
-export default function toPubString(mint: PublicKeyish | undefined): string {
-  if (!mint) return ''
+export default function toPubString(mint: undefined | null): undefined
+export default function toPubString(mint: PublicKeyish): string
+export default function toPubString(mint: PublicKeyish | undefined | null): string | undefined
+export default function toPubString(mint: PublicKeyish | undefined | null): string | undefined {
+  if (!mint) return undefined
   if (isString(mint)) return mint
   if (mintCache.has(mint)) {
     return mintCache.get(mint)!

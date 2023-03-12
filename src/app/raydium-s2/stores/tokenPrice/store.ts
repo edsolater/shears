@@ -2,11 +2,15 @@ import { Numberish } from '@edsolater/fnkit'
 import { createEffect, createSignal } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../utils/common/config'
-import {
-  Token} from '../tokenList/type'
-import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from "./type"
+import { Token } from '../tokenList/type'
+import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from './type'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { TokenListStore, useTokenListStore } from '../tokenList/store'
+
+export type TokenPriceStore = {
+  isLoading: boolean
+  prices: Map<string, Numberish>
+}
 
 /**
  * token related type is in
@@ -40,11 +44,6 @@ export const useTokenPriceStore = createCachedGlobalHook(() => {
   }
   return store
 })
-
-type TokenPriceStore = {
-  isLoading: boolean
-  prices: Map<string, Numberish>
-}
 
 const getTokenPriceInfo = (tokens: TokenListStore['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
   subscribeWebWorker<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
