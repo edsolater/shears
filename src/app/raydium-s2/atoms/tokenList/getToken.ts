@@ -1,4 +1,4 @@
-import { useTokenListAtom } from '../tokenListAtom'
+import { useTokenListAtom } from './atom'
 
 /**
  * @todo should link to a proxy that may return when token is aviliable in future

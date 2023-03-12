@@ -1,5 +1,5 @@
 import { jFetch } from '../../../../packages/jFetch'
-import { FarmPoolAprJsonInfo } from '../farmJsonUtils/type'
+import { FarmPoolAprJsonInfo } from '../farmJson/type'
 
 export async function fetchFarmAprJsonFile(options: {
   url: string

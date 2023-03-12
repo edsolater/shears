@@ -1,8 +1,8 @@
 import { createEffect, createSignal } from 'solid-js'
-import { createCachedGlobalHook } from '../../../packages/pivkit'
-import { appApiUrls } from '../stores/common/utils/config'
-import { FarmPoolJsonInfo, FetchFarmsJsonPayloads } from './farmJsonUtils/type'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../utils/webworker/mainThread_receiver'
+import { createCachedGlobalHook } from '../../../../packages/pivkit'
+import { appApiUrls } from '../../stores/common/utils/config'
+import { FarmPoolJsonInfo, FetchFarmsJsonPayloads } from './type'
+import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 
 export const useFarmJsonAtom = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)

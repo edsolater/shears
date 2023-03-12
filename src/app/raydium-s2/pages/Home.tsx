@@ -1,6 +1,6 @@
 import { Piv } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
-import { useTokenListAtom } from '../atoms/tokenListAtom'
+import { useTokenListAtom } from '../atoms/tokenList/atom'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'
 import { routePath } from '../routes/routes'

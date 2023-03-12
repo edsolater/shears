@@ -4,8 +4,8 @@ import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { CoinAvatar } from '../components/CoinAvatar'
 import { NavBar } from '../components/NavBar'
-import { useFarmJsonAtom } from '../atoms/farmJsonAtom'
-import { useTokenPriceAtom } from '../atoms/tokenPriceAtom'
+import { useFarmJsonAtom } from '../atoms/farmJson/atom'
+import { useTokenPriceAtom } from '../atoms/tokenPrice/atom'
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
