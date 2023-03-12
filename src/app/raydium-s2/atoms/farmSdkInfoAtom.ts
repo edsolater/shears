@@ -1,11 +1,11 @@
 import { createEffect, createSignal } from 'solid-js'
-import { createGlobalHook } from '../../../packages/pivkit'
+import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { appRpcEndpointUrl } from '../stores/common/utils/config'
 import { FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from '../stores/farms/type'
 import { onWalletPropertyChange } from '../stores/wallet/store'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../utils/webworker/mainThread_receiver'
 
-export const useFarmSdkInfoAtom = createGlobalHook(() => {
+export const useFarmSdkInfoAtom = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [farmSdkInfoInfos, setFarmSdkInfoInfos] = createSignal<SdkParsedFarmInfo[]>([])
   function loadData() {

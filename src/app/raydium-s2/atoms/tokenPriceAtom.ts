@@ -1,6 +1,6 @@
 import { Numberish } from '@edsolater/fnkit'
 import { createEffect, createSignal } from 'solid-js'
-import { createGlobalHook } from '../../../packages/pivkit'
+import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { appApiUrls } from '../stores/common/utils/config'
 import {
   FetchRaydiumTokenPriceOptions,
@@ -15,7 +15,7 @@ import { TokenListAtom, useTokenListAtom } from './tokenListAtom'
  * {@link Token}
  */
 
-export const useTokenPriceAtom = createGlobalHook(() => {
+export const useTokenPriceAtom = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [prices, setPrices] = createSignal<Map<string, Numberish>>(new Map())
 

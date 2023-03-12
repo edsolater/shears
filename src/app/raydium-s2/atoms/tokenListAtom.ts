@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js'
-import { createGlobalHook } from '../../../packages/pivkit'
+import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { appApiUrls } from '../stores/common/utils/config'
 import { FetchRaydiumTokenListOptions, Token, TokenWorkerData } from '../types/atoms/type'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../utils/webworker/mainThread_receiver'
@@ -10,7 +10,7 @@ import { subscribeWebWorker, WebworkerSubscribeCallback } from '../utils/webwork
  * {@link Token} 
  */
 
-export const useTokenListAtom = createGlobalHook(() => {
+export const useTokenListAtom = createCachedGlobalHook(() => {
   const [isLoading, setIsLoading] = createSignal(false)
   const [allTokens, setAllTokens] = createSignal<Map<string, Token>>(new Map())
 

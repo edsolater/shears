@@ -1,4 +1,4 @@
-import { createGlobalHook } from '../createGlobalHook'
+import { createCachedGlobalHook } from '../createGlobalHook'
 import { createProxiedStore, CreateProxiedStoreCallbacks } from './core'
 import { DefaultStoreValue, OnChangeCallback, Store } from './type'
 
@@ -11,6 +11,6 @@ export function createGlobalStore<T extends Record<string, any>>(
   onPropertyChange: <K extends keyof T>(key: K, cb: OnChangeCallback<T, K>) => { abort(): void }
 ] {
   const [proxiedStore, rawStore, onPropertyChange] = createProxiedStore(defaultValue, options)
-  const useStore = createGlobalHook(() => proxiedStore)
+  const useStore = createCachedGlobalHook(() => proxiedStore)
   return [useStore, rawStore, onPropertyChange]
 }
