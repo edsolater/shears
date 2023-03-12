@@ -4,14 +4,14 @@ import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { CoinAvatar } from '../components/CoinAvatar'
 import { NavBar } from '../components/NavBar'
-import { useFarmJsonStore } from '../stores/farmJson/store'
+import { useFarmStore } from '../stores/farms/store'
 import { useTokenPriceStore } from '../stores/tokenPrice/store'
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export function FarmPanel() {
-  const farmJsonStore = useFarmJsonStore()
+  const farmStore = useFarmStore()
   const tokenPriceStore = useTokenPriceStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
@@ -20,7 +20,8 @@ export function FarmPanel() {
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
   // createEffect(() => console.log('isFarmJsonsLoading', isFarmJsonsLoading()))
-  createEffect(()=>console.log('pricesdd', tokenPriceStore.prices.size))
+  createEffect(() => console.log('rokenPriceStore prices', tokenPriceStore.prices))
+  createEffect(() => console.log('farmStore sdk', farmStore.farmSdkInfoInfos))
   return (
     <Piv>
       <NavBar barTitle='Farms' />
@@ -34,7 +35,7 @@ export function FarmPanel() {
           '> :nth-child(2n)': { background: tailwindPaletteColors.gray50 }
         }}
       >
-        <For each={farmJsonStore.infos}>
+        <For each={farmStore.farmJsonInfos}>
           {(info) => (
             <Collapse onlyContent>
               <Collapse.Content>
@@ -66,5 +67,3 @@ export function FarmPanel() {
     </Piv>
   )
 }
-
-

@@ -4,7 +4,7 @@ import { jsonInfo2PoolKeys } from '../../utils/sdkTools/jsonInfo2PoolKeys'
 import { getConnection } from '../../utils/common/getConnection'
 import { toPub } from '../../utils/common/pub'
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
-import { fetchFarmJsonInfo } from './fetchFarmJson'
+import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from './type'
 
 const [cachedFarmJsons$, setCachedFarmJsons] = createSubscribable<FarmPoolJsonInfo[]>([])

@@ -1,5 +1,4 @@
 import { UnionCover } from '@edsolater/fnkit'
-import BN from 'bn.js'
 import {
   ApiFarmApr,
   FarmFetchMultipleInfoReturnItem,
@@ -8,7 +7,8 @@ import {
   FarmStateV6,
   SplAccount
 } from '@raydium-io/raydium-sdk'
-import { Connection, PublicKey } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
+import BN from 'bn.js'
 
 export type FetchFarmsJsonPayloads = {
   url: string
