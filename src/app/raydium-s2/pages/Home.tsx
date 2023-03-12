@@ -4,7 +4,7 @@ import { usePairsAtom } from '../atoms/pairs/atom'
 import { useTokenListAtom } from '../atoms/tokenList/atom'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'
-import { routePath } from '../routes/routes'
+import { routePath } from './routes'
 import { useWalletStore } from '../atoms/wallet/store'
 
 export function Home() {
