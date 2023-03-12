@@ -5,7 +5,6 @@ import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindP
 import { CoinAvatar } from '../components/CoinAvatar'
 import { NavBar } from '../components/NavBar'
 import { useFarmJsonAtom } from '../atoms/farmJsonAtom'
-import { useFarmStore } from '../stores/farms/store'
 import { useTokenPriceAtom } from '../atoms/tokenPriceAtom'
 
 const icssSmoothBoxShadow =
@@ -14,7 +13,6 @@ const icssSmoothBoxShadow =
 export function FarmPanel() {
   const farmJsonAtom = useFarmJsonAtom()
   const tokenPriceAtom = useTokenPriceAtom()
-  const farmStore = useFarmStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
