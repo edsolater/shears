@@ -1,18 +1,41 @@
 import { KitProps, useKitProps } from '../../../packages/piv'
 import { Image, ImageProps } from '../../../packages/pivkit'
-import { getToken } from "../stores/tokenList/methods/getToken"
 import { Token } from '../stores/tokenList/type'
 
-type CoinAvatarProps = KitProps<
+export type CoinAvatarProps = KitProps<
   {
-    tokenMint?: string
     token?: Token
+    /** xs: 16px | sm: 20px | smi: 24px | md: 32px | lg: 48px | 2xl: 80px | (default: md) */
+    size?: 'xs' | 'sm' | 'smi' | 'md' | 'lg' | '2xl'
   },
   { extendsProp: ImageProps }
 >
 
 export function CoinAvatar(rawProps: CoinAvatarProps) {
-  const props = useKitProps(rawProps)
-  const coin = () => (props.tokenMint ? getToken(props.tokenMint) : props.token)
-  return <Image shadowProps={props} src={coin()?.icon} alt={coin()?.name} icss={{ width: 24, height: 24 }} />
+  const props = useKitProps(rawProps, { defaultProps: { size: 'md' } })
+
+  return (
+    <Image
+      shadowProps={props}
+      src={props.token?.icon}
+      alt={props.token?.name ?? props.token?.symbol}
+      icss={{
+        '--size':
+          props.size === '2xl'
+            ? '80px'
+            : props.size === 'lg'
+            ? '48px'
+            : props.size === 'md'
+            ? '32px'
+            : props.size === 'smi'
+            ? '24px'
+            : props.size === 'sm'
+            ? '20px'
+            : '16px',
+        width: 'var(--size)',
+        height: 'var(--size)',
+        borderRadius: '50%',
+      }}
+    />
+  )
 }

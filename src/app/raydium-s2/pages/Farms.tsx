@@ -1,10 +1,12 @@
 import { createEffect, createMemo, For, Show } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
+import { Box, Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
 import { CoinAvatar } from '../components/CoinAvatar'
+import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmStore } from '../stores/farms/store'
+import { useTokenListStore } from '../stores/tokenList/store'
 import { useTokenPriceStore } from '../stores/tokenPrice/store'
 
 const icssSmoothBoxShadow =
@@ -13,6 +15,7 @@ const icssSmoothBoxShadow =
 export function FarmPanel() {
   const farmStore = useFarmStore()
   const tokenPriceStore = useTokenPriceStore()
+  const tokenListStore = useTokenListStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -28,7 +31,7 @@ export function FarmPanel() {
       <Piv
         ref={setRef}
         icss={{
-          '--item-width':'300px',
+          '--item-width': '300px',
           display: 'grid',
           paddingInline: 16,
           gridTemplateColumns: 'repeat(auto-fit, minmax(var(--item-width), 1fr))',
@@ -48,9 +51,13 @@ export function FarmPanel() {
                       boxShadow: icssSmoothBoxShadow
                     }}
                   >
-                    <CoinAvatar tokenMint={info.baseMint} />
-                    <CoinAvatar tokenMint={info.quoteMint} />
-                    <Piv>{info.symbol}</Piv>
+                    <Box icss={{ display: 'flex', alignItems:'center', gap:8 }}>
+                      <CoinAvatarPair
+                        token1={tokenListStore.getToken(info.baseMint)}
+                        token2={tokenListStore.getToken(info.quoteMint)}
+                      />
+                      <Piv>{info.symbol}</Piv>
+                    </Box>
                     <Piv>{info.category}</Piv>
                     <Show when={status.isOpen}>
                       <Piv>{info.version}</Piv>

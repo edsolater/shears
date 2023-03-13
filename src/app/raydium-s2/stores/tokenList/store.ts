@@ -4,6 +4,7 @@ import { appApiUrls } from '../../utils/common/config'
 import { FetchRaydiumTokenListOptions, Token, TokenWorkerData } from './type'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { loadTokens } from './methods/loadTokens'
+import { getToken } from './methods/getToken'
 
 export type TokenListStore = {
   // for extract method
@@ -13,6 +14,7 @@ export type TokenListStore = {
   }
   isLoading: boolean
   allTokens: Map<string, Token>
+  getToken(mint: string | undefined): Token | undefined
 }
 /**
  * token related type is in
@@ -33,6 +35,7 @@ export const useTokenListStore = createCachedGlobalHook(() => {
     get allTokens() {
       return allTokens()
     },
+    getToken,
     get isLoading() {
       return isLoading()
     }
