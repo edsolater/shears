@@ -28,9 +28,10 @@ export function FarmPanel() {
       <Piv
         ref={setRef}
         icss={{
+          '--item-width':'300px',
           display: 'grid',
-          paddingInline: 32,
-          gridTemplateColumns: 'repeat(2, minmax(300px, 1fr))',
+          paddingInline: 16,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(var(--item-width), 1fr))',
           gap: 16,
           '> :nth-child(2n)': { background: tailwindPaletteColors.gray50 }
         }}
