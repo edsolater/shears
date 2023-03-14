@@ -26,12 +26,10 @@ export function CoinAvatar(rawProps: CoinAvatarProps) {
             : props.size === 'lg'
             ? '48px'
             : props.size === 'md'
-            ? '32px'
-            : props.size === 'smi'
             ? '24px'
             : props.size === 'sm'
-            ? '20px'
-            : '16px',
+            ? '18px'
+            : '12px',
         width: 'var(--size)',
         height: 'var(--size)',
         borderRadius: '50%',

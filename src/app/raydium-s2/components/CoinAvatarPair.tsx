@@ -17,7 +17,7 @@ export function CoinAvatarPair(rawProps: CoinAvatarPairProps) {
   return (
     <Box shadowProps={props} icss={{ display: 'flex' }}>
       <CoinAvatar token={props.token1} size={props.size} shadowProps={props.token1Props} icss={{ zIndex: 1 }} />
-      <CoinAvatar token={props.token2} size={props.size} shadowProps={props.token2Props} icss={{ marginLeft: -8 }} />
+      <CoinAvatar token={props.token2} size={props.size} shadowProps={props.token2Props} icss={{ marginLeft: '-18%' }} />
     </Box>
   )
 }
