@@ -1,13 +1,12 @@
-import { createEffect, createMemo, For, Show } from 'solid-js'
+import { createEffect, Show } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Box, Button, Collapse, createRef, useElementSize } from '../../../packages/pivkit'
-import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
+import { Box, Collapse, List } from '../../../packages/pivkit'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
+import { useFarmPageStates } from '../states/farmState'
 import { useFarmStore } from '../stores/farms/store'
 import { useTokenListStore } from '../stores/tokenList/store'
 import { useTokenPriceStore } from '../stores/tokenPrice/store'
-import { useFarmPageStates } from '../states/farmState'
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
@@ -23,115 +22,60 @@ export function FarmPage() {
   return (
     <Piv>
       <NavBar barTitle='Farms' />
-      {/* TODO: should experiment how to move smoothly */}
-      {farmPageStates.detailViewFarmId ? (
-        <div>
-          <Button
-            onClick={() => {
-              farmPageStates.setDetailViewFarmId(undefined)
-            }}
-            icss={{ marginBottom: '24px' }}
-          >
-            back to list
-          </Button>
-          <FarmDetailPanel />
-        </div>
-      ) : (
-        <FarmItems />
-      )}
+      <FarmList />
     </Piv>
   )
 }
 
-function FarmItems() {
+function FarmList() {
   const farmStore = useFarmStore()
   const farmPageStates = useFarmPageStates()
   const tokenPriceStore = useTokenPriceStore()
   const tokenListStore = useTokenListStore()
-  // -------- determine size  --------
-  const [ref, setRef] = createRef<HTMLElement>()
-  const { width, height } = useElementSize(ref)
-  const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
-  const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
+
+  console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
 
   return (
-    <Piv
-      ref={setRef}
-      icss={{
-        '--item-width': '300px',
-        display: 'grid',
-        paddingInline: 16,
-        gridTemplateColumns: 'repeat(auto-fit, minmax(var(--item-width), 1fr))',
-        gap: 16,
-        '> :nth-child(2n)': {
-          background: tailwindPaletteColors.gray50
-        }
-      }}
-    >
-      <For each={farmStore.farmJsonInfos}>
-        {(info) => (
-          <Collapse onlyContent>
-            <Collapse.Content>
-              {(status) => (
-                <Piv
+    <List items={ farmStore.farmJsonInfos}>
+      {(info) => (
+        <Collapse onlyContent>
+          <Collapse.Content>
+            {(status) => (
+              <Piv
+                icss={{
+                  padding: 6,
+                  borderRadius: 4,
+                  boxShadow: icssSmoothBoxShadow
+                }}
+                onClick={() => {
+                  farmPageStates.setDetailViewFarmId(info.id)
+                }}
+              >
+                <Box
                   icss={{
-                    padding: 6,
-                    borderRadius: 4,
-                    boxShadow: icssSmoothBoxShadow
-                  }}
-                  onClick={() => {
-                    farmPageStates.setDetailViewFarmId(info.id)
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
                   }}
                 >
-                  <Box
-                    icss={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8
-                    }}
-                  >
-                    <CoinAvatarPair
-                      token1={tokenListStore.getToken(info.baseMint)}
-                      token2={tokenListStore.getToken(info.quoteMint)}
-                    />
-                    <Piv>{info.symbol}</Piv>
-                  </Box>
-                  <Piv>{info.category}</Piv>
-                  <Show when={status.isOpen}>
-                    <Piv>{info.version}</Piv>
-                  </Show>
-                </Piv>
-              )}
-            </Collapse.Content>
-            {/* <Collapse.Content>
-         <Piv>{info.symbol} farm's detail here</Piv>
-        </Collapse.Content> */}
-          </Collapse>
-        )}
-      </For>
-    </Piv>
-  )
-}
-
-function FarmDetailPanel() {
-  const farmStore = useFarmStore()
-  const farmPageStates = useFarmPageStates()
-  const tokenPriceStore = useTokenPriceStore()
-  const tokenListStore = useTokenListStore()
-  // -------- determine size  --------
-  const [ref, setRef] = createRef<HTMLElement>()
-  const { width, height } = useElementSize(ref)
-  const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
-  const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
-
-  return (
-    <Piv
-      ref={setRef}
-      icss={{
-        background: tailwindPaletteColors.gray50
-      }}
-    >
-      show details (farm id: {farmPageStates.detailViewFarmId})
-    </Piv>
+                  <CoinAvatarPair
+                    token1={tokenListStore.getToken(info.baseMint)}
+                    token2={tokenListStore.getToken(info.quoteMint)}
+                  />
+                  <Piv>{info.symbol}</Piv>
+                </Box>
+                <Piv>{info.category}</Piv>
+                <Show when={status.isOpen}>
+                  <Piv>{info.version}</Piv>
+                </Show>
+              </Piv>
+            )}
+          </Collapse.Content>
+          {/* <Collapse.Content>
+     <Piv>{info.symbol} farm's detail here</Piv>
+    </Collapse.Content> */}
+        </Collapse>
+      )}
+    </List>
   )
 }
