@@ -2,7 +2,7 @@ import { appRpcEndpointUrl } from '../../../utils/common/config'
 import { WebworkerSubscribeCallback, subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
 import { WalletStore } from '../../wallet/store'
 import { useFarmStore } from '../store'
-import { SdkParsedFarmInfo, FetchFarmsSDKInfoPayloads } from '../type'
+import { FarmSDKInfo, FetchFarmsSDKInfoPayloads } from '../type'
 
 export function loadFarmSDKInfos(owner: string | undefined): { abort?(): void } {
   useFarmStore().$setters.setIsFarmSDKInfosLoading(true)
@@ -13,9 +13,9 @@ export function loadFarmSDKInfos(owner: string | undefined): { abort?(): void } 
   return { abort: subscription?.abort }
 }
 
-function getFarmSDKInfosFromWorker(owner: WalletStore['owner'], cb: WebworkerSubscribeCallback<SdkParsedFarmInfo[]>) {
+function getFarmSDKInfosFromWorker(owner: WalletStore['owner'], cb: WebworkerSubscribeCallback<FarmSDKInfo[]>) {
   if (!owner) return
-  const { abort } = subscribeWebWorker<SdkParsedFarmInfo[], FetchFarmsSDKInfoPayloads>(
+  const { abort } = subscribeWebWorker<FarmSDKInfo[], FetchFarmsSDKInfoPayloads>(
     {
       description: 'parse raydium farms info sdk list',
       payload: { owner: owner, rpcUrl: appRpcEndpointUrl }

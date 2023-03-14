@@ -36,13 +36,7 @@ export function toString(from: Numberish, options?: NumberishOption): string {
     return shakeTailingZero(`${intPart}.${decPart}`)
   }
 }
-/**
- * CAUTION : if original number have decimal part, it will lost
- */
-export function toBigint(n: Numberish): bigint {
-  const { numerator, denominator } = toFraction(n)
-  return numerator / denominator
-}
+
 
 /**
  * CAUTION 1: if original number have very long decimal part, it will lost

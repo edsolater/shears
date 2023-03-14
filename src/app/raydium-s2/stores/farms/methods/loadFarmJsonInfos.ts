@@ -1,7 +1,7 @@
 import { appApiUrls } from '../../../utils/common/config'
 import { WebworkerSubscribeCallback, subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
 import { useFarmStore } from '../store'
-import { FarmPoolJsonInfo, FetchFarmsJsonPayloads } from '../type'
+import { FarmJSONInfo, FetchFarmsJSONPayloads } from '../type'
 
 export function loadFarmJsonInfos() {
   useFarmStore().$setters.setIsFarmJsonLoading(true)
@@ -12,8 +12,8 @@ export function loadFarmJsonInfos() {
   })
 }
 
-function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmPoolJsonInfo[]>) {
-  return subscribeWebWorker<FarmPoolJsonInfo[], FetchFarmsJsonPayloads>(
+function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmJSONInfo[]>) {
+  return subscribeWebWorker<FarmJSONInfo[], FetchFarmsJSONPayloads>(
     {
       description: 'fetch raydium farms info',
       payload: { url: appApiUrls.farmInfo }

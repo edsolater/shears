@@ -1,13 +1,11 @@
+import { getType } from '@edsolater/fnkit'
 import { PublicKey } from '@solana/web3.js'
-import { wrapToLazyObject } from '../../../../../packages/fnkit/wrapToLazyObject'
-import toPubString, { toPub } from '../../common/pub'
+import toPubString from '../../common/pub'
 import { addTransportRule } from '../addTransportRule'
-import { createEncodedObject } from '../createEncodedObject'
-import { EncodedObject } from '../type'
 
 export const addRule = () =>
   addTransportRule({
-    isTargetInstance: (data) => data instanceof PublicKey,
+    isTargetInstance: (data) => data instanceof PublicKey || getType(data) as string === 'PublicKey',
     encodeFn: (rawData: PublicKey) => toPubString(rawData)
 
     // name: 'PublicKey',

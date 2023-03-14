@@ -3,10 +3,12 @@ import { Token } from '../../stores/tokenList/type'
 export type PublicKey = string /* just special in string content */
 
 // plain object for easier structure clone
-export type Percent = Numberish
+export type Percent = Numberish | number
 
 // plain object for easier structure clone
-export type BN = Fraction
+export type BN = Fraction | bigint
+
+export type Price = Fraction
 
 // this structure is not mathematics elegant
 export type Decimal = {

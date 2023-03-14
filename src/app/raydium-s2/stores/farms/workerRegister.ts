@@ -5,12 +5,12 @@ import { getConnection } from '../../utils/common/getConnection'
 import { toPub } from '../../utils/common/pub'
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
-import { FarmPoolJsonInfo, FetchFarmsJsonPayloads, FetchFarmsSDKInfoPayloads, SdkParsedFarmInfo } from './type'
+import { FarmJSONInfo, FetchFarmsJSONPayloads, FetchFarmsSDKInfoPayloads, FarmSDKInfo } from './type'
 
-const [cachedFarmJsons$, setCachedFarmJsons] = createSubscribable<FarmPoolJsonInfo[]>([])
+const [cachedFarmJsons$, setCachedFarmJsons] = createSubscribable<FarmJSONInfo[]>([])
 
 export function registInWorker() {
-  registMessageReceiver<FetchFarmsJsonPayloads>('fetch raydium farms info', ({ payload, resolve }) =>
+  registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ payload, resolve }) =>
     fetchFarmJsonInfo(payload).then((infos) => {
       setCachedFarmJsons(infos ?? [])
       resolve(infos)
@@ -42,13 +42,15 @@ export function registInWorker() {
   )
 }
 
+
+/* TODO: move to `/utils` */
 /** and state info  */
 export async function getSdkParsedFarmInfo(
   options: FarmFetchMultipleInfoParams,
   payload: {
-    jsonInfos: FarmPoolJsonInfo[]
+    jsonInfos: FarmJSONInfo[]
   }
-): Promise<SdkParsedFarmInfo[]> {
+): Promise<FarmSDKInfo[]> {
   console.log('options: ', options)
   const rawInfos = await Farm.fetchMultipleInfoAndUpdate(options)
   console.log('rawInfos: ', rawInfos)
@@ -59,7 +61,7 @@ export async function getSdkParsedFarmInfo(
       ...rawInfos[String(pool.id)],
       fetchedMultiInfo: rawInfos[String(pool.id)],
       jsonInfo: payload.jsonInfos[idx]
-    } as unknown as SdkParsedFarmInfo
+    } as unknown as FarmSDKInfo
   })
   return result
 }

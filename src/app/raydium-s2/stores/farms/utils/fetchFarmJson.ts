@@ -1,7 +1,7 @@
 import { jFetch } from '../../../../../packages/jFetch'
-import { FarmPoolJsonInfo, FarmPoolsJsonFile } from '../type'
+import { FarmJSONInfo, FarmJSONFile } from '../type'
 
-export async function fetchFarmJsonInfo(options: { url: string }): Promise<FarmPoolJsonInfo[] | undefined> {
+export async function fetchFarmJsonInfo(options: { url: string }): Promise<FarmJSONInfo[] | undefined> {
   const result = await fetchFarmJsonFile(options)
   if (!result) return undefined
   return [
@@ -9,9 +9,9 @@ export async function fetchFarmJsonInfo(options: { url: string }): Promise<FarmP
     ...(result.raydium.map((i) => ({ ...i, category: 'raydium' })) ?? []),
     ...(result.fusion.map((i) => ({ ...i, category: 'fusion' })) ?? []),
     ...(result.ecosystem.map((i) => ({ ...i, category: 'ecosystem' })) ?? [])
-  ] as FarmPoolJsonInfo[]
+  ] as FarmJSONInfo[]
 }
 
 function fetchFarmJsonFile(options: { url: string }) {
-  return jFetch<FarmPoolsJsonFile>(options.url, { cacheFreshTime: 5 * 60 * 1000 })
+  return jFetch<FarmJSONFile>(options.url, { cacheFreshTime: 5 * 60 * 1000 })
 }
