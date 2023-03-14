@@ -8,9 +8,9 @@ import { FarmPoolJsonInfo, SdkParsedFarmInfo } from './type'
 export type FarmStore = {
   $setters: {
     setIsFarmJsonLoading: Setter<boolean>
-    setFarmJsonInfos: Setter<FarmPoolJsonInfo[] | undefined>
+    setFarmJsonInfos: Setter<FarmPoolJsonInfo[] | undefined>// should format to JS Map
     setIsFarmSDKInfosLoading: Setter<boolean>
-    setFarmSdkInfoInfos: Setter<SdkParsedFarmInfo[] | undefined>
+    setFarmSdkInfoInfos: Setter<SdkParsedFarmInfo[] | undefined>// should format to JS Map
   }
   readonly farmJsonInfos: FarmPoolJsonInfo[] | undefined
   readonly isFarmJsonLoading: boolean

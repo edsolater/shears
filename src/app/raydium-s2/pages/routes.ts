@@ -1,5 +1,5 @@
 import { RouteDefinition } from '@solidjs/router'
-import { FarmPanel } from './Farms'
+import { FarmPage } from './Farms'
 import { Home } from './Home'
 import { PairsPanel } from './Pairs'
 
@@ -11,5 +11,5 @@ export const routePath = {
 export const routes: RouteDefinition[] = [
   { path: routePath.home, component: Home },
   { path: routePath.pools, component: PairsPanel },
-  { path: routePath.farms, component: FarmPanel }
+  { path: routePath.farms, component: FarmPage }
 ]
