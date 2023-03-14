@@ -75,7 +75,11 @@ export function CollapseFace(rawProps: CollapseFaceProps) {
   const props = useKitProps(rawProps)
   const status = useContext(CollapseContext)
   return (
-    <Piv<'summary'> as={(parsedPivProps) => <summary {...parsedPivProps} />} shadowProps={props}>
+    <Piv<'summary'>
+      as={(parsedPivProps) => <summary {...parsedPivProps} />}
+      shadowProps={props}
+      icss={{ listStyle: 'none' }}
+    >
       {shrinkFn(props.children, [status])}
     </Piv>
   )

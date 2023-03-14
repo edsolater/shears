@@ -7,8 +7,9 @@ import {
   FarmStateV6,
   SplAccount
 } from '@raydium-io/raydium-sdk'
-import { PublicKey } from '@solana/web3.js'
-import BN from 'bn.js'
+import { BN } from '../../utils/dataStructures/BN'
+import { TokenAmount, Percent, PublicKey,  } from '../../utils/dataStructures/type'
+import { Token } from '../tokenList/type'
 
 export type FetchFarmsJsonPayloads = {
   url: string
@@ -102,4 +103,30 @@ interface APIRewardInfo {
   rewardPerSecond: string | number
   rewardSender?: string
   rewardType: 'Standard SPL' | 'Option tokens'
+}
+
+export type HydratedRewardInfo = {
+  userHavedReward: boolean
+  apr: Percent | undefined // farm's rewards apr
+  token: Token | undefined
+  /** only when user have deposited and connected wallet */
+  userPendingReward: TokenAmount | undefined
+  version: 3 /* closed reward */ | 5/* open reward */ | 6/* upcoming reward */
+  rewardVault: PublicKey
+  openTime?: Date // v6
+  endTime?: Date // v6
+
+  isOptionToken?: boolean // v6
+  isRewarding?: boolean // v6
+  isRewardBeforeStart?: boolean // v6
+  isRewardEnded?: boolean // v6
+  isRwardingBeforeEnd72h?: boolean // v6
+
+  rewardPeriodMin?: number // v6 '7-90 days's     7 * 24 * 60 * 60 seconds
+  rewardPeriodMax?: number // v6 '7-90 days's     90 * 24 * 60 * 60 seconds
+  rewardPeriodExtend?: number // v6 'end before 72h's    72 * 60 * 60 seconds
+
+  claimableRewards?: TokenAmount // v6
+  owner?: string // v6
+  perSecond?: string | number // v6
 }

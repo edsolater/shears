@@ -8,8 +8,8 @@ import { EncodedObject } from '../type'
 export const addRule = () =>
   addTransportRule({
     isTargetInstance: (data) => data instanceof PublicKey,
-    encodeFn: (rawData: PublicKey) => createEncodedObject('PublicKey', toPubString(rawData)),
+    encodeFn: (rawData: PublicKey) => toPubString(rawData)
 
-    name: 'PublicKey',
-    decodeFn: (encodedData: EncodedObject<string>): PublicKey => wrapToLazyObject(() => toPub(encodedData._info))
+    // name: 'PublicKey',
+    // decodeFn: (encodedData: EncodedObject<string>): PublicKey => wrapToLazyObject(() => toPub(encodedData._info))
   })

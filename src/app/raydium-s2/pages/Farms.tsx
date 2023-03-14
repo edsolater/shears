@@ -1,6 +1,6 @@
 import { createEffect, Show } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Box, Collapse, List } from '../../../packages/pivkit'
+import { Box, Collapse, CollapseFace, List } from '../../../packages/pivkit'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmPageStates } from '../states/farmState'
@@ -36,21 +36,25 @@ function FarmList() {
   console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
 
   return (
-    <List items={ farmStore.farmJsonInfos}>
-      {(info) => (
-        <Collapse onlyContent>
-          <Collapse.Content>
+    <List items={farmStore.farmJsonInfos}>
+      {(info, idx) => (
+        <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
+          <CollapseFace>
             {(status) => (
-              <Piv
+              <Box
                 icss={{
+                  display: 'grid',
+                  gridTemplateColumns: '.3fr 1fr 1fr 1fr 1fr',
                   padding: 6,
-                  borderRadius: 4,
-                  boxShadow: icssSmoothBoxShadow
+                  borderRadius: 4
                 }}
                 onClick={() => {
                   farmPageStates.setDetailViewFarmId(info.id)
                 }}
               >
+                {/* part 1 */}
+                <Box></Box>
+                {/* part 2 */}
                 <Box
                   icss={{
                     display: 'flex',
@@ -64,16 +68,18 @@ function FarmList() {
                   />
                   <Piv>{info.symbol}</Piv>
                 </Box>
+                
+                {/* part 3 */}
                 <Piv>{info.category}</Piv>
-                <Show when={status.isOpen}>
+                {/* <Show when={status.isOpen}>
                   <Piv>{info.version}</Piv>
-                </Show>
-              </Piv>
+                </Show> */}
+              </Box>
             )}
+          </CollapseFace>
+          <Collapse.Content>
+            <Piv>{info.symbol} farm's detail here</Piv>
           </Collapse.Content>
-          {/* <Collapse.Content>
-     <Piv>{info.symbol} farm's detail here</Piv>
-    </Collapse.Content> */}
         </Collapse>
       )}
     </List>

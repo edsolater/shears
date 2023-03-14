@@ -43,8 +43,9 @@ function initMessageReceiver() {
 
     invokePrevCleanUps(onMessage)
     invoke(onMessage, { payload, onCleanUp, resolve: promiseResolve! })
-    returnValueMap.get(onMessage)?.then((returnData) => {
-      const encodedData = encode(returnData)
+    returnValueMap.get(onMessage)?.then((outputData) => {
+      /**  need {@link encode}, so not `encode(returnData)` */
+      const encodedData = encode(outputData)
       globalThis.postMessage({ description, data: encodedData } as WorkerMessage)
     })
   })
