@@ -1,13 +1,13 @@
 import { createEffect, createMemo, For, Show } from 'solid-js'
-import { Piv } from '../../../../packages/piv'
-import { Box, Button, Collapse, createRef, useElementSize } from '../../../../packages/pivkit'
-import { tailwindPaletteColors } from '../../../../packages/pivkit/styles/tailwindPaletteColors'
-import { CoinAvatarPair } from '../../components/CoinAvatarPair'
-import { NavBar } from '../../components/NavBar'
-import { useFarmStore } from '../../stores/farms/store'
-import { useTokenListStore } from '../../stores/tokenList/store'
-import { useTokenPriceStore } from '../../stores/tokenPrice/store'
-import { useFarmPageStates } from './farmState'
+import { Piv } from '../../../packages/piv'
+import { Box, Button, Collapse, createRef, useElementSize } from '../../../packages/pivkit'
+import { tailwindPaletteColors } from '../../../packages/pivkit/styles/tailwindPaletteColors'
+import { CoinAvatarPair } from '../components/CoinAvatarPair'
+import { NavBar } from '../components/NavBar'
+import { useFarmStore } from '../stores/farms/store'
+import { useTokenListStore } from '../stores/tokenList/store'
+import { useTokenPriceStore } from '../stores/tokenPrice/store'
+import { useFarmPageStates } from '../states/farmState'
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
@@ -23,7 +23,6 @@ export function FarmPage() {
   return (
     <Piv>
       <NavBar barTitle='Farms' />
-
       {/* TODO: should experiment how to move smoothly */}
       {farmPageStates.detailViewFarmId ? (
         <div>

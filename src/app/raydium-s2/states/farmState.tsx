@@ -1,7 +1,7 @@
 import { createMemo, createSignal, Setter } from 'solid-js'
-import { createCachedGlobalHook } from '../../../../packages/pivkit'
-import { useFarmStore } from '../../stores/farms/store'
-import { FarmPoolJsonInfo } from '../../stores/farms/type'
+import { createCachedGlobalHook } from '../../../packages/pivkit'
+import { useFarmStore } from '../stores/farms/store'
+import { FarmPoolJsonInfo } from '../stores/farms/type'
 
 export type FarmPageStates = {
   // setters
