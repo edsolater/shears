@@ -1,5 +1,6 @@
 import { Token } from '../../stores/tokenList/type'
 
+export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */
 
 // plain object for easier structure clone

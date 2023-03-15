@@ -2,43 +2,43 @@ import { createEffect, createSignal, onCleanup, Setter } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { useWalletStore } from '../wallet/store'
 import { loadFarmJsonInfos } from './methods/loadFarmJsonInfos'
-import { loadFarmSDKInfos } from './methods/loadFarmSDKInfos'
+import { loadFarmSYNInfos } from './methods/loadFarmSYNInfos'
 import { FarmJSONInfo, FarmSDKInfo } from './type'
 
 export type FarmStore = {
   $setters: {
     setIsFarmJsonLoading: Setter<boolean>
     setFarmJsonInfos: Setter<FarmJSONInfo[] | undefined>// should format to JS Map
-    setIsFarmSDKInfosLoading: Setter<boolean>
-    setFarmSDKInfos: Setter<FarmSDKInfo[] | undefined>// should format to JS Map
+    setIsFarmSYNInfosLoading: Setter<boolean>
+    setFarmSYNInfos: Setter<FarmSDKInfo[] | undefined>// should format to JS Map
   }
   readonly farmJsonInfos: FarmJSONInfo[] | undefined
   readonly isFarmJsonLoading: boolean
-  readonly farmSDKInfos: FarmSDKInfo[] | undefined
-  readonly isFarmSDKInfosLoading: boolean
+  readonly farmSYNInfos: FarmSDKInfo[] | undefined
+  readonly isFarmSYNInfosLoading: boolean
   refetchJsonInfos(): void
-  refetchFarmSDKInfos(): void
+  refetchFarmSYNInfos(): void
 }
 
 export const useFarmStore = createCachedGlobalHook(() => {
   const [isFarmJsonLoading, setIsFarmJsonLoading] = createSignal(false)
   const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmJSONInfo[]>()
-  const [isFarmSDKInfosLoading, setIsFarmSDKInfosLoading] = createSignal(false)
-  const [farmSDKInfos, setFarmSDKInfos] = createSignal<FarmSDKInfo[]>()
+  const [isFarmSYNInfosLoading, setIsFarmSYNInfosLoading] = createSignal(false)
+  const [farmSYNInfos, setFarmSYNInfos] = createSignal<FarmSDKInfo[]>()
 
   const walletStore = useWalletStore()
   createEffect(loadFarmJsonInfos)
 
   createEffect(() => {
-    const { abort } = loadFarmSDKInfos(walletStore.owner)
+    const { abort } = loadFarmSYNInfos(walletStore.owner)
     abort && onCleanup(abort)
   })
   const store: FarmStore = {
     $setters: {
       setIsFarmJsonLoading,
       setFarmJsonInfos,
-      setIsFarmSDKInfosLoading,
-      setFarmSDKInfos
+      setIsFarmSYNInfosLoading,
+      setFarmSYNInfos
     },
     get farmJsonInfos() {
       return farmJsonInfos()
@@ -46,15 +46,15 @@ export const useFarmStore = createCachedGlobalHook(() => {
     get isFarmJsonLoading() {
       return isFarmJsonLoading()
     },
-    get farmSDKInfos() {
-      return farmSDKInfos()
+    get farmSYNInfos() {
+      return farmSYNInfos()
     },
-    get isFarmSDKInfosLoading() {
-      return isFarmSDKInfosLoading()
+    get isFarmSYNInfosLoading() {
+      return isFarmSYNInfosLoading()
     },
     refetchJsonInfos: loadFarmJsonInfos,
-    refetchFarmSDKInfos() {
-      loadFarmSDKInfos(walletStore.owner)
+    refetchFarmSYNInfos() {
+      loadFarmSYNInfos(walletStore.owner)
     }
   }
   return store

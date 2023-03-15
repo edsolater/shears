@@ -10,7 +10,7 @@ import {
 import _BN from 'bn.js'
 import { PublicKey as _PublicKey } from '@solana/web3.js'
 import { BN } from '../../utils/dataStructures/BN'
-import { TokenAmount, Percent, PublicKey, Price } from '../../utils/dataStructures/type'
+import { TokenAmount, Percent, PublicKey, Price, Mint } from '../../utils/dataStructures/type'
 import { Token } from '../tokenList/type'
 import { SDKSplAccount } from '../sdkTypes'
 
@@ -19,7 +19,8 @@ export type FetchFarmsJSONPayloads = {
   force?: boolean
 }
 
-export type FetchFarmsSDKInfoPayloads = {
+export type FetchFarmsSYNInfoPayloads = {
+  farmApiUrl: string
   rpcUrl: string
   owner: string
 }
@@ -70,43 +71,47 @@ export type FarmJSONFile = {
   ecosystem: Omit<FarmJSONInfo, 'category'>[]
 }
 
-export type FarmSDKInfo = UnionCover<
-  FarmJSONInfo,
-  FarmSDKInfoBaseSharedPart &
-    ({ version: 6; state: FarmStateV6 } | { version: 3; state: FarmStateV3 } | { version: 5; state: FarmStateV5 })
-> & { jsonInfo: FarmJSONInfo; fetchedMultiInfo: FarmFetchMultipleInfoReturnItem }
+// export type FarmSDKInfo = UnionCover<
+//   FarmJSONInfo,
+//   FarmSDKInfoBaseSharedPart &
+//     ({ version: 6; state: FarmStateV6 } | { version: 3; state: FarmStateV3 } | { version: 5; state: FarmStateV5 })
+// > & { jsonInfo: FarmJSONInfo; fetchedMultiInfo: FarmFetchMultipleInfoReturnItem }
 
-export type FarmSDKInfoBaseSharedPart = {
-  jsonInfo: FarmJSONInfo
+// export type FarmSDKInfoBaseSharedPart = {
+//   jsonInfo: FarmJSONInfo
+//   id: PublicKey
+//   lpMint: PublicKey
+//   programId: PublicKey
+//   authority: PublicKey
+//   lpVault: SDKSplAccount
+//   rewardInfos: FarmRewardJSONInfo[]
+//   /** only when user have deposited and connected wallet */
+//   ledger?: {
+//     id: PublicKey
+//     owner: PublicKey
+//     state: BN
+//     deposited: BN
+//     rewardDebts: BN[]
+//   }
+//   /** only when user have deposited and connected wallet */
+//   wrapped?: {
+//     pendingRewards: BN[]
+//   }
+// }
+
+export type FarmSYNInfo = {
+  lp: Mint | /* staking pool */ undefined
+  lpPrice: Price | undefined
+
+  base: Mint | undefined
+  quote: Mint | undefined
+
   id: PublicKey
+  name: string
+  ammId: PublicKey
   lpMint: PublicKey
   programId: PublicKey
   authority: PublicKey
-  lpVault: SDKSplAccount
-  rewardInfos: FarmRewardJSONInfo[]
-  /** only when user have deposited and connected wallet */
-  ledger?: {
-    id: PublicKey
-    owner: PublicKey
-    state: BN
-    deposited: BN
-    rewardDebts: BN[]
-  }
-  /** only when user have deposited and connected wallet */
-  wrapped?: {
-    pendingRewards: BN[]
-  }
-}
-
-export type FarmSYNInfo = FarmSDKInfo & {
-  lp: Token | /* staking pool */ undefined
-  lpPrice: Price | undefined
-
-  base: Token | undefined
-  quote: Token | undefined
-  name: string
-
-  ammId: string | undefined
 
   /** only for v3/v5 */
   isDualFusionPool: boolean
@@ -137,18 +142,34 @@ export type FarmSYNInfo = FarmSDKInfo & {
   rewards: FarmRewardSYNInfo[]
   userStakedLpAmount: TokenAmount | undefined
   stakedLpAmount: TokenAmount | undefined
+
+  rewardInfos: FarmRewardJSONInfo[]
+  /** only when user have deposited and connected wallet */
+  ledger?: {
+    id: PublicKey
+    owner: PublicKey
+    state: BN
+    deposited: BN
+    rewardDebts: BN[]
+  }
+  /** only when user have deposited and connected wallet */
+  wrapped?: {
+    pendingRewards: BN[]
+  }
 }
 
 export type FarmRewardSYNInfo = {
   userHavedReward: boolean
   apr: Percent | undefined // farm's rewards apr
-  token: Token | undefined
+  token: Mint | undefined
   /** only when user have deposited and connected wallet */
   userPendingReward: TokenAmount | undefined
   version: 3 /* closed reward */ | 5 /* open reward */ | 6 /* upcoming reward */
   rewardVault: PublicKey
   openTime?: Date // v6
   endTime?: Date // v6
+  // this reward is sent by who
+  sender?: PublicKey // v6
 
   isOptionToken?: boolean // v6
   isRewarding?: boolean // v6
@@ -163,4 +184,5 @@ export type FarmRewardSYNInfo = {
   claimableRewards?: TokenAmount // v6
   owner?: string // v6
   perSecond?: string | number // v6
+  type: 'Standard SPL' | 'Option tokens' // v6
 }

@@ -8,5 +8,5 @@ export type WorkerDescription =
   | 'fetch raydium supported tokens'
   | 'fetch raydium pairs info'
   | 'fetch raydium farms info'
-  | 'parse raydium farms info sdk list'
+  | 'get raydium farms syn infos'
   | 'get raydium token prices'
