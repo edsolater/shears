@@ -1,15 +1,19 @@
 import { jFetch } from '../../../../../packages/jFetch'
 import { FarmJSONInfo, FarmJSONFile } from '../type'
 
-export async function fetchFarmJsonInfo(options: { url: string }): Promise<FarmJSONInfo[] | undefined> {
+export async function fetchFarmJsonInfo(options: { url: string }): Promise<Map<string, FarmJSONInfo>> {
   const result = await fetchFarmJsonFile(options)
-  if (!result) return undefined
-  return [
-    ...(result.stake.map((i) => ({ ...i, category: 'stake' })) ?? []),
-    ...(result.raydium.map((i) => ({ ...i, category: 'raydium' })) ?? []),
-    ...(result.fusion.map((i) => ({ ...i, category: 'fusion' })) ?? []),
-    ...(result.ecosystem.map((i) => ({ ...i, category: 'ecosystem' })) ?? [])
-  ] as FarmJSONInfo[]
+  if (!result) return new Map()
+  const stateInfos = result.stake.map((i) => ({ ...i, category: 'stake' })) as FarmJSONInfo[]
+  const raydiumInfos = result.raydium.map((i) => ({ ...i, category: 'raydium' })) as FarmJSONInfo[]
+  const fusionInfos = result.fusion.map((i) => ({ ...i, category: 'fusion' })) as FarmJSONInfo[]
+  const ecosystemInfos = result.ecosystem.map((i) => ({ ...i, category: 'ecosystem' })) as FarmJSONInfo[]
+  return new Map([
+    ...stateInfos.map((i) => [i.id, i] as const),
+    ...raydiumInfos.map((i) => [i.id, i] as const),
+    ...fusionInfos.map((i) => [i.id, i] as const),
+    ...ecosystemInfos.map((i) => [i.id, i] as const)
+  ])
 }
 
 function fetchFarmJsonFile(options: { url: string }) {

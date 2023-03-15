@@ -9,10 +9,7 @@ import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAb
 /* TODO: move to `/utils` */
 /** and state info  */
 
-export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApiUrl: string }): {
-  result: Promise<FarmSYNInfo[]>
-  abort(): void
-} {
+export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApiUrl: string }) {
   return createAbortableAsyncTask<FarmSYNInfo[]>(async (resolve, reject, aborted) => {
     if (aborted()) return
     const farmJsonInfos = await fetchFarmJsonInfo({ url: payload.farmApiUrl })
@@ -24,7 +21,7 @@ export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApi
     if (aborted()) return
     const options: FarmFetchMultipleInfoParams = {
       connection: getConnection(payload.rpcUrl),
-      pools: farmJsonInfos.map(jsonInfo2PoolKeys),
+      pools: [...farmJsonInfos.values()].map(jsonInfo2PoolKeys),
       owner: toPub(payload.owner),
       config: { commitment: 'confirmed' }
     }
@@ -36,16 +33,15 @@ export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApi
     }
     console.log('end get sdk')
 
-
     if (aborted()) return
-    const farmSYNInfos = farmJsonInfos.map((jsonInfo) => {
+    const farmSYNInfos = [...farmJsonInfos.values()].map((jsonInfo) => {
       const sdkInfo = farmSDKInfos[toPubString(jsonInfo.id)]
       return {
-        ...jsonInfo,
-        ...sdkInfo,
-        fetchedMultiInfo: sdkInfo,
-        jsonInfo
-      } as unknown as FarmSYNInfo
+        name: jsonInfo.symbol,
+        baseMint: jsonInfo.baseMint,
+        quoteMint: jsonInfo.quoteMint,
+        category: jsonInfo.category
+      } as FarmSYNInfo
     })
     if (!farmSYNInfos) {
       reject('hydrate farm syn info failed')

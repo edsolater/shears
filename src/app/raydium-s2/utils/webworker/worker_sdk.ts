@@ -1,7 +1,6 @@
 /// <reference lib="webworker" />
 import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-
 import { WorkerDescription, WorkerMessage } from './type'
 import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
@@ -46,7 +45,7 @@ function initMessageReceiver() {
     returnValueMap.get(onMessage)?.then((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)
-      console.log('transforming...')
+      console.log(`transforming ${description}...`)
       globalThis.postMessage({ description, data: encodedData } as WorkerMessage)
     })
   })
@@ -60,4 +59,3 @@ export function registMessageReceiver<D = any>(description: WorkerDescription, o
 }
 
 applyWebworkerRegisters()
-

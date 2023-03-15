@@ -36,7 +36,7 @@ function FarmList() {
   console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
 
   return (
-    <List items={farmStore.farmJsonInfos}>
+    <List items={farmStore.farmSYNInfos}>
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>
@@ -66,7 +66,7 @@ function FarmList() {
                     token1={tokenListStore.getToken(info.baseMint)}
                     token2={tokenListStore.getToken(info.quoteMint)}
                   />
-                  <Piv>{info.symbol}</Piv>
+                  <Piv>{info.name}</Piv>
                 </Box>
                 
                 {/* part 3 */}
@@ -78,7 +78,7 @@ function FarmList() {
             )}
           </CollapseFace>
           <Collapse.Content>
-            <Piv>{info.symbol} farm's detail here</Piv>
+            <Piv>{info.name} farm's detail here</Piv>
           </Collapse.Content>
         </Collapse>
       )}
