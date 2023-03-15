@@ -1,16 +1,18 @@
+import { map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
-import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
+import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
-import { fetchFarmJsonInfo } from './fetchFarmJson'
+import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
+import { FarmStore } from '../store'
 import { FarmSYNInfo } from '../type'
-import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
+import { fetchFarmJsonInfo } from './fetchFarmJson'
 
 /* TODO: move to `/utils` */
 /** and state info  */
 
 export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApiUrl: string }) {
-  return createAbortableAsyncTask<FarmSYNInfo[]>(async (resolve, reject, aborted) => {
+  return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async (resolve, reject, aborted) => {
     if (aborted()) return
     const farmJsonInfos = await fetchFarmJsonInfo({ url: payload.farmApiUrl })
     if (!farmJsonInfos) {
@@ -34,7 +36,7 @@ export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApi
     console.log('end get sdk')
 
     if (aborted()) return
-    const farmSYNInfos = [...farmJsonInfos.values()].map((jsonInfo) => {
+    const farmSYNInfos = map(farmJsonInfos, (jsonInfo) => {
       const sdkInfo = farmSDKInfos[toPubString(jsonInfo.id)]
       return {
         name: jsonInfo.symbol,

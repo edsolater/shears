@@ -1,7 +1,8 @@
 import { jFetch } from '../../../../../packages/jFetch'
+import { FarmStore } from '../store'
 import { FarmJSONInfo, FarmJSONFile } from '../type'
 
-export async function fetchFarmJsonInfo(options: { url: string }): Promise<Map<string, FarmJSONInfo>> {
+export async function fetchFarmJsonInfo(options: { url: string }): Promise<NonNullable<FarmStore['farmJsonInfos']>> {
   const result = await fetchFarmJsonFile(options)
   if (!result) return new Map()
   const stateInfos = result.stake.map((i) => ({ ...i, category: 'stake' })) as FarmJSONInfo[]

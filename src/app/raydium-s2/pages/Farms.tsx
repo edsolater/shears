@@ -1,9 +1,9 @@
-import { createEffect, Show } from 'solid-js'
+import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box, Collapse, CollapseFace, List } from '../../../packages/pivkit'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
-import { useFarmPageStates } from '../states/farmState'
+import { useFarmPageStates } from '../pageStates/farmState'
 import { useFarmStore } from '../stores/farms/store'
 import { useTokenListStore } from '../stores/tokenList/store'
 import { useTokenPriceStore } from '../stores/tokenPrice/store'
@@ -36,7 +36,7 @@ function FarmList() {
   console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
 
   return (
-    <List items={farmStore.farmSYNInfos}>
+    <List items={farmStore.farmSYNInfos && [...farmStore.farmSYNInfos.values()]}>
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>
@@ -68,7 +68,7 @@ function FarmList() {
                   />
                   <Piv>{info.name}</Piv>
                 </Box>
-                
+
                 {/* part 3 */}
                 <Piv>{info.category}</Piv>
                 {/* <Show when={status.isOpen}>

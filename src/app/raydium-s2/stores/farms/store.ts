@@ -6,25 +6,26 @@ import { loadFarmSYNInfos } from './methods/loadFarmSYNInfos'
 import { FarmJSONInfo, FarmSYNInfo } from './type'
 
 export type FarmStore = {
-  $setters: {
-    setIsFarmJsonLoading: Setter<boolean>
-    setFarmJsonInfos: Setter<FarmJSONInfo[] | undefined> // should format to JS Map
-    setIsFarmSYNInfosLoading: Setter<boolean>
-    setFarmSYNInfos: Setter<FarmSYNInfo[] | undefined> // should format to JS Map
-  }
-  readonly farmJsonInfos: FarmJSONInfo[] | undefined
+  readonly farmJsonInfos: Map<FarmJSONInfo['id'], FarmJSONInfo> | undefined
   readonly isFarmJsonLoading: boolean
-  readonly farmSYNInfos: FarmSYNInfo[] | undefined
+  readonly farmSYNInfos: Map<FarmSYNInfo['id'], FarmSYNInfo> | undefined
   readonly isFarmSYNInfosLoading: boolean
   refetchJsonInfos(): void
   refetchFarmSYNInfos(): void
+
+  $setters: {
+    setIsFarmJsonLoading: Setter<FarmStore['isFarmJsonLoading']>
+    setFarmJsonInfos: Setter<FarmStore['farmJsonInfos']> // should format to JS Map
+    setIsFarmSYNInfosLoading: Setter<FarmStore['isFarmSYNInfosLoading']>
+    setFarmSYNInfos: Setter<FarmStore['farmSYNInfos']> // should format to JS Map
+  }
 }
 
 export const useFarmStore = createCachedGlobalHook(() => {
-  const [isFarmJsonLoading, setIsFarmJsonLoading] = createSignal(false)
-  const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmJSONInfo[]>()
-  const [isFarmSYNInfosLoading, setIsFarmSYNInfosLoading] = createSignal(false)
-  const [farmSYNInfos, setFarmSYNInfos] = createSignal<FarmSYNInfo[]>()
+  const [isFarmJsonLoading, setIsFarmJsonLoading] = createSignal<FarmStore['isFarmJsonLoading']>(false)
+  const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmStore['farmJsonInfos']>()
+  const [isFarmSYNInfosLoading, setIsFarmSYNInfosLoading] = createSignal<FarmStore['isFarmSYNInfosLoading']>(false)
+  const [farmSYNInfos, setFarmSYNInfos] = createSignal<FarmStore['farmSYNInfos']>()
 
   const walletStore = useWalletStore()
   createEffect(loadFarmJsonInfos)

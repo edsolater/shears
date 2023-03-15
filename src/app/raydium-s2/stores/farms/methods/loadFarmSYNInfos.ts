@@ -1,8 +1,8 @@
 import { appApiUrls, appRpcEndpointUrl } from '../../../utils/common/config'
-import { WebworkerSubscribeCallback, subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { WalletStore } from '../../wallet/store'
-import { useFarmStore } from '../store'
-import { FarmSDKInfo, FetchFarmsSYNInfoPayloads } from '../type'
+import { FarmStore, useFarmStore } from '../store'
+import { FetchFarmsSYNInfoPayloads } from '../type'
 
 export function loadFarmSYNInfos(owner: string | undefined): { abort?(): void } {
   useFarmStore().$setters.setIsFarmSYNInfosLoading(true)
@@ -13,9 +13,9 @@ export function loadFarmSYNInfos(owner: string | undefined): { abort?(): void } 
   return { abort: subscription?.abort }
 }
 
-function getFarmSYNInfosFromWorker(owner: WalletStore['owner'], cb: WebworkerSubscribeCallback<FarmSDKInfo[]>) {
+function getFarmSYNInfosFromWorker(owner: WalletStore['owner'], cb: WebworkerSubscribeCallback<FarmStore['farmSYNInfos']>) {
   if (!owner) return
-  const { abort } = subscribeWebWorker<FarmSDKInfo[], FetchFarmsSYNInfoPayloads>(
+  const { abort } = subscribeWebWorker<FarmStore['farmSYNInfos'], FetchFarmsSYNInfoPayloads>(
     {
       description: 'get raydium farms syn infos',
       payload: { owner: owner, rpcUrl: appRpcEndpointUrl, farmApiUrl: appApiUrls.farmInfo }
