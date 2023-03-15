@@ -10,11 +10,11 @@ export type FarmStore = {
     setIsFarmJsonLoading: Setter<boolean>
     setFarmJsonInfos: Setter<FarmJSONInfo[] | undefined>// should format to JS Map
     setIsFarmSDKInfosLoading: Setter<boolean>
-    setFarmSdkInfoInfos: Setter<FarmSDKInfo[] | undefined>// should format to JS Map
+    setFarmSDKInfos: Setter<FarmSDKInfo[] | undefined>// should format to JS Map
   }
   readonly farmJsonInfos: FarmJSONInfo[] | undefined
   readonly isFarmJsonLoading: boolean
-  readonly farmSdkInfoInfos: FarmSDKInfo[] | undefined
+  readonly farmSDKInfos: FarmSDKInfo[] | undefined
   readonly isFarmSDKInfosLoading: boolean
   refetchJsonInfos(): void
   refetchFarmSDKInfos(): void
@@ -24,7 +24,7 @@ export const useFarmStore = createCachedGlobalHook(() => {
   const [isFarmJsonLoading, setIsFarmJsonLoading] = createSignal(false)
   const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmJSONInfo[]>()
   const [isFarmSDKInfosLoading, setIsFarmSDKInfosLoading] = createSignal(false)
-  const [farmSdkInfoInfos, setFarmSdkInfoInfos] = createSignal<FarmSDKInfo[]>()
+  const [farmSDKInfos, setFarmSDKInfos] = createSignal<FarmSDKInfo[]>()
 
   const walletStore = useWalletStore()
   createEffect(loadFarmJsonInfos)
@@ -38,7 +38,7 @@ export const useFarmStore = createCachedGlobalHook(() => {
       setIsFarmJsonLoading,
       setFarmJsonInfos,
       setIsFarmSDKInfosLoading,
-      setFarmSdkInfoInfos
+      setFarmSDKInfos
     },
     get farmJsonInfos() {
       return farmJsonInfos()
@@ -46,8 +46,8 @@ export const useFarmStore = createCachedGlobalHook(() => {
     get isFarmJsonLoading() {
       return isFarmJsonLoading()
     },
-    get farmSdkInfoInfos() {
-      return farmSdkInfoInfos()
+    get farmSDKInfos() {
+      return farmSDKInfos()
     },
     get isFarmSDKInfosLoading() {
       return isFarmSDKInfosLoading()

@@ -8,7 +8,7 @@ export function loadFarmSDKInfos(owner: string | undefined): { abort?(): void } 
   useFarmStore().$setters.setIsFarmSDKInfosLoading(true)
   const subscription = getFarmSDKInfosFromWorker(owner, (allFarmSDKInfos) => {
     useFarmStore().$setters.setIsFarmSDKInfosLoading(false)
-    allFarmSDKInfos && useFarmStore().$setters.setFarmSdkInfoInfos(allFarmSDKInfos)
+    allFarmSDKInfos && useFarmStore().$setters.setFarmSDKInfos(allFarmSDKInfos)
   })
   return { abort: subscription?.abort }
 }

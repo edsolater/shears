@@ -19,7 +19,7 @@ export function FarmPage() {
 
   // createEffect(() => console.log('isFarmJsonsLoading', isFarmJsonsLoading()))
   createEffect(() => console.log('rokenPriceStore prices', tokenPriceStore.prices))
-  createEffect(() => console.log('farmStore sdk', farmStore.farmSdkInfoInfos))
+  createEffect(() => console.log('farmStore sdk', farmStore.farmSDKInfos))
   return (
     <Piv>
       <NavBar barTitle='Farms' />
