@@ -16,13 +16,15 @@ export type NumberishOption = {
 
 /**
  * @example
+ * toString(undefined) //=> ''
  * toString(3) //=> '3'
  * toString('.3') //=> '0.3'
  * toString('8n') //=> '8'
  * toString({ numerator: 3n, denominator: 2n  }) => '1.5'
  * toString({ numerator: 42312n, denominator: 100n  }) => '423.12'
  */
-export function toString(from: Numberish, options?: NumberishOption): string {
+export function toString(from: Numberish | undefined, options?: NumberishOption): string {
+  if (from == null) return ''
   const { numerator, denominator } = toFraction(from)
   if (denominator === 1n) {
     return String(numerator)
@@ -36,7 +38,6 @@ export function toString(from: Numberish, options?: NumberishOption): string {
     return shakeTailingZero(`${intPart}.${decPart}`)
   }
 }
-
 
 /**
  * CAUTION 1: if original number have very long decimal part, it will lost

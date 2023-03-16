@@ -10,13 +10,8 @@ export function registInWorker() {
 
   registMessageReceiver<FetchFarmsSYNInfoPayloads>(
     'get raydium farms syn infos',
-    async ({ payload: { rpcUrl, owner, farmApiUrl, liquidityUrl }, resolve, onCleanUp }) => {
-      const { abort, result: farmSYNInfos } = composeFarmSYNInfo({
-        owner,
-        rpcUrl,
-        farmApiUrl,
-        liquidityUrl
-      })
+    async ({ payload, resolve, onCleanUp }) => {
+      const { abort, result: farmSYNInfos } = composeFarmSYNInfo(payload)
       farmSYNInfos.then(resolve)
       onCleanUp(abort)
     }

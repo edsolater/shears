@@ -9,6 +9,7 @@ export type FetchFarmsJSONPayloads = {
 }
 
 export type FetchFarmsSYNInfoPayloads = {
+  pairApiUrl: string
   farmApiUrl: string
   liquidityUrl: string
   rpcUrl: string
@@ -106,12 +107,12 @@ export type FarmSYNInfo = {
     token: Mint | undefined
     /** only when user have deposited and connected wallet */
     userPendingReward: TokenAmount | undefined
-    version: 3 /* closed reward */ | 5 /* open reward */ | 6 /* upcoming reward */
+    farmVersion: 3 | 5 | 6 
     rewardVault: PublicKey
     openTime?: Date // v6
     endTime?: Date // v6
     // this reward is sent by who
-    sender?: PublicKey // v6
+    sender: FarmRewardJSONInfo['rewardSender'] // v6
 
     isOptionToken?: boolean // v6
     isRewarding?: boolean // v6
@@ -125,8 +126,8 @@ export type FarmSYNInfo = {
 
     claimableRewards?: TokenAmount // v6
     owner?: string // v6
-    perSecond?: string | number // v6
-    type: 'Standard SPL' | 'Option tokens' // v6
+    perSecond: FarmRewardJSONInfo['rewardPerSecond'] // v6
+    type: FarmRewardJSONInfo['rewardType'] // v6
   }[]
   userStakedLpAmount: TokenAmount
   stakedLpAmount: TokenAmount

@@ -6,6 +6,7 @@ export async function fetchPairJsonInfo(options: { url: string }): Promise<Map<s
   const pairJsonInfo = await jFetch<JsonPairItemInfo[]>(options.url, {
     cacheFreshTime: 5 * 60 * 1000
   })
+  console.log('pairJsonInfo: ', pairJsonInfo)
   if (!pairJsonInfo) return
   return new Map(pairJsonInfo.map((info) => [info.ammId, info] as const))
 }
