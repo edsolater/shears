@@ -39,7 +39,7 @@ export type FarmJSONInfo = {
   version: number
   programId: string
 
-  authority: string 
+  authority: string
   creator?: string
   rewardInfos: FarmRewardJSONInfo[]
   upcoming: boolean
@@ -95,12 +95,12 @@ export type FarmSYNInfo = {
 
   userHasStaked: boolean
   rewards: {
-    apr?: Promise<{
+    apr?: {
       // farm's rewards apr
       '7d': Percent
       '30d': Percent
       '24h': Percent
-    }>
+    } // fulfilled if liquidity API jFetch is ready
     userHavedReward: boolean
     pendingRewardsBN?: BN /** only when user have deposited and connected wallet */
     token: Mint | undefined
