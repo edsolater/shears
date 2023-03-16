@@ -13,12 +13,20 @@ export function loadFarmSYNInfos(owner: string | undefined): { abort?(): void } 
   return { abort: subscription?.abort }
 }
 
-function getFarmSYNInfosFromWorker(owner: WalletStore['owner'], cb: WebworkerSubscribeCallback<FarmStore['farmSYNInfos']>) {
+function getFarmSYNInfosFromWorker(
+  owner: WalletStore['owner'],
+  cb: WebworkerSubscribeCallback<FarmStore['farmSYNInfos']>
+) {
   if (!owner) return
   const { abort } = subscribeWebWorker<FarmStore['farmSYNInfos'], FetchFarmsSYNInfoPayloads>(
     {
       description: 'get raydium farms syn infos',
-      payload: { owner: owner, rpcUrl: appRpcEndpointUrl, farmApiUrl: appApiUrls.farmInfo }
+      payload: {
+        owner: owner,
+        rpcUrl: appRpcEndpointUrl,
+        farmApiUrl: appApiUrls.farmInfo,
+        liquidityUrl: appApiUrls.poolInfo
+      }
     },
     cb
   )

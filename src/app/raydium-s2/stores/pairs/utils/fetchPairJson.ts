@@ -1,10 +1,11 @@
 import { jFetch } from '../../../../../packages/jFetch'
 import { JsonPairItemInfo } from '../type'
 
-export async function fetchPairJsonInfo(options: { url: string }) {
+// TODO: it should be a map
+export async function fetchPairJsonInfo(options: { url: string }): Promise<Map<string, JsonPairItemInfo> | undefined> {
   const pairJsonInfo = await jFetch<JsonPairItemInfo[]>(options.url, {
     cacheFreshTime: 5 * 60 * 1000
   })
   if (!pairJsonInfo) return
-  return pairJsonInfo
+  return new Map(pairJsonInfo.map((info) => [info.ammId, info] as const))
 }

@@ -63,8 +63,8 @@ function FarmList() {
                   }}
                 >
                   <CoinAvatarPair
-                    token1={tokenListStore.getToken(info.baseMint)}
-                    token2={tokenListStore.getToken(info.quoteMint)}
+                    token1={tokenListStore.getToken(info.base)}
+                    token2={tokenListStore.getToken(info.quote)}
                   />
                   <Piv>{info.name}</Piv>
                 </Box>

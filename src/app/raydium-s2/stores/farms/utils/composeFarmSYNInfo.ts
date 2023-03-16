@@ -4,14 +4,18 @@ import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAb
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
+import { fetchLiquidityJson } from '../../apiInfos/fetchLiquidityJson'
+import { usePairsStore } from '../../pairs/store'
+import { fetchPairJsonInfo } from '../../pairs/utils/fetchPairJson'
 import { FarmStore } from '../store'
 import { FarmSYNInfo } from '../type'
+import { fetchFarmAprJsonFile } from './fetchFarmAprJson'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 
 /* TODO: move to `/utils` */
 /** and state info  */
 
-export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApiUrl: string }) {
+export function composeFarmSYNInfo(payload: { owner: string; rpcUrl: string; liquidityUrl: string; farmApiUrl: string }) {
   return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async (resolve, reject, aborted) => {
     if (aborted()) return
     const farmJsonInfos = await fetchFarmJsonInfo({ url: payload.farmApiUrl })
@@ -36,13 +40,30 @@ export function getFarmSYNInfo(payload: { owner: string; rpcUrl: string; farmApi
     console.log('end get sdk')
 
     if (aborted()) return
+    const pairAprJsonInfosPromise = fetchLiquidityJson({ url: payload.liquidityUrl })
     const farmSYNInfos = map(farmJsonInfos, (jsonInfo) => {
       const sdkInfo = farmSDKInfos[toPubString(jsonInfo.id)]
       return {
         name: jsonInfo.symbol,
-        baseMint: jsonInfo.baseMint,
-        quoteMint: jsonInfo.quoteMint,
-        category: jsonInfo.category
+        base: jsonInfo.baseMint,
+        quote: jsonInfo.quoteMint,
+        category: jsonInfo.category,
+        // rewards: jsonInfo.rewardInfos.map(
+        //   (jsonRewardInfo) =>
+        //     new Proxy(
+        //       {},
+        //       {
+        //         get(target, p, receiver) {
+        //           if (p === 'token') return jsonRewardInfo['rewardMint']
+        //           if (p === 'apr')
+        //             return pairAprJsonInfosPromise.then(
+        //               (pairAprJsonInfos) =>
+        //                 pairAprJsonInfos && [...pairAprJsonInfos.values()].find((i) => i.lpMint === jsonInfo.lpMint) // TO BE CONTINUE
+        //             )
+        //         }
+        //       }
+        //     ) as FarmSYNInfo['rewards'][number]
+        // )
       } as FarmSYNInfo
     })
     if (!farmSYNInfos) {

@@ -10,6 +10,7 @@ export type FetchFarmsJSONPayloads = {
 
 export type FetchFarmsSYNInfoPayloads = {
   farmApiUrl: string
+  liquidityUrl: string
   rpcUrl: string
   owner: string
 }
@@ -17,11 +18,11 @@ export type FetchFarmsSYNInfoPayloads = {
 export type FarmRewardJSONInfo = {
   rewardMint: string
   rewardVault: string
-  rewardOpenTime: number
-  rewardEndTime: number
-  rewardPerSecond: string | number
-  rewardSender?: string
-  rewardType: 'Standard SPL' | 'Option tokens'
+  rewardOpenTime?: number // only v6
+  rewardEndTime?: number // only v6
+  rewardPerSecond?: string | number // only v6
+  rewardSender?: string // only v6
+  rewardType?: 'Standard SPL' | 'Option tokens' // only v6
 }
 
 export type FarmAprJSONInfo = ApiFarmApr
@@ -38,7 +39,7 @@ export type FarmJSONInfo = {
   version: number
   programId: string
 
-  authority: string
+  authority: string 
   creator?: string
   rewardInfos: FarmRewardJSONInfo[]
   upcoming: boolean
@@ -61,9 +62,9 @@ export type FarmJSONFile = {
 }
 
 export type FarmSYNInfo = {
-  baseMint: Mint
-  quoteMint: Mint
-  lpMint: Mint
+  base: Mint
+  quote: Mint
+  lp: Mint
   lpPrice: Price
 
   id: PublicKey
@@ -83,11 +84,6 @@ export type FarmSYNInfo = {
   /** new pool shoud sort in highest  */
   isNewPool: boolean
 
-  totalApr: {
-    '7d': Percent
-    '30d': Percent
-    '24h': Percent
-  }
   raydiumFeeApr: {
     // raydium fee for each transaction
     '7d': Percent
@@ -99,8 +95,14 @@ export type FarmSYNInfo = {
 
   userHasStaked: boolean
   rewards: {
+    apr?: Promise<{
+      // farm's rewards apr
+      '7d': Percent
+      '30d': Percent
+      '24h': Percent
+    }>
     userHavedReward: boolean
-    apr: Percent | undefined // farm's rewards apr
+    pendingRewardsBN?: BN /** only when user have deposited and connected wallet */
     token: Mint | undefined
     /** only when user have deposited and connected wallet */
     userPendingReward: TokenAmount | undefined
@@ -129,7 +131,8 @@ export type FarmSYNInfo = {
   userStakedLpAmount: TokenAmount
   stakedLpAmount: TokenAmount
 
-  rewardInfos: FarmRewardJSONInfo[]
+  // rewardInfos: FarmRewardJSONInfo[]
+
   /** only when user have deposited and connected wallet */
   ledger?: {
     id: PublicKey
@@ -138,8 +141,8 @@ export type FarmSYNInfo = {
     deposited: BN
     rewardDebts: BN[]
   }
-  /** only when user have deposited and connected wallet */
-  wrapped?: {
-    pendingRewards: BN[]
-  }
+
+  // wrapped?: {
+  //   pendingRewards: BN[]
+  // }
 }

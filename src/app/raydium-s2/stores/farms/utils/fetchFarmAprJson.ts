@@ -3,9 +3,8 @@ import { FarmAprJSONInfo } from '../type'
 
 export async function fetchFarmAprJsonFile(options: {
   url: string
-  owner?: string
-}): Promise<FarmAprJSONInfo[] | undefined> {
+}): Promise<Map<string, FarmAprJSONInfo>> {
   const result = await jFetch<{ data: FarmAprJSONInfo[] }>(options.url, { cacheFreshTime: 5 * 60 * 1000 })
-  if (!result) return undefined
-  return result.data
+  if (!result) return new Map()
+  return new Map(result.data.map((info) => [info.id, info] as const))
 }
