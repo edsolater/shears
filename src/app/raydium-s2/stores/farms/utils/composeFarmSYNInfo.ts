@@ -47,7 +47,7 @@ export function composeFarmSYNInfo(payload: {
 
     if (aborted()) return
 
-    const liquidityJsonInfos = await fetchLiquidityJson({ url: payload.liquidityUrl })
+    const liquidityJsonInfos = await fetchLiquidityJson({ url: payload.liquidityUrl }) // TODO: 💡 url should not be a parameter , it's not strightforward (easy to read)
     if (!liquidityJsonInfos) {
       reject('fetch pair apr json info failed')
       return
