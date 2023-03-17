@@ -60,18 +60,11 @@ export function composeFarmSYN(payload: {
 
     if (aborted()) return
 
-    const lpMintAmmIdMap = new Map(
-      [...liquidityJsons.values()].map((pairAprJsonInfo) => [pairAprJsonInfo.lpMint, pairAprJsonInfo])
-    )
-    const lpPriceMap = new Map(
-      [...pairJsons.values()].map((pairJsonInfo) => [pairJsonInfo.lpMint, pairJsonInfo.lpPrice])
-    )
-
     const farmSYN = map(farmJsonInfos, (jsonInfo) => {
       const farmSDK = farmSDKs[toPubString(jsonInfo.id)]
-      const ammId = lpMintAmmIdMap.get(jsonInfo.lpMint)?.id
+      const ammId = liquidityJsons.get(jsonInfo.lpMint, 'lpMint')?.id
       const pairJson = ammId ? pairJsons.get(ammId) : undefined
-      const lpPrice = lpPriceMap.get(jsonInfo.lpMint) ?? undefined
+      const lpPrice = pairJsons.get(jsonInfo.lpMint)?.lpPrice ?? undefined
       const tvl = lpPrice != null ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
       const apr =
         pairJson &&

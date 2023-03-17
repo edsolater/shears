@@ -5,7 +5,7 @@ import { fetchPairJsonInfo } from './utils/fetchPairJson'
 export function registInWorker() {
   registMessageReceiver<FetchPairsOptions>('fetch raydium pairs info', ({ payload, resolve }) =>
     fetchPairJsonInfo(payload)
-      .then((map) => map && [...map.values()])
+      .then((map) => map && [...map.toJSMap().values()])
       .then(resolve)
   )
 }
