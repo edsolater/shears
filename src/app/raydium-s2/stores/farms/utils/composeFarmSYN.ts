@@ -14,7 +14,7 @@ import { fetchFarmJsonInfo } from './fetchFarmJson'
 /* TODO: move to `/utils` */
 /** and state info  */
 
-export function composeFarmSYNInfo(payload: {
+export function composeFarmSYN(payload: {
   owner: string
   rpcUrl: string
   pairApiUrl: string
@@ -37,23 +37,23 @@ export function composeFarmSYNInfo(payload: {
       config: { commitment: 'confirmed' }
     }
     console.log('start get sdk')
-    const farmSDKInfos = await Farm.fetchMultipleInfoAndUpdate(paramOptions)
-    if (!farmSDKInfos) {
+    const farmSDKs = await Farm.fetchMultipleInfoAndUpdate(paramOptions)
+    if (!farmSDKs) {
       reject('fetch farm sdk info failed')
       return
     }
     console.log('end get sdk')
 
     if (aborted()) return
-    const liquidityJsonInfos = await fetchLiquidityJson({ url: payload.liquidityUrl }) // TODO: 💡 url should not be a parameter , it's not strightforward (easy to read)
-    if (!liquidityJsonInfos) {
+    const liquidityJsons = await fetchLiquidityJson({ url: payload.liquidityUrl }) // TODO: 💡 url should not be a parameter , it's not strightforward (easy to read)
+    if (!liquidityJsons) {
       reject('fetch pair apr json info failed')
       return
     }
 
     if (aborted()) return
-    const pairJsonInfos = await fetchPairJsonInfo({ url: payload.pairApiUrl })
-    if (!pairJsonInfos) {
+    const pairJsons = await fetchPairJsonInfo({ url: payload.pairApiUrl })
+    if (!pairJsons) {
       reject('fetch pair apr json info failed')
       return
     }
@@ -61,24 +61,24 @@ export function composeFarmSYNInfo(payload: {
     if (aborted()) return
 
     const lpMintAmmIdMap = new Map(
-      [...liquidityJsonInfos.values()].map((pairAprJsonInfo) => [pairAprJsonInfo.lpMint, pairAprJsonInfo])
+      [...liquidityJsons.values()].map((pairAprJsonInfo) => [pairAprJsonInfo.lpMint, pairAprJsonInfo])
     )
     const lpPriceMap = new Map(
-      [...pairJsonInfos.values()].map((pairJsonInfo) => [pairJsonInfo.lpMint, pairJsonInfo.lpPrice])
+      [...pairJsons.values()].map((pairJsonInfo) => [pairJsonInfo.lpMint, pairJsonInfo.lpPrice])
     )
 
-    const farmSYNInfos = map(farmJsonInfos, (jsonInfo) => {
-      const sdkInfo = farmSDKInfos[toPubString(jsonInfo.id)]
+    const farmSYN = map(farmJsonInfos, (jsonInfo) => {
+      const farmSDK = farmSDKs[toPubString(jsonInfo.id)]
       const ammId = lpMintAmmIdMap.get(jsonInfo.lpMint)?.id
-      const pairJsonInfo = ammId ? pairJsonInfos.get(ammId) : undefined
+      const pairJson = ammId ? pairJsons.get(ammId) : undefined
       const lpPrice = lpPriceMap.get(jsonInfo.lpMint) ?? undefined
-      const tvl = lpPrice != null ? mul(String(sdkInfo.lpVault.amount), lpPrice) : undefined
+      const tvl = lpPrice != null ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
       const apr =
-        pairJsonInfo &&
+        pairJson &&
         ({
-          '24h': pairJsonInfo.apr24h,
-          '30d': pairJsonInfo.apr30d,
-          '7d': pairJsonInfo.apr7d
+          '24h': pairJson.apr24h,
+          '30d': pairJson.apr30d,
+          '7d': pairJson.apr7d
         } as FarmSYNInfo['rewards'][number]['apr'])
       return {
         name: jsonInfo.symbol,
@@ -100,10 +100,10 @@ export function composeFarmSYNInfo(payload: {
         )
       } as FarmSYNInfo
     })
-    if (!farmSYNInfos) {
+    if (!farmSYN) {
       reject('hydrate farm syn info failed')
     } else {
-      resolve(farmSYNInfos)
+      resolve(farmSYN)
     }
   })
 }

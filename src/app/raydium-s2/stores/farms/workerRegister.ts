@@ -1,7 +1,7 @@
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { FetchFarmsJSONPayloads, FetchFarmsSYNInfoPayloads } from './type'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
-import { composeFarmSYNInfo } from './utils/composeFarmSYNInfo'
+import { composeFarmSYN } from './utils/composeFarmSYN'
 
 export function registInWorker() {
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ payload, resolve }) =>
@@ -11,7 +11,7 @@ export function registInWorker() {
   registMessageReceiver<FetchFarmsSYNInfoPayloads>(
     'get raydium farms syn infos',
     async ({ payload, resolve, onCleanUp }) => {
-      const { abort, result: farmSYNInfos } = composeFarmSYNInfo(payload)
+      const { abort, result: farmSYNInfos } = composeFarmSYN(payload)
       farmSYNInfos.then(resolve)
       onCleanUp(abort)
     }
