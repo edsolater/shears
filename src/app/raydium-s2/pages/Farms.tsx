@@ -1,7 +1,8 @@
-import { Numberish } from '@edsolater/fnkit'
-import { createEffect } from 'solid-js'
+import { Numberish, toPercentString } from '@edsolater/fnkit'
+import { createEffect, For } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box, Collapse, CollapseFace, List } from '../../../packages/pivkit'
+import { CoinAvatar } from '../components/CoinAvatar'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmPageStates } from '../pageStates/farmState'
@@ -41,7 +42,7 @@ function FarmList() {
   return (
     <List items={farmStore.farmSYNInfos && [...farmStore.farmSYNInfos.values()]}>
       {(info, idx) => {
-        console.log('info: ', info)
+        // console.log('info: ', info)
         return (
           <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
             <CollapseFace>
@@ -55,10 +56,11 @@ function FarmList() {
                   }}
                   onClick={() => {
                     farmPageStates.setDetailViewFarmId(info.id)
-                  } }
+                  }}
                 >
                   {/* part 1 */}
                   <Box></Box>
+
                   {/* part 2 */}
                   <Box
                     icss={{
@@ -69,12 +71,21 @@ function FarmList() {
                   >
                     <CoinAvatarPair
                       token1={tokenListStore.getToken(info.base)}
-                      token2={tokenListStore.getToken(info.quote)} />
+                      token2={tokenListStore.getToken(info.quote)}
+                    />
                     <Piv>{info.name}</Piv>
                   </Box>
 
-                  {/* part 3 */}
-                  <Piv>234{toString(info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => add(acc, r), 0))}</Piv>
+                  {/* part 3 : pending reward*/}
+                  <Piv>
+                    <For each={info.rewards}>{(r) => <CoinAvatar token={tokenListStore.getToken(r.token)} />}</For>
+                  </Piv>
+
+                  {/* part 4 total apr */}
+                  <Piv>{toString(info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => add(acc, r), 0))}</Piv>
+
+                  {/* part 5 tvl */}
+                  <Piv>{toString(info.tvl)}</Piv>
 
                   {/* <Show when={status.isOpen}>
                       <Piv>{info.version}</Piv>

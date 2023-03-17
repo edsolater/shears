@@ -23,7 +23,7 @@ export type NumberishOption = {
  * toString({ numerator: 3n, denominator: 2n  }) => '1.5'
  * toString({ numerator: 42312n, denominator: 100n  }) => '423.12'
  */
-export function toString(from: Numberish | undefined, options?: NumberishOption): string {
+export function toString(from?: Numberish | undefined, options?: NumberishOption): string {
   if (from == null) return ''
   const { numerator, denominator } = toFraction(from)
   if (denominator === 1n) {
@@ -42,7 +42,6 @@ export function toString(from: Numberish | undefined, options?: NumberishOption)
 /**
  * CAUTION 1: if original number have very long decimal part, it will lost
  * CAUTION 2: result MUST between MAX_SAFE_INTEGER and MIN_SAFE_INTEGER
- *
  */
 export function toNumber(from: Numberish): number {
   const n = Number(toString(from))

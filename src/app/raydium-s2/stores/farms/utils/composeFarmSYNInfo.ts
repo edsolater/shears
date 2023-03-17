@@ -3,13 +3,12 @@ import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
+import { mul } from '../../../utils/dataStructures/basicMath/operations'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { fetchLiquidityJson } from '../../apiInfos/fetchLiquidityJson'
-import { usePairsStore } from '../../pairs/store'
 import { fetchPairJsonInfo } from '../../pairs/utils/fetchPairJson'
 import { FarmStore } from '../store'
 import { FarmSYNInfo } from '../type'
-import { fetchFarmAprJsonFile } from './fetchFarmAprJson'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 
 /* TODO: move to `/utils` */
@@ -46,29 +45,34 @@ export function composeFarmSYNInfo(payload: {
     console.log('end get sdk')
 
     if (aborted()) return
-
     const liquidityJsonInfos = await fetchLiquidityJson({ url: payload.liquidityUrl }) // TODO: 💡 url should not be a parameter , it's not strightforward (easy to read)
     if (!liquidityJsonInfos) {
       reject('fetch pair apr json info failed')
       return
     }
-    if (aborted()) return
 
+    if (aborted()) return
     const pairJsonInfos = await fetchPairJsonInfo({ url: payload.pairApiUrl })
     if (!pairJsonInfos) {
       reject('fetch pair apr json info failed')
       return
     }
+
     if (aborted()) return
 
     const lpMintAmmIdMap = new Map(
       [...liquidityJsonInfos.values()].map((pairAprJsonInfo) => [pairAprJsonInfo.lpMint, pairAprJsonInfo])
+    )
+    const lpPriceMap = new Map(
+      [...pairJsonInfos.values()].map((pairJsonInfo) => [pairJsonInfo.lpMint, pairJsonInfo.lpPrice])
     )
 
     const farmSYNInfos = map(farmJsonInfos, (jsonInfo) => {
       const sdkInfo = farmSDKInfos[toPubString(jsonInfo.id)]
       const ammId = lpMintAmmIdMap.get(jsonInfo.lpMint)?.id
       const pairJsonInfo = ammId ? pairJsonInfos.get(ammId) : undefined
+      const lpPrice = lpPriceMap.get(jsonInfo.lpMint) ?? undefined
+      const tvl = lpPrice != null ? mul(String(sdkInfo.lpVault.amount), lpPrice) : undefined
       const apr =
         pairJsonInfo &&
         ({
@@ -81,6 +85,7 @@ export function composeFarmSYNInfo(payload: {
         base: jsonInfo.baseMint,
         quote: jsonInfo.quoteMint,
         category: jsonInfo.category,
+        tvl,
         rewards: jsonInfo.rewardInfos.map(
           (rewardJsonInfo) =>
             ({
@@ -101,16 +106,4 @@ export function composeFarmSYNInfo(payload: {
       resolve(farmSYNInfos)
     }
   })
-  // const rawInfos = await Farm.fetchMultipleInfoAndUpdate(options)
-  // console.log('rawInfos: ', rawInfos)
-  // const result = options.pools.map((pool, idx) => {
-  //   return {
-  //     ...payload.jsonInfos[idx],
-  //     ...pool,
-  //     ...rawInfos[String(pool.id)],
-  //     fetchedMultiInfo: rawInfos[String(pool.id)],
-  //     jsonInfo: payload.jsonInfos[idx]
-  //   } as unknown as FarmSDKInfo
-  // })
-  // return result
 }
