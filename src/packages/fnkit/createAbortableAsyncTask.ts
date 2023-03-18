@@ -1,20 +1,29 @@
-// make it  possiable to abort inside the progress of task
+import { createSubscribable, Subscribable } from '@edsolater/fnkit'
+import { invoke } from './invoke'
+
+/**
+ * make it  possiable to abort inside the progress of task
+ * inner use basic subscribable
+ */
 export function createAbortableAsyncTask<T>(
-  task: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void, aborted: () => boolean) => void
-): { result: Promise<T>; abort(): void } {
-  let innerResolve: (value: T | PromiseLike<T>) => void
-  let innerReject: (reason?: any) => void
-  const abortController = new AbortController()
-  const abortableTask = new Promise<T>((resolve, reject) => {
-    innerResolve = resolve
-    innerReject = reject
-    task(resolve, reject, () => abortController.signal.aborted)
-  })
+  task: (utils: { resolve: (value: T | PromiseLike<T>) => void; aborted: () => boolean }) => void
+): {
+  abort(): void
+  resultSubscribable: Subscribable<T>
+} {
+  let isTaskAborted = false
+  const innerResolve: (value: T | PromiseLike<T>) => void = async (asyncValue) => {
+    const value = await asyncValue
+    if (isTaskAborted) return // case: abort before value promise fulfilled
+    inputToTaskResultSubscribe(value)
+  }
+  const [taskResultSubscribable, inputToTaskResultSubscribe] = createSubscribable<T>()
+  const utils = { resolve: innerResolve, aborted: () => isTaskAborted }
+  invoke(task, utils)
   return {
-    result: abortableTask,
     abort: () => {
-      innerReject('abort by user')
-      abortController.abort()
-    }
+      isTaskAborted = true
+    },
+    resultSubscribable: taskResultSubscribable
   }
 }

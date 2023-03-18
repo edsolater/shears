@@ -21,13 +21,10 @@ export function composeFarmSYN(payload: {
   liquidityUrl: string
   farmApiUrl: string
 }) {
-  return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async (resolve, reject, aborted) => {
+  return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async ({ resolve, aborted }) => {
     if (aborted()) return
     const farmJsonInfos = await fetchFarmJsonInfo({ url: payload.farmApiUrl })
-    if (!farmJsonInfos) {
-      reject('fetch farm json info failed')
-      return
-    }
+    if (!farmJsonInfos) return
 
     if (aborted()) return
     const paramOptions: FarmFetchMultipleInfoParams = {
@@ -38,25 +35,17 @@ export function composeFarmSYN(payload: {
     }
     console.log('start get sdk')
     const farmSDKs = await Farm.fetchMultipleInfoAndUpdate(paramOptions)
-    if (!farmSDKs) {
-      reject('fetch farm sdk info failed')
-      return
-    }
+    if (!farmSDKs) return
+
     console.log('end get sdk')
 
     if (aborted()) return
     const liquidityJsons = await fetchLiquidityJson({ url: payload.liquidityUrl }) // TODO: 💡 url should not be a parameter , it's not strightforward (easy to read)
-    if (!liquidityJsons) {
-      reject('fetch pair apr json info failed')
-      return
-    }
+    if (!liquidityJsons) return
 
     if (aborted()) return
     const pairJsons = await fetchPairJsonInfo({ url: payload.pairApiUrl })
-    if (!pairJsons) {
-      reject('fetch pair apr json info failed')
-      return
-    }
+    if (!pairJsons) return
 
     if (aborted()) return
 
@@ -93,10 +82,8 @@ export function composeFarmSYN(payload: {
         )
       } as FarmSYNInfo
     })
-    if (!farmSYN) {
-      reject('hydrate farm syn info failed')
-    } else {
-      resolve(farmSYN)
-    }
+    if (!farmSYN) return
+
+    resolve(farmSYN)
   })
 }
