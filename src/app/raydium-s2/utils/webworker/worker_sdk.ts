@@ -6,7 +6,7 @@ import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
 import { applyWebworkerRegisters } from './worker_registers'
 
-type onMessage<D> = (utils: { payload: D; onCleanUp(cleanFn: () => void): void; resolve(value: any): void }) => void
+type onMessage<D> = (utils: { payload: D; onClean(cleanFn: () => void): void; resolve(value: any): void }) => void
 
 const callbackMap = new Map<string, onMessage<any>>()
 const cleanFunctionMap = new WeakMap<onMessage<any>, (() => void)[]>()
@@ -25,7 +25,7 @@ function initMessageReceiver() {
       cleanFunctionMap.delete(onMessage)
     }
 
-    const onCleanUp = (cleanFn: () => void) => {
+    const onClean = (cleanFn: () => void) => {
       const cleanFns = cleanFunctionMap.get(onMessage) || []
       cleanFns.push(cleanFn)
       cleanFunctionMap.set(onMessage, cleanFns)
@@ -41,7 +41,7 @@ function initMessageReceiver() {
     )
 
     invokePrevCleanUps(onMessage)
-    invoke(onMessage, { payload, onCleanUp, resolve: promiseResolve! })
+    invoke(onMessage, { payload, onClean, resolve: promiseResolve! })
     returnValueMap.get(onMessage)?.then((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)
