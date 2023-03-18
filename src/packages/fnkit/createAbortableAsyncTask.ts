@@ -1,4 +1,4 @@
-import { createSubscribable, Subscribable } from '@edsolater/fnkit'
+import { Subscribable } from './customizedClasses/Subscribable'
 import { invoke } from './invoke'
 
 /**
@@ -15,9 +15,9 @@ export function createAbortableAsyncTask<T>(
   const innerResolve: (value: T | PromiseLike<T>) => void = async (asyncValue) => {
     const value = await asyncValue
     if (isTaskAborted) return // case: abort before value promise fulfilled
-    inputToTaskResultSubscribe(value)
+    taskResultSubscribable.injectValue(value)
   }
-  const [taskResultSubscribable, inputToTaskResultSubscribe] = createSubscribable<T>()
+  const taskResultSubscribable = new Subscribable<T>()
   const utils = { resolve: innerResolve, aborted: () => isTaskAborted }
   invoke(task, utils)
   return {
