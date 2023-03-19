@@ -1,5 +1,6 @@
 import { map } from '@edsolater/fnkit'
-import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
+import { Farm, FarmFetchMultipleInfoParams, FarmFetchMultipleInfoReturn } from '@raydium-io/raydium-sdk'
+import { composePromises } from '../../../../../packages/fnkit/composePromises'
 import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
@@ -11,76 +12,83 @@ import { FarmStore } from '../store'
 import { FarmSYNInfo } from '../type'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 
-/** 
- * use LiquidityJson to get 
+/**
+ * use LiquidityJson to get
  */
-export function composeFarmSYN(payload: {
-  owner: string
-  rpcUrl: string
-}) {
+export function composeFarmSYN(payload: { owner: string; rpcUrl: string }) {
   return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async ({ resolve, aborted }) => {
-    if (aborted()) return
-    const farmJsonInfos = await fetchFarmJsonInfo()
-    if (!farmJsonInfos) return
+    const fetchedAPIPromise = Promise.all([fetchFarmJsonInfo(), fetchLiquidityJson(), fetchPairJsonInfo()])
 
-    if (aborted()) return
-    const paramOptions: FarmFetchMultipleInfoParams = {
-      connection: getConnection(payload.rpcUrl),
-      pools: [...farmJsonInfos.values()].map(jsonInfo2PoolKeys),
-      owner: toPub(payload.owner),
-      config: { commitment: 'confirmed' }
-    }
-    console.log('start get sdk')
-    const farmSDKs = await Farm.fetchMultipleInfoAndUpdate(paramOptions)
-    if (!farmSDKs) return
-
-    console.log('end get sdk')
-
-    if (aborted()) return
-    const liquidityJsons = await fetchLiquidityJson() 
-    if (!liquidityJsons) return
-
-    if (aborted()) return
-    const pairJsons = await fetchPairJsonInfo()
-    if (!pairJsons) return
-
-    if (aborted()) return
-
-    const farmSYN = map(farmJsonInfos, (jsonInfo) => {
-      const farmSDK = farmSDKs[toPubString(jsonInfo.id)]
-      const ammId = liquidityJsons.get(jsonInfo.lpMint, 'lpMint')?.id
-      const pairJson = ammId ? pairJsons.get(ammId) : undefined
-      const lpPrice = pairJsons.get(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
-      const tvl = lpPrice != null ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
-      const apr =
-        pairJson &&
-        ({
-          '24h': pairJson.apr24h,
-          '30d': pairJson.apr30d,
-          '7d': pairJson.apr7d
-        } as FarmSYNInfo['rewards'][number]['apr'])
-      return {
-        name: jsonInfo.symbol,
-        base: jsonInfo.baseMint,
-        quote: jsonInfo.quoteMint,
-        category: jsonInfo.category,
-        tvl,
-        rewards: jsonInfo.rewardInfos.map(
-          (rewardJsonInfo) =>
-            ({
-              token: rewardJsonInfo.rewardMint,
-              apr: apr,
-              farmVersion: jsonInfo.version,
-              type: rewardJsonInfo.rewardType,
-              perSecond: rewardJsonInfo.rewardPerSecond,
-              openTime: rewardJsonInfo.rewardOpenTime && new Date(rewardJsonInfo.rewardOpenTime * 1000),
-              endTime: rewardJsonInfo.rewardEndTime && new Date(rewardJsonInfo.rewardEndTime * 1000)
-            } as FarmSYNInfo['rewards'][number])
-        )
-      } as FarmSYNInfo
+    const farmSDKPromise = fetchedAPIPromise.then(([farmJsonInfos]) => {
+      const paramOptions: FarmFetchMultipleInfoParams = {
+        connection: getConnection(payload.rpcUrl),
+        pools: [...farmJsonInfos.values()].map(jsonInfo2PoolKeys),
+        owner: toPub(payload.owner),
+        config: { commitment: 'confirmed' }
+      }
+      return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })
-    if (!farmSYN) return
+    const allPromise = composePromises(fetchedAPIPromise, farmSDKPromise)
 
-    resolve(farmSYN)
+    fetchedAPIPromise.then(([farmJsons, liquidityJsons, pairJsons]) => {
+      if (aborted()) return
+      const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons })
+      if (!farmSYN) return
+      resolve(farmSYN)
+    })
+
+    allPromise.then(([farmJsons, liquidityJsons, pairJsons, farmSDKs]) => {
+      if (aborted()) return
+      const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
+      if (!farmSYN) return
+      resolve(farmSYN)
+    })
+  })
+}
+
+function hydrateFarmSYN({
+  farmJsons,
+  farmSDKs,
+  liquidityJsons,
+  pairJsons
+}: {
+  farmJsons?: Awaited<ReturnType<typeof fetchFarmJsonInfo>>
+  farmSDKs?: Awaited<ReturnType<(typeof Farm)['fetchMultipleInfoAndUpdate']>>
+  liquidityJsons?: Awaited<ReturnType<typeof fetchLiquidityJson>>
+  pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
+}) {
+  if (!farmJsons || !liquidityJsons || !pairJsons) return
+  return map(farmJsons, (jsonInfo) => {
+    const farmSDK = farmSDKs?.[toPubString(jsonInfo.id)]
+    const ammId = liquidityJsons.get(jsonInfo.lpMint, 'lpMint')?.id
+    const pairJson = ammId ? pairJsons?.get(ammId) : undefined
+    const lpPrice = pairJsons?.get(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
+    const tvl = lpPrice != null && farmSDK ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
+    const apr =
+      pairJson &&
+      ({
+        '24h': pairJson.apr24h,
+        '30d': pairJson.apr30d,
+        '7d': pairJson.apr7d
+      } as FarmSYNInfo['rewards'][number]['apr'])
+    return {
+      name: jsonInfo.symbol,
+      base: jsonInfo.baseMint,
+      quote: jsonInfo.quoteMint,
+      category: jsonInfo.category,
+      tvl,
+      rewards: jsonInfo.rewardInfos.map(
+        (rewardJsonInfo) =>
+          ({
+            token: rewardJsonInfo.rewardMint,
+            apr: apr,
+            farmVersion: jsonInfo.version,
+            type: rewardJsonInfo.rewardType,
+            perSecond: rewardJsonInfo.rewardPerSecond,
+            openTime: rewardJsonInfo.rewardOpenTime && new Date(rewardJsonInfo.rewardOpenTime * 1000),
+            endTime: rewardJsonInfo.rewardEndTime && new Date(rewardJsonInfo.rewardEndTime * 1000)
+          } as FarmSYNInfo['rewards'][number])
+      )
+    } as FarmSYNInfo
   })
 }

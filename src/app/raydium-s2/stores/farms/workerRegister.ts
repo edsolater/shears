@@ -12,10 +12,7 @@ export function registInWorker() {
     'get raydium farms syn infos',
     async ({ payload, resolve, onClean }) => {
       const { abort, resultSubscribable } = composeFarmSYN(payload)
-      resultSubscribable.subscribe((value) => {
-        console.log('value: ', value)
-        resolve(value)
-      })
+      resultSubscribable.subscribe(resolve)
       onClean(abort)
     }
   )

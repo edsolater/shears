@@ -23,7 +23,7 @@ export type FarmRewardJSONInfo = {
 
 export type FarmAprJSONInfo = ApiFarmApr
 
-export type FarmJSONInfo = {
+export type FarmJSON = {
   id: string
   symbol: string
   lpMint: string
@@ -51,10 +51,10 @@ export type FarmJSONInfo = {
 export type FarmJSONFile = {
   name: string
   version: unknown
-  stake: Omit<FarmJSONInfo, 'category'>[]
-  raydium: Omit<FarmJSONInfo, 'category'>[]
-  fusion: Omit<FarmJSONInfo, 'category'>[]
-  ecosystem: Omit<FarmJSONInfo, 'category'>[]
+  stake: Omit<FarmJSON, 'category'>[]
+  raydium: Omit<FarmJSON, 'category'>[]
+  fusion: Omit<FarmJSON, 'category'>[]
+  ecosystem: Omit<FarmJSON, 'category'>[]
 }
 
 export type FarmSYNInfo = {
@@ -87,7 +87,7 @@ export type FarmSYNInfo = {
     '24h': Percent
   }
 
-  tvl: Numberish
+  tvl?: Numberish // only when sdk is ready
 
   userHasStaked: boolean
   rewards: {
@@ -102,7 +102,7 @@ export type FarmSYNInfo = {
     token: Mint | undefined
     /** only when user have deposited and connected wallet */
     userPendingReward: TokenAmount | undefined
-    farmVersion: 3 | 5 | 6 
+    farmVersion: 3 | 5 | 6
     rewardVault: PublicKey
     openTime?: Date // v6
     endTime?: Date // v6

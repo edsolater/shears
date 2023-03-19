@@ -2,7 +2,7 @@ export type FetchPairsOptions = {
   force?: boolean
 }
 
-export interface JsonPairItemInfo {
+export interface PairJson {
   ammId: string
   apr24h: number
   apr7d: number

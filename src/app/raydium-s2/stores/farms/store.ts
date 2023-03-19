@@ -3,10 +3,10 @@ import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { useWalletStore } from '../wallet/store'
 import { loadFarmJsonInfos } from './methods/loadFarmJsonInfos'
 import { loadFarmSYNInfos } from './methods/loadFarmSYNInfos'
-import { FarmJSONInfo, FarmSYNInfo } from './type'
+import { FarmJSON, FarmSYNInfo } from './type'
 
 export type FarmStore = {
-  readonly farmJsonInfos: Map<FarmJSONInfo['id'], FarmJSONInfo> | undefined
+  readonly farmJsonInfos: Map<FarmJSON['id'], FarmJSON> | undefined
   readonly isFarmJsonLoading: boolean
   readonly farmSYNInfos: Map<FarmSYNInfo['id'], FarmSYNInfo> | undefined
   readonly isFarmSYNInfosLoading: boolean

@@ -1,7 +1,7 @@
 import { appApiUrls } from '../../../utils/common/config'
 import { WebworkerSubscribeCallback, subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
 import { usePairsStore } from '../store'
-import { JsonPairItemInfo, FetchPairsOptions } from '../type'
+import { PairJson, FetchPairsOptions } from '../type'
 
 export function loadData() {
   usePairsStore().$setters.setIsLoading(true)
@@ -19,8 +19,8 @@ export function loadData() {
   })
 }
 
-function getPairJson(cb: WebworkerSubscribeCallback<JsonPairItemInfo[]>) {
-  return subscribeWebWorker<JsonPairItemInfo[], FetchPairsOptions>(
+function getPairJson(cb: WebworkerSubscribeCallback<PairJson[]>) {
+  return subscribeWebWorker<PairJson[], FetchPairsOptions>(
     {
       description: 'fetch raydium pairs info',
       payload: {

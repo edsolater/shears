@@ -1,22 +1,22 @@
 import { createEffect, createSignal, Setter } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
 import { loadData } from './methods/loadPairs'
-import { JsonPairItemInfo } from './type'
+import { PairJson } from './type'
 
 export type PairsStore = {
   // for extract method
   $setters: {
     setIsLoading: Setter<boolean>
-    setPairsInfos: Setter<JsonPairItemInfo[]>
+    setPairsInfos: Setter<PairJson[]>
   }
-  readonly infos: JsonPairItemInfo[]
+  readonly infos: PairJson[]
   readonly isLoading: boolean
   refetch(): void
 }
 
 export const usePairsStore = createCachedGlobalHook((): PairsStore => {
   const [isLoading, setIsLoading] = createSignal(false)
-  const [pairsInfos, setPairsInfos] = createSignal<JsonPairItemInfo[]>([])
+  const [pairsInfos, setPairsInfos] = createSignal<PairJson[]>([])
   createEffect(loadData)
   const store = {
     $setters: {

@@ -2,14 +2,14 @@ import { createMemo, createSignal, Setter } from 'solid-js'
 import find from '../../../packages/fnkit/collectionMethods/find'
 import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { useFarmStore } from '../stores/farms/store'
-import { FarmJSONInfo } from '../stores/farms/type'
+import { FarmJSON } from '../stores/farms/type'
 
 export type FarmPageStates = {
   // setters
   setDetailViewFarmId: Setter<string | undefined>
 
   readonly detailViewFarmId: string | undefined
-  readonly detailViewFarmJsonInfo: FarmJSONInfo | undefined
+  readonly detailViewFarmJsonInfo: FarmJSON | undefined
 }
 
 export const useFarmPageStates = createCachedGlobalHook(() => {
