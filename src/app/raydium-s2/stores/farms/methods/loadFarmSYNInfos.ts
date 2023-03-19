@@ -24,9 +24,6 @@ function getFarmSYNInfosFromWorker(
       payload: {
         owner: owner,
         rpcUrl: appRpcEndpointUrl,
-        farmApiUrl: appApiUrls.farmInfo,
-        liquidityUrl: appApiUrls.poolInfo,
-        pairApiUrl: appApiUrls.pairs
       }
     },
     cb

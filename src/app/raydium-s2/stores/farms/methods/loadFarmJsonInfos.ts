@@ -16,7 +16,7 @@ function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<FarmStore['farmJso
   return subscribeWebWorker<FarmStore['farmJsonInfos'], FetchFarmsJSONPayloads>(
     {
       description: 'fetch raydium farms info',
-      payload: { url: appApiUrls.farmInfo }
+      payload: {  }
     },
     cb
   )

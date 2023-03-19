@@ -1,9 +1,10 @@
 import { jFetch } from '../../../../../packages/jFetch'
+import { appApiUrls } from '../../../utils/common/config'
 import { FarmStore } from '../store'
 import { FarmJSONInfo, FarmJSONFile } from '../type'
 
-export async function fetchFarmJsonInfo(options: { url: string }): Promise<NonNullable<FarmStore['farmJsonInfos']>> {
-  const result = await fetchFarmJsonFile(options)
+export async function fetchFarmJsonInfo(): Promise<NonNullable<FarmStore['farmJsonInfos']>> {
+  const result = await fetchFarmJsonFile()
   if (!result) return new Map()
   const stateInfos = result.stake.map((i) => ({ ...i, category: 'stake' })) as FarmJSONInfo[]
   const raydiumInfos = result.raydium.map((i) => ({ ...i, category: 'raydium' })) as FarmJSONInfo[]
@@ -17,6 +18,6 @@ export async function fetchFarmJsonInfo(options: { url: string }): Promise<NonNu
   ])
 }
 
-function fetchFarmJsonFile(options: { url: string }) {
-  return jFetch<FarmJSONFile>(options.url, { cacheFreshTime: 5 * 60 * 1000 })
+function fetchFarmJsonFile() {
+  return jFetch<FarmJSONFile>(appApiUrls.farmInfo, { cacheFreshTime: 5 * 60 * 1000 })
 }

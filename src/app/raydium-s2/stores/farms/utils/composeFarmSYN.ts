@@ -11,18 +11,16 @@ import { FarmStore } from '../store'
 import { FarmSYNInfo } from '../type'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 
-/* TODO: move to `/utils` */
-/** and state info  */
+/** 
+ * use LiquidityJson to get 
+ */
 export function composeFarmSYN(payload: {
   owner: string
   rpcUrl: string
-  pairApiUrl: string
-  liquidityUrl: string
-  farmApiUrl: string
 }) {
   return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async ({ resolve, aborted }) => {
     if (aborted()) return
-    const farmJsonInfos = await fetchFarmJsonInfo({ url: payload.farmApiUrl })
+    const farmJsonInfos = await fetchFarmJsonInfo()
     if (!farmJsonInfos) return
 
     if (aborted()) return
@@ -39,11 +37,11 @@ export function composeFarmSYN(payload: {
     console.log('end get sdk')
 
     if (aborted()) return
-    const liquidityJsons = await fetchLiquidityJson({ url: payload.liquidityUrl }) // TODO: 💡 url should not be a parameter , it's not strightforward (easy to read)
+    const liquidityJsons = await fetchLiquidityJson() 
     if (!liquidityJsons) return
 
     if (aborted()) return
-    const pairJsons = await fetchPairJsonInfo({ url: payload.pairApiUrl })
+    const pairJsons = await fetchPairJsonInfo()
     if (!pairJsons) return
 
     if (aborted()) return

@@ -1,9 +1,7 @@
 import { createEffect, createSignal, Setter } from 'solid-js'
 import { createCachedGlobalHook } from '../../../../packages/pivkit'
-import { appApiUrls } from '../../utils/common/config'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../utils/webworker/mainThread_receiver'
 import { loadData } from './methods/loadPairs'
-import { FetchPairsOptions, JsonPairItemInfo } from './type'
+import { JsonPairItemInfo } from './type'
 
 export type PairsStore = {
   // for extract method

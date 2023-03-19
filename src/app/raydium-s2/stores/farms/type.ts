@@ -3,14 +3,10 @@ import { BN } from '../../utils/dataStructures/BN'
 import { Mint, Numberish, Percent, Price, PublicKey, TokenAmount } from '../../utils/dataStructures/type'
 
 export type FetchFarmsJSONPayloads = {
-  url: string
   force?: boolean
 }
 
 export type FetchFarmsSYNInfoPayloads = {
-  pairApiUrl: string
-  farmApiUrl: string
-  liquidityUrl: string
   rpcUrl: string
   owner: string
 }

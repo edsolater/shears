@@ -1,5 +1,4 @@
 export type FetchPairsOptions = {
-  url: string
   force?: boolean
 }
 
