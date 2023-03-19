@@ -4,6 +4,7 @@ export type SubscribeCallbackFn<T> = ((value: T) => void | Promise<void>) | ((ne
 
 type Dispatcher<T> = T | ((oldValue: T) => T)
 
+// TODO: need to be like Promise
 export class Subscribable<T> {
   private _value: T | undefined = undefined
   private _callbacks = new Set<SubscribeCallbackFn<T>>()
@@ -16,7 +17,7 @@ export class Subscribable<T> {
   }
 
   constructor(executor?: (injectValue: (value: T | PromiseLike<T>) => void) => void) {
-    executor?.(this.inputValue.bind(this))
+    executor?.(this.inputValue)
   }
 
   get current() {

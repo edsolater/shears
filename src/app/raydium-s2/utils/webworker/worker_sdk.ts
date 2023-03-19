@@ -5,12 +5,13 @@ import { WorkerDescription, WorkerMessage } from './type'
 import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
 import { applyWebworkerRegisters } from './worker_registers'
+import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
 
 type onMessage<D> = (utils: { payload: D; onClean(cleanFn: () => void): void; resolve(value: any): void }) => void
 
 const callbackMap = new Map<string, onMessage<any>>()
 const cleanFunctionMap = new WeakMap<onMessage<any>, (() => void)[]>()
-const returnValueMap = new WeakMap<onMessage<any>, Promise<any>>()
+const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
 function initMessageReceiver() {
   globalThis.addEventListener('message', async (ev) => {
@@ -31,18 +32,12 @@ function initMessageReceiver() {
       cleanFunctionMap.set(onMessage, cleanFns)
     }
 
-    let promiseResolve: (value: any) => void
-
-    returnValueMap.set(
-      onMessage,
-      new Promise((resolve) => {
-        promiseResolve = resolve
-      })
-    )
+    const subscribable = new Subscribable()
+    returnValueMap.set(onMessage, subscribable)
 
     invokePrevCleanUps(onMessage)
-    invoke(onMessage, { payload, onClean, resolve: promiseResolve! })
-    returnValueMap.get(onMessage)?.then((outputData) => {
+    invoke(onMessage, { payload, onClean, resolve: subscribable.injectValue.bind(subscribable) })
+    returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)
       console.log(`transforming ${description}...`)

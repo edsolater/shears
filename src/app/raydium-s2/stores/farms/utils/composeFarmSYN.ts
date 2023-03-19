@@ -13,7 +13,6 @@ import { fetchFarmJsonInfo } from './fetchFarmJson'
 
 /* TODO: move to `/utils` */
 /** and state info  */
-
 export function composeFarmSYN(payload: {
   owner: string
   rpcUrl: string
