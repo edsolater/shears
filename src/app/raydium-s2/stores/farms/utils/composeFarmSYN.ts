@@ -52,7 +52,7 @@ export function composeFarmSYN(payload: {
       const farmSDK = farmSDKs[toPubString(jsonInfo.id)]
       const ammId = liquidityJsons.get(jsonInfo.lpMint, 'lpMint')?.id
       const pairJson = ammId ? pairJsons.get(ammId) : undefined
-      const lpPrice = pairJsons.get(jsonInfo.lpMint)?.lpPrice ?? undefined
+      const lpPrice = pairJsons.get(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
       const tvl = lpPrice != null ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
       const apr =
         pairJson &&
