@@ -28,22 +28,26 @@ export class IndexAccessMap<V extends object, BK extends keyof V> {
     this.#basicKeyIndexAccessMap = basicKeyPropertyName
   }
 
-  get<K extends keyof V>(key: V[K], keyName?: K) {
-    if (!keyName) return this.#innerMap.get(key as unknown as V[BK])
+  select<K extends keyof V>(key: V[K], keyPropertyName: K) {
+    if (!keyPropertyName) return this.get(key)
     // @ts-ignore
-    if (keyName !== this.#basicKeyIndexAccessMap) {
+    if (keyPropertyName !== this.#basicKeyIndexAccessMap) {
       const targetIndexAccessMap =
-        this.#keyIndexAccessMap[keyName] ||
+        this.#keyIndexAccessMap[keyPropertyName] ||
         (() => {
           const newAccessMap = new Map<any, V[BK]>(
-            [...this.#innerMap.values()].map((v) => [v[keyName], v[this.#basicKeyIndexAccessMap]])
+            [...this.#innerMap.values()].map((v) => [v[keyPropertyName], v[this.#basicKeyIndexAccessMap]])
           )
-          this.#keyIndexAccessMap[keyName] = newAccessMap
+          this.#keyIndexAccessMap[keyPropertyName] = newAccessMap
           return newAccessMap
         })()
       const targetBasicKey = targetIndexAccessMap.get(key)
       return targetBasicKey && this.#innerMap.get(targetBasicKey)
     }
+  }
+  
+  get<K extends keyof V>(key: V[K]) {
+    return this.#innerMap.get(key as unknown as V[BK])
   }
 
   set(value: V) {

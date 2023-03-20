@@ -60,9 +60,9 @@ function hydrateFarmSYN({
   if (!farmJsons || !liquidityJsons || !pairJsons) return
   return map(farmJsons, (jsonInfo) => {
     const farmSDK = farmSDKs?.[toPubString(jsonInfo.id)]
-    const ammId = liquidityJsons.get(jsonInfo.lpMint, 'lpMint')?.id
+    const ammId = liquidityJsons.select(jsonInfo.lpMint, 'lpMint')?.id
     const pairJson = ammId ? pairJsons?.get(ammId) : undefined
-    const lpPrice = pairJsons?.get(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
+    const lpPrice = pairJsons?.select(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
     const tvl = lpPrice != null && farmSDK ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
     const apr =
       pairJson &&
