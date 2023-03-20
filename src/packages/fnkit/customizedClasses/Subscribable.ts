@@ -51,11 +51,21 @@ export class Subscribable<T> {
     if (newValue) this.inputValue(newValue)
   }
 
-  
-  /** Subscribable should be just richer version of Promise  */
-  static fromPromise<T>(promise: Promise<T>) {
+  /**
+   * Subscribable should be just richer version of Promise
+   * TODO: Test it !!!
+   */
+  static from<T>(...promises: Promise<T>[]) {
     return new Subscribable<T>((injectValue) => {
-      promise.then(injectValue)
+      const promiseValues = promises.map((promise) => undefined) as any[]
+      promises.forEach((promise, index) => {
+        promise.then((value) => {
+          promiseValues[index] = value
+          if (promiseValues.some((value) => value != null)) {
+            injectValue(promiseValues as any)
+          }
+        })
+      })
     })
   }
 
@@ -86,7 +96,7 @@ export class Subscribable<T> {
       }
     }
   }
-  
+
   pipe<U>(fn: (value: T) => U) {
     return new Subscribable<U>((injectValue) => {
       this.subscribe((value) => injectValue(fn(value)))
