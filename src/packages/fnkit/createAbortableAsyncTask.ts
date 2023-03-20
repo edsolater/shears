@@ -15,7 +15,7 @@ export function createAbortableAsyncTask<T>(
   const innerResolve: (value: T | PromiseLike<T>) => void = async (asyncValue) => {
     const value = await asyncValue
     if (isTaskAborted) return // case: abort before value promise fulfilled
-    taskResultSubscribable.injectValue(value)
+    taskResultSubscribable.inject(value)
   }
   const taskResultSubscribable = new Subscribable<T>()
   const utils = { resolve: innerResolve, aborted: () => isTaskAborted }

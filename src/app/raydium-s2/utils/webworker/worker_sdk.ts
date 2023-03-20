@@ -36,7 +36,7 @@ function initMessageReceiver() {
     returnValueMap.set(onMessage, subscribable)
 
     invokePrevCleanUps(onMessage)
-    invoke(onMessage, { payload, onClean, resolve: subscribable.injectValue.bind(subscribable) })
+    invoke(onMessage, { payload, onClean, resolve: subscribable.inject.bind(subscribable) })
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)
