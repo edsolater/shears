@@ -15,7 +15,7 @@ export class Subscribable<T> {
   extendedSubscribables: WeakSet<WeakRef<Subscribable<any>>> = new WeakSet()
 
   constructor(executor?: (injectValue: (value: T | PromiseLike<T>) => void) => void) {
-    executor?.(this.inputValue)
+    executor?.(this.inputValue.bind(this))
   }
 
   /**
@@ -53,11 +53,10 @@ export class Subscribable<T> {
 
   /**
    * Subscribable should be just richer version of Promise
-   * TODO: Test it !!!
    */
-  static from<T>(...promises: Promise<T>[]) {
-    return new Subscribable<T>((injectValue) => {
-      const promiseValues = promises.map((promise) => undefined) as any[]
+  static fromPromises<T extends Promise<any>[]>(promises: [...T]) {
+    return new Subscribable<GetPromiseArrayItem<T>>((injectValue) => {
+      const promiseValues = promises.map(() => undefined) as any[]
       promises.forEach((promise, index) => {
         promise.then((value) => {
           promiseValues[index] = value
@@ -103,3 +102,24 @@ export class Subscribable<T> {
     })
   }
 }
+
+type GetPromiseArrayItem<T extends Promise<any>[]> = T extends [Promise<infer F>]
+  ? [F | undefined]
+  : T extends [Promise<infer F>, Promise<infer R>]
+  ? [F | undefined, R | undefined]
+  : T extends [Promise<infer F>, Promise<infer R>, Promise<infer P>]
+  ? [F | undefined, R | undefined, P | undefined]
+  : T extends [Promise<infer F>, Promise<infer R>, Promise<infer P>, Promise<infer Q>]
+  ? [F | undefined, R | undefined, P | undefined, Q | undefined]
+  : T extends [Promise<infer F>, Promise<infer R>, Promise<infer P>, Promise<infer Q>, Promise<infer S>]
+  ? [F | undefined, R | undefined, P | undefined, Q | undefined, S | undefined]
+  : T extends [
+      Promise<infer F>,
+      Promise<infer R>,
+      Promise<infer P>,
+      Promise<infer Q>,
+      Promise<infer S>,
+      Promise<infer T>
+    ]
+  ? [F | undefined, R | undefined, P | undefined, Q | undefined, S | undefined, T | undefined]
+  : never

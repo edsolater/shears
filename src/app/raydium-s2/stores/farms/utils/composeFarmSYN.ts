@@ -2,6 +2,7 @@ import { map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams, FarmFetchMultipleInfoReturn } from '@raydium-io/raydium-sdk'
 import { composePromises } from '../../../../../packages/fnkit/composePromises'
 import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
+import { Subscribable } from '../../../../../packages/fnkit/customizedClasses/Subscribable'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
@@ -28,21 +29,15 @@ export function composeFarmSYN(payload: { owner: string; rpcUrl: string }) {
       }
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })
-    const allPromise = composePromises(fetchedAPIPromise, farmSDKPromise)
 
-    fetchedAPIPromise.then(([farmJsons, liquidityJsons, pairJsons]) => {
-      if (aborted()) return
-      const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons })
-      if (!farmSYN) return
-      resolve(farmSYN)
-    })
-
-    allPromise.then(([farmJsons, liquidityJsons, pairJsons, farmSDKs]) => {
-      if (aborted()) return
-      const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
-      if (!farmSYN) return
-      resolve(farmSYN)
-    })
+    Subscribable.fromPromises([fetchedAPIPromise, farmSDKPromise]).subscribe(
+      ([[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs]) => {
+        if (aborted()) return
+        const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
+        if (!farmSYN) return
+        resolve(farmSYN)
+      }
+    )
   })
 }
 
