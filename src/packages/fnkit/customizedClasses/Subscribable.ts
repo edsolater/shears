@@ -1,14 +1,23 @@
-import { isFunction } from '@edsolater/fnkit'
+import { AnyFn, isFunction, isObject } from '@edsolater/fnkit'
 
-export type SubscribeCallbackFn<T> = ((value: T) => void | Promise<void>) | ((newValue: T) => void)
+export type SubscribeCallbackFn<T> = (value: T, prevValue: T | undefined) => void | Promise<void>
 
 type Dispatcher<T> = T | ((oldValue: T) => T)
+type MayWeakRef<T> = T extends object | AnyFn ? WeakRef<T> : T
+
+function createMayWeakRef<T>(value: T): MayWeakRef<T> {
+  //@ts-ignore
+  return isObject(value) || isFunction(value) ? new WeakRef(value) : value
+}
+
+function deMayWeakRef<T>(value: MayWeakRef<T> | T): T | undefined {
+  return value instanceof WeakRef ? value.deref() : value
+}
 
 // TODO: need to be like Promise
 export class Subscribable<T> {
   /** it's current value */
-  private _value: T | undefined = undefined
-
+  private _values: MayWeakRef<T>[] = []
   private _callbacks = new Set<SubscribeCallbackFn<T>>()
 
   /** for easier debug a data graph */
@@ -22,56 +31,18 @@ export class Subscribable<T> {
    * inner method of Subscribable, to inject value and invoke callbacks
    */
   private async inputValue(mayAsyncValue: T | PromiseLike<T>) {
-    this._value = await mayAsyncValue
+    const values = await mayAsyncValue
+    this._values.push(createMayWeakRef(values))
+    const currentValue = deMayWeakRef(this._values.at(-1))
+    const prevValue = deMayWeakRef(this._values.at(-2))
+    if (currentValue == null) return
     this._callbacks.forEach((cb) => {
-      this._value != null && cb(this._value)
+      cb(currentValue, prevValue)
     })
   }
 
   get current() {
-    return this._value
-  }
-
-  /**
-   * main method of Subscribable
-   * use this function to register a callback
-   */
-  subscribe(cb: SubscribeCallbackFn<T>) {
-    this._callbacks.add(cb)
-    return {
-      abort: () => this._callbacks.delete(cb)
-    }
-  }
-
-  /**
-   * for user, try not to use this, it is more predicatable to use only executor
-   */
-  inject(dispatcher: Dispatcher<T | PromiseLike<T> | undefined>) {
-    const newValue = isFunction(dispatcher) ? dispatcher(this._value) : dispatcher
-    if (newValue) this.inputValue(newValue)
-  }
-
-  /**
-   * Subscribable should be just richer version of Promise
-   */
-  static fromPromises<T extends Promise<any>[]>(promises: [...T]) {
-    return new Subscribable<GetPromiseArrayItem<T>>((injectValue) => {
-      const promiseValues = promises.map(() => undefined) as any[]
-      promises.forEach((promise, index) => {
-        promise.then((value) => {
-          promiseValues[index] = value
-          if (promiseValues.some((value) => value != null)) {
-            injectValue(promiseValues as any)
-          }
-        })
-      })
-    })
-  }
-
-  toPromise() {
-    return new Promise<T>((resolve) => {
-      this.subscribe(resolve)
-    })
+    return deMayWeakRef(this._values.at(-1))
   }
 
   /**
@@ -96,9 +67,68 @@ export class Subscribable<T> {
     }
   }
 
+  /**
+   * main method of Subscribable
+   * use this function to create a new subscribable
+   */
   pipe<U>(fn: (value: T) => U) {
     return new Subscribable<U>((injectValue) => {
       this.subscribe((value) => injectValue(fn(value)))
+    })
+  }
+
+  /**
+   * main method of Subscribable
+   * use this function to register a callback
+   */
+  subscribe(callback: SubscribeCallbackFn<T>) {
+    this._callbacks.add(callback)
+    return {
+      abort: () => this._callbacks.delete(callback)
+    }
+  }
+
+  /**
+   * this method is simulate `promise.prototype.then`
+   * like subscribe
+   * but it won't return a subscription, instead it will return a new subscribable
+   */
+  then<U>(onFulfilled: (value: T) => U | PromiseLike<U>) {
+    return new Subscribable<U>((injectValue) => {
+      this.subscribe((value) => {
+        injectValue(onFulfilled(value))
+      })
+    })
+  }
+
+  /**
+   * for user, try not to use this, it is more predicatable to use only executor
+   */
+  inject(dispatcher: Dispatcher<T | PromiseLike<T> | undefined>) {
+    const newValue = isFunction(dispatcher) ? dispatcher(deMayWeakRef(this._values.at(-1))) : dispatcher
+    if (newValue) this.inputValue(newValue)
+  }
+
+  /**
+   * Subscribable should be just richer version of Promise
+   */
+  static fromPromises<T extends Promise<any>[]>(promises: [...T]) {
+    return new Subscribable<GetPromiseArrayItem<T>>((injectValue) => {
+      const promiseValues = promises.map(() => undefined) as any[]
+      promises.forEach((promise, index) => {
+        promise.then((value) => {
+          promiseValues[index] = value
+          if (promiseValues.some((value) => value != null)) {
+            injectValue(promiseValues as any)
+          }
+        })
+      })
+    })
+  }
+
+  toPromise() {
+    return new Promise<T>((resolve) => {
+      this.subscribe(resolve)
     })
   }
 }
