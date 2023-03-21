@@ -24,13 +24,13 @@ export class Subscribable<T> {
   extendedSubscribables: WeakSet<WeakRef<Subscribable<any>>> = new WeakSet()
 
   constructor(executor?: (injectValue: (value: T | PromiseLike<T>) => void) => void) {
-    executor?.(this.inputValue.bind(this))
+    executor?.(this.innerInject.bind(this))
   }
 
   /**
    * inner method of Subscribable, to inject value and invoke callbacks
    */
-  private async inputValue(mayAsyncValue: T | PromiseLike<T>) {
+  private async innerInject(mayAsyncValue: T | PromiseLike<T>) {
     const values = await mayAsyncValue
     this._values.push(createMayWeakRef(values))
     const currentValue = deMayWeakRef(this._values.at(-1))
@@ -58,7 +58,7 @@ export class Subscribable<T> {
   extends<U extends T>(another: Subscribable<U>) {
     const weakRefAnother = new WeakRef(another)
     this.extendedSubscribables.add(weakRefAnother)
-    const { abort } = another.subscribe((value) => this.inputValue(value))
+    const { abort } = another.subscribe((value) => this.innerInject(value))
     return {
       disconnect: () => {
         this.extendedSubscribables.delete(weakRefAnother)
@@ -106,7 +106,7 @@ export class Subscribable<T> {
    */
   inject(dispatcher: Dispatcher<T | PromiseLike<T> | undefined>) {
     const newValue = isFunction(dispatcher) ? dispatcher(deMayWeakRef(this._values.at(-1))) : dispatcher
-    if (newValue) this.inputValue(newValue)
+    if (newValue) this.innerInject(newValue)
   }
 
   /**
