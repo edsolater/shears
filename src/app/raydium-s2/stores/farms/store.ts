@@ -1,10 +1,11 @@
 import { onCleanup } from 'solid-js'
-import { createGlobalStore, createOnFirstAccessCallback, createStoreDefaultState } from '../../../../packages/pivkit'
+import { createGlobalStore, createOnFirstAccess, createStoreDefault } from '../../../../packages/pivkit'
 import { useWalletStore } from '../wallet/store'
 import { loadFarmJsonInfos } from './methods/loadFarmJsonInfos'
 import { loadFarmSYNInfos } from './methods/loadFarmSYNInfos'
 import { FarmJSON, FarmSYNInfo } from './type'
 
+// 💡 farm methods should isolated, because it isn't transformable data
 export type FarmStore = {
   readonly farmJsonInfos: Map<FarmJSON['id'], FarmJSON> | undefined
   readonly isFarmJsonLoading: boolean
@@ -14,7 +15,7 @@ export type FarmStore = {
   refetchFarmSYNInfos(): void
 }
 
-const defaultFarmStore = createStoreDefaultState<FarmStore>((store) => ({
+const defaultFarmStore = createStoreDefault<FarmStore>((store) => ({
   isFarmJsonLoading: false,
   isFarmInfosLoading: false,
   refetchJsonInfos: () => loadFarmJsonInfos(store),
@@ -24,13 +25,14 @@ const defaultFarmStore = createStoreDefaultState<FarmStore>((store) => ({
   }
 }))
 
-const onAccessFarmJsonInfos = createOnFirstAccessCallback<FarmStore>(['farmJsonInfos', 'farmInfos'], (store) => {
+const onAccessFarmJsonInfos = createOnFirstAccess<FarmStore>(['farmJsonInfos', 'farmInfos'], (store) => {
   loadFarmJsonInfos(store)
 })
 
-const onAccessFarmSYNInfos = createOnFirstAccessCallback<FarmStore>(['farmInfos'], (store) => {
+// 💡 subscribe wallet change
+const onAccessFarmSYNInfos = createOnFirstAccess<FarmStore>(['farmInfos'], (store) => {
   const walletStore = useWalletStore()
-  console.log('TODO: it\'s not subscribe wallet owner: ', walletStore.owner)
+  console.log("TODO: it's not subscribe wallet owner: ", walletStore.owner)
   const { abort } = loadFarmSYNInfos({ owner: walletStore.owner, store })
   onCleanup(() => {
     abort?.()
