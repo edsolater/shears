@@ -16,8 +16,8 @@ import { fetchFarmJsonInfo } from './fetchFarmJson'
 /**
  * use LiquidityJson to get
  */
-export function composeFarmSYN(payload: { owner: string; rpcUrl: string }) {
-  return createAbortableAsyncTask<FarmStore['farmSYNInfos']>(async ({ resolve, aborted }) => {
+export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
+  return createAbortableAsyncTask<FarmStore['farmInfos']>(async ({ resolve, aborted }) => {
     const fetchedAPIPromise = Promise.all([fetchFarmJsonInfo(), fetchLiquidityJson(), fetchPairJsonInfo()])
 
     const farmSDKPromise = fetchedAPIPromise.then(([farmJsonInfos]) => {
@@ -32,11 +32,6 @@ export function composeFarmSYN(payload: { owner: string; rpcUrl: string }) {
 
     Subscribable.fromPromises([fetchedAPIPromise, farmSDKPromise]).subscribe(
       ([[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs]) => {
-        console.log('1: ', 1)
-        console.log('farmJsons: ', farmJsons)
-        console.log('liquidityJsons: ', liquidityJsons)
-        console.log('pairJsons: ', pairJsons)
-        console.log('farmSDKs: ', farmSDKs)
         if (aborted()) return
         const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
         console.log('farmSYN: ', farmSYN)

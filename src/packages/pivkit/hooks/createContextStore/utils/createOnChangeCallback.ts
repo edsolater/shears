@@ -6,3 +6,5 @@ export function createOnChangeCallback<T extends Record<string, any>, K extends 
 ) {
   return { propertyName, cb }
 }
+
+// export const createOnChangeCallback2 = <T extends Record<string, any>, K extends keyof T>(propertyName:keyof T)=>(cb)=>({ propertyName, cb }

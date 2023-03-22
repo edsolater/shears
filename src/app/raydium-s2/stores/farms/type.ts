@@ -8,7 +8,7 @@ export type FetchFarmsJSONPayloads = {
 
 export type FetchFarmsSYNInfoPayloads = {
   rpcUrl: string
-  owner: string
+  owner?: string
 }
 
 export type FarmRewardJSONInfo = {

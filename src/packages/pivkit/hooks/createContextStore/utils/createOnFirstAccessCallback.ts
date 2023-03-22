@@ -1,11 +1,12 @@
+import { MayArray } from '@edsolater/fnkit'
 import { OnFirstAccessCallback } from '../type'
 
 /**
  * type utils function
  */
 export function createOnFirstAccessCallback<T extends Record<string, any>>(
-  propertyName: keyof T,
+  propertyName: MayArray<keyof T>,
   cb: OnFirstAccessCallback<T>
-): { propertyName: keyof T; cb: OnFirstAccessCallback<T> } {
+): { propertyName: MayArray<keyof T>; cb: OnFirstAccessCallback<T> } {
   return { propertyName, cb: cb as any /*  no need to check type here */ }
 }

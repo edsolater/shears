@@ -1,5 +1,5 @@
-import { createEffect, createSignal, onCleanup, Setter } from 'solid-js'
-import { createCachedGlobalHook } from '../../../../packages/pivkit'
+import { onCleanup } from 'solid-js'
+import { createGlobalStore, createOnFirstAccessCallback, createStoreDefaultState } from '../../../../packages/pivkit'
 import { useWalletStore } from '../wallet/store'
 import { loadFarmJsonInfos } from './methods/loadFarmJsonInfos'
 import { loadFarmSYNInfos } from './methods/loadFarmSYNInfos'
@@ -8,55 +8,35 @@ import { FarmJSON, FarmSYNInfo } from './type'
 export type FarmStore = {
   readonly farmJsonInfos: Map<FarmJSON['id'], FarmJSON> | undefined
   readonly isFarmJsonLoading: boolean
-  readonly farmSYNInfos: Map<FarmSYNInfo['id'], FarmSYNInfo> | undefined
-  readonly isFarmSYNInfosLoading: boolean
+  readonly farmInfos: Map<FarmSYNInfo['id'], FarmSYNInfo> | undefined
+  readonly isFarmInfosLoading: boolean
   refetchJsonInfos(): void
   refetchFarmSYNInfos(): void
-
-  $setters: {
-    setIsFarmJsonLoading: Setter<FarmStore['isFarmJsonLoading']>
-    setFarmJsonInfos: Setter<FarmStore['farmJsonInfos']> // should format to JS Map
-    setIsFarmSYNInfosLoading: Setter<FarmStore['isFarmSYNInfosLoading']>
-    setFarmSYNInfos: Setter<FarmStore['farmSYNInfos']> // should format to JS Map
-  }
 }
 
-export const useFarmStore = createCachedGlobalHook(() => {
-  const [isFarmJsonLoading, setIsFarmJsonLoading] = createSignal<FarmStore['isFarmJsonLoading']>(false)
-  const [farmJsonInfos, setFarmJsonInfos] = createSignal<FarmStore['farmJsonInfos']>()
-  const [isFarmSYNInfosLoading, setIsFarmSYNInfosLoading] = createSignal<FarmStore['isFarmSYNInfosLoading']>(false)
-  const [farmSYNInfos, setFarmSYNInfos] = createSignal<FarmStore['farmSYNInfos']>()
-
-  const walletStore = useWalletStore()
-  createEffect(loadFarmJsonInfos)
-
-  createEffect(() => {
-    const { abort } = loadFarmSYNInfos(walletStore.owner)
-    abort && onCleanup(abort)
-  })
-  const store: FarmStore = {
-    $setters: {
-      setIsFarmJsonLoading,
-      setFarmJsonInfos,
-      setIsFarmSYNInfosLoading,
-      setFarmSYNInfos
-    },
-    get farmJsonInfos() {
-      return farmJsonInfos()
-    },
-    get isFarmJsonLoading() {
-      return isFarmJsonLoading()
-    },
-    get farmSYNInfos() {
-      return farmSYNInfos()
-    },
-    get isFarmSYNInfosLoading() {
-      return isFarmSYNInfosLoading()
-    },
-    refetchJsonInfos: loadFarmJsonInfos,
-    refetchFarmSYNInfos() {
-      loadFarmSYNInfos(walletStore.owner)
-    }
+const defaultFarmStore = createStoreDefaultState<FarmStore>((store) => ({
+  isFarmJsonLoading: false,
+  isFarmInfosLoading: false,
+  refetchJsonInfos: () => loadFarmJsonInfos(store),
+  refetchFarmSYNInfos() {
+    const walletStore = useWalletStore()
+    loadFarmSYNInfos({ owner: walletStore.owner, store })
   }
-  return store
+}))
+
+const onAccessFarmJsonInfos = createOnFirstAccessCallback<FarmStore>(['farmJsonInfos', 'farmInfos'], (store) => {
+  loadFarmJsonInfos(store)
+})
+
+const onAccessFarmSYNInfos = createOnFirstAccessCallback<FarmStore>(['farmInfos'], (store) => {
+  const walletStore = useWalletStore()
+  console.log('TODO: it\'s not subscribe wallet owner: ', walletStore.owner)
+  const { abort } = loadFarmSYNInfos({ owner: walletStore.owner, store })
+  onCleanup(() => {
+    abort?.()
+  })
+})
+
+export const [useFarmStore] = createGlobalStore<FarmStore>(defaultFarmStore, {
+  onFirstAccess: [onAccessFarmJsonInfos, onAccessFarmSYNInfos]
 })

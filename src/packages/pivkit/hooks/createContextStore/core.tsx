@@ -1,32 +1,42 @@
-import { AnyFn, isFunction, isString, uncapitalize } from '@edsolater/fnkit'
+import { AnyFn, flapDeep, isFunction, isString, MayArray, MayDeepArray, uncapitalize } from '@edsolater/fnkit'
 import { createStore } from 'solid-js/store'
 import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 
-function toCallbackMap<F extends AnyFn>(pairs: { propertyName: string | number | symbol; cb: F }[] = []) {
+function toCallbackMap<F extends AnyFn>(
+  pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined
+) {
   const map = new Map<keyof any, F[] | undefined>()
-  pairs.forEach(({ propertyName, cb }) => {
-    if (!isString(propertyName)) throw new Error('propertyName must be string')
-    const callbacks = map.get(propertyName) ?? []
+  function recordCallback(propertyName: string | number | symbol, cb: F) {
+    const p = String(propertyName)
+    const callbacks = map.get(p) ?? []
     callbacks.push(cb)
-    map.set(propertyName, callbacks)
+    map.set(p, callbacks)
+  }
+  if (!pairs) return map
+  flapDeep(pairs).forEach(({ propertyName, cb }) => {
+    if (Array.isArray(propertyName)) {
+      propertyName.forEach((p) => recordCallback(p, cb))
+    } else {
+      recordCallback(propertyName, cb)
+    }
   })
   return map
 }
 
 export type CreateProxiedStoreCallbacks<T extends Record<string, any>> = {
   onInit?: { cb: (store: Store<T>) => void }[]
-  onPropertyFirstAccess?: {
-    propertyName: keyof T
+  onFirstAccess?: MayDeepArray<{
+    propertyName: MayArray<keyof T>
     cb: OnFirstAccessCallback<T>
-  }[]
-  onChange?: {
-    propertyName: keyof T
+  }>
+  onChange?: MayDeepArray<{
+    propertyName: MayArray<keyof T>
     cb: OnChangeCallback<T>
-  }[]
+  }>
 }
 
-/** CORE */
+/** CORE, please client createContextStore or createGlobalStore */
 export function createProxiedStore<T extends Record<string, any>>(
   defaultValue?: DefaultStoreValue<T>,
   options?: CreateProxiedStoreCallbacks<T>
@@ -35,11 +45,11 @@ export function createProxiedStore<T extends Record<string, any>>(
   rawStore: T,
   onPropertyChange: <K extends keyof T>(key: K, cb: OnChangeCallback<T, K>) => { abort(): void }
 ] {
-  const onFirstAccessCallbackMap = new Map(toCallbackMap(options?.onPropertyFirstAccess))
+  const onFirstAccessCallbackMap = new Map(toCallbackMap(options?.onFirstAccess))
   const onChangeCallbackMap = new Map(toCallbackMap(options?.onChange))
   const onChangeCleanFnMap = new Map<AnyFn, () => void>()
 
-  function invokeOnInitGets(propertyName: string, value: any, store: Store<T>) {
+  function invokeOnFirstAccess(propertyName: string, value: any, store: Store<T>) {
     if (onFirstAccessCallbackMap.has(propertyName)) {
       const callbacks = onFirstAccessCallbackMap.get(propertyName)
       onFirstAccessCallbackMap.delete(propertyName) // it's init, so sould delete eventually
@@ -86,7 +96,9 @@ export function createProxiedStore<T extends Record<string, any>>(
 
         if (targetType === 'getter(methods)') {
           const propertyName = p as string
-          return Reflect.get(rawStore, propertyName, receiver)
+          const value = Reflect.get(rawStore, propertyName, receiver)
+          invokeOnFirstAccess(propertyName, value, proxiedStore)
+          return value
         }
       }
     }

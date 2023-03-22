@@ -20,9 +20,6 @@ export function FarmPage() {
   const farmPageStates = useFarmPageStates()
   const tokenPriceStore = useTokenPriceStore()
 
-  // createEffect(() => console.log('isFarmJsonsLoading', isFarmJsonsLoading()))
-  createEffect(() => console.log('rokenPriceStore prices', tokenPriceStore.prices))
-  createEffect(() => console.log('farmStore sdk', farmStore.farmSYNInfos))
   return (
     <Piv>
       <NavBar barTitle='Farms' />
@@ -40,7 +37,7 @@ function FarmList() {
   console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
 
   return (
-    <List items={farmStore.farmSYNInfos && [...farmStore.farmSYNInfos.values()]}>
+    <List items={farmStore.farmInfos && [...farmStore.farmInfos.values()]}>
       {(info, idx) => {
         // console.log('info: ', info)
         return (

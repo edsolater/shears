@@ -22,7 +22,6 @@ export function List<T>(rawProps: ListProps<T>) {
 
   /* ---------------------------------- props --------------------------------- */
   createEffect(() => console.log('props.items: ', props.items))
-  console.log('1: ', 1)
   console.log('props.items: ', props.items)
   return (
     <Piv ref={setRef} shadowProps={props}>
