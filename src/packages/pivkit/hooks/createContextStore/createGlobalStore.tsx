@@ -4,7 +4,10 @@ import { DefaultStoreValue, OnChangeCallback, Store } from './type'
 
 export function createGlobalStore<T extends Record<string, any>>(
   defaultValue?: DefaultStoreValue<T>,
-  options?: CreateProxiedStoreCallbacks<T>
+  options?: CreateProxiedStoreCallbacks<T>,
+  storeMethods?: {
+    
+  }
 ): [
   useStore: () => Store<T>,
   rawStore: T,
