@@ -1,4 +1,4 @@
-import { isObject, map } from '@edsolater/fnkit'
+import { isArray, isObject, isObjectLiteral, map } from '@edsolater/fnkit'
 import { addAllRuleAction } from './rules'
 import { EncodedObject } from './type'
 
@@ -14,14 +14,16 @@ function loadAllRulesIfNeeded() {
 
 export function decode(data: unknown): any {
   loadAllRulesIfNeeded()
-  if (!isObject(data)) return data
-  const decodedData = map(data, (v) => (isObject(v) ? decodeObject(v) : v))
-  return decodedData
+
+  if (isEncodedObject(data)) return decodeObject(data)
+  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => (isObject(v) ? decodeObject(v) : v))
+
+  return data
 }
 
 function decodeObject(data: object): any {
   const targetRule = isEncodedObject(data) ? decodeRules.find((rule) => rule.name === data._type) : undefined
-  if (!targetRule) return decode(data)
+  if (!targetRule) return data
   return targetRule.decodeFn?.(data as EncodedObject<any> /* force */)
 }
 

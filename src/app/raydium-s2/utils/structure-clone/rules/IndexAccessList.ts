@@ -5,8 +5,8 @@ import { EncodedObject } from '../type'
 
 export const addRule = () =>
   addTransportRule({
-    isTargetInstance: (data) => data instanceof IndexAccessList || (getType(data) as string) === 'PublicKey',
-    encodeFn: (rawData: IndexAccessList) => rawData['_structureCloneEncode'],
+    isTargetInstance: (data) => data instanceof IndexAccessList || (getType(data) as string) === 'IndexAccessList',
+    encodeFn: (rawData: IndexAccessList) => rawData['_structureCloneEncode']?.(),
     name: 'IndexAccessList',
     decodeFn: ({ _info }: EncodedObject<any[]>): IndexAccessList => IndexAccessList._structureCloneDecode(_info)
   })

@@ -15,11 +15,10 @@ function loadAllRulesIfNeeded() {
 
 export function encode(data: unknown): any {
   loadAllRulesIfNeeded()
-  if (isPrimitive(data)) return data
-  if (isObjectLiteral(data) || isArray(data)) {
-    return map(data, (v) => (isObject(v) ? encodeObject(v) : v))
-  }
+
+  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => (isObject(v) ? encodeObject(v) : v))
   if (isObject(data)) return encodeObject(data)
+  
   return data
 }
 
