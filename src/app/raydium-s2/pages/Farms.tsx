@@ -34,7 +34,7 @@ function FarmList() {
   const tokenListStore = useTokenListStore()
 
   createEffect(() => {
-    console.log('farmStore.farmInfos: ', farmStore.farmInfos?.size)
+    console.log('farmStore.farmInfos: ', farmStore.farmInfos)
   })
   return (
     <List items={farmStore.farmInfos?.toArray?.()}>

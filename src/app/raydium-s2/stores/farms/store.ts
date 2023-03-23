@@ -2,7 +2,7 @@ import { createGlobalStore, createStoreDefault } from '../../../../packages/pivk
 import { FarmJSON, FarmSYNInfo } from './type'
 import { onAccessFarmSYNInfos } from './storeActions/onAccessFarmSYNInfos'
 import { onAccessFarmJsonInfos } from './storeActions/onAccessFarmJsonInfos'
-import { IndexAccessList } from '../../../../packages/fnkit/customizedClasses/IndexAccessMap'
+import { IndexAccessList } from '../../../../packages/fnkit/customizedClasses/IndexAccessList'
 
 export type FarmStore = {
   readonly farmJsonInfos: IndexAccessList<FarmJSON, 'id'> | undefined

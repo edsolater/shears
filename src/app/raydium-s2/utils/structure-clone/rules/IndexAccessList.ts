@@ -1,5 +1,5 @@
 import { getType } from '@edsolater/fnkit'
-import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessMap'
+import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { addTransportRule } from '../addTransportRule'
 import { EncodedObject } from '../type'
 

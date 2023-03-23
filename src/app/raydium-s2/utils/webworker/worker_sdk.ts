@@ -6,7 +6,7 @@ import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
 import { applyWebworkerRegisters } from './worker_registers'
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
-import { IndexAccessList } from '../../../../packages/fnkit/customizedClasses/IndexAccessMap'
+import { IndexAccessList } from '../../../../packages/fnkit/customizedClasses/IndexAccessList'
 
 type onMessage<D> = (utils: { payload: D; onClean(cleanFn: () => void): void; resolve(value: any): void }) => void
 

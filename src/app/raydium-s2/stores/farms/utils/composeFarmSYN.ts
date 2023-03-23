@@ -1,7 +1,7 @@
 import { map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
-import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessMap'
+import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { Subscribable } from '../../../../../packages/fnkit/customizedClasses/Subscribable'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
@@ -35,8 +35,6 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
       ([[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs]) => {
         if (aborted()) return
         const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
-        console.log('farmSYN: ', farmSYN)
-        if (!farmSYN) return
         resolve(farmSYN)
       }
     )
@@ -54,10 +52,10 @@ function hydrateFarmSYN({
   liquidityJsons?: Awaited<ReturnType<typeof fetchLiquidityJson>>
   pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
 }) {
-  if (!farmJsons || !liquidityJsons || !pairJsons) return
+  if (!farmJsons) return
   const rawList = map(farmJsons.toArray(), (jsonInfo) => {
     const farmSDK = farmSDKs?.[toPubString(jsonInfo.id)]
-    const ammId = liquidityJsons.query(jsonInfo.lpMint, 'lpMint')?.id
+    const ammId = liquidityJsons?.query(jsonInfo.lpMint, 'lpMint')?.id
     const pairJson = ammId ? pairJsons?.get(ammId) : undefined
     const lpPrice = pairJsons?.query(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
     const tvl = lpPrice != null && farmSDK ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
@@ -69,6 +67,7 @@ function hydrateFarmSYN({
         '7d': pairJson.apr7d
       } as FarmSYNInfo['rewards'][number]['apr'])
     return {
+      id: jsonInfo.id,
       name: jsonInfo.symbol,
       base: jsonInfo.baseMint,
       quote: jsonInfo.quoteMint,
@@ -89,7 +88,6 @@ function hydrateFarmSYN({
     } as FarmSYNInfo
   })
 
-  console.log('rawList: ', rawList)
   const indexAccessList = new IndexAccessList(rawList, 'id')
   return indexAccessList
 }

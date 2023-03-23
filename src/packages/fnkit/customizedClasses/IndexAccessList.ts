@@ -3,7 +3,10 @@
  * it's inner use JS Map
  */
 
-export class IndexAccessList<V extends object = object, BK extends keyof V = any>  {
+import { assert } from '@edsolater/fnkit'
+import { createEncodedObject } from '../../../app/raydium-s2/utils/structure-clone/createEncodedObject'
+
+export class IndexAccessList<V extends object = object, BK extends keyof V = any> {
   // get faster access
   #keyIndexAccessMap: {
     [K in keyof V]?: Map<any, V[BK]>
@@ -21,12 +24,14 @@ export class IndexAccessList<V extends object = object, BK extends keyof V = any
   }
 
   constructor(iterable: Iterable<V>, basicKeyPropertyName: BK) {
-    console.log('iterable: ', iterable)
-
+    const source = [...iterable]
     // @ts-ignore
     this.#innerMap = new Map(
-      iterable && basicKeyPropertyName ? [...iterable].map((i) => [i[basicKeyPropertyName], i]) : undefined
+      iterable && basicKeyPropertyName ? source.map((i) => [i[basicKeyPropertyName], i]) : undefined
     )
+    if (iterable) {
+      assert(basicKeyPropertyName in source[0], `key ${String(basicKeyPropertyName)} not found in source`)
+    }
     this.#basicKeyIndexAccessMap = basicKeyPropertyName
   }
 
@@ -102,12 +107,11 @@ export class IndexAccessList<V extends object = object, BK extends keyof V = any
   _structureCloneEncode() {
     const items = this.toArray()
     Reflect.set(items, '#indexAccessBasicKey', this.#basicKeyIndexAccessMap)
-    return items
+    return createEncodedObject('IndexAccessList', items)
   }
 
   static _structureCloneDecode<V extends object>(array: V[]) {
     const baseKey = Reflect.get(array, '#indexAccessBasicKey') || 'id'
-    console.log('array: ', array)
     return new IndexAccessList<V>(array, baseKey)
   }
 }

@@ -1,4 +1,4 @@
-import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessMap'
+import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { jFetch } from '../../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
 import { FarmStore } from '../store'
