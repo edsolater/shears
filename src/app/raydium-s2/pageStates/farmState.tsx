@@ -16,7 +16,10 @@ export const useFarmPageStates = createCachedGlobalHook(() => {
   const farmDataStore = useFarmStore()
   const [detailViewFarmId, setDetailViewFarmId] = createSignal<string>()
   const detailViewFarmJsonInfo = createMemo(
-    () => find(farmDataStore.farmJsonInfos, (info) => info.id === detailViewFarmId())
+    () => {
+      console.log('farmDataStore.farmJsonInfos: ', farmDataStore.farmJsonInfos)
+      return find(farmDataStore.farmJsonInfos?.toArray?.(), (info) => info.id === detailViewFarmId())
+    }
   )
   const states: FarmPageStates = {
     // setters

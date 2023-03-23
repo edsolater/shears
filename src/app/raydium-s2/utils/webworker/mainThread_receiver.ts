@@ -19,7 +19,8 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
     const body = ev.data as WorkerMessage<ResultData>
     if (body.description === message.description) {
       /** no need {@link decode}, so not `decode(body.data)` */
-      const decodedData = body.data
+      const decodedData = decode(body.data)
+      console.log(`receving ${message.description}...`, decodedData)
       if (isFunction(cleanFn)) cleanFn(decodedData)
       const newCleanFn = callback?.(decodedData)
       cleanFn = newCleanFn

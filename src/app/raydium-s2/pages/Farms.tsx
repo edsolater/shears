@@ -31,12 +31,13 @@ export function FarmPage() {
 function FarmList() {
   const farmStore = useFarmStore()
   const farmPageStates = useFarmPageStates()
-  const tokenPriceStore = useTokenPriceStore()
   const tokenListStore = useTokenListStore()
 
-  console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
+  createEffect(() => {
+    console.log('farmStore.farmInfos: ', farmStore.farmInfos?.size)
+  })
   return (
-    <List items={farmStore.farmInfos && [...farmStore.farmInfos.values()]}>
+    <List items={farmStore.farmInfos?.toArray?.()}>
       {(info, idx) => {
         // console.log('info: ', info)
         return (

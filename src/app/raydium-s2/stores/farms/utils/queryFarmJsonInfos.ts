@@ -1,14 +1,12 @@
 import { Store } from '../../../../../packages/pivkit'
-import { appApiUrls } from '../../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
-import { FarmStore, useFarmStore } from '../store'
+import { FarmStore } from '../store'
 import { FetchFarmsJSONPayloads } from '../type'
 
 export function loadFarmJsonInfos(store: Store<FarmStore>) {
   store.set({ isFarmJsonLoading: true })
   getFarmJsonFromWorker((allFarmJsonInfos) => {
-    store.set({ isFarmJsonLoading: false })
-    allFarmJsonInfos &&   store.set({ farmJsonInfos: allFarmJsonInfos })
+    store.set({ isFarmJsonLoading: false, farmJsonInfos: allFarmJsonInfos })
   })
 }
 

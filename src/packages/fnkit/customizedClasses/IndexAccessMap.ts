@@ -3,7 +3,7 @@
  * it's inner use JS Map
  */
 
-export class IndexAccessMap<V extends object, BK extends keyof V> {
+export class IndexAccessList<V extends object = object, BK extends keyof V = any>  {
   // get faster access
   #keyIndexAccessMap: {
     [K in keyof V]?: Map<any, V[BK]>
@@ -14,13 +14,15 @@ export class IndexAccessMap<V extends object, BK extends keyof V> {
   static fromJSMap<V extends object, BK extends keyof V>(
     basicKeyPropertyName: BK,
     jsMap: Map<V[BK], V>
-  ): IndexAccessMap<V, BK> {
-    const indexAccessMap = new IndexAccessMap<V, BK>(basicKeyPropertyName)
+  ): IndexAccessList<V, BK> {
+    const indexAccessMap = new IndexAccessList<V, BK>([], basicKeyPropertyName)
     indexAccessMap.#innerMap = jsMap
     return indexAccessMap
   }
 
-  constructor(basicKeyPropertyName: BK, iterable?: Iterable<V>) {
+  constructor(iterable: Iterable<V>, basicKeyPropertyName: BK) {
+    console.log('iterable: ', iterable)
+
     // @ts-ignore
     this.#innerMap = new Map(
       iterable && basicKeyPropertyName ? [...iterable].map((i) => [i[basicKeyPropertyName], i]) : undefined
@@ -28,7 +30,7 @@ export class IndexAccessMap<V extends object, BK extends keyof V> {
     this.#basicKeyIndexAccessMap = basicKeyPropertyName
   }
 
-  select<K extends keyof V>(key: V[K], keyPropertyName: K) {
+  query<K extends keyof V>(key: V[K], keyPropertyName: K) {
     if (!keyPropertyName) return this.get(key)
     // @ts-ignore
     if (keyPropertyName !== this.#basicKeyIndexAccessMap) {
@@ -45,12 +47,12 @@ export class IndexAccessMap<V extends object, BK extends keyof V> {
       return targetBasicKey && this.#innerMap.get(targetBasicKey)
     }
   }
-  
+
   get<K extends keyof V>(key: V[K]) {
     return this.#innerMap.get(key as unknown as V[BK])
   }
 
-  set(value: V) {
+  add(value: V) {
     const sourceBasicKey = value[this.#basicKeyIndexAccessMap]
     this.#innerMap.set(sourceBasicKey, value)
     for (const indexAccessKey in this.#keyIndexAccessMap) {
@@ -87,5 +89,25 @@ export class IndexAccessMap<V extends object, BK extends keyof V> {
 
   toJSMap() {
     return this.#innerMap
+  }
+
+  toArray() {
+    return [...this.#innerMap.values()]
+  }
+
+  [Symbol.iterator]() {
+    return this.#innerMap.values()
+  }
+
+  _structureCloneEncode() {
+    const items = this.toArray()
+    Reflect.set(items, '#indexAccessBasicKey', this.#basicKeyIndexAccessMap)
+    return items
+  }
+
+  static _structureCloneDecode<V extends object>(array: V[]) {
+    const baseKey = Reflect.get(array, '#indexAccessBasicKey') || 'id'
+    console.log('array: ', array)
+    return new IndexAccessList<V>(array, baseKey)
   }
 }

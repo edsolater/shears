@@ -1,7 +1,7 @@
 import { map } from '@edsolater/fnkit'
-import { Farm, FarmFetchMultipleInfoParams, FarmFetchMultipleInfoReturn } from '@raydium-io/raydium-sdk'
-import { composePromises } from '../../../../../packages/fnkit/composePromises'
+import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
+import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessMap'
 import { Subscribable } from '../../../../../packages/fnkit/customizedClasses/Subscribable'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
@@ -21,9 +21,10 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
     const fetchedAPIPromise = Promise.all([fetchFarmJsonInfo(), fetchLiquidityJson(), fetchPairJsonInfo()])
 
     const farmSDKPromise = fetchedAPIPromise.then(([farmJsonInfos]) => {
+      if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
         connection: getConnection(payload.rpcUrl),
-        pools: [...farmJsonInfos.values()].map(jsonInfo2PoolKeys),
+        pools: farmJsonInfos.toArray().map(jsonInfo2PoolKeys),
         owner: toPub(payload.owner),
         config: { commitment: 'confirmed' }
       }
@@ -33,9 +34,6 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
     Subscribable.fromPromises([fetchedAPIPromise, farmSDKPromise]).subscribe(
       ([[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs]) => {
         if (aborted()) return
-        console.log('farmJsons: ', farmJsons)
-        console.log('liquidityJsons: ', liquidityJsons)
-        console.log('pairJsons: ', pairJsons)
         const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
         console.log('farmSYN: ', farmSYN)
         if (!farmSYN) return
@@ -57,11 +55,11 @@ function hydrateFarmSYN({
   pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
 }) {
   if (!farmJsons || !liquidityJsons || !pairJsons) return
-  return map(farmJsons, (jsonInfo) => {
+  const rawList = map(farmJsons.toArray(), (jsonInfo) => {
     const farmSDK = farmSDKs?.[toPubString(jsonInfo.id)]
-    const ammId = liquidityJsons.select(jsonInfo.lpMint, 'lpMint')?.id
+    const ammId = liquidityJsons.query(jsonInfo.lpMint, 'lpMint')?.id
     const pairJson = ammId ? pairJsons?.get(ammId) : undefined
-    const lpPrice = pairJsons?.select(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
+    const lpPrice = pairJsons?.query(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
     const tvl = lpPrice != null && farmSDK ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
     const apr =
       pairJson &&
@@ -90,4 +88,8 @@ function hydrateFarmSYN({
       )
     } as FarmSYNInfo
   })
+
+  console.log('rawList: ', rawList)
+  const indexAccessList = new IndexAccessList(rawList, 'id')
+  return indexAccessList
 }

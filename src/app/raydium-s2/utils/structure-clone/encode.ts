@@ -19,12 +19,13 @@ export function encode(data: unknown): any {
   if (isObjectLiteral(data) || isArray(data)) {
     return map(data, (v) => (isObject(v) ? encodeObject(v) : v))
   }
+  if (isObject(data)) return encodeObject(data)
   return data
 }
 
 function encodeObject(data: object): any {
   const encodeRule = isObject(data) ? encodeRules.find((rule) => rule.isTargetInstance?.(data)) : undefined
-  if (!encodeRule) return encode(data)
+  if (!encodeRule) return data
   return encodeRule.encodeFn?.(data as any /* force */)
 }
 
