@@ -14,7 +14,7 @@ export type Store<T extends Record<string, any>> =
   {
     _setStore: SetStoreFunction<T>
     // 💡 like zustand's set
-    set: (dispatcher: ((store: T) => Partial<T>) | Partial<T>) => Store<T>
+    set: (dispatcher: ((store: T) => Partial<T>) | Partial<T>) => Promise<Store<T>>
   }
 
 export type DefaultStoreValue<T extends Record<string, any>> = (

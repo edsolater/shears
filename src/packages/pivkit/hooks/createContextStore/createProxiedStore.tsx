@@ -87,13 +87,12 @@ export function createProxiedStore<T extends Record<string, any>>(
         const targetType = p === 'set' ? 'setter' : 'getter(methods)'
 
         if (targetType === 'setter') {
-          const propertyName = uncapitalize((p as string).slice('set'.length))
           return (dispatch: ((prevValue?: unknown) => unknown) | unknown) =>
             asyncInvoke(
               () => {
                 const prevStore = rawStore
                 const newStore = isFunction(dispatch) ? dispatch(rawStore) : dispatch
-                if (!newStore) return // no need to update store with the same value
+                if (!newStore) return proxiedStore // no need to update store with the same value
                 Object.entries(newStore).forEach(([propertyName, newValue]) => {
                   // @ts-ignore
                   const prevValue = prevStore[propertyName]
@@ -103,7 +102,7 @@ export function createProxiedStore<T extends Record<string, any>>(
                 return proxiedStore
               },
               {
-                key: propertyName
+                key: 'setStore'
               }
             )
         }
