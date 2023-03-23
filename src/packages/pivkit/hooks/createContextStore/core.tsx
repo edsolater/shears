@@ -103,6 +103,8 @@ export function createProxiedStore<T extends Record<string, any>>(
       }
     }
   ) as Store<T>
+
+  // 🚧 use solid system to hold reactive system
   const [rawStore, setRawStore] = createStore(defaultValue?.(proxiedStore))
 
   // invoke onStoreInit callbacks
