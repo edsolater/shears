@@ -5,11 +5,13 @@ import { WalletStore } from '../../wallet/store'
 import { FarmStore } from '../store'
 import { FetchFarmsSYNInfoPayloads } from '../type'
 
-export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; store: Store<FarmStore> }): { abort?(): void } {
-  store.setIsFarmInfosLoading(true)
+export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; store: Store<FarmStore> }): {
+  abort?(): void
+} {
+  store.set({ isFarmInfosLoading: true })
   const subscription = getFarmSYNInfosFromWorker(owner, (allFarmSYNInfos) => {
-    store.setIsFarmInfosLoading(false)
-    allFarmSYNInfos && store.setFarmInfos(allFarmSYNInfos)
+    store.set({ isFarmInfosLoading: false })
+    allFarmSYNInfos &&store.set({ farmInfos: allFarmSYNInfos })
   })
   return { abort: subscription?.abort }
 }

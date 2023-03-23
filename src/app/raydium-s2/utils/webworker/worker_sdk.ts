@@ -40,7 +40,7 @@ function initMessageReceiver() {
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)
-      console.log(`transforming ${description}...`)
+      console.log(`transforming ${description}...`, encodedData)
       globalThis.postMessage({ description, data: encodedData } as WorkerMessage)
     })
   })

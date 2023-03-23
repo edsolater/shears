@@ -1,7 +1,17 @@
-import { AnyFn, flapDeep, isFunction, isString, MayArray, MayDeepArray, uncapitalize } from '@edsolater/fnkit'
+import {
+  AnyFn,
+  areShallowEqual,
+  flapDeep,
+  isFunction,
+  isString,
+  MayArray,
+  MayDeepArray,
+  uncapitalize
+} from '@edsolater/fnkit'
 import { createStore } from 'solid-js/store'
 import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
+import { areShallowContain } from '../../../fnkit/areShallowContain'
 
 function toCallbackMap<F extends AnyFn>(
   pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined
@@ -72,21 +82,25 @@ export function createProxiedStore<T extends Record<string, any>>(
     {
       // result contain keys info
       get: (_, p, receiver) => {
-        if (p === 'setStore') return setRawStore
+        if (p === '_setStore') return setRawStore
 
-        const targetType = isString(p) && p.startsWith('set') ? 'setter' : 'getter(methods)'
+        const targetType = p === 'set' ? 'setter' : 'getter(methods)'
 
         if (targetType === 'setter') {
           const propertyName = uncapitalize((p as string).slice('set'.length))
-          return (dispatch: ((newValue: unknown, prevValue?: unknown) => unknown) | unknown) =>
+          return (dispatch: ((prevValue?: unknown) => unknown) | unknown) =>
             asyncInvoke(
               () => {
-                const prevValue = Reflect.get(rawStore, propertyName, receiver)
-                const newValue = isFunction(dispatch) ? dispatch(prevValue) : dispatch
-                if (prevValue === newValue) return // no need to update store with the same value
-                invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
-                setRawStore({ [propertyName]: newValue })
-                return newValue
+                const prevStore = rawStore
+                const newStore = isFunction(dispatch) ? dispatch(rawStore) : dispatch
+                if (!newStore) return // no need to update store with the same value
+                Object.entries(newStore).forEach(([propertyName, newValue]) => {
+                  // @ts-ignore
+                  const prevValue = prevStore[propertyName]
+                  invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
+                })
+                setRawStore(newStore)
+                return proxiedStore
               },
               {
                 key: propertyName

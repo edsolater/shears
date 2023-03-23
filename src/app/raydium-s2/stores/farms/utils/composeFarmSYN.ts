@@ -33,6 +33,9 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
     Subscribable.fromPromises([fetchedAPIPromise, farmSDKPromise]).subscribe(
       ([[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs]) => {
         if (aborted()) return
+        console.log('farmJsons: ', farmJsons)
+        console.log('liquidityJsons: ', liquidityJsons)
+        console.log('pairJsons: ', pairJsons)
         const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
         console.log('farmSYN: ', farmSYN)
         if (!farmSYN) return

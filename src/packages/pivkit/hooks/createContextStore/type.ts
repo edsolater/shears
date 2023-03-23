@@ -2,17 +2,19 @@ import { AnyFn, ShakeNever } from '@edsolater/fnkit'
 import { SetStoreFunction } from 'solid-js/store'
 
 type StoreAccessor<T> = () => T
-type StoreSetter<T> = (dispatcher: ((newValue: T, prevValue?: T) => T) | T) => Promise<T>
+type StoreSetter<T> = (dispatcher: ((prevValue?: T) => T) | T) => T
 
-export type Store<T extends Record<string, any>> = T &
-  ShakeNever<{
-    [K in keyof T as `set${Capitalize<K & string>}`]-?: T[K] extends AnyFn
-      ? never
-      : K extends `set${string}`
-      ? never
-      : StoreSetter<T[K]>
-  }> & {
-    setStore: SetStoreFunction<T>
+export type Store<T extends Record<string, any>> =
+  T & //   [K in keyof T as `set${Capitalize<K & string>}`]-?: T[K] extends AnyFn // ShakeNever<{
+  //     ? never
+  //     : K extends `set${string}`
+  //     ? never
+  //     : StoreSetter<T[K]>
+  // }> &
+  {
+    _setStore: SetStoreFunction<T>
+    // 💡 like zustand's set
+    set: (dispatcher: ((store: T) => Partial<T>) | Partial<T>) => Store<T>
   }
 
 export type DefaultStoreValue<T extends Record<string, any>> = (

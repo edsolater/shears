@@ -5,10 +5,10 @@ import { FarmStore, useFarmStore } from '../store'
 import { FetchFarmsJSONPayloads } from '../type'
 
 export function loadFarmJsonInfos(store: Store<FarmStore>) {
-  store.setIsFarmJsonLoading(true)
+  store.set({ isFarmJsonLoading: true })
   getFarmJsonFromWorker((allFarmJsonInfos) => {
-    store.setIsFarmJsonLoading(false)
-    allFarmJsonInfos && store.setFarmJsonInfos(allFarmJsonInfos)
+    store.set({ isFarmJsonLoading: false })
+    allFarmJsonInfos &&   store.set({ farmJsonInfos: allFarmJsonInfos })
   })
 }
 

@@ -1,4 +1,4 @@
-export * from './core'
+export * from './createProxiedStore'
 export * from './createContextStore'
 export * from './createGlobalStore'
 export * from './utils/createOnFirstAccessCallback'

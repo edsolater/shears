@@ -35,7 +35,6 @@ function FarmList() {
   const tokenListStore = useTokenListStore()
 
   console.log('farmStore.farmJsonInfos: ', farmStore.farmJsonInfos)
-
   return (
     <List items={farmStore.farmInfos && [...farmStore.farmInfos.values()]}>
       {(info, idx) => {
