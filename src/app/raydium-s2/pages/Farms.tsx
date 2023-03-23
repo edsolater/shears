@@ -69,7 +69,7 @@ function FarmList() {
                       token1={tokenListStore.getToken(info.base)}
                       token2={tokenListStore.getToken(info.quote)}
                     />
-                    <Piv>{info.name}</Piv>
+                    {/* <Piv>{info.name}</Piv> */}
                   </Box>
 
                   {/* part 3 : pending reward*/}

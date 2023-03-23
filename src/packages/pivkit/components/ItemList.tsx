@@ -21,8 +21,6 @@ export function List<T>(rawProps: ListProps<T>) {
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
 
   /* ---------------------------------- props --------------------------------- */
-  createEffect(() => console.log('props.items: ', props.items))
-  console.log('props.items: ', props.items)
   return (
     <Piv ref={setRef} shadowProps={props}>
       <For each={props.items ?? []}>{(item, idx) => props.children(item, idx)}</For>
