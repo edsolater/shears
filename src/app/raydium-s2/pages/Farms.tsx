@@ -35,7 +35,7 @@ function FarmList() {
   createEffect(()=>{console.log('farmStore.farmInfos: ', farmStore.farmInfos)})
 
   return (
-    <List items={farmStore.farmInfos}>
+    <List items={farmStore.farmInfos?.toArray()}>
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>

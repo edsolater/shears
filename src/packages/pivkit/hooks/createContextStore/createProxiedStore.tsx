@@ -88,7 +88,7 @@ export function createProxiedStore<T extends Record<string, any>>(
                   const prevValue = prevStore[propertyName]
                   invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
                 })
-                setRawStore(reconcile(newStore))
+                setRawStore(reconcile(newStore)) // FIXME: 💡 use `reconcile` will clean farm info, but don't use reconcile won't
                 return proxiedStore
               },
               {
