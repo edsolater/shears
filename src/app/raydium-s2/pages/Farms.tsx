@@ -6,7 +6,7 @@ import { CoinAvatar } from '../components/CoinAvatar'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmPageStates } from '../pageStates/farmState'
-import { useFarmStore } from '../stores/farms/store'
+import { useFarmStore } from '../stores/data/store'
 import { useTokenListStore } from '../stores/tokenList/store'
 import { useTokenPriceStore } from '../stores/tokenPrice/store'
 import { toString } from '../utils/dataStructures/basicMath/format'
@@ -34,7 +34,7 @@ function FarmList() {
   const tokenListStore = useTokenListStore()
 
   return (
-    <List items={farmStore.farmInfos?.toArray?.()}>
+    <List items={farmStore.farmInfos}>
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>

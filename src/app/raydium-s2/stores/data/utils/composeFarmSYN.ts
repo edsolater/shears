@@ -9,15 +9,15 @@ import { mul } from '../../../utils/dataStructures/basicMath/operations'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { fetchLiquidityJson } from '../../apiInfos/fetchLiquidityJson'
 import { fetchPairJsonInfo } from '../../pairs/utils/fetchPairJson'
-import { FarmStore } from '../store'
-import { FarmSYNInfo } from '../type'
+import { DataStore } from '../store'
+import { FarmSYNInfo } from '../farmType'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 
 /**
  * use LiquidityJson to get
  */
 export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
-  return createAbortableAsyncTask<FarmStore['farmInfos']>(async ({ resolve, aborted }) => {
+  return createAbortableAsyncTask<DataStore['farmInfos']>(async ({ resolve, aborted }) => {
     const farmJsonPromise = fetchFarmJsonInfo()
     const liquidityJsonPromise = fetchLiquidityJson()
     const pairJsonInfoPromise = fetchPairJsonInfo()

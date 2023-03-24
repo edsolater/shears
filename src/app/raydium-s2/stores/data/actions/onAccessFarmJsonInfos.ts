@@ -1,7 +1,7 @@
 import { createOnFirstAccess } from '../../../../../packages/pivkit'
 import { loadFarmJsonInfos } from '../utils/queryFarmJsonInfos'
-import { FarmStore } from '../store'
+import { DataStore } from '../store'
 
-export const onAccessFarmJsonInfos = createOnFirstAccess<FarmStore>(['farmJsonInfos', 'farmInfos'], (store) => {
+export const onAccessFarmJsonInfos = createOnFirstAccess<DataStore>(['farmJsonInfos', 'farmInfos'], (store) => {
   loadFarmJsonInfos(store)
 })

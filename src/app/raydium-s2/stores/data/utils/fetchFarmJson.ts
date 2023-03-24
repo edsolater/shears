@@ -1,10 +1,10 @@
 import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { jFetch } from '../../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
-import { FarmStore } from '../store'
-import { FarmJSON, FarmJSONFile } from '../type'
+import { DataStore } from '../store'
+import { FarmJSON, FarmJSONFile } from '../farmType'
 
-export async function fetchFarmJsonInfo(): Promise<FarmStore['farmJsonInfos']> {
+export async function fetchFarmJsonInfo(): Promise<DataStore['farmJsonInfos']> {
   const result = await fetchFarmJsonFile()
   if (!result) return
   const stateInfos = result.stake.map((i) => ({ ...i, category: 'stake' })) as FarmJSON[]

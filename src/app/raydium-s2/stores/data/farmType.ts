@@ -1,4 +1,5 @@
 import { ApiFarmApr } from '@raydium-io/raydium-sdk'
+import { IndexAccessList } from '../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { BN } from '../../utils/dataStructures/BN'
 import { Mint, Numberish, Percent, Price, PublicKey, TokenAmount } from '../../utils/dataStructures/type'
 
@@ -141,4 +142,11 @@ export type FarmSYNInfo = {
   // wrapped?: {
   //   pendingRewards: BN[]
   // }
+}
+
+export type FarmStore = {
+  readonly farmJsonInfos?: IndexAccessList<FarmJSON, 'id'>
+  readonly isFarmJsonLoading?: boolean
+  readonly farmInfos?: IndexAccessList<FarmSYNInfo, 'id'>
+  readonly isFarmInfosLoading?: boolean
 }

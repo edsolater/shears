@@ -1,5 +1,5 @@
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
-import { FetchFarmsJSONPayloads, FetchFarmsSYNInfoPayloads } from './type'
+import { FetchFarmsJSONPayloads, FetchFarmsSYNInfoPayloads } from './farmType'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 import { composeFarmSYN } from './utils/composeFarmSYN'
 
