@@ -1,17 +1,7 @@
-import {
-  AnyFn,
-  areShallowEqual,
-  flapDeep,
-  isFunction,
-  isString,
-  MayArray,
-  MayDeepArray,
-  uncapitalize
-} from '@edsolater/fnkit'
-import { createStore } from 'solid-js/store'
-import { asyncInvoke } from './utils/asyncInvoke'
+import { AnyFn, flapDeep, isFunction, MayArray, MayDeepArray } from '@edsolater/fnkit'
+import { createStore, reconcile } from 'solid-js/store'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
-import { areShallowContain } from '../../../fnkit/areShallowContain'
+import { asyncInvoke } from './utils/asyncInvoke'
 
 function toCallbackMap<F extends AnyFn>(
   pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined
@@ -98,7 +88,7 @@ export function createProxiedStore<T extends Record<string, any>>(
                   const prevValue = prevStore[propertyName]
                   invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
                 })
-                setRawStore(newStore)
+                setRawStore(reconcile(newStore))
                 return proxiedStore
               },
               {
