@@ -16,19 +16,19 @@ function loadAllRulesIfNeeded() {
 export function encode(data: unknown): any {
   loadAllRulesIfNeeded()
 
-  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => (isObject(v) ? encodeObject(v) : v))
+  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => encode(v))
   if (isObject(data)) return encodeObject(data)
-  
+
   return data
 }
 
 function encodeObject(data: object): any {
   const encodeRule = isObject(data) ? encodeRules.find((rule) => rule.isTargetInstance?.(data)) : undefined
   if (!encodeRule) return data
-  return encodeRule.encodeFn?.(data as any /* force */)
+  return encodeRule.encodeFn?.(data as any /* force */, encode)
 }
 
 export type EncodeRule = {
   isTargetInstance?: (data: object) => boolean | undefined
-  encodeFn?: (rawData: any) => EncodedObject<any> | any /* can transport */
+  encodeFn?: (rawData: any, encodeInner: (innerValue: unknown) => any) => EncodedObject<any> | any /* can transport */
 }

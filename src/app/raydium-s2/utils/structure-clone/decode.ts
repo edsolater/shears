@@ -24,7 +24,7 @@ export function decode(data: unknown): any {
 function decodeObject(data: object): any {
   const targetRule = isEncodedObject(data) ? decodeRules.find((rule) => rule.name === data._type) : undefined
   if (!targetRule) return data
-  return targetRule.decodeFn?.(data as EncodedObject<any> /* force */)
+  return targetRule.decodeFn?.(data as EncodedObject<any> /* force */, decode)
 }
 
 function isEncodedObject(data: any): data is EncodedObject<any> {
@@ -33,5 +33,5 @@ function isEncodedObject(data: any): data is EncodedObject<any> {
 
 export type DecodeRule = {
   name?: string
-  decodeFn?: (encodedData: EncodedObject<any>) => any
+  decodeFn?: (encodedData: EncodedObject<any>, decodeInner: (innerValue: unknown) => any) => any
 }

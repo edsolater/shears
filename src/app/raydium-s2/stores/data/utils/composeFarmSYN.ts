@@ -55,11 +55,11 @@ function hydrateFarmSYN({
   pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
 }) {
   if (!farmJsons) return
-  const rawList = map(farmJsons.toArray(), (jsonInfo) => {
-    const farmSDK = farmSDKs?.[toPubString(jsonInfo.id)]
-    const ammId = liquidityJsons?.query(jsonInfo.lpMint, 'lpMint')?.id
+  const rawList = map(farmJsons.toArray(), (farmJson) => {
+    const farmSDK = farmSDKs?.[toPubString(farmJson.id)]
+    const ammId = liquidityJsons?.query(farmJson.lpMint, 'lpMint')?.id
     const pairJson = ammId ? pairJsons?.get(ammId) : undefined
-    const lpPrice = pairJsons?.query(jsonInfo.lpMint, 'lpMint')?.lpPrice ?? undefined
+    const lpPrice = pairJsons?.query(farmJson.lpMint, 'lpMint')?.lpPrice ?? undefined
     const tvl = lpPrice != null && farmSDK ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
     const apr =
       pairJson &&
@@ -69,30 +69,39 @@ function hydrateFarmSYN({
         '7d': pairJson.apr7d
       } as FarmSYNInfo['rewards'][number]['apr'])
     return {
-      id: jsonInfo.id,
-      name: jsonInfo.symbol,
-      base: jsonInfo.baseMint,
-      quote: jsonInfo.quoteMint,
-      category: jsonInfo.category,
+      hasLoad: [farmSDK ? 'sdk' : undefined, farmSDK?.ledger ? 'ledger' : undefined, 'api'],
+
+      id: farmJson.id,
+
+      name: farmJson.symbol,
+      base: farmJson.baseMint,
+      quote: farmJson.quoteMint,
+      category: farmJson.category,
       tvl,
-      userStakedLpAmount: farmSDK
+      userStakedLpAmount: farmSDK?.ledger
         ? {
-            token: jsonInfo.lpMint,
-            amount: farmSDK.lpVault.amount
+            token: farmJson.lpMint,
+            amount: farmSDK.ledger.deposited
           }
         : undefined,
-      rewards: jsonInfo.rewardInfos.map(
-        (rewardJsonInfo) =>
-          ({
-            token: rewardJsonInfo.rewardMint,
-            apr: apr,
-            farmVersion: jsonInfo.version,
-            type: rewardJsonInfo.rewardType,
-            perSecond: rewardJsonInfo.rewardPerSecond,
-            openTime: rewardJsonInfo.rewardOpenTime && new Date(rewardJsonInfo.rewardOpenTime * 1000),
-            endTime: rewardJsonInfo.rewardEndTime && new Date(rewardJsonInfo.rewardEndTime * 1000)
-          } as FarmSYNInfo['rewards'][number])
-      )
+      rewards: farmJson.rewardInfos.map((rewardJson, idx) => {
+        const rewardSDK = farmSDK?.state.rewardInfos.at(idx)
+        return {
+          token: rewardJson.rewardMint,
+          userPendingReward: farmSDK?.wrapped?.pendingRewards.at(idx)
+            ? {
+                token: rewardJson.rewardMint,
+                amount: farmSDK.wrapped.pendingRewards.at(idx)
+              }
+            : undefined,
+          apr,
+          farmVersion: farmJson.version,
+          type: rewardJson.rewardType,
+          perSecond: rewardJson.rewardPerSecond,
+          openTime: rewardJson.rewardOpenTime && new Date(rewardJson.rewardOpenTime * 1000),
+          endTime: rewardJson.rewardEndTime && new Date(rewardJson.rewardEndTime * 1000)
+        } as FarmSYNInfo['rewards'][number]
+      })
     } as FarmSYNInfo
   })
 

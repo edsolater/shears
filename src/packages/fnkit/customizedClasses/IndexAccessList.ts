@@ -112,14 +112,20 @@ export class IndexAccessList<V extends object = object, BK extends keyof V = any
     return this.#innerMap.values()
   }
 
-  _structureCloneEncode() {
+  _structureCloneEncode(handleInnerValue: (innerValue: unknown) => any = (i) => i) {
     const items = this.toArray()
-    Reflect.set(items, '#indexAccessBasicKey', this.#basicKeyIndexAccessMap)
-    return createEncodedObject('IndexAccessList', items)
+    return createEncodedObject('IndexAccessList', {
+      items: handleInnerValue(items),
+      basicKey: this.#basicKeyIndexAccessMap
+    } satisfies IndexAccessListStructureCloneType)
   }
 
-  static _structureCloneDecode<V extends object>(array: V[]) {
-    const baseKey = Reflect.get(array, '#indexAccessBasicKey') || 'id'
-    return new IndexAccessList<V>(array, baseKey)
+  static _structureCloneDecode(transformed: IndexAccessListStructureCloneType) {
+    return new IndexAccessList(transformed.items, transformed.basicKey)
   }
+}
+
+export type IndexAccessListStructureCloneType = {
+  items: any[]
+  basicKey: keyof any
 }

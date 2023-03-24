@@ -32,7 +32,6 @@ function FarmList() {
   const farmStore = useDataStore()
   const farmPageStates = useFarmPageStates()
   const tokenListStore = useTokenListStore()
-  createEffect(()=>{console.log('farmStore.farmInfos: ', farmStore.farmInfos)})
 
   return (
     <List items={farmStore.farmInfos?.toArray()}>
@@ -87,7 +86,12 @@ function FarmList() {
             )}
           </CollapseFace>
           <Collapse.Content>
-            <Piv>{info.name} farm's detail here</Piv>
+            <Piv>
+              <Piv>state: {info.hasLoad.join(' ')}</Piv>
+              <Piv>deposited: {toString(info.userStakedLpAmount?.amount)}</Piv>
+              {(console.log(info.userStakedLpAmount), undefined)}
+              <Piv>to havest: {toString(info.userStakedLpAmount?.amount)}</Piv>
+            </Piv>
           </Collapse.Content>
         </Collapse>
       )}

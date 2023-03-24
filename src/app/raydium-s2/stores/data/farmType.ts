@@ -59,6 +59,7 @@ export type FarmJSONFile = {
 }
 
 export type FarmSYNInfo = {
+  hasLoad: ('sdk' | 'api'|'ledger'|undefined)[] // easier detect info load state
   base: Mint
   quote: Mint
   lp: Mint
@@ -88,7 +89,6 @@ export type FarmSYNInfo = {
     '24h': Percent
   }
 
-  
   tvl?: Numberish // only when sdk is ready
 
   userHasStaked: boolean
@@ -99,7 +99,7 @@ export type FarmSYNInfo = {
       '30d': Percent
       '24h': Percent
     } // fulfilled if liquidity API jFetch is ready
-    userHavedReward: boolean
+    // userHavePendingReward: boolean // logic is too complicated
     pendingRewardsBN?: BN /** only when user have deposited and connected wallet */
     token: Mint | undefined
     /** only when user have deposited and connected wallet */
