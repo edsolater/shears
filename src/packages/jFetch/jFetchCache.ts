@@ -37,7 +37,9 @@ type JFetchCacheItem = (
 }
 type JFetchCacheLocalStorageItem = Omit<JFetchCacheItem, 'response' | 'rawText'> & { rawText: string }
 
-export const resultCache = syncWithLocalStorage(new Map<ResourceUrl, JFetchCacheItem>())
+export const resultCache = new Map<ResourceUrl, JFetchCacheItem>()
+// weborker can't have localStorage 
+// export const resultCache = syncWithLocalStorage(new Map<ResourceUrl, JFetchCacheItem>())
 
 function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
   // initly get data from localStorage

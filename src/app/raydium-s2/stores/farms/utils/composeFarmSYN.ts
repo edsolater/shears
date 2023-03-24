@@ -18,6 +18,7 @@ import { fetchFarmJsonInfo } from './fetchFarmJson'
  */
 export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
   return createAbortableAsyncTask<FarmStore['farmInfos']>(async ({ resolve, aborted }) => {
+    console.log('fetch 222')
     const fetchedAPIPromise = Promise.all([fetchFarmJsonInfo(), fetchLiquidityJson(), fetchPairJsonInfo()])
 
     const farmSDKPromise = fetchedAPIPromise.then(([farmJsonInfos]) => {

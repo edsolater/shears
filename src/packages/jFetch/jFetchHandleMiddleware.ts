@@ -15,7 +15,7 @@ export type JFetchOptions = {
 type JFetchResultCache = Map<
   string,
   {
-    rawText: string
+    rawText: Promise<string | undefined>
     timeStamp: number
     options?: JFetchOptions | undefined
     result?: unknown
@@ -25,7 +25,7 @@ type JFetchResultCache = Map<
 const finalResultCache: JFetchResultCache = new Map()
 function storeInResultCache(
   input: RequestInfo,
-  rawText: string,
+  rawText: Promise<string | undefined>,
   options: JFetchOptions | undefined,
   formattedData: any
 ) {
@@ -37,7 +37,11 @@ function storeInResultCache(
     result: formattedData
   })
 }
-function getCachedSuitableResult(input: RequestInfo, rawText: string, options: JFetchOptions | undefined) {
+function getCachedSuitableResult(
+  input: RequestInfo,
+  rawText: Promise<string | undefined>,
+  options: JFetchOptions | undefined
+) {
   const key = typeof input === 'string' ? input : input.url
   if (finalResultCache.has(key)) {
     const cached = finalResultCache.get(key)!
@@ -54,15 +58,14 @@ export default async function jFetch<Shape = any>(
   input: RequestInfo,
   options?: JFetchOptions
 ): Promise<Shape | undefined> {
-  const rawText = await jFetchCoreWithCache(input, options)
+  const rawText = jFetchCoreWithCache(input, options)
 
-  if (!rawText) return undefined
   /* ----------see if cache have result to avoid return same content but different object */
   const cached = getCachedSuitableResult(input, rawText, options)
   if (cached) return cached as Shape
   const renamedText = await asyncReduce(
     shakeNil(options?.middlewares?.map((m) => m.parseResponseRaw) ?? []),
-    (rawText, parseResponseRaw) => parseResponseRaw(rawText),
+    (rawText, parseResponseRaw) => rawText && parseResponseRaw(rawText),
     rawText
   )
   if (!renamedText) return undefined

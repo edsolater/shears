@@ -40,6 +40,9 @@ export async function jFetchCoreWithCache(
     key,
     cacheFreshDuraction: options?.cacheFreshTime ?? defaultCacheFreshTime
   })
+  if (key.includes('farm')) {
+    console.log('shouldUseCache: ', performance.now(), shouldUseCache, resultCache)
+  }
 
   if (shouldUseCache) return resultCache.get(key)!.rawText
 
@@ -52,6 +55,9 @@ export async function jFetchCoreWithCache(
         if (requestIsSuccess) {
           return res.text()
         } else {
+          if (key.includes('farm')) {
+            console.log('shouldUseCache delete cache at: ', performance.now())
+          }
           resultCache.delete(key)
           return ''
         }
@@ -67,6 +73,9 @@ export async function jFetchCoreWithCache(
       isLoading: true,
       state: 'loading'
     } as const
+    if (key.includes('farm')) {
+      console.log('shouldUseCache set cache at: ', performance.now())
+    }
     resultCache.set(key, tempJFetchItem)
 
     // error
