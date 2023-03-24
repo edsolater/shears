@@ -2,6 +2,7 @@ import { AnyFn, flapDeep, isFunction, isString, MayArray, MayDeepArray } from '@
 import { createStore, reconcile } from 'solid-js/store'
 import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
+import { batch } from 'solid-js'
 
 function toCallbackMap<F extends AnyFn>(
   pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined
@@ -88,7 +89,16 @@ export function createProxiedStore<T extends Record<string, any>>(
                   const prevValue = prevStore[propertyName]
                   invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
                 })
-                setRawStore(reconcile(newStore)) // FIXME: 💡 use `reconcile` will clean farm info, but don't use reconcile won't
+                batch(() => {
+                  Object.entries(newStore).forEach(([propertyName, newValue]) => {
+                    // @ts-ignore
+                    const prevValue = prevStore[propertyName]
+                    if (newValue !== prevValue) {
+                      // @ts-ignore
+                      setRawStore(propertyName, reconcile(newValue))
+                    }
+                  })
+                })
                 return proxiedStore
               },
               {
