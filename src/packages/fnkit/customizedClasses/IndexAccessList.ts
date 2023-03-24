@@ -92,8 +92,16 @@ export class IndexAccessList<V extends object = object, BK extends keyof V = any
     }
   }
 
-  toJSMap() {
+  toMap() {
     return this.#innerMap
+  }
+
+  toRecord() {
+    return Object.fromEntries(this.#innerMap.entries())
+  }
+
+  toSet() {
+    return new Set(this.#innerMap.values())
   }
 
   toArray() {

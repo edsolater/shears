@@ -2,7 +2,7 @@ import { map, mapEntry, Numberish, shakeFalsy, shakeNil } from '@edsolater/fnkit
 import { jFetch } from '../../../../../packages/jFetch';
 import { Token } from '../../tokenList/type';
 import { parallelAsyncTasks } from '../../../../../packages/fnkit/parallelAsyncTasks';
-import { recordToMap } from '../../../../../packages/fnkit/recordToMap';
+import { recordToMap } from '../../../../../packages/fnkit/recordAndMap';
 
 export async function fetchTokenPrices(tokens: Map<string, Token>, raydiumUrl: string): Promise<Map<string, Numberish>> {
   type CoingeckoPriceFile = Record<

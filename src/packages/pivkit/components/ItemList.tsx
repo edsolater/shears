@@ -4,7 +4,7 @@ import { createRef } from '../hooks/createRef'
 import { useElementSize } from '../hooks/useElementSize'
 
 export type ListProps<T> = KitProps<{
-  items?: T[] | undefined
+  items?: Iterable<T> | undefined
   children(item: T, index: () => number): JSXElement
 }>
 
@@ -23,7 +23,7 @@ export function List<T>(rawProps: ListProps<T>) {
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv ref={setRef} shadowProps={props}>
-      <For each={props.items ?? []}>{(item, idx) => props.children(item, idx)}</For>
+      <For each={[...(props.items ?? [])]}>{(item, idx) => props.children(item, idx)}</For>
     </Piv>
   )
 }
