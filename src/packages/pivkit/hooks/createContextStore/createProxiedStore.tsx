@@ -1,7 +1,7 @@
-import { AnyFn, flapDeep, isFunction, MayArray, MayDeepArray } from '@edsolater/fnkit'
+import { AnyFn, flapDeep, isFunction, isString, MayArray, MayDeepArray } from '@edsolater/fnkit'
 import { createStore, reconcile } from 'solid-js/store'
-import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 import { asyncInvoke } from './utils/asyncInvoke'
+import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 
 function toCallbackMap<F extends AnyFn>(
   pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined
