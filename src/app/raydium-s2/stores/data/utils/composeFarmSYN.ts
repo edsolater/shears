@@ -75,6 +75,12 @@ function hydrateFarmSYN({
       quote: jsonInfo.quoteMint,
       category: jsonInfo.category,
       tvl,
+      userStakedLpAmount: farmSDK
+        ? {
+            token: jsonInfo.lpMint,
+            amount: farmSDK.lpVault.amount
+          }
+        : undefined,
       rewards: jsonInfo.rewardInfos.map(
         (rewardJsonInfo) =>
           ({

@@ -19,7 +19,8 @@ export type Decimal = {
 
 // plain object for easier structure clone
 export type TokenAmount = {
-  token: Token
+  token: Token | Mint
+  decimaled: boolean
   amount: Numberish
 }
 

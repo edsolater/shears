@@ -88,6 +88,7 @@ export type FarmSYNInfo = {
     '24h': Percent
   }
 
+  
   tvl?: Numberish // only when sdk is ready
 
   userHasStaked: boolean
@@ -125,8 +126,8 @@ export type FarmSYNInfo = {
     perSecond: FarmRewardJSONInfo['rewardPerSecond'] // v6
     type: FarmRewardJSONInfo['rewardType'] // v6
   }[]
-  userStakedLpAmount: TokenAmount
-  stakedLpAmount: TokenAmount
+  userStakedLpAmount?: TokenAmount
+  totalStakedLpAmount: TokenAmount
 
   // rewardInfos: FarmRewardJSONInfo[]
 
