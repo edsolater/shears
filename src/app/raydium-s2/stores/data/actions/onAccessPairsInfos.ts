@@ -1,7 +1,7 @@
 import { createOnFirstAccess } from '../../../../../packages/pivkit'
 import { queryPairs } from '../utils/queryPairs'
-import { PairsStore } from '../store'
+import { DataStore } from '../store'
 
-export const onAccessPairsInfos = createOnFirstAccess<PairsStore>(['infos'], (store) => {
+export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {
   queryPairs(store)
 })

@@ -1,17 +1,17 @@
 import { Store } from '../../../../../packages/pivkit'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
-import { PairsStore } from '../store'
-import { FetchPairsOptions, PairJson } from '../type'
+import { FetchPairsOptions, PairJson } from '../pairsType'
+import { DataStore } from '../store'
 
-export function queryPairs(store: Store<PairsStore>) {
+export function queryPairs(store: Store<DataStore>) {
   store.set({ isLoading: true })
   getPairJson((allPairJsonInfos) => {
-    store.set({ isLoading: false, infos: allPairJsonInfos.slice(0, 50) })
+    store.set({ isLoading: false, pairInfos: allPairJsonInfos.slice(0, 50) })
     let count = 0
     const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
     const timeoutId = setInterval(() => {
       const newPairs = clonedAllPairJsonInfos?.slice(0, 50).map((i) => ({ ...i, name: i.name + count }))
-      newPairs && store.set({ isLoading: false, infos: newPairs.slice(0, 50) })
+      newPairs && store.set({ isLoading: false, pairInfos: newPairs.slice(0, 50) })
       count++
     }, 1000)
     return () => clearInterval(timeoutId)

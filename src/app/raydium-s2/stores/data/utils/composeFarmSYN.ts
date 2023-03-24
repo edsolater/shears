@@ -8,7 +8,7 @@ import toPubString, { toPub } from '../../../utils/common/pub'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { fetchLiquidityJson } from '../../apiInfos/fetchLiquidityJson'
-import { fetchPairJsonInfo } from '../../pairs/utils/fetchPairJson'
+import { fetchPairJsonInfo } from './fetchPairJson'
 import { DataStore } from '../store'
 import { FarmSYNInfo } from '../farmType'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
@@ -90,6 +90,6 @@ function hydrateFarmSYN({
     } as FarmSYNInfo
   })
 
-  const indexAccessList = new IndexAccessList(rawList, 'id')
+  const indexAccessList = new IndexAccessList(rawList.slice(0, 20), 'id')
   return indexAccessList
 }

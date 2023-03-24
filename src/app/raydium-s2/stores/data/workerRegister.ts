@@ -2,6 +2,8 @@ import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
 import { FetchFarmsJSONPayloads, FetchFarmsSYNInfoPayloads } from './farmType'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 import { composeFarmSYN } from './utils/composeFarmSYN'
+import { FetchPairsOptions } from './pairsType'
+import { fetchPairJsonInfo } from './utils/fetchPairJson'
 
 export function registInWorker() {
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ resolve }) =>
@@ -15,5 +17,11 @@ export function registInWorker() {
       resultSubscribable.subscribe(resolve)
       onClean(abort)
     }
+  )
+
+  registMessageReceiver<FetchPairsOptions>('fetch raydium pairs info', ({ payload, resolve }) =>
+    fetchPairJsonInfo()
+      .then((map) => map && [...map.toMap().values()])
+      .then(resolve)
   )
 }

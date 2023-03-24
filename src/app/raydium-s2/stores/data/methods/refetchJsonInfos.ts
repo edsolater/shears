@@ -1,7 +1,7 @@
-import { useFarmStore } from '../store'
+import { useDataStore } from '../store'
 import { loadFarmJsonInfos } from '../utils/queryFarmJsonInfos'
 
 export function refetchJsonInfos() {
-  const store = useFarmStore()
+  const store = useDataStore()
   loadFarmJsonInfos(store)
 }

@@ -6,7 +6,7 @@ import { CoinAvatar } from '../components/CoinAvatar'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmPageStates } from '../pageStates/farmState'
-import { useFarmStore } from '../stores/data/store'
+import { useDataStore } from '../stores/data/store'
 import { useTokenListStore } from '../stores/tokenList/store'
 import { useTokenPriceStore } from '../stores/tokenPrice/store'
 import { toString } from '../utils/dataStructures/basicMath/format'
@@ -16,7 +16,7 @@ const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export function FarmPage() {
-  const farmStore = useFarmStore()
+  const farmStore = useDataStore()
   const farmPageStates = useFarmPageStates()
   const tokenPriceStore = useTokenPriceStore()
 
@@ -29,9 +29,10 @@ export function FarmPage() {
 }
 
 function FarmList() {
-  const farmStore = useFarmStore()
+  const farmStore = useDataStore()
   const farmPageStates = useFarmPageStates()
   const tokenListStore = useTokenListStore()
+  createEffect(()=>{console.log('farmStore.farmInfos: ', farmStore.farmInfos)})
 
   return (
     <List items={farmStore.farmInfos}>

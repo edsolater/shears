@@ -1,7 +1,7 @@
 import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { jFetch } from '../../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
-import { PairJson } from '../type'
+import { PairJson } from '../pairsType'
 
 // TODO: it should be a map
 export async function fetchPairJsonInfo(): Promise<IndexAccessList<PairJson, 'ammId'> | undefined> {

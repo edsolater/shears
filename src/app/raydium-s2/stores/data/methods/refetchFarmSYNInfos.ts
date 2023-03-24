@@ -1,9 +1,9 @@
 import { useWalletStore } from '../../wallet/store'
-import { useFarmStore } from '../store'
+import { useDataStore } from '../store'
 import { loadFarmSYNInfos } from '../utils/queryFarmSYNInfos'
 
 export function refetchFarmSYNInfos() {
   const walletStore = useWalletStore()
-  const store = useFarmStore()
+  const store = useDataStore()
   loadFarmSYNInfos({ owner: walletStore.owner, store })
 }
