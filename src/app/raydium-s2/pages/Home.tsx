@@ -1,6 +1,6 @@
 import { Piv } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
-import { usePairsStore } from '../stores/pairs/store'
+import { usePairStore } from '../stores/pairs/store'
 import { useTokenListStore } from '../stores/tokenList/store'
 import { useWalletStore } from '../stores/wallet/store'
 import { Link } from '../components/Link'
@@ -8,7 +8,7 @@ import { NavBar } from '../components/NavBar'
 import { routePath } from './routes'
 
 export function Home() {
-  const pairStore =usePairsStore()
+  const pairStore = usePairStore()
   const walletStore = useWalletStore()
   const tokenListStore = useTokenListStore()
   return (
@@ -19,7 +19,7 @@ export function Home() {
         {/* info */}
         <Piv>token count: {tokenListStore.isLoading ? '(loading)' : tokenListStore.allTokens.size}</Piv>
         <Piv>current owner: {walletStore.owner}</Piv>
-        <Piv>pair count: {pairStore.isLoading ? '(loading)' : pairStore.infos.length}</Piv>
+        <Piv>pair count: {pairStore.isLoading ? '(loading)' : pairStore.infos?.length}</Piv>
         <Piv>
           nav:
           <Link innerRoute href={routePath.farms}>

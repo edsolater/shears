@@ -1,11 +1,11 @@
-import { createMemo, For, Show } from 'solid-js'
+import { createMemo, For } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { createRef, useElementSize } from '../../../packages/pivkit'
+import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
-import { usePairsStore } from '../stores/pairs/store'
+import { usePairStore } from '../stores/pairs/store'
 
 export function PairsPanel() {
-  const pairsStore = usePairsStore()
+  const pairsStore = usePairStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -27,19 +27,23 @@ export function PairsPanel() {
       >
         <For each={pairsStore.infos}>
           {(info) => (
-            <Piv
-              icss={{
-                display: 'grid',
-                gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                paddingBlock: 4,
-                ':nth-child(2n)': { background: '#8080802e' }
-              }}
-            >
-              <Piv>{info.name}</Piv>
-              <Show when={!isWidthSmall()}>
+            <Collapse>
+              <Collapse.Face>
+                <Piv
+                  icss={{
+                    display: 'grid',
+                    gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
+                    paddingBlock: 4,
+                    ':nth-child(2n)': { background: '#8080802e' }
+                  }}
+                >
+                  <Piv>{info.name}</Piv>
+                </Piv>
+              </Collapse.Face>
+              <Collapse.Content>
                 <Piv>{info.ammId}</Piv>
-              </Show>
-            </Piv>
+              </Collapse.Content>
+            </Collapse>
           )}
         </For>
       </Piv>

@@ -3,7 +3,7 @@ import { SetStoreFunction } from 'solid-js/store'
 export type Store<T extends Record<string, any>> = T & {
   _setStore: SetStoreFunction<T>
   // 💡 like zustand's set
-  set: (dispatcher: ((store: T) => Partial<T>) | Partial<T>) => Promise<Store<T>>
+  set(dispatcher: ((store: T) => Partial<T>) | Partial<T>): Promise<Store<T>>
 }
 
 export type DefaultStoreValue<T extends Record<string, any>> = (

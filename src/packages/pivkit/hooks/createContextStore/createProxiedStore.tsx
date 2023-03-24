@@ -8,7 +8,7 @@ import {
   MayDeepArray,
   uncapitalize
 } from '@edsolater/fnkit'
-import { createStore } from 'solid-js/store'
+import { createStore, reconcile } from 'solid-js/store'
 import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 import { areShallowContain } from '../../../fnkit/areShallowContain'
@@ -98,7 +98,7 @@ export function createProxiedStore<T extends Record<string, any>>(
                   const prevValue = prevStore[propertyName]
                   invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
                 })
-                setRawStore(newStore)
+                setRawStore(reconcile(newStore))
                 return proxiedStore
               },
               {
