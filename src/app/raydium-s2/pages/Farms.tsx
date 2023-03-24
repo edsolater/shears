@@ -33,69 +33,63 @@ function FarmList() {
   const farmPageStates = useFarmPageStates()
   const tokenListStore = useTokenListStore()
 
-  createEffect(() => {
-    console.log('farmStore.farmInfos: ', farmStore.farmInfos)
-  })
   return (
     <List items={farmStore.farmInfos?.toArray?.()}>
-      {(info, idx) => {
-        // console.log('info: ', info)
-        return (
-          <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
-            <CollapseFace>
-              {(status) => (
+      {(info, idx) => (
+        <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
+          <CollapseFace>
+            {(status) => (
+              <Box
+                icss={{
+                  display: 'grid',
+                  gridTemplateColumns: '.3fr 1fr 1fr 1fr 1fr',
+                  padding: 6,
+                  borderRadius: 4
+                }}
+                onClick={() => {
+                  farmPageStates.setDetailViewFarmId(info.id)
+                }}
+              >
+                {/* part 1 */}
+                <Box></Box>
+
+                {/* part 2 */}
                 <Box
                   icss={{
-                    display: 'grid',
-                    gridTemplateColumns: '.3fr 1fr 1fr 1fr 1fr',
-                    padding: 6,
-                    borderRadius: 4
-                  }}
-                  onClick={() => {
-                    farmPageStates.setDetailViewFarmId(info.id)
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
                   }}
                 >
-                  {/* part 1 */}
-                  <Box></Box>
-
-                  {/* part 2 */}
-                  <Box
-                    icss={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 8
-                    }}
-                  >
-                    <CoinAvatarPair
-                      token1={tokenListStore.getToken(info.base)}
-                      token2={tokenListStore.getToken(info.quote)}
-                    />
-                    {/* <Piv>{info.name}</Piv> */}
-                  </Box>
-
-                  {/* part 3 : pending reward*/}
-                  <Piv>
-                    <For each={info.rewards}>{(r) => <CoinAvatar token={tokenListStore.getToken(r.token)} />}</For>
-                  </Piv>
-
-                  {/* part 4 total apr */}
-                  <Piv>{toString(info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => add(acc, r), 0))}</Piv>
-
-                  {/* part 5 tvl */}
-                  <Piv>{toString(info.tvl)}</Piv>
-
-                  {/* <Show when={status.isOpen}>
-                      <Piv>{info.version}</Piv>
-                    </Show> */}
+                  <CoinAvatarPair
+                    token1={tokenListStore.getToken(info.base)}
+                    token2={tokenListStore.getToken(info.quote)}
+                  />
+                  {/* <Piv>{info.name}</Piv> */}
                 </Box>
-              )}
-            </CollapseFace>
-            <Collapse.Content>
-              <Piv>{info.name} farm's detail here</Piv>
-            </Collapse.Content>
-          </Collapse>
-        )
-      }}
+
+                {/* part 3 : pending reward*/}
+                <Piv>
+                  <For each={info.rewards}>{(r) => <CoinAvatar token={tokenListStore.getToken(r.token)} />}</For>
+                </Piv>
+
+                {/* part 4 total apr */}
+                <Piv>{toString(info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => add(acc, r), 0))}</Piv>
+
+                {/* part 5 tvl */}
+                <Piv>{toString(info.tvl)}</Piv>
+
+                {/* <Show when={status.isOpen}>
+                    <Piv>{info.version}</Piv>
+                  </Show> */}
+              </Box>
+            )}
+          </CollapseFace>
+          <Collapse.Content>
+            <Piv>{info.name} farm's detail here</Piv>
+          </Collapse.Content>
+        </Collapse>
+      )}
     </List>
   )
 }

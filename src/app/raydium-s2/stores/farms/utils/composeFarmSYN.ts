@@ -18,16 +18,17 @@ import { fetchFarmJsonInfo } from './fetchFarmJson'
  */
 export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
   return createAbortableAsyncTask<FarmStore['farmInfos']>(async ({ resolve, aborted }) => {
-    console.log('fetch 222')
-    const fetchedAPIPromise = Promise.all([fetchFarmJsonInfo(), fetchLiquidityJson(), fetchPairJsonInfo()])
-
-    const farmSDKPromise = fetchedAPIPromise.then(([farmJsonInfos]) => {
+    const farmJsonPromise = fetchFarmJsonInfo()
+    const liquidityJsonPromise = fetchLiquidityJson()
+    const pairJsonInfoPromise = fetchPairJsonInfo()
+    const fetchedAPIPromise = Promise.all([farmJsonPromise, liquidityJsonPromise, pairJsonInfoPromise])
+    const farmSDKPromise = farmJsonPromise.then((farmJsonInfos) => {
       if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
         connection: getConnection(payload.rpcUrl),
         pools: farmJsonInfos.toArray().map(jsonInfo2PoolKeys),
         owner: toPub(payload.owner),
-        config: { commitment: 'confirmed' }
+        config: { batchRequest: true, commitment: 'confirmed' }
       }
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })

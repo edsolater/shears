@@ -9,6 +9,5 @@ export async function fetchPairJsonInfo(): Promise<IndexAccessList<PairJson, 'am
     cacheFreshTime: 5 * 60 * 1000
   })
   if (!pairJsons) return
-  console.log('pairJsonInfo: ', pairJsons)
   return new IndexAccessList<PairJson, 'ammId'>(pairJsons, 'ammId')
 }

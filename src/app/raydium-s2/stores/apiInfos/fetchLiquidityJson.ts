@@ -10,6 +10,5 @@ export async function fetchLiquidityJson(): Promise<IndexAccessList<LiquidityJso
   const response = await jFetch<LiquidityJsonFile>(appApiUrls.poolInfo, { cacheFreshTime: 5 * 60 * 1000 })
   if (!response) return undefined
   const liquidityInfoList = [...(response?.official ?? []), ...(response?.unOfficial ?? [])]
-  console.log('liquidityInfoList: ', liquidityInfoList)
   return new IndexAccessList<LiquidityJson, 'id'>(liquidityInfoList, 'id')
 }

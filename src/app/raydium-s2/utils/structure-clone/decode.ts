@@ -22,7 +22,6 @@ export function decode(data: unknown): any {
 }
 
 function decodeObject(data: object): any {
-  console.log('data: ', data)
   const targetRule = isEncodedObject(data) ? decodeRules.find((rule) => rule.name === data._type) : undefined
   if (!targetRule) return data
   return targetRule.decodeFn?.(data as EncodedObject<any> /* force */)

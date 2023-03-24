@@ -4,8 +4,8 @@ import { AnyObj, isArray } from '@edsolater/fnkit'
  * simliar to `array.prototype.find()`
  * @requires  {@link toEntries `toEntries()`} {@link fromEntries `fromEntries()`} {@link getType `getType()`}
  * @example
- * console.log(find([1, 2], (v) => v > 1)) // 1
- * console.log(find({ a: 1, b: 2}, (v) => v > 1))) // 1
+ * find([1, 2], (v) => v > 1) // 1
+ * find({ a: 1, b: 2}, (v) => v > 1)) // 1
  */
 export default function find<T>(arr: T[] | undefined, predicate: (item: T, index: number) => boolean): T | undefined
 export default function find<T>(set: Set<T> | undefined, predicate: (item: T, index: number) => boolean): T | undefined

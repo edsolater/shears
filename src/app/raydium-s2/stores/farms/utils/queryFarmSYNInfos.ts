@@ -10,7 +10,6 @@ export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; 
 } {
   store.set({ isFarmInfosLoading: true })
   const subscription = getFarmSYNInfosFromWorker(owner, (allFarmSYNInfos) => {
-    console.log('allFarmSYNInfos: ', allFarmSYNInfos)
     store.set({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
   })
   return { abort: subscription?.abort }

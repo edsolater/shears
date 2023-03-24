@@ -5,10 +5,7 @@ import { composeFarmSYN } from './utils/composeFarmSYN'
 
 export function registInWorker() {
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ resolve }) =>
-    {
-      console.log('fetch 111')
-      return fetchFarmJsonInfo().then(resolve)
-    }
+    fetchFarmJsonInfo().then(resolve)
   )
 
   registMessageReceiver<FetchFarmsSYNInfoPayloads>(
