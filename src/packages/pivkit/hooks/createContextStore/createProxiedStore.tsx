@@ -1,4 +1,14 @@
-import { AnyFn, flapDeep, isFunction, isString, MayArray, MayDeepArray } from '@edsolater/fnkit'
+import {
+  AnyFn,
+  flapDeep,
+  isArray,
+  isFunction,
+  isNullish,
+  isPrimitive,
+  isString,
+  MayArray,
+  MayDeepArray
+} from '@edsolater/fnkit'
 import { createStore, reconcile } from 'solid-js/store'
 import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
@@ -95,7 +105,7 @@ export function createProxiedStore<T extends Record<string, any>>(
                     const prevValue = prevStore[propertyName]
                     if (newValue !== prevValue) {
                       // @ts-ignore
-                      setRawStore(propertyName, reconcile(newValue))
+                      setRawStore(propertyName, assignToNewValue(prevValue, newValue))
                     }
                   })
                 })
@@ -138,4 +148,31 @@ export function createProxiedStore<T extends Record<string, any>>(
     }
   }
   return [proxiedStore, rawStore as T, addOnChange]
+}
+
+/**
+ * use old object's reference
+ * @param oldValue may be mutated
+ * @param newValue provide new values
+ */
+function assignToNewValue(oldValue: unknown, newValue: unknown): unknown {
+  if (isNullish(oldValue) || isPrimitive(oldValue)) return newValue
+  if (isArray(oldValue) && isArray(newValue)) {
+    const newArray = mutateArray(oldValue, newValue, assignToNewValue)
+    console.log('0', newArray === oldValue)
+    console.log('1', newArray[0] === oldValue[0])
+    console.log('2', newArray[1].name)
+    console.log('3', newValue[1].name) // <- this is the problem
+    return newArray
+  }
+  return oldValue
+}
+
+function mutateArray<T, U, W>(oldArray: T[], newArray: U[], mutateFn?: (oldItem: T, newItem: U) => W): (T | U | W)[] {
+  const mergedNewItems = oldArray.slice(0, newArray.length).map((oldItems, index) => {
+    const newItem = newArray[index]
+    return mutateFn ? mutateFn(oldItems, newItem) : newItem
+  })
+  oldArray.splice(0, mergedNewItems.length, ...(mergedNewItems as any[]))
+  return oldArray
 }
