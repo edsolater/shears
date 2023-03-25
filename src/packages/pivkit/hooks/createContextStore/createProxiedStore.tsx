@@ -163,6 +163,7 @@ function assignToNewValue(oldValue: unknown, newValue: unknown): unknown {
     console.log('1', newArray[0] === oldValue[0])
     console.log('2', newArray[1].name)
     console.log('3', newValue[1].name) // <- this is the problem
+    console.log('should equal', newArray[0].name === newValue[0].name) // <- this is the problem
     return newArray
   }
   return oldValue
