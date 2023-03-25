@@ -1,6 +1,6 @@
 import { createMemo, For } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Collapse, createRef, useElementSize } from '../../../packages/pivkit'
+import { Collapse, createRef, List, useElementSize } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
 
@@ -25,7 +25,7 @@ export function PairsPanel() {
           gap: 4
         }}
       >
-        <For each={dataStore.pairInfos}>
+        <List items={dataStore.pairInfos}>
           {(info) => (
             <Collapse>
               <Collapse.Face>
@@ -45,7 +45,7 @@ export function PairsPanel() {
               </Collapse.Content>
             </Collapse>
           )}
-        </For>
+        </List>
       </Piv>
     </Piv>
   )
