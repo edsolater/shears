@@ -1,15 +1,17 @@
 import {
   AnyFn,
+  AnyObj,
   flapDeep,
   isArray,
   isFunction,
   isNullish,
+  isObject,
   isPrimitive,
   isString,
   MayArray,
   MayDeepArray
 } from '@edsolater/fnkit'
-import { createStore, reconcile } from 'solid-js/store'
+import { createStore, produce, reconcile, unwrap } from 'solid-js/store'
 import { asyncInvoke } from './utils/asyncInvoke'
 import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } from './type'
 import { batch } from 'solid-js'
@@ -101,12 +103,11 @@ export function createProxiedStore<T extends Record<string, any>>(
                 })
                 batch(() => {
                   Object.entries(newStore).forEach(([propertyName, newValue]) => {
-                    // @ts-ignore
-                    const prevValue = prevStore[propertyName]
-                    if (newValue !== prevValue) {
-                      // @ts-ignore
-                      setRawStore(propertyName, assignToNewValue(prevValue, newValue))
-                    }
+                    setRawStore(
+                      produce((draft: AnyObj) => {
+                        draft[propertyName] = assignToNewValue(draft[propertyName], newValue)
+                      })
+                    )
                   })
                 })
                 return proxiedStore
@@ -157,23 +158,29 @@ export function createProxiedStore<T extends Record<string, any>>(
  */
 function assignToNewValue(oldValue: unknown, newValue: unknown): unknown {
   if (isNullish(oldValue) || isPrimitive(oldValue)) return newValue
-  if (isArray(oldValue) && isArray(newValue)) {
-    const newArray = mutateArray(oldValue, newValue, assignToNewValue)
-    console.log('0', newArray === oldValue)
-    console.log('1', newArray[0] === oldValue[0])
-    console.log('2', newArray[1].name)
-    console.log('3', newValue[1].name) // <- this is the problem
-    console.log('should equal', newArray[0].name === newValue[0].name) // <- this is the problem
-    return newArray
+  if (isFunction(oldValue) && isFunction(newValue)) return newValue
+  if (isObject(oldValue) && isObject(newValue)) {
+    const newMutatedObj = mutateObj(oldValue, newValue, assignToNewValue)
+    // console.log('0', newMutatedObj, oldValue, newValue)
+    // console.log('1', newMutatedObj[0] === oldValue[0])
+    // console.log('2', newMutatedObj[1]?.name)
+    // console.log('3', newValue[1]?.name) // <- this is the problem
+    // console.log('should equal', newMutatedObj[0]?.name === newValue[0]?.name) // <- this is the problem
+    return newMutatedObj
   }
-  return oldValue
+  return newValue
 }
 
-function mutateArray<T, U, W>(oldArray: T[], newArray: U[], mutateFn?: (oldItem: T, newItem: U) => W): (T | U | W)[] {
-  const mergedNewItems = oldArray.slice(0, newArray.length).map((oldItems, index) => {
-    const newItem = newArray[index]
-    return mutateFn ? mutateFn(oldItems, newItem) : newItem
+function mutateObj(
+  oldObj: Record<keyof any, unknown>,
+  newObj: Record<keyof any, unknown>,
+  mutateFn?: (oldItem: unknown, newItem: unknown) => unknown
+): Record<keyof any, unknown> {
+  const result = oldObj
+  Object.entries(newObj).forEach(([key, newValue]) => {
+    const oldValue = oldObj[key]
+    const mutatedValue = mutateFn ? mutateFn(oldValue, newValue) : newValue
+    result[key] = mutatedValue
   })
-  oldArray.splice(0, mergedNewItems.length, ...(mergedNewItems as any[]))
-  return oldArray
+  return result
 }
