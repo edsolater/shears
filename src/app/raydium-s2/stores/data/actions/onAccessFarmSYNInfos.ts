@@ -1,7 +1,7 @@
 import { createEffect, getOwner, onCleanup } from 'solid-js'
 import { createOnFirstAccess } from '../../../../../packages/pivkit'
 import { useWalletStore } from '../../wallet/store'
-import { loadFarmSYNInfos } from '../utils/queryFarmSYNInfos'
+import { loadFarmSYNInfos } from './queryFarmSYNInfos'
 import { DataStore } from '../store'
 
 // 💡 subscribe wallet change
