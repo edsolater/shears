@@ -1,4 +1,4 @@
-import { BN, PublicKey } from '../utils/dataStructures/type'
+import { BN, PublicKey } from '../../utils/dataStructures/type'
 
 export type SDKSplAccount = {
   owner: PublicKey

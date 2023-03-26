@@ -1,6 +1,6 @@
-import { jFetch } from '../../../../packages/jFetch'
-import { appApiUrls } from '../../utils/common/config'
-import { LiquidityJson, LiquidityJsonFile } from './liquidtyInfoType'
+import { jFetch } from '../../../../../packages/jFetch'
+import { appApiUrls } from '../../../utils/common/config'
+import { LiquidityJson, LiquidityJsonFile } from '../types/liquidtyPools'
 
 /**
  * <span style="color:blue">some *blue* text</span>.
