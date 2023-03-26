@@ -1,7 +1,11 @@
-import { Store } from '../../../../../packages/pivkit'
+import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { FetchPairsOptions, PairJson } from '../types/pairs'
 import { DataStore } from '../store'
+
+export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {
+  loadPairs(store)
+})
 
 export function loadPairs(store: Store<DataStore>) {
   store.set({ isPairInfoLoading: true })

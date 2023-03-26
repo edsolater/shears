@@ -1,9 +1,21 @@
-import { Store } from '../../../../../packages/pivkit'
+import { createEffect, onCleanup } from 'solid-js'
+import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { appRpcEndpointUrl } from '../../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
-import { WalletStore } from '../../wallet/store'
+import { useWalletStore, WalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
 import { FetchFarmsSYNInfoPayloads } from '../types/farm'
+
+// 💡 subscribe wallet change
+export const onAccessFarmSYNInfos = createOnFirstAccess<DataStore>(['farmInfos'], (store) => {
+  createEffect(() => {
+    const walletStore = useWalletStore()
+    const { abort } = loadFarmSYNInfos({ owner: walletStore.owner, store })
+    onCleanup(() => {
+      abort?.()
+    })
+  })
+})
 
 export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; store: Store<DataStore> }): {
   abort?(): void

@@ -1,8 +1,10 @@
-import { Store } from '../../../../../packages/pivkit'
+import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
 import { FetchRaydiumTokenListOptions } from '../types/tokenList'
+
+export const onAccessTokens = createOnFirstAccess<DataStore>(['allTokens'], loadTokensInfos)
 
 export function loadTokensInfos(store: Store<DataStore>) {
   store.set({ isTokenLoading: true })

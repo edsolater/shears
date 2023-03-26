@@ -1,7 +1,11 @@
-import { Store } from '../../../../../packages/pivkit'
+import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
 import { FetchFarmsJSONPayloads } from '../types/farm'
+
+export const onAccessFarmJsonInfos = createOnFirstAccess<DataStore>(['farmJsonInfos', 'farmInfos'], (store) => {
+  loadFarmJsonInfos(store)
+})
 
 export function loadFarmJsonInfos(store: Store<DataStore>) {
   store.set({ isFarmJsonLoading: true })
