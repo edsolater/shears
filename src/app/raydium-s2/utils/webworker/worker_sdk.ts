@@ -1,12 +1,11 @@
 /// <reference lib="webworker" />
-import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import './worker_polyfill'; // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { WorkerDescription, WorkerMessage } from './type'
+import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
 import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
+import { WorkerDescription, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
-import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
-import { IndexAccessList } from '../../../../packages/fnkit/customizedClasses/IndexAccessList'
 
 type onMessage<D> = (utils: { payload: D; onClean(cleanFn: () => void): void; resolve(value: any): void }) => void
 

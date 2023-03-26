@@ -34,7 +34,7 @@ function FarmList() {
   const tokenListStore = useTokenListStore()
 
   return (
-    <List items={farmStore.farmInfos?.toArray()}>
+    <List items={farmStore.farmInfos}>
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>
@@ -89,7 +89,6 @@ function FarmList() {
             <Piv>
               <Piv>state: {info.hasLoad.join(' ')}</Piv>
               <Piv>deposited: {toString(info.userStakedLpAmount?.amount)}</Piv>
-              {(console.log(info.userStakedLpAmount), undefined)}
               <Piv>to havest: {toString(info.userStakedLpAmount?.amount)}</Piv>
             </Piv>
           </Collapse.Content>

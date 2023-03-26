@@ -1,17 +1,16 @@
-import { map } from '@edsolater/fnkit'
+import { listToJSMap, map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { createAbortableAsyncTask } from '../../../../../packages/fnkit/createAbortableAsyncTask'
-import { IndexAccessList } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { Subscribable } from '../../../../../packages/fnkit/customizedClasses/Subscribable'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/common/pub'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { fetchLiquidityJson } from '../../apiInfos/fetchLiquidityJson'
-import { fetchPairJsonInfo } from './fetchPairJson'
-import { DataStore } from '../store'
 import { FarmSYNInfo } from '../farmType'
+import { DataStore } from '../store'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
+import { fetchPairJsonInfo } from './fetchPairJson'
 
 /**
  * use LiquidityJson to get
@@ -26,9 +25,10 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
       if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
         connection: getConnection(payload.rpcUrl),
-        pools: farmJsonInfos.toArray().map(jsonInfo2PoolKeys),
+        pools: farmJsonInfos.map(jsonInfo2PoolKeys),
         owner: toPub(payload.owner),
-        config: { batchRequest: true, commitment: 'confirmed' }
+        config: { batchRequest: true, commitment: 'confirmed' },
+        chainTime: Date.now() / 1000 // TEMP for not create chainTime system yet
       }
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })
@@ -55,11 +55,15 @@ function hydrateFarmSYN({
   pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
 }) {
   if (!farmJsons) return
-  const rawList = map(farmJsons.toArray(), (farmJson) => {
+  const liquidityJsonLpMintMap = liquidityJsons && listToJSMap(liquidityJsons, (i) => i.lpMint)
+  const pairJsonAmmIdMap = pairJsons && listToJSMap(pairJsons, (i) => i.ammId)
+  const pairJsonLpMintMap = pairJsons && listToJSMap(pairJsons, (i) => i.lpMint)
+
+  const rawList = map(farmJsons, (farmJson) => {
     const farmSDK = farmSDKs?.[toPubString(farmJson.id)]
-    const ammId = liquidityJsons?.query(farmJson.lpMint, 'lpMint')?.id
-    const pairJson = ammId ? pairJsons?.get(ammId) : undefined
-    const lpPrice = pairJsons?.query(farmJson.lpMint, 'lpMint')?.lpPrice ?? undefined
+    const ammId = liquidityJsonLpMintMap?.get(farmJson.lpMint)?.id
+    const pairJson = ammId ? pairJsonAmmIdMap?.get(ammId) : undefined
+    const lpPrice = pairJsonLpMintMap?.get(farmJson.lpMint)?.lpPrice ?? undefined
     const tvl = lpPrice != null && farmSDK ? mul(String(farmSDK.lpVault.amount), lpPrice) : undefined
     const apr =
       pairJson &&
@@ -105,6 +109,6 @@ function hydrateFarmSYN({
     } as FarmSYNInfo
   })
 
-  const indexAccessList = new IndexAccessList(rawList.slice(0, 20), 'id')
+  const indexAccessList = rawList.slice(0, 20)
   return indexAccessList
 }

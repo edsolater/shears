@@ -160,18 +160,13 @@ function assignToNewValue(oldValue: unknown, newValue: unknown): unknown {
   if (isNullish(oldValue) || isPrimitive(oldValue)) return newValue
   if (isFunction(oldValue) && isFunction(newValue)) return newValue
   if (isObject(oldValue) && isObject(newValue)) {
-    const newMutatedObj = mutateObj(oldValue, newValue, assignToNewValue)
-    // console.log('0', newMutatedObj, oldValue, newValue)
-    // console.log('1', newMutatedObj[0] === oldValue[0])
-    // console.log('2', newMutatedObj[1]?.name)
-    // console.log('3', newValue[1]?.name) // <- this is the problem
-    // console.log('should equal', newMutatedObj[0]?.name === newValue[0]?.name) // <- this is the problem
+    const newMutatedObj = mutateTwoObj(oldValue, newValue, assignToNewValue)
     return newMutatedObj
   }
   return newValue
 }
 
-function mutateObj(
+function mutateTwoObj(
   oldObj: Record<keyof any, unknown>,
   newObj: Record<keyof any, unknown>,
   mutateFn?: (oldItem: unknown, newItem: unknown) => unknown
