@@ -4,14 +4,14 @@ import { FetchPairsOptions, PairJson } from '../pairsType'
 import { DataStore } from '../store'
 
 export function loadPairs(store: Store<DataStore>) {
-  store.set({ isLoading: true })
+  store.set({ isPairInfoLoading: true })
   getPairJson((allPairJsonInfos) => {
-    store.set({ isLoading: false, pairInfos: allPairJsonInfos.slice(0, 50) })
+    store.set({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 50) })
     let count = 0
     const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
     const timeoutId = setInterval(() => {
       const newPairs = clonedAllPairJsonInfos?.slice(0, 50).map((i) => ({ ...i, name: i.name + count }))
-      newPairs && store.set({ isLoading: false, pairInfos: newPairs.slice(0, 50) })
+      newPairs && store.set({ isPairInfoLoading: false, pairInfos: newPairs.slice(0, 50) })
       count++
     }, 1000)
     return () => clearInterval(timeoutId)

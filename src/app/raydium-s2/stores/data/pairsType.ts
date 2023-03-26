@@ -33,5 +33,5 @@ export interface PairJson {
 
 export type PairsStore = {
   readonly pairInfos?: PairJson[]
-  readonly isLoading?: boolean
+  readonly isPairInfoLoading?: boolean
 }

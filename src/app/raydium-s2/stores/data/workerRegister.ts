@@ -6,6 +6,8 @@ import { FetchPairsOptions } from './pairsType'
 import { fetchPairJsonInfo } from './utils/fetchPairJson'
 import { FetchRaydiumTokenListOptions } from './tokenListType'
 import { fetchTokenJsonFile } from './utils/fetchTokenJson'
+import { FetchRaydiumTokenPriceOptions } from './tokenPriceType'
+import { fetchTokenPrices } from './utils/fetchTokenPrices'
 
 export function registInWorker() {
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ resolve }) =>
@@ -33,5 +35,11 @@ export function registInWorker() {
         const availableTokens = res?.tokens.filter((t) => !res?.blacklist.includes(t.mint))
         availableTokens && resolve(availableTokens)
       })
+  )
+
+  registMessageReceiver<FetchRaydiumTokenPriceOptions>(
+    'get raydium token prices',
+    async ({ payload: options, resolve }) =>
+      fetchTokenPrices(options.tokens, options.url).then((res) => resolve({ prices: res }))
   )
 }

@@ -19,7 +19,7 @@ export function Home() {
         {/* info */}
         <Piv>token count: {dataStore.isTokenLoading ? '(loading)' : dataStore.allTokens?.length}</Piv>
         <Piv>current owner: {walletStore.owner}</Piv>
-        <Piv>pair count: {dataStore.isLoading ? '(loading)' : dataStore.pairInfos?.length}</Piv>
+        <Piv>pair count: {dataStore.isPairInfoLoading ? '(loading)' : dataStore.pairInfos?.length}</Piv>
         <Piv>
           nav:
           <Link innerRoute href={routePath.farms}>
