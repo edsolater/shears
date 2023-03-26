@@ -2,7 +2,7 @@ import { mapEntry, Numberish, shakeFalsy, shakeNil } from '@edsolater/fnkit'
 import { parallelAsyncTasks } from '../../../../../packages/fnkit/parallelAsyncTasks'
 import { recordToMap } from '../../../../../packages/fnkit/recordAndMap'
 import { jFetch } from '../../../../../packages/jFetch'
-import { TokenListStore } from '../tokenListType'
+import { TokenListStore } from '../types/tokenList'
 
 export async function fetchTokenPrices(
   tokens: TokenListStore['allTokens'],

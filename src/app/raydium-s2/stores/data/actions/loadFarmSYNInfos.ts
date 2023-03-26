@@ -3,7 +3,7 @@ import { appRpcEndpointUrl } from '../../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { WalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
-import { FetchFarmsSYNInfoPayloads } from '../farmType'
+import { FetchFarmsSYNInfoPayloads } from '../types/farm'
 
 export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; store: Store<DataStore> }): {
   abort?(): void

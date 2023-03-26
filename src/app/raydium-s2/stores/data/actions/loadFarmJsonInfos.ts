@@ -1,7 +1,7 @@
 import { Store } from '../../../../../packages/pivkit'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
-import { FetchFarmsJSONPayloads } from '../farmType'
+import { FetchFarmsJSONPayloads } from '../types/farm'
 
 export function loadFarmJsonInfos(store: Store<DataStore>) {
   store.set({ isFarmJsonLoading: true })

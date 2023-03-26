@@ -1,5 +1,5 @@
 import { Numberish } from '@edsolater/fnkit'
-import { Token, TokenListStore } from './tokenListType'
+import { Token, TokenListStore } from './tokenList'
 
 export type TokenPriceWorkerData = {
   prices: TokenPriceStore['prices']

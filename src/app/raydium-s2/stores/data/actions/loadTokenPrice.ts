@@ -2,8 +2,8 @@ import { Store } from '../../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
-import { Token, TokenListStore } from '../tokenListType'
-import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from '../tokenPriceType'
+import { Token, TokenListStore } from '../types/tokenList'
+import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from '../types/tokenPrice'
 
 export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
   store.set({ isTokenLoading: true })

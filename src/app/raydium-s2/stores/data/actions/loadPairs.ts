@@ -1,6 +1,6 @@
 import { Store } from '../../../../../packages/pivkit'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
-import { FetchPairsOptions, PairJson } from '../pairsType'
+import { FetchPairsOptions, PairJson } from '../types/pairs'
 import { DataStore } from '../store'
 
 export function loadPairs(store: Store<DataStore>) {

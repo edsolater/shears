@@ -1,6 +1,6 @@
 import { ApiFarmApr } from '@raydium-io/raydium-sdk'
-import { BN } from '../../utils/dataStructures/BN'
-import { Mint, Numberish, Percent, Price, PublicKey, TokenAmount } from '../../utils/dataStructures/type'
+import { BN } from '../../../utils/dataStructures/BN'
+import { Mint, Numberish, Percent, Price, PublicKey, TokenAmount } from '../../../utils/dataStructures/type'
 
 export type FetchFarmsJSONPayloads = {
   force?: boolean

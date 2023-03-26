@@ -1,12 +1,12 @@
 import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
-import { FetchFarmsJSONPayloads, FetchFarmsSYNInfoPayloads } from './farmType'
+import { FetchFarmsJSONPayloads, FetchFarmsSYNInfoPayloads } from './types/farm'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 import { composeFarmSYN } from './utils/composeFarmSYN'
-import { FetchPairsOptions } from './pairsType'
+import { FetchPairsOptions } from './types/pairs'
 import { fetchPairJsonInfo } from './utils/fetchPairJson'
-import { FetchRaydiumTokenListOptions } from './tokenListType'
+import { FetchRaydiumTokenListOptions } from './types/tokenList'
 import { fetchTokenJsonFile } from './utils/fetchTokenJson'
-import { FetchRaydiumTokenPriceOptions } from './tokenPriceType'
+import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
 
 export function registInWorker() {

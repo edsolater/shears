@@ -1,6 +1,6 @@
 import { jFetch } from '../../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
-import { FarmJSON, FarmJSONFile } from '../farmType'
+import { FarmJSON, FarmJSONFile } from '../types/farm'
 import { DataStore } from '../store'
 
 export async function fetchFarmJsonInfo(): Promise<DataStore['farmJsonInfos']> {

@@ -4,10 +4,10 @@ import { onAccessFarmSYNInfos } from './actions/onAccessFarmSYNInfos'
 import { onAccessPairsInfos } from './actions/onAccessPairsInfos'
 import { onAccessTokens } from './actions/onAccessTokens'
 import { onAccessTokensPrice } from './actions/onAccessTokensPrice'
-import { FarmStore } from './farmType'
-import { PairsStore } from './pairsType'
-import { TokenListStore } from './tokenListType'
-import { TokenPriceStore } from './tokenPriceType'
+import { FarmStore } from './types/farm'
+import { PairsStore } from './types/pairs'
+import { TokenListStore } from './types/tokenList'
+import { TokenPriceStore } from './types/tokenPrice'
 
 export type DataStore = FarmStore & PairsStore & TokenListStore & TokenPriceStore
 const defaultStore = createStoreDefault<DataStore>(() => ({}))
