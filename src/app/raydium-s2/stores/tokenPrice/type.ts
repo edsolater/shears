@@ -1,5 +1,5 @@
 import { Numberish } from '@edsolater/fnkit'
-import { Token } from '../tokenList/type'
+import { Token, TokenListStore } from '../data/tokenListType'
 
 export type TokenPriceWorkerData = {
   prices: Map<string, Numberish>
@@ -8,5 +8,5 @@ export type TokenPriceWorkerData = {
 
 export type FetchRaydiumTokenPriceOptions = {
   url: string
-  tokens: Map<string, Token>
+  tokens: TokenListStore['allTokens']
 }

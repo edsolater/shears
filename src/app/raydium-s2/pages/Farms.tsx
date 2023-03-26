@@ -1,14 +1,12 @@
-import { Numberish, toPercentString } from '@edsolater/fnkit'
-import { createEffect, For } from 'solid-js'
+import { For } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box, Collapse, CollapseFace, List } from '../../../packages/pivkit'
 import { CoinAvatar } from '../components/CoinAvatar'
 import { CoinAvatarPair } from '../components/CoinAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmPageStates } from '../pageStates/farmState'
+import { getToken } from '../stores/data/methods/getToken'
 import { useDataStore } from '../stores/data/store'
-import { useTokenListStore } from '../stores/tokenList/store'
-import { useTokenPriceStore } from '../stores/tokenPrice/store'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { add } from '../utils/dataStructures/basicMath/operations'
 
@@ -16,10 +14,6 @@ const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export function FarmPage() {
-  const farmStore = useDataStore()
-  const farmPageStates = useFarmPageStates()
-  const tokenPriceStore = useTokenPriceStore()
-
   return (
     <Piv>
       <NavBar barTitle='Farms' />
@@ -29,12 +23,11 @@ export function FarmPage() {
 }
 
 function FarmList() {
-  const farmStore = useDataStore()
+  const dataStore = useDataStore()
   const farmPageStates = useFarmPageStates()
-  const tokenListStore = useTokenListStore()
 
   return (
-    <List items={farmStore.farmInfos}>
+    <List items={dataStore.farmInfos}>
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>
@@ -62,15 +55,15 @@ function FarmList() {
                   }}
                 >
                   <CoinAvatarPair
-                    token1={tokenListStore.getToken(info.base)}
-                    token2={tokenListStore.getToken(info.quote)}
+                    token1={getToken(info.base)}
+                    token2={getToken(info.quote)}
                   />
                   {/* <Piv>{info.name}</Piv> */}
                 </Box>
 
                 {/* part 3 : pending reward*/}
                 <Piv>
-                  <For each={info.rewards}>{(r) => <CoinAvatar token={tokenListStore.getToken(r.token)} />}</For>
+                  <For each={info.rewards}>{(r) => <CoinAvatar token={getToken(r.token)} />}</For>
                 </Piv>
 
                 {/* part 4 total apr */}

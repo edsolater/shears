@@ -1,6 +1,6 @@
 import { useWalletStore } from '../../wallet/store'
 import { useDataStore } from '../store'
-import { loadFarmSYNInfos } from '../actions/queryFarmSYNInfos'
+import { loadFarmSYNInfos } from '../actions/loadFarmSYNInfos'
 
 export function refetchFarmSYNInfos() {
   const walletStore = useWalletStore()

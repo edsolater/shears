@@ -3,7 +3,7 @@ import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/w
 import { FetchPairsOptions, PairJson } from '../pairsType'
 import { DataStore } from '../store'
 
-export function queryPairs(store: Store<DataStore>) {
+export function loadPairs(store: Store<DataStore>) {
   store.set({ isLoading: true })
   getPairJson((allPairJsonInfos) => {
     store.set({ isLoading: false, pairInfos: allPairJsonInfos.slice(0, 50) })

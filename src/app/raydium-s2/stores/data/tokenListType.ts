@@ -1,6 +1,6 @@
 
 export type TokenWorkerData = {
-  tokens: Map<string, Token>
+  tokens: Token[]
   blacklist: string[]
 }
 
@@ -29,4 +29,9 @@ export interface Token {
   userAdded?: boolean // only if token is added by user
   icon?: string
   hasFreeze?: boolean
+}
+
+export type TokenListStore = {
+  isTokenLoading?: boolean
+  allTokens?: Token[]
 }

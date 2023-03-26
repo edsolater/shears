@@ -1,6 +1,6 @@
 import { KitProps, useKitProps } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
-import { Token } from '../stores/tokenList/type'
+import { Token } from '../stores/data/tokenListType'
 import { CoinAvatar, CoinAvatarProps } from './CoinAvatar'
 
 export type CoinAvatarPairProps = KitProps<{
