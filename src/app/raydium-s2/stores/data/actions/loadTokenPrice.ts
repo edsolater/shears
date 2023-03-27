@@ -19,12 +19,12 @@ export const onAccessTokensPrice = createOnFirstAccess<DataStore>(['prices'], (s
 
 export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
   store.set({ isTokenLoading: true })
-  getTokenPriceInfo(tokens, (workerResult) => {
+  getTokenPriceInfoFromWorker(tokens, (workerResult) => {
     store.set({ isTokenLoading: false, prices: workerResult.prices })
   })
 }
 
-const getTokenPriceInfo = (tokens: TokenListStore['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
+const getTokenPriceInfoFromWorker = (tokens: TokenListStore['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
   subscribeWebWorker<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
     {
       description: 'get raydium token prices',

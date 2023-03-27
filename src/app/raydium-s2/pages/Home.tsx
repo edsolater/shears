@@ -13,7 +13,7 @@ export function Home() {
   createEffect(() => console.log('dataStore.allTokens', dataStore.allTokens))
   return (
     <div>
-      <NavBar />
+      <NavBar title='Home' />
 
       <Box icss={{ margin: 8 }}>
         {/* info */}

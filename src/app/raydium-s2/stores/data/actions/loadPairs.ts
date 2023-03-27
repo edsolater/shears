@@ -9,7 +9,7 @@ export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], 
 
 export function loadPairs(store: Store<DataStore>) {
   store.set({ isPairInfoLoading: true })
-  getPairJson((allPairJsonInfos) => {
+  getPairJsonFromWorker((allPairJsonInfos) => {
     store.set({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 50) })
     let count = 0
     const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
@@ -22,7 +22,7 @@ export function loadPairs(store: Store<DataStore>) {
   })
 }
 
-function getPairJson(cb: WebworkerSubscribeCallback<PairJson[]>) {
+function getPairJsonFromWorker(cb: WebworkerSubscribeCallback<PairJson[]>) {
   return subscribeWebWorker<PairJson[], FetchPairsOptions>(
     {
       description: 'fetch raydium pairs info',

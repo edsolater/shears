@@ -14,7 +14,7 @@ export function PairsPanel() {
 
   return (
     <Piv>
-      <NavBar barTitle='Pools' />
+      <NavBar title='Pools' />
       <Piv
         ref={setRef}
         icss={{

@@ -8,12 +8,12 @@ export const onAccessTokens = createOnFirstAccess<DataStore>(['allTokens'], load
 
 export function loadTokensInfos(store: Store<DataStore>) {
   store.set({ isTokenLoading: true })
-  getTokenJsonInfo((allTokens) => {
+  getTokenJsonInfoFromWorker((allTokens) => {
     store.set({ isTokenLoading: false, allTokens: allTokens })
   })
 }
 
-export const getTokenJsonInfo = (cb: WebworkerSubscribeCallback<DataStore['allTokens']>) =>
+export const getTokenJsonInfoFromWorker = (cb: WebworkerSubscribeCallback<DataStore['allTokens']>) =>
   subscribeWebWorker<DataStore['allTokens'], FetchRaydiumTokenListOptions>(
     {
       description: 'fetch raydium supported tokens',

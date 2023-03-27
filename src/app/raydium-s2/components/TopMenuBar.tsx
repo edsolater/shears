@@ -1,13 +1,11 @@
+import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Show } from 'solid-js'
-import { Box, Image, Text } from '../../../packages/pivkit'
+import { Box, Text } from '../../../packages/pivkit'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
 
 export type TopMenuBarProps = {
-  browserTabTitle?: string
-  barTitle?: string
-  onOpenMenu?: () => void
+  title?: string
 }
 
 /**
@@ -15,6 +13,9 @@ export type TopMenuBarProps = {
  */
 
 export function TopMenuBar(props: TopMenuBarProps) {
+  createEffect(() => {
+    if (globalThis.document && props.title) Reflect.set(globalThis.document, 'title', `${props.title} - shears`)
+  })
   return (
     <Piv<'nav'>
       icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
@@ -22,12 +23,7 @@ export function TopMenuBar(props: TopMenuBarProps) {
     >
       <Box icss={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Box icss={{ display: 'flex', gap: 64 }}>
-          <Link href='/' innerRoute>
-            <Image icss={{ cursor: 'pointer' }} src='/raydium-logo-with-text.svg' />
-          </Link>
-          <Show when={props.barTitle}>
-            <Text icss={{ fontSize: 24, fontWeight: 500 }}>{props.barTitle}</Text>
-          </Show>
+          <Text icss={{ fontSize: 36, fontWeight: 800 }}>{props.title}</Text>
         </Box>
 
         {/* tabs */}
