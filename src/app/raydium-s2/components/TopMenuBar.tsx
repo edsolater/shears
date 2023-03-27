@@ -34,6 +34,9 @@ export function TopMenuBar(props: TopMenuBarProps) {
           <Link href='/pools' innerRoute>
             Pools
           </Link>
+          <Link href='/playground' innerRoute>
+            Playground
+          </Link>
         </Box>
 
         <WalletWidget />
