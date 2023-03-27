@@ -23,7 +23,7 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
   const mergedResult = mergeObjectsWithConfigs(trimedProps, [
     // special div props
     ['domRef', (v1, v2) => (v1 && v2 ? mergeRefs(v1 as any, v2 as any) : v1 ?? v2)],
-    ['className', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['class', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['style', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['icss', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['htmlProps', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
@@ -66,7 +66,11 @@ function getValue<T extends AnyObj>(
   if (targetCoverRule) {
     return objs.reduce((objA, objB) => (objA ? targetCoverRule[1](objA[key], objB[key]) : objB[key]), undefined)
   } else {
-    return [...objs].reverse().find((o) => o[key] != null)?.[key] // FIXME: access too times
+    for (let i = objs.length - 1; i >= 0; i--) {
+      const obj = objs[i]
+      const v = obj[key]
+      if (v != null) return v
+    }
   }
 }
 
