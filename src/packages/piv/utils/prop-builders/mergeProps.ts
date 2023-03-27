@@ -1,4 +1,4 @@
-import { flap, mergeObjectsWithConfigs, parallelSwitch, shakeNil } from '@edsolater/fnkit'
+import { AnyObj, flap, parallelSwitch, shakeNil, unifyItem } from '@edsolater/fnkit'
 import { ValidProps } from '../../types/tools'
 import { mergeRefs } from './mergeRefs'
 
@@ -20,24 +20,61 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
   // @ts-ignore
   if (trimedProps.length <= 1) return trimedProps[0] ?? {}
 
-  const mergedResult = mergeObjectsWithConfigs(trimedProps, ({ key, valueA: v1, valueB: v2 }) => {
-    return parallelSwitch(
-      key,
-      [
-        // special div props
-        ['domRef', () => (v1 && v2 ? mergeRefs(v1 as any, v2 as any) : v1 ?? v2)],
-        ['className', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['style', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['icss', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['htmlProps', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['shadowProps', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['plugin', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['dangerousRenderWrapperNode', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-        ['controller', () => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)]
-      ],
-      v2 ?? v1
-    )
-  })
+  const mergedResult = mergeObjectsWithConfigs(trimedProps, [
+    // special div props
+    ['domRef', (v1, v2) => (v1 && v2 ? mergeRefs(v1 as any, v2 as any) : v1 ?? v2)],
+    ['className', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['style', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['icss', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['htmlProps', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['shadowProps', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['plugin', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['dangerousRenderWrapperNode', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['controller', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)]
+  ])
   // @ts-ignore
   return mergedResult
+}
+
+function mergeObjectsWithConfigs<T extends object>(
+  objs: T[],
+  coverRules: [propertyName: string, fn: (valueA: unknown, valueB: unknown) => unknown][]
+): T {
+  if (objs.length === 0) return {} as T
+  if (objs.length === 1) return objs[0]!
+
+  return Object.defineProperties(
+    {},
+    getObjKey(objs).reduce((acc: any, key: any) => {
+      acc[key] = {
+        enumerable: true,
+        get() {
+          return getValue(objs, key, coverRules)
+        }
+      }
+      return acc
+    }, {} as PropertyDescriptorMap)
+  ) as T
+}
+
+function getValue<T extends AnyObj>(
+  objs: T[],
+  key: keyof any,
+  coverRules: [propertyName: keyof any, fn: (valueA: unknown, valueB: unknown) => unknown][]
+) {
+  const targetCoverRule = coverRules.find(([propertyName]) => propertyName === key)
+  if (targetCoverRule) {
+    return objs.reduce((objA, objB) => (objA ? targetCoverRule[1](objA[key], objB[key]) : objB[key]), undefined)
+  } else {
+    return [...objs].reverse().find((o) => o[key] != null)?.[key] // FIXME: access too times
+  }
+}
+
+function getObjKey<T extends object>(objs: T[]) {
+  return unifyItem(
+    objs.flatMap((obj) => {
+      const descriptors = Object.getOwnPropertyDescriptors(obj)
+      return Reflect.ownKeys(descriptors)
+    })
+  )
 }
