@@ -5,7 +5,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { Drawer } from '../components/Drawer'
+import { Drawer } from '../../../packages/pivkit/components/Drawer'
 
 export function PlaygroundPage() {
   return (
