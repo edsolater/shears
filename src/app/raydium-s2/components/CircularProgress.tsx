@@ -52,8 +52,7 @@ export function CircularProgress(rawProps: CircularProgressProps) {
             stroke: 'currentcolor',
             transform: 'rotate(-90deg)',
             'transform-origin': 'center',
-            'stroke-linecap': 'round',
-            transition: '200ms'
+            'stroke-linecap': 'round'
           }}
         />
       </svg>
