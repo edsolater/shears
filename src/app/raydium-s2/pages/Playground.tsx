@@ -1,5 +1,5 @@
 import { Piv } from '../../../packages/piv'
-import { Box } from '../../../packages/pivkit'
+import { Box, Button } from '../../../packages/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
@@ -22,13 +22,16 @@ function PlaygoundList() {
     <Box
       icss={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
         padding: '16px 32px 0',
         gap: 16
       }}
     >
       <ExamplePanel name='IntervalCircle'>
         <CircularProgressExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='Drawer'>
         <DrawerExample />
       </ExamplePanel>
     </Box>
@@ -51,6 +54,11 @@ function CircularProgressExample() {
  * @todo 2. make percent handler to be a hook
  */
 function DrawerExample() {
-  return null
-  return <Drawer open />
+  // const [receiver, commander] = createDrawerTriggerPair()
+  return (
+    <>
+      <Button>Open Drawer</Button>
+      <Drawer />
+    </>
+  )
 }

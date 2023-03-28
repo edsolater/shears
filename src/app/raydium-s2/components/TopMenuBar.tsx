@@ -2,6 +2,7 @@ import { createEffect } from 'solid-js'
 import { Piv, PivProps } from '../../../packages/piv'
 import { Box, Text } from '../../../packages/pivkit'
 import { Link } from './Link'
+import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { WalletWidget } from './WalletWidget'
 
 export type TopMenuBarProps = {
@@ -13,15 +14,13 @@ export type TopMenuBarProps = {
  */
 
 export function TopMenuBar(props: TopMenuBarProps) {
-  createEffect(() => {
-    if (globalThis.document && props.title) Reflect.set(globalThis.document, 'title', `${props.title} - shears`)
-  })
+  useMetaTitle(() => props.title)
   return (
     <Piv<'nav'>
       icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
       as={(parsedPivProps) => <nav {...parsedPivProps} />}
     >
-      <ThreeGridSlotBox>
+      <Box icss={threeGridSlotBoxICSS}>
         <Box icss={{ display: 'flex', gap: 64 }}>
           <Text icss={{ fontSize: 36, fontWeight: 800 }}>{props.title}</Text>
         </Box>
@@ -40,24 +39,13 @@ export function TopMenuBar(props: TopMenuBarProps) {
         </Box>
 
         <WalletWidget />
-      </ThreeGridSlotBox>
+      </Box>
     </Piv>
   )
 }
-// TODO: it should be just a icss block 
-function ThreeGridSlotBox(props: { children?: PivProps['children'] }) {
-  return (
-    <Box
-      icss={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        alignItems: 'center',
-        '& > :nth-child(1)': { justifySelf: 'start' },
-        '& > :nth-child(2)': { justifySelf: 'center' },
-        '& > :nth-child(3)': { justifySelf: 'end' }
-      }}
-    >
-      {props.children}
-    </Box>
-  )
+
+function useMetaTitle(title?: () => string | undefined) {
+  createEffect(() => {
+    if (globalThis.document && title?.()) Reflect.set(globalThis.document, 'title', `${title()} - shears`)
+  })
 }
