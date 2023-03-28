@@ -1,7 +1,7 @@
 import { flapDeep, MayDeepArray, omit } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
-import { PivProps } from '../../types/piv'
-import { mergeProps } from '../prop-builders/mergeProps'
+import { PivProps } from './types/piv'
+import { mergeProps } from './utils/prop-builders/mergeProps'
 
 export type GetPluginProps<T> = T extends Plugin<infer Px1>
   ? Px1

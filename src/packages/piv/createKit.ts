@@ -1,10 +1,8 @@
 import { AddDefaultProperties, flap, flapDeep, hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
+import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './plugin'
 import { CRef, PivProps } from './types/piv'
-import { ExtendsProps, SignalizeProps, ValidProps, ValidStatus } from './types/tools'
-import { gettersProps } from './utils/prop-builders/gettersProps'
-import { signalize } from './utils/prop-builders/signalize'
-import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './utils/prop-handlers/plugin'
+import { ExtendsProps, ValidProps, ValidStatus } from './types/tools'
 import { handleShadowProps } from './utils/prop-handlers/shallowProps'
 
 /**
@@ -27,7 +25,7 @@ type KitPropsCore<
       forceStatus?: ValidStatus
       // -------- additional --------
       // auto inject status to it
-      componentStatusRef?: CRef<Status>
+      componentRef?: CRef<Status>
     },
     keyof Props
   >

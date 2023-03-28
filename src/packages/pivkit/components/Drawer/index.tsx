@@ -1,4 +1,4 @@
-import { KitProps, Piv, useKitProps } from '../../piv'
+import { KitProps, Piv, useKitProps } from '../../../piv'
 import { PopPortal } from './PopPortal'
 
 export type DrawerProps = KitProps<{

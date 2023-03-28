@@ -2,7 +2,7 @@ import { flapDeep, merge, pipe, shakeFalsy, shakeNil } from '@edsolater/fnkit'
 import { PivProps } from '../../types/piv'
 import { classname } from '../classname'
 import { parseCSSToString } from '../icss'
-import { handlePluginProps } from '../prop-handlers/plugin'
+import { handlePluginProps } from '../../plugin'
 import { handleShadowProps } from '../prop-handlers/shallowProps'
 import { mergeRefs } from './mergeRefs'
 
