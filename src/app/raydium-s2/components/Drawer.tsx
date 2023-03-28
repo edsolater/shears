@@ -23,6 +23,10 @@ function createPopStackHTMLElement() {
     document.body.appendChild(div)
     div.style.position = 'fixed'
     div.style.inset = '0'
+
+    // document.head.appendChild(`<style>
+
+    // </style>`)
     return div
   }
 }

@@ -58,7 +58,7 @@ function DrawerExample() {
   return (
     <>
       <Button>Open Drawer</Button>
-      <Drawer />
+      <Drawer/>
     </>
   )
 }
