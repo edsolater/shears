@@ -8,10 +8,21 @@ export type DrawerProps = KitProps<{
 
 export function Drawer(rawProps: DrawerProps) {
   const props = useKitProps(rawProps, { defaultProps: { placement: 'from-right' } })
-
+  const element = createPopStackHTMLElement()
   return (
-    <Portal mount={document.getElementById('pop-stack') ?? undefined}>
+    <Portal mount={element}>
       <Piv icss={{ width: 400, height: '100dvh', background: 'dodgerblue' }}></Piv>
     </Portal>
   )
+}
+
+function createPopStackHTMLElement() {
+  if ('document' in globalThis) {
+    const div = document.createElement('div')
+    div.id = 'pop-stack'
+    document.body.appendChild(div)
+    div.style.position = 'fixed'
+    div.style.inset = '0'
+    return div
+  }
 }

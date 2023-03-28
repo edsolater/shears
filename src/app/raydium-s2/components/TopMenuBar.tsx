@@ -1,5 +1,5 @@
 import { createEffect } from 'solid-js'
-import { Piv } from '../../../packages/piv'
+import { Piv, PivProps } from '../../../packages/piv'
 import { Box, Text } from '../../../packages/pivkit'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
@@ -21,7 +21,7 @@ export function TopMenuBar(props: TopMenuBarProps) {
       icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
       as={(parsedPivProps) => <nav {...parsedPivProps} />}
     >
-      <Box icss={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <ThreeGridSlotBox>
         <Box icss={{ display: 'flex', gap: 64 }}>
           <Text icss={{ fontSize: 36, fontWeight: 800 }}>{props.title}</Text>
         </Box>
@@ -40,7 +40,24 @@ export function TopMenuBar(props: TopMenuBarProps) {
         </Box>
 
         <WalletWidget />
-      </Box>
+      </ThreeGridSlotBox>
     </Piv>
+  )
+}
+// TODO: it should be just a icss block 
+function ThreeGridSlotBox(props: { children?: PivProps['children'] }) {
+  return (
+    <Box
+      icss={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        alignItems: 'center',
+        '& > :nth-child(1)': { justifySelf: 'start' },
+        '& > :nth-child(2)': { justifySelf: 'center' },
+        '& > :nth-child(3)': { justifySelf: 'end' }
+      }}
+    >
+      {props.children}
+    </Box>
   )
 }

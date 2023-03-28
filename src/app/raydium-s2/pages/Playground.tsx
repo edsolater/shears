@@ -51,5 +51,6 @@ function CircularProgressExample() {
  * @todo 2. make percent handler to be a hook
  */
 function DrawerExample() {
+  return null
   return <Drawer open />
 }
