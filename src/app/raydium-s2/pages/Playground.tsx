@@ -5,6 +5,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
 import { useLoopPercent } from '../hooks/useLoopPercent'
+import { Drawer } from '../components/Drawer'
 
 export function PlaygroundPage() {
   return (
@@ -13,16 +14,6 @@ export function PlaygroundPage() {
       <PlaygoundList />
     </Piv>
   )
-}
-
-/**
- *
- * @todo 1. fade out when come to the end, not play track back.
- * @todo 2. make percent handler to be a hook
- */
-function CircularProgressExample() {
-  const { percent } = useLoopPercent()
-  return <CircularProgress percent={percent()} />
 }
 
 function PlaygoundList() {
@@ -38,7 +29,27 @@ function PlaygoundList() {
     >
       <ExamplePanel name='IntervalCircle'>
         <CircularProgressExample />
+        <DrawerExample />
       </ExamplePanel>
     </Box>
   )
+}
+
+/**
+ *
+ * @todo 1. fade out when come to the end, not play track back.
+ * @todo 2. make percent handler to be a hook
+ */
+function CircularProgressExample() {
+  const { percent } = useLoopPercent()
+  return <CircularProgress percent={percent()} />
+}
+
+/**
+ *
+ * @todo 1. fade out when come to the end, not play track back.
+ * @todo 2. make percent handler to be a hook
+ */
+function DrawerExample() {
+  return <Drawer open />
 }
