@@ -62,9 +62,12 @@ function getValue<T extends AnyObj>(
   key: keyof any,
   coverRules: [propertyName: keyof any, fn: (valueA: unknown, valueB: unknown) => unknown][]
 ) {
-  const targetCoverRule = coverRules.find(([propertyName]) => propertyName === key)
+  const targetCoverRule = coverRules.find(([propertyName]) => propertyName === key)?.[1]
   if (targetCoverRule) {
-    return objs.reduce((objA, objB) => (objA ? targetCoverRule[1](objA[key], objB[key]) : objB[key]), undefined)
+    return objs.reduce((finalValue, objB) => {
+      const valueB = objB[key]
+      return valueB ? targetCoverRule(finalValue, valueB) : finalValue
+    }, undefined as unknown)
   } else {
     for (let i = objs.length - 1; i >= 0; i--) {
       const obj = objs[i]

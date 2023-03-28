@@ -1,11 +1,10 @@
-import { JSX } from 'solid-js/web/types/jsx'
+import { createEffect, createSignal, onCleanup } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
+import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
-import { CircularProgress } from '../components/CircularProgress'
-import { createEffect, createSignal, onCleanup } from 'solid-js'
 
 export function PlaygroundPage() {
   console.count('load <PlaygroundPage>')
@@ -17,16 +16,20 @@ export function PlaygroundPage() {
   )
 }
 
+/**
+ *
+ * @todo 1. fade out when come to the end, not play track back.
+ * @todo 2. make percent handler to be a hook
+ */
 function CircularProgressExample() {
   const [percent100, setPercent100] = createSignal(0)
 
   const onEnd = () => {
     console.log('onEnd')
   }
-
   console.count('load <CircularProgressExample>')
   createEffect(() => {
-    const interval = setInterval(() => {
+    const { cancel } = requestLoopAnimationFrame(() => {
       setPercent100((percent100) => {
         if (percent100 >= 100) {
           onEnd()
@@ -34,11 +37,38 @@ function CircularProgressExample() {
         }
         return percent100 + 1
       })
-    }, 100)
-    onCleanup(() => clearInterval(interval))
+    })
+    onCleanup(cancel)
   })
 
   return <CircularProgress percent={percent100() / 100} />
+}
+
+/**
+ * TODO: move to fnkit
+ * @todo option:endUntil、option:eachMS、option:eachFrameCount
+ */
+function requestLoopAnimationFrame(
+  fn: FrameRequestCallback,
+  options?: {
+    /** if ture, cancel the frame loop */
+    endUntil?: () => boolean
+  }
+) {
+  let rAFId: number
+  const frameCallback = (...args: Parameters<FrameRequestCallback>) => {
+    fn(...args)
+    globalThis.requestAnimationFrame(frameCallback)
+  }
+  rAFId = globalThis.requestAnimationFrame(frameCallback)
+  return {
+    rAFId() {
+      return rAFId
+    },
+    cancel() {
+      return globalThis.cancelAnimationFrame(rAFId)
+    }
+  }
 }
 
 function PlaygoundList() {
