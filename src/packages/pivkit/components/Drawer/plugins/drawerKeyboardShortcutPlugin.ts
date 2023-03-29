@@ -12,19 +12,19 @@ export const drawerKeyboardShortcutPlugin = createPlugin<DrawerProps>(() => {
   const [drawerController, setControllerRef] = createControllerRef<DrawerController>()
   createEffect(() => {
     const el = divRef()
-    console.log('el: ', el)
     if (!el) return
-    el.focus()
+    keyboardFocusElement(el)
     const subscription = handleKeyboardShortcut(el, {
-      // 'ArrowDown': drawerController()?.toNext,
-      // 'ArrowUp': drawerController()?.toPrev,
-      // 'ctrl + ArrowUp': drawerController()?.toFirst,
-      // 'Home': drawerController()?.toFirst,
-      // 'ctrl + ArrowDown': drawerController()?.toLast,
-      // 'End': drawerController()?.toLast,
-      'Escape': drawerController()?.().close // TODO: urgly, try a prettier here
+      'Escape': () => {
+        console.log('press esc', drawerController())
+        return drawerController()?.().close() // TODO: urgly, try a prettier here
+      } // TODO: urgly, try a prettier here
     })
     return subscription.abort
   }, [])
-  return { ref: setDivRef, controller: setControllerRef }
+  return { ref: setDivRef, controller: setControllerRef, open: true }
 })
+
+function keyboardFocusElement(el: HTMLElement) {
+  el.focus()
+}

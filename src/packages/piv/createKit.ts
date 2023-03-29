@@ -64,14 +64,11 @@ export function useKitProps<
   const mergedGettersProps = pipe(
     props,
     (props) => {
-      if (hasProperty(options, 'plugin')) {
-        console.log('merged: ', props)
-      }
-      const merged = mergePluginReturnedProps({
+      const pluginMergedProps = mergePluginReturnedProps({
         plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
         props
       })
-      return merged
+      return pluginMergedProps
     }, // defined-time
     (props) =>
       mergeProps(

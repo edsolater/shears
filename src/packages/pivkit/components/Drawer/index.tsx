@@ -29,24 +29,23 @@ export function Drawer(rawProps: DrawerProps) {
     open,
     close
   })
+
   const props = useKitProps(rawProps, {
     defaultProps: { placement: 'from-right' },
     plugin: [drawerKeyboardShortcutPlugin],
     initController: controller
   })
-  
+
+  // TODO: loadPropsContollerRef hook
 
   const [isOpen, setIsOpen] = createSignal(props.open)
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
-  createEffect(() => {
-    console.log('rawProps', rawProps)
-  })
 
   return (
     <PopPortal>
       <Show when={isOpen()}>
-        <Piv icss={{ width: 400, height: '100dvh', background: 'dodgerblue' }}></Piv>
+        <Piv shadowProps={props} icss={{ width: 400, height: '100dvh', background: 'dodgerblue' }}></Piv>
       </Show>
     </PopPortal>
   )
