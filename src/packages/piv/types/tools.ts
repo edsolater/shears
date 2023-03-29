@@ -5,7 +5,8 @@ export type ValidProps = Record<string, Exclude<any, Promise<any>>>
 /**
  * includes component controller and component methods
  */
-export type ValidController = Record<string, any>
+export type ValidController = () => ControllerBody
+export type ControllerBody = Record<string, any>
 
 /**
  * auto omit P2's same name props

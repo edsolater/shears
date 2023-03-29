@@ -10,7 +10,7 @@ import { handleShadowProps } from './utils/prop-handlers/shallowProps'
  * - auto add Div's props
  * - auto pick plugin prop if specified plugin
  */
-type KitPropsCore<
+type KitPropsInstance<
   Props extends ValidProps,
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
@@ -25,7 +25,7 @@ type KitPropsCore<
       forceController?: ValidController
       // -------- additional --------
       // auto inject controller to it
-      controller?: CRef<Controller>
+      controllerRef?: CRef<Controller>
     },
     keyof Props
   >
@@ -36,17 +36,17 @@ export type KitProps<
   O extends {
     extendsProp?: ValidProps
     /** will auto-add props: */
-    controller?: ValidController
+    controllerRef?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
   } = {}
-> = KitPropsCore<
+> = KitPropsInstance<
   ExtendsProps<P, NonNullable<O['extendsProp']>>,
-  NonNullable<O['controller']>,
+  NonNullable<O['controllerRef']>,
   NonNullable<O['plugin']>,
   NonNullable<unknown extends O['htmlPropsTagName'] ? 'div' : O['htmlPropsTagName']>
 >
-export type CreateKitOptions<T, Controller extends ValidController = {}, DefaultProps extends Partial<T> = {}> = {
+export type CreateKitOptions<T, Controller extends ValidController = () => {}, DefaultProps extends Partial<T> = {}> = {
   name?: string
   initController?: Controller
   defaultProps?: DefaultProps
@@ -54,13 +54,13 @@ export type CreateKitOptions<T, Controller extends ValidController = {}, Default
 }
 
 export function useKitProps<
-  RawProps extends ValidProps,
-  Controller extends ValidController = {},
-  DefaultProps extends Partial<RawProps> = {}
+  KitProps extends ValidProps,
+  Controller extends ValidController = () => {},
+  DefaultProps extends Partial<KitProps> = {}
 >(
-  props: RawProps,
-  options?: CreateKitOptions<RawProps, Controller, DefaultProps>
-): Omit<AddDefaultProperties<RawProps, DefaultProps>, 'plugin' | 'shadowProps'> {
+  props: KitProps,
+  options?: CreateKitOptions<KitProps, Controller, DefaultProps>
+): Omit<AddDefaultProperties<KitProps, DefaultProps>, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
     props,
     (props) => {

@@ -1,5 +1,6 @@
+import { hasProperty } from '@edsolater/fnkit'
 import { createEffect, createSignal, Show } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../../piv'
+import { KitProps, Piv, useKitProps, ValidController, ValidProps } from '../../../piv'
 import { drawerKeyboardShortcutPlugin } from './plugins/drawerKeyboardShortcutPlugin'
 import { PopPortal } from './PopPortal'
 
@@ -16,32 +17,37 @@ export type DrawerProps = KitProps<
     placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
   },
   {
-    controller: DrawerController
+    controllerRef: DrawerController
   }
 >
 
+const DrawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
+
 export function Drawer(rawProps: DrawerProps) {
-  const controller = () => ({
+  const controller: DrawerController = () => ({
     get isOpen() {
-      return isOpen()
+      return Boolean(isOpen())
     },
     placement: props.placement,
     open,
     close
   })
 
-  const props = useKitProps(rawProps, {
-    defaultProps: { placement: 'from-right' },
+  const props = useKitProps<DrawerProps, DrawerController, typeof DrawerDefaultProps>(rawProps, {
+    defaultProps: DrawerDefaultProps,
     plugin: [drawerKeyboardShortcutPlugin],
     initController: controller
   })
 
+  
   // TODO: loadPropsContollerRef hook
-
+  
   const [isOpen, setIsOpen] = createSignal(props.open)
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
-
+  
+  loadPropsContollerRef(props, controller)
+  
   return (
     <PopPortal>
       <Show when={isOpen()}>
@@ -49,4 +55,15 @@ export function Drawer(rawProps: DrawerProps) {
       </Show>
     </PopPortal>
   )
+}
+
+function loadPropsContollerRef<ControllerType extends ValidController>(
+  props: Partial<KitProps<{ controllerRef?: (controller: ControllerType) => void }>>,
+  providedController: ControllerType
+) {
+  console.log('props: ', props.controllerRef, providedController)
+  console.log('1: ', 1)
+  if (hasProperty(props, 'controllerRef')) {
+    props.controllerRef!(providedController)
+  }
 }

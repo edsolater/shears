@@ -17,14 +17,14 @@ export const drawerKeyboardShortcutPlugin = createPlugin<DrawerProps>(() => {
     const subscription = handleKeyboardShortcut(el, {
       'Escape': () => {
         console.log('press esc', drawerController())
-        return drawerController()?.().close() // TODO: urgly, try a prettier here
+        return drawerController()?.close() // TODO: urgly, try a prettier here
       } // TODO: urgly, try a prettier here
     })
     return subscription.abort
   }, [])
-  return { ref: setDivRef, controller: setControllerRef, open: true }
+  return { ref: setDivRef, controllerRef: setControllerRef, open: true }
 })
 
-function keyboardFocusElement(el: HTMLElement) {
-  el.focus()
+function keyboardFocusElement(el?: HTMLElement) {
+  el?.focus()
 }
