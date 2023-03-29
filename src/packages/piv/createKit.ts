@@ -89,7 +89,7 @@ export function useKitProps<
   if (options?.initController) {
     loadPropsContollerRef(
       mergedGettersProps,
-      proxifyController<Controller>(() => options.initController!(mergedGettersProps))
+      toProxifyController<Controller>(() => options.initController!(mergedGettersProps))
     )
   }
   return mergedGettersProps as any
@@ -113,7 +113,7 @@ function loadPropsContollerRef<Controller extends ValidController>(
 }
 
 /** for lazy invoke,  */
-function proxifyController<Controller extends ValidController>(getController: () => Controller): Controller {
+function toProxifyController<Controller extends ValidController>(getController: () => Controller): Controller {
   let controller: Controller | undefined = undefined
   return new Proxy(
     {},
