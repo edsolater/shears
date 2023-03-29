@@ -87,7 +87,10 @@ export function useKitProps<
 
   // load controller
   if (options?.initController) {
-    loadPropsContollerRef(mergedGettersProps, () => options.initController!(mergedGettersProps))
+    loadPropsContollerRef(
+      mergedGettersProps,
+      proxifyController<Controller>(() => options.initController!(mergedGettersProps))
+    )
   }
   return mergedGettersProps as any
 }
@@ -101,10 +104,26 @@ function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
 }
 
 function loadPropsContollerRef<Controller extends ValidController>(
-  props: Partial<KitProps<{ controllerRef?: (getController: () => Controller) => void }>>, // FIXME: this type is not same as CRef<>
-  providedController: () => Controller
+  props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>, // FIXME: this type is not same as CRef<>
+  providedController: Controller
 ) {
   if (hasProperty(props, 'controllerRef')) {
     props.controllerRef!(providedController)
   }
+}
+
+/** for lazy invoke,  */
+function proxifyController<Controller extends ValidController>(getController: () => Controller): Controller {
+  let controller: Controller | undefined = undefined
+  return new Proxy(
+    {},
+    {
+      get(target, prop) {
+        if (!controller) {
+          controller = getController()
+        }
+        return controller![prop as keyof Controller]
+      }
+    }
+  ) as Controller
 }

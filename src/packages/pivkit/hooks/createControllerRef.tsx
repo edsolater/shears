@@ -9,6 +9,6 @@ export function createControllerRef<T extends Record<string, any> = Record<strin
   // @ts-ignore
   const setRef = (v: any) => (isFunction(v) ? _setRef(() => v) : _setRef(v))
   // @ts-ignore
-  const ref = () => _ref()?.()
+  const ref = () => _ref()
   return [ref, setRef]
 }
