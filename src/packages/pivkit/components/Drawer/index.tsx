@@ -4,7 +4,7 @@ import { KitProps, Piv, useKitProps, ValidController, ValidProps } from '../../.
 import { drawerKeyboardShortcutPlugin } from './plugins/drawerKeyboardShortcutPlugin'
 import { PopPortal } from './PopPortal'
 
-export type DrawerController = () => {
+export type DrawerController = {
   isOpen: boolean
   placement: NonNullable<DrawerProps['placement']>
   open(): void
@@ -17,37 +17,30 @@ export type DrawerProps = KitProps<
     placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
   },
   {
-    controllerRef: DrawerController
+    controller: DrawerController
   }
 >
 
 const DrawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
 
 export function Drawer(rawProps: DrawerProps) {
-  const controller: DrawerController = () => ({
-    get isOpen() {
-      return Boolean(isOpen())
-    },
-    placement: props.placement,
-    open,
-    close
-  })
-
-  const props = useKitProps<DrawerProps, DrawerController, typeof DrawerDefaultProps>(rawProps, {
+  const props = useKitProps(rawProps, {
     defaultProps: DrawerDefaultProps,
     plugin: [drawerKeyboardShortcutPlugin],
-    initController: controller
+    initController: (mergedProps) => ({
+      get isOpen() {
+        return Boolean(isOpen())
+      },
+      placement: mergedProps.placement,
+      open,
+      close
+    })
   })
 
-  
-  // TODO: loadPropsContollerRef hook
-  
   const [isOpen, setIsOpen] = createSignal(props.open)
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
-  
-  loadPropsContollerRef(props, controller)
-  
+
   return (
     <PopPortal>
       <Show when={isOpen()}>
@@ -55,15 +48,4 @@ export function Drawer(rawProps: DrawerProps) {
       </Show>
     </PopPortal>
   )
-}
-
-function loadPropsContollerRef<ControllerType extends ValidController>(
-  props: Partial<KitProps<{ controllerRef?: (controller: ControllerType) => void }>>,
-  providedController: ControllerType
-) {
-  console.log('props: ', props.controllerRef, providedController)
-  console.log('1: ', 1)
-  if (hasProperty(props, 'controllerRef')) {
-    props.controllerRef!(providedController)
-  }
 }

@@ -59,4 +59,4 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
 
 export type DangerousWrapperNodeFn = (node: JSXElement) => JSXElement // change outter wrapper element
 
-export type CRef<T> = (el: T) => void
+export type CRef<T> = (el: T) => void // not right

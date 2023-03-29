@@ -36,31 +36,36 @@ export type KitProps<
   O extends {
     extendsProp?: ValidProps
     /** will auto-add props: */
-    controllerRef?: ValidController
+    controller?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
   } = {}
 > = KitPropsInstance<
   ExtendsProps<P, NonNullable<O['extendsProp']>>,
-  NonNullable<O['controllerRef']>,
+  NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<unknown extends O['htmlPropsTagName'] ? 'div' : O['htmlPropsTagName']>
 >
-export type CreateKitOptions<T, Controller extends ValidController = () => {}, DefaultProps extends Partial<T> = {}> = {
+export type CreateKitOptions<
+  KitProps,
+  Controller extends ValidController = {},
+  DefaultProps extends Partial<KitProps> = {}
+> = {
   name?: string
-  initController?: Controller
+  initController?: (props: KitProps) => Controller
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
 }
 
 export function useKitProps<
   KitProps extends ValidProps,
-  Controller extends ValidController = () => {},
+  Controller extends ValidController = {},
   DefaultProps extends Partial<KitProps> = {}
 >(
   props: KitProps,
   options?: CreateKitOptions<KitProps, Controller, DefaultProps>
 ): Omit<AddDefaultProperties<KitProps, DefaultProps>, 'plugin' | 'shadowProps'> {
+  // merge kit props
   const mergedGettersProps = pipe(
     props,
     (props) => {
@@ -79,6 +84,11 @@ export function useKitProps<
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
   )
+
+  // load controller
+  if (options?.initController) {
+    loadPropsContollerRef(mergedGettersProps, () => options.initController!(mergedGettersProps))
+  }
   return mergedGettersProps as any
 }
 
@@ -88,4 +98,13 @@ function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
   if (plugins.every((p) => !p.priority)) return plugins
 
   return [...plugins].sort(({ priority: priorityA }, { priority: priorityB }) => (priorityB ?? 0) - (priorityA ?? 0))
+}
+
+function loadPropsContollerRef<Controller extends ValidController>(
+  props: Partial<KitProps<{ controllerRef?: (getController: () => Controller) => void }>>, // FIXME: this type is not same as CRef<>
+  providedController: () => Controller
+) {
+  if (hasProperty(props, 'controllerRef')) {
+    props.controllerRef!(providedController)
+  }
 }
