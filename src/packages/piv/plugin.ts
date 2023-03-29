@@ -25,6 +25,7 @@ export type Plugin<T> = {
 
 export function handlePluginProps<P extends Partial<PivProps>>(props: P) {
   if (!props?.plugin) return props
+  console.log('propsii: ', props)
   return omit(mergePluginReturnedProps({ plugin: props.plugin, props }), 'plugin')
 }
 

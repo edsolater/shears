@@ -25,7 +25,7 @@ type KitPropsCore<
       forceController?: ValidController
       // -------- additional --------
       // auto inject controller to it
-      controllerRef?: CRef<Controller>
+      controller?: CRef<Controller>
     },
     keyof Props
   >
@@ -35,6 +35,7 @@ export type KitProps<
   P extends ValidProps,
   O extends {
     extendsProp?: ValidProps
+    /** will auto-add props: */
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
@@ -53,21 +54,31 @@ export type CreateKitOptions<T, Controller extends ValidController = {}, Default
 }
 
 export function useKitProps<
-  GetterProps extends ValidProps,
+  RawProps extends ValidProps,
   Controller extends ValidController = {},
-  DefaultProps extends Partial<GetterProps> = {}
+  DefaultProps extends Partial<RawProps> = {}
 >(
-  props: GetterProps,
-  options?: CreateKitOptions<GetterProps, Controller, DefaultProps>
-): Omit<AddDefaultProperties<GetterProps, DefaultProps>, 'plugin' | 'shadowProps'> {
+  props: RawProps,
+  options?: CreateKitOptions<RawProps, Controller, DefaultProps>
+): Omit<AddDefaultProperties<RawProps, DefaultProps>, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
     props,
-    (props) =>
-      mergePluginReturnedProps({
+    (props) => {
+      if (hasProperty(options, 'plugin')) {
+        console.log('merged: ', props)
+      }
+      const merged = mergePluginReturnedProps({
         plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
         props
-      }), // defined-time
-    (props) => mergeProps(...flap(options?.defaultProps ?? {}), props, { className: options?.name }), // defined-time
+      })
+      return merged
+    }, // defined-time
+    (props) =>
+      mergeProps(
+        ...flap(options?.defaultProps ?? {}),
+        props,
+        hasProperty(options, 'name') ? { class: options!.name } : {}
+      ), // defined-time
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
   )

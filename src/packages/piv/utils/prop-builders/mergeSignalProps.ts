@@ -43,7 +43,7 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
       [
         // special div props
         ['domRef', () => (v1 && v2 ? () => mergeRefs(v1(), v2()) : v1 ?? v2)],
-        ['className', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
+        ['class', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['style', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['icss', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['htmlProps', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
