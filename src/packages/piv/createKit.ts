@@ -2,7 +2,7 @@ import { AddDefaultProperties, flap, flapDeep, hasProperty, MayArray, MayDeepArr
 import { mergeProps } from 'solid-js'
 import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './plugin'
 import { CRef, PivProps } from './types/piv'
-import { ExtendsProps, ValidProps, ValidStatus } from './types/tools'
+import { ExtendsProps, ValidProps, ValidController } from './types/tools'
 import { handleShadowProps } from './utils/prop-handlers/shallowProps'
 
 /**
@@ -12,7 +12,7 @@ import { handleShadowProps } from './utils/prop-handlers/shallowProps'
  */
 type KitPropsCore<
   Props extends ValidProps,
-  Status extends ValidStatus,
+  Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
   TagName extends keyof HTMLElementTagNameMap = 'div'
 > = Props &
@@ -22,10 +22,10 @@ type KitPropsCore<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
       shadowProps?: MayArray<Partial<Props>> // component must merged before `<Div>`
-      forceStatus?: ValidStatus
+      forceController?: ValidController
       // -------- additional --------
-      // auto inject status to it
-      componentRef?: CRef<Status>
+      // auto inject controller to it
+      controllerRef?: CRef<Controller>
     },
     keyof Props
   >
@@ -35,30 +35,30 @@ export type KitProps<
   P extends ValidProps,
   O extends {
     extendsProp?: ValidProps
-    status?: ValidStatus
+    controller?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
   } = {}
 > = KitPropsCore<
   ExtendsProps<P, NonNullable<O['extendsProp']>>,
-  NonNullable<O['status']>,
+  NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<unknown extends O['htmlPropsTagName'] ? 'div' : O['htmlPropsTagName']>
 >
-export type CreateKitOptions<T, Status extends ValidStatus = {}, DefaultProps extends Partial<T> = {}> = {
+export type CreateKitOptions<T, Controller extends ValidController = {}, DefaultProps extends Partial<T> = {}> = {
   name?: string
-  initStatus?: Status
+  initController?: Controller
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
 }
 
 export function useKitProps<
   GetterProps extends ValidProps,
-  Status extends ValidStatus = {},
+  Controller extends ValidController = {},
   DefaultProps extends Partial<GetterProps> = {}
 >(
   props: GetterProps,
-  options?: CreateKitOptions<GetterProps, Status, DefaultProps>
+  options?: CreateKitOptions<GetterProps, Controller, DefaultProps>
 ): Omit<AddDefaultProperties<GetterProps, DefaultProps>, 'plugin' | 'shadowProps'> {
   const mergedGettersProps = pipe(
     props,

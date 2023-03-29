@@ -31,7 +31,7 @@ function FarmList() {
       {(info, idx) => (
         <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>
-            {(status) => (
+            {(controller) => (
               <Box
                 icss={{
                   display: 'grid',
@@ -72,7 +72,7 @@ function FarmList() {
                 {/* part 5 tvl */}
                 <Piv>{toString(info.tvl)}</Piv>
 
-                {/* <Show when={status.isOpen}>
+                {/* <Show when={controller.isOpen}>
                     <Piv>{info.version}</Piv>
                   </Show> */}
               </Box>

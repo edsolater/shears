@@ -1,7 +1,11 @@
 import { AnyFn } from '@edsolater/fnkit'
 
 export type ValidProps = Record<string, Exclude<any, Promise<any>>>
-export type ValidStatus = object
+
+/**
+ * includes component controller and component methods
+ */
+export type ValidController = Record<string, any>
 
 /**
  * auto omit P2's same name props

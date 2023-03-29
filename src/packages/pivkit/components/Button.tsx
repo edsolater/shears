@@ -7,12 +7,12 @@ import { CRef } from '../../piv/types/piv'
 import { ICSS, compressICSSToObj } from '../../piv/utils/icss'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
-import { useStatusRef } from '../hooks/useStatusRef'
+import { useControllerRef } from '../hooks/useControllerRef'
 import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
 type BooleanLike = unknown
 
-export interface ButtonStatus {
+export interface ButtonController {
   click?: () => void
   focus?: () => void
 }
@@ -52,11 +52,11 @@ export type ButtonProps = KitProps<{
     fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
   }>
   /** normally, it's an icon  */
-  prefix?: MayFn<JSX.Element, [utils: ButtonStatus]>
+  prefix?: MayFn<JSX.Element, [utils: ButtonController]>
   /** normally, it's an icon  */
-  suffix?: MayFn<JSX.Element, [utils: ButtonStatus]>
-  statusRef?: CRef<ButtonStatus>
-  clildren?: MayFn<JSX.Element, [utils: ButtonStatus]>
+  suffix?: MayFn<JSX.Element, [utils: ButtonController]>
+  controllerRef?: CRef<ButtonController>
+  clildren?: MayFn<JSX.Element, [utils: ButtonController]>
 }>
 
 /**
@@ -91,7 +91,7 @@ export function Button(rawProps: ButtonProps) {
 
   const [ref, setRef] = createRef<HTMLButtonElement>()
 
-  const innerStatus = {
+  const innerController = {
     click: () => {
       ref()?.click()
     },
@@ -100,7 +100,7 @@ export function Button(rawProps: ButtonProps) {
     }
   }
 
-  useStatusRef(props.statusRef, innerStatus)
+  useControllerRef(props.controllerRef, innerController)
 
   const cssPadding = {
     lg: '14px 24px',
@@ -183,9 +183,9 @@ export function Button(rawProps: ButtonProps) {
       ]}
       ref={setRef}
     >
-      {shrinkFn(props.prefix, [innerStatus])}
+      {shrinkFn(props.prefix, [innerController])}
       {props.children}
-      {shrinkFn(props.suffix, [innerStatus])}
+      {shrinkFn(props.suffix, [innerController])}
     </Piv>
   )
 }

@@ -9,7 +9,7 @@
   --style-color-blue: #2b6aff;
   --style-color-cyan: #39d0d8;
 
-  --status-active: #aadefe;
+  --controller-active: #aadefe;
   --text-home-page-primary: hsl(0deg, 0%, 100%);
   --text-home-page-secondary: hsl(222deg, 100%, 84%);
 
@@ -49,7 +49,7 @@
 :root.dark {
   --primary: hsl(210deg, 6%, 76%);
   --secondary: hsl(180deg, 90%, 78%);
-  --status-active: hsl(252deg, 100%, 65%);
+  --controller-active: hsl(252deg, 100%, 65%);
 
   --ground-color: hsl(240deg, 4%, 11%);
   --app-line-color: hsl(187deg, 3%, 12%);

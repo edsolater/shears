@@ -1,6 +1,6 @@
 import { createSignal } from 'solid-js'
 
-export function createStatusRef<T extends HTMLElement = HTMLElement>(): [
+export function createControllerRef<T extends HTMLElement = HTMLElement>(): [
   ref: () => T | undefined,
   setRef: (el:unknown) => void
 ] {
