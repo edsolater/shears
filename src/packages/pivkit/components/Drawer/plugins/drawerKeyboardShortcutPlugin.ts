@@ -18,7 +18,7 @@ export const drawerKeyboardShortcutPlugin = createPlugin<DrawerProps>(() => {
       'Escape': () => {
         console.log('press esc', drawerController())
         return drawerController()?.close()
-      } // TODO: urgly, try a prettier here
+      }
     })
     return subscription.abort
   }, [])
