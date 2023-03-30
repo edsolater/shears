@@ -15,7 +15,7 @@ export * from './utils/prop-builders/toGettersObj'
 export * from './utils/prop-builders/getPropsKeys'
 
 export * from './plugin'
-export * from './utils/prop-handlers/shallowProps'
+export * from './utils/propHandlers/shadowProps'
 
 export * from './types/piv'
 export * from './types/plugin'

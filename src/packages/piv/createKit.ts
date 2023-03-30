@@ -3,7 +3,7 @@ import { mergeProps } from 'solid-js'
 import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './plugin'
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, ValidProps, ValidController } from './types/tools'
-import { handleShadowProps } from './utils/prop-handlers/shallowProps'
+import { handleShadowProps } from './utils/propHandlers/shadowProps'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -46,16 +46,23 @@ export type KitProps<
   NonNullable<O['plugin']>,
   NonNullable<unknown extends O['htmlPropsTagName'] ? 'div' : O['htmlPropsTagName']>
 >
-export type CreateKitOptions<
-  KitProps,
+export type KitPropsOptions<
+  KitProps extends ValidProps,
   Controller extends ValidController = {},
   DefaultProps extends Partial<KitProps> = {}
 > = {
   name?: string
-  initController?: (props: KitProps) => Controller
+  controller?: (props: ParsedKitProps<KitProps, Controller, DefaultProps>) => Controller
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
 }
+
+/** return type of useKitProps */
+export type ParsedKitProps<
+  KitProps extends ValidProps,
+  Controller extends ValidController = {},
+  DefaultProps extends Partial<KitProps> = {}
+> = Omit<AddDefaultProperties<KitProps, DefaultProps>, 'plugin' | 'shadowProps'>
 
 export function useKitProps<
   KitProps extends ValidProps,
@@ -63,8 +70,8 @@ export function useKitProps<
   DefaultProps extends Partial<KitProps> = {}
 >(
   props: KitProps,
-  options?: CreateKitOptions<KitProps, Controller, DefaultProps>
-): Omit<AddDefaultProperties<KitProps, DefaultProps>, 'plugin' | 'shadowProps'> {
+  options?: KitPropsOptions<KitProps, Controller, DefaultProps>
+): ParsedKitProps<KitProps, Controller, DefaultProps> {
   // merge kit props
   const mergedGettersProps = pipe(
     props,
@@ -83,16 +90,15 @@ export function useKitProps<
       ), // defined-time
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
-  )
-
+  ) as ParsedKitProps<KitProps, Controller, DefaultProps>
   // load controller
-  if (options?.initController) {
+  if (options?.controller) {
     loadPropsContollerRef(
       mergedGettersProps,
-      toProxifyController<Controller>(() => options.initController!(mergedGettersProps))
+      toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
     )
   }
-  return mergedGettersProps as any
+  return mergedGettersProps
 }
 
 function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {

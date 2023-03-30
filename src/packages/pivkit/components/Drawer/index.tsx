@@ -1,6 +1,6 @@
 import { hasProperty } from '@edsolater/fnkit'
 import { createEffect, createSignal, Show } from 'solid-js'
-import { KitProps, Piv, useKitProps, ValidController, ValidProps } from '../../../piv'
+import { KitProps, ParsedKitProps, Piv, useKitProps, ValidController, ValidProps } from '../../../piv'
 import { drawerKeyboardShortcutPlugin } from './plugins/drawerKeyboardShortcutPlugin'
 import { PopPortal } from './PopPortal'
 
@@ -21,13 +21,15 @@ export type DrawerProps = KitProps<
   }
 >
 
-const DrawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
+const defaultProps = { placement: 'from-right' } satisfies DrawerProps
+
+export type DrawerDefaultProps = typeof defaultProps
 
 export function Drawer(rawProps: DrawerProps) {
   const props = useKitProps(rawProps, {
-    defaultProps: DrawerDefaultProps,
+    defaultProps: defaultProps,
     plugin: [drawerKeyboardShortcutPlugin],
-    initController: (mergedProps) => ({
+    controller: (mergedProps) => ({
       get isOpen() {
         return Boolean(isOpen())
       },
