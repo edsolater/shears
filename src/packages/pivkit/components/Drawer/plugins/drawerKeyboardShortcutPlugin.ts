@@ -1,7 +1,7 @@
 import { createEffect } from 'solid-js'
 import { DrawerController, DrawerProps } from '..'
 import { handleKeyboardShortcut } from '../../../../domkit/gesture/handleKeyboardShortcut'
-import { createPlugin } from '../../../../piv/handlers/plugin'
+import { createPlugin } from '../../../../piv/propHandlers/plugin'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 

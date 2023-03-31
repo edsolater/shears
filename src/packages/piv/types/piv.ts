@@ -1,7 +1,7 @@
 import { MayArray } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
-import { ClassName } from '../pivProps/classname'
-import { ICSS } from '../pivProps/icss'
+import { ClassName } from '../propHandlers/classname'
+import { ICSS } from '../propHandlers/icss'
 import { PivPlugin, PivShadowProps } from './plugin'
 
 export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
@@ -10,10 +10,6 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
    */
   as?: (props: object) => JSX.Element // assume a function return ReactNode is a Component
 
-  /**
-   * it can hold some small logic scripts. only trigger once, if you need update frequently, please use `domRef`
-   * if it's in shadow props, it will merge with exist props
-   */
   ref?: MayArray<CRef<any> | null | undefined>
 
   /**

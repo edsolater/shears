@@ -2,7 +2,7 @@ import { AnyFn, isFunction, isObject } from '@edsolater/fnkit'
 
 export type SubscribeCallbackFn<T> = (value: T, prevValue: T | undefined) => void | Promise<void>
 
-type Dispatcher<T> = T | ((oldValue: T) => T)
+type Dispatcher<T> = T | ((oldValue: T) => T | PromiseLike<T>)
 type MayWeakRef<T> = T extends object | AnyFn ? WeakRef<T> : T
 
 function createMayWeakRef<T>(value: T): MayWeakRef<T> {
@@ -104,9 +104,14 @@ export class Subscribable<T> {
   /**
    * for user, try not to use this, it is more predicatable to use only executor
    */
-  inject(dispatcher: Dispatcher<T | PromiseLike<T> | undefined>) {
+  inject(dispatcher: Dispatcher<T | undefined>) {
     const newValue = isFunction(dispatcher) ? dispatcher(deMayWeakRef(this._values.at(-1))) : dispatcher
-    if (newValue) this.innerInject(newValue)
+    if (!newValue) return
+    else if (isPromiseLike(newValue)) {
+      newValue.then((value) => value && this.innerInject(value))
+    } else {
+      this.innerInject(newValue)
+    }
   }
 
   /**
@@ -153,3 +158,7 @@ type GetPromiseArrayItem<T extends Promise<any>[]> = T extends [Promise<infer F>
     ]
   ? [F | undefined, R | undefined, P | undefined, Q | undefined, S | undefined, T | undefined]
   : never
+
+export function isPromiseLike(target: unknown): target is PromiseLike<unknown> {
+  return isObject(target) && (target instanceof Promise || 'then' in target)
+}

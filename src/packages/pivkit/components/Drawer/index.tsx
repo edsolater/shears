@@ -1,6 +1,6 @@
-import { hasProperty } from '@edsolater/fnkit'
-import { createEffect, createSignal, Show } from 'solid-js'
-import { KitProps, ParsedKitProps, Piv, useKitProps, ValidController, ValidProps } from '../../../piv'
+import { createSignal, Show } from 'solid-js'
+import { KitProps, Piv, useKitProps } from '../../../piv'
+import { createRef } from '../../hooks/createRef'
 import { drawerKeyboardShortcutPlugin } from './plugins/drawerKeyboardShortcutPlugin'
 import { PopPortal } from './PopPortal'
 
@@ -9,6 +9,7 @@ export type DrawerController = {
   placement: NonNullable<DrawerProps['placement']>
   open(): void
   close(): void
+  toggle(): void
 }
 
 export type DrawerProps = KitProps<
@@ -34,11 +35,23 @@ export function Drawer(rawProps: DrawerProps) {
         return Boolean(isOpen())
       },
       placement: mergedProps.placement,
-      open,
-      close
+      open() {
+        open()
+        drawerRef()?.focus()
+      },
+      close,
+      toggle() {
+        if (isOpen()) {
+          close()
+        } else {
+          open()
+          drawerRef()?.focus()
+        }
+      }
     })
   })
 
+  const [drawerRef, setDrawerRef] = createRef<HTMLDivElement>()
   const [isOpen, setIsOpen] = createSignal(props.open)
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
@@ -46,7 +59,11 @@ export function Drawer(rawProps: DrawerProps) {
   return (
     <PopPortal>
       <Show when={isOpen()}>
-        <Piv shadowProps={props} icss={{ width: 400, height: '100dvh', background: 'dodgerblue' }}></Piv>
+        <Piv
+          ref={setDrawerRef}
+          shadowProps={props}
+          icss={{ width: 400, height: '100dvh', background: 'dodgerblue' }}
+        ></Piv>
       </Show>
     </PopPortal>
   )

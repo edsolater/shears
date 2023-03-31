@@ -22,7 +22,7 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
 
   const mergedResult = mergeObjectsWithConfigs(trimedProps, [
     // special div props
-    ['domRef', (v1, v2) => (v1 && v2 ? mergeRefs(v1 as any, v2 as any) : v1 ?? v2)],
+    ['ref', (v1, v2) => (v1 && v2 ? mergeRefs(v1 as any, v2 as any) : v1 ?? v2)],
     ['class', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['style', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['icss', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],

@@ -1,8 +1,8 @@
 export * from './Piv'
 export * from './createKit'
 
-export * from './pivProps/classname'
-export * from './pivProps/icss'
+export * from './propHandlers/classname'
+export * from './propHandlers/icss'
 
 export * from './utils/propBuilders/mergeProps'
 export * from './utils/propBuilders/mergeSignalProps'
@@ -14,8 +14,8 @@ export * from './utils/propBuilders/gettersProps'
 export * from './utils/propBuilders/toGettersObj'
 export * from './utils/propBuilders/getPropsKeys'
 
-export * from './handlers/plugin'
-export * from './handlers/shadowProps'
+export * from './propHandlers/plugin'
+export * from './propHandlers/shadowProps'
 
 export * from './types/piv'
 export * from './types/plugin'

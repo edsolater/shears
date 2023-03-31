@@ -5,7 +5,8 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { Drawer } from '../../../packages/pivkit/components/Drawer'
+import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
+import { useComponentController } from '../../../packages/piv/propHandlers/controller'
 
 export function PlaygroundPage() {
   return (
@@ -54,11 +55,11 @@ function CircularProgressExample() {
  * @todo 2. make percent handler to be a hook
  */
 function DrawerExample() {
-  // const [receiver, commander] = createDrawerTriggerPair()
+  const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
     <>
-      <Button>Open Drawer</Button>
-      <Drawer/>
+      <Button onClick={() => drawerController()?.toggle()}>Open Drawer</Button>
+      <Drawer id='big-drawer' />
     </>
   )
 }

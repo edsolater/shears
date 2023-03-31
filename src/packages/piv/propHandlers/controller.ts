@@ -2,6 +2,7 @@ import { hasProperty, WeakerMap } from '@edsolater/fnkit'
 import { ValidController } from '../types/tools'
 import { KitProps } from '../createKit'
 import { createSignal } from 'solid-js'
+import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 
 export function loadPropsControllerRef<Controller extends ValidController>(
   props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>,
@@ -18,7 +19,7 @@ export function toProxifyController<Controller extends ValidController>(getContr
   return new Proxy(
     {},
     {
-      get(target, prop) {
+      get(_target, prop) {
         if (!controller) {
           controller = getController()
         }
@@ -28,22 +29,28 @@ export function toProxifyController<Controller extends ValidController>(getContr
   ) as Controller
 }
 
-const recordedControllers = new WeakerMap<string, ValidController>()
+const recordedControllers = new Subscribable<WeakerMap<string, ValidController>>()
 
 export function recordController<Controller extends ValidController>(id: string, proxyController: Controller) {
-  recordedControllers.set(id, proxyController)
+  recordedControllers.inject((m) => (m ?? new WeakerMap()).set(id, proxyController))
 }
 
 export function unregisterController(id?: string) {
-  id && recordedControllers.delete(id)
+  if (!id) return
+  const records = recordedControllers.current
+  if (records) {
+    records.delete(id)
+  }
 }
 
 /** hook */
 export function useComponentController<Controller extends ValidController>(id: string) {
   const [controller, setController] = createSignal<Controller>()
-  const recordController = recordedControllers.get(id) as Controller | undefined
-  if (recordController) {
-    setController(() => recordController)
-  }
+  recordedControllers.subscribe((records) => {
+    const recordController = records?.get(id) as Controller | undefined
+    if (recordController) {
+      setController(() => recordController)
+    }
+  })
   return controller
 }

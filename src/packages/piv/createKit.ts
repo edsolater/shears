@@ -6,16 +6,16 @@ import {
   mergePluginReturnedProps,
   Plugin,
   sortPluginByPriority
-} from './handlers/plugin'
+} from './propHandlers/plugin'
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, ValidProps, ValidController } from './types/tools'
-import { handleShadowProps } from './handlers/shadowProps'
+import { handleShadowProps } from './propHandlers/shadowProps'
 import {
   toProxifyController,
   loadPropsControllerRef,
   recordController,
   unregisterController
-} from './handlers/controller'
+} from './propHandlers/controller'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -32,6 +32,11 @@ type KitPropsInstance<
   Omit<GetPluginProps<Plugins>, keyof Props | 'plugin' | 'shadowProps'> &
   Omit<
     {
+      /**
+       * id for component instance
+       * so others can access component's controller without set `props:controllerRef` to component, this have to have access to certain component instance
+       */
+      id?: string
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
       shadowProps?: MayArray<Partial<Props>> // component must merged before `<Div>`
       // -------- additional --------
@@ -64,11 +69,6 @@ export type KitPropsOptions<
 > = {
   name?: string
   controller?: (props: ParsedKitProps<KitProps, Controller, DefaultProps>) => Controller
-  /**
-   * id for component instance
-   * so others can access component's controller without set `props:controller` to component, this have to have access to certain component instance
-   */
-  id?: string
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
 }
@@ -113,11 +113,12 @@ export function useKitProps<
     const proxyController = toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
     loadPropsControllerRef(mergedGettersProps, proxyController)
     // load id
-    if (options?.id) {
+    const id = props.id
+    if (id) {
       createEffect(() => {
-        options.id && recordController(options.id, proxyController)
+        id && recordController(id, proxyController)
         onCleanup(() => {
-          unregisterController(options.id)
+          unregisterController(id)
         })
       })
     }
