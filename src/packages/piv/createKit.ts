@@ -1,5 +1,5 @@
 import { AddDefaultProperties, flap, flapDeep, hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
-import { mergeProps } from 'solid-js'
+import { createEffect, mergeProps, onCleanup } from 'solid-js'
 import {
   GetPluginProps,
   handlePluginProps,
@@ -10,7 +10,12 @@ import {
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, ValidProps, ValidController } from './types/tools'
 import { handleShadowProps } from './handlers/shadowProps'
-import { toProxifyController, loadPropsControllerRef, recordController } from './handlers/controller'
+import {
+  toProxifyController,
+  loadPropsControllerRef,
+  recordController,
+  unregisterController
+} from './handlers/controller'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -109,7 +114,12 @@ export function useKitProps<
     loadPropsControllerRef(mergedGettersProps, proxyController)
     // load id
     if (options?.id) {
-      recordController(options.id, proxyController)
+      createEffect(() => {
+        options.id && recordController(options.id, proxyController)
+        onCleanup(() => {
+          unregisterController(options.id)
+        })
+      })
     }
   }
 

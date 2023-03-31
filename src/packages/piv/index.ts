@@ -1,8 +1,8 @@
 export * from './Piv'
 export * from './createKit'
 
-export * from './utils/classname'
-export * from './utils/icss'
+export * from './pivProps/classname'
+export * from './pivProps/icss'
 
 export * from './utils/propBuilders/mergeProps'
 export * from './utils/propBuilders/mergeSignalProps'

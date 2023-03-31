@@ -1,7 +1,7 @@
 import { MayArray } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
-import { ClassName } from '../utils/classname'
-import { ICSS } from '../utils/icss'
+import { ClassName } from '../pivProps/classname'
+import { ICSS } from '../pivProps/icss'
 import { PivPlugin, PivShadowProps } from './plugin'
 
 export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
