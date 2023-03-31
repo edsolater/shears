@@ -1,7 +1,7 @@
 import { flapDeep, MayDeepArray, omit } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
-import { PivProps } from './types/piv'
-import { mergeProps } from './utils/prop-builders/mergeProps'
+import { PivProps } from '../types/piv'
+import { mergeProps } from '../utils/propBuilders/mergeProps'
 
 export type GetPluginProps<T> = T extends Plugin<infer Px1>
   ? Px1
@@ -90,4 +90,14 @@ export function createPlugin<T>(
   pluginMiddleware.priority = options?.priority
 
   return pluginMiddleware
+}
+
+
+
+export function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
+  const plugins = flapDeep(deepPluginList)
+  if (plugins.length <= 1) return plugins
+  if (plugins.every((p) => !p.priority)) return plugins
+
+  return [...plugins].sort(({ priority: priorityA }, { priority: priorityB }) => (priorityB ?? 0) - (priorityA ?? 0))
 }

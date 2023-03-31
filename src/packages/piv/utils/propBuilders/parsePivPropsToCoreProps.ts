@@ -2,8 +2,8 @@ import { flapDeep, merge, pipe, shakeFalsy, shakeNil } from '@edsolater/fnkit'
 import { PivProps } from '../../types/piv'
 import { classname } from '../classname'
 import { parseCSSToString } from '../icss'
-import { handlePluginProps } from '../../plugin'
-import { handleShadowProps } from '../propHandlers/shadowProps'
+import { handlePluginProps } from '../../handlers/plugin'
+import { handleShadowProps } from '../../handlers/shadowProps'
 import { mergeRefs } from './mergeRefs'
 
 // TODO: change props:icss will make all props to re-calc, this may cause performance issue

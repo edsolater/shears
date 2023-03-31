@@ -1,6 +1,6 @@
 import { flapDeep } from '@edsolater/fnkit'
-import { PivProps } from '../../types/piv'
-import { mergeProps } from '../prop-builders/mergeProps'
+import { PivProps } from '../types/piv'
+import { mergeProps } from '../utils/propBuilders/mergeProps'
 
 export function handleShadowProps<P extends Partial<PivProps<any>>>(props: P): Omit<P, 'shadowProps'> {
   if (!props?.shadowProps) return props

@@ -1,6 +1,6 @@
 import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createSignal } from 'solid-js'
-import { addDefaultProps } from '../../piv/utils/prop-builders/addDefaultProps'
+import { addDefaultProps } from '../../piv/utils/propBuilders/addDefaultProps'
 
 type ToggleController = {
   delayOn(options?: { forceDelayTime?: number }): void

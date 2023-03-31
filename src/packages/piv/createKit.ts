@@ -1,9 +1,16 @@
 import { AddDefaultProperties, flap, flapDeep, hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
-import { GetPluginProps, handlePluginProps, mergePluginReturnedProps, Plugin } from './plugin'
+import {
+  GetPluginProps,
+  handlePluginProps,
+  mergePluginReturnedProps,
+  Plugin,
+  sortPluginByPriority
+} from './handlers/plugin'
 import { CRef, PivProps } from './types/piv'
 import { ExtendsProps, ValidProps, ValidController } from './types/tools'
-import { handleShadowProps } from './utils/propHandlers/shadowProps'
+import { handleShadowProps } from './handlers/shadowProps'
+import { toProxifyController, loadPropsControllerRef, recordController } from './handlers/controller'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -22,7 +29,6 @@ type KitPropsInstance<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
       shadowProps?: MayArray<Partial<Props>> // component must merged before `<Div>`
-      forceController?: ValidController
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>
@@ -53,6 +59,11 @@ export type KitPropsOptions<
 > = {
   name?: string
   controller?: (props: ParsedKitProps<KitProps, Controller, DefaultProps>) => Controller
+  /**
+   * id for component instance
+   * so others can access component's controller without set `props:controller` to component, this have to have access to certain component instance
+   */
+  id?: string
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
 }
@@ -91,45 +102,16 @@ export function useKitProps<
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
   ) as ParsedKitProps<KitProps, Controller, DefaultProps>
+
   // load controller
   if (options?.controller) {
-    loadPropsContollerRef(
-      mergedGettersProps,
-      toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
-    )
-  }
-  return mergedGettersProps
-}
-
-function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
-  const plugins = flapDeep(deepPluginList)
-  if (plugins.length <= 1) return plugins
-  if (plugins.every((p) => !p.priority)) return plugins
-
-  return [...plugins].sort(({ priority: priorityA }, { priority: priorityB }) => (priorityB ?? 0) - (priorityA ?? 0))
-}
-
-function loadPropsContollerRef<Controller extends ValidController>(
-  props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>, // FIXME: this type is not same as CRef<>
-  providedController: Controller
-) {
-  if (hasProperty(props, 'controllerRef')) {
-    props.controllerRef!(providedController)
-  }
-}
-
-/** for lazy invoke,  */
-function toProxifyController<Controller extends ValidController>(getController: () => Controller): Controller {
-  let controller: Controller | undefined = undefined
-  return new Proxy(
-    {},
-    {
-      get(target, prop) {
-        if (!controller) {
-          controller = getController()
-        }
-        return controller![prop as keyof Controller]
-      }
+    const proxyController = toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
+    loadPropsControllerRef(mergedGettersProps, proxyController)
+    // load id
+    if (options?.id) {
+      recordController(options.id, proxyController)
     }
-  ) as Controller
+  }
+
+  return mergedGettersProps
 }
