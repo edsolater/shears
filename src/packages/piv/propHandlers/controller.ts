@@ -45,6 +45,7 @@ export function unregisterController(id?: string) {
 
 /** hook */
 export function useComponentController<Controller extends ValidController>(id: string) {
+  //TODO: proxy object, not signal
   const [controller, setController] = createSignal<Controller>()
   recordedControllers.subscribe((records) => {
     const recordController = records?.get(id) as Controller | undefined
