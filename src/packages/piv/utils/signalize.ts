@@ -1,5 +1,5 @@
 import { isFunction } from '@edsolater/fnkit'
-import { SignalizeProps } from '../../types/tools'
+import { SignalizeProps } from '../types/tools'
 
 // can only convert primary object literal or array type
 export function signalize<T extends object | undefined>(props: T): SignalizeProps<NonNullable<T>> {

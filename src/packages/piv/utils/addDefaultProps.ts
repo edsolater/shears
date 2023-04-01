@@ -1,5 +1,5 @@
 import { mergeProps as solidjsMergeProps } from 'solid-js'
-import { ValidProps } from '../../types/tools'
+import { ValidProps } from '../types/tools'
 import { mergeProps } from './mergeProps'
 
 /** use solidjs's mergeProps */

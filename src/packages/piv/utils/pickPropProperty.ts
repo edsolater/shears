@@ -1,5 +1,5 @@
 import { createMemo } from 'solid-js'
-import { ValidProps } from '../../types/tools'
+import { ValidProps } from '../types/tools'
 
 /**
  * will return a symbol

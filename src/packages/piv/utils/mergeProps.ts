@@ -1,5 +1,5 @@
 import { AnyObj, flap, parallelSwitch, shakeNil, unifyItem } from '@edsolater/fnkit'
-import { ValidProps } from '../../types/tools'
+import { ValidProps } from '../types/tools'
 import { mergeRefs } from './mergeRefs'
 
 export function mergeProps<P1 = ValidProps, P2 = ValidProps>(...propsObjs: [P1, P2]): Exclude<P1 & P2, undefined>

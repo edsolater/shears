@@ -2,7 +2,7 @@ import { AnyObj, flapDeep, isFunction, isObject, MayDeepArray, omit, overwriteFu
 import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'
-import { mergeProps } from '../utils/propBuilders/mergeProps'
+import { mergeProps } from '../utils/mergeProps'
 
 export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   ? Px1
