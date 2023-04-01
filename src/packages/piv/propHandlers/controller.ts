@@ -38,9 +38,11 @@ export function recordController<Controller extends ValidController>(id: string,
 export function unregisterController(id?: string) {
   if (!id) return
   const records = recordedControllers.current
-  if (records) {
-    records.delete(id)
-  }
+  if (!records) return
+  recordedControllers.inject((recoder) => {
+    recoder?.delete(id)
+    return recoder
+  })
 }
 
 /** hook */
@@ -49,9 +51,8 @@ export function useComponentController<Controller extends ValidController>(id: s
   const [controller, setController] = createSignal<Controller>()
   recordedControllers.subscribe((records) => {
     const recordController = records?.get(id) as Controller | undefined
-    if (recordController) {
-      setController(() => recordController)
-    }
+    setController(() => recordController)
   })
   return controller
 }
+
