@@ -5,7 +5,6 @@ import { createPlugin } from '../../../../piv/propHandlers/plugin'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 
-export type DrawerKeyboardShortcutPlugin = {}
 
 export const drawerKeyboardShortcutPlugin = createPlugin<DrawerProps>(() => {
   const [divRef, setDivRef] = createRef<HTMLDivElement>()

@@ -93,7 +93,7 @@ export function useKitProps<
     props,
     (props) => {
       const pluginMergedProps = mergePluginReturnedProps({
-        plugin: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
+        plugins: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
         props
       })
       return pluginMergedProps

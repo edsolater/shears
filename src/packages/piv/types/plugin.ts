@@ -7,7 +7,7 @@ export type PluginCreateFn<T> = (props: T) => Partial<Omit<PivProps, 'plugin' | 
 
 export type PivPlugin<T> = {
   (additionalProps: Partial<T & PivProps>): PivPlugin<T>
-  getProps?: (props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>
+  pluginCoreFn?: (props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>
   priority?: number // NOTE -1:  it should be calculated after final prop has determine
 }
 
