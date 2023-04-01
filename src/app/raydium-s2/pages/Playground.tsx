@@ -1,5 +1,5 @@
 import { Piv } from '../../../packages/piv'
-import { Box, Button } from '../../../packages/pivkit'
+import { Box, Button, Collapse } from '../../../packages/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
@@ -58,7 +58,13 @@ function DrawerExample() {
   const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
     <>
-      <Button onClick={() => drawerController()?.toggle()}>Open Drawer</Button>
+      <Button onClick={() => drawerController()?.toggle()}>
+        {drawerController()?.isOpen ? 'Close' : 'Open'}
+        <Collapse open={(console.log('controller', drawerController()?.isOpen), drawerController()?.isOpen)}>
+          <Collapse.Face>info</Collapse.Face>
+          <Collapse.Content>detail</Collapse.Content>
+        </Collapse>
+      </Button>
       <Drawer id='big-drawer' />
     </>
   )

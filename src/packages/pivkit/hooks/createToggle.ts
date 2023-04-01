@@ -14,7 +14,7 @@ type ToggleController = {
   set(b: boolean): void
 }
 
-export type UseToggleReturn = [Accessor<boolean>, ToggleController]
+export type CreateToggleReturn = [Accessor<boolean>, ToggleController]
 
 export function createToggle(
   initValue: MayFn<boolean> = false,
@@ -29,7 +29,7 @@ export function createToggle(
     /* usually it is for debug */
     onToggle?(isOn: boolean): void
   } = {}
-):UseToggleReturn {
+):CreateToggleReturn {
   const opts = addDefaultProps(options, { delay: 800 })
   const [isOn, _setIsOn] = createSignal(shrinkFn(initValue))
   const [delayActionId, setDelayActionId] = createSignal<number | NodeJS.Timeout>(0)

@@ -1,5 +1,5 @@
 import { MayFn, shrinkFn } from '@edsolater/fnkit'
-import { createContext, JSXElement, useContext } from 'solid-js'
+import { createContext, createEffect, JSXElement, useContext } from 'solid-js'
 import { Piv } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { createToggle } from '../hooks/createToggle'
@@ -9,18 +9,13 @@ type CollapseProps = KitProps<
     open?: boolean
     defaultOpen?: boolean
     collapseDirection?: 'down' | 'up'
-    /**
-     * when it's not summary, `<Collapse>` will not render as `<details>` but only `<Piv>`
-     */
-    onlyContent?: boolean
     onOpen?(): void
     onClose?(): void
     onToggle?(): void
   },
-  { htmlPropsTagName: 'details' | 'div' }
+  { htmlPropsTagName: 'details' }
 >
 type CollapseController = {
-  readonly contentOnlyMode: boolean
   readonly isOpen: boolean
   open(): void
   close(): void
@@ -39,10 +34,12 @@ export function Collapse(rawProps: CollapseProps) {
     onToggle: props.onToggle
   })
 
+  // reset innerOpen when props.open changes
+  createEffect(() => {
+    set(Boolean(props.open))
+  })
+
   const controller = {
-    get contentOnlyMode() {
-      return Boolean(props.onlyContent)
-    },
     get isOpen() {
       return innerOpen()
     },
@@ -53,10 +50,11 @@ export function Collapse(rawProps: CollapseProps) {
   }
   return (
     <CollapseContext.Provider value={controller}>
-      <Piv<'details' | 'div'>
-        as={props.onlyContent ? undefined : (parsedPivProps) => <details {...parsedPivProps} />}
+      <Piv<'details'>
+        as={(parsedPivProps) => <details {...parsedPivProps} />}
         shadowProps={props}
         onClick={toggle}
+        htmlProps={{ open: innerOpen() }}
       />
     </CollapseContext.Provider>
   )
