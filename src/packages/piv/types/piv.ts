@@ -2,7 +2,8 @@ import { MayArray } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
 import { ClassName } from '../propHandlers/classname'
 import { ICSS } from '../propHandlers/icss'
-import { PivPlugin, PivShadowProps } from './plugin'
+import { Plugin } from '../propHandlers/plugin'
+import { PivShadowProps } from '../propHandlers/shadowProps'
 
 export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
   /** @example
@@ -45,7 +46,7 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
   shadowProps?: MayArray<PivShadowProps<PivProps<any>>>
 
   /** special: every kit baseon <Piv> should support this prop */
-  plugin?: MayArray<PivPlugin<any>>
+  plugin?: MayArray<Plugin<any>>
 
   /**
    * change outter wrapper element

@@ -18,5 +18,4 @@ export * from './propHandlers/plugin'
 export * from './propHandlers/shadowProps'
 
 export * from './types/piv'
-export * from './types/plugin'
 export * from './types/tools'

@@ -27,21 +27,25 @@ export function PairsPanel() {
       >
         <List items={dataStore.pairInfos}>
           {(info) => (
-            <Collapse>
+            <Collapse
+              icss={{
+                '&:nth-child(even)': { background: '#8080802e' }
+              }}
+            >
               <Collapse.Face>
                 <Piv
                   icss={{
                     display: 'grid',
+                    cursor: 'pointer',
                     gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                    paddingBlock: 4,
-                    ':nth-child(2n)': { background: '#8080802e' }
+                    paddingBlock: 4
                   }}
                 >
                   <Piv>{info.name}</Piv>
                 </Piv>
               </Collapse.Face>
               <Collapse.Content>
-                <Piv>{info.ammId}</Piv>
+                <Piv icss={{ border: 'solid gray' }}>{info.ammId}</Piv>
               </Collapse.Content>
             </Collapse>
           )}

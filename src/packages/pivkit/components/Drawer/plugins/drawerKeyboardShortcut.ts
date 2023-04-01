@@ -6,7 +6,7 @@ import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 
 
-export const drawerKeyboardShortcutPlugin = createPlugin<DrawerProps>(() => {
+export const drawerKeyboardShortcut = createPlugin<DrawerProps>(() => {
   const [divRef, setDivRef] = createRef<HTMLDivElement>()
   const [drawerController, setControllerRef] = createControllerRef<DrawerController>()
   createEffect(() => {
