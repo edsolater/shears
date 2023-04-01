@@ -1,4 +1,4 @@
-import { AnyObj, flapDeep, MayDeepArray, omit, overwriteFunctionName } from '@edsolater/fnkit'
+import { AnyObj, flapDeep, isFunction, isObject, MayDeepArray, omit, overwriteFunctionName } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'
@@ -30,14 +30,20 @@ export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   : unknown
 
 export type PluginCreator<T extends Partial<PivProps>> = (additionalProps?: T) => Plugin<T>
-export type Plugin<T extends Partial<PivProps>> = {
-  pluginCoreFn?: (props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>
-  priority?: number // NOTE -1:  it should be calculated after final prop has determine
-}
+export type Plugin<T extends Partial<PivProps>> =
+  | {
+      pluginCoreFn?: (props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>
+      priority?: number // NOTE -1:  it should be calculated after final prop has determine
+    }
+  | ((props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>)
 
 export function handlePluginProps<P extends Partial<PivProps>>(props: P) {
   if (!props?.plugin) return props
   return omit(mergePluginReturnedProps({ plugins: props.plugin, props }), 'plugin')
+}
+
+function invokePlugin(plugin: Plugin<any>, props: KitProps<any>) {
+  return isFunction(plugin) ? plugin(props) : plugin.pluginCoreFn?.(props)
 }
 
 /**
@@ -48,10 +54,7 @@ export function mergePluginReturnedProps<T extends Partial<PivProps>>(utils: {
   props: T & PivProps
 }): T & PivProps {
   return utils.plugins
-    ? flapDeep(utils.plugins).reduce(
-        (acc, abilityPlugin) => mergeProps(acc, abilityPlugin.pluginCoreFn?.(acc)),
-        utils.props
-      )
+    ? flapDeep(utils.plugins).reduce((acc, plugin) => mergeProps(acc, invokePlugin(plugin, acc)), utils.props)
     : utils.props
 }
 
@@ -74,13 +77,6 @@ export function createWrapperNodePlugin<T extends Partial<PivProps>>(
     }),
     options?.name
   )
-  // function pluginMiddleware(addtionalProps: any) {
-  //   return createWrapperNodePlugin((node, props) => createrFn(node, mergeProps(addtionalProps, props)), options)
-  // }
-  // pluginMiddleware.pluginCoreFn = (props: any) => ({
-  //   dangerousRenderWrapperNode: (node: any) => createrFn(node, props)
-  // })
-  // return pluginMiddleware
 }
 
 /**
@@ -114,19 +110,16 @@ export function createPlugin<T extends AnyObj>(
     }),
     options?.name
   )
-  // function pluginMiddleware(addtionalProps: any) {
-  //   return createPlugin((props) => createrFn(mergeProps(addtionalProps, props)), options)
-  // }
-  // pluginMiddleware.pluginCoreFn = (props: any) => createrFn(props)
-  // pluginMiddleware.priority = options?.priority
-
-  // return pluginMiddleware
 }
 
 export function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
   const plugins = flapDeep(deepPluginList)
   if (plugins.length <= 1) return plugins
-  if (plugins.every((p) => !p.priority)) return plugins
+  if (plugins.every((p) => isFunction(p) || !p.priority)) return plugins
 
-  return [...plugins].sort(({ priority: priorityA }, { priority: priorityB }) => (priorityB ?? 0) - (priorityA ?? 0))
+  return [...plugins].sort((pluginA, pluginB) => {
+    const priorityA = isFunction(pluginA) ? 0 : pluginA.priority
+    const priorityB = isFunction(pluginB) ? 0 : pluginB.priority
+    return (priorityB ?? 0) - (priorityA ?? 0)
+  })
 }
