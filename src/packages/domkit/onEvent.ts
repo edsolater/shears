@@ -4,7 +4,7 @@ let eventId = 1
 
 export interface EventListenerController {
   eventId: number
-  abort(): void
+  cancel(): void
 }
 
 export interface EventListenerOptions extends AddEventListenerOptions {
@@ -34,10 +34,10 @@ export function onEvent<
   const targetEventId = eventId++
   const controller = {
     eventId: targetEventId,
-    abort() {
+    cancel() {
       abortEvent(targetEventId, options)
     }
-  }
+  } as EventListenerController
   const newEventCallback = (ev: Event) => {
     if (options?.stopPropergation) ev.stopPropagation()
     if (options?.onlyTargetIsSelf && el !== ev.target) return

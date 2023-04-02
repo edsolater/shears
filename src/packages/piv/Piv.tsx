@@ -2,7 +2,7 @@ import { flap, omit } from '@edsolater/fnkit'
 import { createComponent, JSX, JSXElement } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { PivProps } from './types/piv'
-import { parsePivPropsToCoreProps } from './utils/parsePivPropsToCoreProps'
+import { parsePivPropsToCoreProps } from './propHandlers/parsePivPropsToCoreProps'
 
 export const pivPropsNames = [
   'as',

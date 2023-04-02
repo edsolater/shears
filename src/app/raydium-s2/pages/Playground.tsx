@@ -7,6 +7,8 @@ import { useDataStore } from '../stores/data/store'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { useComponentController } from '../../../packages/piv/propHandlers/controller'
+import { createEffect, createMemo, createSignal } from 'solid-js'
+import { useCSSTransition } from '../../../packages/pivkit/hooks/useCSSTransition'
 
 export function PlaygroundPage() {
   return (
@@ -35,6 +37,10 @@ function PlaygoundList() {
       <ExamplePanel name='Drawer'>
         <DrawerExample />
       </ExamplePanel>
+
+      <ExamplePanel name='CSSTransition'>
+        <CSSTransitionExample />
+      </ExamplePanel>
     </Box>
   )
 }
@@ -51,8 +57,6 @@ function CircularProgressExample() {
 
 /**
  *
- * @todo 1. fade out when come to the end, not play track back.
- * @todo 2. make percent handler to be a hook
  */
 function DrawerExample() {
   const drawerController = useComponentController<DrawerController>('big-drawer')
@@ -65,6 +69,33 @@ function DrawerExample() {
         </Collapse>
       </Button>
       <Drawer id='big-drawer' />
+    </>
+  )
+}
+
+function CSSTransitionExample() {
+  const [show, setShow] = createSignal(false)
+
+  const { transitionProps, refSetter } = useCSSTransition({
+    show: show(),
+    fromProps: { icss: { width: '100px' } },
+    toProps: { icss: { width: '200px' } }
+  })
+
+  createEffect(() => {
+    // @ts-ignore
+    console.log('transitionProps: ', transitionProps().icss?.width)
+  })
+  return (
+    <>
+      <Button onClick={() => setShow(!show)}>Toggle</Button>
+      <Piv
+        ref={refSetter}
+        shadowProps={transitionProps()}
+        icss={{ backgroundColor: 'dodgerblue', height: 200, display: 'grid', placeItems: 'center' }}
+      >
+        <Box>hello</Box>
+      </Piv>
     </>
   )
 }

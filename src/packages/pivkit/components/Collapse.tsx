@@ -2,7 +2,6 @@ import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createContext, createEffect, JSXElement, useContext } from 'solid-js'
 import { Piv } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
-import { commonCollapseTransition } from '../commonPlugins/commonCollapseTransition'
 import { createToggle } from '../hooks/createToggle'
 
 type CollapseProps = KitProps<
@@ -93,7 +92,7 @@ export function CollapseContent(rawProps: CollapseContentProps) {
   const controller = useContext(CollapseContext)
   const isOpen = () => controller.isOpen
   return (
-    <Piv shadowProps={props} plugin={commonCollapseTransition()}>
+    <Piv shadowProps={props}>
       {shrinkFn(props.children, [controller])}
     </Piv>
   )
