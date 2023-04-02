@@ -1,4 +1,4 @@
-import { flap, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { flap, isFunction, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { onEvent } from '../../domkit'
 import { mergeProps } from '../../piv'
@@ -23,7 +23,7 @@ type TransactionAdditionalOptions = {
   cssTransitionTimingFunction?: ICSSObject['transitionTimingFunction']
 
   // detect transition should be turn on
-  show?: boolean
+  show?: boolean | (() => boolean)
   /** will trigger props:onBeforeEnter() if init props:show  */
   appear?: boolean
 
@@ -49,6 +49,7 @@ type TransactionAdditionalOptions = {
 
 export const useCSSTransition = (opts: TransactionAdditionalOptions) => {
   const [contentDivRef, setContentDivRef] = createRef<HTMLElement>()
+  const show = createMemo(() => (isFunction(opts.show) ? opts.show() : !!opts.show))
   const transitionPhaseProps = createMemo(() => {
     const baseTransitionICSS = {
       transition: `${opts.cssTransitionDurationMs}ms`,
@@ -81,9 +82,8 @@ export const useCSSTransition = (opts: TransactionAdditionalOptions) => {
       )
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
-
-  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? 'shown' : 'hidden')
-  const targetPhase = () => (opts.show ? 'shown' : 'hidden') as TransitionTargetPhase
+  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(show() && !opts.appear ? 'shown' : 'hidden')
+  const targetPhase = () => (show() ? 'shown' : 'hidden') as TransitionTargetPhase
   const isInnerShow = createMemo(
     () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown'
   )

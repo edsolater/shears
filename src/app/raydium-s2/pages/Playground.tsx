@@ -77,7 +77,7 @@ function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
   const { transitionProps, refSetter } = useCSSTransition({
-    show: show(),
+    show,
     fromProps: { icss: { width: '100px' } },
     toProps: { icss: { width: '200px' } }
   })
@@ -85,10 +85,11 @@ function CSSTransitionExample() {
   createEffect(() => {
     // @ts-ignore
     console.log('transitionProps: ', transitionProps().icss?.width)
+    console.log('show: ', show())
   })
   return (
     <>
-      <Button onClick={() => setShow(!show)}>Toggle</Button>
+      <Button onClick={() => setShow(!show())}>Toggle</Button>
       <Piv
         ref={refSetter}
         shadowProps={transitionProps()}
