@@ -82,12 +82,12 @@ function CSSTransitionExample() {
     toProps: { icss: { width: '200px' } }
   })
 
-  createEffect(() => {
-    // @ts-ignore
-    console.log('transitionProps: ', transitionProps().icss?.width)
-    console.log('show: ', show())
-  })
-  
+  // createEffect(() => {
+  //   // @ts-ignore
+  //   console.log('transitionProps: ', transitionProps().icss?.width)
+  //   console.log('show: ', show())
+  // })
+
   return (
     <>
       <Button onClick={() => setShow((b) => !b)}>Toggle</Button>

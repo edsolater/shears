@@ -53,7 +53,7 @@ export const useCSSTransition = (additionalProps: TransactionAdditionalProps) =>
   const [contentDivRef, setContentDivRef] = createRef<HTMLElement>()
   const transitionPhaseProps = createMemo(() => {
     const baseTransitionICSS = {
-      transition: `${props.cssTransitionDurationMs}ms`,
+      transition: `${props.cssTransitionDurationMs ?? 250}ms`,
       transitionTimingFunction: props.cssTransitionTimingFunction
     }
     return {
@@ -83,9 +83,11 @@ export const useCSSTransition = (additionalProps: TransactionAdditionalProps) =>
       )
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
-  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(props.show && !props.appear ? 'shown' : 'hidden')
+  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(
+    props.show && !props.appear ? 'shown' : 'hidden'
+  )
   const targetPhase = () => (props.show ? 'shown' : 'hidden') as TransitionTargetPhase
-  const isInnerShow = createMemo(
+  const isInnerVisiable = createMemo(
     () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown'
   )
   const currentPhasePropsName = createMemo<TransitionCurrentPhasePropsName>(() =>
@@ -127,5 +129,5 @@ export const useCSSTransition = (additionalProps: TransactionAdditionalProps) =>
 
   const transitionProps = () => transitionPhaseProps()[currentPhasePropsName()]
 
-  return { refSetter: setContentDivRef, transitionProps }
+  return { /** must set */ refSetter: setContentDivRef, /** must set */ transitionProps, isInnerVisiable }
 }
