@@ -29,15 +29,15 @@ export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   ? Px1 & Px2 & Px3 & Px4 & Px5
   : unknown
 
-export type PluginCreator<T extends Partial<PivProps>> = (additionalProps?: T) => Plugin<T>
-export type Plugin<T extends Partial<PivProps>> =
+export type PluginCreator<T extends AnyObj> = (props?: T) => Plugin<T>
+export type Plugin<T extends AnyObj> =
   | {
-      pluginCoreFn?: (props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>
-      priority?: number // NOTE -1:  it should be calculated after final prop has determine
+      pluginCoreFn?: (props: T) => Partial<Omit<T, 'plugin' | 'shadowProps'>> // TODO: should support 'plugin' and 'shadowProps' too
+      priority?: number
     }
-  | ((props: T & PivProps) => Partial<Omit<PivProps, 'plugin' | 'shadowProps'>>)
+  | ((props: T) => Partial<Omit<T, 'plugin' | 'shadowProps'>>) // TODO: should support 'plugin' and 'shadowProps' for easier compose
 
-export function handlePluginProps<P extends Partial<PivProps>>(props: P) {
+export function handlePluginProps<P extends AnyObj>(props: P) {
   if (!props?.plugin) return props
   return omit(mergePluginReturnedProps({ plugins: props.plugin, props }), 'plugin')
 }
@@ -49,7 +49,7 @@ function invokePlugin(plugin: Plugin<any>, props: KitProps<any>) {
 /**
  * merge additional props from plugin
  */
-export function mergePluginReturnedProps<T extends Partial<PivProps>>(utils: {
+export function mergePluginReturnedProps<T extends AnyObj>(utils: {
   plugins: MayDeepArray<Plugin<T>> | undefined
   props: T & PivProps
 }): T & PivProps {
@@ -62,8 +62,8 @@ export function mergePluginReturnedProps<T extends Partial<PivProps>>(utils: {
  * create special plugin
  * it will merge returned dangerousRenderWrapperNode props
  */
-export function createWrapperNodePlugin<T extends Partial<PivProps>>(
-  createrFn: (insideNode: JSX.Element, outsideProps: T & PivProps) => JSX.Element,
+export function createWrapperNodePlugin<T extends AnyObj>(
+  createrFn: (insideNode: JSX.Element, outsideProps: T) => JSX.Element,
   options?: {
     /** for DEBUG */
     name?: string
@@ -76,7 +76,7 @@ export function createWrapperNodePlugin<T extends Partial<PivProps>>(
       })
     }),
     options?.name
-  )
+  ) as any
 }
 
 /**
@@ -97,7 +97,7 @@ export function createWrapperNodePlugin<T extends Partial<PivProps>>(
  *  />
  */
 export function createPlugin<T extends AnyObj>(
-  createrFn: (props: T & PivProps) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>>, // return a function , in this function can exist hooks
+  createrFn: (props: T) => Partial<Omit<T, 'plugin' | 'shadowProps'>>, // return a function , in this function can exist hooks
   options?: {
     priority?: number // NOTE -1:  it should be render after final prop has determine
     name?: string

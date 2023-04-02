@@ -61,7 +61,7 @@ function DrawerExample() {
       <Button onClick={() => drawerController()?.toggle()}>
         <Collapse open={drawerController()?.isOpen}>
           <Collapse.Face>{drawerController()?.isOpen ? 'Close' : 'Open'}</Collapse.Face>
-          <Collapse.Content>drawer detail is here</Collapse.Content>
+          <Collapse.Content>detail info</Collapse.Content>
         </Collapse>
       </Button>
       <Drawer id='big-drawer' />
