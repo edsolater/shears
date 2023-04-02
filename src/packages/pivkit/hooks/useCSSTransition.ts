@@ -5,6 +5,7 @@ import { mergeProps } from '../../piv'
 import { ICSSObject } from '../../piv/propHandlers/icss'
 import { createPlugin } from '../../piv/propHandlers/plugin'
 import { PivProps } from '../../piv/types/piv'
+import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
 import { createRef } from './createRef'
 
 const TransitionPhaseProcessIn = 'during-process'
@@ -18,12 +19,12 @@ export type TransitionPhase =
 
 type TransitionCurrentPhasePropsName = 'enterFrom' | 'enterTo' | 'leaveFrom' | 'leaveTo'
 type TransitionTargetPhase = typeof TransitionPhaseShowing | typeof TransitionPhaseHidden
-type TransactionAdditionalOptions = {
+type TransactionAdditionalProps = Accessify<{
   cssTransitionDurationMs?: number
   cssTransitionTimingFunction?: ICSSObject['transitionTimingFunction']
 
   // detect transition should be turn on
-  show?: boolean | (() => boolean)
+  show?: boolean
   /** will trigger props:onBeforeEnter() if init props:show  */
   appear?: boolean
 
@@ -43,47 +44,47 @@ type TransactionAdditionalOptions = {
   onBeforeLeave?: (payload: { from: TransitionPhase; to: TransitionPhase; contentRef: HTMLElement }) => void
   onAfterLeave?: (payload: { from: TransitionPhase; to: TransitionPhase; contentRef?: HTMLElement }) => void
 
-  presets?: MayArray<MayFn<Omit<TransactionAdditionalOptions, 'presets'>>>
+  presets?: MayArray<MayFn<Omit<TransactionAdditionalProps, 'presets'>>>
   // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
-}
+}>
 
-export const useCSSTransition = (opts: TransactionAdditionalOptions) => {
+export const useCSSTransition = (additionalProps: TransactionAdditionalProps) => {
+  const props = useAccessifiedProps(additionalProps)
   const [contentDivRef, setContentDivRef] = createRef<HTMLElement>()
-  const show = createMemo(() => (isFunction(opts.show) ? opts.show() : !!opts.show))
   const transitionPhaseProps = createMemo(() => {
     const baseTransitionICSS = {
-      transition: `${opts.cssTransitionDurationMs}ms`,
-      transitionTimingFunction: opts.cssTransitionTimingFunction
+      transition: `${props.cssTransitionDurationMs}ms`,
+      transitionTimingFunction: props.cssTransitionTimingFunction
     }
     return {
       enterFrom: mergeProps(
-        flap(opts.presets).map((i) => shrinkFn(i)?.enterFromProps),
-        opts.duringEnterProps,
-        opts.enterFromProps || opts.fromProps,
+        flap(props.presets).map((i) => shrinkFn(i)?.enterFromProps),
+        props.duringEnterProps,
+        props.enterFromProps || props.fromProps,
         { style: baseTransitionICSS } as PivProps
       ),
       enterTo: mergeProps(
-        flap(opts.presets).map((i) => shrinkFn(i)?.enterToProps),
-        opts.duringEnterProps,
-        opts.enterToProps || opts.toProps,
+        flap(props.presets).map((i) => shrinkFn(i)?.enterToProps),
+        props.duringEnterProps,
+        props.enterToProps || props.toProps,
         { style: baseTransitionICSS } as PivProps
       ),
       leaveFrom: mergeProps(
-        flap(opts.presets).map((i) => shrinkFn(i)?.leaveFromProps),
-        opts.duringLeaveProps,
-        opts.leaveFromProps || opts.toProps,
+        flap(props.presets).map((i) => shrinkFn(i)?.leaveFromProps),
+        props.duringLeaveProps,
+        props.leaveFromProps || props.toProps,
         { style: baseTransitionICSS } as PivProps
       ),
       leaveTo: mergeProps(
-        flap(opts.presets).map((i) => shrinkFn(i)?.leaveToProps),
-        opts.duringLeaveProps,
-        opts.leaveToProps || opts.fromProps,
+        flap(props.presets).map((i) => shrinkFn(i)?.leaveToProps),
+        props.duringLeaveProps,
+        props.leaveToProps || props.fromProps,
         { style: baseTransitionICSS } as PivProps
       )
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
-  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(show() && !opts.appear ? 'shown' : 'hidden')
-  const targetPhase = () => (show() ? 'shown' : 'hidden') as TransitionTargetPhase
+  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(props.show && !props.appear ? 'shown' : 'hidden')
+  const targetPhase = () => (props.show ? 'shown' : 'hidden') as TransitionTargetPhase
   const isInnerShow = createMemo(
     () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown'
   )

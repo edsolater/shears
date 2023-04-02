@@ -87,9 +87,10 @@ function CSSTransitionExample() {
     console.log('transitionProps: ', transitionProps().icss?.width)
     console.log('show: ', show())
   })
+  
   return (
     <>
-      <Button onClick={() => setShow(!show())}>Toggle</Button>
+      <Button onClick={() => setShow((b) => !b)}>Toggle</Button>
       <Piv
         ref={refSetter}
         shadowProps={transitionProps()}

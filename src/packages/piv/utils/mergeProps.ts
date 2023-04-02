@@ -49,7 +49,7 @@ function mergeObjectsWithConfigs<T extends object>(
       acc[key] = {
         enumerable: true,
         get() {
-          return getValue(objs, key, coverRules)
+          return getObjValue(objs, key, coverRules)
         }
       }
       return acc
@@ -57,7 +57,7 @@ function mergeObjectsWithConfigs<T extends object>(
   ) as T
 }
 
-function getValue<T extends AnyObj>(
+function getObjValue<T extends AnyObj>(
   objs: T[],
   key: keyof any,
   coverRules: [propertyName: keyof any, fn: (valueA: unknown, valueB: unknown) => unknown][]
@@ -80,7 +80,7 @@ function getValue<T extends AnyObj>(
 function getObjKey<T extends object>(objs: T[]) {
   return unifyItem(
     objs.flatMap((obj) => {
-      const descriptors = Object.getOwnPropertyDescriptors(obj)
+      const descriptors = Object.getOwnPropertyDescriptors(obj) // 🤔 necessary?
       return Reflect.ownKeys(descriptors)
     })
   )
