@@ -1,12 +1,12 @@
 import { flap, isFunction, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { onEvent } from '../../domkit'
-import { mergeProps } from '../../piv'
-import { ICSSObject } from '../../piv/propHandlers/icss'
-import { createPlugin } from '../../piv/propHandlers/plugin'
-import { PivProps } from '../../piv/types/piv'
-import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
-import { createRef } from './createRef'
+import { onEvent } from '../../../domkit'
+import { mergeProps } from '../../../piv'
+import { ICSSObject } from '../../../piv/propHandlers/icss'
+import { createPlugin } from '../../../piv/propHandlers/plugin'
+import { PivProps } from '../../../piv/types/piv'
+import { Accessify, useAccessifiedProps } from '../../utils/accessifyProps'
+import { createRef } from '../createRef'
 
 const TransitionPhaseProcessIn = 'during-process'
 const TransitionPhaseShowing = 'shown' /* UI visiable and stable(not in transition) */
@@ -19,7 +19,7 @@ export type TransitionPhase =
 
 type TransitionCurrentPhasePropsName = 'enterFrom' | 'enterTo' | 'leaveFrom' | 'leaveTo'
 type TransitionTargetPhase = typeof TransitionPhaseShowing | typeof TransitionPhaseHidden
-type TransactionAdditionalProps = Accessify<{
+export type UseCSSTransactionOptions = Accessify<{
   cssTransitionDurationMs?: number
   cssTransitionTimingFunction?: ICSSObject['transitionTimingFunction']
 
@@ -39,54 +39,58 @@ type TransactionAdditionalProps = Accessify<{
   fromProps?: PivProps // shortcut for both enterFrom and leaveTo
   toProps?: PivProps // shortcut for both enterTo and leaveFrom
 
-  onBeforeEnter?: (payload: { from: TransitionPhase; to: TransitionPhase; contentRef?: HTMLElement }) => void
-  onAfterEnter?: (payload: { from: TransitionPhase; to: TransitionPhase; contentRef?: HTMLElement }) => void
-  onBeforeLeave?: (payload: { from: TransitionPhase; to: TransitionPhase; contentRef: HTMLElement }) => void
-  onAfterLeave?: (payload: { from: TransitionPhase; to: TransitionPhase; contentRef?: HTMLElement }) => void
+  onBeforeEnter?: (status: TransitionStatus) => void
+  onAfterEnter?: (status: TransitionStatus) => void
+  onBeforeLeave?: (status: TransitionStatus) => void
+  onAfterLeave?: (status: TransitionStatus) => void
 
-  presets?: MayArray<MayFn<Omit<TransactionAdditionalProps, 'presets'>>>
+  presets?: MayArray<MayFn<Omit<UseCSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
   // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
 }>
 
-export const useCSSTransition = (additionalProps: TransactionAdditionalProps) => {
-  const props = useAccessifiedProps(additionalProps)
+type TransitionStatus = {
+  contentRef?: HTMLElement
+  from: TransitionPhase
+  to: TransitionPhase
+}
+export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
+  const opts = useAccessifiedProps(additionalOpts)
   const [contentDivRef, setContentDivRef] = createRef<HTMLElement>()
   const transitionPhaseProps = createMemo(() => {
     const baseTransitionICSS = {
-      transition: `${props.cssTransitionDurationMs ?? 250}ms`,
-      transitionTimingFunction: props.cssTransitionTimingFunction
+      transition: `${opts.cssTransitionDurationMs ?? 250}ms`,
+      transitionTimingFunction: opts.cssTransitionTimingFunction
     }
+    const presets = flap(opts.presets)
     return {
       enterFrom: mergeProps(
-        flap(props.presets).map((i) => shrinkFn(i)?.enterFromProps),
-        props.duringEnterProps,
-        props.enterFromProps || props.fromProps,
+        presets.map((i) => shrinkFn(i)?.enterFromProps),
+        opts.duringEnterProps,
+        opts.enterFromProps || opts.fromProps,
         { style: baseTransitionICSS } as PivProps
       ),
       enterTo: mergeProps(
-        flap(props.presets).map((i) => shrinkFn(i)?.enterToProps),
-        props.duringEnterProps,
-        props.enterToProps || props.toProps,
+        presets.map((i) => shrinkFn(i)?.enterToProps),
+        opts.duringEnterProps,
+        opts.enterToProps || opts.toProps,
         { style: baseTransitionICSS } as PivProps
       ),
       leaveFrom: mergeProps(
-        flap(props.presets).map((i) => shrinkFn(i)?.leaveFromProps),
-        props.duringLeaveProps,
-        props.leaveFromProps || props.toProps,
+        presets.map((i) => shrinkFn(i)?.leaveFromProps),
+        opts.duringLeaveProps,
+        opts.leaveFromProps || opts.toProps,
         { style: baseTransitionICSS } as PivProps
       ),
       leaveTo: mergeProps(
-        flap(props.presets).map((i) => shrinkFn(i)?.leaveToProps),
-        props.duringLeaveProps,
-        props.leaveToProps || props.fromProps,
+        presets.map((i) => shrinkFn(i)?.leaveToProps),
+        opts.duringLeaveProps,
+        opts.leaveToProps || opts.fromProps,
         { style: baseTransitionICSS } as PivProps
       )
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
-  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(
-    props.show && !props.appear ? 'shown' : 'hidden'
-  )
-  const targetPhase = () => (props.show ? 'shown' : 'hidden') as TransitionTargetPhase
+  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? 'shown' : 'hidden')
+  const targetPhase = () => (opts.show ? 'shown' : 'hidden') as TransitionTargetPhase
   const isInnerVisiable = createMemo(
     () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown'
   )
@@ -126,6 +130,46 @@ export const useCSSTransition = (additionalProps: TransactionAdditionalProps) =>
       setCurrentPhase('during-process')
     }
   })
+
+  // invoke callbacks
+  createEffect((prevCurrentPhase) => {
+    const status = {
+      get from() {
+        return currentPhase()
+      },
+      get to() {
+        return targetPhase()
+      },
+      get contentRef() {
+        return contentDivRef()
+      }
+    }
+    if (currentPhase() === 'shown' && targetPhase() === 'shown') {
+      contentDivRef()?.clientHeight // force GPU render frame
+      opts.onAfterEnter?.(status)
+    }
+
+    if (currentPhase() === 'hidden' && targetPhase() === 'hidden') {
+      contentDivRef()?.clientHeight // force GPU render frame
+      opts.onAfterLeave?.(status)
+    }
+
+    if (
+      (currentPhase() === 'hidden' || (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
+      targetPhase() === 'shown'
+    ) {
+      contentDivRef()?.clientHeight // force GPU render frame
+      opts.onBeforeEnter?.(status)
+    }
+
+    if (
+      (currentPhase() === 'shown' || (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
+      targetPhase() === 'hidden'
+    ) {
+      contentDivRef()?.clientHeight // force GPU render frame
+      opts.onBeforeLeave?.(status)
+    }
+  }, currentPhase())
 
   const transitionProps = () => transitionPhaseProps()[currentPhasePropsName()]
 
