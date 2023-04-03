@@ -5,7 +5,7 @@ import { ICSS } from '../propHandlers/icss'
 import { Plugin } from '../propHandlers/plugin'
 import { PivShadowProps } from '../propHandlers/shadowProps'
 
-export interface PivProps<TagName extends keyof HTMLElementTagNameMap = 'div'> {
+export interface PivProps<TagName extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap> {
   /** @example
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */

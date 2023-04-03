@@ -131,7 +131,6 @@ export function Button(rawProps: ButtonProps) {
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
       shadowProps={pivProps}
-      //@ts-expect-error
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[

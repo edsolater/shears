@@ -26,7 +26,7 @@ type KitPropsInstance<
   Props extends ValidProps,
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
-  TagName extends keyof HTMLElementTagNameMap = 'div'
+  TagName extends keyof HTMLElementTagNameMap
 > = Props &
   Omit<PivProps<TagName>, keyof Props | 'plugin' | 'shadowProps'> &
   Omit<GetPluginProps<Plugins>, keyof Props | 'plugin' | 'shadowProps'> &
@@ -60,7 +60,7 @@ export type KitProps<
   ExtendsProps<P, NonNullable<O['extendsProp']>>,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
-  NonNullable<unknown extends O['htmlPropsTagName'] ? 'div' : O['htmlPropsTagName']>
+  NonNullable<O['htmlPropsTagName']>
 >
 export type KitPropsOptions<
   KitProps extends ValidProps,

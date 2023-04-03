@@ -18,7 +18,9 @@ export const pivPropsNames = [
   'style'
 ] satisfies (keyof PivProps<any>)[]
 
-export const Piv = <TagName extends keyof HTMLElementTagNameMap = 'div'>(props: PivProps<TagName>) => {
+export const Piv = <TagName extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap>(
+  props: PivProps<TagName>
+) => {
   // const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
   // if (!props) return null // just for type, logicly it will never happen
 
