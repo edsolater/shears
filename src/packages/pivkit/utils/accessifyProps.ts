@@ -1,15 +1,20 @@
-import { AnyFn, AnyObj, isFunction, isObject, mergeObjectsWithConfigs, shrinkFn, unifyItem } from '@edsolater/fnkit'
+import { AnyFn, AnyObj, isFunction, isObject, shrinkFn } from '@edsolater/fnkit'
 import { ValidController } from '../../piv/types/tools'
 
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
 export type Accessify<P extends Record<string, any>, Controller extends ValidController = {}> = {
-  [K in keyof P]: K extends `on${string}` | `${string}Fn` ? P[K] : P[K] | ((controller: Controller) => P[K])
+  [K in keyof P]: K extends `on${string}` | `${string}Fn`
+    ? FixFunctionParam<P[K], Controller>
+    : P[K] | ((controller: Controller) => P[K])
 }
 
-export type DeAccessify<P extends AnyObj> = P extends Accessify<infer R> ? R : P
+export type DeAccessify<P> = P extends Accessify<infer A, any> ? A : unknown
 
+type FixFunctionParam<F, Controller extends ValidController> = F extends (...args: [infer P1, ...infer PS]) => infer R
+  ? (...args: [controller: P1 & Controller, ...rest: PS]) => R
+  : never
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
@@ -26,7 +31,7 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
           if (key.startsWith('on') || key.endsWith('Fn')) {
             const v = props[key]
             if (controller && isFunction(v)) {
-              return predefineFunctionParams(v, [controller])
+              return fixFunctionParams(v, [controller])
             } else {
               return v
             }
@@ -41,7 +46,7 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
   return accessifiedProps
 }
 
-function predefineFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(originalFn: F, preParams: P): F {
+function fixFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(originalFn: F, preParams: P): F {
   // @ts-expect-error no need to check
   return {
     [originalFn.name]: (...args: unknown[]) => originalFn(...shallowMergeTwoArray(preParams, args))

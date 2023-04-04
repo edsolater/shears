@@ -1,9 +1,8 @@
-import { flap, isFunction, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { flap, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { onEvent } from '../../../domkit'
 import { mergeProps } from '../../../piv'
 import { ICSSObject } from '../../../piv/propHandlers/icss'
-import { createPlugin } from '../../../piv/propHandlers/plugin'
 import { PivProps } from '../../../piv/types/piv'
 import { Accessify, useAccessifiedProps } from '../../utils/accessifyProps'
 import { createRef } from '../createRef'
@@ -19,42 +18,56 @@ export type TransitionPhase =
 
 type TransitionCurrentPhasePropsName = 'enterFrom' | 'enterTo' | 'leaveFrom' | 'leaveTo'
 type TransitionTargetPhase = typeof TransitionPhaseShowing | typeof TransitionPhaseHidden
-export type UseCSSTransactionOptions = Accessify<{
-  cssTransitionDurationMs?: number
-  cssTransitionTimingFunction?: ICSSObject['transitionTimingFunction']
+export type UseCSSTransactionOptions = Accessify<
+  {
+    cssTransitionDurationMs?: number
+    cssTransitionTimingFunction?: ICSSObject['transitionTimingFunction']
 
-  // detect transition should be turn on
-  show?: boolean
-  /** will trigger props:onBeforeEnter() if init props:show  */
-  appear?: boolean
+    // detect transition should be turn on
+    show?: boolean
+    /** will trigger props:onBeforeEnter() if init props:show  */
+    appear?: boolean
 
-  enterFromProps?: PivProps
-  duringEnterProps?: PivProps
-  enterToProps?: PivProps
+    enterFromProps?: PivProps
+    duringEnterProps?: PivProps
+    enterToProps?: PivProps
 
-  leaveFromProps?: PivProps
-  duringLeaveProps?: PivProps
-  leaveToProps?: PivProps
+    leaveFromProps?: PivProps
+    duringLeaveProps?: PivProps
+    leaveToProps?: PivProps
 
-  fromProps?: PivProps // shortcut for both enterFrom and leaveTo
-  toProps?: PivProps // shortcut for both enterTo and leaveFrom
+    fromProps?: PivProps // shortcut for both enterFrom and leaveTo
+    toProps?: PivProps // shortcut for both enterTo and leaveFrom
 
-  onBeforeEnter?: (status: TransitionStatus) => void
-  onAfterEnter?: (status: TransitionStatus) => void
-  onBeforeLeave?: (status: TransitionStatus) => void
-  onAfterLeave?: (status: TransitionStatus) => void
+    onBeforeEnter?: () => void
+    onAfterEnter?: () => void
+    onBeforeLeave?: () => void
+    onAfterLeave?: () => void
 
-  presets?: MayArray<MayFn<Omit<UseCSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
-  // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
-}>
-
-type TransitionStatus = {
+    presets?: MayArray<MayFn<Omit<UseCSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
+    // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
+  },
+  TransitionController
+>
+type TransitionController = {
   contentRef?: HTMLElement
   from: TransitionPhase
   to: TransitionPhase
 }
+
 export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
-  const opts = useAccessifiedProps(additionalOpts)
+  const controller: TransitionController = {
+    get from() {
+      return currentPhase()
+    },
+    get to() {
+      return targetPhase()
+    },
+    get contentRef() {
+      return contentDivRef()
+    }
+  }
+  const opts = useAccessifiedProps(additionalOpts, controller)
   const [contentDivRef, setContentDivRef] = createRef<HTMLElement>()
   const transitionPhaseProps = createMemo(() => {
     const baseTransitionICSS = {
@@ -133,25 +146,14 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
 
   // invoke callbacks
   createEffect((prevCurrentPhase) => {
-    const status = {
-      get from() {
-        return currentPhase()
-      },
-      get to() {
-        return targetPhase()
-      },
-      get contentRef() {
-        return contentDivRef()
-      }
-    }
     if (currentPhase() === 'shown' && targetPhase() === 'shown') {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onAfterEnter?.(status)
+      opts.onAfterEnter?.()
     }
 
     if (currentPhase() === 'hidden' && targetPhase() === 'hidden') {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onAfterLeave?.(status)
+      opts.onAfterLeave?.()
     }
 
     if (
@@ -159,7 +161,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
       targetPhase() === 'shown'
     ) {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onBeforeEnter?.(status)
+      opts.onBeforeEnter?.()
     }
 
     if (
@@ -167,7 +169,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
       targetPhase() === 'hidden'
     ) {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onBeforeLeave?.(status)
+      opts.onBeforeLeave?.()
     }
   }, currentPhase())
 
