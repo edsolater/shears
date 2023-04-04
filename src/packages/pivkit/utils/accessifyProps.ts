@@ -56,12 +56,12 @@ function fixFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(ori
 // TODO: move to fnkit
 function shallowMergeTwoArray(old: any[], arr2: any[]) {
   return Array.from({ length: Math.max(old.length, arr2.length) }, (_, i) => {
-    const va = arr2[i]
-    const vb = old[i]
+    const va = old[i]
+    const vb = arr2[i]
     if (isObject(va) && isObject(vb)) {
       return { ...va, ...vb }
     } else {
-      return va ?? vb
+      return vb ?? va
     }
   })
 }
