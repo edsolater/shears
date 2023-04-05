@@ -45,7 +45,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    */
   htmlProps?: MayArray<JSX.IntrinsicElements[TagName] | undefined>
 
-  children?: JSXElement
+  children?: LoadController<JSXElement, Controller>
 
   /** special: every kit baseon <Piv> should support this prop */
   shadowProps?: MayArray<PivShadowProps<PivProps<any>>>
