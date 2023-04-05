@@ -23,13 +23,13 @@ import {
  * - auto pick plugin prop if specified plugin
  */
 type KitPropsInstance<
-  Props extends ValidProps,
+  AccessedProps extends ValidProps,
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
   TagName extends keyof HTMLElementTagNameMap
-> = Props &
-  Omit<PivProps<TagName>, keyof Props | 'plugin' | 'shadowProps'> &
-  Omit<GetPluginProps<Plugins>, keyof Props | 'plugin' | 'shadowProps'> &
+> = AccessedProps &
+  Omit<PivProps<TagName, Controller>, keyof AccessedProps | 'plugin' | 'shadowProps'> &
+  Omit<GetPluginProps<Plugins>, keyof AccessedProps | 'plugin' | 'shadowProps'> &
   Omit<
     {
       /**
@@ -38,12 +38,12 @@ type KitPropsInstance<
        */
       id?: string
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: MayArray<Partial<Props>> // component must merged before `<Div>`
+      shadowProps?: MayArray<Partial<AccessedProps>> // component must merged before `<Div>`
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>
     },
-    keyof Props
+    keyof AccessedProps
   >
 
 /** just a shortcut of KitProps */

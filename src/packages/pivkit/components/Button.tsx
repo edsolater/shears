@@ -14,50 +14,53 @@ import { applyPivController } from '../../piv/propHandlers/controller'
 import { objectMerge } from '../../fnkit/objectMerge'
 type BooleanLike = unknown
 
-export interface ButtonController {
+export type ButtonController = Readonly<{
   click?: () => void
   focus?: () => void
-}
+}>
 
 const cssTransitionTimeFnOutCubic = 'cubic-bezier(0.22, 0.61, 0.36, 1)'
 
-export type ButtonProps = KitProps<{
-  /**
-   * @default 'solid'
-   */
-  variant?: 'solid' | 'outline' | 'text'
-  /**
-   * @default 'md'
-   */
-  size?: 'xs' | 'sm' | 'md' | 'lg'
-  /**
-   * !only for app's uikit <Button>
-   * button's mean  color (apply to all variant of button)
-   * default {@link cssColors.button_bg_primary } when in darkMode
-   */
-  theme?: {
-    mainBgColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-    mainTextColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-    contentGap?: MayFn<CSSStyle['gap'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-    disableOpacity?: MayFn<CSSStyle['opacity'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-    cssProps?: MayFn<ICSS, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-  }
-  /** a short cut for validator */
-  disabled?: boolean
-  /** must all condition passed */
-  validators?: MayArray<{
-    /** must return true to pass this validator */
-    should: MayFn<BooleanLike>
-    // used in "connect wallet" button, it's order is over props: disabled
-    forceActive?: boolean
-    /**  items are button's setting which will apply when corresponding validator has failed */
-    fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
-  }>
-  /** normally, it's an icon  */
-  prefix?: MayFn<JSX.Element, [utils: ButtonController]>
-  /** normally, it's an icon  */
-  suffix?: MayFn<JSX.Element, [utils: ButtonController]>
-}>
+export type ButtonProps = KitProps<
+  {
+    /**
+     * @default 'solid'
+     */
+    variant?: 'solid' | 'outline' | 'text'
+    /**
+     * @default 'md'
+     */
+    size?: 'xs' | 'sm' | 'md' | 'lg'
+    /**
+     * !only for app's uikit <Button>
+     * button's mean  color (apply to all variant of button)
+     * default {@link cssColors.button_bg_primary } when in darkMode
+     */
+    theme?: {
+      mainBgColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+      mainTextColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+      contentGap?: MayFn<CSSStyle['gap'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+      disableOpacity?: MayFn<CSSStyle['opacity'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+      cssProps?: MayFn<ICSS, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+    }
+    /** a short cut for validator */
+    disabled?: boolean
+    /** must all condition passed */
+    validators?: MayArray<{
+      /** must return true to pass this validator */
+      should: MayFn<BooleanLike>
+      // used in "connect wallet" button, it's order is over props: disabled
+      forceActive?: boolean
+      /**  items are button's setting which will apply when corresponding validator has failed */
+      fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
+    }>
+    /** normally, it's an icon  */
+    prefix?: JSX.Element
+    /** normally, it's an icon  */
+    suffix?: JSX.Element
+  },
+  { controller: ButtonController }
+>
 
 /**
  * feat: build-in click ui effect
@@ -130,7 +133,6 @@ export function Button(rawProps: ButtonProps) {
     <Piv<'button'>
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
-      inputController={mergedController}
       shadowProps={props}
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
@@ -183,9 +185,10 @@ export function Button(rawProps: ButtonProps) {
       ]}
       ref={setRef}
     >
-      {shrinkFn(props.prefix, [mergedController])}
+      {props.prefix}
+      {/* TODO: no need. this is because kitProp don't support Access and Deaccess */}
       {applyPivController(props.children, mergedController)}
-      {shrinkFn(props.suffix, [mergedController])}
+      {props.suffix}
     </Piv>
   )
 }
