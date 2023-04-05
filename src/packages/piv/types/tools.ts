@@ -1,12 +1,13 @@
-import { AnyFn } from '@edsolater/fnkit'
+import { AnyFn, AnyObj, MayFn } from '@edsolater/fnkit'
 
 export type ValidProps = Record<string, Exclude<any, Promise<any>>>
 
 /**
  * includes component controller and component methods
  */
-export type ValidController = Record<string, any>
+export type ValidController = AnyObj
 
+export type HTMLTag = keyof HTMLElementTagNameMap
 /**
  * auto omit P2's same name props
  */
@@ -26,3 +27,5 @@ export type ExtendsProps<
 export type SignalizeProps<T extends object | undefined> = {
   [K in keyof T]: T[K] extends AnyFn ? T[K] : () => T[K]
 }
+
+export type LoadController<Target, Controller extends ValidController = {}> = MayFn<Target, [Controller]>

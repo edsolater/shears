@@ -1,18 +1,22 @@
-import { flap, isObjectLike, isTruthy, MayDeepArray } from '@edsolater/fnkit'
+import { flap, isObjectLike, isTruthy, MayDeepArray, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { LoadController, ValidController } from '../types/tools'
 
-export type ClassName = any | { [classname: string]: boolean }
+export type ClassName<Controller extends ValidController = {}> = LoadController<
+  any | { [classname: string]: LoadController<boolean, Controller> },
+  Controller
+>
 
-export function classname(classNameArray: MayDeepArray<ClassName>) {
-  return toClassListString(classNameArray)
-}
-
-function toClassListString(classNameArray: MayDeepArray<ClassName>) {
+export function classname<Controller extends ValidController = {}>(
+  classNameArray: MayDeepArray<ClassName<Controller>>,
+  controller?: Controller
+) {
   return flap(classNameArray)
     .filter(isTruthy)
-    .flatMap((classItem) =>
-      isObjectLike(classItem)
-        ? Object.entries(classItem).map(([classString, condition]) => condition && classString)
+    .flatMap((classItemFn) => {
+      const classItem = shrinkFn(classItemFn, [controller])
+      return isObjectLike(classItem)
+        ? Object.entries(classItem).map(([classString, condition]) => shrinkFn(condition, [controller]) && classString)
         : classItem
-    )
+    })
     .join(' ')
 }

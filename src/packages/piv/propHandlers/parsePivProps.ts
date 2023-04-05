@@ -7,12 +7,12 @@ import { handleShadowProps } from './shadowProps'
 import { mergeRefs } from '../utils/mergeRefs'
 
 // TODO: change props:icss will make all props to re-calc, this may cause performance issue
-export function parsePivPropsToCoreProps(rawProps: PivProps<any>) {
+export function parsePivProps(rawProps: PivProps<any>) {
   const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
   return {
     ...(props.htmlProps && Object.assign({}, ...shakeNil(flapDeep(props.htmlProps)))),
     class:
-      shakeFalsy([classname(props.class), parseCSSToString(props.icss)]).join(' ') ||
+      shakeFalsy([classname(props.class, props.transmittedController), parseCSSToString(props.icss)]).join(' ') ||
       undefined /* don't render if empty string */,
     ref: (el: HTMLElement) => el && mergeRefs(...flapDeep(props.ref))(el),
     style: props.style ? merge(...shakeNil(flapDeep(props.style))) : undefined,

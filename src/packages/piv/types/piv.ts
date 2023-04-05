@@ -4,8 +4,9 @@ import { ClassName } from '../propHandlers/classname'
 import { ICSS } from '../propHandlers/icss'
 import { Plugin } from '../propHandlers/plugin'
 import { PivShadowProps } from '../propHandlers/shadowProps'
+import { HTMLTag, ValidController } from './tools'
 
-export interface PivProps<TagName extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap> {
+export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> {
   /** @example
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */
@@ -16,14 +17,17 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = keyof HT
   /**
    * if it's in shadow props, it will merge with exist props
    */
-  class?: MayArray<ClassName | undefined>
-  onClick?: (utils: {
-    ev: MouseEvent & {
-      currentTarget: HTMLElementTagNameMap[TagName]
-      target: Element
-    }
-    el: HTMLElementTagNameMap[TagName]
-  }) => void
+  class?: MayArray<ClassName<Controller>>
+
+  onClick?: (
+    utils: {
+      ev: MouseEvent & {
+        currentTarget: HTMLElementTagNameMap[TagName]
+        target: Element
+      }
+      el: HTMLElementTagNameMap[TagName]
+    } & Controller
+  ) => void
 
   /**
    * if it's in shadow props, it will merge with exist props
@@ -38,7 +42,7 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = keyof HT
   /**
    * if it's in shadow props, it will merge with exist props
    */
-  htmlProps?: MayArray<JSX.IntrinsicElements[TagName extends {} ? TagName : any] | undefined>
+  htmlProps?: MayArray<JSX.IntrinsicElements[TagName] | undefined>
 
   children?: JSXElement
 
@@ -47,6 +51,11 @@ export interface PivProps<TagName extends keyof HTMLElementTagNameMap = keyof HT
 
   /** special: every kit baseon <Piv> should support this prop */
   plugin?: MayArray<Plugin<any>>
+
+  // -------- special prop --------
+
+  /** only passed in parent component */
+  transmittedController?: Controller
 
   /**
    * change outter wrapper element
