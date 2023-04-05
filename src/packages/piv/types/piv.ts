@@ -4,8 +4,9 @@ import { ClassName } from '../propHandlers/classname'
 import { ICSS } from '../propHandlers/icss'
 import { Plugin } from '../propHandlers/plugin'
 import { PivShadowProps } from '../propHandlers/shadowProps'
-import { HTMLTag, LoadController, ValidController } from './tools'
+import { ControlledChild, HTMLTag, LoadController, RawChild, ValidController } from './tools'
 import { IStyle } from '../propHandlers/istyle'
+import { HTMLProps } from '../propHandlers/htmlProps'
 
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> {
   /** @example
@@ -43,9 +44,9 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   /**
    * if it's in shadow props, it will merge with exist props
    */
-  htmlProps?: MayArray<JSX.IntrinsicElements[TagName] | undefined>
+  htmlProps?: HTMLProps<TagName, Controller>
 
-  children?: LoadController<JSXElement, Controller>
+  children?: RawChild | ControlledChild<Controller>
 
   /** special: every kit baseon <Piv> should support this prop */
   shadowProps?: MayArray<PivShadowProps<PivProps<any>>>
@@ -56,7 +57,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   // -------- special prop --------
 
   /** only passed in parent component */
-  transmittedController?: Controller
+  inputController?: Controller
 
   /**
    * change outter wrapper element

@@ -1,4 +1,4 @@
-import { hasProperty, WeakerMap } from '@edsolater/fnkit'
+import { AnyFn, hasProperty, shrinkFn, WeakerMap } from '@edsolater/fnkit'
 import { ValidController } from '../types/tools'
 import { KitProps } from '../createKit'
 import { createSignal } from 'solid-js'
@@ -56,3 +56,10 @@ export function useComponentController<Controller extends ValidController>(id: s
   return controller
 }
 
+export function applyPivController<
+  Controller extends ValidController,
+  P extends unknown | ((controller: Controller) => unknown)
+>(to: P, controller: Controller = {} as Controller): Exclude<P, AnyFn> {
+  // @ts-expect-error no need to check
+  return shrinkFn(to, [controller])
+}

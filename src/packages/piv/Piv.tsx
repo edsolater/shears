@@ -31,9 +31,7 @@ export const Piv = <TagName extends keyof HTMLElementTagNameMap = keyof HTMLElem
 }
 
 function handleNormalPivProps(
-  props: Omit<PivProps<any>, 'plugin' | 'shadowProps' | 'children'> & {
-    children?: JSX.Element
-  }
+  props: Omit<PivProps<any>, 'plugin' | 'shadowProps'> 
 ) {
   return props.as ? (
     <Dynamic component={props.as} {...parsePivProps(props)} />

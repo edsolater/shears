@@ -1,10 +1,10 @@
 import { createEffect } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import isClientSide from '../../../jFetch/utils/isSSR'
-import { PivProps } from '../../../piv'
 import { createRef } from '../..'
+import isClientSide from '../../../jFetch/utils/isSSR'
+import { RawChild } from '../../../piv'
 
-export function PopPortal(props: { children?: PivProps['children'] }) {
+export function PopPortal(props: { children?: RawChild }) {
   const element = createPopStackHTMLElement()
   const [ref, setRef] = createRef()
   createEffect(() => {

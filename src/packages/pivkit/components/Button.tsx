@@ -10,6 +10,8 @@ import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { useControllerRef } from '../hooks/useControllerRef'
 import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
+import { applyPivController } from '../../piv/propHandlers/controller'
+import { objectMerge } from '../../fnkit/objectMerge'
 type BooleanLike = unknown
 
 export interface ButtonController {
@@ -55,19 +57,25 @@ export type ButtonProps = KitProps<{
   prefix?: MayFn<JSX.Element, [utils: ButtonController]>
   /** normally, it's an icon  */
   suffix?: MayFn<JSX.Element, [utils: ButtonController]>
-  controllerRef?: CRef<ButtonController>
-  clildren?: MayFn<JSX.Element, [utils: ButtonController]>
 }>
 
 /**
  * feat: build-in click ui effect
  */
 export function Button(rawProps: ButtonProps) {
+  const innerController: ButtonController = {
+    click: () => {
+      ref()?.click()
+    },
+    focus: () => {
+      ref()?.focus()
+    }
+  }
   /* ---------------------------------- props --------------------------------- */
   const props = useKitProps(rawProps, {
-    defaultProps: mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
+    defaultProps: mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button')),
+    controller: () => innerController
   })
-  const pivProps = props
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
@@ -90,17 +98,6 @@ export function Button(rawProps: ButtonProps) {
   } = props.theme ?? ({} as NonNullable<ButtonProps['theme']>)
 
   const [ref, setRef] = createRef<HTMLButtonElement>()
-
-  const innerController = {
-    click: () => {
-      ref()?.click()
-    },
-    focus: () => {
-      ref()?.focus()
-    }
-  }
-
-  useControllerRef(props.controllerRef, innerController)
 
   const cssPadding = {
     lg: '14px 24px',
@@ -126,11 +123,15 @@ export function Button(rawProps: ButtonProps) {
     sm: 1,
     xs: 0.5
   }[props.size]
+
+  const mergedController =
+    'inputController' in props ? objectMerge(props.inputController!, innerController) : innerController
   return (
     <Piv<'button'>
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
-      shadowProps={pivProps}
+      inputController={mergedController}
+      shadowProps={props}
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
@@ -182,9 +183,9 @@ export function Button(rawProps: ButtonProps) {
       ]}
       ref={setRef}
     >
-      {shrinkFn(props.prefix, [innerController])}
-      {props.children}
-      {shrinkFn(props.suffix, [innerController])}
+      {shrinkFn(props.prefix, [mergedController])}
+      {applyPivController(props.children, mergedController)}
+      {shrinkFn(props.suffix, [mergedController])}
     </Piv>
   )
 }

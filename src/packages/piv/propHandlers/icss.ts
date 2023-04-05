@@ -1,8 +1,9 @@
 import { filter, flap, flapDeep, isObject, MayArray, mergeObjectsWithConfigs, shrinkFn } from '@edsolater/fnkit'
-import { css, CSSObject } from '@emotion/css'
+import { css, CSSObject as _CSSObject } from '@emotion/css'
 import { LoadController, ValidController } from '../types/tools'
 
 export type ICSSObject<Controller extends ValidController = {}> = LoadController<CSSObject, Controller> // rename  for ICSSObject may be a superset of CSSObject
+export type CSSObject = _CSSObject
 
 export type ICSS<Controller extends ValidController = {}> = MayArray<
   LoadController<boolean | string | number | null | undefined, Controller> | ICSSObject<Controller>
