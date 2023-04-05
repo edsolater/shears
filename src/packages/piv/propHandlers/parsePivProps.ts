@@ -5,6 +5,8 @@ import { parseCSSToString } from './icss'
 import { handlePluginProps } from './plugin'
 import { handleShadowProps } from './shadowProps'
 import { mergeRefs } from '../utils/mergeRefs'
+import { parseIStyles } from './istyle'
+import { objectMerge } from '../../fnkit/objectMerge'
 
 // TODO: change props:icss will make all props to re-calc, this may cause performance issue
 export function parsePivProps(rawProps: PivProps<any>) {
@@ -17,8 +19,13 @@ export function parsePivProps(rawProps: PivProps<any>) {
         parseCSSToString(props.icss, props.transmittedController)
       ]).join(' ') || undefined /* don't render if empty string */,
     ref: (el: HTMLElement) => el && mergeRefs(...flapDeep(props.ref))(el),
-    style: props.style ? merge(...shakeNil(flapDeep(props.style))) : undefined,
-    onClick: props.onClick ? (ev: any) => props.onClick?.({ ev, el: ev.currentTarget }) : undefined,
+    style: parseIStyles(props.style, props.transmittedController),
+    onClick:
+      'onClick' in props
+        ? (ev: any) => props.onClick?.(objectMerge(props.transmittedController ?? {}, { ev, el: ev.currentTarget }))
+        : undefined,
     children: props.children
   }
 }
+
+

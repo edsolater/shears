@@ -4,7 +4,8 @@ import { ClassName } from '../propHandlers/classname'
 import { ICSS } from '../propHandlers/icss'
 import { Plugin } from '../propHandlers/plugin'
 import { PivShadowProps } from '../propHandlers/shadowProps'
-import { HTMLTag, ValidController } from './tools'
+import { HTMLTag, LoadController, ValidController } from './tools'
+import { IStyle } from '../propHandlers/istyle'
 
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> {
   /** @example
@@ -32,12 +33,12 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   /**
    * if it's in shadow props, it will merge with exist props
    */
-  icss?: ICSS
+  icss?: ICSS<Controller>
 
   /**
    * if it's in shadow props, it will merge with exist props
    */
-  style?: MayArray<JSX.HTMLAttributes<any>['style'] | undefined>
+  style?: IStyle<Controller>
 
   /**
    * if it's in shadow props, it will merge with exist props
