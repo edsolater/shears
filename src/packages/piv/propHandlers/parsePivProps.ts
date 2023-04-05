@@ -12,8 +12,10 @@ export function parsePivProps(rawProps: PivProps<any>) {
   return {
     ...(props.htmlProps && Object.assign({}, ...shakeNil(flapDeep(props.htmlProps)))),
     class:
-      shakeFalsy([classname(props.class, props.transmittedController), parseCSSToString(props.icss)]).join(' ') ||
-      undefined /* don't render if empty string */,
+      shakeFalsy([
+        classname(props.class, props.transmittedController),
+        parseCSSToString(props.icss, props.transmittedController)
+      ]).join(' ') || undefined /* don't render if empty string */,
     ref: (el: HTMLElement) => el && mergeRefs(...flapDeep(props.ref))(el),
     style: props.style ? merge(...shakeNil(flapDeep(props.style))) : undefined,
     onClick: props.onClick ? (ev: any) => props.onClick?.({ ev, el: ev.currentTarget }) : undefined,
