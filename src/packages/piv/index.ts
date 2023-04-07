@@ -1,5 +1,5 @@
-export * from './Piv'
-export * from './createKit'
+export * from './Piv' // !important
+export * from './createKit' // !important
 
 export * from './propHandlers/classname'
 export * from './propHandlers/icss'
@@ -14,7 +14,7 @@ export * from './utils/gettersProps'
 export * from './utils/toGettersObj'
 export * from './utils/getPropsKeys'
 
-export * from './propHandlers/plugin'
+export * from './propHandlers/plugin' // !important
 export * from './propHandlers/shadowProps'
 
 export * from './types/piv'

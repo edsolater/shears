@@ -10,7 +10,7 @@ export type Accessify<P extends Record<string, any>, Controller extends ValidCon
     : P[K] | ((controller: Controller) => P[K])
 }
 
-export type DeAccessify<P> = P extends Accessify<infer A, any> ? A : unknown
+export type DeAccessify<P> = P extends Accessify<infer A, any> ? A : P
 
 type FixFunctionParam<F, Controller extends ValidController> = F extends (...args: [infer P1, ...infer PS]) => infer R
   ? (...args: [controller: P1 & Controller, ...rest: PS]) => R

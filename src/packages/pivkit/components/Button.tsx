@@ -59,7 +59,9 @@ export type ButtonProps = KitProps<
     /** normally, it's an icon  */
     suffix?: JSX.Element
   },
-  { controller: ButtonController }
+  {
+    controller: ButtonController
+  }
 >
 
 /**
@@ -92,40 +94,39 @@ export function Button(rawProps: ButtonProps) {
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
   )
 
-  const {
-    mainBgColor = cssColors.button_bg_primary,
-    mainTextColor = cssColors.button_text_primary,
-    contentGap = 4,
-    disableOpacity = 0.3,
-    cssProps
-  } = props.theme ?? ({} as NonNullable<ButtonProps['theme']>)
+  const mainBgColor = props.theme?.mainBgColor ?? cssColors.button_bg_primary
+  const mainTextColor = props.theme?.mainTextColor ?? cssColors.button_text_primary
+  const contentGap = props.theme?.contentGap ?? 4
+  const disableOpacity = props.theme?.disableOpacity ?? 0.3
+  const cssProps = props.theme?.cssProps
 
   const [ref, setRef] = createRef<HTMLButtonElement>()
 
+  const size = props.size
   const cssPadding = {
     lg: '14px 24px',
     md: '10px 16px',
     sm: '8px 16px',
     xs: '2px 6px'
-  }[props.size]
+  }[size]
   const cssFontSize = {
     lg: 16,
     md: 16,
     sm: 14,
     xs: 12
-  }[props.size]
+  }[size]
   const cssBorderRadius = {
     lg: 12,
     md: 8,
     sm: 8,
     xs: 4
-  }[props.size]
+  }[size]
   const cssOutlineWidth = {
     lg: 2,
     md: 2,
     sm: 1,
     xs: 0.5
-  }[props.size]
+  }[size]
 
   const mergedController =
     'inputController' in props ? objectMerge(props.inputController!, innerController) : innerController

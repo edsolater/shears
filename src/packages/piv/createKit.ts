@@ -1,4 +1,13 @@
-import { AddDefaultProperties, flap, flapDeep, hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
+import {
+  AddDefaultProperties,
+  AnyObj,
+  flap,
+  flapDeep,
+  hasProperty,
+  MayArray,
+  MayDeepArray,
+  pipe
+} from '@edsolater/fnkit'
 import { createEffect, mergeProps, onCleanup } from 'solid-js'
 import {
   GetPluginProps,
@@ -16,6 +25,8 @@ import {
   recordController,
   unregisterController
 } from './propHandlers/controller'
+import { Accessify, DeAccessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
+import { ButtonController } from '../pivkit'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -57,7 +68,7 @@ export type KitProps<
     htmlPropsTagName?: keyof HTMLElementTagNameMap
   } = {}
 > = KitPropsInstance<
-  ExtendsProps<P, NonNullable<O['extendsProp']>>,
+  ExtendsProps<Accessify<P, NonNullable<O['controller']>>, NonNullable<O['extendsProp']>>,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<O['htmlPropsTagName']>
@@ -75,10 +86,12 @@ export type KitPropsOptions<
 
 /** return type of useKitProps */
 export type ParsedKitProps<
-  KitProps extends ValidProps,
+  InputKitProps extends ValidProps,
   Controller extends ValidController = {},
-  DefaultProps extends Partial<KitProps> = {}
-> = Omit<AddDefaultProperties<KitProps, DefaultProps>, 'plugin' | 'shadowProps'>
+  DefaultProps extends Partial<InputKitProps> = {}
+> = InputKitProps extends KitPropsInstance<infer P, any, any, any>
+  ? Omit<AddDefaultProperties<DeAccessify<Omit<P, keyof PivProps>>, DefaultProps>, 'plugin' | 'shadowProps'>
+  : false
 
 export function useKitProps<
   KitProps extends ValidProps,
