@@ -1,6 +1,6 @@
 import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createMemo, JSX } from 'solid-js'
-import { mergeProps } from '../../piv'
+import { addDefaultProps, mergeProps } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { Piv } from '../../piv/Piv'
 import { CRef } from '../../piv/types/piv'
@@ -21,53 +21,48 @@ export type ButtonController = Readonly<{
 
 const cssTransitionTimeFnOutCubic = 'cubic-bezier(0.22, 0.61, 0.36, 1)'
 
-export type ButtonProps = KitProps<
-  {
-    /**
-     * @default 'solid'
-     */
-    variant?: 'solid' | 'outline' | 'text'
-    /**
-     * @default 'md'
-     */
-    size?: 'xs' | 'sm' | 'md' | 'lg'
-    /**
-     * !only for app's uikit <Button>
-     * button's mean  color (apply to all variant of button)
-     * default {@link cssColors.button_bg_primary } when in darkMode
-     */
-    theme?: {
-      mainBgColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-      mainTextColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-      contentGap?: MayFn<CSSStyle['gap'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-      disableOpacity?: MayFn<CSSStyle['opacity'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-      cssProps?: MayFn<ICSS, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
-    }
-    /** a short cut for validator */
-    disabled?: boolean
-    /** must all condition passed */
-    validators?: MayArray<{
-      /** must return true to pass this validator */
-      should: MayFn<BooleanLike>
-      // used in "connect wallet" button, it's order is over props: disabled
-      forceActive?: boolean
-      /**  items are button's setting which will apply when corresponding validator has failed */
-      fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
-    }>
-    /** normally, it's an icon  */
-    prefix?: JSX.Element
-    /** normally, it's an icon  */
-    suffix?: JSX.Element
-  },
-  {
-    controller: ButtonController
+export type ButtonProps = {
+  /**
+   * @default 'solid'
+   */
+  variant?: 'solid' | 'outline' | 'text'
+  /**
+   * @default 'md'
+   */
+  size?: 'xs' | 'sm' | 'md' | 'lg'
+  /**
+   * !only for app's uikit <Button>
+   * button's mean  color (apply to all variant of button)
+   * default {@link cssColors.button_bg_primary } when in darkMode
+   */
+  theme?: {
+    mainBgColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+    mainTextColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+    contentGap?: MayFn<CSSStyle['gap'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+    disableOpacity?: MayFn<CSSStyle['opacity'], [props: Omit<ButtonProps, 'theme' | 'validators'>]>
+    cssProps?: MayFn<ICSS, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
   }
->
+  /** a short cut for validator */
+  disabled?: boolean
+  /** must all condition passed */
+  validators?: MayArray<{
+    /** must return true to pass this validator */
+    should: MayFn<BooleanLike>
+    // used in "connect wallet" button, it's order is over props: disabled
+    forceActive?: boolean
+    /**  items are button's setting which will apply when corresponding validator has failed */
+    fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
+  }>
+  /** normally, it's an icon  */
+  prefix?: JSX.Element
+  /** normally, it's an icon  */
+  suffix?: JSX.Element
+}
 
 /**
  * feat: build-in click ui effect
  */
-export function Button(rawProps: ButtonProps) {
+export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonController }>) {
   const innerController: ButtonController = {
     click: () => {
       ref()?.click()
@@ -77,10 +72,14 @@ export function Button(rawProps: ButtonProps) {
     }
   }
   /* ---------------------------------- props --------------------------------- */
-  const props = useKitProps(rawProps, {
-    defaultProps: mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button')),
+  const rawProps = useKitProps<ButtonProps>(kitProps, {
     controller: () => innerController
   })
+
+  const props = addDefaultProps(
+    rawProps,
+    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
+  )
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>

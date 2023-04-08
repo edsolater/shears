@@ -4,17 +4,15 @@ import { Piv } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { createToggle } from '../hooks/createToggle'
 
-type CollapseProps = KitProps<
-  {
-    open?: boolean
-    defaultOpen?: boolean
-    collapseDirection?: 'down' | 'up'
-    onOpen?(): void
-    onClose?(): void
-    onToggle?(): void
-  },
-  { htmlPropsTagName: 'details' }
->
+type CollapseProps = {
+  open?: boolean
+  defaultOpen?: boolean
+  collapseDirection?: 'down' | 'up'
+  onOpen?(): void
+  onClose?(): void
+  onToggle?(): void
+}
+
 type CollapseController = {
   readonly isOpen: boolean
   open(): void
@@ -25,8 +23,8 @@ type CollapseController = {
 
 const CollapseContext = createContext<CollapseController>({} as CollapseController, { name: 'CollapseController' })
 
-export function Collapse(rawProps: CollapseProps) {
-  const props = useKitProps(rawProps)
+export function Collapse(rawProps: KitProps<CollapseProps, { htmlPropsTagName: 'details' }>) {
+  const props = useKitProps(rawProps, { controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(props.open ?? props.defaultOpen ?? false, {
     onOff: props.onClose,
@@ -39,7 +37,7 @@ export function Collapse(rawProps: CollapseProps) {
     set(Boolean(props.open))
   })
 
-  const controller = {
+  const controller: CollapseController = {
     get isOpen() {
       return innerOpen()
     },
@@ -60,42 +58,36 @@ export function Collapse(rawProps: CollapseProps) {
   )
 }
 
-type CollapseFaceProps = KitProps<
-  {
-    children?: MayFn<JSXElement, [controller: CollapseController]>
-  },
-  {
-    htmlPropsTagName: 'summary'
-  }
->
+type CollapseFaceProps = {}
 
-export function CollapseFace(rawProps: CollapseFaceProps) {
-  const props = useKitProps(rawProps)
+export function CollapseFace(
+  rawProps: KitProps<
+    CollapseFaceProps,
+    {
+      controller: CollapseController
+      htmlPropsTagName: 'summary'
+    }
+  >
+) {
   const controller = useContext(CollapseContext)
+  const props = useKitProps<CollapseFaceProps>(rawProps, { controller: () => controller })
   return (
     <Piv<'summary'>
       as={(parsedPivProps) => <summary {...parsedPivProps} />}
       shadowProps={props}
       icss={{ listStyle: 'none' }}
     >
-      {shrinkFn(props.children, [controller])}
+      {props.children}
     </Piv>
   )
 }
 
-type CollapseContentProps = KitProps<{
-  children?: MayFn<JSXElement, [controller: CollapseController]>
-}>
+type CollapseContentProps = {}
 
-export function CollapseContent(rawProps: CollapseContentProps) {
-  const props = useKitProps(rawProps)
+export function CollapseContent(rawProps: KitProps<CollapseContentProps, { controller: CollapseController }>) {
   const controller = useContext(CollapseContext)
-  const isOpen = () => controller.isOpen
-  return (
-    <Piv shadowProps={props}>
-      {shrinkFn(props.children, [controller])}
-    </Piv>
-  )
+  const props = useKitProps<CollapseContentProps, CollapseController>(rawProps, { controller: () => controller })
+  return <Piv shadowProps={props}>{shrinkFn(props.children, [controller])}</Piv>
 }
 
 Collapse.Face = CollapseFace

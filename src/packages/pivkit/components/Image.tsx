@@ -1,6 +1,6 @@
 import { KitProps, Piv, useKitProps } from "../../piv"
 
-export type ImageProps = KitProps<{
+export type ImageProps = {
   /**
    *  also accept multi srcs
    */
@@ -10,14 +10,14 @@ export type ImageProps = KitProps<{
    *  for readability
    */
   alt?: string
-}>
+}
 
 /**
  * if for layout , don't render important content in Box
  * @todo add fallbackSrc
  */
-export function Image(rawProps: ImageProps) {
-  const props = useKitProps(rawProps)
+export function Image(rawProps: KitProps<ImageProps>) {
+  const props = useKitProps<ImageProps>(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>

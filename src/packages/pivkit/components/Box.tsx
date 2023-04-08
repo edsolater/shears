@@ -1,6 +1,6 @@
-import { KitProps, Piv, PivProps } from '../../../packages/piv'
+import { Piv, PivProps } from '../../../packages/piv'
 
-export type BoxProps = KitProps<{}>
+export type BoxProps = {}
 
 /**
  * if for layout , don't render important content in Box

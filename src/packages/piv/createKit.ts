@@ -17,7 +17,7 @@ import {
   sortPluginByPriority
 } from './propHandlers/plugin'
 import { CRef, PivProps } from './types/piv'
-import { ExtendsProps, ValidProps, ValidController } from './types/tools'
+import { ExtendsProps, ValidProps, ValidController, HTMLTag } from './types/tools'
 import { handleShadowProps } from './propHandlers/shadowProps'
 import {
   toProxifyController,
@@ -34,13 +34,16 @@ import { ButtonController } from '../pivkit'
  * - auto pick plugin prop if specified plugin
  */
 type KitPropsInstance<
-  AccessedProps extends ValidProps,
+  RawProps extends ValidProps,
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
-  TagName extends keyof HTMLElementTagNameMap
-> = AccessedProps &
-  Omit<PivProps<TagName, Controller>, keyof AccessedProps | 'plugin' | 'shadowProps'> &
-  Omit<GetPluginProps<Plugins>, keyof AccessedProps | 'plugin' | 'shadowProps'> &
+  TagName extends keyof HTMLElementTagNameMap,
+  NoNeedAccessifyChildren extends boolean
+> = (NoNeedAccessifyChildren extends true
+  ? Accessify<Omit<RawProps, 'children'>, Controller> & Pick<RawProps, 'children'>
+  : Accessify<RawProps, Controller>) &
+  Omit<PivProps<TagName, Controller>, keyof RawProps | 'plugin' | 'shadowProps'> &
+  Omit<GetPluginProps<Plugins>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<
     {
       /**
@@ -49,58 +52,60 @@ type KitPropsInstance<
        */
       id?: string
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: MayArray<Partial<AccessedProps>> // component must merged before `<Div>`
+      shadowProps?: MayArray<Partial<Accessify<RawProps, Controller>>> // component must merged before `<Div>`
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>
     },
-    keyof AccessedProps
+    keyof RawProps
   >
 
 /** just a shortcut of KitProps */
 export type KitProps<
-  P extends ValidProps,
+  RawProps extends ValidProps,
   O extends {
-    extendsProp?: ValidProps
     /** will auto-add props: */
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
+    // /** default is false */
+    noNeedAccessifyChildren?: boolean
   } = {}
 > = KitPropsInstance<
-  ExtendsProps<Accessify<P, NonNullable<O['controller']>>, NonNullable<O['extendsProp']>>,
+  RawProps,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
-  NonNullable<O['htmlPropsTagName']>
+  NonNullable<O['htmlPropsTagName']>,
+  NonNullable<O['noNeedAccessifyChildren']>
 >
 export type KitPropsOptions<
   KitProps extends ValidProps,
-  Controller extends ValidController = {},
-  DefaultProps extends Partial<KitProps> = {}
+  Controller extends ValidController = {}
+  // DefaultProps extends Partial<KitProps> = {}
 > = {
   name?: string
-  controller?: (props: ParsedKitProps<KitProps, Controller, DefaultProps>) => Controller
-  defaultProps?: DefaultProps
+  controller?: (
+    props: ParsedKitProps<KitProps>
+  ) => any /* use any to avoid this type check (type check means type infer) */
+  // defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
+  /** default is false */
+  noNeedAccessifyChildren?: boolean
 }
 
 /** return type of useKitProps */
-export type ParsedKitProps<
-  InputKitProps extends ValidProps,
-  Controller extends ValidController = {},
-  DefaultProps extends Partial<InputKitProps> = {}
-> = InputKitProps extends KitPropsInstance<infer P, any, any, any>
-  ? Omit<AddDefaultProperties<DeAccessify<Omit<P, keyof PivProps>>, DefaultProps>, 'plugin' | 'shadowProps'>
-  : false
+export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin' | 'shadowProps'>
 
-export function useKitProps<
-  KitProps extends ValidProps,
-  Controller extends ValidController = {},
-  DefaultProps extends Partial<KitProps> = {}
->(
-  props: KitProps,
-  options?: KitPropsOptions<KitProps, Controller, DefaultProps>
-): ParsedKitProps<KitProps, Controller, DefaultProps> {
+// /** to RawProps */
+// export type DeKitProps<Props extends ValidProps> = Props extends KitPropsInstance<infer RawProps, any, any, any, any>
+//   ? RawProps
+//   : Props
+
+export function useKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
+  // too difficult to type here
+  props: any,
+  options?: KitPropsOptions<RawProps, Controller>
+): ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
   // merge kit props
   const mergedGettersProps = pipe(
     props,
@@ -113,13 +118,13 @@ export function useKitProps<
     }, // defined-time
     (props) =>
       mergeProps(
-        ...flap(options?.defaultProps ?? {}),
         props,
-        hasProperty(options, 'name') ? { class: options!.name } : {}
+        hasProperty(options, 'name') ? { class: options!.name } : {},
+        hasProperty(props, 'id') ? { id: props.id } : {}
       ), // defined-time
     handleShadowProps, // outside-props-run-time
     handlePluginProps // outside-props-run-time
-  ) as ParsedKitProps<KitProps, Controller, DefaultProps>
+  ) as any /* too difficult to type */
 
   // load controller
   if (options?.controller) {

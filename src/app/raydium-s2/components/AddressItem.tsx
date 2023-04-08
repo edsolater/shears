@@ -5,32 +5,30 @@ import { KitProps, useKitProps } from '../../../packages/piv/createKit'
 import { PivProps } from '../../../packages/piv/types/piv'
 import { IconProps, RowItemProps } from '../../../packages/pivkit'
 import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
+import { addDefaultProps } from '../../../packages/piv'
 
-type AddressItemProps = KitProps<
-  {
-    publicKey: string
-    showDigitCount?: number | 'all'
-    addressType?: 'token' | 'account'
+type AddressItemProps = {
+  publicKey: string
+  showDigitCount?: number | 'all'
+  addressType?: 'token' | 'account'
 
-    canCopy?: boolean
-    showCopyIcon?: boolean
-    canExternalLink?: boolean
-    /** default sm */
-    iconSize?: IconProps['size']
-    iconSrc?:IconProps['src']
-    iconProps?: IconProps
-    iconRowProps?: PivProps
-    onCopied?(text: string): void // TODO: imply it
-  },
-  { extendsProp: RowItemProps }
->
-
+  canCopy?: boolean
+  showCopyIcon?: boolean
+  canExternalLink?: boolean
+  /** default sm */
+  iconSize?: 'xs' | 'sm' | 'smi' | 'md' | 'lg'
+  iconSrc?: IconProps['src']
+  iconProps?: IconProps
+  iconRowProps?: PivProps
+  onCopied?(text: string): void // TODO: imply it
+} & RowItemProps
 /**
  * base on {@link RowItem}
- * @todo it should be a props:plugin 
+ * @todo it should be a props:plugin
  */
-export function AddressItem(rawProps: AddressItemProps) {
-  const props = useKitProps(rawProps, { defaultProps: { iconSize: 'sm' } })
+export function AddressItem(kitProps: KitProps<AddressItemProps>) {
+  const rawProps = useKitProps<AddressItemProps>(kitProps)
+  const props = addDefaultProps(rawProps, { iconSize: 'sm' })
 
   const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })
 
@@ -47,7 +45,7 @@ export function AddressItem(rawProps: AddressItemProps) {
   }
 
   return null
-  
+
   // const externalSuffix = (
   //   <Piv icss={{ gap: 4, marginLeft: 12 }} shadowProps={props.iconRowProps}>
   //     {props.showCopyIcon ? (
@@ -71,7 +69,6 @@ export function AddressItem(rawProps: AddressItemProps) {
   //     ) : null}
   //   </Piv>
   // )
-  
 
   // return (
   //   <RowItem shadowProps={props} suffix={props.canCopy || props.canExternalLink ? externalSuffix : null}>

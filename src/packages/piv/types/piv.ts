@@ -8,7 +8,7 @@ import { ControlledChild, HTMLTag, LoadController, RawChild, ValidController } f
 import { IStyle } from '../propHandlers/istyle'
 import { HTMLProps } from '../propHandlers/htmlProps'
 
-export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> {
+export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = any> {
   /** @example
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */
@@ -49,7 +49,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   children?: RawChild | ControlledChild<Controller>
 
   /** special: every kit baseon <Piv> should support this prop */
-  shadowProps?: MayArray<PivShadowProps<PivProps<any>>>
+  shadowProps?: MayArray<any /* too difficult to type */>
 
   /** special: every kit baseon <Piv> should support this prop */
   plugin?: MayArray<Plugin<any>>

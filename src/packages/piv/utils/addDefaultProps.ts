@@ -3,8 +3,11 @@ import { ValidProps } from '../types/tools'
 import { mergeProps } from './mergeProps'
 
 /** use solidjs's mergeProps */
-export function addDefaultProps<T extends ValidProps>(props: T, ...defaultProps: Partial<T>[]) {
-  return solidjsMergeProps(...defaultProps, props)
+export function addDefaultProps<T extends ValidProps, const D>(
+  props: T,
+  defaultProps: D
+): Omit<T, keyof D> & Pick<Required<T>, keyof D & string> {
+  return solidjsMergeProps(defaultProps, props) as any
 }
 
 /** will consider icss/shadowPorps/class/etc. piv props */

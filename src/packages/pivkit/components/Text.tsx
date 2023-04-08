@@ -1,14 +1,14 @@
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 
-export type TextProps = KitProps<{
+export type TextProps = {
   inline?: boolean
-}>
+}
 
 /**
  * if for layout , don't render important content in Box
  */
-export function Text(rawProps: TextProps) {
-  const props = useKitProps(rawProps)
+export function Text(rawProps: KitProps<TextProps>) {
+  const props = useKitProps<TextProps>(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv
