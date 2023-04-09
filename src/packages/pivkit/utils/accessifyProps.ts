@@ -20,7 +20,8 @@ type FixFunctionParam<F, Controller extends ValidController> = F extends (...arg
  */
 export function useAccessifiedProps<P extends Record<string, any>, Controller extends ValidController = {}>(
   props: P,
-  controller?: Controller
+  controller?: Controller,
+  noNeedAccessifyProps?: string[]
 ): DeAccessify<P> {
   const accessifiedProps = Object.defineProperties(
     {},
@@ -28,15 +29,17 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
       acc[key] = {
         enumerable: true,
         get() {
-          if (key.startsWith('on') || key.endsWith('Fn')) {
-            const v = props[key]
+          const v = props[key]
+          if (noNeedAccessifyProps?.includes(key)) {
+            return v
+          } else if (key.startsWith('on') || key.endsWith('Fn')) {
             if (controller && isFunction(v)) {
               return fixFunctionParams(v, [controller])
             } else {
               return v
             }
           } else {
-            return shrinkFn(props[key], [controller])
+            return shrinkFn(v, [controller])
           }
         }
       }

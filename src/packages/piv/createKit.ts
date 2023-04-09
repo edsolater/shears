@@ -1,14 +1,12 @@
-import {
-  AddDefaultProperties,
-  AnyObj,
-  flap,
-  flapDeep,
-  hasProperty,
-  MayArray,
-  MayDeepArray,
-  pipe
-} from '@edsolater/fnkit'
+import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
 import { createEffect, mergeProps, onCleanup } from 'solid-js'
+import { Accessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
+import {
+  loadPropsControllerRef,
+  recordController,
+  toProxifyController,
+  unregisterController
+} from './propHandlers/controller'
 import {
   GetPluginProps,
   handlePluginProps,
@@ -16,22 +14,15 @@ import {
   Plugin,
   sortPluginByPriority
 } from './propHandlers/plugin'
-import { CRef, PivProps } from './types/piv'
-import { ExtendsProps, ValidProps, ValidController, HTMLTag } from './types/tools'
 import { handleShadowProps } from './propHandlers/shadowProps'
-import {
-  toProxifyController,
-  loadPropsControllerRef,
-  recordController,
-  unregisterController
-} from './propHandlers/controller'
-import { Accessify, DeAccessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
-import { ButtonController } from '../pivkit'
+import { CRef, PivProps } from './types/piv'
+import { HTMLTag, ValidController, ValidProps } from './types/tools'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
  * - auto add Div's props
  * - auto pick plugin prop if specified plugin
+ * @todo also promisify?
  */
 type KitPropsInstance<
   RawProps extends ValidProps,
@@ -106,9 +97,14 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
   props: any,
   options?: KitPropsOptions<RawProps, Controller>
 ): ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
+  const proxyController = options?.controller
+    ? toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
+    : {}
   // merge kit props
   const mergedGettersProps = pipe(
     props,
+    // FIXME !important should have deAccessify
+    (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
     (props) => {
       const pluginMergedProps = mergePluginReturnedProps({
         plugins: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
@@ -128,7 +124,6 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
 
   // load controller
   if (options?.controller) {
-    const proxyController = toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
     loadPropsControllerRef(mergedGettersProps, proxyController)
     // load id
     const id = props.id

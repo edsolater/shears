@@ -1,8 +1,7 @@
 import { AnyFn, hasProperty, shrinkFn, WeakerMap } from '@edsolater/fnkit'
-import { ValidController } from '../types/tools'
-import { KitProps } from '../createKit'
-import { createSignal } from 'solid-js'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
+import { KitProps } from '../createKit'
+import { ValidController } from '../types/tools'
 
 export function loadPropsControllerRef<Controller extends ValidController>(
   props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>,
@@ -47,13 +46,22 @@ export function unregisterController(id?: string) {
 
 /** hook */
 export function useComponentController<Controller extends ValidController>(id: string) {
-  //TODO: proxy object, not signal
-  const [controller, setController] = createSignal<Controller>()
+  let recordController: Controller | undefined = undefined
+  const controller = new Proxy(
+    {},
+    {
+      get(_target, prop) {
+        if (!recordController) {
+          throw new Error('controller not ready')
+        }
+        return Reflect.get(recordController, prop)
+      }
+    }
+  )
   recordedControllers.subscribe((records) => {
-    const recordController = records?.get(id) as Controller | undefined
-    setController(() => recordController)
+    recordController = records?.get(id) as Controller | undefined
   })
-  return controller
+  return controller as Controller
 }
 
 export function applyPivController<

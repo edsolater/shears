@@ -1,10 +1,11 @@
-import { MayFn, shrinkFn } from '@edsolater/fnkit'
-import { createContext, createEffect, JSXElement, useContext } from 'solid-js'
+import { shrinkFn } from '@edsolater/fnkit'
+import { createContext, createEffect, useContext } from 'solid-js'
 import { Piv } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { createToggle } from '../hooks/createToggle'
 
 type CollapseProps = {
+  /** TODO: open still can't auto lock the trigger not controled component now */
   open?: boolean
   defaultOpen?: boolean
   collapseDirection?: 'down' | 'up'
@@ -23,7 +24,9 @@ type CollapseController = {
 
 const CollapseContext = createContext<CollapseController>({} as CollapseController, { name: 'CollapseController' })
 
-export function Collapse(rawProps: KitProps<CollapseProps, { htmlPropsTagName: 'details' }>) {
+export function Collapse(
+  rawProps: KitProps<CollapseProps, { controller: CollapseController; htmlPropsTagName: 'details' }>
+) {
   const props = useKitProps(rawProps, { controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(props.open ?? props.defaultOpen ?? false, {

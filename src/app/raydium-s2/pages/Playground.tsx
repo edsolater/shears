@@ -62,9 +62,9 @@ function DrawerExample() {
   const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
     <>
-      <Button onClick={() => drawerController()?.toggle()}>
-        <Collapse open={drawerController()?.isOpen}>
-          <Collapse.Face>{drawerController()?.isOpen ? 'Close' : 'Open'}</Collapse.Face>
+      <Button onClick={() => drawerController.toggle?.()}>
+        <Collapse open>
+          <Collapse.Face>{(controller) => (controller.isOpen ? 'Close' : 'Open')}</Collapse.Face>
           <Collapse.Content>detail info</Collapse.Content>
         </Collapse>
       </Button>
@@ -79,7 +79,7 @@ function CSSTransitionExample() {
   const { transitionProps, refSetter } = useCSSTransition({
     show,
     onAfterEnter(controller) {
-      console.log('controller: ', {...controller})
+      console.log('controller: ', { ...controller })
     },
     onBeforeEnter(controller) {},
     fromProps: { icss: { width: '100px' } },
