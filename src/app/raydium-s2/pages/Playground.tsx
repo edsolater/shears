@@ -76,6 +76,7 @@ function DrawerExample() {
 function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
+  // TODO: invoke in  plugin 
   const { transitionProps, refSetter } = useCSSTransition({
     show,
     onAfterEnter(controller) {
