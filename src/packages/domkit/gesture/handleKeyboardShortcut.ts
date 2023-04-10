@@ -73,14 +73,14 @@ type KeyNamesNavigation =
   | 'ArrowLeft'
   | 'ArrowRight'
   | 'ArrowDown'
-export type KeyboardShortcut = {
+export type KeyboardShortcutSettings = {
   [key in `${`${AuxiliaryKeyName} + ` | ''}${ContentKeyName}`]?: () => void
 }
 export function handleKeyboardShortcut(
   el: HTMLElement,
-  keyboardShortcutSetting: KeyboardShortcut
+  keyboardShortcutSettings: KeyboardShortcutSettings
 ): EventListenerController {
-  const formatedKeyboardShortcutSetting = mapKey(keyboardShortcutSetting, (key) =>
+  const formatedKeyboardShortcutSetting = mapKey(keyboardShortcutSettings, (key) =>
     formatKeyboardSettingString(String(key))
   )
   addTabIndex(el) // keydown must have fousable element

@@ -3,6 +3,7 @@ import { Piv } from '../../../packages/piv'
 import { Collapse, createRef, List, useElementSize } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
+import { useKeyboardShortcut } from '../../../packages/pivkit/features/useKeyboardShortcut'
 
 export function PairsPanel() {
   const dataStore = useDataStore()
