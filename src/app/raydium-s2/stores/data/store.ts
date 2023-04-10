@@ -11,6 +11,7 @@ import { TokenPriceStore } from './types/tokenPrice'
 
 export type DataStore = FarmStore & PairsStore & TokenListStore & TokenPriceStore
 const defaultStore = createStoreDefault<DataStore>(() => ({}))
+// this format is old , please use atom format
 export const [useDataStore] = createGlobalStore<DataStore>(defaultStore, {
   onFirstAccess: [onAccessFarmJsonInfos, onAccessFarmSYNInfos, onAccessPairsInfos, onAccessTokens, onAccessTokensPrice]
 })
