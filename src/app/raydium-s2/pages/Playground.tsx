@@ -8,7 +8,7 @@ import { useLoopPercent } from '../hooks/useLoopPercent'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { useComponentController } from '../../../packages/piv/propHandlers/controller'
 import { createEffect, createMemo, createSignal } from 'solid-js'
-import { useCSSTransition } from '../../../packages/pivkit/hooks/features/useCSSTransition'
+import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 
 export function PlaygroundPage() {
   return (
