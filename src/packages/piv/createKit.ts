@@ -105,6 +105,8 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
     props,
     // FIXME !important should have deAccessify
     (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
+    // inject controller
+    (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
     (props) => {
       const pluginMergedProps = mergePluginReturnedProps({
         plugins: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
