@@ -23,6 +23,7 @@ export class Subscribable<T> {
   /** for easier debug a data graph */
   extendedSubscribables: WeakSet<WeakRef<Subscribable<any>>> = new WeakSet()
 
+  /** executor is just a function to be invoked (inspired from `new Promise(executor)`) */
   constructor(executor?: (injectValue: (value: T | PromiseLike<T>) => void) => void) {
     executor?.(this.innerInject.bind(this))
   }
