@@ -11,7 +11,7 @@ const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = mak
  * just a wrapper for {@link handleKeyboardShortcut}
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}
  */
-export function useKeyboardShortcut(settings: KeyboardShortcutSettings) {
+function useKeyboardShortcut(settings: KeyboardShortcutSettings) {
   const [ref, setRef] = createRef()
   // register keyboard shortcut
   createEffect(() => {
@@ -31,7 +31,7 @@ export function useKeyboardShortcut(settings: KeyboardShortcutSettings) {
  * just a wrapper for {@link handleKeyboardShortcut}
  * if you want regist shortcut within a specific component, please use {@link useKeyboardShortcut}
  */
-export function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
+function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
   // register keyboard shortcut
   createEffect(() => {
     const el = globalThis.document.documentElement
@@ -44,12 +44,19 @@ export function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
   })
 }
 
+export function useKeyboardShortcutRegisterers() {
+  return {
+    registGlobalKeyboardShortcut: useKeyboardGlobalShortcut,
+    registLocalKeyboardShortcut: useKeyboardShortcut,
+    getAllRegisteredKeyboardShortcuts: useAllRegisteredKeyboardShortcuts
+  }
+}
+
 /**
  * to get registered keyboard shortcut
  * usually, this hook is for show infos
  */
-//TODO: test it!!!
-export function useAllRegisteredKeyboardShortcuts() {
+function useAllRegisteredKeyboardShortcuts() {
   const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerMap())
   return keyboardShortcutSettingsSignal
 }
