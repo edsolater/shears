@@ -85,14 +85,14 @@ export function makeSubscriable<T extends AnyObj>(
       : Object.keys(originalObject)
   const subscribable = new Subscribable<T>()
   const proxiedValue = new Proxy(originalObject, {
-    get(target, prop, receiver) {
-      const v = Reflect.get(target, prop, receiver) as unknown
+    get(target, prop) {
+      const v = Reflect.get(target, prop) as unknown
       if (isFunction(v) && isString(prop) && mayCauseChangeKeys.includes(prop)) {
-        return (...args: Parameters<typeof v>) => {
-          const result = v(...args)
+        return ((...args: Parameters<typeof v>) => {
+          const result = Reflect.apply(v, target, args)
           subscribable.inject(target)
           return result
-        }
+        }).bind(target)
       } else {
         return v
       }

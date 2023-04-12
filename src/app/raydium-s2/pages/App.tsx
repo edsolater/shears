@@ -7,7 +7,7 @@ import {
   useKeyboardShortcut
 } from '../../../packages/pivkit/features/useKeyboardShortcut'
 import { createEffect } from 'solid-js'
-import { map } from '@edsolater/fnkit'
+import { WeakerMap, map } from '@edsolater/fnkit'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 
 export function App() {
@@ -23,11 +23,14 @@ export function App() {
   // TODO: not readable
   // should useKeyboardShortcut return localRegisterer and globalRegisterer and allRegistedKeybordShorts
   useKeyboardGlobalShortcut(
-    map(globalPageShortcuts, ({ to }) => () => {
-      console.log('to: ', to)
-      return navigate(to)
-    })
+    map(
+      globalPageShortcuts,
+      ({ to }) =>
+        () =>
+          navigate(to)
+    )
   )
 
+  // sdf.forEach((i) => console.log('i: ', i))
   return <Routes />
 }
