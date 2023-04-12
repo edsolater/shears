@@ -1,11 +1,11 @@
+import { AnyObj, WeakerMap, WeakerSet, isFunction, isString } from '@edsolater/fnkit'
 import { Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
 import { KeyboardShortcutSettings, handleKeyboardShortcut } from '../../domkit/gesture/handleKeyboardShortcut'
-import { createRef } from '../hooks/createRef'
-import { AnyObj, WeakerMap, WeakerSet, isFunction, isObjectLiteral, isString } from '@edsolater/fnkit'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
+import { createRef } from '../hooks/createRef'
 
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
-  new WeakerMap<HTMLElement, { type: 'specific' | 'global'; settings: KeyboardShortcutSettings }>()
+  new WeakerMap<HTMLElement, { bindLevel: 'specific' | 'global'; settings: KeyboardShortcutSettings }>()
 )
 /**
  * just a wrapper for {@link handleKeyboardShortcut}
@@ -18,7 +18,7 @@ export function useKeyboardShortcut(settings: KeyboardShortcutSettings) {
     const el = ref()
     if (!el) return
     const { abort } = handleKeyboardShortcut(el, settings)
-    registeredKeyboardShortcut.set(el, { type: 'specific', settings })
+    registeredKeyboardShortcut.set(el, { bindLevel: 'specific', settings })
     onCleanup(() => {
       abort()
       registeredKeyboardShortcut.delete(el)
@@ -36,7 +36,7 @@ export function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
   createEffect(() => {
     const el = globalThis.document.documentElement
     const { abort } = handleKeyboardShortcut(el, settings)
-    registeredKeyboardShortcut.set(el, { type: 'global', settings })
+    registeredKeyboardShortcut.set(el, { bindLevel: 'global', settings })
     onCleanup(() => {
       abort()
       registeredKeyboardShortcut.delete(el)
@@ -49,7 +49,7 @@ export function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
  * usually, this hook is for show infos
  */
 //TODO: test it!!!
-export function useRegisteredKeyboardShortcuts() {
+export function useAllRegisteredKeyboardShortcuts() {
   const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerMap())
   return keyboardShortcutSettingsSignal
 }
@@ -85,8 +85,8 @@ export function makeSubscriable<T extends AnyObj>(
       : Object.keys(originalObject)
   const subscribable = new Subscribable<T>()
   const proxiedValue = new Proxy(originalObject, {
-    get(target, prop) {
-      const v = Reflect.get(target, prop) as unknown
+    get(target, prop, receiver) {
+      const v = Reflect.get(target, prop, receiver) as unknown
       if (isFunction(v) && isString(prop) && mayCauseChangeKeys.includes(prop)) {
         return (...args: Parameters<typeof v>) => {
           const result = v(...args)

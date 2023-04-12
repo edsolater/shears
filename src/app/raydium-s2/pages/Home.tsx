@@ -3,7 +3,7 @@ import { Box } from '../../../packages/pivkit'
 import { useWalletStore } from '../stores/wallet/store'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'
-import { routePath } from './routes'
+import { routePath } from '../configs/routes'
 import { useDataStore } from '../stores/data/store'
 import { createEffect } from 'solid-js'
 

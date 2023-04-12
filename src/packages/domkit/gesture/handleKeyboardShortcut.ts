@@ -73,8 +73,9 @@ type KeyNamesNavigation =
   | 'ArrowLeft'
   | 'ArrowRight'
   | 'ArrowDown'
+export type KeybordShortcutValidKeys = `${`${AuxiliaryKeyName} + ` | ''}${ContentKeyName}`
 export type KeyboardShortcutSettings = {
-  [key in `${`${AuxiliaryKeyName} + ` | ''}${ContentKeyName}`]?: () => void
+  [key in KeybordShortcutValidKeys]?: () => void
 }
 export function handleKeyboardShortcut(
   el: HTMLElement,
