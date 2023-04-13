@@ -89,11 +89,12 @@ export function handleKeyboardShortcut(
     el,
     'keydown',
     ({ ev }) => {
+      ev.stopPropagation()
+      ev.preventDefault()
       const pressedKey = parseKeyboardEventToGetKeyString(ev)
       const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
       targetShortcut?.()
-    },
-    { capture: true }
+    }
   )
 }
 /** this still not prevent **all** brower shortcut (like build-in ctrl T ) */

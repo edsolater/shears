@@ -44,11 +44,12 @@ function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
   })
 }
 
+/** a hook factory */
 export function useKeyboardShortcutRegisterers() {
   return {
-    registGlobalKeyboardShortcut: useKeyboardGlobalShortcut,
-    registLocalKeyboardShortcut: useKeyboardShortcut,
-    getAllRegisteredKeyboardShortcuts: useAllRegisteredKeyboardShortcuts
+    registerGlobal: useKeyboardGlobalShortcut,
+    registerLocal: useKeyboardShortcut,
+    getAllRegistereds: useAllRegisteredKeyboardShortcuts
   }
 }
 

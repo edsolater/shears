@@ -4,13 +4,15 @@ import { useKeyboardShortcutRegisterers } from '../../../packages/pivkit/feature
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../configs/routes'
 import '../styles/index.css'
+import { Piv } from '../../../packages/piv'
+import { createEffect } from 'solid-js'
 
 export function App() {
   const Routes = useRoutes(routes)
   const navigate = useNavigate()
-  const { registGlobalKeyboardShortcut } = useKeyboardShortcutRegisterers()
+  const keyboardShortcutRegisterers = useKeyboardShortcutRegisterers()
 
-  registGlobalKeyboardShortcut(
+  keyboardShortcutRegisterers.registerGlobal(
     map(
       globalPageShortcuts,
       ({ to }) =>
@@ -19,6 +21,12 @@ export function App() {
     )
   )
 
-  // sdf.forEach((i) => console.log('i: ', i))
-  return <Routes />
+  const allShortcuts = keyboardShortcutRegisterers.getAllRegistereds()
+
+  createEffect(() => allShortcuts().forEach((shortcut) => console.log('shortcut: ', shortcut)))
+  return (
+    <Piv>
+      <Routes />
+    </Piv>
+  )
 }
