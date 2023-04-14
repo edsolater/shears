@@ -1,5 +1,5 @@
 import { AnyObj, WeakerMap, WeakerSet, isFunction, isString } from '@edsolater/fnkit'
-import { Accessor, createEffect, createSignal, onCleanup } from 'solid-js'
+import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { KeyboardShortcutSettings, handleKeyboardShortcut } from '../../domkit/gesture/handleKeyboardShortcut'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { createRef } from '../hooks/createRef'
@@ -45,12 +45,17 @@ function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
 }
 
 /** a hook factory */
-export function useKeyboardShortcutRegisterers() {
-  return {
-    registerGlobal: useKeyboardGlobalShortcut,
-    registerLocal: useKeyboardShortcut,
-    getAllRegistereds: useAllRegisteredKeyboardShortcuts
-  }
+export const keyboardShortcutUtils = {
+  registerGlobal: useKeyboardGlobalShortcut,
+  registerLocal: useKeyboardShortcut,
+  getAllRegistereds: useAllRegisteredKeyboardShortcuts,
+  // getAllGlobalShortcuts: () => {
+  //   const allShortcuts = useAllRegisteredKeyboardShortcuts()
+
+  //   return createMemo(() => {
+  //     [allShortcuts()]
+  //   })
+  // }
 }
 
 /**

@@ -73,9 +73,11 @@ type KeyNamesNavigation =
   | 'ArrowLeft'
   | 'ArrowRight'
   | 'ArrowDown'
-export type KeybordShortcutValidKeys = `${`${AuxiliaryKeyName} + ` | ''}${ContentKeyName}`
+export type KeybordShortcutKeys = `${`${AuxiliaryKeyName} + ` | ''}${ContentKeyName}`
+export type KeyboardShortcutFn = () => void
+
 export type KeyboardShortcutSettings = {
-  [key in KeybordShortcutValidKeys]?: () => void
+  [key in KeybordShortcutKeys]?: KeyboardShortcutFn
 }
 export function handleKeyboardShortcut(
   el: HTMLElement,
@@ -85,17 +87,13 @@ export function handleKeyboardShortcut(
     formatKeyboardSettingString(String(key))
   )
   addTabIndex(el) // keydown must have fousable element
-  return addEventListener(
-    el,
-    'keydown',
-    ({ ev }) => {
-      ev.stopPropagation()
-      ev.preventDefault()
-      const pressedKey = parseKeyboardEventToGetKeyString(ev)
-      const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
-      targetShortcut?.()
-    }
-  )
+  return addEventListener(el, 'keydown', ({ ev }) => {
+    ev.stopPropagation()
+    ev.preventDefault()
+    const pressedKey = parseKeyboardEventToGetKeyString(ev)
+    const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
+    targetShortcut?.()
+  })
 }
 /** this still not prevent **all** brower shortcut (like build-in ctrl T ) */
 export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
