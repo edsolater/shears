@@ -41,7 +41,7 @@ function KeyboardShortcutPanel() {
       .flatMap((setting) => Object.entries(setting).map(([key, shortcutFn]) => ({ key, shortcutFn })))
   )
   return (
-    <Piv icss={{ position: 'fixed', bottom: 0, right: 0 }}>
+    <Piv icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding:'4px' }}>
       <List items={globalShortcuts}>{(settings) => <Piv>{settings.key}</Piv>}</List>
     </Piv>
   )
