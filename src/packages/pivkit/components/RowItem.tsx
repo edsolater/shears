@@ -1,5 +1,5 @@
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
-import { JSXElement } from 'solid-js'
+import { JSXElement, createEffect } from 'solid-js'
 
 export type RowItemProps = {
   suffix?: JSXElement
@@ -12,10 +12,12 @@ export type RowItemProps = {
 export function RowItem(rawProps: KitProps<RowItemProps>) {
   const props = useKitProps<RowItemProps>(rawProps)
   /* ---------------------------------- props --------------------------------- */
+  createEffect(() => console.log('props.children: ', rawProps.children))
   return (
     <Piv shadowProps={props} icss={{ display: 'flex', alignItems: 'center' }}>
       {props.prefix}
-      <Piv icss={{ flex: 1 }}>{props.children}</Piv>
+      {/* TODO: porps.children should be normal  */}
+      <>{props.children}</>
       {props.suffix}
     </Piv>
   )

@@ -1,12 +1,11 @@
 import { MayArray } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
 import { ClassName } from '../propHandlers/classname'
-import { ICSS } from '../propHandlers/icss'
-import { Plugin } from '../propHandlers/plugin'
-import { PivShadowProps } from '../propHandlers/shadowProps'
-import { ControlledChild, HTMLTag, LoadController, RawChild, ValidController } from './tools'
-import { IStyle } from '../propHandlers/istyle'
 import { HTMLProps } from '../propHandlers/htmlProps'
+import { ICSS } from '../propHandlers/icss'
+import { IStyle } from '../propHandlers/istyle'
+import { Plugin } from '../propHandlers/plugin'
+import { ControlledChild, HTMLTag, RawChild, ValidController } from './tools'
 
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = any> {
   /** @example
@@ -48,8 +47,11 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
 
   children?: RawChild | ControlledChild<Controller>
 
-  /** special: every kit baseon <Piv> should support this prop */
+  /** high priority */
   shadowProps?: MayArray<any /* too difficult to type */>
+
+  // /** low priority */
+  // outsideProps?: MayArray<any /* too difficult to type */>
 
   /** special: every kit baseon <Piv> should support this prop */
   plugin?: MayArray<Plugin<any>>

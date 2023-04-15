@@ -5,7 +5,7 @@ import type {
   KeybordShortcutKeys
 } from '../../../packages/domkit/gesture/handleKeyboardShortcut'
 import { Piv } from '../../../packages/piv'
-import { List, Text } from '../../../packages/pivkit'
+import { Box, List, RowItem, Text } from '../../../packages/pivkit'
 import {
   useAllRegisteredGlobalShortcuts,
   useKeyboardGlobalShortcut
@@ -38,15 +38,15 @@ function KeyboardShortcutPanel() {
   const globalShortcuts = useAllRegisteredGlobalShortcuts()
   createEffect(() => console.log('globalShortcuts(): ', globalShortcuts()))
   return (
-    <Piv icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding: '4px' }}>
+    <Box icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding: '4px' }}>
       <List items={globalShortcuts}>
         {(rule) => (
-          <Piv icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
+          <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
             <Text icss={cssColors.labelColor}>{rule.description}</Text>
             <Text>{rule.key}</Text>
-          </Piv>
+          </Box>
         )}
       </List>
-    </Piv>
+    </Box>
   )
 }

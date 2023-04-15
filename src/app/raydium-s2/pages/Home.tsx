@@ -1,16 +1,14 @@
 import { Piv } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
-import { useWalletStore } from '../stores/wallet/store'
 import { Link } from '../components/Link'
 import { NavBar } from '../components/NavBar'
 import { routePath } from '../configs/routes'
 import { useDataStore } from '../stores/data/store'
-import { createEffect } from 'solid-js'
+import { useWalletStore } from '../stores/wallet/store'
 
 export function Home() {
   const dataStore = useDataStore()
   const walletStore = useWalletStore()
-  createEffect(() => console.log('dataStore.allTokens', dataStore.allTokens))
   return (
     <div>
       <NavBar title='Home' />

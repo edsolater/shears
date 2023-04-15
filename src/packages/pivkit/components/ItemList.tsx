@@ -2,6 +2,7 @@ import { createEffect, createMemo, For, JSXElement } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../piv'
 import { createRef } from '../hooks/createRef'
 import { useElementSize } from '../hooks/useElementSize'
+import { omit } from '@edsolater/fnkit'
 
 export type ListProps<T> = {
   items?: Iterable<T> | undefined
@@ -18,11 +19,12 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
+  createEffect(() => console.log('props: ', props.children))
 
   /* ---------------------------------- props --------------------------------- */
   return (
-    <Piv ref={setRef} shadowProps={props}>
-      <For each={[...(props.items ?? [])]}>{(item, idx) => props.children(item, idx)}</For>
+    <Piv ref={setRef} shadowProps={omit(props, ['children'])}>
+      <For each={[...(props.items ?? [])]}>{(item, idx) => (console.log('item', item), props.children(item, idx))}</For>
     </Piv>
   )
 }
