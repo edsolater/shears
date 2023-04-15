@@ -1,27 +1,27 @@
 import { AnyObj, WeakerMap, WeakerSet, isFunction, isString } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { KeyboardShortcutSettings, handleKeyboardShortcut } from '../../domkit/gesture/handleKeyboardShortcut'
+import { KeyboardShortcutSetting, handleKeyboardShortcut } from '../../domkit/gesture/handleKeyboardShortcut'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { createRef } from '../hooks/createRef'
 
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
-  new WeakerMap<HTMLElement, { bindLevel: 'specific' | 'global'; settings: KeyboardShortcutSettings }>()
+  new WeakerSet<KeyboardShortcutSetting>()
 )
 /**
  * just a wrapper for {@link handleKeyboardShortcut}
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}
  */
-function useKeyboardShortcut(settings: KeyboardShortcutSettings) {
+export function useKeyboardShortcut(settings: KeyboardShortcutSetting[]) {
   const [ref, setRef] = createRef()
   // register keyboard shortcut
   createEffect(() => {
     const el = ref()
     if (!el) return
-    const { abort } = handleKeyboardShortcut(el, settings)
-    registeredKeyboardShortcut.set(el, { bindLevel: 'specific', settings })
+    const { abort } = handleKeyboardShortcut(settings)
+    settings.forEach((setting) => registeredKeyboardShortcut.add(setting))
     onCleanup(() => {
       abort()
-      registeredKeyboardShortcut.delete(el)
+      settings.forEach((setting) => registeredKeyboardShortcut.delete(setting))
     })
   })
   return { setRef }
@@ -31,40 +31,34 @@ function useKeyboardShortcut(settings: KeyboardShortcutSettings) {
  * just a wrapper for {@link handleKeyboardShortcut}
  * if you want regist shortcut within a specific component, please use {@link useKeyboardShortcut}
  */
-function useKeyboardGlobalShortcut(settings: KeyboardShortcutSettings) {
+export function useKeyboardGlobalShortcut(originalSettings: KeyboardShortcutSetting[]) {
+  const settings = originalSettings.map((s) => ({ ...s, el: window.document.documentElement }))
   // register keyboard shortcut
   createEffect(() => {
-    const el = globalThis.document.documentElement
-    const { abort } = handleKeyboardShortcut(el, settings)
-    registeredKeyboardShortcut.set(el, { bindLevel: 'global', settings })
+    const { abort } = handleKeyboardShortcut(settings)
+    settings.forEach((setting) => registeredKeyboardShortcut.add(setting))
     onCleanup(() => {
       abort()
-      registeredKeyboardShortcut.delete(el)
+      settings.forEach((setting) => registeredKeyboardShortcut.delete(setting))
     })
   })
-}
-
-/** a hook factory */
-export const keyboardShortcutUtils = {
-  registerGlobal: useKeyboardGlobalShortcut,
-  registerLocal: useKeyboardShortcut,
-  getAllRegistereds: useAllRegisteredKeyboardShortcuts,
-  // getAllGlobalShortcuts: () => {
-  //   const allShortcuts = useAllRegisteredKeyboardShortcuts()
-
-  //   return createMemo(() => {
-  //     [allShortcuts()]
-  //   })
-  // }
 }
 
 /**
  * to get registered keyboard shortcut
  * usually, this hook is for show infos
  */
-function useAllRegisteredKeyboardShortcuts() {
-  const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerMap())
+export function useAllRegisteredKeyboardShortcuts() {
+  const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerSet())
   return keyboardShortcutSettingsSignal
+}
+
+export function useAllRegisteredGlobalShortcuts() {
+  const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerSet())
+  return createMemo(() => {
+    const keyboardShortcutSettings = keyboardShortcutSettingsSignal()
+    return [...keyboardShortcutSettings.values()].filter((s) => s.el === window.document.documentElement)
+  })
 }
 
 // TODO: move to pivkit/hooks

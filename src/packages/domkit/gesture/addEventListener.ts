@@ -6,6 +6,10 @@ export interface EventListenerController {
   eventId: number
   abort(): void
 }
+export interface ComposedEventListenerControllers {
+  eventId: EventListenerController['eventId'][]
+  abort: EventListenerController['abort']
+}
 
 export interface EventListenerOptions extends AddEventListenerOptions {
   stopPropergation?: boolean
@@ -46,6 +50,17 @@ export function addEventListener<
   el?.addEventListener(eventName as unknown as string, newEventCallback, defaultedOptions)
   eventIdMap.set(targetEventId, { el, eventName: eventName as unknown as string, cb: newEventCallback })
   return controller
+}
+
+export function composeMultiListenerControllers(
+  eventListenerControllers: EventListenerController[]
+): ComposedEventListenerControllers {
+  return {
+    eventId: eventListenerControllers.map((c) => c.eventId),
+    abort() {
+      eventListenerControllers.forEach((c) => c.abort())
+    }
+  }
 }
 
 function abortEvent(id: number | undefined | null, options?: EventListenerOptions) {

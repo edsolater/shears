@@ -1,4 +1,9 @@
-import { addEventListener, EventListenerController } from './addEventListener'
+import {
+  addEventListener,
+  EventListenerController,
+  ComposedEventListenerControllers,
+  composeMultiListenerControllers
+} from './addEventListener'
 import { mapKey, shakeFalsy, toLowerCase, unifyItem } from '@edsolater/fnkit'
 import { addTabIndex } from './addTabIndex'
 
@@ -76,25 +81,33 @@ type KeyNamesNavigation =
 export type KeybordShortcutKeys = `${`${AuxiliaryKeyName} + ` | ''}${ContentKeyName}`
 export type KeyboardShortcutFn = () => void
 
-export type KeyboardShortcutSettings = {
-  [key in KeybordShortcutKeys]?: KeyboardShortcutFn
+// TODO: not imply yet
+export type KeyboardShortcutSetting = {
+  key: KeybordShortcutKeys
+  el?: HTMLElement // is documentElement if not specified
+  description?: string
+  when?: unknown // not ready yet
+  fn: KeyboardShortcutFn
 }
+
 export function handleKeyboardShortcut(
-  el: HTMLElement,
-  keyboardShortcutSettings: KeyboardShortcutSettings
-): EventListenerController {
-  const formatedKeyboardShortcutSetting = mapKey(keyboardShortcutSettings, (key) =>
-    formatKeyboardSettingString(String(key))
-  )
-  addTabIndex(el) // keydown must have fousable element
-  return addEventListener(el, 'keydown', ({ ev }) => {
-    ev.stopPropagation()
-    ev.preventDefault()
-    const pressedKey = parseKeyboardEventToGetKeyString(ev)
-    const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
-    targetShortcut?.()
-  })
+  keyboardShortcutSettings: KeyboardShortcutSetting[]
+): ComposedEventListenerControllers {
+  const controllers: EventListenerController[] = []
+  for (const setting of keyboardShortcutSettings) {
+    const { key, el = document.documentElement, fn } = setting
+    const formattedKey = formatKeyboardSettingString(key)
+    const eventController = addEventListener(el, 'keydown', ({ ev }) => {
+      const pressedKey = parseKeyboardEventToReadableKeyString(ev)
+      if (pressedKey === formattedKey) {
+        fn()
+      }
+    })
+    controllers.push(eventController)
+  }
+  return composeMultiListenerControllers(controllers)
 }
+
 /** this still not prevent **all** brower shortcut (like build-in ctrl T ) */
 export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
   pureEl.addEventListener(
@@ -106,7 +119,7 @@ export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
     { capture: true }
   )
 }
-function parseKeyboardEventToGetKeyString(ev: KeyboardEvent) {
+function parseKeyboardEventToReadableKeyString(ev: KeyboardEvent) {
   const keyArray = [ev.ctrlKey && 'ctrl', ev.shiftKey && 'shift', ev.altKey && 'alt', ev.metaKey && 'meta', ev.key]
   return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).sort().join(' + ')
 }
