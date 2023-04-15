@@ -17,7 +17,7 @@ export function useKeyboardShortcut(settings: KeyboardShortcutSetting[]) {
   createEffect(() => {
     const el = ref()
     if (!el) return
-    const { abort } = handleKeyboardShortcut(settings)
+    const { abort } = handleKeyboardShortcut(...settings)
     settings.forEach((setting) => registeredKeyboardShortcut.add(setting))
     onCleanup(() => {
       abort()
@@ -35,7 +35,7 @@ export function useKeyboardGlobalShortcut(originalSettings: KeyboardShortcutSett
   const settings = originalSettings.map((s) => ({ ...s, el: window.document.documentElement }))
   // register keyboard shortcut
   createEffect(() => {
-    const { abort } = handleKeyboardShortcut(settings)
+    const { abort } = handleKeyboardShortcut(...settings)
     settings.forEach((setting) => registeredKeyboardShortcut.add(setting))
     onCleanup(() => {
       abort()

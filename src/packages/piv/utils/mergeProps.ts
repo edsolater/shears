@@ -30,7 +30,8 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
     ['shadowProps', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['plugin', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
     ['dangerousRenderWrapperNode', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['controller', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)]
+    ['controller', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
+    ['children', (v1, v2) => v1 ?? v2] //NOTE: special , nearist is first
   ])
   // @ts-ignore
   return mergedResult

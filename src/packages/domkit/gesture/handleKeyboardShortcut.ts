@@ -91,7 +91,7 @@ export type KeyboardShortcutSetting = {
 }
 
 export function handleKeyboardShortcut(
-  keyboardShortcutSettings: KeyboardShortcutSetting[]
+  ...keyboardShortcutSettings: KeyboardShortcutSetting[]
 ): ComposedEventListenerControllers {
   const controllers: EventListenerController[] = []
   for (const setting of keyboardShortcutSettings) {

@@ -21,7 +21,7 @@ export function App() {
 
   const settings: KeyboardShortcutSetting[] = Object.entries(globalPageShortcuts).map(([key, { to }]) => ({
     fn: () => navigate(to),
-    description: `navigate to ${to}`,
+    description: `go to ${to}`,
     key: key as KeybordShortcutKeys
   }))
   useKeyboardGlobalShortcut(settings)

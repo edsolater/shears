@@ -5,7 +5,6 @@ import { createPlugin } from '../../../../piv/propHandlers/plugin'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 
-
 export const drawerKeyboardShortcut = createPlugin<DrawerProps>(() => {
   const [divRef, setDivRef] = createRef<HTMLDivElement>()
   const [drawerController, setControllerRef] = createControllerRef<DrawerController>()
@@ -13,9 +12,7 @@ export const drawerKeyboardShortcut = createPlugin<DrawerProps>(() => {
     const el = divRef()
     if (!el) return
     keyboardFocusElement(el)
-    const subscription = handleKeyboardShortcut(el, {
-      'Escape': () => drawerController()?.close()
-    })
+    const subscription = handleKeyboardShortcut({ el, key: 'Escape', fn: () => drawerController()?.close })
     return subscription.abort
   }, [])
   return { ref: setDivRef, controllerRef: setControllerRef, open: true }
