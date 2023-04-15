@@ -21,6 +21,7 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
   createEffect(() => console.log('props: ', props.children))
 
+  // TODO: FIXME
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv ref={setRef} shadowProps={omit(props, ['children'])}>
