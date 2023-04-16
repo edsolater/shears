@@ -20,6 +20,7 @@ export function PlaygroundPage() {
 }
 
 function PlaygoundList() {
+  console.log('6: ', 6)
   const dataStore = useDataStore()
   return (
     <Box
@@ -59,6 +60,7 @@ function CircularProgressExample() {
  *
  */
 function DrawerExample() {
+  console.log('5: ', 5)
   const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
     <>

@@ -1,4 +1,4 @@
-import { createSignal, Show } from 'solid-js'
+import { createEffect, createSignal, Show } from 'solid-js'
 import { addDefaultProps, KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { drawerKeyboardShortcut } from './plugins/drawerKeyboardShortcut'
@@ -48,10 +48,16 @@ export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerContr
   const [drawerRef, setDrawerRef] = createRef<HTMLDivElement>()
   const [isOpen, setIsOpen] = createSignal(props.open)
   const open = () => setIsOpen(true)
-  const close = () => setIsOpen(false)
-
+  const close = () => {
+    console.log(`close drawer`)
+    return setIsOpen(false)
+  }
+  createEffect(() => {
+    console.log('isOpen: ', isOpen())
+  })
+  console.log('4: ', 4)
   return (
-    <PopPortal>
+    <PopPortal id="pop-stack">
       <Show when={isOpen()}>
         <Piv
           ref={setDrawerRef}
