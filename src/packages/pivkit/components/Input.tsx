@@ -1,12 +1,13 @@
-import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import { createEffect, createMemo, createSignal } from 'solid-js'
 import { KitProps, ParsedKitProps, Piv, PivProps, useKitProps } from '../../piv'
-import { createToggle } from '../hooks/createToggle'
 import { createRef } from '../hooks/createRef'
+import { createToggle } from '../hooks/createToggle'
 
 export type InputProps = {
   /**
    * will not apply default icss: `min-width: 10em`
    * input will auto widen depends on content Text
+   * @todo
    */
   isFluid?: boolean
 
@@ -51,10 +52,12 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
   // if user is inputing or just input, no need to update upon out-side value
   const [isOutsideValueLocked, { on: lockOutsideValue, off: unlockOutsideValue }] = createToggle()
   const [innerValue, setInnerValue] = createSignal(props.defaultValue ?? props.value)
+
   createEffect(() => {
     const value = props.value
     value && setInnerValue(value)
   })
+
   const additionalProps = createMemo(
     () =>
       ({
@@ -63,8 +66,8 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
           value: isOutsideValueLocked() ? innerValue() ?? props.value ?? '' : props.value ?? innerValue() ?? '',
           onInput: (e: Event) => {
             const text = (e.target as HTMLInputElement).value
-            console.log('text: ', text)
             setInnerValue(text)
+            props.onUserInput?.({ text })
           }
         }
       } as PivProps<'input'>)
