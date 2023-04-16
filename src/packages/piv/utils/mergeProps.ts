@@ -1,4 +1,4 @@
-import { AnyObj, flap, parallelSwitch, shakeNil, unifyItem } from '@edsolater/fnkit'
+import { AnyObj, flap, mergeFunction, parallelSwitch, shakeNil, unifyItem } from '@edsolater/fnkit'
 import { ValidProps } from '../types/tools'
 import { mergeRefs } from './mergeRefs'
 
@@ -37,18 +37,20 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
 }
 function getPivPropsValue(objs: AnyObj[], key: keyof any) {
   switch (key) {
-    case 'ref':
-      return objs.reduce((finalValue, objB) => {
-        const valueB = objB[key]
-        return valueB && finalValue ? mergeRefs(finalValue as any, valueB as any) : finalValue ?? valueB
-      }, undefined as unknown)
+    // -------- specific --------
     case 'children':
       for (let i = 0; i < objs.length; i++) {
         const obj = objs[i]
         const v = obj[key]
         if (v != null) return v
       }
-    // case 'onClick':
+
+    // -------- pivprops --------
+    case 'ref':
+      return objs.reduce((finalValue, objB) => {
+        const valueB = objB[key]
+        return valueB && finalValue ? mergeRefs(finalValue as any, valueB as any) : finalValue ?? valueB
+      }, undefined as unknown)
     case 'class':
     case 'style':
     case 'icss':
@@ -60,12 +62,23 @@ function getPivPropsValue(objs: AnyObj[], key: keyof any) {
         const valueB = objB[key]
         return valueB && finalValue ? [finalValue, valueB].flat() : finalValue ?? valueB
       }, undefined as unknown)
-    default:
-      for (let i = objs.length - 1; i >= 0; i--) {
-        const obj = objs[i]
-        const v = obj[key]
-        if (v != null) return v
+    // -------- normal props --------
+    default: {
+      // -------- 'on' callback function --------
+      if (key.toString().startsWith('on')) {
+        return objs.reduce((finalValue, objB) => {
+          const valueB = objB[key]
+          return valueB && finalValue ? mergeFunction(finalValue, valueB) : finalValue ?? valueB
+        }, undefined as unknown)
+      } else {
+        // -------- very normal props --------
+        for (let i = objs.length - 1; i >= 0; i--) {
+          const obj = objs[i]
+          const v = obj[key]
+          if (v != null) return v
+        }
       }
+    }
   }
 }
 

@@ -12,6 +12,7 @@ import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
 import { applyPivController } from '../../piv/propHandlers/controller'
 import { objectMerge } from '../../fnkit/objectMerge'
+import { omit } from '../../piv/utils/omit'
 type BooleanLike = unknown
 
 export type ButtonController = Readonly<{
@@ -133,7 +134,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     <Piv<'button'>
       class={Button.name}
       as={(parsedPivProps) => <button {...parsedPivProps} />}
-      shadowProps={props}
+      shadowProps={omit(props, 'onClick')} // omit onClick for need to invoke the function manually, see below 👇
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[

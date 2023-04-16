@@ -16,7 +16,7 @@ type FixFunctionParam<F, Controller extends ValidController> = F extends (...arg
   ? (...args: [controller: P1 & Controller, ...rest: PS]) => R
   : never
 /**
- * propertyName start with 'on' or end with 'Fn' will treate as origin
+ * propertyName start with 'on' will treate as function
  */
 export function useAccessifiedProps<P extends Record<string, any>, Controller extends ValidController = {}>(
   props: P,
@@ -32,7 +32,7 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
           const v = props[key]
           if (noNeedAccessifyProps?.includes(key)) {
             return v
-          } else if (key.startsWith('on') || key.endsWith('Fn')) {
+          } else if (key.startsWith('on')) {
             if (controller && isFunction(v)) {
               return fixFunctionParams(v, [controller])
             } else {
