@@ -49,7 +49,7 @@ function getPivPropsValue(objs: AnyObj[], key: keyof any) {
     case 'ref':
       return objs.reduce((finalValue, objB) => {
         const valueB = objB[key]
-        return valueB && finalValue ? mergeRefs(finalValue as any, valueB as any) : finalValue ?? valueB
+        return valueB && finalValue ? mergeRefs(finalValue as any, valueB as any) : valueB ?? finalValue
       }, undefined as unknown)
     case 'class':
     case 'style':
@@ -60,7 +60,7 @@ function getPivPropsValue(objs: AnyObj[], key: keyof any) {
     case 'dangerousRenderWrapperNode':
       return objs.reduce((finalValue, objB) => {
         const valueB = objB[key]
-        return valueB && finalValue ? [finalValue, valueB].flat() : finalValue ?? valueB
+        return valueB && finalValue ? [finalValue, valueB].flat() : valueB ?? finalValue
       }, undefined as unknown)
     // -------- normal props --------
     default: {
@@ -68,7 +68,7 @@ function getPivPropsValue(objs: AnyObj[], key: keyof any) {
       if (key.toString().startsWith('on')) {
         return objs.reduce((finalValue, objB) => {
           const valueB = objB[key]
-          return valueB && finalValue ? mergeFunction(finalValue, valueB) : finalValue ?? valueB
+          return valueB && finalValue ? mergeFunction(finalValue, valueB) : valueB ?? finalValue
         }, undefined as unknown)
       } else {
         // -------- very normal props --------
