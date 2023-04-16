@@ -1,4 +1,4 @@
-import { AnyObj } from '@edsolater/fnkit'
+import { AnyObj, unifyItem } from '@edsolater/fnkit'
 
 /**
  * will return a proxy to access only in runtime
@@ -34,9 +34,22 @@ export function objectMerge<
 >(...objects: [T, U, V, W, X, Y, Z]): T & U & V & W & X & Y & Z
 export function objectMerge(...objects: AnyObj[]): AnyObj
 export function objectMerge(...objects: AnyObj[]) {
-  return new Proxy(objects[0] ?? {}, {
-    get: (target, key) => getValue(objects, key)
+  return new Proxy(createEmptyObjectWithSpecificKeys(getKeys(objects)), {
+    get: (_target, key) => getValue(objects, key)
   }) as any
+}
+
+function createEmptyObjectWithSpecificKeys(keys: (keyof any)[]) {
+  return Object.fromEntries(keys.map((key) => [key, undefined]))
+}
+
+function getKeys(objs: AnyObj[]) {
+  return unifyItem(
+    objs.flatMap((obj) => {
+      const descriptors = Object.getOwnPropertyDescriptors(obj) // 🤔 necessary?
+      return Reflect.ownKeys(descriptors)
+    })
+  )
 }
 
 function getValue(objs: AnyObj[], key: keyof any) {

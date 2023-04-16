@@ -13,6 +13,8 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    */
   as?: (props: object) => JSX.Element // assume a function return ReactNode is a Component
 
+  debugLog?: (keyof PivProps)[]
+
   ref?: MayArray<CRef<any> | null | undefined>
 
   /**

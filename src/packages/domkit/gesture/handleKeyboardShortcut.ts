@@ -88,8 +88,6 @@ export function handleKeyboardShortcut(
   )
   addTabIndex(el) // keydown must have fousable element
   return addEventListener(el, 'keydown', ({ ev }) => {
-    ev.stopPropagation()
-    ev.preventDefault()
     const pressedKey = parseKeyboardEventToGetKeyString(ev)
     const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
     targetShortcut?.()

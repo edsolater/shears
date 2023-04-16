@@ -15,6 +15,7 @@ import { handleShadowProps } from './shadowProps'
 export function parsePivProps(rawProps: PivProps<any>) {
   const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
   const controller = (props.inputController ?? {}) as ValidController
+  debugLog(rawProps, props, controller)
   return {
     ...parseHTMLProps(props.htmlProps, controller),
     class:
@@ -24,5 +25,42 @@ export function parsePivProps(rawProps: PivProps<any>) {
     style: parseIStyles(props.style, controller),
     onClick: 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined,
     children: applyPivController(props.children, controller)
+  }
+}
+
+/**
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/console/debug
+ */
+function debugLog(rawProps: PivProps<any>, props: PivProps<any>, controller: ValidController) {
+  if (props.debugLog) {
+    if (props.debugLog.includes('shadowProps')) {
+      console.debug('shadowProps (raw): ', rawProps.shadowProps)
+    }
+    if (props.debugLog.includes('plugin')) {
+      console.debug('plugin (raw): ', rawProps.plugin)
+    }
+    if (props.debugLog.includes('htmlProps')) {
+      console.debug('htmlProps (raw → parsed): ', props.htmlProps, { ...parseHTMLProps(props.htmlProps, controller) })
+    }
+    if (props.debugLog.includes('icss')) {
+      console.debug('icss (raw → parsed): ', props.icss, parseCSSToString(props.icss, controller))
+    }
+    if (props.debugLog.includes('style')) {
+      console.debug('style (raw → parsed): ', props.style, parseIStyles(props.style, controller))
+    }
+    if (props.debugLog.includes('class')) {
+      console.debug('class (raw → parsed): ', props.class, classname(props.class, controller))
+    }
+    if (props.debugLog.includes('inputController')) {
+      console.debug('inputController (raw → parsed): ', props.inputController)
+    }
+    if (props.debugLog.includes('onClick')) {
+      console.debug(
+        'onClick (raw → parsed): ',
+        props.onClick,
+        'onClick' in props && parseOnClick(props.onClick!, controller)
+      )
+    }
   }
 }

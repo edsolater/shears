@@ -14,6 +14,8 @@ type DetailKeyboardShortcutSetting = {
     description?: string
   }
 }
+
+// hook info store, store registered keyboard shortcuts
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
   new WeakerMap<HTMLElement, DetailKeyboardShortcutSetting>()
 )

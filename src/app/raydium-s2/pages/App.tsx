@@ -1,6 +1,6 @@
 import { map } from '@edsolater/fnkit'
 import { useNavigate, useRoutes } from '@solidjs/router'
-import { createEffect, createMemo } from 'solid-js'
+import { createEffect, createMemo, createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box, List, Text } from '../../../packages/pivkit'
 import {
@@ -11,6 +11,8 @@ import { cssColors } from '../../../packages/pivkit/styles/cssColors'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../configs/routes'
 import '../styles/index.css'
+import { Input } from '../../../packages/pivkit/components/Input'
+import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
 
 export function App() {
   const Routes = useRoutes(routes)
@@ -37,15 +39,20 @@ function KeyboardShortcutPanel() {
     const shortcuts = globalShortcuts()
     return shortcuts && Object.entries(shortcuts)
   })
+  const increasing = createIncresingAccessor()
+  console.log('render once')
   return (
     <Box icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding: '4px' }}>
       <List items={globalShortcutsArray}>
-        {([key, rule]) => (
-          <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
-            <Text icss={cssColors.labelColor}>{rule?.description}</Text>
-            <Text>{key}</Text>
-          </Box>
-        )}
+        {([key, rule]) => {
+          console.log('render 6 times')
+          return (
+            <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
+              <Text icss={cssColors.labelColor}>{rule?.description}</Text>
+              <Input value={key + increasing()} icss={{ border: 'solid' }} />
+            </Box>
+          )
+        }}
       </List>
     </Box>
   )

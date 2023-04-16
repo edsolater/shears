@@ -103,7 +103,6 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
   // merge kit props
   const mergedGettersProps = pipe(
     props,
-    // FIXME !important should have deAccessify
     (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),

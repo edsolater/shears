@@ -22,7 +22,7 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
 
   const merged = Object.defineProperties(
     {},
-    getObjKey(trimedProps).reduce((acc: any, key: any) => {
+    getKeys(trimedProps).reduce((acc: any, key: any) => {
       acc[key] = {
         enumerable: true,
         get() {
@@ -91,7 +91,7 @@ function mergeObjectsWithConfigs<T extends object>(
 
   return Object.defineProperties(
     {},
-    getObjKey(objs).reduce((acc: any, key: any) => {
+    getKeys(objs).reduce((acc: any, key: any) => {
       acc[key] = {
         enumerable: true,
         get() {
@@ -123,7 +123,7 @@ function getObjValue<T extends AnyObj>(
   }
 }
 
-function getObjKey<T extends object>(objs: T[]) {
+function getKeys<T extends object>(objs: T[]) {
   return unifyItem(
     objs.flatMap((obj) => {
       const descriptors = Object.getOwnPropertyDescriptors(obj) // 🤔 necessary?
