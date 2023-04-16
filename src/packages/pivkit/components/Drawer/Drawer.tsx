@@ -52,17 +52,17 @@ export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerContr
     console.log(`close drawer`)
     return setIsOpen(false)
   }
+  console.time('sss')
   createEffect(() => {
-    console.log('isOpen: ', isOpen())
+    console.timeEnd('sss')
   })
-  console.log('4: ', 4)
   return (
-    <PopPortal id="pop-stack">
+    <PopPortal id='pop-stack'>
       <Show when={isOpen()}>
         <Piv
           ref={setDrawerRef}
           shadowProps={props}
-          icss={{ width: 400, height: '100dvh', background: 'dodgerblue' }}
+          icss={{ width: isOpen() ? 300 : 400, height: '100dvh', background: 'dodgerblue' }}
         ></Piv>
       </Show>
     </PopPortal>

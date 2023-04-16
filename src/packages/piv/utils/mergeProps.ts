@@ -20,21 +20,53 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
   // @ts-ignore
   if (trimedProps.length <= 1) return trimedProps[0] ?? {}
 
-  const mergedResult = mergeObjectsWithConfigs(trimedProps, [
-    // special div props
-    ['ref', (v1, v2) => (v1 && v2 ? mergeRefs(v1 as any, v2 as any) : v1 ?? v2)],
-    ['class', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['style', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['icss', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['htmlProps', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['shadowProps', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['plugin', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['dangerousRenderWrapperNode', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['controller', (v1, v2) => (v1 && v2 ? [v1, v2].flat() : v1 ?? v2)],
-    ['children', (v1, v2) => v1 ?? v2] //NOTE: special , nearist is first
-  ])
-  // @ts-ignore
-  return mergedResult
+  const merged = Object.defineProperties(
+    {},
+    getObjKey(trimedProps).reduce((acc: any, key: any) => {
+      acc[key] = {
+        enumerable: true,
+        get() {
+          return getPivPropsValue(trimedProps, key)
+        }
+      }
+      return acc
+    }, {} as PropertyDescriptorMap)
+  ) as Exclude<P, undefined>
+
+  return merged
+}
+function getPivPropsValue(objs: AnyObj[], key: keyof any) {
+  switch (key) {
+    case 'ref':
+      return objs.reduce((finalValue, objB) => {
+        const valueB = objB[key]
+        return valueB && finalValue ? mergeRefs(finalValue as any, valueB as any) : finalValue ?? valueB
+      }, undefined as unknown)
+    case 'children':
+      for (let i = 0; i < objs.length; i++) {
+        const obj = objs[i]
+        const v = obj[key]
+        if (v != null) return v
+      }
+    // case 'onClick':
+    case 'class':
+    case 'style':
+    case 'icss':
+    case 'htmlProps':
+    case 'showProps':
+    case 'plugin':
+    case 'dangerousRenderWrapperNode':
+      return objs.reduce((finalValue, objB) => {
+        const valueB = objB[key]
+        return valueB && finalValue ? [finalValue, valueB].flat() : finalValue ?? valueB
+      }, undefined as unknown)
+    default:
+      for (let i = objs.length - 1; i >= 0; i--) {
+        const obj = objs[i]
+        const v = obj[key]
+        if (v != null) return v
+      }
+  }
 }
 
 function mergeObjectsWithConfigs<T extends object>(

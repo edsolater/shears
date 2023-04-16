@@ -5,7 +5,6 @@ import isClientSide from '../../../jFetch/utils/isSSR'
 import { RawChild } from '../../../piv'
 
 export function PopPortal(props: { id: string; children?: RawChild }) {
-  console.log('3: ', 3 , props.children)
   const element = createPopStackHTMLElement(props.id)
   const [ref, setRef] = createRef()
   createEffect(() => {
@@ -18,18 +17,18 @@ export function PopPortal(props: { id: string; children?: RawChild }) {
   )
 }
 function createPopStackHTMLElement(id: string) {
-  console.log('2: ', 2, id)
-  if ('document' in globalThis) {
+  const el = document.querySelector(`#${id}`)
+  if ('document' in globalThis && !el) {
     const div = document.createElement('div')
-    console.log('div: ', div)
     div.id = id
     document.body.appendChild(div)
-    console.log('1: ', 1)
     div.style.position = 'fixed'
     div.style.inset = '0'
     div.classList.add('self-pointer-events-none')
     insertCSSPointerEventNone()
     return div
+  } else {
+    return el ?? undefined
   }
 }
 

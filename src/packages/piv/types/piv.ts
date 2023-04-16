@@ -28,7 +28,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
       }
       el: HTMLElementTagNameMap[TagName]
     } & Controller
-  ) => void
+  ) => void // for accessifyProps, onClick can't be array
 
   /**
    * if it's in shadow props, it will merge with exist props
