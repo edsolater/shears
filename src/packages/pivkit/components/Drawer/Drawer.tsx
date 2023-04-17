@@ -44,18 +44,10 @@ export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerContr
     })
   })
   const props = addDefaultProps(rawProps, drawerDefaultProps)
-
   const [drawerRef, setDrawerRef] = createRef<HTMLDivElement>()
   const [isOpen, setIsOpen] = createSignal(props.open)
   const open = () => setIsOpen(true)
-  const close = () => {
-    console.log(`close drawer`)
-    return setIsOpen(false)
-  }
-  console.time('sss')
-  createEffect(() => {
-    console.timeEnd('sss')
-  })
+  const close = () => setIsOpen(false)
   return (
     <PopPortal id='pop-stack'>
       <Show when={isOpen()}>

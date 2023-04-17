@@ -9,6 +9,7 @@ import { Drawer, DrawerController } from '../../../packages/pivkit/components/Dr
 import { useComponentController } from '../../../packages/piv/propHandlers/controller'
 import { createEffect, createMemo, createSignal } from 'solid-js'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
+import { Input } from '../../../packages/pivkit/components/Input'
 
 export function PlaygroundPage() {
   return (
@@ -40,6 +41,10 @@ function PlaygoundList() {
 
       <ExamplePanel name='CSSTransition'>
         <CSSTransitionExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='Input'>
+        <InputExample />
       </ExamplePanel>
     </Box>
   )
@@ -76,7 +81,7 @@ function DrawerExample() {
 function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
-  // TODO: invoke in  plugin 
+  // TODO: invoke in  plugin
   const { transitionProps, refSetter } = useCSSTransition({
     show,
     onAfterEnter(controller) {
@@ -104,5 +109,21 @@ function CSSTransitionExample() {
         <Box>hello</Box>
       </Piv>
     </>
+  )
+}
+
+function InputExample() {
+  const [controlledValue, setControlledValue] = createSignal<string>()
+  setInterval(() => {
+    setControlledValue((s) => (s ?? '') + '1')
+  }, 4000)
+  return (
+    <Input
+      value={controlledValue}
+      icss={{ border: 'solid' }}
+      onUserInput={(utils) => {
+        setControlledValue(utils.text)
+      }}
+    />
   )
 }

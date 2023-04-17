@@ -40,26 +40,21 @@ function KeyboardShortcutPanel() {
     return shortcuts && Object.entries(shortcuts)
   })
   const increasing = createIncresingAccessor()
-  console.count('render once')
   return (
     <Box icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding: '4px' }}>
       <List items={globalShortcutsArray}>
-        {([key, rule]) => {
-          // FIXME 
-          console.count('render 6 times')
-          return (
-            <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
-              <Text icss={cssColors.labelColor}>{rule?.description}</Text>
-              <Input
-                value={key + increasing()}
-                icss={{ border: 'solid' }}
-                onUserInput={(utils) => {
-                  console.log('utils.: ', utils.text)
-                }}
-              />
-            </Box>
-          )
-        }}
+        {([key, rule]) => (
+          <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
+            <Text icss={cssColors.labelColor}>{rule?.description}</Text>
+            <Input
+              value={key + increasing()}
+              icss={{ border: 'solid' }}
+              onUserInput={(utils) => {
+                console.log('utils.: ', utils.text)
+              }}
+            />
+          </Box>
+        )}
       </List>
     </Box>
   )

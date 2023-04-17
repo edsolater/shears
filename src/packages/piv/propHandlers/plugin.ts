@@ -32,10 +32,11 @@ export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
 export type PluginCreator<T extends AnyObj> = (props?: T) => Plugin<T>
 export type Plugin<T extends AnyObj> =
   | {
-      pluginCoreFn?: (props: T) => Partial<Omit<T, 'plugin' | 'shadowProps'>> // TODO: should support 'plugin' and 'shadowProps' too
+      pluginCoreFn?: (props: T) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>> // TODO: should support 'plugin' and 'shadowProps' too
       priority?: number
     }
-  | ((props: T) => Partial<Omit<T, 'plugin' | 'shadowProps'>>) // TODO: should support 'plugin' and 'shadowProps' for easier compose
+  | ((props: T) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>>) // TODO: should support 'plugin' and 'shadowProps' for easier compose
+// TODO2: not accessify yet
 
 export function handlePluginProps<P extends AnyObj>(props: P) {
   if (!props?.plugin) return props
@@ -97,7 +98,7 @@ export function createWrapperNodePlugin<T extends AnyObj>(
  *  />
  */
 export function createPlugin<T extends AnyObj>(
-  createrFn: (props: T) => Partial<Omit<T, 'plugin' | 'shadowProps'>>, // return a function , in this function can exist hooks
+  createrFn: (props: T) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>>, // return a function , in this function can exist hooks
   options?: {
     priority?: number // NOTE -1:  it should be render after final prop has determine
     name?: string
