@@ -116,13 +116,13 @@ function InputExample() {
   const [controlledValue, setControlledValue] = createSignal<string>()
   setInterval(() => {
     setControlledValue((s) => (s ?? '') + '1')
-  }, 4000)
+  }, 500)
   return (
     <Input
       value={controlledValue}
       icss={{ border: 'solid' }}
-      onUserInput={(utils) => {
-        setControlledValue(utils.text)
+      onUserInput={({ text }) => {
+        setControlledValue(text)
       }}
     />
   )
