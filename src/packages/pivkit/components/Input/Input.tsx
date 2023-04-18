@@ -18,7 +18,18 @@ export type InputProps = {
 
   disableOutsideValueUpdateWhenUserInput?: boolean
 
+  // only user can trigger this callback
   onUserInput?(utils: { text: string }): void
+  // both user and program can trigger this callback
+  onInput?(utils: { text: string }): void
+  // only program can trigger this callback
+  onProgramInput?(utils: { text: string }): void
+}
+
+export type InputController = {
+  text: string
+  /** set Input Value */
+  setText(newText: string | ((oldText: string) => string)): void
 }
 
 // css flexible
@@ -27,9 +38,16 @@ const cssInputPadding = 8 // (px)
 /**
  * if for layout , don't render important content in Box
  */
-export function Input(rawProps: KitProps<InputProps>) {
-  const props = useKitProps<InputProps>(rawProps)
-  const [additionalProps] = createInputInnerValue(props)
+export function Input(rawProps: KitProps<InputProps, { controller: InputController }>) {
+  const props = useKitProps<InputProps>(rawProps, {
+    controller: (mergedProps) => ({
+      get text() {
+        return innerText()
+      },
+      updateText
+    })
+  })
+  const [additionalProps, { innerText, updateText }] = createInputInnerValue(props)
 
   return (
     <Piv<'input'>
@@ -56,6 +74,20 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
   // store inner value for
   const [cachedOutsideValue, setCachedOutsideValue] = createSignal(props.defaultValue ?? props.value)
 
+  /** DOM content */
+  const [innerText, setInnerText] = createSignal(props.defaultValue ?? props.value)
+
+  const updateText = (newText: string | undefined) => {
+    const el = inputRef()
+    if (el) {
+      el.value = newText ?? ''
+      setInnerText(newText)
+    }
+  }
+
+  // init reflect innerText
+  createEffect(on(inputRef, () => updateText(innerText())))
+
   // handle value change (consider selection offset)
   createEffect(() => {
     const newValue = props.value
@@ -68,7 +100,7 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
         const prevRangeDirection = el.selectionDirection ?? undefined
         const prevValue = cachedOutsideValue()
         // set real value by DOM API, for restore selectionRange
-        el.value = newValue ?? ''
+        updateText(newValue)
         const needUpdate = prevValue !== newValue && prevValue && newValue
 
         // restore selectionRange
@@ -118,5 +150,8 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
         }
       } as PivProps<'input'>)
   )
-  return [additionalProps, { cachedOutsideValue, isFocused, focusInput, unfocusInput, setCachedOutsideValue }] as const
+  return [
+    additionalProps,
+    { innerText, updateText, cachedOutsideValue, isFocused, focusInput, unfocusInput, setCachedOutsideValue }
+  ] as const
 }

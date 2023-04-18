@@ -49,8 +49,8 @@ function KeyboardShortcutPanel() {
             <Input
               value={key + increasing()}
               icss={{ border: 'solid' }}
-              onUserInput={(utils) => {
-                console.log('utils.: ', utils.text)
+              onUserInput={({ text }) => {
+                console.log('utils.: ', text)
               }}
             />
           </Box>
