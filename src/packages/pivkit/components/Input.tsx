@@ -63,20 +63,25 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
       const el = inputRef()
       const canChangeInnerValue = !(isFocused() && props.disableOutsideValueUpdateWhenUserInput)
       if (canChangeInnerValue && el) {
-        const prevCursorOffsetStart = el?.selectionStart ?? 0
-        const prevCursorOffsetEnd = el?.selectionEnd ?? 0
-        const prevRangeDirection = el?.selectionDirection ?? undefined
+        const prevCursorOffsetStart = el.selectionStart ?? 0
+        const prevCursorOffsetEnd = el.selectionEnd ?? 0
+        const prevRangeDirection = el.selectionDirection ?? undefined
         const prevValue = cachedOutsideValue()
         // set real value by DOM API, for restore selectionRange
         el.value = newValue ?? ''
+        const needUpdate = prevValue !== newValue && prevValue && newValue
 
         // restore selectionRange
-        if (prevValue && newValue) {
+        if (needUpdate) {
           const isCursor = prevCursorOffsetEnd === prevCursorOffsetStart
           const isCursorAtTail = isCursor && prevCursorOffsetEnd === prevValue.length
+          const hasSelectAll = prevCursorOffsetStart === 0 && prevCursorOffsetEnd === prevValue.length
           if (isCursorAtTail) {
             // stay  end
             el.setSelectionRange(newValue.length, newValue.length) // to end
+          } else if (hasSelectAll) {
+            // stay select all
+            el.setSelectionRange(prevCursorOffsetStart, newValue.length, prevRangeDirection) // to end
           } else {
             // stay same range offset
             el.setSelectionRange(prevCursorOffsetStart, prevCursorOffsetEnd, prevRangeDirection)
