@@ -1,15 +1,15 @@
+import { createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
+import { useComponentController } from '../../../packages/piv/propHandlers/controller'
 import { Box, Button, Collapse } from '../../../packages/pivkit'
+import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
+import { Input } from '../../../packages/pivkit/components/Input'
+import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
-import { useDataStore } from '../stores/data/store'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
-import { useComponentController } from '../../../packages/piv/propHandlers/controller'
-import { createEffect, createMemo, createSignal } from 'solid-js'
-import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
-import { Input } from '../../../packages/pivkit/components/Input'
+import { useDataStore } from '../stores/data/store'
 
 export function PlaygroundPage() {
   return (

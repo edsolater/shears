@@ -1,7 +1,7 @@
 import { createEffect, createMemo, createSignal, on, untrack } from 'solid-js'
-import { KitProps, ParsedKitProps, Piv, PivProps, useKitProps } from '../../piv'
-import { createRef } from '../hooks/createRef'
-import { createToggle } from '../hooks/createToggle'
+import { KitProps, ParsedKitProps, Piv, PivProps, useKitProps } from '../../../piv'
+import { createRef } from '../../hooks/createRef'
+import { createToggle } from '../../hooks/createToggle'
 
 export type InputProps = {
   /**
