@@ -29,7 +29,7 @@ export type InputProps = {
 export type InputController = {
   text: string
   /** set Input Value */
-  setText(newText: string | ((oldText: string) => string)): void
+  setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
 }
 
 // css flexible
@@ -44,7 +44,7 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
       get text() {
         return innerText()
       },
-      updateText
+      setText: updateText
     })
   })
   const [additionalProps, { innerText, updateText }] = createInputInnerValue(props)

@@ -88,7 +88,7 @@ export function handleKeyboardShortcut(
   )
   addTabIndex(el) // keydown must have fousable element
   return addEventListener(el, 'keydown', ({ ev }) => {
-    const pressedKey = parseKeyboardEventToGetKeyString(ev)
+    const pressedKey = getShorcutStringFromKeyboardEvent(ev)
     const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
     targetShortcut?.()
   })
@@ -104,11 +104,22 @@ export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
     { capture: true }
   )
 }
-function parseKeyboardEventToGetKeyString(ev: KeyboardEvent) {
+
+/**
+ * parse from original KeyboardEvent to a string
+ * @example
+ * getShorcutStringFromKeyboardEvent(new KeyboardEvent('keydown', { ctrlKey: true, key: 'a' })) // 'ctrl + a'
+ */
+export function getShorcutStringFromKeyboardEvent(ev: KeyboardEvent) {
   const keyArray = [ev.ctrlKey && 'ctrl', ev.shiftKey && 'shift', ev.altKey && 'alt', ev.metaKey && 'meta', ev.key]
   return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).sort().join(' + ')
 }
-function formatKeyboardSettingString(keyString: string) {
+
+/**
+ * @example
+ * formatKeyboardSettingString('ctrl+SHIFT+alt+A') // 'alt + ctrl + shift + a'
+ */
+export function formatKeyboardSettingString(keyString: string) {
   const keyArray = keyString.split(/\s?\+\s?/)
   return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).sort().join(' + ')
 }

@@ -3,6 +3,7 @@ import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'
 import { mergeProps } from '../utils/mergeProps'
+import { ValidController } from '../types/tools'
 
 export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   ? Px1
@@ -29,13 +30,13 @@ export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   ? Px1 & Px2 & Px3 & Px4 & Px5
   : unknown
 
-export type PluginCreator<T extends AnyObj> = (props?: T) => Plugin<T>
-export type Plugin<T extends AnyObj> =
+export type PluginCreator<T extends AnyObj, C extends ValidController = {}> = (props?: T) => Plugin<T, C>
+export type Plugin<T extends AnyObj, C extends ValidController = {}> =
   | {
-      pluginCoreFn?: (props: T) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>> // TODO: should support 'plugin' and 'shadowProps' too
+      pluginCoreFn?: (props: T) => Partial<KitProps<T, C>> // TODO: should support 'plugin' and 'shadowProps' too
       priority?: number
     }
-  | ((props: T) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>>) // TODO: should support 'plugin' and 'shadowProps' for easier compose
+  | ((props: T) => Partial<KitProps<T, C>>) // TODO: should support 'plugin' and 'shadowProps' for easier compose
 // TODO2: not accessify yet
 
 export function handlePluginProps<P extends AnyObj>(props: P) {
@@ -97,13 +98,13 @@ export function createWrapperNodePlugin<T extends AnyObj>(
  *    ]}
  *  />
  */
-export function createPlugin<T extends AnyObj>(
-  createrFn: (props: T) => Partial<Omit<T & PivProps, 'plugin' | 'shadowProps'>>, // return a function , in this function can exist hooks
+export function createPlugin<T extends AnyObj, C extends ValidController = {}>(
+  createrFn: (props: T) => Partial<KitProps<T, C>>, // return a function , in this function can exist hooks
   options?: {
     priority?: number // NOTE -1:  it should be render after final prop has determine
     name?: string
   }
-): PluginCreator<T> {
+): PluginCreator<T, C> {
   return overwriteFunctionName(
     (addtionalProps: any) => ({
       pluginCoreFn: (props: any) => createrFn(mergeProps(addtionalProps, props)),

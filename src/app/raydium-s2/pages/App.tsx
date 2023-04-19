@@ -13,6 +13,8 @@ import { routes } from '../configs/routes'
 import '../styles/index.css'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
+import { handleKeyboardShortcut } from '../../../packages/domkit/gesture/handleKeyboardShortcut'
+import { shortcutInputPlugin } from '../../../packages/pivkit/components/Input/plugins/shortcutInputPlugin'
 
 export function App() {
   const Routes = useRoutes(routes)
@@ -26,7 +28,7 @@ export function App() {
 
   return (
     <Piv>
-      {/* <KeyboardShortcutPanel /> */}
+      <KeyboardShortcutPanel />
       <Routes />
     </Piv>
   )
@@ -52,6 +54,7 @@ function KeyboardShortcutPanel() {
               onUserInput={({ text }) => {
                 console.log('utils.: ', text)
               }}
+              plugin={shortcutInputPlugin}
             />
           </Box>
         )}

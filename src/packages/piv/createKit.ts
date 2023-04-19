@@ -106,12 +106,16 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
     (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
+    // parse plugin of **options**
     (props) => {
-      const pluginMergedProps = mergePluginReturnedProps({
-        plugins: hasProperty(options, 'plugin') ? sortPluginByPriority(options!.plugin!) : undefined,
-        props
-      })
-      return pluginMergedProps
+      if (hasProperty(options, 'plugin')) {
+        return mergePluginReturnedProps({
+          plugins: sortPluginByPriority(options!.plugin!),
+          props
+        })
+      } else {
+        return props
+      }
     }, // defined-time
     (props) =>
       mergeProps(
@@ -119,8 +123,8 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
         hasProperty(options, 'name') ? { class: options!.name } : {},
         hasProperty(props, 'id') ? { id: props.id } : {}
       ), // defined-time
-    handleShadowProps, // outside-props-run-time
-    handlePluginProps // outside-props-run-time
+    handleShadowProps, // outside-props-run-time // TODO: assume can't be promisify
+    handlePluginProps // outside-props-run-time // TODO: assume can't be promisify
   ) as any /* too difficult to type */
 
   // load controller
