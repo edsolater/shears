@@ -1,9 +1,10 @@
-import { AnyObj, flapDeep, isFunction, isObject, MayDeepArray, omit, overwriteFunctionName } from '@edsolater/fnkit'
+import { AnyObj, flapDeep, isFunction, isObject, MayDeepArray, overwriteFunctionName } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'
 import { mergeProps } from '../utils/mergeProps'
 import { ValidController } from '../types/tools'
+import { omit } from '../utils/omit'
 
 export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   ? Px1
