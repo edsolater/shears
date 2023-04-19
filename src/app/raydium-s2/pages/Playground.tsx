@@ -84,7 +84,7 @@ function CSSTransitionExample() {
   // TODO: invoke in  plugin
   const { transitionProps, refSetter } = useCSSTransition({
     show,
-    onAfterEnter(controller) {
+    onAfterEnter({controller}) {
       console.log('controller: ', { ...controller })
     },
     onBeforeEnter(controller) {},

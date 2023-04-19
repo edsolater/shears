@@ -19,11 +19,11 @@ export type InputProps = {
   disableOutsideValueUpdateWhenUserInput?: boolean
 
   // only user can trigger this callback
-  onUserInput?(utils: { text: string }): void
+  onUserInput?(utils: { text: string | undefined }): void
   // both user and program can trigger this callback
-  onInput?(utils: { text: string }): void
+  onInput?(utils: { text: string | undefined; byUser: boolean }): void
   // only program can trigger this callback
-  onProgramInput?(utils: { text: string }): void
+  onProgramInput?(utils: { text: string | undefined }): void
 }
 
 export type InputController = {
@@ -67,7 +67,12 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
 /**
  *  handle `<Input>`'s value
  */
-function createInputInnerValue(props: ParsedKitProps<InputProps>) {
+function createInputInnerValue(
+  props: Pick<
+    ParsedKitProps<InputProps>,
+    'defaultValue' | 'disableOutsideValueUpdateWhenUserInput' | 'value' | 'onUserInput' | 'onInput' | 'onProgramInput'
+  >
+) {
   const [inputRef, setInputRef] = createRef<HTMLInputElement>()
   // if user is inputing or just input, no need to update upon out-side value
   const [isFocused, { on: focusInput, off: unfocusInput }] = createToggle()
@@ -77,53 +82,63 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
   /** DOM content */
   const [innerText, setInnerText] = createSignal(props.defaultValue ?? props.value)
 
-  const updateText = (newText: string | undefined) => {
+  const updateTextDOMContent = (newText: string | undefined) => {
     const el = inputRef()
     if (el) {
       el.value = newText ?? ''
       setInnerText(newText)
+      props.onProgramInput?.({ text: newText })
+      props.onInput?.({ text: newText, byUser: false })
     }
   }
 
-  // init reflect innerText
-  createEffect(on(inputRef, () => updateText(innerText())))
+  // handle outside value change (will stay selection offset effect)
+  const updateTextDOM = (newValue: string | undefined) => {
+    console.log('updateTextDOM', newValue)
+    const el = inputRef()
+    const canChangeInnerValue = !(isFocused() && props.disableOutsideValueUpdateWhenUserInput)
+    if (canChangeInnerValue && el) {
+      const prevCursorOffsetStart = el.selectionStart ?? 0
+      const prevCursorOffsetEnd = el.selectionEnd ?? 0
+      const prevRangeDirection = el.selectionDirection ?? undefined
+      const prevValue = cachedOutsideValue()
+      // set real value by DOM API, for restore selectionRange
+      updateTextDOMContent(newValue)
+      const needUpdate = prevValue !== newValue && prevValue && newValue
 
-  // handle value change (consider selection offset)
-  createEffect(() => {
-    const newValue = props.value
-    untrack(() => {
-      const el = inputRef()
-      const canChangeInnerValue = !(isFocused() && props.disableOutsideValueUpdateWhenUserInput)
-      if (canChangeInnerValue && el) {
-        const prevCursorOffsetStart = el.selectionStart ?? 0
-        const prevCursorOffsetEnd = el.selectionEnd ?? 0
-        const prevRangeDirection = el.selectionDirection ?? undefined
-        const prevValue = cachedOutsideValue()
-        // set real value by DOM API, for restore selectionRange
-        updateText(newValue)
-        const needUpdate = prevValue !== newValue && prevValue && newValue
-
-        // restore selectionRange
-        if (needUpdate) {
-          const isCursor = prevCursorOffsetEnd === prevCursorOffsetStart
-          const isCursorAtTail = isCursor && prevCursorOffsetEnd === prevValue.length
-          const hasSelectAll = prevCursorOffsetStart === 0 && prevCursorOffsetEnd === prevValue.length
-          if (isCursorAtTail) {
-            // stay  end
-            el.setSelectionRange(newValue.length, newValue.length) // to end
-          } else if (hasSelectAll) {
-            // stay select all
-            el.setSelectionRange(prevCursorOffsetStart, newValue.length, prevRangeDirection) // to end
-          } else {
-            // stay same range offset
-            el.setSelectionRange(prevCursorOffsetStart, prevCursorOffsetEnd, prevRangeDirection)
-          }
+      // restore selectionRange
+      if (needUpdate) {
+        const isCursor = prevCursorOffsetEnd === prevCursorOffsetStart
+        const isCursorAtTail = isCursor && prevCursorOffsetEnd === prevValue.length
+        const hasSelectAll = prevCursorOffsetStart === 0 && prevCursorOffsetEnd === prevValue.length
+        if (isCursorAtTail) {
+          // stay  end
+          el.setSelectionRange(newValue.length, newValue.length) // to end
+        } else if (hasSelectAll) {
+          // stay select all
+          el.setSelectionRange(prevCursorOffsetStart, newValue.length, prevRangeDirection) // to end
+        } else {
+          // stay same range offset
+          el.setSelectionRange(prevCursorOffsetStart, prevCursorOffsetEnd, prevRangeDirection)
         }
       }
-      // in any case, it will update inner's js cachedOutsideValue
-      setCachedOutsideValue(newValue)
-    })
-  })
+    }
+    // in any case, it will update inner's js cachedOutsideValue
+    setCachedOutsideValue(newValue)
+  }
+
+  // reflect default text in init lifecycle
+  createEffect(on(inputRef, () => updateTextDOMContent(innerText())))
+
+  // handle outside value change (consider selection offset)
+  createEffect(
+    on(
+      () => props.value,
+      (newValue) => {
+        updateTextDOM(newValue)
+      }
+    )
+  )
 
   createEffect(
     on(
@@ -139,10 +154,10 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
       ({
         ref: setInputRef,
         htmlProps: {
-          // value: isOutsideValueLocked() ? innerValue() ?? props.value ?? '' : props.value ?? innerValue() ?? '',
           onInput: (e: Event) => {
             const text = (e.target as HTMLInputElement).value
-            setCachedOutsideValue(text)
+            setInnerText(text)
+            props.onInput?.({ text, byUser: true })
             props.onUserInput?.({ text })
           },
           onFocus: focusInput,
@@ -152,6 +167,14 @@ function createInputInnerValue(props: ParsedKitProps<InputProps>) {
   )
   return [
     additionalProps,
-    { innerText, updateText, cachedOutsideValue, isFocused, focusInput, unfocusInput, setCachedOutsideValue }
+    {
+      innerText,
+      updateText: updateTextDOMContent,
+      cachedOutsideValue,
+      isFocused,
+      focusInput,
+      unfocusInput,
+      setCachedOutsideValue
+    }
   ] as const
 }
