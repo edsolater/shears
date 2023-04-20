@@ -106,13 +106,11 @@ export function createPlugin<T extends AnyObj, C extends ValidController = {}>(
     name?: string
   }
 ): PluginCreator<T, C> {
-  return overwriteFunctionName(
-    (addtionalProps: any) => ({
-      pluginCoreFn: (props: any) => createrFn(mergeProps(addtionalProps, props)),
-      priority: options?.priority
-    }),
-    options?.name
-  )
+  const fn = (addtionalProps: any) => ({
+    pluginCoreFn: (props: any) => createrFn(mergeProps(addtionalProps, props)),
+    priority: options?.priority
+  })
+  return options?.name ? overwriteFunctionName(fn, options.name) : fn
 }
 
 export function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {

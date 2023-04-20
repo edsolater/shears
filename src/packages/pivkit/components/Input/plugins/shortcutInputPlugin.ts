@@ -7,7 +7,7 @@ import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 import { InputController, InputProps } from '../Input'
 
-export const shortcutInputPlugin = createPlugin<InputProps, InputController>(() => {
+export const keyboardShortcutObserverPlugin = createPlugin<InputProps, InputController>((inputProps) => {
   const [elRef, setElRef] = createRef<HTMLDivElement>()
 
   const [controllerRef, setControllerRef] = createControllerRef<InputController>()
