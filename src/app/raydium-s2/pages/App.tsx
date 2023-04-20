@@ -41,7 +41,7 @@ function KeyboardShortcutPanel() {
     const shortcuts = globalShortcuts()
     return shortcuts && Object.entries(shortcuts)
   })
-  const increasing = createIncresingAccessor()
+  const increasing = createIncresingAccessor({ eachTime: 2000 })
   return (
     <Box icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding: '4px' }}>
       <List items={globalShortcutsArray}>
@@ -51,6 +51,7 @@ function KeyboardShortcutPanel() {
             <Input
               value={key + increasing()}
               icss={{ border: 'solid' }}
+              disableUserInput
               onUserInput={({ text }) => {
                 console.log('utils.: ', text)
               }}

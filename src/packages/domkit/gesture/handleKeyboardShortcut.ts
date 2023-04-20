@@ -111,8 +111,13 @@ export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
  * getShorcutStringFromKeyboardEvent(new KeyboardEvent('keydown', { ctrlKey: true, key: 'a' })) // 'ctrl + a'
  */
 export function getShorcutStringFromKeyboardEvent(ev: KeyboardEvent) {
-  const keyArray = [ev.ctrlKey && 'ctrl', ev.shiftKey && 'shift', ev.altKey && 'alt', ev.metaKey && 'meta', ev.key]
+  const rawKey = areCaseInsensitiveEqual(ev.key, 'control') ? 'ctrl' : ev.key // special
+  const keyArray = [ev.ctrlKey && 'ctrl', ev.shiftKey && 'shift', ev.altKey && 'alt', ev.metaKey && 'meta', rawKey]
   return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).sort().join(' + ')
+}
+
+function areCaseInsensitiveEqual(a: string, b: string) {
+  return a.toLowerCase() === b.toLowerCase()
 }
 
 /**

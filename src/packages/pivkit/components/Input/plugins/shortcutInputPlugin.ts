@@ -7,6 +7,7 @@ import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 import { InputController, InputProps } from '../Input'
 
+// NOTE: plugin is a function accept props and return additional props
 export const keyboardShortcutObserverPlugin = createPlugin<InputProps, InputController>((inputProps) => {
   const [elRef, setElRef] = createRef<HTMLDivElement>()
 
