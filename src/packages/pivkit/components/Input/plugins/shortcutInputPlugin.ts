@@ -18,8 +18,8 @@ export const keyboardShortcutObserverPlugin = (options: { onRecordShortcut?: (sh
     createEffect(() => {
       const el = elRef()
       if (!el) return
-      const subscri = recordShortcut(el)
-      const { abort } = subscri.subscribe(handleKeydownKeyboardShortcut)
+      const subscribable = subscribeKeyboardShortcut(el)
+      const { abort } = subscribable.subscribe(handleKeydownKeyboardShortcut)
       onCleanup(abort)
     })
 
@@ -39,12 +39,18 @@ export const keyboardShortcutObserverPlugin = (options: { onRecordShortcut?: (sh
     return { ref: setElRef, controllerRef: setControllerRef }
   })
 
-function recordShortcut(el: HTMLElement) {
+function subscribeKeyboardShortcut(el: HTMLElement) {
   const subscri = new Subscribable<string>()
   onEvent(el, 'keydown', ({ ev }) => {
     ev.stopPropagation()
     const shortcut = getShorcutStringFromKeyboardEvent(ev)
-    subscri.inject(shortcut)
+    if (isValidShortcut(ev)) subscri.inject(shortcut)
   })
   return subscri
+}
+
+function isValidShortcut(ev: KeyboardEvent, options?: { banedKeywords?: string[] }): boolean {
+  return ['control', 'alt', 'shift', 'meta', 'backspace', 'enter', ...(options?.banedKeywords ?? [])].every(
+    (key) => !ev.key.toLowerCase().includes(key.toLowerCase())
+  )
 }

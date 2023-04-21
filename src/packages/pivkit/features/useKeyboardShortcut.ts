@@ -19,51 +19,87 @@ type DetailKeyboardShortcutSetting = {
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
   new WeakerMap<HTMLElement, DetailKeyboardShortcutSetting>()
 )
+
+function registerLocalKeyboardShortcut(el: HTMLElement, settings: DetailKeyboardShortcutSetting): { remove(): void } {
+  registeredKeyboardShortcut.set(el, settings)
+  return {
+    remove() {
+      registeredKeyboardShortcut.delete(el)
+    }
+  }
+}
+
+function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting): { remove(): void } {
+  const el = globalThis.document.documentElement
+  const originalObject = registeredKeyboardShortcut.get(el)
+  registeredKeyboardShortcut.set(el, { ...originalObject, ...settings })
+  return {
+    remove() {
+      if (!originalObject) return
+      const removedKeys = Object.keys(settings) as KeybordShortcutKeys[]
+      removedKeys.forEach((key) => {
+        delete originalObject[key]
+      })
+      registeredKeyboardShortcut.set(el, originalObject)
+    }
+  }
+}
+
 /**
  * just a wrapper for {@link handleKeyboardShortcut}
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}
  */
-export function useKeyboardShortcut(settings: DetailKeyboardShortcutSetting) {
+export function useKeyboardShortcut(settings?: DetailKeyboardShortcutSetting) {
+  const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
   const [ref, setRef] = createRef()
   // register keyboard shortcut
   createEffect(() => {
     const el = ref()
     if (!el) return
-    const shortcuts = shakeNil(map(settings, (detail) => detail?.fn))
+    const shortcuts = parseShortcutFromSettings(currentSettings())
     const { abort } = handleKeyboardShortcut(el, shortcuts)
-    registeredKeyboardShortcut.set(el, settings)
+    const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
     onCleanup(() => {
       abort()
-      registeredKeyboardShortcut.delete(el)
+      remove()
     })
   })
-  return { setRef }
+  return {
+    setRef,
+    setNewSettings(newSettings: DetailKeyboardShortcutSetting) {
+      setCurrentSettings(newSettings)
+    }
+  }
 }
 
 /**
  * just a wrapper for {@link handleKeyboardShortcut}
  * if you want regist shortcut within a specific component, please use {@link useKeyboardShortcut}
  */
-export function useKeyboardGlobalShortcut(settings: DetailKeyboardShortcutSetting) {
-  // register keyboard shortcut
+export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetting) {
+  const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
   createEffect(() => {
+    const shortcuts = parseShortcutFromSettings(currentSettings())
     const el = globalThis.document.documentElement
-    const shortcuts = shakeNil(map(settings, (detail) => detail?.fn))
     const { abort } = handleKeyboardShortcut(el, shortcuts)
-    const originalObject = registeredKeyboardShortcut.get(el)
-    registeredKeyboardShortcut.set(el, { ...originalObject, ...settings })
+    const { remove } = registerGlobalKeyboardShortcut(currentSettings())
     onCleanup(() => {
       abort()
-      const originalObject = registeredKeyboardShortcut.get(el)
-      if (originalObject) {
-        const removedKeys = Object.keys(settings) as KeybordShortcutKeys[]
-        removedKeys.forEach((key) => {
-          delete originalObject[key]
-        })
-        registeredKeyboardShortcut.set(el, originalObject)
-      }
+      remove()
     })
   })
+  return {
+    setNewSettings(newSettings: DetailKeyboardShortcutSetting) {
+      setCurrentSettings(newSettings)
+    },
+    get registeredGlobalShortcuts() {
+      return useAllRegisteredGlobalShortcuts()
+    }
+  }
+}
+
+function parseShortcutFromSettings(settings: DetailKeyboardShortcutSetting) {
+  return shakeNil(map(settings, (detail) => detail?.fn))
 }
 
 /**

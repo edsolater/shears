@@ -35,12 +35,13 @@ export function App() {
 }
 
 function KeyboardShortcutPanel() {
-  const globalShortcuts = useAllRegisteredGlobalShortcuts()
-  createEffect(() => console.log('globalShortcuts(): ', globalShortcuts()))
+  const { registeredGlobalShortcuts: globalShortcuts, setNewSettings } = useKeyboardGlobalShortcut()
+  createEffect(() => console.warn('globalShortcuts(): ', globalShortcuts())) // FIXME: why not update??!
   const globalShortcutsArray = createMemo(() => {
     const shortcuts = globalShortcuts()
     return shortcuts && Object.entries(shortcuts)
   })
+
   const increasing = createIncresingAccessor({ eachTime: 2000 })
   return (
     <Box icss={{ position: 'fixed', bottom: 0, right: 0, border: 'solid', padding: '4px' }}>
@@ -49,12 +50,13 @@ function KeyboardShortcutPanel() {
           <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
             <Text icss={cssColors.labelColor}>{rule?.description}</Text>
             <Input
-              value={key + increasing()}
+              value={key}
               icss={{ border: 'solid' }}
               disableUserInput
               plugin={keyboardShortcutObserverPlugin({
                 onRecordShortcut(shortcut) {
                   console.log('new shortcut: ', shortcut)
+                  setNewSettings({ [shortcut]: rule })
                 }
               })}
             />

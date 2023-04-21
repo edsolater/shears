@@ -116,7 +116,7 @@ export function getShorcutStringFromKeyboardEvent(ev: KeyboardEvent) {
   return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).sort().join(' + ')
 }
 
-function areCaseInsensitiveEqual(a: string, b: string) {
+export function areCaseInsensitiveEqual(a: string, b: string) {
   return a.toLowerCase() === b.toLowerCase()
 }
 
