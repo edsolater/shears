@@ -52,10 +52,11 @@ function KeyboardShortcutPanel() {
               value={key + increasing()}
               icss={{ border: 'solid' }}
               disableUserInput
-              onUserInput={({ text }) => {
-                console.log('utils.: ', text)
-              }}
-              plugin={keyboardShortcutObserverPlugin}
+              plugin={keyboardShortcutObserverPlugin({
+                onRecordShortcut(shortcut) {
+                  console.log('new shortcut: ', shortcut)
+                }
+              })}
             />
           </Box>
         )}

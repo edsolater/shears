@@ -8,33 +8,36 @@ import { createRef } from '../../../hooks/createRef'
 import { InputController, InputProps } from '../Input'
 
 // NOTE: plugin is a function accept props and return additional props
-export const keyboardShortcutObserverPlugin = createPlugin<InputProps, InputController>((inputProps) => {
-  const [elRef, setElRef] = createRef<HTMLDivElement>()
+// TODO: apply `createConfigableFunction((options) => (props) => {...})`
+export const keyboardShortcutObserverPlugin = (options: { onRecordShortcut?: (shortcut: string) => void }) =>
+  createPlugin<InputProps, InputController>((inputProps) => {
+    const [elRef, setElRef] = createRef<HTMLDivElement>()
 
-  const [controllerRef, setControllerRef] = createControllerRef<InputController>()
-  const [recordedShortcut, setRecordedShortcut] = createSignal<string | undefined>(undefined)
-  createEffect(() => {
-    const el = elRef()
-    if (!el) return
-    const subscri = recordShortcut(el)
-    const { abort } = subscri.subscribe(handleKeydownKeyboardShortcut)
-    onCleanup(abort)
-  })
-
-  // reflect recorded shortcut to input value
-  createEffect(
-    on(recordedShortcut, () => {
-      controllerRef()?.setText(recordedShortcut())
+    const [controllerRef, setControllerRef] = createControllerRef<InputController>()
+    const [recordedShortcut, setRecordedShortcut] = createSignal<string | undefined>(undefined)
+    createEffect(() => {
+      const el = elRef()
+      if (!el) return
+      const subscri = recordShortcut(el)
+      const { abort } = subscri.subscribe(handleKeydownKeyboardShortcut)
+      onCleanup(abort)
     })
-  )
 
-  const handleKeydownKeyboardShortcut = (text: string) => {
-    setRecordedShortcut(text)
-    controllerRef()?.setText(text)
-  }
+    // reflect recorded shortcut to input value
+    createEffect(
+      on(recordedShortcut, () => {
+        controllerRef()?.setText(recordedShortcut())
+      })
+    )
 
-  return { ref: setElRef, controllerRef: setControllerRef }
-})
+    const handleKeydownKeyboardShortcut = (text: string) => {
+      setRecordedShortcut(text)
+      controllerRef()?.setText(text)
+      options.onRecordShortcut?.(text)
+    }
+
+    return { ref: setElRef, controllerRef: setControllerRef }
+  })
 
 function recordShortcut(el: HTMLElement) {
   const subscri = new Subscribable<string>()
