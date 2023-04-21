@@ -12,6 +12,8 @@ export type InputProps = {
    */
   isFluid?: boolean
 
+
+  // -------- handle by useInputInnerValue --------
   /** only after `<Input>` created */
   defaultValue?: string
   /** when change, affact to ui*/
@@ -21,12 +23,16 @@ export type InputProps = {
 
   disableUserInput?: boolean
 
+  disabled?: boolean
+
   // only user can trigger this callback
   onUserInput?(utils: { text: string | undefined }): void
   // both user and program can trigger this callback
   onInput?(utils: { text: string | undefined; byUser: boolean }): void
   // only program can trigger this callback
   onProgramInput?(utils: { text: string | undefined }): void
+
+
 }
 
 export type InputController = {
@@ -50,7 +56,8 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
       setText: updateText
     })
   })
-  const [additionalProps, { innerText, updateText }] = createInputInnerValue(props)
+
+  const [additionalProps, { innerText, updateText }] = useInputInnerValue(props)
 
   return (
     <Piv<'input'>
@@ -70,12 +77,13 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
 /**
  *  handle `<Input>`'s value
  */
-function createInputInnerValue(
+function useInputInnerValue(
   props: Pick<
     ParsedKitProps<InputProps>,
     | 'defaultValue'
     | 'disableOutsideValueUpdateWhenUserInput'
     | 'disableUserInput'
+    | 'disabled'
     | 'value'
     | 'onUserInput'
     | 'onInput'
@@ -148,6 +156,7 @@ function createInputInnerValue(
     )
   )
 
+  // update when lose focus
   createEffect(
     on(
       () => isFocused() === false,
@@ -157,26 +166,18 @@ function createInputInnerValue(
     )
   )
 
-  // still can focus even disableUserInput
-  createEffect(() => {
-    const el = inputRef()
-    console.log('props.disableUserInput: ', props.disableUserInput)
-    if (el && props.disableUserInput) {
-      console.log(el)
-      const { cancel } = onEvent(el, 'click', ({el}) => {
-        console.log('why not invoke')
-        return el.focus()
-      })
-      onCleanup(cancel)
-    }
-  })
-
   const additionalProps = createMemo(
     () =>
       ({
         ref: setInputRef,
         htmlProps: {
-          disabled: props.disableUserInput,
+          disabled: props.disabled,
+          onBeforeInput: (ev: Event) => {
+            // onBeforeInput to prevent user input
+            if (props.disableUserInput) {
+              ev.preventDefault()
+            }
+          },
           onInput: (e: Event) => {
             const text = (e.target as HTMLInputElement).value
             setInnerText(text)

@@ -20,6 +20,8 @@ export const keyboardShortcutObserverPlugin = createPlugin<InputProps, InputCont
     const { abort } = subscri.subscribe(handleKeydownKeyboardShortcut)
     onCleanup(abort)
   })
+
+  // reflect recorded shortcut to input value
   createEffect(
     on(recordedShortcut, () => {
       controllerRef()?.setText(recordedShortcut())
