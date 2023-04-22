@@ -27,11 +27,14 @@ export function TopMenuBar(props: TopMenuBarProps) {
 
         {/* tabs */}
         <Box icss={{ display: 'flex', gap: 16 }}>
-          <Link href='/farms' innerRoute /* TODO: active style */>
-            Farms
+          <Link href='/swap' innerRoute>
+            Swap
           </Link>
           <Link href='/pools' innerRoute>
             Pools
+          </Link>
+          <Link href='/farms' innerRoute /* TODO: active style */>
+            Farms
           </Link>
           <Link href='/playground' innerRoute>
             Playground
