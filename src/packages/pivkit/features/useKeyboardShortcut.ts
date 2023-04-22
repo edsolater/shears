@@ -1,4 +1,4 @@
-import { AnyObj, WeakerMap, WeakerSet, isFunction, isString, map, shakeNil } from '@edsolater/fnkit'
+import { AnyObj, WeakerMap, WeakerSet, isFunction, isString, map, mapEntry, shakeNil } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import {
   KeyboardShortcutFn,
@@ -9,12 +9,15 @@ import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { createRef } from '../hooks/createRef'
 import { createSharedSignal } from '../hooks/createSharedSignal'
 
-type DetailKeyboardShortcutSetting = {
-  [key in KeybordShortcutKeys]?: {
+type Description = string
+
+export type DetailKeyboardShortcutSetting = Record<
+  Description,
+  {
     fn: KeyboardShortcutFn
-    description?: string
+    shortcut: KeybordShortcutKeys
   }
-}
+>
 
 // hook info store, store registered keyboard shortcuts
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
@@ -34,8 +37,6 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
   const el = globalThis.document.documentElement
   const originalObject = registeredKeyboardShortcut.get(el)
   registeredKeyboardShortcut.set(el, { ...originalObject, ...settings })
-  console.log('input settings:', settings)
-  console.log('2333: ', 2333, originalObject, settings)
   return {
     remove() {
       if (!originalObject) return
@@ -43,7 +44,6 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
       removedKeys.forEach((key) => {
         delete originalObject[key]
       })
-      console.log('clean', originalObject, removedKeys, settings)
       registeredKeyboardShortcut.set(el, originalObject)
     }
   }
@@ -60,7 +60,7 @@ export function useKeyboardShortcut(settings?: DetailKeyboardShortcutSetting) {
   createEffect(() => {
     const el = ref()
     if (!el) return
-    const shortcuts = parseShortcutFromSettings(currentSettings())
+    const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     const { abort } = handleKeyboardShortcut(el, shortcuts)
     const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
     onCleanup(() => {
@@ -81,11 +81,9 @@ export function useKeyboardShortcut(settings?: DetailKeyboardShortcutSetting) {
  * if you want regist shortcut within a specific component, please use {@link useKeyboardShortcut}
  */
 export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetting) {
-  console.log('settings: ', settings)
   const [currentSettings, setCurrentSettings] = createSharedSignal(useKeyboardGlobalShortcut.name, settings ?? {})
   createEffect(() => {
-    console.log('currentSettings(): ', currentSettings())
-    const shortcuts = parseShortcutFromSettings(currentSettings())
+    const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     const el = globalThis.document.documentElement
     const { abort } = handleKeyboardShortcut(el, shortcuts)
     const { remove } = registerGlobalKeyboardShortcut(currentSettings())
@@ -95,8 +93,11 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
     })
   })
   return {
-    setNewSettings(newSettings: DetailKeyboardShortcutSetting) {
-      console.log('newSettings: ', newSettings)
+    setNewSettings(
+      newSettings:
+        | DetailKeyboardShortcutSetting
+        | ((prev: DetailKeyboardShortcutSetting) => DetailKeyboardShortcutSetting)
+    ) {
       setCurrentSettings(newSettings)
     },
     get registeredGlobalShortcuts() {
@@ -105,8 +106,15 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
   }
 }
 
-function parseShortcutFromSettings(settings: DetailKeyboardShortcutSetting) {
-  return shakeNil(map(settings, (detail) => detail?.fn))
+function parseShortcutConfigFromSettings(settings: DetailKeyboardShortcutSetting) {
+  return shakeNil(mapObjectEntry(settings, (detail) => [detail.shortcut, detail.fn]))
+}
+// TODO: should move to /fnkit
+function mapObjectEntry<T extends AnyObj, NK extends keyof any, NV>(
+  o: T,
+  fn: (value: T[keyof T], key: keyof T) => [NK, NV]
+): Record<NK, NV> {
+  return Object.fromEntries(Object.entries(o).map(([key, value]) => fn(value, key as keyof T))) as Record<NK, NV>
 }
 
 /**

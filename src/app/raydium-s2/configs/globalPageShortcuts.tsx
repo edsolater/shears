@@ -1,14 +1,17 @@
-import { farmsRoutePath, homeRoutePath, pairsRoutePath } from './routes';
-import { KeybordShortcutKeys } from '../../../packages/domkit/gesture/handleKeyboardShortcut';
+import { KeybordShortcutKeys } from '../../../packages/domkit/gesture/handleKeyboardShortcut'
+import { farmsRoutePath, homeRoutePath, pairsRoutePath } from './routes'
 
 export const globalPageShortcuts = {
-  'alt + p': {
-    to: pairsRoutePath,
+  'go to pools': {
+    shortcut: 'alt + p',
+    to: pairsRoutePath
   },
-  'alt + f': {
+  'go to farms': {
+    shortcut: 'alt + f',
     to: farmsRoutePath
   },
-  'alt + /': {
+  'go to home': {
+    shortcut: 'alt + /',
     to: homeRoutePath
   }
-} satisfies Partial<Record<KeybordShortcutKeys, { to: string; }>>;
+} satisfies Record<string, { to: string; shortcut: KeybordShortcutKeys }>

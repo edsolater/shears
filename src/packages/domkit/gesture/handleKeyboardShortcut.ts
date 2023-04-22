@@ -83,14 +83,14 @@ export function handleKeyboardShortcut(
   el: HTMLElement,
   keyboardShortcutSettings: KeyboardShortcutSettings
 ): EventListenerController {
-  const formatedKeyboardShortcutSetting = mapKey(keyboardShortcutSettings, (key) =>
-    formatKeyboardSettingString(String(key))
-  )
   addTabIndex(el) // keydown must have fousable element
   return addEventListener(el, 'keydown', ({ ev }) => {
     const pressedKey = getShorcutStringFromKeyboardEvent(ev)
-    const targetShortcut = Reflect.get(formatedKeyboardShortcutSetting, pressedKey)
-    targetShortcut?.()
+    console.log('pressedKey: ', pressedKey)
+    console.log('keyboardShortcutSettings: ', keyboardShortcutSettings)
+    const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
+    console.log('targetShortcutFn: ', targetShortcutFn)
+    targetShortcutFn?.()
   })
 }
 /** this still not prevent **all** brower shortcut (like build-in ctrl T ) */
@@ -113,7 +113,7 @@ export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
 export function getShorcutStringFromKeyboardEvent(ev: KeyboardEvent) {
   const rawKey = areCaseInsensitiveEqual(ev.key, 'control') ? 'ctrl' : ev.key // special
   const keyArray = [ev.ctrlKey && 'ctrl', ev.shiftKey && 'shift', ev.altKey && 'alt', ev.metaKey && 'meta', rawKey]
-  return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).sort().join(' + ')
+  return unifyItem(shakeFalsy(keyArray).map(toLowerCase)).join(' + ')
 }
 
 export function areCaseInsensitiveEqual(a: string, b: string) {
