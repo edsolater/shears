@@ -33,6 +33,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
   const el = globalThis.document.documentElement
   const originalObject = registeredKeyboardShortcut.get(el)
   registeredKeyboardShortcut.set(el, { ...originalObject, ...settings })
+  console.log('2333: ', 2333, originalObject, settings)
   return {
     remove() {
       if (!originalObject) return
@@ -113,9 +114,19 @@ export function useAllRegisteredKeyboardShortcuts() {
 
 export function useAllRegisteredGlobalShortcuts() {
   const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerMap())
-  return createMemo(() => {
+  createEffect(() => console.log(`!!!! ${keyboardShortcutSettingsSignal()} detect`))
+  createEffect(() => {
+    const { abort } = registeredKeyboardShortcutSubscribable.subscribe((s) =>
+      console.log('inner has change: ', s, [...s.values()])
+    )
+    onCleanup(abort)
+  })
+  return createMemo((prev) => {
+    console.log('detect that global shortcut settings change')
     const keyboardShortcutSettings = keyboardShortcutSettingsSignal()
-    return keyboardShortcutSettings.get(globalThis.document.documentElement)
+    const next = keyboardShortcutSettings.get(globalThis.document.documentElement)
+    console.log('prev === next : ', prev === next, prev, next)
+    return next
   })
 }
 
@@ -123,7 +134,7 @@ export function useAllRegisteredGlobalShortcuts() {
 export function useSubscribable<T>(subscribable: Subscribable<T>): Accessor<T | undefined>
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue: T): Accessor<T>
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue?: T) {
-  const [value, setValue] = createSignal(subscribable.current ?? defaultValue)
+  const [value, setValue] = createSignal(subscribable.current ?? defaultValue, { equals: false })
   createEffect(() => {
     const { abort } = subscribable.subscribe(setValue)
     onCleanup(abort)
@@ -152,6 +163,7 @@ export function makeSubscriable<T extends AnyObj>(
   const proxiedValue = new Proxy(originalObject, {
     get(target, prop) {
       const v = Reflect.get(target, prop) as unknown
+      // detect try to get inner change function
       if (isFunction(v) && isString(prop) && mayCauseChangeKeys.includes(prop)) {
         return ((...args: Parameters<typeof v>) => {
           const result = Reflect.apply(v, target, args)
