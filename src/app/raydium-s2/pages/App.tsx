@@ -35,6 +35,7 @@ export function App() {
 }
 
 function KeyboardShortcutPanel() {
+  console.log('2: ', 2)
   const { registeredGlobalShortcuts: globalShortcuts, setNewSettings } = useKeyboardGlobalShortcut()
   createEffect(() => console.warn('globalShortcuts(): ', globalShortcuts())) // FIXME: why not update??!
   const globalShortcutsArray = createMemo(() => {

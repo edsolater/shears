@@ -62,7 +62,6 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
   return (
     <Piv<'input'>
       as={(parsedPivProps) => <input {...parsedPivProps} />}
-      debugLog={['htmlProps']}
       shadowProps={[props, additionalProps()]}
       class={Input.name}
       icss={[

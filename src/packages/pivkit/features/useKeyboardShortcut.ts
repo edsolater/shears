@@ -7,6 +7,7 @@ import {
 } from '../../domkit/gesture/handleKeyboardShortcut'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { createRef } from '../hooks/createRef'
+import { createSharedSignal } from '../hooks/createSharedSignal'
 
 type DetailKeyboardShortcutSetting = {
   [key in KeybordShortcutKeys]?: {
@@ -33,6 +34,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
   const el = globalThis.document.documentElement
   const originalObject = registeredKeyboardShortcut.get(el)
   registeredKeyboardShortcut.set(el, { ...originalObject, ...settings })
+  console.log('input settings:', settings)
   console.log('2333: ', 2333, originalObject, settings)
   return {
     remove() {
@@ -41,6 +43,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
       removedKeys.forEach((key) => {
         delete originalObject[key]
       })
+      console.log('clean', originalObject, removedKeys, settings)
       registeredKeyboardShortcut.set(el, originalObject)
     }
   }
@@ -78,8 +81,10 @@ export function useKeyboardShortcut(settings?: DetailKeyboardShortcutSetting) {
  * if you want regist shortcut within a specific component, please use {@link useKeyboardShortcut}
  */
 export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetting) {
-  const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
+  console.log('settings: ', settings)
+  const [currentSettings, setCurrentSettings] = createSharedSignal(useKeyboardGlobalShortcut.name, settings ?? {})
   createEffect(() => {
+    console.log('currentSettings(): ', currentSettings())
     const shortcuts = parseShortcutFromSettings(currentSettings())
     const el = globalThis.document.documentElement
     const { abort } = handleKeyboardShortcut(el, shortcuts)
@@ -91,6 +96,7 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
   })
   return {
     setNewSettings(newSettings: DetailKeyboardShortcutSetting) {
+      console.log('newSettings: ', newSettings)
       setCurrentSettings(newSettings)
     },
     get registeredGlobalShortcuts() {
@@ -114,18 +120,9 @@ export function useAllRegisteredKeyboardShortcuts() {
 
 export function useAllRegisteredGlobalShortcuts() {
   const keyboardShortcutSettingsSignal = useSubscribable(registeredKeyboardShortcutSubscribable, new WeakerMap())
-  createEffect(() => console.log(`!!!! ${keyboardShortcutSettingsSignal()} detect`))
-  createEffect(() => {
-    const { abort } = registeredKeyboardShortcutSubscribable.subscribe((s) =>
-      console.log('inner has change: ', s, [...s.values()])
-    )
-    onCleanup(abort)
-  })
   return createMemo((prev) => {
-    console.log('detect that global shortcut settings change')
     const keyboardShortcutSettings = keyboardShortcutSettingsSignal()
     const next = keyboardShortcutSettings.get(globalThis.document.documentElement)
-    console.log('prev === next : ', prev === next, prev, next)
     return next
   })
 }
