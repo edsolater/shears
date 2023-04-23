@@ -1,12 +1,12 @@
-import { isPromise } from '@edsolater/fnkit'
+import { isPromise, mergeFunction, shrinkFn } from '@edsolater/fnkit'
 import { Signal, createSignal } from 'solid-js'
 
 /** if it's promise, default is undefined */
 // TODO: haven't test yet
-export function createFirstAccessSignal<V>(onFirstAccess: () => V | Promise<V>): Signal<V> {
+export function createLazySignal<V>(lazyValue: () => V | Promise<V>, defaultValue?: V): Signal<V> {
   const [hasAccessed, setHasAccessed] = createSignal(false)
-  let innerOnFirstAccessFunction = onFirstAccess
-  const [signal, _setSignal] = createSignal()
+  let innerOnFirstAccessFunction = lazyValue
+  const [signal, _setSignal] = createSignal<any>(defaultValue) // no need to type check
   const getSignal = () => {
     const value = innerOnFirstAccessFunction()
     if (isPromise(value)) {
