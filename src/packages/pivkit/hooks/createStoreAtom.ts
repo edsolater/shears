@@ -1,9 +1,9 @@
 import { isFunction } from '@edsolater/fnkit'
-import { Signal, SignalOptions, createSignal } from 'solid-js'
+import { Setter, Signal, SignalOptions, createSignal } from 'solid-js'
 import { createLazySignal } from './createLazySignal'
 
 type StoreAtomOptions<T> = SignalOptions<T> & {
-  onFirstAccess?: (currentValue?: T) => void
+  onFirstAccess?: (getCurrentValue: () => T | undefined, setNew: Setter<T>) => void
   /** default value when lazy is true */
   lazyDefaultValue?: T
 }
@@ -29,8 +29,8 @@ export function createStoreAtom<T>(value?: T | (() => T | Promise<T>), options?:
   // wrap getter to invoke onFirstAccess
   let haveInvokedFirstAccess = false
   const wrappedGetter = () => {
-    if (haveInvokedFirstAccess) {
-      options?.onFirstAccess?.()
+    if (haveInvokedFirstAccess === false) {
+      options?.onFirstAccess?.(getter, setter as any /* no need to check */)
       haveInvokedFirstAccess = true
     }
     return getter()

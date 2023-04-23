@@ -1,4 +1,4 @@
-import { isPromise, mergeFunction, shrinkFn } from '@edsolater/fnkit'
+import { isPromise } from '@edsolater/fnkit'
 import { Signal, createSignal } from 'solid-js'
 
 /** if it's promise, default is undefined */
