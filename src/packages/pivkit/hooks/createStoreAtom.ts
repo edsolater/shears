@@ -13,10 +13,10 @@ type StoreAtomOptions<T> = SignalOptions<T> & {
  */
 export function createStoreAtom<T>(): Signal<T | undefined>
 export function createStoreAtom<T>(
-  value: T | (() => T | Promise<T>),
+  value: T | (() => T),
   options?: StoreAtomOptions<T>
 ): [getter: Signal<T>[0], setter: Signal<T>[1]]
-export function createStoreAtom<T>(value?: T | (() => T | Promise<T>), options?: StoreAtomOptions<T>): any {
+export function createStoreAtom<T>(value?: T | (() => T), options?: StoreAtomOptions<T>): any {
   // get basic getter and setter
   const isLazy = isFunction(value)
   const [getter, setter] = (() =>
