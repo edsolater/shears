@@ -8,15 +8,15 @@ type StoreAtomOptions<T> = SignalOptions<T> & {
   lazyDefaultValue?: T
 }
 
+type StoreAtom<T> = {
+  (): [getter: Signal<T>[0], setter: Signal<T>[1]]
+  value: Signal<T>
+  set(patcher: T | ((prev: T) => T)): void
+}
 /**
  * @param value if it's function, it will be called only when first access. ()
  */
-export function createStoreAtom<T>(): Signal<T | undefined>
-export function createStoreAtom<T>(
-  value: T | (() => T),
-  options?: StoreAtomOptions<T>
-): [getter: Signal<T>[0], setter: Signal<T>[1]]
-export function createStoreAtom<T>(value?: T | (() => T), options?: StoreAtomOptions<T>): any {
+export function createStoreAtom<T>(value?: T | (() => T), options?: StoreAtomOptions<T>): StoreAtom<T> {
   // get basic getter and setter
   const isLazy = isFunction(value)
   const [getter, setter] = (() =>
@@ -36,5 +36,13 @@ export function createStoreAtom<T>(value?: T | (() => T), options?: StoreAtomOpt
     return getter()
   }
 
-  return [wrappedGetter, setter]
+  function atom() {
+    return [wrappedGetter, setter]
+  }
+  Object.defineProperty(atom, 'value', {
+    get: wrappedGetter,
+    set: setter
+  })
+  atom.set = setter
+  return atom as any
 }

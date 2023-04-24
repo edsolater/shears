@@ -2,24 +2,17 @@ import { createStoreAtom } from '../../../../packages/pivkit/hooks/createStoreAt
 import { RAYMint, USDCMint } from '../../configs/wellknowns'
 import { useDataStore } from '../data/store'
 
-export const useSwapToken1 = () =>
-  createStoreAtom(
-    () => {
+export const useSwapToken1 = createStoreAtom(RAYMint, {
+  onFirstAccess(getter, setter) {
+    let hasLoaded: boolean = false
+    setInterval(() => {
       const dataStore = useDataStore()
-      return dataStore.allTokens?.find((t) => t.mint === RAYMint)
-    },
-    {
-      onFirstAccess(getter, setter) {
-        let hasLoaded: boolean = false
-        setInterval(() => {
-          const dataStore = useDataStore()
-          const USDC = dataStore.allTokens?.find((t) => t.mint === USDCMint)
-          if (USDC && hasLoaded === false) {
-            hasLoaded = true
+      const USDC = dataStore.allTokens?.find((t) => t.mint === USDCMint)
+      if (USDC && hasLoaded === false) {
+        hasLoaded = true
 
-            setter(USDC) // FIXME 2023-04-23: why not update?
-          }
-        }, 1000)
+        setter(USDC.mint) // FIXME 2023-04-23: why not update?
       }
-    }
-  )
+    }, 1000)
+  }
+})
