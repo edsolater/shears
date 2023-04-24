@@ -12,6 +12,9 @@ export function createLazySignal<V>(lazyValue: () => V, defaultValue?: V): Signa
   const getSignal = () => {
     if (!hasAccessed()) {
       setHasAccessed(true)
+      // Don't know how to avoid init get value twice
+      // const value = innerOnFirstAccessFunction()
+      // _setSignal(() => value)
     }
     return signal()
   }
