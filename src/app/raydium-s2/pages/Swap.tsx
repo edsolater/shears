@@ -2,7 +2,7 @@ import { createMemo } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
-import { useSwapToken1 } from '../stores/swap/swapToken1'
+import { useSwapToken1 } from '../stores/swap/atoms'
 
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint

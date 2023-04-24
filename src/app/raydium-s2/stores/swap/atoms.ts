@@ -1,5 +1,5 @@
 import { createStoreAtom } from '../../../../packages/pivkit/hooks/createStoreAtom'
-import { RAYMint, USDCMint } from '../../configs/wellknowns'
+import { RAYMint, SOLMint, USDCMint } from '../../configs/wellknowns'
 import { useDataStore } from '../data/store'
 
 export const useSwapToken1 = createStoreAtom(RAYMint, {
@@ -16,3 +16,7 @@ export const useSwapToken1 = createStoreAtom(RAYMint, {
     }, 1000)
   }
 })
+
+export const useSwapToken2 = createStoreAtom(SOLMint)
+export const useSwapAmount1 = createStoreAtom<number | string | undefined>()
+export const useSwapAmount2 = createStoreAtom<number | string | undefined>()
