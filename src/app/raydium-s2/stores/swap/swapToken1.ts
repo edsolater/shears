@@ -10,12 +10,13 @@ export const useSwapToken1 = () =>
     },
     {
       onFirstAccess(getter, setter) {
-        setTimeout(() => {
+        let hasLoaded: boolean = false
+        setInterval(() => {
           const dataStore = useDataStore()
           const USDC = dataStore.allTokens?.find((t) => t.mint === USDCMint)
-          console.log('2: ', dataStore, USDC)
-          if (USDC) {
-            console.log('setter: ', setter)
+          if (USDC && hasLoaded === false) {
+            hasLoaded = true
+
             setter(USDC) // FIXME 2023-04-23: why not update?
           }
         }, 1000)
