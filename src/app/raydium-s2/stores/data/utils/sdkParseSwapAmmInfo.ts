@@ -1,4 +1,8 @@
-import { AmmV3, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-io/raydium-sdk'
+import {
+  AmmV3,
+  ReturnTypeFetchMultiplePoolTickArrays,
+  TradeV2
+} from '@raydium-io/raydium-sdk'
 import toPubString, { toPub } from '../../../utils/common/pub'
 import { ApiPoolInfo } from '../types/ammPools'
 import { Connection } from '@solana/web3.js'
@@ -23,7 +27,7 @@ export function clearSdkCache() {
 /**
  * api amm info → pre-sdk-paresed amm info
  */
-export function getSDKParseSwapAmmInfo({
+export function sdkParseSwapAmmInfo({
   connection,
   inputMint,
   outputMint,
@@ -67,3 +71,5 @@ export function getSDKParseSwapAmmInfo({
   }
   return sdkCaches.get(key)!
 }
+
+

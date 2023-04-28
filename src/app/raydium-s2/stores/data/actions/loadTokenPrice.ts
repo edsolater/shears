@@ -3,7 +3,8 @@ import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
 import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
-import { Token, TokenListStore } from '../types/tokenList'
+import { TokenListStore } from '../types/tokenList'
+import { Token } from "../../../utils/dataStructures/Token"
 import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from '../types/tokenPrice'
 
 

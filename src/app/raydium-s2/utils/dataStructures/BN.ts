@@ -5,7 +5,7 @@ import { Fraction, Numberish } from './type'
 // plain object for easier structure clone
 export type BN = Fraction
 
-export function toOriginalBN(n: Numberish): OriginalBN {
+export function toBN(n: Numberish): OriginalBN {
   return new OriginalBN(String(toBigint(n)))
 }
 

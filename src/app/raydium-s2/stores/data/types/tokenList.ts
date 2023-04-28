@@ -1,3 +1,4 @@
+import { Token } from "../../../utils/dataStructures/Token"
 
 export type TokenWorkerData = {
   tokens: Token[]
@@ -14,21 +15,6 @@ export interface RaydiumTokenListJsonFile {
   unOfficial: Token[]
   unNamed: Token[]
   blacklist: string[]
-}
-
-export interface Token {
-  mint: string
-  decimals: number
-
-  symbol?: string
-  name?: string
-  extensions?: {
-    coingeckoId?: string
-  }
-  is: 'raydium-official' | 'raydium-unofficial' | 'raydium-unnamed' | 'raydium-blacklist'
-  userAdded?: boolean // only if token is added by user
-  icon?: string
-  hasFreeze?: boolean
 }
 
 export type TokenListStore = {

@@ -1,6 +1,6 @@
 import { WeakerMap } from '@edsolater/fnkit'
 import { useDataStore } from '../store'
-import { Token } from '../types/tokenList'
+import { Token } from '../../../utils/dataStructures/Token'
 
 const mintWeakerMap = new WeakerMap<string, Token>()
 /**

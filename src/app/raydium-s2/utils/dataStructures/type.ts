@@ -1,4 +1,4 @@
-import { Token } from '../../stores/data/types/tokenList'
+import { Token } from "./Token"
 
 export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */

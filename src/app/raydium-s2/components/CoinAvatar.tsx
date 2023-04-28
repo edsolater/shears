@@ -1,6 +1,6 @@
 import { KitProps, Piv, addDefaultProps, useKitProps } from '../../../packages/piv'
 import { Image, ImageProps } from '../../../packages/pivkit'
-import { Token } from '../stores/data/types/tokenList'
+import { Token } from "../utils/dataStructures/Token"
 
 export type CoinAvatarProps = {
   token?: Token
