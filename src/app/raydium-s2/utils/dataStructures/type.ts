@@ -17,12 +17,6 @@ export type Decimal = {
   decimal: number
 }
 
-// plain object for easier structure clone
-export type TokenAmount = {
-  token: Token | Mint
-  decimaled: boolean
-  amount: Numberish
-}
 
 export type Fraction = {
   numerator: bigint

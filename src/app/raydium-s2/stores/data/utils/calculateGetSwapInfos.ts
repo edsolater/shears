@@ -1,4 +1,4 @@
-import { Numberish, assert, hasProperty, isAfter, isObject, shakeNil } from '@edsolater/fnkit'
+import { Numberish, assert, hasProperty, isAfter, shakeNil } from '@edsolater/fnkit'
 import {
   AmmV3PoolInfo,
   ApiPoolInfoItem,
@@ -8,15 +8,15 @@ import {
   TradeV2
 } from '@raydium-io/raydium-sdk'
 import { Connection } from '@solana/web3.js'
+import toPubString from '../../../utils/common/pub'
 import { toPercent } from '../../../utils/dataStructures/Percent'
 import { Token, deUIToken } from '../../../utils/dataStructures/Token'
-import { deUITokenAmount, toTokenAmount } from '../../../utils/dataStructures/TokenAmount'
+import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
-import toPubString from '../../../utils/common/pub'
 
-export async function getAllSwapableRouteInfos({
+export async function calculateGetSwapInfos({
   connection,
   slippageTolerance,
   input,
@@ -27,7 +27,7 @@ export async function getAllSwapableRouteInfos({
   slippageTolerance: Numberish
   input: Token
   output: Token
-  inputAmount: Numberish
+  inputAmount: TokenAmount
 }) {
   const { ammV3, liquidity: apiPoolList } = await fetchAmmPoolInfo()
   if (!connection) return
@@ -59,7 +59,7 @@ export async function getAllSwapableRouteInfos({
     routePathDict: routes.routePathDict,
     simulateCache: awaitedSimulateCache,
     tickCache: awaitedTickCache,
-    inputTokenAmount: deUITokenAmount(toTokenAmount(input, inputAmount, { alreadyDecimaled: true })),
+    inputTokenAmount: deUITokenAmount(inputAmount),
     outputToken: deUIToken(output),
     slippage: toPercent(slippageTolerance),
     chainTime

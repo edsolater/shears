@@ -1,4 +1,4 @@
-import { For } from 'solid-js'
+import { For, Show } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box, Collapse, CollapseFace, List } from '../../../packages/pivkit'
 import { CoinAvatar } from '../components/CoinAvatar'
@@ -54,10 +54,7 @@ function FarmList() {
                     gap: 8
                   }}
                 >
-                  <CoinAvatarPair
-                    token1={getToken(info.base)}
-                    token2={getToken(info.quote)}
-                  />
+                  <CoinAvatarPair token1={getToken(info.base)} token2={getToken(info.quote)} />
                   {/* <Piv>{info.name}</Piv> */}
                 </Box>
 
@@ -81,8 +78,10 @@ function FarmList() {
           <Collapse.Content>
             <Piv>
               <Piv>state: {info.hasLoad.join(' ')}</Piv>
-              <Piv>deposited: {toString(info.userStakedLpAmount?.amount)}</Piv>
-              <Piv>to havest: {toString(info.userStakedLpAmount?.amount)}</Piv>
+              <Show when={info.userStakedLpAmount}>
+                <Piv>deposited: {toString(info.userStakedLpAmount?.amount)}</Piv>
+                <Piv>to havest: {toString(info.userStakedLpAmount?.amount)}</Piv>
+              </Show>
             </Piv>
           </Collapse.Content>
         </Collapse>
