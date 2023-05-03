@@ -15,3 +15,5 @@ export * from './hooks/useControllerRef'
 export * from './hooks/useElementSize'
 export * from './hooks/createGlobalHook'
 export * from './hooks/createToggle'
+
+export * from './icssBlocks/box'

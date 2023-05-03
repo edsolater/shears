@@ -9,3 +9,4 @@ export function Box(props: PivProps) {
   /* ---------------------------------- props --------------------------------- */
   return <Piv class={Box.name} {...props} />
 }
+

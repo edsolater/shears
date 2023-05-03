@@ -18,5 +18,5 @@ export const useSwapToken1 = createStoreAtom(RAYMint, {
 })
 
 export const useSwapToken2 = createStoreAtom(SOLMint)
-export const useSwapAmount1 = createStoreAtom<number | string | undefined>()
-export const useSwapAmount2 = createStoreAtom<number | string | undefined>()
+export const useSwapTokenAmount1 = createStoreAtom<number | string | undefined>()
+export const useSwapTokenAmount2 = createStoreAtom<number | string | undefined>()
