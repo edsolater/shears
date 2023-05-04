@@ -8,8 +8,11 @@ type StoreAtomOptions<T> = SignalOptions<T> & {
   lazyDefaultValue?: T
 }
 
-type StoreAtom<T> = {
-  (): [getter: Signal<T>[0], setter: Signal<T>[1]]
+export type StoreAtomAccessor<T> = Signal<T>[0]
+export type StoreAtomSetter<T> = Signal<T>[1]
+
+export type StoreAtom<T> = {
+  (): [getter: StoreAtomAccessor<T>, setter: StoreAtomSetter<T>]
   value: Signal<T>
   set(patcher: T | ((prev: T) => T)): void
 }

@@ -12,8 +12,8 @@ dependencies:
     specifier: ^7.21.5
     version: 7.21.5
   '@edsolater/fnkit':
-    specifier: ^0.1.30
-    version: 0.1.30
+    specifier: ^0.1.31
+    version: 0.1.31
   '@emotion/css':
     specifier: ^11.10.8
     version: 11.10.8
@@ -1362,8 +1362,8 @@ packages:
       '@chainsafe/persistent-merkle-tree': 0.6.1
     dev: false
 
-  /@edsolater/fnkit@0.1.30:
-    resolution: {integrity: sha512-dlE/Y9xCiv/9ShBBb+Qr8ASPd64xlU16ibxt3owdlRZEBGbYcvb1n4J/vd+cZsOtMaOvYABKYQvT2CwND7WlpQ==}
+  /@edsolater/fnkit@0.1.31:
+    resolution: {integrity: sha512-tDhZgGtQ2rShqdGMvvDeIOqQ6NHDj52j6TcKi8QiAcFLgpfQ/sOBykTmV2F8WLmcPfzy8N9r3iHkRSMMv+99yg==}
     dev: false
 
   /@emotion/babel-plugin@11.10.8:

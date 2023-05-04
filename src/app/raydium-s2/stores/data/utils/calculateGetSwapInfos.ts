@@ -1,4 +1,4 @@
-import { Numberish, assert, hasProperty, isAfter, shakeNil } from '@edsolater/fnkit'
+import { Numberish, assert, hasProperty, isDateAfter, shakeNil } from '@edsolater/fnkit'
 import {
   AmmV3PoolInfo,
   ApiPoolInfoItem,
@@ -16,7 +16,7 @@ import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 
-export async function calculateGetSwapInfos({
+export async function calculateSwapRouteInfos({
   connection,
   slippageTolerance,
   input,
@@ -105,7 +105,7 @@ function getBestCalcResult(
       const poolAccountInfo = i.version === 6 ? i : poolInfosCache[ammId]
       if (!poolAccountInfo) return undefined
       const startTime = Number(poolAccountInfo.startTime) * 1000
-      const isPoolOpen = isAfter(chainTime, startTime)
+      const isPoolOpen = isDateAfter(chainTime, startTime)
       if (isPoolOpen) return undefined
       return { ammId, startTime, poolType: i, poolInfo: getPoolInfoFromPoolType(i) }
     })

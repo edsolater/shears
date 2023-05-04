@@ -11,7 +11,7 @@ export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
   const dataStore = useDataStore()
   const token = createMemo(() => dataStore.allTokens?.find((t) => t.mint === swapToken1()))
-  const [amount1, setAmount1] =  useSwapTokenAmount1()
+  const [amount1, setAmount1] = useSwapTokenAmount1()
   const tokenAmount1 = createDerivedAccessor(amount1, (amount) => (amount ? String(amount) : undefined))
   const [amount2, setAmount2] = useSwapTokenAmount2()
   const tokenAmount2 = createDerivedAccessor(amount2, (amount) => (amount ? String(amount) : undefined))
@@ -34,7 +34,9 @@ export function SwapPage() {
         <Input
           icss={{ border: 'solid', width: '12em', flex: 0 }}
           value={tokenAmount2}
-          onUserInput={({ text }) => setAmount2(isStringNumber(text) ? text : undefined)}
+          onUserInput={({ text }) => {
+            isStringNumber(text) ? setAmount2(text) : undefined
+          }}
         />
       </Box>
     </Piv>
