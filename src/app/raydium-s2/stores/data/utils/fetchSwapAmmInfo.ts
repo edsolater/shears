@@ -25,18 +25,10 @@ async function fetchOldAmmPoolInfo() {
  */
 export async function fetchAmmPoolInfo() {
   if (!apiCache.ammV3) {
-    fetchAmmV3PoolInfo().then((r) => {
-      if (r) {
-        apiCache.ammV3 = r
-      }
-    })
+    apiCache.ammV3 = await fetchAmmV3PoolInfo()
   }
   if (!apiCache.liquidity) {
-    fetchOldAmmPoolInfo().then((r) => {
-      if (r) {
-        apiCache.liquidity = r
-      }
-    })
+    apiCache.liquidity = await fetchOldAmmPoolInfo()
   }
   return apiCache
 }

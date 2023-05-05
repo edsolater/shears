@@ -2,6 +2,10 @@ import { createEffect } from 'solid-js'
 import { StoreAtom, createStoreAtom } from '../../../../../packages/pivkit/hooks/createStoreAtom'
 import { RAYMint, SOLMint, USDCMint } from '../../../configs/wellknowns'
 import { useDataStore } from '../store'
+import { calculateSwapRouteInfos } from '../utils/calculateGetSwapInfos'
+import { getConnection } from '../../../utils/common/getConnection'
+import { getToken } from '../methods/getToken'
+import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 
 export const useSwapToken1 = createStoreAtom(RAYMint, {
   onFirstAccess(getter, setter) {
@@ -32,10 +36,27 @@ export function useSwapAmountCalculator() {
   const [amount2, setAmount2] = useSwapTokenAmount2()
 
   createEffect(() => {
-    // TODO: how to use webwork for it's calculation?
-    // const info
+    const inputToken = getToken(token1())
+    const outputToken = getToken(token2())
+    const amount = amount1()
+
+    if (!inputToken) return
+    if (!outputToken) return
+    if (!amount) return
+    const inputAmount: TokenAmount = { token: inputToken, amount }
+    calculateSwapRouteInfos({
+      connection: getConnection('https://rpc.asdf1234.win'), // TEMP for DEV
+      slippageTolerance: 0.05,
+      input: inputToken,
+      inputAmount,
+      output: outputToken
+    }).then((info) => {
+      if (!info) return
+      const { bestResult } = info
+      console.log('bestResult: ', bestResult)
+    })
   })
 }
 
-/**will clac on once in the same time */
+/** ensure even during different component will clac only once in the whole app */
 function createStoreEffect() {}

@@ -4,7 +4,12 @@ import { Piv } from '../../../packages/piv'
 import { Box, icssBlock_row } from '../../../packages/pivkit'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { NavBar } from '../components/NavBar'
-import { useSwapToken1, useSwapTokenAmount1, useSwapTokenAmount2 } from '../stores/data/atoms/swap'
+import {
+  useSwapAmountCalculator,
+  useSwapToken1,
+  useSwapTokenAmount1,
+  useSwapTokenAmount2
+} from '../stores/data/atoms/swap'
 import { useDataStore } from '../stores/data/store'
 
 export function SwapPage() {
@@ -15,6 +20,8 @@ export function SwapPage() {
   const tokenAmount1 = createDerivedAccessor(amount1, (amount) => (amount ? String(amount) : undefined))
   const [amount2, setAmount2] = useSwapTokenAmount2()
   const tokenAmount2 = createDerivedAccessor(amount2, (amount) => (amount ? String(amount) : undefined))
+
+  useSwapAmountCalculator()
   // createEffect(() => console.log('tokenAmount1: ', tokenAmount1()))
   return (
     <Piv>
