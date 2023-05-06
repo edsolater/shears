@@ -1,4 +1,5 @@
 import { jFetch } from '../../../../../packages/jFetch'
+import { asyncInvoke } from '../../../../../packages/pivkit/hooks/createContextStore/utils/asyncInvoke'
 import { appApiUrls } from '../../../utils/common/config'
 import { ApiAmmV3PoolsItem, ApiPoolInfo } from '../types/ammPools'
 
@@ -24,11 +25,16 @@ async function fetchOldAmmPoolInfo() {
  * api amm info
  */
 export async function fetchAmmPoolInfo() {
-  if (!apiCache.ammV3) {
-    apiCache.ammV3 = await fetchAmmV3PoolInfo()
-  }
-  if (!apiCache.liquidity) {
-    apiCache.liquidity = await fetchOldAmmPoolInfo()
-  }
+  const task1 = (async () => {
+    if (!apiCache.ammV3) {
+      apiCache.ammV3 = await fetchAmmV3PoolInfo()
+    }
+  })()
+  const task2 = (async ()=>{
+    if (!apiCache.liquidity) {
+      apiCache.liquidity = await fetchOldAmmPoolInfo()
+    }
+  })()
+  await Promise.allSettled([task1, task2])
   return apiCache
 }
