@@ -11,11 +11,17 @@ import {
   useSwapTokenAmount2
 } from '../stores/data/atoms/swap'
 import { useDataStore } from '../stores/data/store'
+import { useSwapToken2 } from '../stores/data/atoms/swap'
 
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
   const dataStore = useDataStore()
-  const token = createMemo(() => dataStore.allTokens?.find((t) => t.mint === swapToken1()))
+  // const token = createMemo(() => dataStore.allTokens?.find((t) => t.mint === swapToken1()))
+  const [token1Mint, setToken1Mint] = useSwapToken1()
+  const token1 = createMemo(() => dataStore.allTokens?.find((t) => t.mint === token1Mint()))
+  const [token2Mint, setToken2Mint] = useSwapToken2()
+  const token2 = createMemo(() => dataStore.allTokens?.find((t) => t.mint === token2Mint()))
+
   const [amount1, setAmount1] = useSwapTokenAmount1()
   const tokenAmount1 = createDerivedAccessor(amount1, (amount) => (amount ? String(amount) : undefined))
   const [amount2, setAmount2] = useSwapTokenAmount2()
@@ -27,7 +33,7 @@ export function SwapPage() {
     <Piv>
       <NavBar title='Swap' />
       <Box icss={icssBlock_row({ gap: 8 })}>
-        <Piv>SOL</Piv>
+        <Piv>{token1()?.symbol}</Piv>
         <Input
           icss={{ border: 'solid', width: '12em', flex: 0 }}
           value={tokenAmount1}
@@ -37,7 +43,7 @@ export function SwapPage() {
         />
       </Box>
       <Box icss={icssBlock_row({ gap: 8 })}>
-        <Piv>RAY</Piv>
+        <Piv>{token2()?.symbol}</Piv>
         <Input
           icss={{ border: 'solid', width: '12em', flex: 0 }}
           value={tokenAmount2}

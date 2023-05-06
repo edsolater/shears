@@ -1,5 +1,5 @@
 import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
 import { FetchFarmsJSONPayloads } from '../types/farm'
 
@@ -15,7 +15,7 @@ export function loadFarmJsonInfos(store: Store<DataStore>) {
 }
 
 export function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<DataStore['farmJsonInfos']>) {
-  return subscribeWebWorker<DataStore['farmJsonInfos'], FetchFarmsJSONPayloads>(
+  return subscribeWebWorker_Drepcated<DataStore['farmJsonInfos'], FetchFarmsJSONPayloads>(
     {
       description: 'fetch raydium farms info',
       payload: {}

@@ -7,7 +7,7 @@ export type FetchFarmsJSONPayloads = {
   force?: boolean
 }
 
-export type FetchFarmsSYNInfoPayloads = {
+export type CalculateSwapRouteInfosParams = {
   rpcUrl: string
   owner?: string
 }

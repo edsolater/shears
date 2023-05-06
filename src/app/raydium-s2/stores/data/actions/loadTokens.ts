@@ -1,6 +1,6 @@
 import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
 import { FetchRaydiumTokenListOptions } from '../types/tokenList'
 
@@ -14,7 +14,7 @@ export function loadTokensInfos(store: Store<DataStore>) {
 }
 
 export const getTokenJsonInfoFromWorker = (cb: WebworkerSubscribeCallback<DataStore['allTokens']>) =>
-  subscribeWebWorker<DataStore['allTokens'], FetchRaydiumTokenListOptions>(
+  subscribeWebWorker_Drepcated<DataStore['allTokens'], FetchRaydiumTokenListOptions>(
     {
       description: 'fetch raydium supported tokens',
       payload: {

@@ -1,5 +1,5 @@
 import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { FetchPairsOptions, PairJson } from '../types/pairs'
 import { DataStore } from '../store'
 
@@ -23,7 +23,7 @@ export function loadPairs(store: Store<DataStore>) {
 }
 
 function getPairJsonFromWorker(cb: WebworkerSubscribeCallback<PairJson[]>) {
-  return subscribeWebWorker<PairJson[], FetchPairsOptions>(
+  return subscribeWebWorker_Drepcated<PairJson[], FetchPairsOptions>(
     {
       description: 'fetch raydium pairs info',
       payload: {

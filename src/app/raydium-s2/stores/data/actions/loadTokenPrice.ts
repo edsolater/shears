@@ -1,7 +1,7 @@
 import { createEffect } from 'solid-js'
 import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
-import { subscribeWebWorker, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
 import { TokenListStore } from '../types/tokenList'
 import { Token } from "../../../utils/dataStructures/Token"
@@ -26,7 +26,7 @@ export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
 }
 
 const getTokenPriceInfoFromWorker = (tokens: TokenListStore['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
-  subscribeWebWorker<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
+  subscribeWebWorker_Drepcated<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
     {
       description: 'get raydium token prices',
       payload: {

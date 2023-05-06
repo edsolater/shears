@@ -7,7 +7,7 @@ import {
   ReturnTypeGetAllRouteComputeAmountOut,
   TradeV2
 } from '@raydium-io/raydium-sdk'
-import { Connection } from '@solana/web3.js'
+import { getConnection } from '../../../utils/common/getConnection'
 import toPubString from '../../../utils/common/pub'
 import { toPercent } from '../../../utils/dataStructures/Percent'
 import { Token, deUIToken } from '../../../utils/dataStructures/Token'
@@ -16,25 +16,23 @@ import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 
+export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
+export type CalculateSwapRouteInfosResult = ReturnType<typeof calculateSwapRouteInfos>
 export async function calculateSwapRouteInfos({
-  connection,
-  slippageTolerance,
+  rpcAddress = 'https://rpc.asdf1234.win',
+  slippageTolerance = 0.05,
   input,
   output,
   inputAmount
 }: {
-  connection: Connection
-  slippageTolerance: Numberish
+  rpcAddress?: string
+  slippageTolerance?: Numberish
   input: Token
   output: Token
   inputAmount: TokenAmount
 }) {
   const { ammV3, liquidity: apiPoolList } = await fetchAmmPoolInfo()
-  if (!connection) return
-  assert(
-    connection,
-    "no connection provide. it will default useConnection's connection, but can still appointed by user"
-  )
+  const connection = getConnection(rpcAddress)
   assert(ammV3, 'ammV3 api must be loaded')
   assert(apiPoolList, 'liquidity api must be loaded')
   const chainTime = Date.now() / 1000

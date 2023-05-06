@@ -1,11 +1,10 @@
-import { createEffect } from 'solid-js'
+import { createEffect, onCleanup } from 'solid-js'
 import { StoreAtom, createStoreAtom } from '../../../../../packages/pivkit/hooks/createStoreAtom'
 import { RAYMint, SOLMint, USDCMint } from '../../../configs/wellknowns'
-import { useDataStore } from '../store'
-import { calculateSwapRouteInfos } from '../utils/calculateGetSwapInfos'
-import { getConnection } from '../../../utils/common/getConnection'
-import { getToken } from '../methods/getToken'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
+import { getToken } from '../methods/getToken'
+import { useDataStore } from '../store'
+import { getWebworkerCalculateSwapRouteInfos_mainThreadReceiver } from '../workerBridge/getWebworkerCalculateSwapRouteInfos_mainThreadReceiver'
 
 export const useSwapToken1 = createStoreAtom(RAYMint, {
   onFirstAccess(getter, setter) {
@@ -44,16 +43,18 @@ export function useSwapAmountCalculator() {
     if (!outputToken) return
     if (!amount) return
     const inputAmount: TokenAmount = { token: inputToken, amount }
-    calculateSwapRouteInfos({
-      connection: getConnection('https://rpc.asdf1234.win'), // TEMP for DEV
-      slippageTolerance: 0.05,
+    const subscriber = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
       input: inputToken,
       inputAmount,
       output: outputToken
-    }).then((info) => {
-      if (!info) return
-      const { bestResult } = info
-      console.log('bestResult: ', bestResult)
+    })
+    onCleanup(subscriber.abort)
+    subscriber.subscribe((result) => {
+      result.then((info) => {
+        if (!info) return
+        const { bestResult } = info
+        console.log('bestResult: ', bestResult)
+      })
     })
   })
 }

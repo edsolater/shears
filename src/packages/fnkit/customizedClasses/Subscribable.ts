@@ -1,5 +1,6 @@
 import { AnyFn, isFunction, isObject } from '@edsolater/fnkit'
 
+// TODO: should support clean function
 export type SubscribeCallbackFn<T> = (value: T, prevValue: T | undefined) => void | Promise<void>
 
 type Dispatcher<T> = T | ((oldValue: T) => T | PromiseLike<T>)
