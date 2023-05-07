@@ -20,3 +20,11 @@ export function toBigint(n: Numberish): bigint {
   const { numerator, denominator } = toFraction(n)
   return numerator / denominator
 }
+
+export function parseSDKBN(n: OriginalBN): bigint {
+  return toBigint(n.toString())
+}
+
+export function isSDKBN(n: unknown): n is OriginalBN {
+  return n instanceof OriginalBN
+}

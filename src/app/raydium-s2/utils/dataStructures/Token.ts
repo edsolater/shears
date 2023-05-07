@@ -44,13 +44,11 @@ export function deUIToken(token: Token): _Token | Currency {
 }
 
 export function isSDKToken(token: unknown): token is Currency | _Token {
-  return isObject(token) && (token instanceof Currency || token instanceof _Token)
+  return token instanceof Currency || token instanceof _Token
 }
 
 /**
  * SDK token → UI prefer transformable object literal token
- * @param token
- * @returns
  */
 export function parseSDKToken(token: Currency | _Token): Token {
   if (isSDKTokenSOL(token)) {
