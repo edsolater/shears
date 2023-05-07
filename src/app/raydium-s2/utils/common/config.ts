@@ -1,7 +1,7 @@
 import { map } from '@edsolater/fnkit'
 import { ENDPOINT, MAINNET_PROGRAM_ID, RAYDIUM_MAINNET } from '@raydium-io/raydium-sdk'
 // import { ENDPOINT, MAINNET_PROGRAM_ID, RAYDIUM_MAINNET } from '@raydium-io/raydium-sdk'
-import toPubString from './pub'
+import toPubString from '../dataStructures/Publickey'
 
 const apiTailUrls = RAYDIUM_MAINNET
 const apiBase = ENDPOINT

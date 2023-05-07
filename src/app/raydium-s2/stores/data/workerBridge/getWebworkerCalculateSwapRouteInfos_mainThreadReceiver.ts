@@ -8,14 +8,14 @@ import { unwrap } from 'solid-js/store'
 export function getWebworkerCalculateSwapRouteInfos_mainThreadReceiver(params: CalculateSwapRouteInfosParams) {
   return subscribeWebWorker<CalculateSwapRouteInfosResult, CalculateSwapRouteInfosParams>(
     'get webworker calculate swap route infos',
-    deepUnwrap(params)
+    deepUnwrapSolidProxy(params)
   )
 }
 
 /** solidjs utils */
-function deepUnwrap<T>(data: T): T {
+function deepUnwrapSolidProxy<T>(data: T): T {
   if (isObjectLiteral(data)) {
-    return map(data, (v) => deepUnwrap(v)) as T
+    return map(data, (v) => deepUnwrapSolidProxy(v)) as T
   } else if (isProxy(data)) {
     return unwrap(data)
   } else {

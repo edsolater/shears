@@ -1,6 +1,6 @@
 import { getType } from '@edsolater/fnkit'
 import { PublicKey } from '@solana/web3.js'
-import toPubString from '../../common/pub'
+import toPubString from '../../dataStructures/Publickey'
 import { addTransportRule } from '../addTransportRule'
 
 export const addRule = () =>

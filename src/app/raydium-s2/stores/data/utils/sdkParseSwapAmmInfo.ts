@@ -3,7 +3,7 @@ import {
   ReturnTypeFetchMultiplePoolTickArrays,
   TradeV2
 } from '@raydium-io/raydium-sdk'
-import toPubString, { toPub } from '../../../utils/common/pub'
+import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { ApiPoolInfo } from '../types/ammPools'
 import { Connection } from '@solana/web3.js'
 

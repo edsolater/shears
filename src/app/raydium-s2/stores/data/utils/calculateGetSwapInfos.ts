@@ -8,16 +8,18 @@ import {
   TradeV2
 } from '@raydium-io/raydium-sdk'
 import { getConnection } from '../../../utils/common/getConnection'
-import toPubString from '../../../utils/common/pub'
+import toPubString from '../../../utils/dataStructures/Publickey'
 import { toPercent } from '../../../utils/dataStructures/Percent'
 import { Token, deUIToken } from '../../../utils/dataStructures/Token'
 import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
+import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
 export type CalculateSwapRouteInfosResult = ReturnType<typeof calculateSwapRouteInfos>
+
 export async function calculateSwapRouteInfos({
   rpcAddress = 'https://rpc.asdf1234.win',
   slippageTolerance = 0.05,
@@ -93,7 +95,13 @@ export async function calculateSwapRouteInfos({
     beseResult: best?.bestResult,
     bestResultStartTimes: best?.bestResultStartTimes
   }))
-  return swapInfo
+
+  const flatedSwapInfo = swapInfo.then(flatSDKReturnedInfo).then((i) => {
+    console.log('flatedSwapInfo: ', i)
+    return i
+  })
+  
+  return flatedSwapInfo
 }
 
 type BestResultStartTimeInfo = {

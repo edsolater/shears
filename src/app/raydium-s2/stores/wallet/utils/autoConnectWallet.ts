@@ -1,4 +1,4 @@
-import toPubString from '../../../utils/common/pub';
+import toPubString from '../../../utils/dataStructures/Publickey';
 import { WalletAdapterInterface } from '../type';
 import { connectWallet } from './connectWallet'
 import { getWalletAdapter } from './getWalletAdapter'
