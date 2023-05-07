@@ -44,3 +44,7 @@ export function tryToPub<T>(v: T): T | PublicKey {
 export function recordPubString(...args: Parameters<typeof toPubString>): void {
   toPubString(...args)
 }
+
+export function isPublicKey(v: unknown): v is PublicKey {
+  return v instanceof PublicKey
+}
