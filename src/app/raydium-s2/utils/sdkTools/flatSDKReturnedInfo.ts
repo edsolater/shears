@@ -3,6 +3,9 @@ import { isSDKToken, parseSDKToken } from '../dataStructures/Token'
 import toPubString, { isPublicKey } from '../dataStructures/Publickey'
 import { isSDKTokenAmount, parseSDKTokenAmount } from '../dataStructures/TokenAmount'
 import { isSDKBN, parseSDKBN } from '../dataStructures/BN'
+import { isSDKFraction, parseSDKFraction } from '../dataStructures/Fraction'
+import { isSDKPrice, parseSDKPrice } from '../dataStructures/Price'
+import { isSDKDecimal, parseSDKDecimal } from '../dataStructures/Decimal'
 
 /**
  *
@@ -21,8 +24,15 @@ export function flatSDKReturnedInfo<T>(sdkRawData: T): T {
     return toPubString(sdkRawData) as unknown as T
   } else if (isSDKBN(sdkRawData)) {
     return parseSDKBN(sdkRawData) as unknown as T
+  } else if (isSDKDecimal(sdkRawData)) {
+    return parseSDKDecimal(sdkRawData) as unknown as T
+  } else if (isSDKPrice(sdkRawData)) {
+    return parseSDKPrice(sdkRawData) as unknown as T
+  } else if (isSDKFraction(sdkRawData)) {
+    return parseSDKFraction(sdkRawData) as unknown as T
   } else if (isObjectLiteral(sdkRawData)) {
     return map(sdkRawData, (v) => flatSDKReturnedInfo(v)) as unknown as T
   }
+
   return sdkRawData
 }

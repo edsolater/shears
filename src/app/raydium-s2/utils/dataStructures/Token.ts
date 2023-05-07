@@ -48,7 +48,7 @@ export function isSDKToken(token: unknown): token is Currency | _Token {
 }
 
 /**
- * SDK token → UI prefer transformable object literal token
+ * SDK value → UI prefer transformable object literal value
  */
 export function parseSDKToken(token: Currency | _Token): Token {
   if (isSDKTokenSOL(token)) {
