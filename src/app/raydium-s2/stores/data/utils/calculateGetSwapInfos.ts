@@ -18,7 +18,7 @@ import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
-export type CalculateSwapRouteInfosResult = ReturnType<typeof calculateSwapRouteInfos>
+export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>>
 
 export async function calculateSwapRouteInfos({
   rpcAddress = 'https://rpc.asdf1234.win',
@@ -92,15 +92,16 @@ export async function calculateSwapRouteInfos({
 
   const swapInfo = Promise.all([routeList, best]).then(([routeList, best]) => ({
     routeList,
-    beseResult: best?.bestResult,
+    bestResult: best?.bestResult,
     bestResultStartTimes: best?.bestResultStartTimes
   }))
 
   const flatedSwapInfo = swapInfo.then(flatSDKReturnedInfo).then((i) => {
     console.log('flatedSwapInfo: ', i)
     return i
-  })
-  
+  }) 
+  flatedSwapInfo
+
   return flatedSwapInfo
 }
 

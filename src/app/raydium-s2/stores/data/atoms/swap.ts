@@ -5,6 +5,8 @@ import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { getToken } from '../methods/getToken'
 import { useDataStore } from '../store'
 import { getWebworkerCalculateSwapRouteInfos_mainThreadReceiver } from '../workerBridge/getWebworkerCalculateSwapRouteInfos_mainThreadReceiver'
+import { Numberish } from '../../../utils/dataStructures/type'
+import { mul } from '../../../utils/dataStructures/basicMath/operations'
 
 export const useSwapToken1 = createStoreAtom(RAYMint, {
   onFirstAccess(getter, setter) {
@@ -22,8 +24,8 @@ export const useSwapToken1 = createStoreAtom(RAYMint, {
 })
 
 export const useSwapToken2 = createStoreAtom(SOLMint)
-export const useSwapTokenAmount1 = createStoreAtom<number | string | undefined>()
-export const useSwapTokenAmount2 = createStoreAtom<number | string | undefined>()
+export const useSwapTokenAmount1 = createStoreAtom<Numberish | undefined>()
+export const useSwapTokenAmount2 = createStoreAtom<Numberish | undefined>()
 
 type AtomAccessor<Atom extends StoreAtom<any>> = ReturnType<Atom>[0]
 type AtomSetter<Atom extends StoreAtom<any>> = ReturnType<Atom>[1]
@@ -42,19 +44,19 @@ export function useSwapAmountCalculator() {
     if (!inputToken) return
     if (!outputToken) return
     if (!amount) return
-    const inputAmount: TokenAmount = { token: inputToken, amount }
+    const inputAmount: TokenAmount = { token: inputToken, amount: 1 }
     const subscriber = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
       input: inputToken,
       inputAmount,
       output: outputToken
     })
     onCleanup(subscriber.abort)
-    subscriber.subscribe((result) => {
-      result.then((info) => {
-        if (!info) return
-        const { bestResult } = info
-        console.log('bestResult: ', bestResult)
-      })
+    subscriber.subscribe((info) => {
+      console.log('in subscriber result: ', info)
+      if (!info) return
+      const { bestResult } = info
+      console.log('bestResult: ', bestResult)
+      setAmount2(bestResult?.amountOut.amount)
     })
   })
 }

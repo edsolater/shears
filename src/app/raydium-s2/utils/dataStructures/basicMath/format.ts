@@ -32,12 +32,17 @@ export function toString(from?: Numberish | undefined, options?: NumberishOption
     const decimalPlace = options?.decimalLength ?? 4
     const DummyNumerator = numerator * 10n ** BigInt(decimalPlace)
     const DummyDenominator = denominator * 10n ** BigInt(decimalPlace)
+    console.log('DummyNumerator: ', DummyNumerator)
+    console.log('DummyDenominator: ', DummyDenominator)
+    // TODO: error
     const DummyfinalN = String(DummyNumerator / DummyDenominator)
+    console.log('DummyfinalN: ', DummyfinalN)
     const intPart = DummyfinalN.slice(0, -decimalPlace)
     const decPart = DummyfinalN.slice(-decimalPlace)
     return shakeTailingZero(`${intPart}.${decPart}`)
   }
 }
+console.log('toString({}): ', toString({ numerator: 46936916n, denominator: 1000000000n }, { decimalLength: 9 }))
 
 /**
  * CAUTION 1: if original number have very long decimal part, it will lost

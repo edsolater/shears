@@ -3,6 +3,7 @@ import { parseSDKBN, toBN } from './BN'
 import { SDK_CURRENCY_SOL, TOKEN_SOL, Token, parseSDKToken } from './Token'
 import { mul } from './basicMath/operations'
 import { Numberish } from './type'
+import { div } from './basicMath/operations'
 
 export type TokenAmount = {
   token: Token
@@ -14,7 +15,7 @@ export function deUITokenAmount(tokenAmount: TokenAmount): _TokenAmount | Curren
   const isSol = tokenAmount.token.is === 'sol'
   if (isSol) {
     const token = SDK_CURRENCY_SOL
-    return new CurrencyAmount(token, toBN(tokenAmount.amount)) // which means error appears
+    return new CurrencyAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
   } else {
     const token = new _Token(
       tokenAmount.token.mint,
@@ -22,12 +23,12 @@ export function deUITokenAmount(tokenAmount: TokenAmount): _TokenAmount | Curren
       tokenAmount.token.symbol,
       tokenAmount.token.name
     )
-    return new _TokenAmount(token, toBN(tokenAmount.amount)) // which means error appears
+    return new _TokenAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
   }
 }
 
-export function toTokenAmount(token: Token, amount: Numberish, options?: { alreadyDecimaled?: boolean }): TokenAmount {
-  return { token, amount: options?.alreadyDecimaled ? mul(amount, 10 ** token.decimals) : amount }
+export function toTokenAmount(token: Token, amount: Numberish, options?: { amountIsRawBN?: boolean }): TokenAmount {
+  return { token, amount: options?.amountIsRawBN ? div(amount, 10 ** token.decimals) : amount }
 }
 
 export function isSDKTokenAmount(amount: unknown): amount is _TokenAmount | CurrencyAmount {
@@ -39,12 +40,12 @@ export function isSDKTokenAmount(amount: unknown): amount is _TokenAmount | Curr
  */
 export function parseSDKTokenAmount(tokenAmount: CurrencyAmount | _TokenAmount): TokenAmount {
   if (isSDKCurrencyAmount(tokenAmount)) {
-    return { token: TOKEN_SOL, amount: parseSDKBN(tokenAmount.raw) }
+    return { token: TOKEN_SOL, amount: div(parseSDKBN(tokenAmount.raw), 10 ** TOKEN_SOL.decimals) }
   } else {
     const ta = tokenAmount as _TokenAmount
     return {
       token: parseSDKToken(ta.token),
-      amount: parseSDKBN(ta.raw)
+      amount: div(parseSDKBN(ta.raw), 10 ** ta.token.decimals)
     }
   }
 }

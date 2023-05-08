@@ -12,6 +12,7 @@ import {
 } from '../stores/data/atoms/swap'
 import { useDataStore } from '../stores/data/store'
 import { useSwapToken2 } from '../stores/data/atoms/swap'
+import { toString } from '../utils/dataStructures/basicMath/format'
 
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
@@ -23,9 +24,12 @@ export function SwapPage() {
   const token2 = createMemo(() => dataStore.allTokens?.find((t) => t.mint === token2Mint()))
 
   const [amount1, setAmount1] = useSwapTokenAmount1()
-  const tokenAmount1 = createDerivedAccessor(amount1, (amount) => (amount ? String(amount) : undefined))
+  const tokenAmount1 = createDerivedAccessor(amount1, (amount) => (amount ? toString(amount) : undefined))
   const [amount2, setAmount2] = useSwapTokenAmount2()
-  const tokenAmount2 = createDerivedAccessor(amount2, (amount) => (amount ? String(amount) : undefined))
+  const tokenAmount2 = createDerivedAccessor(amount2, (amount) => {
+    console.log('amount: ', amount, toString(amount))
+    return amount ? toString(amount) : undefined
+  })
 
   useSwapAmountCalculator()
   // createEffect(() => console.log('tokenAmount1: ', tokenAmount1()))
