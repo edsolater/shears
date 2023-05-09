@@ -1,11 +1,12 @@
+import { MayPromise } from '@edsolater/fnkit'
 import { jFetch } from '../../../../../packages/jFetch'
 import { asyncInvoke } from '../../../../../packages/pivkit/hooks/createContextStore/utils/asyncInvoke'
 import { appApiUrls } from '../../../utils/common/config'
 import { ApiAmmV3PoolsItem, ApiPoolInfo } from '../types/ammPools'
 
 const apiCache = {} as {
-  ammV3?: ApiAmmV3PoolsItem[]
-  liquidity?: ApiPoolInfo
+  ammV3?: MayPromise<ApiAmmV3PoolsItem[] | undefined>
+  liquidity?: MayPromise<ApiPoolInfo | undefined>
 }
 
 export function clearApiCache() {
@@ -25,16 +26,18 @@ async function fetchOldAmmPoolInfo() {
  * api amm info
  */
 export async function fetchAmmPoolInfo() {
-  const task1 = (async () => {
-    if (!apiCache.ammV3) {
-      apiCache.ammV3 = await fetchAmmV3PoolInfo()
-    }
-  })()
-  const task2 = (async ()=>{
-    if (!apiCache.liquidity) {
-      apiCache.liquidity = await fetchOldAmmPoolInfo()
-    }
-  })()
-  await Promise.allSettled([task1, task2])
+  if (!apiCache.ammV3) {
+    apiCache.ammV3 = fetchAmmV3PoolInfo()
+  }
+  if (!apiCache.liquidity) {
+    apiCache.liquidity = fetchOldAmmPoolInfo()
+  }
   return apiCache
 }
+
+export function prefetchAmmPoolInfo() {
+  return fetchAmmPoolInfo()
+}
+
+// apply prefetch
+prefetchAmmPoolInfo()
