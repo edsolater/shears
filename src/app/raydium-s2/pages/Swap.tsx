@@ -17,22 +17,16 @@ import { toString } from '../utils/dataStructures/basicMath/format'
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
   const dataStore = useDataStore()
-  // const token = createMemo(() => dataStore.allTokens?.find((t) => t.mint === swapToken1()))
   const [token1Mint, setToken1Mint] = useSwapToken1()
-  const token1 = createMemo(() => dataStore.allTokens?.find((t) => t.mint === token1Mint()))
   const [token2Mint, setToken2Mint] = useSwapToken2()
-  const token2 = createMemo(() => dataStore.allTokens?.find((t) => t.mint === token2Mint()))
-
+  const token1 = () => dataStore.allTokens?.find((t) => t.mint === token1Mint())
+  const token2 = () => dataStore.allTokens?.find((t) => t.mint === token2Mint())
   const [amount1, setAmount1] = useSwapTokenAmount1()
-  const tokenAmount1 = createDerivedAccessor(amount1, (amount) => (amount ? toString(amount) : undefined))
   const [amount2, setAmount2] = useSwapTokenAmount2()
-  const tokenAmount2 = createDerivedAccessor(amount2, (amount) => {
-    console.log('amount: ', amount, toString(amount))
-    return amount ? toString(amount) : undefined
-  })
+  const tokenAmount1 = () => (amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined)
+  const tokenAmount2 = () => (amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined)
 
   useSwapAmountCalculator()
-  // createEffect(() => console.log('tokenAmount1: ', tokenAmount1()))
   return (
     <Piv>
       <NavBar title='Swap' />
@@ -58,8 +52,4 @@ export function SwapPage() {
       </Box>
     </Piv>
   )
-}
-
-function createDerivedAccessor<T, U>(signal: () => T, mapFn: (v: T) => U): () => U {
-  return createMemo(() => mapFn(signal()))
 }

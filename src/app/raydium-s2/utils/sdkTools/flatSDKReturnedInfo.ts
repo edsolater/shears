@@ -1,19 +1,19 @@
-import { ReplaceType, isArray, isObjectLiteral, isPrimitive, map } from '@edsolater/fnkit'
-import { isSDKToken, parseSDKToken } from '../dataStructures/Token'
+import { isArray, isObjectLiteral, isPrimitive, map } from '@edsolater/fnkit'
+import { FlatSDKBN, isSDKBN, parseSDKBN } from '../dataStructures/BN'
+import { FlatSDKDecimal, isSDKDecimal, parseSDKDecimal } from '../dataStructures/Decimal'
+import { FlatSDKFraction, isSDKFraction, parseSDKFraction } from '../dataStructures/Fraction'
+import { FlatSDKPrice, isSDKPrice, parseSDKPrice } from '../dataStructures/Price'
 import toPubString, { isPublicKey } from '../dataStructures/Publickey'
-import { isSDKTokenAmount, parseSDKTokenAmount } from '../dataStructures/TokenAmount'
-import { isSDKBN, parseSDKBN } from '../dataStructures/BN'
-import { isSDKFraction, parseSDKFraction } from '../dataStructures/Fraction'
-import { isSDKPrice, parseSDKPrice } from '../dataStructures/Price'
-import { isSDKDecimal, parseSDKDecimal } from '../dataStructures/Decimal'
-import { CurrencyAmount, TokenAmount as _TokenAmount } from '@raydium-io/raydium-sdk'
-import { TokenAmount } from '../dataStructures/TokenAmount'
+import { FlatSDKToken, isSDKToken, parseSDKToken } from '../dataStructures/Token'
+import { FlatSDKTokenAmount, isSDKTokenAmount, parseSDKTokenAmount } from '../dataStructures/TokenAmount'
 
 /**
  *
  * @param sdkRawData input raw sdk data
  */
-export function flatSDKReturnedInfo<T>(sdkRawData: T): ReplaceType<T, CurrencyAmount | _TokenAmount, TokenAmount> {
+export function flatSDKReturnedInfo<T>(
+  sdkRawData: T
+): FlatSDKFraction<FlatSDKBN<FlatSDKPrice<FlatSDKDecimal<FlatSDKToken<FlatSDKTokenAmount<T>>>>>> {
   if (isPrimitive(sdkRawData)) {
     return sdkRawData as any
   } else if (isArray(sdkRawData)) {

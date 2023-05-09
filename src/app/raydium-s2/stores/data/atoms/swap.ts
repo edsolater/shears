@@ -45,13 +45,14 @@ export function useSwapAmountCalculator() {
     if (!outputToken) return
     if (!amount) return
     const inputAmount: TokenAmount = { token: inputToken, amount: 1 }
-    const subscriber = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
+    const subscribable = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
       input: inputToken,
       inputAmount,
       output: outputToken
     })
-    onCleanup(subscriber.abort)
-    subscriber.subscribe((info) => {
+
+    onCleanup(subscribable.abort)
+    subscribable.subscribe((info) => {
       console.log('in subscriber result: ', info)
       if (!info) return
       const { bestResult } = info

@@ -1,4 +1,4 @@
-import { isObject } from '@edsolater/fnkit'
+import { ReplaceType, isObject } from '@edsolater/fnkit'
 import { Currency, Token as _Token } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
 
@@ -46,6 +46,8 @@ export function deUIToken(token: Token): _Token | Currency {
 export function isSDKToken(token: unknown): token is Currency | _Token {
   return token instanceof Currency || token instanceof _Token
 }
+
+export type FlatSDKToken<T> = ReplaceType<T, Currency | _Token, Token>
 
 /**
  * SDK value → UI prefer transformable object literal value

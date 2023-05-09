@@ -4,6 +4,7 @@ import { SDK_CURRENCY_SOL, TOKEN_SOL, Token, parseSDKToken } from './Token'
 import { mul } from './basicMath/operations'
 import { Numberish } from './type'
 import { div } from './basicMath/operations'
+import { ReplaceType } from '@edsolater/fnkit'
 
 export type TokenAmount = {
   token: Token
@@ -34,6 +35,8 @@ export function toTokenAmount(token: Token, amount: Numberish, options?: { amoun
 export function isSDKTokenAmount(amount: unknown): amount is _TokenAmount | CurrencyAmount {
   return amount instanceof _TokenAmount || amount instanceof CurrencyAmount
 }
+
+export type FlatSDKTokenAmount<T> = ReplaceType<T, CurrencyAmount | _TokenAmount, TokenAmount>
 
 /**
  * SDK tokenAmount → UI prefer transformable object literal tokenAmount

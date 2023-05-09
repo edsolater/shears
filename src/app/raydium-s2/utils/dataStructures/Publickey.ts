@@ -1,4 +1,4 @@
-import { isString, tryCatch } from '@edsolater/fnkit'
+import { ReplaceType, isString, tryCatch } from '@edsolater/fnkit'
 import { PublicKeyish } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
 
@@ -37,6 +37,8 @@ export function tryToPub<T>(v: T): T | PublicKey {
       )
     : v
 }
+
+export type FlatPublicKey<T> = ReplaceType<T, PublicKey, string>
 
 /**
  * just push the result to cache
