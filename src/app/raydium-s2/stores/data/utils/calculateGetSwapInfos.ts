@@ -16,11 +16,15 @@ import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
+import { makeTaskAbortable } from '../../../../../packages/fnkit/makeTaskAbortable'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
-export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>>
+export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>['result']>
 
-export async function calculateSwapRouteInfos({
+/**
+ * swap core calculation algorithm
+ */
+export function calculateSwapRouteInfos({
   rpcAddress = 'https://rpc.asdf1234.win',
   slippageTolerance = 0.05,
   input,
@@ -33,76 +37,83 @@ export async function calculateSwapRouteInfos({
   output: Token
   inputAmount: TokenAmount
 }) {
-  const fetchedAmmPoolInfoPromise = fetchAmmPoolInfo()
-  const ammV3Promise = fetchedAmmPoolInfoPromise
-    .then((i) => i.ammV3)
-    .then((ammV3) => {
-      assert(ammV3, 'ammV3 api must be loaded')
-      return ammV3
-    })
-  const apiPoolListPromise = fetchedAmmPoolInfoPromise
-    .then((i) => i.liquidity)
-    .then((apiPoolList) => {
-      assert(apiPoolList, 'liquidity api must be loaded')
-      return apiPoolList
-    })
-  const connection = getConnection(rpcAddress)
-  const chainTime = Date.now() / 1000
-
-  const sdkParsedAmmV3PoolInfoPromise = ammV3Promise.then((ammV3) =>
-    sdkParseCLMMPoolInfo({ connection, apiAmmPools: ammV3 })
-  )
-
-  const sdkParsedSwapAmmInfo = Promise.all([sdkParsedAmmV3PoolInfoPromise, apiPoolListPromise]).then(
-    ([sdkParsedAmmV3PoolInfo, apiPoolList]) =>
-      sdkParseSwapAmmInfo({
-        connection,
-        inputMint: input.mint,
-        outputMint: output.mint,
-        apiPoolList: apiPoolList,
-        sdkParsedAmmV3PoolInfo: sdkParsedAmmV3PoolInfo
+  return makeTaskAbortable((canContinue) => {
+    const fetchedAmmPoolInfoPromise = fetchAmmPoolInfo()
+    const canContinueAsyncChecker = <T>(i: T): T => {
+      assert(canContinue(), 'task aborted')
+      return i
+    }
+    const ammV3Promise = fetchedAmmPoolInfoPromise
+      .then(canContinueAsyncChecker)
+      .then((i) => i.ammV3)
+      .then((ammV3) => {
+        assert(ammV3, 'ammV3 api must be loaded')
+        return ammV3
       })
-  )
+    const apiPoolListPromise = fetchedAmmPoolInfoPromise
+      .then(canContinueAsyncChecker)
+      .then((i) => i.liquidity)
+      .then((apiPoolList) => {
+        assert(apiPoolList, 'liquidity api must be loaded')
+        return apiPoolList
+      })
+    const connection = getConnection(rpcAddress)
+    const chainTime = Date.now() / 1000
 
-  const awaitedSimulateCache = sdkParsedSwapAmmInfo.then((info) => info.poolInfosCache)
-  if (!awaitedSimulateCache) return
+    const sdkParsedAmmV3PoolInfoPromise = ammV3Promise
+      .then(canContinueAsyncChecker)
+      .then((ammV3) => sdkParseCLMMPoolInfo({ connection, apiAmmPools: ammV3 }))
 
-  const awaitedTickCache = sdkParsedSwapAmmInfo.then((info) => info.tickCache)
-  if (!awaitedTickCache) return
+    const sdkParsedSwapAmmInfo = Promise.all([sdkParsedAmmV3PoolInfoPromise, apiPoolListPromise])
+      .then(canContinueAsyncChecker)
+      .then(([sdkParsedAmmV3PoolInfo, apiPoolList]) =>
+        sdkParseSwapAmmInfo({
+          connection,
+          inputMint: input.mint,
+          outputMint: output.mint,
+          apiPoolList: apiPoolList,
+          sdkParsedAmmV3PoolInfo: sdkParsedAmmV3PoolInfo
+        })
+      )
 
-  const routeList = sdkParsedSwapAmmInfo.then(async ({ poolInfosCache, tickCache, routes }) => {
-    const [awaitedPoolInfosCache, awaitedTickCache] = await Promise.all([poolInfosCache, tickCache])
-    assert(awaitedPoolInfosCache)
-    assert(awaitedTickCache)
-    return TradeV2.getAllRouteComputeAmountOut({
-      directPath: routes.directPath,
-      routePathDict: routes.routePathDict,
-      simulateCache: awaitedPoolInfosCache,
-      tickCache: awaitedTickCache,
-      inputTokenAmount: deUITokenAmount(inputAmount),
-      outputToken: deUIToken(output),
-      slippage: toPercent(slippageTolerance),
-      chainTime
-    })
+    const awaitedSimulateCache = sdkParsedSwapAmmInfo.then((info) => info.poolInfosCache)
+    if (!awaitedSimulateCache) return
+
+    const awaitedTickCache = sdkParsedSwapAmmInfo.then((info) => info.tickCache)
+    if (!awaitedTickCache) return
+
+    const routeList = sdkParsedSwapAmmInfo
+      .then(canContinueAsyncChecker)
+      .then(async ({ poolInfosCache, tickCache, routes }) => {
+        const [awaitedPoolInfosCache, awaitedTickCache] = await Promise.all([poolInfosCache, tickCache])
+        assert(awaitedPoolInfosCache)
+        assert(awaitedTickCache)
+        return TradeV2.getAllRouteComputeAmountOut({
+          directPath: routes.directPath,
+          routePathDict: routes.routePathDict,
+          simulateCache: awaitedPoolInfosCache,
+          tickCache: awaitedTickCache,
+          inputTokenAmount: deUITokenAmount(inputAmount),
+          outputToken: deUIToken(output),
+          slippage: toPercent(slippageTolerance),
+          chainTime
+        })
+      })
+
+    const best = Promise.all([routeList, sdkParsedSwapAmmInfo.then((i) => i.poolInfosCache)])
+      .then(canContinueAsyncChecker)
+      .then(([routeList, poolInfosCache]) => getBestCalcResult(routeList, poolInfosCache, chainTime))
+
+    const swapInfo = Promise.all([routeList, best])
+      .then(canContinueAsyncChecker)
+      .then(([routeList, best]) => ({
+        routeList,
+        bestResult: best?.bestResult,
+        bestResultStartTimes: best?.bestResultStartTimes
+      }))
+
+    return swapInfo.then(flatSDKReturnedInfo)
   })
-
-  const best = Promise.all([routeList, sdkParsedSwapAmmInfo.then((i) => i.poolInfosCache)]).then(
-    ([routeList, poolInfosCache]) => getBestCalcResult(routeList, poolInfosCache, chainTime)
-  )
-
-  const swapInfo = Promise.all([routeList, best]).then(([routeList, best]) => ({
-    routeList,
-    bestResult: best?.bestResult,
-    bestResultStartTimes: best?.bestResultStartTimes
-  }))
-
-  const flatedSwapInfo = swapInfo.then(flatSDKReturnedInfo).then((i) => {
-    console.log('flatedSwapInfo: ', i)
-    return i
-  }) 
-  flatedSwapInfo
-
-  return flatedSwapInfo
 }
 
 type BestResultStartTimeInfo = {

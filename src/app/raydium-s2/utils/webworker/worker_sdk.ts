@@ -1,5 +1,5 @@
 /// <reference lib="webworker" />
-import './worker_polyfill'; // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
 import { invoke } from '../../../../packages/fnkit/invoke'
@@ -15,6 +15,7 @@ const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
 function initMessageReceiver() {
   globalThis.addEventListener('message', async (ev) => {
+    console.log('receive message at: ', ev.data.payload, performance.now())
     const description = ev.data.description
     const payload = ev.data.payload
     const onMessage = callbackMap.get(description)

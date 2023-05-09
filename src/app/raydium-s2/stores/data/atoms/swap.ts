@@ -35,6 +35,29 @@ export function useSwapAmountCalculator() {
   const [amount1, setAmount1] = useSwapTokenAmount1()
   const [amount2, setAmount2] = useSwapTokenAmount2()
 
+  // preflight
+  createEffect(() => {
+    const inputToken = getToken(token1())
+    const outputToken = getToken(token2())
+    if (!inputToken) return
+    if (!outputToken) return
+    const inputAmount: TokenAmount = { token: inputToken, amount: 1 }
+
+    const subscribable = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
+      input: inputToken,
+      inputAmount,
+      output: outputToken
+    })
+    onCleanup(subscribable.abort)
+    const s = subscribable.subscribe((info) => {
+      if (!info) return
+      const { bestResult } = info
+      s.unsubscribe()
+      console.log('preflight result: ', bestResult)
+    })
+  })
+
+  // swap calc
   createEffect(() => {
     const inputToken = getToken(token1())
     const outputToken = getToken(token2())
@@ -52,10 +75,8 @@ export function useSwapAmountCalculator() {
 
     onCleanup(subscribable.abort)
     subscribable.subscribe((info) => {
-      console.log('in subscriber result: ', info)
       if (!info) return
       const { bestResult } = info
-      console.log('bestResult: ', bestResult)
       setAmount2(bestResult?.amountOut.amount)
     })
   })

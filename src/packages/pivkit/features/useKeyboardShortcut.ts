@@ -141,8 +141,8 @@ export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue: 
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue?: T) {
   const [value, setValue] = createSignal(subscribable.current ?? defaultValue, { equals: false })
   createEffect(() => {
-    const { abort } = subscribable.subscribe(setValue)
-    onCleanup(abort)
+    const { unsubscribe } = subscribable.subscribe(setValue)
+    onCleanup(unsubscribe)
   })
   return value
 }

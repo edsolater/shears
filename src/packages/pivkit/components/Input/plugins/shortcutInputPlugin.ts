@@ -19,8 +19,8 @@ export const keyboardShortcutObserverPlugin = (options: { onRecordShortcut?: (sh
       const el = elRef()
       if (!el) return
       const subscribable = subscribeKeyboardShortcut(el)
-      const { abort } = subscribable.subscribe(handleKeydownKeyboardShortcut)
-      onCleanup(abort)
+      const { unsubscribe } = subscribable.subscribe(handleKeydownKeyboardShortcut)
+      onCleanup(unsubscribe)
     })
 
     // reflect recorded shortcut to input value

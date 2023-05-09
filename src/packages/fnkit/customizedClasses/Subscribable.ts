@@ -60,11 +60,11 @@ export class Subscribable<T> {
   extends<U extends T>(another: Subscribable<U>) {
     const weakRefAnother = new WeakRef(another)
     this.extendedSubscribables.add(weakRefAnother)
-    const { abort } = another.subscribe((value) => this.innerInject(value))
+    const { unsubscribe } = another.subscribe((value) => this.innerInject(value))
     return {
       disconnect: () => {
         this.extendedSubscribables.delete(weakRefAnother)
-        abort()
+        unsubscribe()
       }
     }
   }
@@ -86,7 +86,7 @@ export class Subscribable<T> {
   subscribe(callback: SubscribeCallbackFn<T>) {
     this._callbacks.add(callback)
     return {
-      abort: () => this._callbacks.delete(callback)
+      unsubscribe: () => this._callbacks.delete(callback)
     }
   }
 

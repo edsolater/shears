@@ -18,6 +18,7 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
   callback?: WebworkerSubscribeCallback<ResultData>
 ): { abort(): void } {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
+  console.log('message send at: ', performance.now())
   worker.postMessage(message)
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
@@ -46,6 +47,7 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   query: PostOptions
 ) {
   const subscribable = new Subscribable<ResultData>()
+  console.log('message send at: ', performance.now())
   worker.postMessage({ description: messageDescription, payload: query })
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
