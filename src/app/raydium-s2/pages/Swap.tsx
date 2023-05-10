@@ -13,6 +13,8 @@ import {
 import { useDataStore } from '../stores/data/store'
 import { useSwapToken2 } from '../stores/data/atoms/swap'
 import { toString } from '../utils/dataStructures/basicMath/format'
+import { Section } from '../../../packages/pivkit/components/Section'
+import { Card } from '../../../packages/pivkit/components/Card'
 
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
@@ -30,26 +32,30 @@ export function SwapPage() {
   return (
     <Piv>
       <NavBar title='Swap' />
-      <Box icss={icssBlock_row({ gap: 8 })}>
-        <Piv>{token1()?.symbol}</Piv>
-        <Input
-          icss={{ border: 'solid', width: '12em', flex: 0 }}
-          value={tokenAmount1}
-          onUserInput={({ text }) => {
-            isStringNumber(text) ? setAmount1(text) : undefined
-          }}
-        />
-      </Box>
-      <Box icss={icssBlock_row({ gap: 8 })}>
-        <Piv>{token2()?.symbol}</Piv>
-        <Input
-          icss={{ border: 'solid', width: '12em', flex: 0 }}
-          value={tokenAmount2}
-          onUserInput={({ text }) => {
-            isStringNumber(text) ? setAmount2(text) : undefined
-          }}
-        />
-      </Box>
+      <Section icss={{ display: 'grid', justifyContent: 'center' }}>
+        <Card icss={{ display: 'grid', gap: 8, border: 'solid', padding: 16 }}>
+          <Box icss={icssBlock_row({ gap: 8 })}>
+            <Piv>{token1()?.symbol}</Piv>
+            <Input
+              icss={{ border: 'solid', width: '12em', flex: 0 }}
+              value={tokenAmount1}
+              onUserInput={({ text }) => {
+                isStringNumber(text) ? setAmount1(text) : undefined
+              }}
+            />
+          </Box>
+          <Box icss={icssBlock_row({ gap: 8 })}>
+            <Piv>{token2()?.symbol}</Piv>
+            <Input
+              icss={{ border: 'solid', width: '12em', flex: 0 }}
+              value={tokenAmount2}
+              onUserInput={({ text }) => {
+                isStringNumber(text) ? setAmount2(text) : undefined
+              }}
+            />
+          </Box>
+        </Card>
+      </Section>
     </Piv>
   )
 }
