@@ -53,7 +53,6 @@ export function useSwapAmountCalculator() {
       if (!info) return
       const { bestResult } = info
       s.unsubscribe()
-      console.log('preflight result: ', bestResult)
     })
   })
 

@@ -17,6 +17,7 @@ import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 import { makeTaskAbortable } from '../../../../../packages/fnkit/makeTaskAbortable'
+import { inNextMainLoop } from '../../../../../packages/fnkit/inNextMainLoop'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
 export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>['result']>
@@ -44,14 +45,14 @@ export function calculateSwapRouteInfos({
       return i
     }
     const ammV3Promise = fetchedAmmPoolInfoPromise
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then((i) => i.ammV3)
       .then((ammV3) => {
         assert(ammV3, 'ammV3 api must be loaded')
         return ammV3
       })
     const apiPoolListPromise = fetchedAmmPoolInfoPromise
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then((i) => i.liquidity)
       .then((apiPoolList) => {
         assert(apiPoolList, 'liquidity api must be loaded')
@@ -61,11 +62,11 @@ export function calculateSwapRouteInfos({
     const chainTime = Date.now() / 1000
 
     const sdkParsedAmmV3PoolInfoPromise = ammV3Promise
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then((ammV3) => sdkParseCLMMPoolInfo({ connection, apiAmmPools: ammV3 }))
 
     const sdkParsedSwapAmmInfo = Promise.all([sdkParsedAmmV3PoolInfoPromise, apiPoolListPromise])
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then(([sdkParsedAmmV3PoolInfo, apiPoolList]) =>
         sdkParseSwapAmmInfo({
           connection,
@@ -83,7 +84,7 @@ export function calculateSwapRouteInfos({
     if (!awaitedTickCache) return
 
     const routeList = sdkParsedSwapAmmInfo
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then(async ({ poolInfosCache, tickCache, routes }) => {
         const [awaitedPoolInfosCache, awaitedTickCache] = await Promise.all([poolInfosCache, tickCache])
         assert(awaitedPoolInfosCache)
@@ -101,11 +102,11 @@ export function calculateSwapRouteInfos({
       })
 
     const best = Promise.all([routeList, sdkParsedSwapAmmInfo.then((i) => i.poolInfosCache)])
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then(([routeList, poolInfosCache]) => getBestCalcResult(routeList, poolInfosCache, chainTime))
 
     const swapInfo = Promise.all([routeList, best])
-      .then(canContinueAsyncChecker)
+      .then(inNextMainLoop(canContinueAsyncChecker))
       .then(([routeList, best]) => ({
         routeList,
         bestResult: best?.bestResult,

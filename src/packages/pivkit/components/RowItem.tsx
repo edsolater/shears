@@ -12,7 +12,6 @@ export type RowItemProps = {
 export function RowItem(rawProps: KitProps<RowItemProps>) {
   const props = useKitProps<RowItemProps>(rawProps)
   /* ---------------------------------- props --------------------------------- */
-  createEffect(() => console.log('props.children: ', rawProps.children))
   return (
     <Piv shadowProps={props} icss={{ display: 'flex', alignItems: 'center' }}>
       {props.prefix}

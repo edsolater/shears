@@ -15,7 +15,6 @@ const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
 function initMessageReceiver() {
   globalThis.addEventListener('message', async (ev) => {
-    console.log('receive message at: ', ev.data.payload, performance.now())
     const description = ev.data.description
     const payload = ev.data.payload
     const onMessage = callbackMap.get(description)
