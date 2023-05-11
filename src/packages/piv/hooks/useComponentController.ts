@@ -1,8 +1,25 @@
 import { WeakerMap } from '@edsolater/fnkit'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { ValidController } from '../types/tools'
+import { createEffect, onCleanup } from 'solid-js'
 
 const recordedControllers = new Subscribable<WeakerMap<string, ValidController>>()
+
+/**
+ * only use it in {@link useKitProps}
+ * @param proxyController provide controller
+ * @param id id for {@link useComponentController}
+ */
+export function registerControllerInCreateKit(proxyController: ValidController | undefined, id: string | undefined) {
+  if (!proxyController) return
+  if (!id) return
+  createEffect(() => {
+    recordController(id, proxyController)
+    onCleanup(() => {
+      unregisterController(id)
+    })
+  })
+}
 
 export function recordController<Controller extends ValidController>(id: string, proxyController: Controller) {
   recordedControllers.inject((m) => (m ?? new WeakerMap()).set(id, proxyController))

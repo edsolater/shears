@@ -1,10 +1,8 @@
 import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
-import { createEffect, mergeProps, onCleanup } from 'solid-js'
+import { mergeProps } from 'solid-js'
 import { Accessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
-import {
-  loadPropsControllerRef,
-  toProxifyController} from './propHandlers/controller'
-import { recordController, unregisterController } from "./hooks/useComponentController"
+import { registerControllerInCreateKit } from './hooks/useComponentController'
+import { loadPropsControllerRef, toProxifyController } from './propHandlers/controller'
 import {
   GetPluginProps,
   handlePluginProps,
@@ -35,11 +33,6 @@ type KitPropsInstance<
   Omit<GetPluginProps<Plugins>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<
     {
-      /**
-       * id for component instance
-       * so others can access component's controller without set `props:controllerRef` to component, this have to have access to certain component instance
-       */
-      id?: string
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
       shadowProps?: MayArray<Partial<Accessify<RawProps, Controller>>> // component must merged before `<Div>`
       // -------- additional --------
@@ -115,30 +108,16 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
         return props
       }
     }, // defined-time
-    (props) =>
-      mergeProps(
-        props,
-        hasProperty(options, 'name') ? { class: options!.name } : {},
-        hasProperty(props, 'id') ? { id: props.id } : {}
-      ), // defined-time
+    (props) => mergeProps(props, hasProperty(options, 'name') ? { class: options!.name } : {}), // defined-time
     handleShadowProps, // outside-props-run-time // TODO: assume can't be promisify
     handlePluginProps // outside-props-run-time // TODO: assume can't be promisify
   ) as any /* too difficult to type */
 
   // load controller
-  if (options?.controller) {
-    loadPropsControllerRef(mergedGettersProps, proxyController)
-    // load id
-    const id = props.id
-    if (id) {
-      createEffect(() => {
-        id && recordController(id, proxyController)
-        onCleanup(() => {
-          unregisterController(id)
-        })
-      })
-    }
-  }
+  if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
+
+  // load controller id
+  registerControllerInCreateKit(proxyController, props.id)
 
   return mergedGettersProps
 }

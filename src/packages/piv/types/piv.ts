@@ -21,6 +21,12 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * if it's in shadow props, it will merge with exist props
    */
   class?: MayArray<ClassName<Controller>>
+  
+  /**
+   * id for component instance
+   * so others can access component's controller without set `props:controllerRef` to component, this have to have access to certain component instance
+   */
+  id?: string
 
   onClick?: (
     utils: {
