@@ -1,5 +1,4 @@
-import { AnyFn, hasProperty, shrinkFn, WeakerMap } from '@edsolater/fnkit'
-import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
+import { AnyFn, hasProperty, shrinkFn } from '@edsolater/fnkit'
 import { KitProps } from '../createKit'
 import { ValidController } from '../types/tools'
 
@@ -26,42 +25,6 @@ export function toProxifyController<Controller extends ValidController>(getContr
       }
     }
   ) as Controller
-}
-
-const recordedControllers = new Subscribable<WeakerMap<string, ValidController>>()
-
-export function recordController<Controller extends ValidController>(id: string, proxyController: Controller) {
-  recordedControllers.inject((m) => (m ?? new WeakerMap()).set(id, proxyController))
-}
-
-export function unregisterController(id?: string) {
-  if (!id) return
-  const records = recordedControllers.current
-  if (!records) return
-  recordedControllers.inject((recoder) => {
-    recoder?.delete(id)
-    return recoder
-  })
-}
-
-/** hook */
-export function useComponentController<Controller extends ValidController>(id: string) {
-  let recordController: Controller | undefined = undefined
-  const controller = new Proxy(
-    {},
-    {
-      get(_target, prop) {
-        if (!recordController) {
-          throw new Error('controller not ready')
-        }
-        return Reflect.get(recordController, prop)
-      }
-    }
-  )
-  recordedControllers.subscribe((records) => {
-    recordController = records?.get(id) as Controller | undefined
-  })
-  return controller as Controller
 }
 
 export function applyPivController<

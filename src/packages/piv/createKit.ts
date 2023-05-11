@@ -3,10 +3,8 @@ import { createEffect, mergeProps, onCleanup } from 'solid-js'
 import { Accessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
 import {
   loadPropsControllerRef,
-  recordController,
-  toProxifyController,
-  unregisterController
-} from './propHandlers/controller'
+  toProxifyController} from './propHandlers/controller'
+import { recordController, unregisterController } from "./hooks/useComponentController"
 import {
   GetPluginProps,
   handlePluginProps,

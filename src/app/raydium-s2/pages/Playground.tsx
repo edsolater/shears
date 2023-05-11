@@ -1,9 +1,10 @@
 import { createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { useComponentController } from '../../../packages/piv/propHandlers/controller'
+import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
 import { Box, Button, Collapse } from '../../../packages/pivkit'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
+import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
@@ -46,6 +47,10 @@ function PlaygoundList() {
       <ExamplePanel name='Input'>
         <InputExample />
       </ExamplePanel>
+
+      <ExamplePanel name='Modal'>
+        <ModalExample />
+      </ExamplePanel>
     </Box>
   )
 }
@@ -60,9 +65,6 @@ function CircularProgressExample() {
   return <CircularProgress percent={percent()} />
 }
 
-/**
- *
- */
 function DrawerExample() {
   const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
@@ -78,13 +80,28 @@ function DrawerExample() {
   )
 }
 
+function ModalExample() {
+  const modalController = useComponentController<ModalController>('example-modal')
+  return (
+    <>
+      <Button onClick={() => modalController.toggle?.()}>
+        <Collapse open>
+          <Collapse.Face>{(controller) => (controller.isOpen ? 'Close' : 'Open')}</Collapse.Face>
+          <Collapse.Content>detail info</Collapse.Content>
+        </Collapse>
+      </Button>
+      <Modal id='example-modal' />
+    </>
+  )
+}
+
 function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
   // TODO: invoke in  plugin
   const { transitionProps, refSetter } = useCSSTransition({
     show,
-    onAfterEnter({controller}) {
+    onAfterEnter({ controller }) {
       console.log('controller: ', { ...controller })
     },
     onBeforeEnter(controller) {},
