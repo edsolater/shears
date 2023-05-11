@@ -49,14 +49,22 @@ export function Modal(kitProps: KitProps<ModalProps, { controller: ModalControll
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
   return (
-    <PopPortal id='pop-stack'>
-      <Show when={isOpen()}>
-        <Piv
-          ref={setModalRef}
-          shadowProps={props}
-          icss={{ width: isOpen() ? 300 : 400, height: '100dvh', background: 'dodgerblue' }}
-        ></Piv>
-      </Show>
-    </PopPortal>
+    <Show when={isOpen()}>
+      <Piv
+        ref={setModalRef}
+        shadowProps={props}
+        icss={{
+          width: isOpen() ? 300 : 400,
+          color: 'blue',
+          height: '30dvh',
+          background: 'dodgerblue',
+          overflow: 'hidden'
+        }}
+      >
+        <dialog open>
+          <div style={{ width: '500px', height: '500px', border: 'solid' }}>modal</div>
+        </dialog>
+      </Piv>
+    </Show>
   )
 }
