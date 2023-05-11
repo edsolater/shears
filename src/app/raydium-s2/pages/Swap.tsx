@@ -1,7 +1,7 @@
 import { isStringNumber } from '@edsolater/fnkit'
 import { createEffect, createMemo } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Box, icssBlock_row } from '../../../packages/pivkit'
+import { Box, icssBlock_card, icssBlock_row } from '../../../packages/pivkit'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { NavBar } from '../components/NavBar'
 import {
@@ -33,8 +33,8 @@ export function SwapPage() {
     <Piv>
       <NavBar title='Swap' />
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
-        <Card icss={{ display: 'grid', gap: 8, border: 'solid', padding: 16 }}>
-          <Box icss={icssBlock_row({ gap: 8 })}>
+        <Card icss={icssBlock_card}>
+          <Box icss={[icssBlock_row({ gap: 8 })]}>
             <Piv>{token1()?.symbol}</Piv>
             <Input
               icss={{ border: 'solid', width: '12em', flex: 0 }}

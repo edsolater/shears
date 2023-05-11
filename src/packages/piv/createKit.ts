@@ -98,16 +98,10 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
     // parse plugin of **options**
-    (props) => {
-      if (hasProperty(options, 'plugin')) {
-        return mergePluginReturnedProps({
-          plugins: sortPluginByPriority(options!.plugin!),
-          props
-        })
-      } else {
-        return props
-      }
-    }, // defined-time
+    (props) =>
+      hasProperty(options, 'plugin')
+        ? mergePluginReturnedProps({ plugins: sortPluginByPriority(options!.plugin!), props })
+        : props, // defined-time
     (props) => mergeProps(props, hasProperty(options, 'name') ? { class: options!.name } : {}), // defined-time
     handleShadowProps, // outside-props-run-time // TODO: assume can't be promisify
     handlePluginProps // outside-props-run-time // TODO: assume can't be promisify
@@ -117,6 +111,9 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
   if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
 
   // load controller id
+  if (props.id) {
+    console.log('props.id: ', props.id)
+  }
   registerControllerInCreateKit(proxyController, props.id)
 
   return mergedGettersProps

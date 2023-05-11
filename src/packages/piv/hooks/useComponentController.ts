@@ -6,7 +6,7 @@ import { createEffect, onCleanup } from 'solid-js'
 const recordedControllers = new Subscribable<WeakerMap<string, ValidController>>()
 
 /**
- * only use it in {@link useKitProps}
+ * only use it in {link useKitProps}
  * @param proxyController provide controller
  * @param id id for {@link useComponentController}
  */

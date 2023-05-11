@@ -33,7 +33,7 @@ export class Subscribable<T> {
    * inner method of Subscribable, to inject value and invoke callbacks
    */
   private async innerInject(mayAsyncValue: T | PromiseLike<T>) {
-    const values = await mayAsyncValue
+    const values = isPromiseLike(mayAsyncValue) ? await mayAsyncValue : mayAsyncValue
     this._values.push(createMayWeakRef(values))
     const currentValue = deMayWeakRef(this._values.at(-1))
     const prevValue = deMayWeakRef(this._values.at(-2))

@@ -69,12 +69,10 @@ function DrawerExample() {
   const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
     <>
-      <Button onClick={() => drawerController.toggle?.()}>
-        <Collapse open>
-          <Collapse.Face>{(controller) => (controller.isOpen ? 'Close' : 'Open')}</Collapse.Face>
-          <Collapse.Content>detail info</Collapse.Content>
-        </Collapse>
-      </Button>
+      <Button onClick={() => {
+        console.log('drawerController: ', drawerController)
+        return drawerController.toggle?.()
+      }}>Open</Button>
       <Drawer id='big-drawer' />
     </>
   )
@@ -82,15 +80,13 @@ function DrawerExample() {
 
 function ModalExample() {
   const modalController = useComponentController<ModalController>('example-modal')
+  const modalController2 = useComponentController<ModalController>('example-modal2')
   return (
     <>
-      <Button onClick={() => modalController.toggle?.()}>
-        <Collapse open>
-          <Collapse.Face>{(controller) => (controller.isOpen ? 'Close' : 'Open')}</Collapse.Face>
-          <Collapse.Content>detail info</Collapse.Content>
-        </Collapse>
-      </Button>
+      <Button onClick={() => modalController.toggle?.()}>Open</Button>
       <Modal id='example-modal' />
+      <Button onClick={() => modalController2.toggle?.()}>Open</Button>
+      <Modal id='example-modal2' />
     </>
   )
 }
