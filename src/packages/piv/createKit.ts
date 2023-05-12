@@ -50,7 +50,7 @@ export type KitProps<
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
-    // /** default is false */
+    // /** default is false, only set when children must be function  */
     noNeedAccessifyChildren?: boolean
   } = {}
 > = KitPropsInstance<
