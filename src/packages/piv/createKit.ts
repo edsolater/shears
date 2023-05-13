@@ -1,4 +1,4 @@
-import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
+import { hasProperty, MayArray, MayDeepArray, pipe, shrinkFn } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
 import { Accessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
 import { registerControllerInCreateKit } from './hooks/useComponentController'
@@ -83,6 +83,10 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
 //   ? RawProps
 //   : Props
 
+/**
+ *
+ * @deprecated old is not eause use
+ */
 export function useKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
   // too difficult to type here
   props: any,
@@ -117,4 +121,24 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
   registerControllerInCreateKit(proxyController, props.id)
 
   return mergedGettersProps
+}
+
+/** return multi; not just props */
+export function useComposiableKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
+  // too difficult to type here
+  props: any,
+  options?: KitPropsOptions<RawProps, Controller>
+): {
+  props: ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps>
+  loadController(controller: Controller | ((props: ParsedKitProps<RawProps>) => Controller)): void
+} {
+  let settledController = {} as Controller | ((props: ParsedKitProps<RawProps>) => Controller)
+  const loadController = (controller: Controller) => {
+    settledController = controller
+  }
+  const composedProps = useKitProps(props, {
+    controller: (props: ParsedKitProps<RawProps>) => shrinkFn(settledController, [props]),
+    ...options
+  })
+  return { props: composedProps, loadController }
 }

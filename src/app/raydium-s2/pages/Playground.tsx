@@ -69,10 +69,14 @@ function DrawerExample() {
   const drawerController = useComponentController<DrawerController>('big-drawer')
   return (
     <>
-      <Button onClick={() => {
-        console.log('drawerController: ', drawerController)
-        return drawerController.toggle?.()
-      }}>Open</Button>
+      <Button
+        onClick={() => {
+          console.log('drawerController: ', drawerController)
+          return drawerController.toggle?.()
+        }}
+      >
+        Open
+      </Button>
       <Drawer id='big-drawer' />
     </>
   )
@@ -81,12 +85,21 @@ function DrawerExample() {
 function ModalExample() {
   const modalController = useComponentController<ModalController>('example-modal')
   const modalController2 = useComponentController<ModalController>('example-modal2')
+  const modalController3 = useComponentController<ModalController>('example-modal3')
+  const modalController4 = useComponentController<ModalController>('example-modal4')
+  const modalController5 = useComponentController<ModalController>('example-modal5')
   return (
     <>
       <Button onClick={() => modalController.toggle?.()}>Open</Button>
-      <Modal id='example-modal' />
+      <Modal id='example-modal' isModal>Modal1</Modal>
       <Button onClick={() => modalController2.toggle?.()}>Open</Button>
-      <Modal id='example-modal2' />
+      <Modal id='example-modal2' isModal>Modal2</Modal>
+      <Button onClick={() => modalController3.toggle?.()}>Open</Button>
+      <Modal id='example-modal3' isModal>Modal3</Modal>
+      <Button onClick={() => modalController4.toggle?.()}>Open</Button>
+      <Modal id='example-modal4' isModal>Modal4</Modal>
+      <Button onClick={() => modalController5.toggle?.()}>Open</Button>
+      <Modal id='example-modal5' isModal>Modal5</Modal>
     </>
   )
 }

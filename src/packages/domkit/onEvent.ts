@@ -19,6 +19,15 @@ const eventIdMap = new Map<
   { el: HTMLElement | Document | Window | undefined | null; eventName: string; cb: AnyFn }
 >()
 
+export type EventCallback<
+  K extends keyof HTMLElementEventMap,
+  El extends HTMLElement | Document | Window | undefined | null
+> = {
+  ev: HTMLElementEventMap[K]
+  el: El
+  eventListenerController: EventListenerController
+}
+
 // TODO: !!! move to domkit
 export function onEvent<
   El extends HTMLElement | Document | Window | undefined | null,
@@ -26,7 +35,7 @@ export function onEvent<
 >(
   el: El,
   eventName: K,
-  fn: (payload: { ev: HTMLElementEventMap[K]; el: El; eventListenerController: EventListenerController }) => void,
+  fn: (payload: EventCallback<K, El>) => void,
   /** default is `{ passive: true }` */
   options?: EventListenerOptions
 ): EventListenerController {
