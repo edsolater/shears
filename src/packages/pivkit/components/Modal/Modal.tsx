@@ -1,6 +1,6 @@
 import { CSSInterpolation } from '@emotion/css'
 import { Accessor, Show, createEffect, createSignal } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../../piv'
+import { KitProps, Piv, useComposiableKitProps, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { useDOMEventListener } from '../../hooks/useDOMEventListener'
@@ -32,17 +32,15 @@ export type ModalProps = {
 }
 
 export function Modal(rawProps: KitProps<ModalProps>) {
-  const controllerCreator = () =>
-    ({
-      get isOpen() {
-        return innerOpen()
-      },
-      open: openDialog,
-      close: closeDialog,
-      toggle: toggleDialog
-    } satisfies ModalController)
-  const props = useKitProps<ModalProps>(rawProps, { controller: controllerCreator })
-
+  const { props, loadController } = useComposiableKitProps<ModalProps, ModalController>(rawProps)
+  loadController(() => ({
+    get isOpen() {
+      return innerOpen()
+    },
+    open: openDialog,
+    close: closeDialog,
+    toggle: toggleDialog
+  }))
   const [dialogRef, setDialogRef] = createRef<HTMLDialogElement>()
   const [dialogContentRef, setDialogContentRef] = createRef<HTMLDivElement>()
   const [innerOpen, setInnerOpen] = createSignal(props.open ?? false)

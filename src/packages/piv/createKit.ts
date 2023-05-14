@@ -1,5 +1,6 @@
-import { hasProperty, MayArray, MayDeepArray, pipe, shrinkFn } from '@edsolater/fnkit'
+import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
+import { Faker } from '../fnkit/customizedClasses/Faker'
 import { Accessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
 import { registerControllerInCreateKit } from './hooks/useComponentController'
 import { loadPropsControllerRef, toProxifyController } from './propHandlers/controller'
@@ -114,10 +115,6 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
   // load controller
   if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
 
-  // load controller id
-  if (props.id) {
-    console.log('props.id: ', props.id)
-  }
   registerControllerInCreateKit(proxyController, props.id)
 
   return mergedGettersProps
@@ -132,12 +129,13 @@ export function useComposiableKitProps<RawProps extends ValidProps, Controller e
   props: ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps>
   loadController(controller: Controller | ((props: ParsedKitProps<RawProps>) => Controller)): void
 } {
-  let settledController = {} as Controller | ((props: ParsedKitProps<RawProps>) => Controller)
-  const loadController = (controller: Controller) => {
-    settledController = controller
+  const controllerFaker = new Faker<(props: ParsedKitProps<RawProps>) => Controller>()
+  const loadController = (inputController: Controller | ((props: ParsedKitProps<RawProps>) => Controller)) => {
+    const controllerCreator = typeof inputController === 'function' ? inputController : () => inputController
+    controllerFaker.load(controllerCreator)
   }
   const composedProps = useKitProps(props, {
-    controller: (props: ParsedKitProps<RawProps>) => shrinkFn(settledController, [props]),
+    controller: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props),
     ...options
   })
   return { props: composedProps, loadController }
