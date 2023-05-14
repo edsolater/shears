@@ -85,10 +85,9 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
 //   : Props
 
 /**
- *
- * @deprecated old is not easy to use
+ * section 1: merge props
  */
-export function useKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
+function getParsedKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
   // too difficult to type here
   props: any,
   options?: KitPropsOptions<RawProps, Controller>
@@ -121,7 +120,7 @@ export function useKitProps<RawProps extends ValidProps, Controller extends Vali
 }
 
 /** return multi; not just props */
-export function useComposiableKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
+export function useKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
   // too difficult to type here
   props: any,
   options?: KitPropsOptions<RawProps, Controller>
@@ -129,14 +128,22 @@ export function useComposiableKitProps<RawProps extends ValidProps, Controller e
   props: ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps>
   loadController(controller: Controller | ((props: ParsedKitProps<RawProps>) => Controller)): void
 } {
+  const { loadController, getControllerCreator } = composeController<RawProps, Controller>()
+  const composedProps = getParsedKitProps(props, {
+    controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),
+    ...options
+  })
+  return { props: composedProps, loadController }
+}
+
+/**
+ * section 2: load controller
+ */
+function composeController<RawProps extends ValidProps, Controller extends ValidController>() {
   const controllerFaker = new Faker<(props: ParsedKitProps<RawProps>) => Controller>()
   const loadController = (inputController: Controller | ((props: ParsedKitProps<RawProps>) => Controller)) => {
     const controllerCreator = typeof inputController === 'function' ? inputController : () => inputController
     controllerFaker.load(controllerCreator)
   }
-  const composedProps = useKitProps(props, {
-    controller: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props),
-    ...options
-  })
-  return { props: composedProps, loadController }
+  return { loadController, getControllerCreator: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props) }
 }

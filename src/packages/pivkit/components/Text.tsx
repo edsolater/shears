@@ -8,7 +8,7 @@ export type TextProps = {
  * if for layout , don't render important content in Box
  */
 export function Text(rawProps: KitProps<TextProps>) {
-  const props = useKitProps<TextProps>(rawProps)
+  const { props } = useKitProps<TextProps>(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv

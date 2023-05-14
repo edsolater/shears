@@ -1,6 +1,6 @@
 import { KitProps, Piv, addDefaultProps, useKitProps } from '../../../packages/piv'
 import { Image, ImageProps } from '../../../packages/pivkit'
-import { Token } from "../utils/dataStructures/Token"
+import { Token } from '../utils/dataStructures/Token'
 
 export type CoinAvatarProps = {
   token?: Token
@@ -9,7 +9,7 @@ export type CoinAvatarProps = {
 } & ImageProps
 
 export function CoinAvatar(kitProps: KitProps<CoinAvatarProps>) {
-  const rawProps = useKitProps<CoinAvatarProps>(kitProps)
+  const { props: rawProps } = useKitProps<CoinAvatarProps>(kitProps)
   const props = addDefaultProps(rawProps, { size: 'md' })
 
   return <Piv icss={{ marginInline: 4 }}>{props.token?.symbol ?? props.token?.name}</Piv>

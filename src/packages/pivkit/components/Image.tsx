@@ -17,7 +17,7 @@ export type ImageProps = {
  * @todo add fallbackSrc
  */
 export function Image(rawProps: KitProps<ImageProps>) {
-  const props = useKitProps<ImageProps>(rawProps)
+  const { props } = useKitProps<ImageProps>(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>

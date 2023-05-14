@@ -1,6 +1,6 @@
 import { CSSInterpolation } from '@emotion/css'
 import { Accessor, Show, createEffect, createSignal } from 'solid-js'
-import { KitProps, Piv, useComposiableKitProps, useKitProps } from '../../../piv'
+import { KitProps, Piv, useKitProps, } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { useDOMEventListener } from '../../hooks/useDOMEventListener'
@@ -32,7 +32,7 @@ export type ModalProps = {
 }
 
 export function Modal(rawProps: KitProps<ModalProps>) {
-  const { props, loadController } = useComposiableKitProps<ModalProps, ModalController>(rawProps)
+  const { props, loadController } = useKitProps<ModalProps, ModalController>(rawProps)
   loadController(() => ({
     get isOpen() {
       return innerOpen()

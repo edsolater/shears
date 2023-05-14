@@ -1,4 +1,4 @@
-import { createEffect, createSignal, Show } from 'solid-js'
+import { createSignal, Show } from 'solid-js'
 import { addDefaultProps, KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { drawerKeyboardShortcut } from './plugins/drawerKeyboardShortcut'
@@ -21,7 +21,7 @@ const drawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
 export type DrawerDefaultProps = typeof drawerDefaultProps
 
 export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerController }>) {
-  const rawProps = useKitProps<DrawerProps, DrawerController>(kitProps, {
+  const { props: rawProps } = useKitProps<DrawerProps, DrawerController>(kitProps, {
     plugin: [drawerKeyboardShortcut()],
     controller: (mergedProps) => ({
       get isOpen() {

@@ -27,7 +27,7 @@ const CollapseContext = createContext<CollapseController>({} as CollapseControll
 export function Collapse(
   rawProps: KitProps<CollapseProps, { controller: CollapseController; htmlPropsTagName: 'details' }>
 ) {
-  const props = useKitProps(rawProps, { controller: () => controller })
+  const { props } = useKitProps(rawProps, { controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(props.open ?? props.defaultOpen ?? false, {
     onOff: props.onClose,
@@ -73,7 +73,7 @@ export function CollapseFace(
   >
 ) {
   const controller = useContext(CollapseContext)
-  const props = useKitProps<CollapseFaceProps>(rawProps, { controller: () => controller })
+  const { props } = useKitProps<CollapseFaceProps>(rawProps, { controller: () => controller })
   return (
     <Piv<'summary'>
       as={(parsedPivProps) => <summary {...parsedPivProps} />}
@@ -89,7 +89,7 @@ type CollapseContentProps = {}
 
 export function CollapseContent(rawProps: KitProps<CollapseContentProps, { controller: CollapseController }>) {
   const controller = useContext(CollapseContext)
-  const props = useKitProps<CollapseContentProps, CollapseController>(rawProps, { controller: () => controller })
+  const { props } = useKitProps<CollapseContentProps, CollapseController>(rawProps, { controller: () => controller })
   return <Piv shadowProps={props}>{shrinkFn(props.children, [controller])}</Piv>
 }
 

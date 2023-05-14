@@ -1,11 +1,11 @@
 import { AnyFn } from '@edsolater/fnkit'
 import { createEffect } from 'solid-js'
 import copyToClipboard from '../../../packages/domkit/copyToClipboard'
+import { addDefaultProps } from '../../../packages/piv'
 import { KitProps, useKitProps } from '../../../packages/piv/createKit'
 import { PivProps } from '../../../packages/piv/types/piv'
 import { IconProps, RowItemProps } from '../../../packages/pivkit'
 import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
-import { addDefaultProps } from '../../../packages/piv'
 
 type AddressItemProps = {
   publicKey: string
@@ -27,7 +27,7 @@ type AddressItemProps = {
  * @todo it should be a props:plugin
  */
 export function AddressItem(kitProps: KitProps<AddressItemProps>) {
-  const rawProps = useKitProps<AddressItemProps>(kitProps)
+  const { props: rawProps } = useKitProps<AddressItemProps>(kitProps)
   const props = addDefaultProps(rawProps, { iconSize: 'sm' })
 
   const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })

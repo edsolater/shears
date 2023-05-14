@@ -6,7 +6,7 @@ export type ExamplePanelProps = {
 }
 
 export function ExamplePanel(rawProps: KitProps<ExamplePanelProps>) {
-  const props = useKitProps<ExamplePanelProps>(rawProps)
+  const { props } = useKitProps<ExamplePanelProps>(rawProps)
   return (
     <Piv shadowProps={props}>
       <Text icss={{ fontWeight: 'bold', fontSize: '52px' }}>{props.name}</Text>
