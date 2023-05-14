@@ -27,7 +27,8 @@ export function useClickOutside(els: ElementAccessors, options?: UseClickOutside
         if (isDisabled) return
         if (!targetElements.length) return
         const path = payload.ev.composedPath()
-        if (targetElements.some((el) => el && path.includes(el))) return
+        const isTargetInPath = targetElements.some((el) => el && path.includes(el))
+        if (isTargetInPath) return
         parasedOptions?.onClickOutSide?.(payload)
       },
       { capture: true }

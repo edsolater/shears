@@ -1,11 +1,12 @@
 import { createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
-import { Box, Button, Collapse } from '../../../packages/pivkit'
+import { Box, Button } from '../../../packages/pivkit'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
+import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
@@ -85,21 +86,17 @@ function DrawerExample() {
 function ModalExample() {
   const modalController = useComponentController<ModalController>('example-modal')
   const modalController2 = useComponentController<ModalController>('example-modal2')
-  const modalController3 = useComponentController<ModalController>('example-modal3')
-  const modalController4 = useComponentController<ModalController>('example-modal4')
-  const modalController5 = useComponentController<ModalController>('example-modal5')
+  const couter = createIncresingAccessor()
   return (
     <>
       <Button onClick={() => modalController.toggle?.()}>Open</Button>
-      <Modal id='example-modal' isModal>Modal1</Modal>
+      <Modal id='example-modal' isModal>
+        Modal1
+      </Modal>
       <Button onClick={() => modalController2.toggle?.()}>Open</Button>
-      <Modal id='example-modal2' isModal>Modal2</Modal>
-      <Button onClick={() => modalController3.toggle?.()}>Open</Button>
-      <Modal id='example-modal3' isModal>Modal3</Modal>
-      <Button onClick={() => modalController4.toggle?.()}>Open</Button>
-      <Modal id='example-modal4' isModal>Modal4</Modal>
-      <Button onClick={() => modalController5.toggle?.()}>Open</Button>
-      <Modal id='example-modal5' isModal>Modal5</Modal>
+      <Modal id='example-modal2' isModal>
+        Modal2 + {couter()}
+      </Modal>
     </>
   )
 }

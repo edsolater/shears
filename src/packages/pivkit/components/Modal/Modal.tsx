@@ -1,10 +1,9 @@
-import { createEffect, createSignal, onCleanup, untrack } from 'solid-js'
+import { CSSInterpolation } from '@emotion/css'
+import { Accessor, Show, createEffect, createSignal } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
-import { onEvent } from '../../../domkit'
-import { calcHypotenuse } from '@edsolater/fnkit'
-import { useDOMEventListener } from '../../hooks/useDOMEventListener'
 import { useClickOutside } from '../../hooks/useClickOutside'
+import { useDOMEventListener } from '../../hooks/useDOMEventListener'
 
 export type ModalController = {
   isOpen: boolean
@@ -16,7 +15,20 @@ export type ModalController = {
 export type ModalProps = {
   open?: boolean
   isModal?: boolean
+
   onClose?(): void
+
+  /** style of backdrop */
+  backdropICSS?: CSSInterpolation
+
+  /**
+   * control when to render DOM
+   * @default 'first-open'
+   */
+  domRenderWhen?:
+    | 'first-open' // not render DOM until open, but close will stay DOM [default]
+    | 'open' // render DOM every open
+    | 'always' // always stay DOM
 }
 
 export function Modal(rawProps: KitProps<ModalProps>) {
@@ -32,8 +44,9 @@ export function Modal(rawProps: KitProps<ModalProps>) {
   const props = useKitProps<ModalProps>(rawProps, { controller: controllerCreator })
 
   const [dialogRef, setDialogRef] = createRef<HTMLDialogElement>()
-
+  const [dialogContentRef, setDialogContentRef] = createRef<HTMLDivElement>()
   const [innerOpen, setInnerOpen] = createSignal(props.open ?? false)
+  const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
   // initly load modal show
   createEffect(() => {
@@ -45,40 +58,79 @@ export function Modal(rawProps: KitProps<ModalProps>) {
   // register onClose callback
   useDOMEventListener(dialogRef, 'close', () => closeDialog({ witDOMChange: false }))
 
-  useClickOutside(dialogRef, {
+  // register click outside
+  useClickOutside(dialogContentRef, {
     disable: () => !innerOpen(),
-    onClickOutSide: ({ ev }) => {
-      if (dialogRef() && ev.target !== dialogRef()) {
-        // TODO
-        closeDialog()
-      }
+    onClickOutSide: () => {
+      closeDialog()
     }
   })
 
+  // user action: open dialog
   const openDialog = () => {
     setInnerOpen(true)
     props.isModal ? dialogRef()?.showModal() : dialogRef()?.show()
   }
 
-  const closeDialog = (options?: { /** if it's caused by dom, it should set false */ witDOMChange?: boolean }) => {
+  // user action: close dialog
+  const closeDialog = (options?: {
+    /**
+     *  if it's caused by dom, it should set false
+     * @default true
+     */
+    witDOMChange?: boolean
+  }) => {
     setInnerOpen(false)
     if (options?.witDOMChange ?? true) dialogRef()?.close()
     props.onClose?.()
   }
 
+  // user action: toggle(open & close) dialog
   const toggleDialog = () => {
     innerOpen() ? closeDialog() : openDialog()
   }
 
-  console.log('props.children: ', props.children)
   return (
-    <Piv
-      as={(parsedPivProps) => <dialog {...parsedPivProps} open={props.open && !props.isModal} />}
-      shadowProps={props}
-      icss={{ outline: 'none' }}
-      ref={setDialogRef}
-    >
-      {props.children}
-    </Piv>
+    <Show when={shouldRenderDOM()}>
+      <Piv
+        as={(parsedPivProps) => <dialog {...parsedPivProps} open={props.open && !props.isModal} />}
+        shadowProps={props}
+        icss={[props.backdropICSS && { '&::backdrop': props.backdropICSS }]}
+        ref={setDialogRef}
+      >
+        <Piv ref={setDialogContentRef} icss={{ display: 'contents' }}>
+          {props.children}
+        </Piv>
+      </Piv>
+    </Show>
   )
+}
+
+/**
+ * detect whether should render `<Modal>`'s content in DOM
+ */
+function useShouldRenderDOMDetector(utils: { props: ModalProps; innerOpen: Accessor<boolean> }) {
+  const [haveFirstOpened, setHaveFirstOpened] = createSignal(utils.innerOpen())
+
+  // reflect to innerOpen() change
+  createEffect(() => {
+    const isOpen = utils.innerOpen()
+    setHaveFirstOpened((b) => b || isOpen)
+  })
+
+  const shouldRenderDOM = () => {
+    switch (utils.props.domRenderWhen ?? 'first-open') {
+      case 'open': {
+        return utils.innerOpen()
+      }
+      case 'always': {
+        return true
+      }
+      case 'first-open': {
+        return haveFirstOpened()
+      }
+    }
+  }
+
+  return { shouldRenderDOM }
 }

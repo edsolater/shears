@@ -85,7 +85,7 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
 
 /**
  *
- * @deprecated old is not eause use
+ * @deprecated old is not easy to use
  */
 export function useKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
   // too difficult to type here
