@@ -14,6 +14,7 @@ import {
 import { handleShadowProps } from './propHandlers/shadowProps'
 import { CRef, PivProps } from './types/piv'
 import { HTMLTag, ValidController, ValidProps } from './types/tools'
+import { AddDefaultPivProps, addDefaultPivProps } from './utils/addDefaultProps'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -63,14 +64,14 @@ export type KitProps<
 >
 export type KitPropsOptions<
   KitProps extends ValidProps,
-  Controller extends ValidController = {}
-  // DefaultProps extends Partial<KitProps> = {}
+  Controller extends ValidController = {},
+  DefaultProps extends Partial<KitProps> = {}
 > = {
   name?: string
   controller?: (
     props: ParsedKitProps<KitProps>
   ) => any /* use any to avoid this type check (type check means type infer) */
-  // defaultProps?: DefaultProps
+  defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
   /** default is false */
   noNeedAccessifyChildren?: boolean
@@ -87,17 +88,23 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
 /**
  * section 1: merge props
  */
-function getParsedKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
+function getParsedKitProps<
+  RawProps extends ValidProps,
+  Controller extends ValidController = {},
+  DefaultProps extends Partial<RawProps> = {}
+>(
   // too difficult to type here
   props: any,
-  options?: KitPropsOptions<RawProps, Controller>
-): ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
+  options?: KitPropsOptions<RawProps, Controller, DefaultProps>
+): ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
   const proxyController = options?.controller
     ? toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
     : {}
+
+  const defaultProps = addDefaultPivProps(props.options?.defaultProps)
   // merge kit props
   const mergedGettersProps = pipe(
-    props,
+    defaultProps,
     (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
@@ -119,20 +126,30 @@ function getParsedKitProps<RawProps extends ValidProps, Controller extends Valid
   return mergedGettersProps
 }
 
-/** return multi; not just props */
-export function useKitProps<RawProps extends ValidProps, Controller extends ValidController = {}>(
-  // too difficult to type here
-  props: any,
-  options?: KitPropsOptions<RawProps, Controller>
+export type GetRawProps<K extends ValidProps> = K extends KitProps<infer RawProps, any> ? RawProps : K
+/**
+ * **core function**
+ *
+ * return multi; not just props
+ */
+export function useKitProps<
+  P extends ValidProps,
+  Controller extends ValidController = {},
+  DefaultProps extends Partial<GetRawProps<P>> = {}
+>(
+  props: P,
+  options?: KitPropsOptions<GetRawProps<P>, Controller>
 ): {
-  props: ParsedKitProps<RawProps> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps>
-  loadController(controller: Controller | ((props: ParsedKitProps<RawProps>) => Controller)): void
+  props: ParsedKitProps<AddDefaultPivProps<GetRawProps<P>, DefaultProps>> &
+    Omit<PivProps<HTMLTag, Controller>, keyof GetRawProps<P>>
+  loadController(controller: Controller | ((props: ParsedKitProps<GetRawProps<P>>) => Controller)): void
 } {
+  type RawProps = GetRawProps<P>
   const { loadController, getControllerCreator } = composeController<RawProps, Controller>()
   const composedProps = getParsedKitProps(props, {
     controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),
     ...options
-  })
+  }) as any /* too difficult to type, no need to check */
   return { props: composedProps, loadController }
 }
 
@@ -147,3 +164,6 @@ function composeController<RawProps extends ValidProps, Controller extends Valid
   }
   return { loadController, getControllerCreator: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props) }
 }
+
+type A = { hello?: string; b?: boolean } & { hello: string; c?: boolean }
+type B = A['hello']

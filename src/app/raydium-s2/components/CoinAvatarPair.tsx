@@ -13,7 +13,7 @@ export type CoinAvatarPairProps = {
 }
 
 export function CoinAvatarPair(rawProps: KitProps<CoinAvatarPairProps>) {
-  const { props } = useKitProps<CoinAvatarPairProps>(rawProps)
+  const { props } = useKitProps(rawProps)
   return (
     <Box shadowProps={props} icss={{ display: 'flex' }}>
       <CoinAvatar token={props.token1} size={props.size} shadowProps={props.token1Props} icss={{ zIndex: 1 }} />

@@ -8,7 +8,7 @@ export type LinkProps = {
 }
 
 export function Link(rawProps: KitProps<LinkProps>) {
-  const { props } = useKitProps<LinkProps>(rawProps)
+  const { props } = useKitProps(rawProps)
   const navigate = useNavigate()
   return (
     <Piv<'a'>

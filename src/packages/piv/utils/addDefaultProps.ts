@@ -14,3 +14,5 @@ export function addDefaultProps<T extends ValidProps, const D>(
 export function addDefaultPivProps<T extends ValidProps>(props: T, ...defaultProps: Partial<T>[]) {
   return mergeProps(...defaultProps, props)
 }
+
+export type AddDefaultPivProps<T extends ValidProps, D = {}> = Omit<T, keyof D> & Pick<Required<T>, keyof D & string>

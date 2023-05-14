@@ -9,7 +9,7 @@ export type CoinAvatarProps = {
 } & ImageProps
 
 export function CoinAvatar(kitProps: KitProps<CoinAvatarProps>) {
-  const { props: rawProps } = useKitProps<CoinAvatarProps>(kitProps)
+  const { props: rawProps } = useKitProps(kitProps)
   const props = addDefaultProps(rawProps, { size: 'md' })
 
   return <Piv icss={{ marginInline: 4 }}>{props.token?.symbol ?? props.token?.name}</Piv>

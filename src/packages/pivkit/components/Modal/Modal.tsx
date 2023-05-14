@@ -32,7 +32,7 @@ export type ModalProps = {
 }
 
 export function Modal(rawProps: KitProps<ModalProps>) {
-  const { props, loadController } = useKitProps<ModalProps, ModalController>(rawProps)
+  const { props, loadController } = useKitProps(rawProps)
   loadController(() => ({
     get isOpen() {
       return innerOpen()

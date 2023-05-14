@@ -21,7 +21,7 @@ const drawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
 export type DrawerDefaultProps = typeof drawerDefaultProps
 
 export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerController }>) {
-  const { props: rawProps } = useKitProps<DrawerProps, DrawerController>(kitProps, {
+  const { props: rawProps } = useKitProps(kitProps, {
     plugin: [drawerKeyboardShortcut()],
     controller: (mergedProps) => ({
       get isOpen() {

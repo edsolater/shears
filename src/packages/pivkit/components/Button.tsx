@@ -71,7 +71,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     }
   }
   /* ---------------------------------- props --------------------------------- */
-  const { props: rawProps } = useKitProps<ButtonProps>(kitProps, {
+  const { props: rawProps } = useKitProps(kitProps, {
     controller: () => innerController
   })
 

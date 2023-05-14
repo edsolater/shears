@@ -1,4 +1,5 @@
-import { KitProps, Piv, useKitProps } from "../../piv"
+import { P } from 'vitest/dist/types-b7007192'
+import { KitProps, Piv, useKitProps } from '../../piv'
 
 export type ImageProps = {
   /**
@@ -12,12 +13,17 @@ export type ImageProps = {
   alt?: string
 }
 
+export type ImageController = {}
+
+const defaultProps = {} as const satisfies Partial<ImageProps>
+
+export type DefaultImageProps = typeof defaultProps
 /**
  * if for layout , don't render important content in Box
  * @todo add fallbackSrc
  */
 export function Image(rawProps: KitProps<ImageProps>) {
-  const { props } = useKitProps<ImageProps>(rawProps)
+  const { props } = useKitProps(rawProps, { defaultProps })
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>

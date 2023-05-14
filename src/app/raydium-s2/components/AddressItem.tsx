@@ -1,13 +1,13 @@
 import { AnyFn } from '@edsolater/fnkit'
 import { createEffect } from 'solid-js'
 import copyToClipboard from '../../../packages/domkit/copyToClipboard'
-import { addDefaultProps } from '../../../packages/piv'
-import { KitProps, useKitProps } from '../../../packages/piv/createKit'
+import { addDefaultPivProps, addDefaultProps } from '../../../packages/piv'
+import { GetRawProps, KitProps, useKitProps } from '../../../packages/piv/createKit'
 import { PivProps } from '../../../packages/piv/types/piv'
 import { IconProps, RowItemProps } from '../../../packages/pivkit'
 import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
 
-type AddressItemProps = {
+export type AddressItemProps = {
   publicKey: string
   showDigitCount?: number | 'all'
   addressType?: 'token' | 'account'
@@ -22,13 +22,19 @@ type AddressItemProps = {
   iconRowProps?: PivProps
   onCopied?(text: string): void // TODO: imply it
 } & RowItemProps
+
+const defaultProps = {
+  iconSize: 'sm'
+} satisfies Partial<AddressItemProps>
+
+export type DefaultAddressItemProps = typeof defaultProps
+
 /**
  * base on {@link RowItem}
  * @todo it should be a props:plugin
  */
 export function AddressItem(kitProps: KitProps<AddressItemProps>) {
-  const { props: rawProps } = useKitProps<AddressItemProps>(kitProps)
-  const props = addDefaultProps(rawProps, { iconSize: 'sm' })
+  const { props } = useKitProps(kitProps, { defaultProps })
 
   const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })
 

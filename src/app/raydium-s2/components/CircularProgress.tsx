@@ -18,7 +18,7 @@ type CircularProgressProps = {
 
 // TODO: should move to pivkit in future
 export function CircularProgress(kitProps: KitProps<CircularProgressProps>) {
-  const { props: rawProps } = useKitProps<CircularProgressProps>(kitProps)
+  const { props: rawProps } = useKitProps(kitProps)
   const props = addDefaultProps(rawProps, { svgWidth: 36, strokeWidth: 3, percent: 0.3 })
   const [ref, setRef] = createRef<SVGSVGElement>()
 

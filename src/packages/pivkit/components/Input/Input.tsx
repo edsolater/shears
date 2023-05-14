@@ -48,7 +48,7 @@ const cssInputPadding = 8 // (px)
  * if for layout , don't render important content in Box
  */
 export function Input(rawProps: KitProps<InputProps, { controller: InputController }>) {
-  const { props } = useKitProps<InputProps>(rawProps, {
+  const { props } = useKitProps(rawProps, {
     controller: (mergedProps) => ({
       get text() {
         return innerText()

@@ -12,7 +12,7 @@ export type ListProps<T> = {
  * if for layout , don't render important content in Box
  */
 export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildren: true }>) {
-  const { props } = useKitProps<ListProps<T>>(rawProps, { noNeedAccessifyChildren: true })
+  const { props } = useKitProps(rawProps, { noNeedAccessifyChildren: true })
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
