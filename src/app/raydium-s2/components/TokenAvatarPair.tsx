@@ -1,23 +1,23 @@
 import { KitProps, useKitProps } from '../../../packages/piv'
 import { Box } from '../../../packages/pivkit'
 import { Token } from '../utils/dataStructures/Token'
-import { CoinAvatar, CoinAvatarProps } from './CoinAvatar'
+import { TokenAvatar, TokenAvatarProps } from './TokenAvatar'
 
-export type CoinAvatarPairProps = {
+export type TokenAvatarPairProps = {
   token1?: Token
   token2?: Token
-  size?: CoinAvatarProps['size']
+  size?: TokenAvatarProps['size']
 
-  token1Props?: CoinAvatarProps
-  token2Props?: CoinAvatarProps
+  token1Props?: TokenAvatarProps
+  token2Props?: TokenAvatarProps
 }
 
-export function CoinAvatarPair(rawProps: KitProps<CoinAvatarPairProps>) {
+export function TokenAvatarPair(rawProps: KitProps<TokenAvatarPairProps>) {
   const { props } = useKitProps(rawProps)
   return (
     <Box shadowProps={props} icss={{ display: 'flex' }}>
-      <CoinAvatar token={props.token1} size={props.size} shadowProps={props.token1Props} icss={{ zIndex: 1 }} />
-      <CoinAvatar
+      <TokenAvatar token={props.token1} size={props.size} shadowProps={props.token1Props} icss={{ zIndex: 1 }} />
+      <TokenAvatar
         token={props.token2}
         size={props.size}
         shadowProps={props.token2Props}

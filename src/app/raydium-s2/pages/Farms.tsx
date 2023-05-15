@@ -1,8 +1,8 @@
 import { For, Show } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Box, Collapse, CollapseFace, List } from '../../../packages/pivkit'
-import { CoinAvatar } from '../components/CoinAvatar'
-import { CoinAvatarPair } from '../components/CoinAvatarPair'
+import { TokenAvatar } from '../components/TokenAvatar'
+import { TokenAvatarPair } from '../components/TokenAvatarPair'
 import { NavBar } from '../components/NavBar'
 import { useFarmPageStates } from '../pageStates/farmState'
 import { getToken } from '../stores/data/methods/getToken'
@@ -54,13 +54,13 @@ function FarmList() {
                     gap: 8
                   }}
                 >
-                  <CoinAvatarPair token1={getToken(info.base)} token2={getToken(info.quote)} />
+                  <TokenAvatarPair token1={getToken(info.base)} token2={getToken(info.quote)} />
                   {/* <Piv>{info.name}</Piv> */}
                 </Box>
 
                 {/* part 3 : pending reward*/}
                 <Piv>
-                  <For each={info.rewards}>{(r) => <CoinAvatar token={getToken(r.token)} />}</For>
+                  <For each={info.rewards}>{(r) => <TokenAvatar token={getToken(r.token)} />}</For>
                 </Piv>
 
                 {/* part 4 total apr */}

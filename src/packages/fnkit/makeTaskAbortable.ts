@@ -24,7 +24,7 @@ export function makeTaskAbortable<T>(task: (canContinue: () => boolean) => T | P
     (r) => {
       finished = true
       if (hasAbort) {
-        throw new Error('task aborted')
+        throw new Error('input task aborted')
       }
       return r
     },
