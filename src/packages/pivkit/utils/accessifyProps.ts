@@ -5,7 +5,7 @@ import { ValidController } from '../../piv/types/tools'
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
 export type Accessify<P extends Record<string, any>, Controller extends ValidController = {}> = {
-  [K in keyof P]: K extends `on${string}` | `${string}Fn`
+  [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef`
     ? FixFunctionControllerParam<P[K], Controller>
     : P[K] | ((controller: Controller) => P[K])
 }
@@ -23,6 +23,7 @@ type FixFunctionControllerParam<F, Controller extends ValidController> = F exten
 export function useAccessifiedProps<P extends Record<string, any>, Controller extends ValidController = {}>(
   props: P,
   controller?: Controller,
+  /** default is on_ and ref and controllerRef, but you can add more */
   noNeedAccessifyProps?: string[]
 ): DeAccessify<P> {
   const accessifiedProps = Object.defineProperties(
@@ -32,7 +33,7 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
         enumerable: true,
         get() {
           const v = props[key]
-          if (noNeedAccessifyProps?.includes(key)) {
+          if (noNeedAccessifyProps?.includes(key) || key === 'ref' || key === 'controllerRef') {
             return v
           } else if (key.startsWith('on')) {
             if (controller && isFunction(v)) {

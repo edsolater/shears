@@ -7,6 +7,7 @@ export function loadPropsControllerRef<Controller extends ValidController>(
   providedController: Controller
 ) {
   if (hasProperty(props, 'controllerRef')) {
+    // @ts-expect-error no need to check
     props.controllerRef!(providedController)
   }
 }

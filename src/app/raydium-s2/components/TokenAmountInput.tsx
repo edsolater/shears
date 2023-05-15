@@ -1,11 +1,12 @@
 import { isStringNumber } from '@edsolater/fnkit'
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
-import { Box, icssBlock_row } from '../../../packages/pivkit'
+import { Box, createRef, icssBlock_row } from '../../../packages/pivkit'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { createMutableSignal } from '../../../packages/pivkit/hooks/createMutableSignal'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
+import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 
 export type TokenAmountInputBoxController = {}
 
@@ -27,9 +28,12 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
     get: () => (props.amount != null ? toString(props.amount) : undefined),
     set: (amount) => props.onAmountChange?.(amount)
   })
+
+  const [modalRef, setModalRef] = createRef<ModalController>()
+
   return (
     <Box icss={icssBlock_row({ gap: 8 })}>
-      <Piv>{token()?.symbol}</Piv>
+      <Piv onClick={() => modalRef()?.open()}>{token()?.symbol}</Piv>
       <Input
         icss={{ border: 'solid', width: '12em', flex: 0 }}
         value={amount}
@@ -37,6 +41,13 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
           isStringNumber(text) ? setAmount(text) : undefined
         }}
       />
+      <Modal controllerRef={setModalRef} isModal >
+        <TokenSelectorModalContent />
+      </Modal>
     </Box>
   )
+}
+
+function TokenSelectorModalContent() {
+  return <Box>TEMP: token selector</Box>
 }

@@ -164,6 +164,3 @@ function composeController<RawProps extends ValidProps, Controller extends Valid
   }
   return { loadController, getControllerCreator: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props) }
 }
-
-type A = { hello?: string; b?: boolean } & { hello: string; c?: boolean }
-type B = A['hello']
