@@ -2,7 +2,7 @@ import { isStringNumber } from '@edsolater/fnkit'
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 import { Box, icssBlock_row } from '../../../packages/pivkit'
 import { Input } from '../../../packages/pivkit/components/Input'
-import { createSyncerSignal } from '../../../packages/pivkit/hooks/createSyncerSignal'
+import { createMutableSignal } from '../../../packages/pivkit/hooks/createMutableSignal'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
@@ -18,8 +18,12 @@ export type TokenAmountInputBoxProps = {
 
 export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>) {
   const { props, loadController } = useKitProps(rawProps)
-  const [token, setToken] = createSyncerSignal({ get: () => props.token, set: (token) => props.onSelectToken?.(token) })
-  const [amount, setAmount] = createSyncerSignal({
+
+  const [token, setToken] = createMutableSignal({
+    get: () => props.token,
+    set: (token) => props.onSelectToken?.(token)
+  })
+  const [amount, setAmount] = createMutableSignal({
     get: () => (props.amount != null ? toString(props.amount) : undefined),
     set: (amount) => props.onAmountChange?.(amount)
   })
