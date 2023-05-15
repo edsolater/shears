@@ -101,7 +101,7 @@ function getParsedKitProps<
     ? toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
     : {}
 
-  const defaultProps = addDefaultPivProps(props.options?.defaultProps)
+  const defaultProps = addDefaultPivProps(props, props.options?.defaultProps)
   // merge kit props
   const mergedGettersProps = pipe(
     defaultProps,
