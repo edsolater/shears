@@ -65,19 +65,19 @@ function getPivPropsValue(objs: AnyObj[], key: keyof any) {
     // -------- normal props --------
     default: {
       // -------- 'on' callback function --------
-      if (key.toString().startsWith('on')) {
-        return objs.reduce((finalValue, objB) => {
-          const valueB = objB[key]
-          return valueB && finalValue ? mergeFunction(finalValue, valueB) : valueB ?? finalValue
-        }, undefined as unknown)
-      } else {
-        // -------- very normal props --------
-        for (let i = objs.length - 1; i >= 0; i--) {
-          const obj = objs[i]
-          const v = obj[key]
-          if (v != null) return v
-        }
+      // if (key.toString().startsWith('on')) {
+      //   return objs.reduce((finalValue, objB) => {
+      //     const valueB = objB[key]
+      //     return valueB && finalValue ? mergeFunction(finalValue, valueB) : valueB ?? finalValue
+      //   }, undefined as unknown)
+      // } else {
+      // -------- very normal props --------
+      for (let i = objs.length - 1; i >= 0; i--) {
+        const obj = objs[i]
+        const v = obj[key]
+        if (v != null) return v
       }
+      // }
     }
   }
 }
