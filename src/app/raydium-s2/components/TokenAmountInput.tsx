@@ -25,8 +25,14 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
     set: (token) => props.onSelectToken?.(token)
   })
   const [amount, setAmount] = createMutableSignal({
-    get: () => (props.amount != null ? toString(props.amount) : undefined),
-    set: (amount) => props.onAmountChange?.(amount)
+    get: () => {
+      console.log('props.amount: ', props.amount)
+      return (props.amount != null ? toString(props.amount) : undefined)
+    },
+    set: (amount) => {
+      console.log('amount: ', amount)
+      return props.onAmountChange?.(amount)
+    }
   })
 
   const [modalRef, setModalRef] = createRef<ModalController>()

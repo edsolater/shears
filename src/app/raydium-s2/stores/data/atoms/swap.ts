@@ -6,6 +6,7 @@ import { getToken } from '../methods/getToken'
 import { useDataStore } from '../store'
 import { getWebworkerCalculateSwapRouteInfos_mainThreadReceiver } from '../workerBridge/getWebworkerCalculateSwapRouteInfos_mainThreadReceiver'
 import { Numberish } from '../../../utils/dataStructures/type'
+import { notZero } from '@edsolater/fnkit'
 
 export const useSwapToken1 = createStoreAtom(RAYMint, {
   onFirstAccess(getter, setter) {
@@ -76,7 +77,8 @@ export function useSwapAmountCalculator() {
     subscribable.subscribe((info) => {
       if (!info) return
       const { bestResult } = info
-      setAmount2(bestResult?.amountOut.amount)
+      const amount = bestResult?.amountOut.amount
+      if (notZero(amount)) setAmount2(amount)
     })
   })
 }

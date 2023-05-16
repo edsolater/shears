@@ -1,21 +1,20 @@
-import { isStringNumber } from '@edsolater/fnkit'
-import { createEffect, createMemo } from 'solid-js'
+import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Box, icssBlock_card, icssBlock_row } from '../../../packages/pivkit'
-import { Input } from '../../../packages/pivkit/components/Input'
+import { icssBlock_card } from '../../../packages/pivkit'
+import { Card } from '../../../packages/pivkit/components/Card'
+import { Section } from '../../../packages/pivkit/components/Section'
 import { NavBar } from '../components/NavBar'
+import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import {
   useSwapAmountCalculator,
   useSwapToken1,
+  useSwapToken2,
   useSwapTokenAmount1,
   useSwapTokenAmount2
 } from '../stores/data/atoms/swap'
 import { useDataStore } from '../stores/data/store'
-import { useSwapToken2 } from '../stores/data/atoms/swap'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { Section } from '../../../packages/pivkit/components/Section'
-import { Card } from '../../../packages/pivkit/components/Card'
-import { TokenAmountInputBox } from '../components/TokenAmountInput'
+import { Token } from '../utils/dataStructures/Token'
 
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
@@ -24,19 +23,49 @@ export function SwapPage() {
   const [token2Mint, setToken2Mint] = useSwapToken2()
   const token1 = () => dataStore.allTokens?.find((t) => t.mint === token1Mint())
   const token2 = () => dataStore.allTokens?.find((t) => t.mint === token2Mint())
+  const setToken1 = (token: Token | undefined) => {
+    token?.mint && setToken1Mint(token?.mint)
+  }
+  const setToken2 = (token: Token | undefined) => {
+    token?.mint && setToken1Mint(token?.mint)
+  }
+
   const [amount1, setAmount1] = useSwapTokenAmount1()
   const [amount2, setAmount2] = useSwapTokenAmount2()
   const tokenAmount1 = () => (amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined)
   const tokenAmount2 = () => (amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined)
 
   useSwapAmountCalculator()
+
+  createEffect(() => {
+    console.log('tokenAmount1(): ', tokenAmount1())
+    console.log('amount1(): ', amount1()) // <- fixme
+  })
+  createEffect(() => {
+    console.log('tokenAmount2(): ', tokenAmount2())
+    console.log('amount2(): ', amount2()) // <- fixme
+  })
+
   return (
     <Piv>
       <NavBar title='Swap' />
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Card icss={icssBlock_card}>
-          <TokenAmountInputBox token={token1} amount={tokenAmount1} />
-          <TokenAmountInputBox token={token2} amount={tokenAmount2} />
+          <TokenAmountInputBox
+            token={token1}
+            amount={tokenAmount1}
+            onSelectToken={setToken1}
+            onAmountChange={(am) => {
+              console.log('am: ', am)
+              return setAmount1(am)
+            }}
+          />
+          <TokenAmountInputBox
+            token={token2}
+            amount={tokenAmount2}
+            onSelectToken={setToken2}
+            onAmountChange={setAmount2}
+          />
         </Card>
       </Section>
     </Piv>

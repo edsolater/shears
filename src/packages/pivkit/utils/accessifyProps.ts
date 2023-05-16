@@ -33,14 +33,14 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
         enumerable: true,
         get() {
           const v = props[key]
-          if (noNeedAccessifyProps?.includes(key) || key === 'ref' || key === 'controllerRef') {
+          if (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'ref' || key === 'controllerRef') {
             return v
-          } else if (key.startsWith('on')) {
-            if (controller && isFunction(v)) {
-              return fixFunctionParams(v, [{ controller }])
-            } else {
-              return v
-            }
+            // } else if (key.startsWith('on')) {
+            //   if (controller && isFunction(v)) {
+            //     return fixFunctionParams(v, [{ controller }])
+            //   } else {
+            //     return v
+            //   }
           } else {
             return shrinkFn(v, [controller])
           }
