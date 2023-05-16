@@ -1,6 +1,7 @@
 import { isStringNumber } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
+import { omit } from '../../../packages/piv/utils/omit'
 import { Box, BoxProps, List, Text, b_clickable, b_row, createRef } from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
 import { Input } from '../../../packages/pivkit/components/Input'
@@ -56,12 +57,7 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
 
       {/* modal dialog */}
       <Modal controllerRef={setModalRef} isModal>
-        <TokenSelectorModalContent
-          onTokenSelect={(token) => {
-            console.log('token: ', token)
-            setToken(token)
-          }}
-        />
+        <TokenSelectorModalContent onTokenSelect={setToken} />
       </Modal>
     </Box>
   )
@@ -98,9 +94,8 @@ function TokenSelectorModalContent_TokenItem(
   return (
     <Box
       icss={[b_row(), b_clickable()]}
-      shadowProps={props} // BUG: props has olso `props:onClick`
+      shadowProps={omit(props, 'onClick')}
       onClick={() => {
-        console.log('props.token: ', props.token)
         props.onClick?.(props.token)
       }}
     >
