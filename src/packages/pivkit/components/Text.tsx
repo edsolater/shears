@@ -5,7 +5,7 @@ export type TextProps = {
 }
 
 /**
- * if for layout , don't render important content in Box
+ * if for layout , inner content should only be text
  */
 export function Text(rawProps: KitProps<TextProps>) {
   const { props } = useKitProps(rawProps)

@@ -10,7 +10,7 @@ export function addDefaultProps<T extends ValidProps, const D>(
   return solidjsMergeProps(defaultProps, props) as any
 }
 
-/** will consider icss/shadowPorps/class/etc. piv props */
+/** will consider icss/shadowProps/class/etc. piv props */
 export function addDefaultPivProps<T extends ValidProps>(props: T, ...defaultProps: Partial<T>[]) {
   return mergeProps(...defaultProps, props)
 }

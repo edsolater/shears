@@ -15,13 +15,17 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
 
   debugLog?: (keyof PivProps)[]
 
+  /**
+   * auto merge by shadowProps
+   */
   ref?: MayArray<CRef<any> | null | undefined>
 
   /**
+   * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
    */
   class?: MayArray<ClassName<Controller>>
-  
+
   /**
    * id for component instance
    * so others can access component's controller without set `props:controllerRef` to component, this have to have access to certain component instance
@@ -39,29 +43,38 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   ) => void // for accessifyProps, onClick can't be array
 
   /**
+   * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
    */
   icss?: ICSS<Controller>
 
   /**
+   * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
    */
   style?: IStyle<Controller>
 
   /**
+   * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
    */
   htmlProps?: HTMLProps<TagName, Controller>
 
   children?: RawChild | ControlledChild<Controller>
 
-  /** high priority */
+  /**
+   * auto merge by shadowProps
+   * high priority
+   */
   shadowProps?: MayArray<any /* too difficult to type */>
 
   // /** low priority */
   // outsideProps?: MayArray<any /* too difficult to type */>
 
-  /** special: every kit baseon <Piv> should support this prop */
+  /**
+   * auto merge by shadowProps
+   * special: every kit baseon <Piv> should support this prop
+   */
   plugin?: MayArray<Plugin<any>>
 
   // -------- special prop --------
@@ -70,6 +83,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   inputController?: Controller
 
   /**
+   * auto merge by shadowProps
    * change outter wrapper element
    */
   dangerousRenderWrapperNode?: MayArray<DangerousWrapperNodeFn>
