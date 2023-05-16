@@ -107,10 +107,8 @@ function CSSTransitionExample() {
   // TODO: invoke in  plugin
   const { transitionProps, refSetter } = useCSSTransition({
     show,
-    onAfterEnter({ controller }) {
-      console.log('controller: ', { ...controller })
-    },
-    onBeforeEnter(controller) {},
+    onAfterEnter() {},
+    onBeforeEnter() {},
     fromProps: { icss: { width: '100px' } },
     toProps: { icss: { width: '200px' } }
   })

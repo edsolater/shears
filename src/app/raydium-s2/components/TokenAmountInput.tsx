@@ -25,13 +25,9 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
     set: (token) => props.onSelectToken?.(token)
   })
   const [amount, setAmount] = createMutableSignal({
-    get: () => {
-      console.log('props.amount: ', props.amount)
-      return (props.amount != null ? toString(props.amount) : undefined)
-    },
+    get: () => (props.amount != null ? toString(props.amount) : undefined),
     set: (amount) => {
-      console.log('amount: ', amount)
-      return props.onAmountChange?.(amount)
+      props.onAmountChange?.(amount)
     }
   })
 
@@ -47,7 +43,7 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
           isStringNumber(text) ? setAmount(text) : undefined
         }}
       />
-      <Modal controllerRef={setModalRef} isModal >
+      <Modal controllerRef={setModalRef} isModal>
         <TokenSelectorModalContent />
       </Modal>
     </Box>

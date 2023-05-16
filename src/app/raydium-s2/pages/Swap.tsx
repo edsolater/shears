@@ -39,11 +39,11 @@ export function SwapPage() {
 
   createEffect(() => {
     console.log('tokenAmount1(): ', tokenAmount1())
-    console.log('amount1(): ', amount1()) // <- fixme
+    console.log('amount1(): ', amount1())
   })
   createEffect(() => {
     console.log('tokenAmount2(): ', tokenAmount2())
-    console.log('amount2(): ', amount2()) // <- fixme
+    console.log('amount2(): ', amount2())
   })
 
   return (

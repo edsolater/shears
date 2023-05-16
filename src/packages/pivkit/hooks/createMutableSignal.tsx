@@ -8,6 +8,7 @@ export function createMutableSignal<T>(options: { get: (prev?: T) => T; set?: (v
   // invoke `get`
   createEffect(() => setSignal((prev) => options.get(prev)))
   // invoke `set`
-  createEffect(on(signal, (newValue) => options.set?.(newValue)))
+  createEffect(on(signal, (newValue) => options.set?.(newValue), { defer: true }))
+  
   return [signal, setSignal]
 }

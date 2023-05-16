@@ -39,10 +39,10 @@ export type UseCSSTransactionOptions = Accessify<
     fromProps?: PivProps // shortcut for both enterFrom and leaveTo
     toProps?: PivProps // shortcut for both enterTo and leaveFrom
 
-    onBeforeEnter?: () => void
-    onAfterEnter?: () => void
-    onBeforeLeave?: () => void
-    onAfterLeave?: () => void
+    onBeforeEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+    onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+    onBeforeLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+    onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
 
     presets?: MayArray<MayFn<Omit<UseCSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
     // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
@@ -145,15 +145,17 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
   })
 
   // invoke callbacks
-  createEffect((prevCurrentPhase) => {
+  createEffect((prevCurrentPhase: TransitionPhase | void) => {
+    const el = contentDivRef()
+
     if (currentPhase() === 'shown' && targetPhase() === 'shown') {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onAfterEnter?.()
+      opts.onAfterEnter?.({ el, from: 'shown', to: 'shown' })
     }
 
     if (currentPhase() === 'hidden' && targetPhase() === 'hidden') {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onAfterLeave?.()
+      opts.onAfterLeave?.({ el, from: 'hidden', to: 'hidden' })
     }
 
     if (
@@ -161,7 +163,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
       targetPhase() === 'shown'
     ) {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onBeforeEnter?.()
+      opts.onBeforeEnter?.({ el, to: 'shown', from: currentPhase() })
     }
 
     if (
@@ -169,7 +171,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
       targetPhase() === 'hidden'
     ) {
       contentDivRef()?.clientHeight // force GPU render frame
-      opts.onBeforeLeave?.()
+      opts.onBeforeLeave?.({ el, to: 'hidden', from: currentPhase() })
     }
   }, currentPhase())
 

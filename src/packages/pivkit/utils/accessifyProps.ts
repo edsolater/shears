@@ -1,26 +1,18 @@
-import { AnyFn, AnyObj, isFunction, isObject, shrinkFn } from '@edsolater/fnkit'
+import { AnyFn, AnyObj, isFunction, isObject, isString, shrinkFn } from '@edsolater/fnkit'
 import { ValidController } from '../../piv/types/tools'
 
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
-export type Accessify<P extends Record<string, any>, Controller extends ValidController = {}> = {
-  [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef`
-    ? FixFunctionControllerParam<P[K], Controller>
-    : P[K] | ((controller: Controller) => P[K])
+export type Accessify<P extends AnyObj, Controller extends ValidController = {}> = {
+  [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef` ? P[K] : P[K] | ((controller: Controller) => P[K])
 }
 
 export type DeAccessify<P> = P extends Accessify<infer A, any> ? A : P
-
-type FixFunctionControllerParam<F, Controller extends ValidController> = F extends (
-  ...args: [infer P1, ...infer PS]
-) => infer R
-  ? (...args: [controller: P1 extends AnyObj | unknown ? P1 & { controller: Controller } : P1, ...rest: PS]) => R
-  : never
 /**
  * propertyName start with 'on' will treate as function
  */
-export function useAccessifiedProps<P extends Record<string, any>, Controller extends ValidController = {}>(
+export function useAccessifiedProps<P extends AnyObj, Controller extends ValidController = {}>(
   props: P,
   controller?: Controller,
   /** default is on_ and ref and controllerRef, but you can add more */
@@ -28,22 +20,15 @@ export function useAccessifiedProps<P extends Record<string, any>, Controller ex
 ): DeAccessify<P> {
   const accessifiedProps = Object.defineProperties(
     {},
-    Reflect.ownKeys(props).reduce((acc: any, key: any) => {
+    Reflect.ownKeys(props).reduce((acc: any, key) => {
       acc[key] = {
         enumerable: true,
         get() {
           const v = props[key]
-          if (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'ref' || key === 'controllerRef') {
-            return v
-            // } else if (key.startsWith('on')) {
-            //   if (controller && isFunction(v)) {
-            //     return fixFunctionParams(v, [{ controller }])
-            //   } else {
-            //     return v
-            //   }
-          } else {
-            return shrinkFn(v, [controller])
-          }
+          const noNeedAccessify =
+            isString(key) &&
+            (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'ref' || key === 'controllerRef')
+          return noNeedAccessify ? v : shrinkFn(v, [controller])
         }
       }
       return acc

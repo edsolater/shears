@@ -28,11 +28,7 @@ export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
   const { refSetter, transitionProps } = useCSSTransition({
     show,
     fromProps: { icss: { position: 'absolute', opacity: 0, overflow: 'hidden' } },
-    onBeforeEnter({ controller }) {
-      console.log('2: ', 2)
-      const el = controller.contentRef
-
-      console.log('el: ', el)
+    onBeforeEnter({ el }) {
       if (!el) return
 
       el.style.removeProperty('position')
@@ -47,8 +43,7 @@ export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
       //   styleMethods.toOriginalStyle(el)
       // }
     },
-    onAfterEnter({ controller }) {
-      const el = controller.contentRef
+    onAfterEnter({ el }) {
       if (!el) return
 
       // if (init && !haveInitTransition) {
@@ -59,11 +54,9 @@ export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
       styleMethods.applyClearUselessStyle(el)
       // onAfterEnter?.()
     },
-    onBeforeLeave({ controller }) {
-      const el = controller.contentRef
+    onBeforeLeave({ el, from }) {
       if (!el) return
-      console.log('4: ', 4)
-      if (controller.from === 'during-process') {
+      if (from === 'during-process') {
         styleMethods.toGhostStyle(el)
       } else {
         styleMethods.toOriginalStyle(el, { recordValue: true })
