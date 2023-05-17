@@ -5,7 +5,7 @@ import { omit } from '../../../packages/piv/utils/omit'
 import { Box, BoxProps, List, Text, b_clickable, b_row, createRef } from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
 import { Input } from '../../../packages/pivkit/components/Input'
-import { ListBox } from '../../../packages/pivkit/components/ListBox'
+import { ListContainerBox } from '../../../packages/pivkit/components/ListContainerBox'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 import { createMutableSignal } from '../../../packages/pivkit/hooks/createMutableSignal'
 import { useDataStore } from '../stores/data/store'
@@ -78,11 +78,11 @@ function TokenSelectorModalContent(rawProps: KitProps<{ onTokenSelect?(token: To
 
       <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>
 
-      <ListBox>
+      <ListContainerBox>
         <List items={tokens}>
           {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
         </List>
-      </ListBox>
+      </ListContainerBox>
     </Card>
   )
 }
