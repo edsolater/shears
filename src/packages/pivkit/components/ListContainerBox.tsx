@@ -12,8 +12,10 @@ export type DefaultListContainerBoxProps = typeof defaultProps
 const defaultProps = {
   dir: 'y'
 } as const satisfies Partial<ListContainerBoxProps>
+
 /**
  * box for list
+ * @deprecated , just use {@link List}
  */
 export function ListContainerBox(rawProps: KitProps<ListContainerBoxProps, ListContainerBoxController>) {
   const { props, lazyLoadController } = useKitProps(rawProps, { defaultProps })

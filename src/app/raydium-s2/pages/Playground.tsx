@@ -184,18 +184,21 @@ function ListExample() {
     { name: 'z', count: 26 }
   ]
   return (
-    <ListContainerBox icss={{ height: '30dvh' }}>
-      <List items={mockData} icss={icss_col({ gap: 16 })}>
-        {(d) => {
-          console.count('render item')
-          return (
-            <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
-              <Text>{d.name}</Text>
-              <Text>{d.count}</Text>
-            </Box>
-          )
-        }}
-      </List>
-    </ListContainerBox>
+    <List
+      items={mockData.concat(mockData).concat(mockData).concat(mockData)}
+      initRenderCount={10}
+      reachBottomMargin={5}
+      icss={icss_col({ gap: 16 })}
+    >
+      {(d) => {
+        console.count('render item')
+        return (
+          <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
+            <Text>{d.name}</Text>
+            <Text>{d.count}</Text>
+          </Box>
+        )
+      }}
+    </List>
   )
 }
