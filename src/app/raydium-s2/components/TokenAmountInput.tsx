@@ -80,7 +80,7 @@ function TokenSelectorModalContent(rawProps: KitProps<{ onTokenSelect?(token: To
 
       <ListBox>
         <List items={tokens}>
-          {(token) => <TokenSelectorModalContent_TokenItem token={token} onClick={props.onTokenSelect} />}
+          {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
         </List>
       </ListBox>
     </Card>
@@ -88,15 +88,15 @@ function TokenSelectorModalContent(rawProps: KitProps<{ onTokenSelect?(token: To
 }
 
 function TokenSelectorModalContent_TokenItem(
-  rawProps: KitProps<{ token: Token; onClick?(token: Token): void } & BoxProps>
+  rawProps: KitProps<{ token: Token; onSelect?(token: Token): void /* 🚧 meanly use `onClick` */ } & BoxProps>
 ) {
   const { props } = useKitProps(rawProps)
   return (
     <Box
       icss={[b_row(), b_clickable()]}
-      shadowProps={omit(props, 'onClick')}
+      shadowProps={props}
       onClick={() => {
-        props.onClick?.(props.token)
+        props.onSelect?.(props.token)
       }}
     >
       <TokenAvatar token={props.token} />
