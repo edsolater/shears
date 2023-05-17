@@ -138,7 +138,7 @@ export function useKitProps<
   DefaultProps extends Partial<GetRawProps<P>> = {}
 >(
   props: P,
-  options?: KitPropsOptions<GetRawProps<P>, Controller>
+  options?: KitPropsOptions<GetRawProps<P>, Controller, DefaultProps>
 ): {
   props: ParsedKitProps<AddDefaultPivProps<GetRawProps<P>, DefaultProps>> &
     Omit<PivProps<HTMLTag, Controller>, keyof GetRawProps<P>>
