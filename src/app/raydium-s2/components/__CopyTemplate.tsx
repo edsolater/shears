@@ -5,6 +5,6 @@ export type TokenAmountInputBoxController = {}
 export type TokenAmountInputBoxProps = {}
 
 export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>) {
-  const { props, loadController } = useKitProps(rawProps)
+  const { props, lazyLoadController } = useKitProps(rawProps)
   return null
 }

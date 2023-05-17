@@ -142,7 +142,7 @@ export function useKitProps<
 ): {
   props: ParsedKitProps<AddDefaultPivProps<GetRawProps<P>, DefaultProps>> &
     Omit<PivProps<HTMLTag, Controller>, keyof GetRawProps<P>>
-  loadController(controller: Controller | ((props: ParsedKitProps<GetRawProps<P>>) => Controller)): void
+  lazyLoadController(controller: Controller | ((props: ParsedKitProps<GetRawProps<P>>) => Controller)): void
 } {
   type RawProps = GetRawProps<P>
   const { loadController, getControllerCreator } = composeController<RawProps, Controller>()
@@ -150,7 +150,7 @@ export function useKitProps<
     controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),
     ...options
   }) as any /* too difficult to type, no need to check */
-  return { props: composedProps, loadController }
+  return { props: composedProps, lazyLoadController:loadController }
 }
 
 /**

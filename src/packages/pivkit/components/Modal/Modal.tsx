@@ -32,8 +32,8 @@ export type ModalProps = {
 }
 
 export function Modal(rawProps: KitProps<ModalProps>) {
-  const { props, loadController } = useKitProps(rawProps)
-  loadController(() => ({
+  const { props, lazyLoadController } = useKitProps(rawProps)
+  lazyLoadController(() => ({
     get isOpen() {
       return innerOpen()
     },

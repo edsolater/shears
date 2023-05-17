@@ -16,7 +16,7 @@ const defaultProps = {
  * box for list
  */
 export function ListContainerBox(rawProps: KitProps<ListContainerBoxProps, ListContainerBoxController>) {
-  const { props, loadController } = useKitProps(rawProps, { defaultProps })
+  const { props, lazyLoadController } = useKitProps(rawProps, { defaultProps })
   return (
     <Box
       shadowProps={props}
