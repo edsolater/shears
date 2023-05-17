@@ -2,7 +2,7 @@ import { isStringNumber } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 import { omit } from '../../../packages/piv/utils/omit'
-import { Box, BoxProps, List, Text, b_clickable, b_row, createRef } from '../../../packages/pivkit'
+import { Box, BoxProps, List, Text, icss_clickable, icss_row, createRef } from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { ListContainerBox } from '../../../packages/pivkit/components/ListContainerBox'
@@ -40,7 +40,7 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
   const [modalRef, setModalRef] = createRef<ModalController>()
 
   return (
-    <Box icss={b_row({ gap: 8 })}>
+    <Box icss={icss_row({ gap: 8 })}>
       {/* show current token info */}
       <Piv onClick={() => modalRef()?.open()} icss={{ width: '5em', border: 'solid', height: '1.5em' }}>
         {token()?.symbol}
@@ -93,7 +93,7 @@ function TokenSelectorModalContent_TokenItem(
   const { props } = useKitProps(rawProps)
   return (
     <Box
-      icss={[b_row(), b_clickable()]}
+      icss={[icss_row(), icss_clickable()]}
       shadowProps={props}
       onClick={() => {
         props.onSelect?.(props.token)

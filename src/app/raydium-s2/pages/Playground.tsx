@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
-import { Box, Button } from '../../../packages/pivkit'
+import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/pivkit'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
@@ -12,6 +12,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
+import { ListContainerBox } from '../../../packages/pivkit/components/ListContainerBox'
 
 export function PlaygroundPage() {
   return (
@@ -51,6 +52,10 @@ function PlaygoundList() {
 
       <ExamplePanel name='Modal'>
         <ModalExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='List'>
+        <ListExample />
       </ExamplePanel>
     </Box>
   )
@@ -146,5 +151,51 @@ function InputExample() {
         setControlledValue(text)
       }}
     />
+  )
+}
+
+function ListExample() {
+  const mockData = [
+    { name: 'a', count: 1 },
+    { name: 'b', count: 2 },
+    { name: 'c', count: 3 },
+    { name: 'd', count: 4 },
+    { name: 'e', count: 5 },
+    { name: 'f', count: 6 },
+    { name: 'g', count: 7 },
+    { name: 'h', count: 8 },
+    { name: 'i', count: 9 },
+    { name: 'j', count: 10 },
+    { name: 'k', count: 11 },
+    { name: 'l', count: 12 },
+    { name: 'm', count: 13 },
+    { name: 'n', count: 14 },
+    { name: 'o', count: 15 },
+    { name: 'p', count: 16 },
+    { name: 'q', count: 17 },
+    { name: 'r', count: 18 },
+    { name: 's', count: 19 },
+    { name: 't', count: 20 },
+    { name: 'u', count: 21 },
+    { name: 'v', count: 22 },
+    { name: 'w', count: 23 },
+    { name: 'x', count: 24 },
+    { name: 'y', count: 25 },
+    { name: 'z', count: 26 }
+  ]
+  return (
+    <ListContainerBox icss={{ height: '30dvh' }}>
+      <List items={mockData} icss={icss_col({ gap: 16 })}>
+        {(d) => {
+          console.count('render item')
+          return (
+            <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
+              <Text>{d.name}</Text>
+              <Text>{d.count}</Text>
+            </Box>
+          )
+        }}
+      </List>
+    </ListContainerBox>
   )
 }
