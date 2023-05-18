@@ -72,7 +72,7 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     <ListContext.Provider value={{ observeFunction: observe }}>
       <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
         <For each={allItems().slice(0, renderItemLength())}>
-          {(item, idx) => renderCache(item, () => props.children(item, idx))}
+          {(item, idx) => props.children(item, idx)}
         </For>
       </Piv>
     </ListContext.Provider>
