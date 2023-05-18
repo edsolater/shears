@@ -101,10 +101,10 @@ function getParsedKitProps<
     ? toProxifyController<Controller>(() => options.controller!(mergedGettersProps))
     : {}
 
-  const defaultProps = addDefaultPivProps(props, props.options?.defaultProps)
+  const defaultedProps = options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props
   // merge kit props
   const mergedGettersProps = pipe(
-    defaultProps,
+    defaultedProps,
     (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
@@ -150,7 +150,7 @@ export function useKitProps<
     controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),
     ...options
   }) as any /* too difficult to type, no need to check */
-  return { props: composedProps, lazyLoadController:loadController }
+  return { props: composedProps, lazyLoadController: loadController }
 }
 
 /**

@@ -38,11 +38,10 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     defaultProps: {
       initRenderCount: 30,
       increaseRenderCount: 30,
-      reachBottomMargin: 5 // FIXME add default is not work
+      reachBottomMargin: 5
     }
   })
-  const inputItems = createMemo(() => (isArray(props.items) ? props.items : [...(props.items ?? [])]))
-
+  const allItems = createMemo(() => (isArray(props.items) ? props.items : [...(props.items ?? [])]))
   const [listRef, setRef] = createRef<HTMLElement>()
 
   // add to context, this observer can make listItem can auto render or not
@@ -53,17 +52,15 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   const [renderItemLength, setRenderItemLength] = createSignal(props.initRenderCount)
 
   createEffect(() => {
-    console.log('props.reachBottomMargin: ', props.reachBottomMargin)
+    console.log('props.reachBottomMargin: ', props.reachBottomMargin) // FIXME: why render twice?
   })
+
   useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
-      console.log('reach bottom')
       setRenderItemLength((n) => n + props.increaseRenderCount)
     },
     reachBottomMargin: props.reachBottomMargin
   })
-
-  const slicedRenderItems = createMemo(() => inputItems().slice(0, renderItemLength()))
 
   createEffect(
     on(
@@ -73,8 +70,8 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   )
   return (
     <ListContext.Provider value={{ observeFunction: observe }}>
-      <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll' }}>
-        <For each={slicedRenderItems()}>{(item, idx) => props.children(item, idx)}</For>
+      <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
+        <For each={allItems().slice(0, renderItemLength())}>{(item, idx) => props.children(item, idx)}</For>
       </Piv>
     </ListContext.Provider>
   )

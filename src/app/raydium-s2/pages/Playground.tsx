@@ -187,7 +187,6 @@ function ListExample() {
     <List
       items={mockData.concat(mockData).concat(mockData).concat(mockData)}
       initRenderCount={10}
-      reachBottomMargin={5}
       icss={icss_col({ gap: 16 })}
     >
       {(d) => {

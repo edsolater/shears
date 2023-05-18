@@ -17,14 +17,14 @@ export function useScrollDegreeDetector(
     if (!el) return
     const { scrollHeight, scrollTop, clientHeight } = el
     const isNearlyReachBottom = scrollTop + clientHeight + (options?.reachBottomMargin ?? 0) >= scrollHeight
-    console.log(
-      'isNearlyReachBottom: ',
-      isNearlyReachBottom,
-      scrollHeight,
-      scrollTop,
-      clientHeight,
-      options?.reachBottomMargin
-    )
+    // console.log(
+    //   'isNearlyReachBottom: ',
+    //   isNearlyReachBottom,
+    //   scrollHeight,
+    //   scrollTop,
+    //   clientHeight,
+    //   options?.reachBottomMargin
+    // )
     if (isNearlyReachBottom && !isReachedBottom) {
       options?.onReachBottom?.()
       isReachedBottom = true
