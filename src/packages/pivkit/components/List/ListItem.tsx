@@ -1,8 +1,9 @@
-import { Accessor, JSX, Show, createEffect, createMemo, createSignal, useContext } from 'solid-js'
+import { Accessor, JSX, Show, createEffect, createMemo, createSignal, onCleanup, useContext } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { ListContext } from './List'
 import { omit } from '../../../piv/utils/omit'
+import useResizeObserver from '../../hooks/useResizeObserver'
 
 export type ListItemProps = {
   // /** e.g. item's index in List  */
@@ -52,4 +53,24 @@ export function ListItem(
       </Piv>
     </Show>
   )
+}
+
+/** use by listItem's canRender */
+function useElementSizeDetector() {
+  const [innerWidth, setInnerWidth] = createSignal<number>()
+  const [innerHeight, setInnerHeight] = createSignal<number>()
+
+  const [ref, setRef] = createRef<HTMLElement>()
+
+  const { destory } = useResizeObserver(ref, ({ el }) => {
+    detectSize(el)
+  })
+  onCleanup(destory)
+
+  function detectSize(el: HTMLElement) {
+    if (!el) return
+    setInnerHeight(el.clientHeight)
+    setInnerWidth(el.clientWidth)
+  }
+  return { setRef, innerWidth, innerHeight }
 }
