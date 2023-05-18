@@ -75,9 +75,10 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     reachBottomMargin: props.reachBottomMargin
   })
 
+  // reset when items.length changed
   createEffect(
     on(
-      () => props.items,
+      () => allItems().length,
       () => setRenderItemLength(props.initRenderCount)
     )
   )
@@ -106,20 +107,4 @@ function checkNeedRenderByIndex(idx: number | undefined, renderItemLength: numbe
   if (idx == null) return false
   if (renderItemLength == null) return false
   return idx <= renderItemLength
-}
-const cache = new WeakMap<Record<keyof any, any>, any>()
-
-/**
- * usually use in `<List>`'s `<For>`\
- * cache the result to avoid render same item again
- */
-function renderCache<T>(item: unknown, renderFunction: () => T): T {
-  if (!isObject(item)) return renderFunction()
-
-  if (!cache.has(item)) {
-    const renderResult = renderFunction()
-    cache.set(item, renderResult)
-  }
-
-  return cache.get(item)
 }
