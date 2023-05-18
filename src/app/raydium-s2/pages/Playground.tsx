@@ -186,12 +186,12 @@ function ListExample() {
   const increaseCount = createIncresingAccessor()
   return (
     <List
-      items={mockData.concat(mockData).concat(mockData).concat(mockData)}
+      items={mockData}
       initRenderCount={10}
-      icss={icss_col({ gap: 16 })}
+      icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}
     >
-      {(d) => {
-        console.count('render item')
+      {(d, idx) => {
+        console.count(`render item, ${d.name}, ${d.count}`)
         return (
           <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
             <Text>{d.name}</Text>

@@ -1,10 +1,22 @@
-import { createContext, createEffect, createMemo, createSignal, For, JSXElement, on, onCleanup } from 'solid-js'
+import {
+  Accessor,
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  Index,
+  JSXElement,
+  on,
+  onCleanup
+} from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useElementSize } from '../../hooks/useElementSize'
 import { isArray, isObject } from '@edsolater/fnkit'
 import { ObserveFn, useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../hooks/useScrollDegreeDetector'
+import { ListItem } from './ListItem'
 
 export type ListProps<T> = {
   items?: Iterable<T> | undefined
@@ -21,13 +33,14 @@ export type ListProps<T> = {
   reachBottomMargin?: number
 }
 
-export type ListController<T = any> = {}
+export type ListController = {}
 
-export type ListContextType<T = any> = {
+export type InnerListContext = {
   observeFunction?: ObserveFn<HTMLElement>
+  renderItemLength?: Accessor<number>
 }
 
-export const ListContext = createContext<ListContextType>({} as ListContextType, { name: 'ListController' })
+export const ListContext = createContext<InnerListContext>({} as InnerListContext, { name: 'ListController' })
 
 /**
  * if for layout , don't render important content in Box
@@ -38,7 +51,7 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     defaultProps: {
       initRenderCount: 30,
       increaseRenderCount: 30,
-      reachBottomMargin: 5
+      reachBottomMargin: 50
     }
   })
   const allItems = createMemo(() => (isArray(props.items) ? props.items : [...(props.items ?? [])]))
@@ -53,10 +66,12 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
 
   createEffect(() => {
     console.log('props.reachBottomMargin: ', props.reachBottomMargin) // FIXME: why render twice?
+    console.log('renderItemLength: ', renderItemLength())
   })
 
   useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
+      console.log('reach bottom, increaseCoun', props.increaseRenderCount)
       setRenderItemLength((n) => n + props.increaseRenderCount)
     },
     reachBottomMargin: props.reachBottomMargin
@@ -69,14 +84,30 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     )
   )
   return (
-    <ListContext.Provider value={{ observeFunction: observe }}>
+    <ListContext.Provider value={{ observeFunction: observe, renderItemLength }}>
       <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
-        <For each={allItems().slice(0, renderItemLength())}>
-          {(item, idx) => props.children(item, idx)}
+        <For each={allItems()}>
+          {(item, idx) => (
+            <ListItem needRender={checkNeedRenderByIndex(idx(), renderItemLength)}>
+              {() => props.children(item, idx)}
+            </ListItem>
+          )}
         </For>
       </Piv>
     </ListContext.Provider>
   )
+}
+
+/**
+ * render may be not visiable
+ */
+function checkNeedRenderByIndex(idx: number | undefined, renderItemLength: () => number | undefined) {
+  if (idx == null) return () => false
+  return () => {
+    const renderLength = renderItemLength()
+    if (renderLength == null) return false
+    return idx <= renderLength
+  }
 }
 
 const cache = new WeakMap<Record<keyof any, any>, any>()
