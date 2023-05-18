@@ -1,4 +1,4 @@
-import { Accessor, JSX, createEffect, createSignal, useContext } from 'solid-js'
+import { Accessor, JSX, Show, createEffect, createMemo, createSignal, useContext } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { ListContext } from './List'
@@ -6,8 +6,8 @@ import { omit } from '../../../piv/utils/omit'
 
 export type ListItemProps = {
   // /** e.g. item's index in List  */
-  // idx: number
-  needRender?: boolean
+  idx: number
+  canRender?: boolean
   children: () => JSX.Element
 }
 
@@ -15,8 +15,8 @@ export type ListItemController = {
   isIntersecting: Accessor<boolean>
 }
 /**
- * context acceptor for {@link List} \
- * only used in {@link List}
+ * context acceptor for `<List>` \
+ * only used in `<List>`
  */
 export function ListItem(
   rawProps: KitProps<ListItemProps, { controller: ListItemController; noNeedAccessifyChildren: true }>
@@ -25,7 +25,7 @@ export function ListItem(
 
   const [itemRef, setRef] = createRef<HTMLElement>()
 
-  // isIntersecting with parent `<List>`
+  // isIntersecting with parent `<List>`'s intersectionObserver
   const listContext = useContext(ListContext)
   const [isIntersecting, setIsIntersecting] = createSignal(false)
   createEffect(() => {
@@ -40,16 +40,16 @@ export function ListItem(
     isIntersecting
   }
   lazyLoadController(controller)
-
-  return props.needRender ? (
-    <Piv
-      ref={setRef}
-      shadowProps={omit(props, 'children')}
-      icss={{ visibility: isIntersecting() ? 'visible' : 'hidden' }}
-    >
-      {props.children()}
-    </Piv>
-  ) : (
-    <>{undefined}</>
+  const childContent = createMemo(() => (props.canRender ? props.children() : undefined))
+  return (
+    <Show when={props.canRender}>
+      <Piv
+        ref={setRef}
+        shadowProps={omit(props, 'children')}
+        icss={{ visibility: isIntersecting() ? 'visible' : 'hidden' }}
+      >
+        {childContent}
+      </Piv>
+    </Show>
   )
 }

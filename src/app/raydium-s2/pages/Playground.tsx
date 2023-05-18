@@ -185,13 +185,9 @@ function ListExample() {
   ]
   const increaseCount = createIncresingAccessor()
   return (
-    <List
-      items={mockData}
-      initRenderCount={10}
-      icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}
-    >
+    <List items={mockData} initRenderCount={10} icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}>
       {(d, idx) => {
-        console.count(`render item, ${d.name}, ${d.count}`)
+        console.count(`render item from <Playground>, ${d.name}, ${d.count}`)
         return (
           <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
             <Text>{d.name}</Text>

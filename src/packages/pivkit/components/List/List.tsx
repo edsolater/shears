@@ -66,12 +66,10 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
 
   createEffect(() => {
     console.log('props.reachBottomMargin: ', props.reachBottomMargin) // FIXME: why render twice?
-    console.log('renderItemLength: ', renderItemLength())
   })
 
   useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
-      console.log('reach bottom, increaseCoun', props.increaseRenderCount)
       setRenderItemLength((n) => n + props.increaseRenderCount)
     },
     reachBottomMargin: props.reachBottomMargin
@@ -87,11 +85,14 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     <ListContext.Provider value={{ observeFunction: observe, renderItemLength }}>
       <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
         <For each={allItems()}>
-          {(item, idx) => (
-            <ListItem needRender={checkNeedRenderByIndex(idx(), renderItemLength)}>
-              {() => props.children(item, idx)}
-            </ListItem>
-          )}
+          {(item, idx) => {
+            console.log('render item children in <For>')
+            return (
+              <ListItem idx={idx} canRender={createMemo(() => checkNeedRenderByIndex(idx(), renderItemLength()))}>
+                {() => props.children(item, idx)}
+              </ListItem>
+            )
+          }}
         </For>
       </Piv>
     </ListContext.Provider>
@@ -101,15 +102,11 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
 /**
  * render may be not visiable
  */
-function checkNeedRenderByIndex(idx: number | undefined, renderItemLength: () => number | undefined) {
-  if (idx == null) return () => false
-  return () => {
-    const renderLength = renderItemLength()
-    if (renderLength == null) return false
-    return idx <= renderLength
-  }
+function checkNeedRenderByIndex(idx: number | undefined, renderItemLength: number | undefined) {
+  if (idx == null) return false
+  if (renderItemLength == null) return false
+  return idx <= renderItemLength
 }
-
 const cache = new WeakMap<Record<keyof any, any>, any>()
 
 /**
