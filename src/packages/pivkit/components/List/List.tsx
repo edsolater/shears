@@ -2,7 +2,7 @@ import { createContext, createEffect, createMemo, createSignal, For, JSXElement,
 import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useElementSize } from '../../hooks/useElementSize'
-import { isArray } from '@edsolater/fnkit'
+import { isArray, isObject } from '@edsolater/fnkit'
 import { ObserveFn, useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../hooks/useScrollDegreeDetector'
 
@@ -71,8 +71,27 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   return (
     <ListContext.Provider value={{ observeFunction: observe }}>
       <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
-        <For each={allItems().slice(0, renderItemLength())}>{(item, idx) => props.children(item, idx)}</For>
+        <For each={allItems().slice(0, renderItemLength())}>
+          {(item, idx) => renderCache(item, () => props.children(item, idx))}
+        </For>
       </Piv>
     </ListContext.Provider>
   )
+}
+
+const cache = new WeakMap<Record<keyof any, any>, any>()
+
+/**
+ * usually use in `<List>`'s `<For>`\
+ * cache the result to avoid render same item again
+ */
+function renderCache<T>(item: unknown, renderFunction: () => T): T {
+  if (!isObject(item)) return renderFunction()
+
+  if (!cache.has(item)) {
+    const renderResult = renderFunction()
+    cache.set(item, renderResult)
+  }
+
+  return cache.get(item)
 }

@@ -183,6 +183,7 @@ function ListExample() {
     { name: 'y', count: 25 },
     { name: 'z', count: 26 }
   ]
+  const increaseCount = createIncresingAccessor()
   return (
     <List
       items={mockData.concat(mockData).concat(mockData).concat(mockData)}
@@ -194,7 +195,7 @@ function ListExample() {
         return (
           <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
             <Text>{d.name}</Text>
-            <Text>{d.count}</Text>
+            <Text>{d.count + increaseCount()}</Text>
           </Box>
         )
       }}
