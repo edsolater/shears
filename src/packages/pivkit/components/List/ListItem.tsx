@@ -52,10 +52,10 @@ export function ListItem(
       domRef={[setRef, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
       shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
       style={{
-        height: isIntersecting() ? 'unset' : `${innerHeight()}px`,
-        width: isIntersecting() ? 'unset' : `${innerWidth()}px`
+        height: isIntersecting() ? undefined : `${innerHeight()}px`,
+        width: isIntersecting() ? undefined : `${innerWidth()}px`
       }}
-      icss={{ visibility: isIntersecting() ? 'visible' : 'hidden' }}
+      icss={{ visibility: isIntersecting() ? 'visible' : 'hidden', width: '100%' }}
     >
       {childContent}
     </Piv>
