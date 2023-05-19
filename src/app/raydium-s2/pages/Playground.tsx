@@ -211,7 +211,7 @@ function ListExample() {
   const increaseCount = createIncresingAccessor()
   return (
     <List
-      items={mockData.slice(0, 200 + increaseCount())}
+      items={mockData}
       initRenderCount={10}
       icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}
     >
