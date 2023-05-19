@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
 import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/pivkit'
@@ -208,17 +208,19 @@ function ListExample() {
     { name: 'ay', count: 26 + 25 },
     { name: 'az', count: 26 + 26 }
   ]
+  const [data, setData] = createSignal<typeof mockData>([])
   const increaseCount = createIncresingAccessor()
+  createEffect(() => {
+    setTimeout(() => {
+      setData(mockData)
+    }, 100)
+  })
   return (
-    <List
-      items={mockData}
-      initRenderCount={10}
-      icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}
-    >
+    <List items={data} initRenderCount={10} icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}>
       {(d, idx) => {
         console.count(`render item from <Playground>, ${d.name}, ${d.count}`)
         return (
-          <Box icss={[icss_row({ gap: 8 }), { padding: 32, background: '#0001', width: '100%' }]}>
+          <Box icss={[icss_row({ gap: 8 }), { background: '#0001', width: '100%' }]}>
             <Text>{d.name}</Text>
             <Text>{d.count + increaseCount()}</Text>
           </Box>

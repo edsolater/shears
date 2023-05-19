@@ -1,5 +1,5 @@
 import { isStringNumber } from '@edsolater/fnkit'
-import { createMemo } from 'solid-js'
+import { createEffect, createMemo } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 import { omit } from '../../../packages/piv/utils/omit'
 import { Box, BoxProps, List, Text, icss_clickable, icss_row, createRef } from '../../../packages/pivkit'
@@ -70,6 +70,9 @@ function TokenSelectorModalContent(rawProps: KitProps<{ onTokenSelect?(token: To
   const { props } = useKitProps(rawProps)
   const dataStore = useDataStore()
   const tokens = createMemo(() => dataStore.allTokens)
+  createEffect(() => {
+    console.log('tokens(): ', tokens())
+  })
   return (
     <Card>
       <Box>
@@ -78,11 +81,9 @@ function TokenSelectorModalContent(rawProps: KitProps<{ onTokenSelect?(token: To
 
       <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>
 
-      <ListContainerBox>
-        <List items={tokens}>
-          {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
-        </List>
-      </ListContainerBox>
+      <List items={tokens}>
+        {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
+      </List>
     </Card>
   )
 }

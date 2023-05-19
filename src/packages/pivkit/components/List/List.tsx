@@ -51,7 +51,7 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     noNeedAccessifyChildren: true,
     defaultProps: {
       initRenderCount: 30,
-      increaseRenderCount: 30,
+      increaseRenderCount: 15,
       reachBottomMargin: 50
     }
   })
@@ -65,8 +65,9 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   // actually showed itemLength
   const [renderItemLength, setRenderItemLength] = createSignal(props.initRenderCount)
 
-  useScrollDegreeDetector(listRef, {
+  const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
+      console.log('33: ', 33)
       setRenderItemLength((n) => n + props.increaseRenderCount)
     },
     reachBottomMargin: props.reachBottomMargin
@@ -76,7 +77,10 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   createEffect(
     on(
       () => allItems().length,
-      () => setRenderItemLength(props.initRenderCount)
+      () => {
+        setRenderItemLength(props.initRenderCount)
+        forceCalculate()
+      }
     )
   )
   const renderListItems = (item: T, idx: () => number) => {
