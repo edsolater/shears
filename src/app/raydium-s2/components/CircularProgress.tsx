@@ -28,7 +28,7 @@ export function CircularProgress(kitProps: KitProps<CircularProgressProps>) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <svg
-        domRef={setRef}
+        ref={setRef}
         width={props.svgWidth}
         height={props.svgWidth}
         viewBox={`0 0 ${props.svgWidth} ${props.svgWidth}`}

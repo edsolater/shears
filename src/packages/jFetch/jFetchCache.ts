@@ -2,43 +2,20 @@ import { isFunction, forEachEntry } from '@edsolater/fnkit'
 import { getLocalStorageItem, setLocalStorageItem } from './utils/localStorage'
 
 type ResourceUrl = string
-type JFetchCacheItem = (
-  | {
-      /**
-       * read .text() multi time will throw error, try to use rawText instead
-       */
-      response?: Promise<Response> // when it comes from localStorage, response is not exist
-      rawText: Promise<string | undefined>
-      isLoading: true
-      state: 'loading' /* common property is easy for type guard */
-    }
-  | {
-      /**
-       * read .text() multi time will throw error, try to use rawText instead
-       */
-      response?: Promise<Response | undefined> // when it comes from localStorage, response is not exist
-      rawText?: Promise<string | undefined>
-      isResponseError: true
-      state: 'error' /* common property is easy for type guard */
-    }
-  | {
-      /**
-       * read .text() multi time will throw error, try to use rawText instead
-       */
-      response?: Promise<Response> // when it comes from localStorage, response is not exist
-      rawText: Promise<string>
-      isResponseError: false
-      isSuccess: true
-      state: 'success' /* common property is easy for type guard */
-    }
-) & {
+export type JFetchCacheItem = {
+  /*
+   * read .text() multi time will throw error, try to use rawText instead
+   */
+  response?: Promise<Response> // when it comes from localStorage, response is not exist
+  rawText: Promise<string>
+  ok?: boolean
   paload?: Record<string, any> // POST's payload when fetching
   timeStamp: number
 }
 type JFetchCacheLocalStorageItem = Omit<JFetchCacheItem, 'response' | 'rawText'> & { rawText: string }
 
 export const resultCache = new Map<ResourceUrl, JFetchCacheItem>()
-// weborker can't have localStorage 
+// weborker can't have localStorage
 // export const resultCache = syncWithLocalStorage(new Map<ResourceUrl, JFetchCacheItem>())
 
 function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
@@ -60,7 +37,7 @@ function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
           const [key, cacheItem] = args as [ResourceUrl, JFetchCacheItem]
           const plainRawText = await cacheItem.rawText
           if (!plainRawText) return
-          if (cacheItem.state === 'success') {
+          cacheItem.response?.then(() => {
             setLocalStorageItem<Record<string, JFetchCacheLocalStorageItem>>(
               'raydium-controller-jFetch-cache',
               (s) => ({
@@ -68,7 +45,7 @@ function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
                 [key]: { ...cacheItem, rawText: plainRawText, response: null }
               })
             )
-          }
+          })
           return bindedOriginal(...args)
         }
       } else {

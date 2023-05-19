@@ -1,5 +1,5 @@
 import { MayPromise } from '@edsolater/fnkit'
-import { resultCache } from './jFetchCache'
+import { JFetchCacheItem, resultCache } from './jFetchCache'
 
 export type JFetchCoreOptions = RequestInit & {
   /** if still within cache fresh time, use cache. */
@@ -10,14 +10,6 @@ const defaultCacheFreshTime = 1000 // 1 second
 async function isRequestSuccess(res: MayPromise<Response>) {
   const clonedRes = (await res).clone()
   if (!clonedRes.ok) return false
-  try {
-    const dataText = await clonedRes.text()
-    const mathed = dataText.match(/\"success\":\s?false/)
-    if (mathed) return false
-    return true
-  } catch {
-    return false
-  }
 }
 
 function canJFetchUseCache({ key, cacheFreshDuraction }: { key: string; cacheFreshDuraction?: number }) {
@@ -30,10 +22,7 @@ function canJFetchUseCache({ key, cacheFreshDuraction }: { key: string; cacheFre
 /**
  * same interface as original fetch, but, customized version have cache
  */
-export async function jFetchCoreWithCache(
-  input: RequestInfo,
-  options?: JFetchCoreOptions
-): Promise<string | undefined> {
+export async function jFetchCoreWithCache(input: RequestInfo, options?: JFetchCoreOptions): Promise<string> {
   const key = typeof input === 'string' ? input : input.url
 
   const shouldUseCache = canJFetchUseCache({
@@ -46,27 +35,30 @@ export async function jFetchCoreWithCache(
   try {
     const response = fetch(input, options)
     const rawText = response
-      .then((r) => r.clone())
-      .then(async (res) => {
-        const requestIsSuccess = await isRequestSuccess(res)
-        if (requestIsSuccess) {
-          return res.text()
-        } else {
-          resultCache.delete(key)
-          return ''
+      .then((r) => {
+        if (r.ok) return r.clone()
+        else {
+          throw new Error('not ok')
         }
       })
-      .catch(() => {
-        return ''
-        // throw new Error('response .text() error')
+      .then((r) => r.text())
+      .then((r) => {
+        if (resultCache.has(key)) {
+          resultCache.get(key)!.ok = true
+        }
+        return r
       })
+      .finally(() => {
+        if (resultCache.has(key)) {
+          resultCache.get(key)!.timeStamp = Date.now()
+        }
+      })
+
     const tempJFetchItem = {
       response,
       rawText,
-      timeStamp: Date.now(),
-      isLoading: true,
-      state: 'loading'
-    } as const
+      timeStamp: Date.now()
+    } satisfies JFetchCacheItem
     resultCache.set(key, tempJFetchItem)
 
     // error
@@ -74,34 +66,27 @@ export async function jFetchCoreWithCache(
       const jFetchItem = {
         response,
         rawText,
-        timeStamp: Date.now(),
-        isResponseError: true,
-        state: 'error'
-      } as const
+        timeStamp: Date.now()
+      } satisfies JFetchCacheItem
       resultCache.set(key, jFetchItem)
-      return canJFetchUseCache({ key }) && resultCache.get(key)!.state === 'success'
-        ? resultCache.get(key)!.rawText
-        : undefined
+      return canJFetchUseCache({ key }) && resultCache.get(key)!.ok === true ? resultCache.get(key)!.rawText : rawText
     } else {
       const jFetchItem = {
         response,
         rawText,
         timeStamp: Date.now(),
-        isResponseError: false,
-        isSuccess: true,
-        state: 'success'
-      } as const
+        ok: true
+      } satisfies JFetchCacheItem
       resultCache.set(key, jFetchItem)
       return rawText
     }
   } catch {
     const jFetchItem = {
-      response: Promise.resolve(undefined),
+      rawText: Promise.reject('jFetch failed2'),
       timeStamp: Date.now(),
-      isResponseError: true,
-      state: 'error'
-    } as const
+      ok: false
+    } satisfies JFetchCacheItem
     resultCache.set(key, jFetchItem)
-    return undefined
+    return Promise.reject('jFetch failed3')
   }
 }
