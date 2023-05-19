@@ -180,11 +180,41 @@ function ListExample() {
     { name: 'w', count: 23 },
     { name: 'x', count: 24 },
     { name: 'y', count: 25 },
-    { name: 'z', count: 26 }
+    { name: 'z', count: 26 },
+    { name: 'aa', count: 26 + 1 },
+    { name: 'ab', count: 26 + 2 },
+    { name: 'ac', count: 26 + 3 },
+    { name: 'ad', count: 26 + 4 },
+    { name: 'ae', count: 26 + 5 },
+    { name: 'af', count: 26 + 6 },
+    { name: 'ag', count: 26 + 7 },
+    { name: 'ah', count: 26 + 8 },
+    { name: 'ai', count: 26 + 9 },
+    { name: 'aj', count: 26 + 10 },
+    { name: 'ak', count: 26 + 11 },
+    { name: 'al', count: 26 + 12 },
+    { name: 'am', count: 26 + 13 },
+    { name: 'an', count: 26 + 14 },
+    { name: 'ao', count: 26 + 15 },
+    { name: 'ap', count: 26 + 16 },
+    { name: 'aq', count: 26 + 17 },
+    { name: 'ar', count: 26 + 18 },
+    { name: 'as', count: 26 + 19 },
+    { name: 'at', count: 26 + 20 },
+    { name: 'au', count: 26 + 21 },
+    { name: 'av', count: 26 + 22 },
+    { name: 'aw', count: 26 + 23 },
+    { name: 'ax', count: 26 + 24 },
+    { name: 'ay', count: 26 + 25 },
+    { name: 'az', count: 26 + 26 }
   ]
   const increaseCount = createIncresingAccessor()
   return (
-    <List items={mockData} initRenderCount={10} icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}>
+    <List
+      items={mockData.slice(0, 200 + increaseCount())}
+      initRenderCount={10}
+      icss={[icss_col({ gap: 16 }), { height: '30dvh' }]}
+    >
       {(d, idx) => {
         console.count(`render item from <Playground>, ${d.name}, ${d.count}`)
         return (
