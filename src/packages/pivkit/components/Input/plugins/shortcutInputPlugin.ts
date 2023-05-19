@@ -36,7 +36,7 @@ export const keyboardShortcutObserverPlugin = (options: { onRecordShortcut?: (sh
       options.onRecordShortcut?.(text as KeybordShortcutKeys)
     }
 
-    return { ref: setElRef, controllerRef: setControllerRef }
+    return { domRef: setElRef, controllerRef: setControllerRef }
   })
 
 function subscribeKeyboardShortcut(el: HTMLElement) {

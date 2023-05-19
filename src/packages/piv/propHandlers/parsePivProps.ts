@@ -1,4 +1,4 @@
-import { flapDeep, pipe, shakeFalsy } from '@edsolater/fnkit'
+import { flap, flapDeep, hasProperty, pipe, shakeFalsy } from '@edsolater/fnkit'
 import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'
@@ -21,7 +21,7 @@ export function parsePivProps(rawProps: PivProps<any>) {
     class:
       shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
       undefined /* don't render if empty string */,
-    ref: (el: HTMLElement) => el && mergeRefs(...flapDeep(props.ref))(el),
+    ref: (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el),
     style: parseIStyles(props.style, controller),
     onClick: 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined,
     children: applyPivController(props.children, controller)

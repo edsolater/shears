@@ -52,7 +52,7 @@ export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerContr
     <PopPortal id='pop-stack'>
       <Show when={isOpen()}>
         <Piv
-          ref={setDrawerRef}
+          domRef={setDrawerRef}
           shadowProps={props}
           icss={{ width: isOpen() ? 300 : 400, height: '100dvh', background: 'dodgerblue' }}
         ></Piv>

@@ -46,7 +46,7 @@ function getPivPropsValue(objs: AnyObj[], key: keyof any) {
       }
 
     // -------- pivprops --------
-    case 'ref':
+    case 'domRef':
       return objs.reduce((finalValue, objB) => {
         const valueB = objB[key]
         return valueB && finalValue ? mergeRefs(finalValue as any, valueB as any) : valueB ?? finalValue

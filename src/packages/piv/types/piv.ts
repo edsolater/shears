@@ -18,7 +18,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   /**
    * auto merge by shadowProps
    */
-  ref?: MayArray<CRef<any> | null | undefined>
+  domRef?: MayArray<CRef<any> | null | undefined>
 
   /**
    * auto merge by shadowProps

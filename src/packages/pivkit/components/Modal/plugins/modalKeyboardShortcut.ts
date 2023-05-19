@@ -17,7 +17,7 @@ export const modalKeyboardShortcut = createPlugin<ModalProps>(() => {
     })
     return subscription.abort
   }, [])
-  return { ref: setDivRef, controllerRef: setControllerRef } 
+  return { domRef: setDivRef, controllerRef: setControllerRef } 
 })
 
 function keyboardFocusElement(el?: HTMLElement) {

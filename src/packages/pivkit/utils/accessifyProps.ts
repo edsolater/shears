@@ -15,7 +15,7 @@ export type DeAccessify<P> = P extends Accessify<infer A, any> ? A : P
 export function useAccessifiedProps<P extends AnyObj, Controller extends ValidController = {}>(
   props: P,
   controller?: Controller,
-  /** default is on_ and ref and controllerRef, but you can add more */
+  /** default is on_ and domRef and controllerRef, but you can add more */
   noNeedAccessifyProps?: string[]
 ): DeAccessify<P> {
   const accessifiedProps = Object.defineProperties(
@@ -27,7 +27,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
           const v = props[key]
           const noNeedAccessify =
             isString(key) &&
-            (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'ref' || key === 'controllerRef')
+            (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
           return noNeedAccessify ? v :( typeof v === 'function' ? v(controller) : v)
         }
       }

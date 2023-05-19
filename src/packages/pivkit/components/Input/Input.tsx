@@ -168,7 +168,7 @@ function useInputInnerValue(
   const additionalProps = createMemo(
     () =>
       ({
-        ref: setInputRef,
+        domRef: setInputRef,
         htmlProps: {
           disabled: props.disabled,
           onBeforeInput: (ev: Event) => {

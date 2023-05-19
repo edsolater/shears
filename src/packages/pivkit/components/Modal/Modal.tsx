@@ -94,9 +94,9 @@ export function Modal(rawProps: KitProps<ModalProps>) {
         as={(parsedPivProps) => <dialog {...parsedPivProps} open={props.open && !props.isModal} />}
         shadowProps={props}
         icss={[props.backdropICSS && { '&::backdrop': props.backdropICSS }]}
-        ref={setDialogRef}
+        domRef={setDialogRef}
       >
-        <Piv ref={setDialogContentRef} icss={{ display: 'contents' }}>
+        <Piv domRef={setDialogContentRef} icss={{ display: 'contents' }}>
           {props.children}
         </Piv>
       </Piv>

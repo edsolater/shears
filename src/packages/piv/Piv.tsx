@@ -13,7 +13,7 @@ export const pivPropsNames = [
   'icss',
   'onClick',
   'plugin',
-  'ref',
+  'domRef',
   'shadowProps',
   'style'
 ] satisfies (keyof PivProps<any>)[]

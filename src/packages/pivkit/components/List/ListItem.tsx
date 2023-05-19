@@ -48,7 +48,8 @@ export function ListItem(
   const childContent = createMemo(() => props.children())
   return (
     <Piv
-      ref={[setRef, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
+      debugLog={[]}
+      domRef={[setRef, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
       shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
       style={{
         height: isIntersecting() ? 'unset' : `${innerHeight()}px`,

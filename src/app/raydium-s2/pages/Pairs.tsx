@@ -16,7 +16,7 @@ export function PairsPanel() {
     <Piv>
       <NavBar title='Pools' />
       <Piv
-        ref={setRef}
+        domRef={setRef}
         icss={{
           // boxShadow: icssSmoothBoxShadow,
           borderRadius: 4,

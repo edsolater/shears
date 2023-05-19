@@ -11,7 +11,7 @@ export function PopPortal(props: { id: string; children?: RawChild }) {
     ref()?.classList.add('self-pointer-events-none')
   })
   return (
-    <Portal mount={element} ref={setRef}>
+    <Portal mount={element} domRef={setRef}>
       {props.children}
     </Portal>
   )

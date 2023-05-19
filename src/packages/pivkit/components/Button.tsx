@@ -182,7 +182,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
         },
         compressICSSToObj(shrinkFn(cssProps, [mergedProps]))
       ]}
-      ref={setRef}
+      domRef={setRef}
     >
       {props.prefix}
       {/* TODO: no need. this is because kitProp don't support Access and Deaccess */}

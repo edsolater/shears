@@ -127,7 +127,7 @@ function CSSTransitionExample() {
     <>
       <Button onClick={() => setShow((b) => !b)}>Toggle</Button>
       <Piv
-        ref={refSetter}
+        domRef={refSetter}
         shadowProps={transitionProps()}
         icss={{ backgroundColor: 'dodgerblue', height: 200, display: 'grid', placeItems: 'center' }}
       >
