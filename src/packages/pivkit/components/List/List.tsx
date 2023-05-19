@@ -50,25 +50,31 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   const { props } = useKitProps(rawProps, {
     noNeedAccessifyChildren: true,
     defaultProps: {
-      initRenderCount: 30,
-      increaseRenderCount: 15,
       reachBottomMargin: 50
     }
   })
+  // [configs]
   const allItems = createMemo(() => (isArray(props.items) ? props.items : [...(props.items ?? [])]))
+  const increaseRenderCount = createMemo(
+    () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30)
+  )
+  const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(Math.floor(allItems().length / 5), 50))
+
+  // [list ref]
   const [listRef, setRef] = createRef<HTMLElement>()
 
-  // add to context, this observer can make listItem can auto render or not
+  // [add to context, this observer can make listItem can auto render or not]
   const { observe, destory } = useIntersectionObserver({ rootRef: listRef, options: { rootMargin: '100%' } })
   onCleanup(() => destory())
 
-  // actually showed itemLength
-  const [renderItemLength, setRenderItemLength] = createSignal(props.initRenderCount)
+  // [actually showed item count]
+  const [renderItemLength, setRenderItemLength] = createSignal(initRenderCount())
 
+  // [scroll handler]
   const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
       console.log('33: ', 33)
-      setRenderItemLength((n) => n + props.increaseRenderCount)
+      setRenderItemLength((n) => n + increaseRenderCount())
     },
     reachBottomMargin: props.reachBottomMargin
   })
@@ -78,7 +84,7 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
     on(
       () => allItems().length,
       () => {
-        setRenderItemLength(props.initRenderCount)
+        setRenderItemLength(initRenderCount())
         forceCalculate()
       }
     )
