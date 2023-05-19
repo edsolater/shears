@@ -6,9 +6,6 @@ import { omit } from '../../../piv/utils/omit'
 import useResizeObserver from '../../hooks/useResizeObserver'
 
 export type ListItemProps = {
-  // /** e.g. item's index in List  */
-  idx: number
-  canRender?: boolean
   children: () => JSX.Element
 }
 
@@ -22,6 +19,7 @@ export type ListItemController = {
 export function ListItem(
   rawProps: KitProps<ListItemProps, { controller: ListItemController; noNeedAccessifyChildren: true }>
 ) {
+  // console.count('render ListItem')
   const { props, lazyLoadController } = useKitProps(rawProps, { noNeedAccessifyChildren: true })
 
   const [itemRef, setRef] = createRef<HTMLElement>()
@@ -41,17 +39,15 @@ export function ListItem(
     isIntersecting
   }
   lazyLoadController(controller)
-  const childContent = createMemo(() => (props.canRender ? props.children() : undefined))
+  const childContent = createMemo(() => props.children())
   return (
-    <Show when={props.canRender}>
-      <Piv
-        ref={setRef}
-        shadowProps={omit(props, 'children')}
-        icss={{ visibility: isIntersecting() ? 'visible' : 'hidden' }}
-      >
-        {childContent}
-      </Piv>
-    </Show>
+    <Piv
+      ref={setRef}
+      shadowProps={omit(props, 'children')}
+      icss={{ visibility: isIntersecting() ? 'visible' : 'hidden' }}
+    >
+      {childContent}
+    </Piv>
   )
 }
 

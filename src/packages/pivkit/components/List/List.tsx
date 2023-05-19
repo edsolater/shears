@@ -8,7 +8,8 @@ import {
   Index,
   JSXElement,
   on,
-  onCleanup
+  onCleanup,
+  Show
 } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
@@ -64,10 +65,6 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
   // actually showed itemLength
   const [renderItemLength, setRenderItemLength] = createSignal(props.initRenderCount)
 
-  createEffect(() => {
-    console.log('props.reachBottomMargin: ', props.reachBottomMargin) // FIXME: why render twice?
-  })
-
   useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
       setRenderItemLength((n) => n + props.increaseRenderCount)
@@ -82,19 +79,18 @@ export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildr
       () => setRenderItemLength(props.initRenderCount)
     )
   )
+  const renderListItems = (item: T, idx: () => number) => {
+    // console.count('render item children in <For>')
+    return (
+      <Show when={checkNeedRenderByIndex(idx(), renderItemLength())}>
+        <ListItem>{() => props.children(item, idx)}</ListItem>
+      </Show>
+    )
+  }
   return (
     <ListContext.Provider value={{ observeFunction: observe, renderItemLength }}>
       <Piv ref={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
-        <For each={allItems()}>
-          {(item, idx) => {
-            console.log('render item children in <For>')
-            return (
-              <ListItem idx={idx} canRender={createMemo(() => checkNeedRenderByIndex(idx(), renderItemLength()))}>
-                {() => props.children(item, idx)}
-              </ListItem>
-            )
-          }}
-        </For>
+        <For each={allItems()}>{renderListItems}</For>
       </Piv>
     </ListContext.Provider>
   )
@@ -107,4 +103,20 @@ function checkNeedRenderByIndex(idx: number | undefined, renderItemLength: numbe
   if (idx == null) return false
   if (renderItemLength == null) return false
   return idx <= renderItemLength
+}
+
+const cache = new WeakMap<Record<keyof any, any>, any>()
+
+/**
+ * usually use in `<List>`'s `<For>`\
+ * cache the result to avoid render same item again
+ */
+function renderCache<T>(item: unknown, renderFunction: () => T): T {
+  if (!isObject(item)) return renderFunction()
+
+  if (!cache.has(item)) {
+    cache.set(item, renderFunction())
+  }
+
+  return cache.get(item)
 }

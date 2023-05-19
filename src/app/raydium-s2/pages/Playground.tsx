@@ -12,7 +12,6 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
-import { ListContainerBox } from '../../../packages/pivkit/components/ListContainerBox'
 
 export function PlaygroundPage() {
   return (

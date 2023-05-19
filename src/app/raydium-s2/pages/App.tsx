@@ -25,7 +25,7 @@ export function App() {
 
   return (
     <Piv>
-      <KeyboardShortcutPanel />
+      {/* <KeyboardShortcutPanel /> */}
       <Routes />
     </Piv>
   )
