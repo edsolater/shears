@@ -24,7 +24,7 @@ export function ListItem(
 
   const [itemRef, setRef] = createRef<HTMLElement>()
 
-  // isIntersecting with parent `<List>`'s intersectionObserver
+  //=== isIntersecting with parent `<List>`'s intersectionObserver
   const listContext = useContext(ListContext)
   const [isIntersecting, setIsIntersecting] = createSignal(false)
   createEffect(() => {
@@ -35,15 +35,25 @@ export function ListItem(
     })
   })
 
+  //=== size observer
+  const { setRef: setSizeDetectorTarget, innerHeight, innerWidth } = useElementSizeDetector()
+
+  //=== Controller
   const controller: ListItemController = {
     isIntersecting
   }
   lazyLoadController(controller)
+
+  //=== render children
   const childContent = createMemo(() => props.children())
   return (
     <Piv
-      ref={setRef}
-      shadowProps={omit(props, 'children')}
+      ref={[setRef, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
+      shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
+      style={{
+        height: isIntersecting() ? 'unset' : `${innerHeight()}px`,
+        width: isIntersecting() ? 'unset' : `${innerWidth()}px`
+      }}
       icss={{ visibility: isIntersecting() ? 'visible' : 'hidden' }}
     >
       {childContent}
