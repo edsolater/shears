@@ -1,6 +1,5 @@
 import { MayPromise } from '@edsolater/fnkit'
 import { jFetch } from '../../../../../packages/jFetch'
-import { asyncInvoke } from '../../../../../packages/pivkit/hooks/createContextStore/utils/asyncInvoke'
 import { appApiUrls } from '../../../utils/common/config'
 import { ApiAmmV3PoolsItem, ApiPoolInfo } from '../types/ammPools'
 
@@ -35,9 +34,10 @@ export async function fetchAmmPoolInfo() {
   return apiCache
 }
 
-export function prefetchAmmPoolInfo() {
+export function prefetch() {
+  console.info('[prefetch] start prefetch ammPoolInfo')
   return fetchAmmPoolInfo()
 }
 
-// apply prefetch
-prefetchAmmPoolInfo()
+// apply prefetch (ammPoolInfo)
+prefetch()
