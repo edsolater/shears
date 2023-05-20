@@ -32,7 +32,7 @@ export type ButtonProps = {
   /**
    * !only for app's uikit <Button>
    * button's mean  color (apply to all variant of button)
-   * default {@link cssColors.button_bg_primary } when in darkMode
+   * default {@link cssColors.component_button_bg_primary } when in darkMode
    */
   theme?: {
     mainBgColor?: MayFn<CSSColorString, [props: Omit<ButtonProps, 'theme' | 'validators'>]>
@@ -92,8 +92,8 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
   )
 
-  const mainBgColor = props.theme?.mainBgColor ?? cssColors.button_bg_primary
-  const mainTextColor = props.theme?.mainTextColor ?? cssColors.button_text_primary
+  const mainBgColor = props.theme?.mainBgColor ?? cssColors.component_button_bg_primary
+  const mainTextColor = props.theme?.mainTextColor ?? cssColors.component_button_text_primary
   const contentGap = props.theme?.contentGap ?? 4
   const disableOpacity = props.theme?.disableOpacity ?? 0.3
   const cssProps = props.theme?.cssProps
@@ -196,5 +196,5 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
  * @todo TEMP, currently force it, should use NPM css color utils
  */
 export function opacityCSSColor(cssColor: CSSColorString, /* 0~1 */ opacity: number) {
-  return cssColor === cssColors.button_bg_primary ? '#7c859826' /* 0.15 */ : `${cssColor}${opacity}` //TODO: temp
+  return cssColor === cssColors.component_button_bg_primary ? '#7c859826' /* 0.15 */ : `${cssColor}${opacity}` //TODO: temp
 }

@@ -1,11 +1,20 @@
 import { isStringNumber } from '@edsolater/fnkit'
 import { createEffect, createMemo } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../../packages/piv'
-import { omit } from '../../../packages/piv/utils/omit'
-import { Box, BoxProps, List, Text, icss_clickable, icss_row, createRef } from '../../../packages/pivkit'
+import { KitProps, Piv, PivProps, useKitProps } from '../../../packages/piv'
+import {
+  Box,
+  BoxProps,
+  List,
+  Text,
+  TextProps,
+  createRef,
+  icss_clickable,
+  icss_inputType,
+  icss_label,
+  icss_row
+} from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
-import { Input } from '../../../packages/pivkit/components/Input'
-import { ListContainerBox } from '../../../packages/pivkit/components/ListContainerBox'
+import { Input, InputProps } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 import { createMutableSignal } from '../../../packages/pivkit/hooks/createMutableSignal'
 import { useDataStore } from '../stores/data/store'
@@ -18,8 +27,11 @@ export type TokenAmountInputBoxController = {}
 
 export type TokenAmountInputBoxProps = {
   token?: Token
-  onSelectToken?: (token: Token | undefined) => void
+  tokenProps?: TextProps
   amount?: Numberish
+  amountInputProps?: InputProps
+  tokenSelectorModalContentProps?: TokenSelectorModalContentProps
+  onSelectToken?: (token: Token | undefined) => void
   onAmountChange?: (amount: Numberish | undefined) => void
 }
 
@@ -42,13 +54,14 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
   return (
     <Box icss={icss_row({ gap: 8 })}>
       {/* show current token info */}
-      <Piv onClick={() => modalRef()?.open()} icss={{ width: '5em', border: 'solid', height: '1.5em' }}>
+      <Text shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label(), icss_clickable()]}>
         {token()?.symbol}
-      </Piv>
+      </Text>
 
       {/* token amount info */}
       <Input
-        icss={{ border: 'solid', width: '12em', flex: 0 }}
+        shadowProps={props.amountInputProps}
+        icss={icss_inputType()}
         value={amount}
         onUserInput={({ text }) => {
           isStringNumber(text) ? setAmount(text) : undefined
@@ -57,16 +70,20 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
 
       {/* modal dialog */}
       <Modal controllerRef={setModalRef} isModal>
-        <TokenSelectorModalContent onTokenSelect={setToken} />
+        <TokenSelectorModalContent shadowProps={props.tokenSelectorModalContentProps} onTokenSelect={setToken} />
       </Modal>
     </Box>
   )
 }
 
+type TokenSelectorModalContentProps = {
+  onTokenSelect?(token: Token | undefined): void
+} & BoxProps
+
 /**
  * hold state (store's tokens)
  */
-function TokenSelectorModalContent(rawProps: KitProps<{ onTokenSelect?(token: Token | undefined): void } & BoxProps>) {
+function TokenSelectorModalContent(rawProps: KitProps<TokenSelectorModalContentProps>) {
   const { props } = useKitProps(rawProps)
   const dataStore = useDataStore()
   const tokens = createMemo(() => dataStore.allTokens)

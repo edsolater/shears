@@ -1,6 +1,6 @@
 html,
 body,
-#__next,
+#root,
 .app {
   height: 100%;
 }
@@ -15,9 +15,6 @@ body {
 }
 * {
   box-sizing: border-box;
-}
-input {
-  font-weight: inherit;
 }
 
 input[type='number']::-webkit-outer-spin-button,

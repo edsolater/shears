@@ -12,7 +12,6 @@ export type InputProps = {
    */
   isFluid?: boolean
 
-
   // -------- handle by useInputInnerValue --------
   /** only after `<Input>` created */
   defaultValue?: string
@@ -31,8 +30,6 @@ export type InputProps = {
   onInput?(utils: { text: string | undefined; byUser: boolean }): void
   // only program can trigger this callback
   onProgramInput?(utils: { text: string | undefined }): void
-
-
 }
 
 export type InputController = {
@@ -40,9 +37,6 @@ export type InputController = {
   /** set Input Value */
   setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
 }
-
-// css flexible
-const cssInputPadding = 8 // (px)
 
 /**
  * if for layout , don't render important content in Box
@@ -67,7 +61,7 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
       icss={[
         { flex: 1, background: 'transparent', minWidth: props.isFluid ? undefined : '14em' },
         /* initialize */
-        { border: 'none', padding: `${cssInputPadding}px` }
+        { border: 'none', padding: 8 }
       ]}
     />
   )

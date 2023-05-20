@@ -1,6 +1,6 @@
 import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { icss_card, icss_col, icss_row } from '../../../packages/pivkit'
+import { Button, icss_card, icss_col, icss_row } from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
 import { Section } from '../../../packages/pivkit/components/Section'
 import { NavBar } from '../components/NavBar'
@@ -52,6 +52,7 @@ export function SwapPage() {
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Card icss={[icss_card, icss_col({ gap: '.5em' })]}>
           <TokenAmountInputBox
+          
             token={token1}
             amount={tokenAmount1}
             onSelectToken={setToken1}
@@ -66,6 +67,8 @@ export function SwapPage() {
             onSelectToken={setToken2}
             onAmountChange={setAmount2}
           />
+
+          <Button>Swap</Button>
         </Card>
       </Section>
     </Piv>
