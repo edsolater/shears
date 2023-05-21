@@ -1,22 +1,23 @@
-import { MayPromise, isObject, produce, mergeFunction, shrinkToValue, assert } from '@edsolater/fnkit'
-import { InnerTransaction, PublicKeyish, TxVersion as _TxVersion } from '@raydium-io/raydium-sdk'
+import { MayPromise, assert, isObject, mergeFunction } from '@edsolater/fnkit'
+import { InnerTransaction, PublicKeyish } from '@raydium-io/raydium-sdk'
 import {
   Connection,
   Context,
   Keypair,
-  PublicKey,
   SignatureResult,
   Transaction,
   TransactionError,
   VersionedTransaction
 } from '@solana/web3.js'
-import { WalletStore } from '../../stores/wallet/store'
-import { buildTransactionsFromSDKInnerTransactions } from './createVersionedTransaction'
+import { produce } from 'immer'
+import { buildTransactionsFromSDKInnerTransactions, isInnerTransaction } from './createVersionedTransaction'
+import { innerTxCollector } from './innerTxCollector'
 import { sendTransactionCore } from './sendTransactionCore'
 import { subscribeTx } from './subscribeTx'
-import { innerTxCollector } from './innerTxCollector'
+import { invoke } from '../../../../packages/fnkit/invoke'
+import { signAllTransactions } from './signAllTransactions'
 
-type TxVersion = 'V0' | 'LEGACY'
+export type TxVersion = 'V0' | 'LEGACY'
 //#region ------------------- basic info -------------------
 export type TxInfo = {
   txid: string
@@ -159,6 +160,7 @@ export type TransactionCollector = {
 export type TxResponseInfos = {
   allSuccess: boolean
   txids: string[]
+  error: unknown
   // errorAt?: number // only if `allSuccess` is false
   // txList: (TxSuccessInfo | TxErrorInfo)[]
 }
@@ -171,13 +173,11 @@ export type TxHandlerOptions = {
 
 type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(transactions: T[]) => Promise<T[]>
 
-export type SendTransactionPayload = {
-  signAllTransactions: SignAllTransactionsFunction
-  owner: PublicKeyish
+export type TxHandlerPayload = {
   connection: Connection
+  owner: PublicKeyish
   txVersion: TxVersion
-  // only if have been shadow open
-  signerkeyPair?: TxKeypairDetective
+  signAllTransactions: SignAllTransactionsFunction
 }
 
 export function isTransaction(x: any): x is Transaction {
@@ -201,12 +201,7 @@ export function isVersionedTransaction(
  *
  */
 export async function txHandler(
-  payload: {
-    connection: Connection
-    owner: PublicKeyish
-    txVersion: TxVersion
-    signAllTransactions: SignAllTransactionsFunction
-  },
+  payload: TxHandlerPayload,
   txFn: TxFn,
   options?: TxHandlerOptions
 ): Promise<TxResponseInfos> {
@@ -214,23 +209,33 @@ export async function txHandler(
     transactionCollector,
     collected: { innerTransactions, singleTxOptions, multiTxOption }
   } = innerTxCollector(options)
+
   try {
     assert(payload.connection, 'provided connection not working')
     assert(payload.owner, 'wallet not connected')
     const userLoadedTransactionQueue = await txFn()
     transactionCollector.add(userLoadedTransactionQueue)
-    const finalInfos = await dealWithMultiTxOptions({
+
+    const parsedSignleTxOptions = makeMultiOptionIntoSignalOptions({
       transactions: innerTransactions,
       singleOptions: singleTxOptions,
-      multiOption: multiTxOption,
+      multiOption: multiTxOption
+    })
+    const allSignedTransactions = await signAllTransactions({ transactions: innerTransactions, payload })
+
+    const senderFn = composeWithDifferentSendMode({
+      transactions: allSignedTransactions,
+      sendMode: multiTxOption.sendMode,
+      singleOptions: parsedSignleTxOptions,
       payload
     })
 
-    return finalInfos
+    senderFn()
   } catch (error) {
     return {
       allSuccess: false,
-      txids: []
+      txids: [],
+      error
     }
   }
 }
@@ -242,173 +247,46 @@ export async function txHandler(
  *
  * so this fn will record txids
  */
-async function dealWithMultiTxOptions({
-  transactions,
-  singleOptions,
-  multiOption,
-  payload
-}: {
-  transactions: (Transaction | InnerTransaction)[]
-  singleOptions: TxHandlerOption[]
-  multiOption: MultiTxsOption
-  payload: SendTransactionPayload
-}): Promise<TxResponseInfos> {
-  return new Promise((resolve, reject) =>
-    (async () => {
-      const txids = [] as string[]
-      const successTxids = [] as typeof txids
-      const pushSuccessTxid = (txid: string) => {
-        successTxids.push(txid)
-        if (successTxids.length === transactions.length) {
-          multiOption.onTxAllSuccess?.({ txids })
-          resolve({ allSuccess: true, txids })
-        }
-      }
-      const parseMultiOptionsInSingleOptions = produce(singleOptions, (options) => {
-        options.forEach((option) => {
-          option.onTxSentSuccess = mergeFunction(
-            (({ txid }) => {
-              txids.push(txid)
-            }) as TxSentSuccessCallback,
-            option.onTxSentSuccess
-          )
-          option.onTxError = mergeFunction(
-            (() => {
-              multiOption.onTxAnyError?.({ txids })
-              resolve({ allSuccess: false, txids })
-            }) as TxErrorCallback,
-            option.onTxError
-          )
-          option.onTxSuccess = mergeFunction(
-            (({ txid }) => {
-              pushSuccessTxid(txid)
-            }) as TxSuccessCallback,
-            option.onTxSuccess
-          )
-        })
-      })
-
-      try {
-        const builded = transactions.every(isInnerTransaction)
-          ? await buildTransactionsFromSDKInnerTransactions({
-              connection: payload.connection,
-              wallet: payload.owner,
-              txVersion: payload.txVersion,
-              transactions
-            })
-          : (transactions as Transaction[])
-
-        try {
-          // eslint-disable-next-line no-console
-          console.info(
-            'tx transactions: ',
-            builded,
-            toHumanReadable(builded),
-            builded.map((i) =>
-              i
-                .serialize({
-                  requireAllSignatures: false,
-                  verifySignatures: false
-                })
-                .toString('base64')
-            )
-          )
-        } catch {
-          console.warn('tx log error')
-        }
-        const noNeedSignAgain = payload.signerkeyPair?.ownerKeypair
-        // const allSignedTransactions = await options.payload.signAllTransactions(options.transactions)
-        const allSignedTransactions = await (noNeedSignAgain // if have signer detected, no need signAllTransactions
-          ? builded
-          : payload.signAllTransactions(builded))
-
-        // pop tx notification
-        const { mutatedSingleOptions } = recordTxNotification({
-          transactions: allSignedTransactions,
-          singleOptions: parseMultiOptionsInSingleOptions,
-          multiOption
-        })
-
-        const combinedTxFn = composeWithDifferentSendMode({
-          transactions: allSignedTransactions,
-          sendMode: multiOption.sendMode,
-          singleOptions: mutatedSingleOptions,
-          payload
-        })
-        combinedTxFn()
-      } catch (err) {
-        reject(err)
-      }
-    })()
-  )
-}
-
-function recordTxNotification({
+function makeMultiOptionIntoSignalOptions({
   transactions,
   singleOptions,
   multiOption
 }: {
-  transactions: (Transaction | VersionedTransaction)[]
+  transactions: (Transaction | InnerTransaction)[]
   singleOptions: TxHandlerOption[]
   multiOption: MultiTxsOption
-}): { mutatedSingleOptions: TxHandlerOption[] } {
-  // log Tx Notification
-  const txInfos = singleOptions.map(({ txHistoryInfo, ...restSingleOptions }, idx) => ({
-    transaction: transactions[idx],
-    historyInfo: txHistoryInfo,
-    ...restSingleOptions
-  })) as TxNotificationItemInfo['txInfos']
-  const txLoggerController = useNotification.getState().logTxid({ txInfos })
-  const mutated1 = produce(singleOptions, (options) => {
+}): TxHandlerOption[] {
+  const txids = [] as string[]
+  const successTxids = [] as typeof txids
+  const pushSuccessTxid = (txid: string) => {
+    successTxids.push(txid)
+    if (successTxids.length === transactions.length) {
+      multiOption.onTxAllSuccess?.({ txids })
+    }
+  }
+  const parseMultiOptionsIntoSingleOptions = produce(singleOptions, (options) => {
     options.forEach((option) => {
       option.onTxSentSuccess = mergeFunction(
-        (({ txid, transaction }) => {
-          txLoggerController.changeItemInfo?.({ txid, state: 'processing' }, { transaction })
+        (({ txid }) => {
+          txids.push(txid)
         }) as TxSentSuccessCallback,
-        option.onTxSentSuccess
+        option.onTxSentSuccess ?? (() => {})
       )
       option.onTxError = mergeFunction(
-        (({ txid, transaction, error }) => {
-          txLoggerController.changeItemInfo?.({ txid, state: 'error', error }, { transaction })
-          const txIndex = transactions.indexOf(transaction)
-          if (txIndex < 0) return
-          transactions.slice(txIndex + 1).forEach((transaction) => {
-            txLoggerController.changeItemInfo?.({ state: 'aborted' }, { transaction })
-          })
+        (() => {
+          multiOption.onTxAnyError?.({ txids })
         }) as TxErrorCallback,
-        option.onTxError
+        option.onTxError ?? (() => {})
       )
       option.onTxSuccess = mergeFunction(
-        (({ txid, transaction }) => {
-          txLoggerController.changeItemInfo?.({ txid, state: 'success' }, { transaction })
+        (({ txid }) => {
+          pushSuccessTxid(txid)
         }) as TxSuccessCallback,
-        option.onTxSuccess
+        option.onTxSuccess ?? (() => {})
       )
     })
   })
-
-  // record tx singleOption
-
-  const mutated2 = produce(mutated1, (options) => {
-    options.forEach((option) => {
-      const { ...restInfo } = option.txHistoryInfo ?? {}
-      option.onTxFinally = mergeFunction(
-        (({ txid, type, passedMultiTxid, isMulti }) => {
-          useTxHistory.getState().addHistoryItem({
-            status: type === 'error' ? 'fail' : type,
-            txid,
-            time: Date.now(),
-            isMulti,
-            relativeTxids: passedMultiTxid,
-            ...restInfo
-          })
-        }) as TxFinallyCallback,
-        option.onTxFinally
-      )
-    })
-  })
-
-  return { mutatedSingleOptions: mutated2 }
+  return parseMultiOptionsIntoSingleOptions 
 }
 
 function composeWithDifferentSendMode({
@@ -420,7 +298,7 @@ function composeWithDifferentSendMode({
   transactions: (Transaction | VersionedTransaction)[]
   sendMode: MultiTxsOption['sendMode']
   singleOptions: TxHandlerOption[]
-  payload: SendTransactionPayload
+  payload: TxHandlerPayload
 }): () => void {
   const wholeTxidInfo: Omit<MultiTxExtraInfo, 'currentIndex'> = {
     isMulti: transactions.length > 1,
@@ -488,7 +366,7 @@ async function dealWithSingleTxOptions({
   transaction: Transaction | VersionedTransaction
   wholeTxidInfo: Omit<MultiTxExtraInfo, 'currentIndex'>
   singleOption?: TxHandlerOption
-  payload: SendTransactionPayload
+  payload: TxHandlerPayload
   isBatched?: boolean
 }) {
   const currentIndex = wholeTxidInfo.transactions.indexOf(transaction)

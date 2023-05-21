@@ -1,7 +1,7 @@
 import { Connection, Transaction, VersionedTransaction } from '@solana/web3.js'
 
-import { isVersionedTransaction, SendTransactionPayload } from './txHandler'
-import { serializeTransaction } from "./serializeTransaction"
+import { isVersionedTransaction, TxHandlerPayload } from './txHandler'
+import { serializeTransaction } from './serializeTransaction'
 import { assert } from '@edsolater/fnkit'
 
 type Txid = string
@@ -25,7 +25,7 @@ export async function sendTransactionCore({
   cache = true
 }: {
   transaction: Transaction | VersionedTransaction
-  payload: SendTransactionPayload
+  payload: TxHandlerPayload
   batchOptions?: { allSignedTransactions: (Transaction | VersionedTransaction)[] }
   cache?: boolean
 }): Promise<Txid> {
@@ -56,32 +56,19 @@ export async function sendTransactionCore({
 
 async function sendSingleTransaction(
   transaction: Transaction | VersionedTransaction,
-  payload: SendTransactionPayload,
+  payload: TxHandlerPayload,
   cache: boolean
 ): Promise<Txid> {
-  if (payload.signerkeyPair?.ownerKeypair) {
-    assert(
-      !isVersionedTransaction(transaction),
-      'if use force ownerKeypair, must use transaction, not versionedTransaction'
-    )
-    // if have signer detected, no need signAllTransactions
-    transaction.feePayer = payload.signerkeyPair.payerKeypair?.publicKey ?? payload.signerkeyPair.ownerKeypair.publicKey
-
-    return payload.connection.sendTransaction(transaction, [
-      payload.signerkeyPair.payerKeypair ?? payload.signerkeyPair.ownerKeypair
-    ])
-  } else {
-    const tx = serializeTransaction(transaction, { cache })
-    return await payload.connection.sendRawTransaction(tx, {
-      skipPreflight: true
-    })
-  }
+  const tx = serializeTransaction(transaction, { cache })
+  return await payload.connection.sendRawTransaction(tx, {
+    skipPreflight: true
+  })
 }
 
 /** @deprecated */
 async function sendBatchedTransactions(
   allSignedTransactions: (Transaction | VersionedTransaction)[],
-  payload: SendTransactionPayload
+  payload: TxHandlerPayload
 ): Promise<Txid[]> {
   const encodedTransactions = allSignedTransactions.map((i) => i.serialize().toString('base64'))
 
