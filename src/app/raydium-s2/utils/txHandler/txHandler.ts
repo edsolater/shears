@@ -3,7 +3,6 @@ import { InnerTransaction, PublicKeyish } from '@raydium-io/raydium-sdk'
 import {
   Connection,
   Context,
-  Keypair,
   SignatureResult,
   Transaction,
   TransactionError,
@@ -27,7 +26,7 @@ export type MultiTxExtraInfo = {
   /** only used in multi mode */
   transactions: (Transaction | VersionedTransaction)[]
   /** only used in multi mode */
-  passedMultiTxid: string[]
+  passedMultiTxids: string[]
   /** only used in multi mode */
   currentIndex: number // in multi transactions
   /** only used in multi mode */
@@ -56,7 +55,8 @@ export type TxErrorInfo = {
 
 export type TxSentErrorInfo = {
   err: unknown
-}
+} & Omit<TxInfo, 'txid'> &
+  Omit<MultiTxExtraInfo, 'passedMultiTxids'>
 
 export type TxFinalInfo =
   | ({
@@ -82,9 +82,12 @@ export type TxFn = (utils: {
 type TxSuccessCallback = (info: TxSuccessInfo) => void
 type TxErrorCallback = (info: TxErrorInfo) => void
 type TxFinallyCallback = (info: TxFinalInfo) => void
+
 type TxSentSuccessCallback = (info: TxSentSuccessInfo) => void
 type TxSentErrorCallback = (info: TxSentErrorInfo) => void
 type TxSentFinallyCallback = () => void
+
+type TxBeforeSendErrorCallback = (err: unknown) => void
 
 type AllSuccessCallback = (info: { txids: string[] }) => void
 type AnyErrorCallback = (info: { txids: string[] /* error at last txids */ }) => void
@@ -178,10 +181,11 @@ export type TxHandlerPayload = {
 export type TxHandlerEventCenter = EventCenter<{
   txSuccess: TxSuccessCallback
   txError: TxErrorCallback
-  txFinally: TxFinallyCallback
+  // readonly txFinally: TxFinallyCallback // can on but can't emit
   sendSuccess: TxSentSuccessCallback
   sendError: TxSentErrorCallback
-  sendFinally: TxSentFinallyCallback
+  beforeSendError: TxBeforeSendErrorCallback
+  // readonly sendFinally: TxSentFinallyCallback // can on but can't emit
   txAllSuccess: AllSuccessCallback
   txAnyError: AnyErrorCallback
 }>
@@ -218,6 +222,30 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       singleOptions: singleTxOptions,
       multiOption: multiTxOption
     })
+    
+    eventCenter.on('txSuccess', (info: TxSuccessInfo) => {
+      parsedSignleTxOptions[info.currentIndex]?.onTxSuccess?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onTxFinally?.({ ...info, type: 'success' })
+    })
+    eventCenter.on('txError', (info: TxErrorInfo) => {
+      parsedSignleTxOptions[info.currentIndex]?.onTxError?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onTxFinally?.({ ...info, type: 'error' })
+    })
+    eventCenter.on('sendSuccess', (info) => {
+      parsedSignleTxOptions[info.currentIndex]?.onTxSentSuccess?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onTxSentFinally?.()
+    })
+    eventCenter.on('sendError', (info) => {
+      parsedSignleTxOptions[info.currentIndex]?.onTxSentError?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onTxSentFinally?.()
+    })
+    eventCenter.on('txAllSuccess', (info) => {
+      multiTxOption?.onTxAllSuccess?.(info)
+    })
+    eventCenter.on('txAnyError', (info) => {
+      multiTxOption?.onTxAnyError?.(info)
+    })
+    // FIXME: where is onTxAllSuccess?
 
     const allSignedTransactions = await signAllTransactions({
       transactions: collectedTransactions,
@@ -231,21 +259,17 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       singleOptions: parsedSignleTxOptions,
       payload,
       callbacks: {
-        onSentError(info) {
+        onSentError: (info) => {
           eventCenter.emit('sendError', [info])
-          eventCenter.emit('sendFinally', [])
         },
         onSentSuccess(info) {
           eventCenter.emit('sendSuccess', [info])
-          eventCenter.emit('sendFinally', [])
         },
         onTxError(info) {
           eventCenter.emit('txError', [info])
-          eventCenter.emit('txFinally', [{ type: 'error', ...info }])
         },
         onTxSuccess(info) {
           eventCenter.emit('txSuccess', [info])
-          eventCenter.emit('txFinally', [{ type: 'success', ...info }])
         }
       }
     })
@@ -253,7 +277,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     // send tx
     senderFn()
   })().catch((error) => {
-    eventCenter.emit('sendError', [{ err: error }])
+    eventCenter.emit('beforeSendError', [{ err: error }])
   })
   return eventCenter
 }
@@ -328,14 +352,14 @@ function composeTransactionSenderWithDifferentSendMode({
 }): () => void {
   const wholeTxidInfo: Omit<MultiTxExtraInfo, 'currentIndex'> = {
     isMulti: transactions.length > 1,
-    passedMultiTxid: Array.from({ length: transactions.length }),
+    passedMultiTxids: Array.from({ length: transactions.length }),
     multiTransactionLength: transactions.length,
     transactions
   }
   if (sendMode === 'parallel(dangerous-without-order)' || sendMode === 'parallel(batch-transactions)') {
     const parallelled = () => {
       transactions.forEach((tx, idx) =>
-        sendTransactionWithOptions({
+        sendOneTransactionWithOptions({
           transaction: tx,
           wholeTxidInfo,
           payload,
@@ -352,7 +376,7 @@ function composeTransactionSenderWithDifferentSendMode({
         const singleOption = singleOptions[idx]
         return {
           fn: () =>
-            sendTransactionWithOptions({
+            sendOneTransactionWithOptions({
               transaction: tx,
               wholeTxidInfo,
               payload,
@@ -373,11 +397,9 @@ function composeTransactionSenderWithDifferentSendMode({
 }
 
 /**
- * duty:
- *
  * it will subscribe txid
  */
-async function sendTransactionWithOptions({
+async function sendOneTransactionWithOptions({
   transaction,
   wholeTxidInfo,
   singleOption,
@@ -412,7 +434,7 @@ async function sendTransactionWithOptions({
     assert(txid, 'something went wrong in sending transaction, getted txid empty')
     callbacks?.onSentSuccess?.({ transaction, txid, ...extraTxidInfo })
 
-    wholeTxidInfo.passedMultiTxid[currentIndex] = txid //! 💩 bad method! it's mutate method!
+    wholeTxidInfo.passedMultiTxids[currentIndex] = txid //! 💩 bad method! it's mutate method!
     const txEventCenter = subscribeTx({
       txid,
       transaction,
@@ -428,6 +450,6 @@ async function sendTransactionWithOptions({
       callbacks?.onTxError?.({ ...info, ...extraTxidInfo })
     })
   } catch (err) {
-    callbacks?.onSentError?.({ err })
+    callbacks?.onSentError?.({ err, transaction, ...extraTxidInfo })
   }
 }

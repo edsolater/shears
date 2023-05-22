@@ -1,8 +1,7 @@
 import { Connection, Transaction, VersionedTransaction } from '@solana/web3.js'
 
-import { isVersionedTransaction, TxHandlerPayload } from './txHandler'
 import { serializeTransaction } from './serializeTransaction'
-import { assert } from '@edsolater/fnkit'
+import { TxHandlerPayload } from './txHandler'
 
 type Txid = string
 

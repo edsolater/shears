@@ -1,7 +1,7 @@
 import { InnerTransaction } from '@raydium-io/raydium-sdk'
 import { Transaction, VersionedTransaction } from '@solana/web3.js'
 import { buildTransactionsFromSDKInnerTransactions, isInnerTransaction } from './createVersionedTransaction'
-import { TxHandlerEventCenter, TxHandlerPayload } from './txHandler'
+import { TxHandlerPayload } from './txHandler'
 
 export async function signAllTransactions({
   transactions,
