@@ -8,7 +8,7 @@ import { FetchRaydiumTokenListOptions } from './types/tokenList'
 import { fetchTokenJsonFile } from './utils/fetchTokenJson'
 import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
-import { getWebworkerCalculateSwapRouteInfos_workerRegister } from './workerBridge/getWebworkerCalculateSwapRouteInfos_workerRegister'
+import { getWebworkerCalculateSwapRouteInfos_workerRegister } from './utils/calculateSwapRouteInfos_workerRegister'
 
 export function registInWorker() {
   getWebworkerCalculateSwapRouteInfos_workerRegister()

@@ -1,6 +1,6 @@
 import { isObject, isPromise } from '@edsolater/fnkit'
 import { subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
-import { CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult } from '../utils/calculateGetSwapInfos'
+import { CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult } from './calculateGetSwapInfos'
 import { isObjectLiteral } from '@edsolater/fnkit'
 import { map } from '@edsolater/fnkit'
 import { unwrap } from 'solid-js/store'

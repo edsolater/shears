@@ -1,6 +1,6 @@
 import { inNextMainLoop } from '../../../../../packages/fnkit/inNextMainLoop'
 import { registMessageReceiver } from '../../../utils/webworker/worker_sdk'
-import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from '../utils/calculateGetSwapInfos'
+import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from './calculateGetSwapInfos'
 
 export function getWebworkerCalculateSwapRouteInfos_workerRegister() {
   return registMessageReceiver<CalculateSwapRouteInfosParams>(

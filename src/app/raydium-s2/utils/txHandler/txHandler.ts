@@ -222,7 +222,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       singleOptions: singleTxOptions,
       multiOption: multiTxOption
     })
-    
+
     eventCenter.on('txSuccess', (info: TxSuccessInfo) => {
       parsedSignleTxOptions[info.currentIndex]?.onTxSuccess?.(info)
       parsedSignleTxOptions[info.currentIndex]?.onTxFinally?.({ ...info, type: 'success' })

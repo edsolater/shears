@@ -4,7 +4,7 @@ import { RAYMint, SOLMint, USDCMint } from '../../../configs/wellknowns'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { getToken } from '../methods/getToken'
 import { useDataStore } from '../store'
-import { getWebworkerCalculateSwapRouteInfos_mainThreadReceiver } from '../workerBridge/getWebworkerCalculateSwapRouteInfos_mainThreadReceiver'
+import { getWebworkerCalculateSwapRouteInfos_mainThreadReceiver } from '../utils/calculateSwapRouteInfos_mainThreadReceiver'
 import { Numberish } from '../../../utils/dataStructures/type'
 import { notZero } from '@edsolater/fnkit'
 
