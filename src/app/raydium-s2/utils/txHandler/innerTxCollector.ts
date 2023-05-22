@@ -50,5 +50,8 @@ export function innerTxCollector(
   }
 
   const transactionCollector: TransactionCollector = { add }
-  return { transactionCollector, collected: { innerTransactions, singleTxOptions, multiTxOption } }
+  return {
+    transactionCollector,
+    collected: { collectedTransactions: innerTransactions, singleTxOptions, multiTxOption }
+  }
 }
