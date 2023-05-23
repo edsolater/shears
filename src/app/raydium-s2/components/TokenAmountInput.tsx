@@ -16,34 +16,35 @@ import {
 import { Card } from '../../../packages/pivkit/components/Card'
 import { Input, InputProps } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
-import { createMutableSignal } from '../../../packages/pivkit/hooks/createMutableSignal'
+import { createSyncSignal } from '../../../packages/pivkit/hooks/createSyncSignal'
 import { useDataStore } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
 import { TokenAvatar } from './TokenAvatar'
+import { Accessify } from '../../../packages/pivkit/utils/accessifyProps'
 
 export interface TokenAmountInputBoxController {}
 
 export interface TokenAmountInputBoxProps {
-  token?: Token
+  token?: Accessify<Token | undefined, TokenAmountInputBoxController>
   tokenProps?: TextProps
-  amount?: Numberish
+  amount?: Accessify<Numberish | undefined, TokenAmountInputBoxController>
   amountInputProps?: InputProps
   tokenSelectorModalContentProps?: TokenSelectorModalContentProps
   onSelectToken?: (token: Token | undefined) => void
   onAmountChange?: (amount: Numberish | undefined) => void
 }
 
-export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>) {
+export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   console.log('rawProps: ', rawProps)
   const { props, lazyLoadController } = useKitProps(rawProps)
 
-  const [token, setToken] = createMutableSignal({
+  const [token, setToken] = createSyncSignal({
     get: () => props.token,
     set: (token) => props.onSelectToken?.(token)
   })
-  const [amount, setAmount] = createMutableSignal({
+  const [amount, setAmount] = createSyncSignal({
     get: () => (props.amount != null ? toString(props.amount) : undefined),
     set: (amount) => {
       props.onAmountChange?.(amount)
@@ -84,7 +85,7 @@ interface TokenSelectorModalContentProps extends BoxProps {
 /**
  * hold state (store's tokens)
  */
-function TokenSelectorModalContent(rawProps: KitProps<TokenSelectorModalContentProps>) {
+function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props } = useKitProps(rawProps)
   const dataStore = useDataStore()
   const tokens = createMemo(() => dataStore.allTokens)

@@ -4,8 +4,9 @@ import { onEvent } from '../../domkit'
 import { mergeProps } from '../../piv'
 import { CSSObject } from '../../piv/propHandlers/icss'
 import { PivProps } from '../../piv/types/piv'
-import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
+import { AccessifyProps, useAccessifiedProps } from '../utils/accessifyProps'
 import { createRef } from '../hooks/createRef'
+import { Accessify } from '../utils/accessifyProps'
 
 const TransitionPhaseProcessIn = 'during-process'
 const TransitionPhaseShowing = 'shown' /* UI visiable and stable(not in transition) */
@@ -18,37 +19,34 @@ export type TransitionPhase =
 
 type TransitionCurrentPhasePropsName = 'enterFrom' | 'enterTo' | 'leaveFrom' | 'leaveTo'
 type TransitionTargetPhase = typeof TransitionPhaseShowing | typeof TransitionPhaseHidden
-export type UseCSSTransactionOptions = Accessify<
-  {
-    cssTransitionDurationMs?: number
-    cssTransitionTimingFunction?: CSSObject['transitionTimingFunction']
+export type UseCSSTransactionOptions = {
+  cssTransitionDurationMs?: Accessify<number | undefined, TransitionController>
+  cssTransitionTimingFunction?: CSSObject['transitionTimingFunction']
 
-    // detect transition should be turn on
-    show?: boolean
-    /** will trigger props:onBeforeEnter() if init props:show  */
-    appear?: boolean
+  // detect transition should be turn on
+  show?: Accessify<boolean | undefined, TransitionController>
+  /** will trigger props:onBeforeEnter() if init props:show  */
+  appear?: Accessify<boolean | undefined, TransitionController>
 
-    enterFromProps?: PivProps
-    duringEnterProps?: PivProps
-    enterToProps?: PivProps
+  enterFromProps?: PivProps<any, TransitionController>
+  duringEnterProps?: PivProps<any, TransitionController>
+  enterToProps?: PivProps<any, TransitionController>
 
-    leaveFromProps?: PivProps
-    duringLeaveProps?: PivProps
-    leaveToProps?: PivProps
+  leaveFromProps?: PivProps<any, TransitionController>
+  duringLeaveProps?: PivProps<any, TransitionController>
+  leaveToProps?: PivProps<any, TransitionController>
 
-    fromProps?: PivProps // shortcut for both enterFrom and leaveTo
-    toProps?: PivProps // shortcut for both enterTo and leaveFrom
+  fromProps?: PivProps<any, TransitionController> // shortcut for both enterFrom and leaveTo
+  toProps?: PivProps<any, TransitionController> // shortcut for both enterTo and leaveFrom
 
-    onBeforeEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-    onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-    onBeforeLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-    onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onBeforeEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onBeforeLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
 
-    presets?: MayArray<MayFn<Omit<UseCSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
-    // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
-  },
-  TransitionController
->
+  presets?: MayArray<MayFn<Omit<UseCSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
+  // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
+}
 interface TransitionController {
   contentRef?: HTMLElement
   from: TransitionPhase

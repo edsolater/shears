@@ -1,27 +1,35 @@
 import { createEffect, createMemo, createSignal, on } from 'solid-js'
-import { KitProps, ParsedKitProps, Piv, PivProps, useKitProps } from '../../../piv'
+import { Piv, PivProps, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
+import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
 
-export interface InputProps {
+export interface InputController {
+  text: string
+  /** set Input Value */
+  setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
+}
+
+export interface InputProps extends PivProps<'input'> {
   /**
    * will not apply default icss: `min-width: 10em`
    * input will auto widen depends on content Text
    * @todo
    */
-  isFluid?: boolean
+  isFluid?: Accessify<boolean | undefined, InputController>
 
   // -------- handle by useInputInnerValue --------
   /** only after `<Input>` created */
-  defaultValue?: string
+  defaultValue?: Accessify<string | undefined, InputController>
+
   /** when change, affact to ui*/
-  value?: string
+  value?: Accessify<string | undefined, InputController>
 
-  disableOutsideValueUpdateWhenUserInput?: boolean
+  disableOutsideValueUpdateWhenUserInput?: Accessify<boolean | undefined, InputController>
 
-  disableUserInput?: boolean
+  disableUserInput?: Accessify<boolean | undefined, InputController>
 
-  disabled?: boolean
+  disabled?: Accessify<boolean | undefined, InputController>
 
   // only user can trigger this callback
   onUserInput?(utils: { text: string | undefined }): void
@@ -31,23 +39,18 @@ export interface InputProps {
   onProgramInput?(utils: { text: string | undefined }): void
 }
 
-export interface InputController {
-  text: string
-  /** set Input Value */
-  setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
-}
-
 /**
  * if for layout , don't render important content in Box
  */
-export function Input(rawProps: KitProps<InputProps, { controller: InputController }>) {
+export function Input(rawProps: InputProps) {
   const { props } = useKitProps(rawProps, {
-    controller: (mergedProps) => ({
-      get text() {
-        return innerText()
-      },
-      setText: updateText
-    })
+    controller: (mergedProps) =>
+      ({
+        get text() {
+          return innerText()
+        },
+        setText: updateText
+      } as InputController)
   })
 
   const [additionalProps, { innerText, updateText }] = useInputInnerValue(props)
@@ -71,7 +74,7 @@ export function Input(rawProps: KitProps<InputProps, { controller: InputControll
  */
 function useInputInnerValue(
   props: Pick<
-    ParsedKitProps<InputProps>,
+    DeAccessifyProps<InputProps>,
     | 'defaultValue'
     | 'disableOutsideValueUpdateWhenUserInput'
     | 'disableUserInput'

@@ -1,11 +1,11 @@
-import { Accessor, JSX, Show, createEffect, createMemo, createSignal, onCleanup, useContext } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../../piv'
-import { createRef } from '../../hooks/createRef'
-import { ListContext } from './List'
+import { Accessor, JSX, createEffect, createMemo, createSignal, onCleanup, splitProps, useContext } from 'solid-js'
+import { Piv, PivProps, useKitProps } from '../../../piv'
 import { omit } from '../../../piv/utils/omit'
+import { createRef } from '../../hooks/createRef'
 import useResizeObserver from '../../hooks/useResizeObserver'
+import { ListContext } from './List'
 
-export interface ListItemProps {
+export interface ListItemProps extends Omit<PivProps, 'children'> {
   children: () => JSX.Element
 }
 
@@ -16,11 +16,11 @@ export interface ListItemController {
  * context acceptor for `<List>` \
  * only used in `<List>`
  */
-export function ListItem(
-  rawProps: KitProps<ListItemProps, { controller: ListItemController; noNeedAccessifyChildren: true }>
-) {
+export function ListItem(originalProps: ListItemProps) {
+  const [childrenProps, rawProps] = splitProps(originalProps, ['children'])
+  const children = childrenProps.children
   // console.count('render ListItem')
-  const { props, lazyLoadController } = useKitProps(rawProps, { noNeedAccessifyChildren: true })
+  const { props, lazyLoadController } = useKitProps(rawProps)
 
   const [itemRef, setRef] = createRef<HTMLElement>()
 
@@ -45,7 +45,7 @@ export function ListItem(
   lazyLoadController(controller)
 
   //=== render children
-  const childContent = createMemo(() => props.children())
+  const childContent = createMemo(() => children())
   return (
     <Piv
       debugLog={[]}

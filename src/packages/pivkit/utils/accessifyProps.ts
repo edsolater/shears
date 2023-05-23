@@ -1,14 +1,22 @@
-import { AnyFn, AnyObj, isFunction, isObject, isString, shrinkFn } from '@edsolater/fnkit'
+import { AnyFn, AnyObj, isObject, isString } from '@edsolater/fnkit'
 import { ValidController } from '../../piv/types/tools'
 
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
-export type Accessify<P extends AnyObj, Controller extends ValidController = {}> = {
-  [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef` ? P[K] : P[K] | ((controller: Controller) => P[K])
+export type AccessifyProps<P extends AnyObj, Controller extends ValidController = {}> = {
+  [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef`
+    ? P[K]
+    : P[K] extends Accessify<any, any>
+    ? P[K]
+    : Accessify<P[K], Controller>
 }
 
-export type DeAccessify<P> = P extends Accessify<infer A, any> ? A : P
+export type Accessify<V, Controller extends ValidController = {}> = V | ((controller: Controller) => V)
+
+export type DeAccessify<V> =  V extends Accessify<infer T, any> ? T : V
+
+export type DeAccessifyProps<P> = { [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef`?P[K]: P[K] extends Accessify<infer T, any> ? T : P[K] }
 /**
  * propertyName start with 'on' will treate as function
  */
@@ -17,7 +25,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
   controller?: Controller,
   /** default is on_ and domRef and controllerRef, but you can add more */
   noNeedAccessifyProps?: string[]
-): DeAccessify<P> {
+): DeAccessifyProps<P> {
   const accessifiedProps = Object.defineProperties(
     {},
     Reflect.ownKeys(props).reduce((acc: any, key) => {
@@ -33,7 +41,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
       }
       return acc
     }, {} as PropertyDescriptorMap)
-  ) as DeAccessify<P>
+  ) as DeAccessifyProps<P>
   return accessifiedProps
 }
 

@@ -1,7 +1,7 @@
 import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
 import { Faker } from '../fnkit/customizedClasses/Faker'
-import { Accessify, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
+import { AccessifyProps, DeAccessifyProps, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
 import { registerControllerInCreateKit } from './hooks/useComponentController'
 import { loadPropsControllerRef, toProxifyController } from './propHandlers/controller'
 import {
@@ -29,14 +29,14 @@ type KitPropsInstance<
   TagName extends keyof HTMLElementTagNameMap,
   NoNeedAccessifyChildren extends boolean
 > = (NoNeedAccessifyChildren extends true
-  ? Accessify<Omit<RawProps, 'children'>, Controller> & Pick<RawProps, 'children'>
-  : Accessify<RawProps, Controller>) &
+  ? AccessifyProps<Omit<RawProps, 'children'>, Controller> & Pick<RawProps, 'children'>
+  : AccessifyProps<RawProps, Controller>) &
   Omit<PivProps<TagName, Controller>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<GetPluginProps<Plugins>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: MayArray<Partial<Accessify<RawProps, Controller>>> // component must merged before `<Div>`
+      shadowProps?: MayArray<Partial<AccessifyProps<RawProps, Controller>>> // component must merged before `<Div>`
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>
@@ -74,7 +74,7 @@ export type KitPropsOptions<
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
   /** default is false */
-  noNeedAccessifyChildren?: boolean
+  noNeedDeAccessifyChildren?: boolean
 }
 
 /** return type of useKitProps */
@@ -105,7 +105,7 @@ function getParsedKitProps<
   // merge kit props
   const mergedGettersProps = pipe(
     defaultedProps,
-    (props) => useAccessifiedProps(props, proxyController, options?.noNeedAccessifyChildren ? ['children'] : undefined),
+    (props) => useAccessifiedProps(props, proxyController, options?.noNeedDeAccessifyChildren ? ['children'] : undefined),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
     // parse plugin of **options**
@@ -126,7 +126,7 @@ function getParsedKitProps<
   return mergedGettersProps
 }
 
-export type GetRawProps<K extends ValidProps> = K extends KitProps<infer RawProps, any> ? RawProps : K
+export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>
 /**
  * **core function**
  *
@@ -135,16 +135,16 @@ export type GetRawProps<K extends ValidProps> = K extends KitProps<infer RawProp
 export function useKitProps<
   P extends ValidProps,
   Controller extends ValidController = {},
-  DefaultProps extends Partial<GetRawProps<P>> = {}
+  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {}
 >(
   props: P,
-  options?: KitPropsOptions<GetRawProps<P>, Controller, DefaultProps>
+  options?: KitPropsOptions<GetDeAccessifiedProps<P>, Controller, DefaultProps>
 ): {
-  props: ParsedKitProps<AddDefaultPivProps<GetRawProps<P>, DefaultProps>> &
-    Omit<PivProps<HTMLTag, Controller>, keyof GetRawProps<P>>
-  lazyLoadController(controller: Controller | ((props: ParsedKitProps<GetRawProps<P>>) => Controller)): void
+  props: ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
+    Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>
+  lazyLoadController(controller: Controller | ((props: ParsedKitProps<GetDeAccessifiedProps<P>>) => Controller)): void
 } {
-  type RawProps = GetRawProps<P>
+  type RawProps = GetDeAccessifiedProps<P>
   const { loadController, getControllerCreator } = composeController<RawProps, Controller>()
   const composedProps = getParsedKitProps(props, {
     controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),

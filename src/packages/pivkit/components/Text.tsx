@@ -1,13 +1,14 @@
-import { KitProps, Piv, useKitProps } from '../../../packages/piv'
+import { Piv, PivProps, useKitProps } from '../../../packages/piv'
+import { Accessify } from '../utils/accessifyProps'
 
-export interface TextProps {
-  inline?: boolean
+export interface TextProps extends PivProps {
+  inline?: Accessify<boolean | undefined>
 }
 
 /**
  * if for layout , inner content should only be text
  */
-export function Text(rawProps: KitProps<TextProps>) {
+export function Text(rawProps: TextProps) {
   const { props } = useKitProps(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (

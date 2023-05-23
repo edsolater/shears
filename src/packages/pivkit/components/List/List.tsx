@@ -1,3 +1,4 @@
+import { isArray } from '@edsolater/fnkit'
 import {
   Accessor,
   createContext,
@@ -5,36 +6,34 @@ import {
   createMemo,
   createSignal,
   For,
-  Index,
   JSXElement,
   on,
   onCleanup,
   Show
 } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../../piv'
+import { KitProps, Piv, PivProps, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
-import { useElementSize } from '../../hooks/useElementSize'
-import { isArray, isObject } from '@edsolater/fnkit'
 import { ObserveFn, useIntersectionObserver } from '../../hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../hooks/useScrollDegreeDetector'
+import { Accessify } from '../../utils/accessifyProps'
 import { ListItem } from './ListItem'
 
-export interface ListProps<T> {
-  items?: Iterable<T> | undefined
+export interface ListController {}
+
+export interface ListProps<T> extends Omit<PivProps, 'children'> {
+  items?: Accessify<Iterable<T> | undefined, ListController>
   children(item: T, index: () => number): JSXElement
 
   /** @default 30 */
-  increaseRenderCount?: number
+  increaseRenderCount?: Accessify<number | undefined, ListController>
   /**
    * @default 30
    * can accept Infinity
    */
-  initRenderCount?: number
+  initRenderCount?: Accessify<number | undefined, ListController>
   /** @default 50(px) */
-  reachBottomMargin?: number
+  reachBottomMargin?: Accessify<number | undefined, ListController>
 }
-
-export interface ListController {}
 
 export interface InnerListContext {
   observeFunction?: ObserveFn<HTMLElement>
@@ -48,7 +47,7 @@ export const ListContext = createContext<InnerListContext>({} as InnerListContex
  */
 export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildren: true }>) {
   const { props } = useKitProps(rawProps, {
-    noNeedAccessifyChildren: true,
+    noNeedDeAccessifyChildren: true,
     defaultProps: {
       reachBottomMargin: 50
     }
