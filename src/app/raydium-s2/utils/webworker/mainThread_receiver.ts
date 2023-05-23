@@ -36,6 +36,8 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
 }
 
 /**
+ * a command sender and a receiver in mainThread-side
+ * 
  * pass a command to webworker
  * @param messageDescription command
  * @param query payload

@@ -13,6 +13,10 @@ const callbackMap = new Map<string, onMessage<any>>()
 const cleanFunctionMap = new WeakMap<onMessage<any>, (() => void)[]>()
 const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
+/**
+ * 
+ * register receiver utils in worker-side
+ */
 function initMessageReceiver() {
   globalThis.addEventListener('message', async (ev) => {
     const description = ev.data.description

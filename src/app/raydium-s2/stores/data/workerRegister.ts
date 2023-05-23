@@ -10,6 +10,9 @@ import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
 import { getWebworkerCalculateSwapRouteInfos_workerRegister } from './utils/calculateSwapRouteInfos_workerRegister'
 
+/**
+ * register receiver functions in worker-side
+ */
 export function registInWorker() {
   getWebworkerCalculateSwapRouteInfos_workerRegister()
 
