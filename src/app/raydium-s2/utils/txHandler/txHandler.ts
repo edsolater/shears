@@ -16,12 +16,12 @@ import { subscribeTx } from './subscribeTx'
 
 export type TxVersion = 'V0' | 'LEGACY'
 //#region ------------------- basic info -------------------
-export type TxInfo = {
+export interface TxInfo {
   txid: string
   transaction: Transaction | VersionedTransaction
 }
 
-export type MultiTxExtraInfo = {
+export interface MultiTxExtraInfo {
   isMulti: boolean
   /** only used in multi mode */
   transactions: (Transaction | VersionedTransaction)[]
@@ -35,29 +35,23 @@ export type MultiTxExtraInfo = {
 //#endregion
 
 //#region ------------------- lifeTime info -------------------
-export type TxSuccessInfo = {
+export interface TxSuccessInfo extends TxInfo, MultiTxExtraInfo {
   signatureResult: SignatureResult
   context: Context
-} & (TxInfo & MultiTxExtraInfo)
-
-export type TxSentSuccessInfo = TxInfo & MultiTxExtraInfo
-
-export type TxFinalBatchSuccessInfo = {
+}
+export interface TxSentSuccessInfo extends TxInfo, MultiTxExtraInfo {}
+export interface TxFinalBatchSuccessInfo {
   allSuccess: true
   txids: string[]
 }
-
-export type TxErrorInfo = {
+export interface TxErrorInfo extends TxInfo, MultiTxExtraInfo {
   signatureResult: SignatureResult
   context: Context
   error?: TransactionError
-} & (TxInfo & MultiTxExtraInfo)
-
-export type TxSentErrorInfo = {
+}
+export interface TxSentErrorInfo extends Omit<TxInfo, 'txid'>, Omit<MultiTxExtraInfo, 'passedMultiTxids'> {
   err: unknown
-} & Omit<TxInfo, 'txid'> &
-  Omit<MultiTxExtraInfo, 'passedMultiTxids'>
-
+}
 export type TxFinalInfo =
   | ({
       type: 'success'
@@ -65,8 +59,7 @@ export type TxFinalInfo =
   | ({
       type: 'error'
     } & TxErrorInfo)
-
-export type TxFinalBatchErrorInfo = {
+export interface TxFinalBatchErrorInfo {
   allSuccess: false
   errorAt: number
   txids: string[] // before absort
@@ -94,7 +87,7 @@ type AnyErrorCallback = (info: { txids: string[] /* error at last txids */ }) =>
 
 //#endregion
 
-export type TxHandlerOption = {
+export interface TxHandlerOption extends SingleTxCallbacks {
   /** @deprecated no need!!!. It's not pure */
   txHistoryInfo?: unknown
   /** if provided, error notification should respect this config
@@ -116,7 +109,7 @@ export type TxHandlerOption = {
 
   /** send multi same recentBlockhash tx will only send first one */
   cacheTransaction?: boolean
-} & SingleTxCallbacks
+}
 
 export type SingleTxCallbacks = {
   onTxSuccess?: TxSuccessCallback
@@ -127,7 +120,7 @@ export type SingleTxCallbacks = {
   onTxSentFinally?: TxSentFinallyCallback
 }
 
-export type MultiTxsOption = {
+export interface MultiTxsOption extends MultiTxCallbacks {
   /**
    * send next when prev is complete (default)
    * send all at once
@@ -137,9 +130,9 @@ export type MultiTxsOption = {
     | 'queue(all-settle)'
     | 'parallel(dangerous-without-order)' /* couldn't promise tx's order */
     | 'parallel(batch-transactions)' /* it will in order */
-} & MultiTxCallbacks
+}
 
-export type MultiTxCallbacks = {
+export interface MultiTxCallbacks {
   onTxAllSuccess?: AllSuccessCallback
   onTxAnyError?: AnyErrorCallback
 }
@@ -150,12 +143,12 @@ export type TransactionQueue = (
   | Transaction
 )[]
 
-export type TransactionCollector = {
+export interface TransactionCollector {
   add(transaction: TransactionQueue | Transaction | InnerTransaction, options?: TxHandlerOption & MultiTxsOption): void
 }
 
 // TODO: should also export addTxSuccessListener() and addTxErrorListener() and addTxFinallyListener()
-export type TxResponseInfos = {
+export interface TxResponseInfos {
   allSuccess: boolean
   txids: string[]
   error: unknown
@@ -163,32 +156,32 @@ export type TxResponseInfos = {
   // txList: (TxSuccessInfo | TxErrorInfo)[]
 }
 
-export type TxHandlerOptions = {
+export interface TxHandlerOptions extends MultiTxCallbacks, MultiTxsOption {
   additionalSingleOptionCallback?: SingleTxCallbacks
   additionalMultiOptionCallback?: MultiTxCallbacks
-} & MultiTxCallbacks &
-  MultiTxsOption
+}
 
 type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(transactions: T[]) => Promise<T[]>
 
-export type TxHandlerPayload = {
+export interface TxHandlerPayload {
   connection: Connection
   owner: PublicKeyish
   txVersion: TxVersion
   signAllTransactions: SignAllTransactionsFunction
 }
 
-export type TxHandlerEventCenter = EventCenter<{
-  txSuccess: TxSuccessCallback
-  txError: TxErrorCallback
-  // readonly txFinally: TxFinallyCallback // can on but can't emit
-  sendSuccess: TxSentSuccessCallback
-  sendError: TxSentErrorCallback
-  beforeSendError: TxBeforeSendErrorCallback
-  // readonly sendFinally: TxSentFinallyCallback // can on but can't emit
-  txAllSuccess: AllSuccessCallback
-  txAnyError: AnyErrorCallback
-}>
+export interface TxHandlerEventCenter
+  extends EventCenter<{
+    txSuccess: TxSuccessCallback
+    txError: TxErrorCallback
+    // readonly txFinally: TxFinallyCallback // can on but can't emit
+    sendSuccess: TxSentSuccessCallback
+    sendError: TxSentErrorCallback
+    beforeSendError: TxBeforeSendErrorCallback
+    // readonly sendFinally: TxSentFinallyCallback // can on but can't emit
+    txAllSuccess: AllSuccessCallback
+    txAnyError: AnyErrorCallback
+  }> {}
 
 export function isTransaction(x: any): x is Transaction {
   return x instanceof Transaction
