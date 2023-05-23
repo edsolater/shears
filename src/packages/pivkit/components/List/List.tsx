@@ -19,7 +19,7 @@ import { ObserveFn, useIntersectionObserver } from '../../hooks/useIntersectionO
 import { useScrollDegreeDetector } from '../../hooks/useScrollDegreeDetector'
 import { ListItem } from './ListItem'
 
-export type ListProps<T> = {
+export interface ListProps<T> {
   items?: Iterable<T> | undefined
   children(item: T, index: () => number): JSXElement
 
@@ -34,9 +34,9 @@ export type ListProps<T> = {
   reachBottomMargin?: number
 }
 
-export type ListController = {}
+export interface ListController {}
 
-export type InnerListContext = {
+export interface InnerListContext {
   observeFunction?: ObserveFn<HTMLElement>
   renderItemLength?: Accessor<number>
 }
@@ -113,20 +113,4 @@ function checkNeedRenderByIndex(idx: number | undefined, renderItemLength: numbe
   if (idx == null) return false
   if (renderItemLength == null) return false
   return idx <= renderItemLength
-}
-
-const cache = new WeakMap<Record<keyof any, any>, any>()
-
-/**
- * usually use in `<List>`'s `<For>`\
- * cache the result to avoid render same item again
- */
-function renderCache<T>(item: unknown, renderFunction: () => T): T {
-  if (!isObject(item)) return renderFunction()
-
-  if (!cache.has(item)) {
-    cache.set(item, renderFunction())
-  }
-
-  return cache.get(item)
 }

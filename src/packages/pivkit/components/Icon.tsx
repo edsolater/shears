@@ -1,6 +1,6 @@
 import { KitProps, Piv, useKitProps } from '../../piv'
 
-export type IconProps = {
+export interface IconProps {
   name?: string
   /** sx: 12px; sm: 16px; smi: 20px; md: 24px; lg: 32px (default: md) */
   size?: 'xs' | 'sm' | 'smi' | 'md' | 'lg'

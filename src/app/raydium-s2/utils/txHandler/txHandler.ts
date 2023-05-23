@@ -111,7 +111,7 @@ export interface TxHandlerOption extends SingleTxCallbacks {
   cacheTransaction?: boolean
 }
 
-export type SingleTxCallbacks = {
+export interface SingleTxCallbacks {
   onTxSuccess?: TxSuccessCallback
   onTxError?: TxErrorCallback
   onTxFinally?: TxFinallyCallback

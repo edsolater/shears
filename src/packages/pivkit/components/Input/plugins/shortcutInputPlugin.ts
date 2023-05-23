@@ -1,6 +1,9 @@
 import { createEffect, createSignal, on, onCleanup } from 'solid-js'
 import { onEvent } from '../../../../domkit'
-import { KeybordShortcutKeys, getShorcutStringFromKeyboardEvent } from '../../../../domkit/gesture/handleKeyboardShortcut'
+import {
+  KeybordShortcutKeys,
+  getShorcutStringFromKeyboardEvent
+} from '../../../../domkit/gesture/handleKeyboardShortcut'
 import { Subscribable } from '../../../../fnkit/customizedClasses/Subscribable'
 import { createPlugin } from '../../../../piv/propHandlers/plugin'
 import { createControllerRef } from '../../../hooks/createControllerRef'
@@ -9,7 +12,9 @@ import { InputController, InputProps } from '../Input'
 
 // NOTE: plugin is a function accept props and return additional props
 // TODO: apply `createConfigableFunction((options) => (props) => {...})`
-export const keyboardShortcutObserverPlugin = (options: { onRecordShortcut?: (shortcut: KeybordShortcutKeys) => void }) =>
+export const keyboardShortcutObserverPlugin = (options: {
+  onRecordShortcut?: (shortcut: KeybordShortcutKeys) => void
+}) =>
   createPlugin<InputProps, InputController>((inputProps) => {
     const [elRef, setElRef] = createRef<HTMLDivElement>()
 

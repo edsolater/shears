@@ -49,5 +49,5 @@ export const icss_inputType = (options?: { w: CSSObject['minWidth']; h: CSSObjec
     // borderRadius: 4,
     // background: cssColors.component_input_bg_default,
     // outlineColor: cssColors.dodgerBlue,
-    borderBottom:'solid'
+    borderBottom: 'solid'
   } satisfies ICSSObject)

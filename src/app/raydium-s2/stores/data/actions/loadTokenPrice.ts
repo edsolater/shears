@@ -4,9 +4,8 @@ import { appApiUrls } from '../../../utils/common/config'
 import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { DataStore } from '../store'
 import { TokenListStore } from '../types/tokenList'
-import { Token } from "../../../utils/dataStructures/Token"
+import { Token } from '../../../utils/dataStructures/Token'
 import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from '../types/tokenPrice'
-
 
 export const onAccessTokensPrice = createOnFirstAccess<DataStore>(['prices'], (store) => {
   createEffect(() => {
@@ -17,7 +16,6 @@ export const onAccessTokensPrice = createOnFirstAccess<DataStore>(['prices'], (s
   })
 })
 
-
 export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
   store.set({ isTokenLoading: true })
   getTokenPriceInfoFromWorker(tokens, (workerResult) => {
@@ -25,7 +23,10 @@ export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
   })
 }
 
-const getTokenPriceInfoFromWorker = (tokens: TokenListStore['allTokens'], cb: WebworkerSubscribeCallback<TokenPriceWorkerData>) =>
+const getTokenPriceInfoFromWorker = (
+  tokens: TokenListStore['allTokens'],
+  cb: WebworkerSubscribeCallback<TokenPriceWorkerData>
+) =>
   subscribeWebWorker_Drepcated<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
     {
       description: 'get raydium token prices',

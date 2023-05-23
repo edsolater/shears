@@ -11,7 +11,6 @@ old:
 store.ts
 workerRegister.ts
 
-
 new:
 /atoms
 /workerBridge -- receiver-register pair

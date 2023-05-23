@@ -49,7 +49,7 @@ export type UseCSSTransactionOptions = Accessify<
   },
   TransitionController
 >
-type TransitionController = {
+interface TransitionController {
   contentRef?: HTMLElement
   from: TransitionPhase
   to: TransitionPhase

@@ -31,7 +31,7 @@ function isEncodedObject(data: any): data is EncodedObject<any> {
   return isObject(data) && '_type' in data && '_info' in data
 }
 
-export type DecodeRule = {
+export interface DecodeRule {
   name?: string
   decodeFn?: (encodedData: EncodedObject<any>, decodeInner: (innerValue: unknown) => any) => any
 }

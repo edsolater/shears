@@ -1,6 +1,6 @@
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 
-export type TextProps = {
+export interface TextProps {
   inline?: boolean
 }
 

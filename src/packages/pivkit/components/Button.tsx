@@ -13,14 +13,14 @@ import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
 type BooleanLike = unknown
 
-export type ButtonController = Readonly<{
+export interface ButtonController {
   click?: () => void
   focus?: () => void
-}>
+}
 
 const cssTransitionTimeFnOutCubic = 'cubic-bezier(0.22, 0.61, 0.36, 1)'
 
-export type ButtonProps = {
+export interface ButtonProps {
   /**
    * @default 'solid'
    */

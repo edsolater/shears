@@ -1,7 +1,7 @@
 import { Accessor, createEffect, onCleanup } from 'solid-js'
 import { onEvent } from '../../domkit'
 
-export type UseScrollDegreeDetectorOptions = {
+export interface UseScrollDegreeDetectorOptions {
   onReachBottom?: () => void
   reachBottomMargin?: number
 }

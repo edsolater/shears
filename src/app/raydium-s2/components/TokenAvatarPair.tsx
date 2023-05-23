@@ -3,7 +3,7 @@ import { Box } from '../../../packages/pivkit'
 import { Token } from '../utils/dataStructures/Token'
 import { TokenAvatar, TokenAvatarProps } from './TokenAvatar'
 
-export type TokenAvatarPairProps = {
+export interface TokenAvatarPairProps {
   token1?: Token
   token2?: Token
   size?: TokenAvatarProps['size']

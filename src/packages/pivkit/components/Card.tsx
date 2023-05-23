@@ -1,6 +1,6 @@
 import { KitProps, Piv, useKitProps } from '../../piv'
 
-export type CardProps = {}
+export interface CardProps {}
 
 /** provide default icss */
 export function Card(rawProps: KitProps<CardProps>) {

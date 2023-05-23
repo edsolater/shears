@@ -3,16 +3,16 @@ import { BN } from '../../../utils/dataStructures/BN'
 import { Mint, Numberish, Percent, Price, PublicKey } from '../../../utils/dataStructures/type'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 
-export type FetchFarmsJSONPayloads = {
+export interface FetchFarmsJSONPayloads {
   force?: boolean
 }
 
-export type CalculateSwapRouteInfosParams = {
+export interface CalculateSwapRouteInfosParams {
   rpcUrl: string
   owner?: string
 }
 
-export type FarmRewardJSONInfo = {
+export interface FarmRewardJSONInfo {
   rewardMint: string
   rewardVault: string
   rewardOpenTime?: number // only v6
@@ -24,7 +24,7 @@ export type FarmRewardJSONInfo = {
 
 export type FarmAprJSONInfo = ApiFarmApr
 
-export type FarmJSON = {
+export interface FarmJSON {
   id: string
   symbol: string
   lpMint: string
@@ -49,7 +49,7 @@ export type FarmJSON = {
   category: 'stake' | 'raydium' | 'fusion' | 'ecosystem' // add by UI for unify the interface
 }
 
-export type FarmJSONFile = {
+export interface FarmJSONFile {
   name: string
   version: unknown
   stake: Omit<FarmJSON, 'category'>[]
@@ -58,7 +58,7 @@ export type FarmJSONFile = {
   ecosystem: Omit<FarmJSON, 'category'>[]
 }
 
-export type FarmSYNInfo = {
+export interface FarmSYNInfo {
   hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load state
   base: Mint
   quote: Mint
@@ -145,7 +145,7 @@ export type FarmSYNInfo = {
   // }
 }
 
-export type FarmStore = {
+export interface FarmStore {
   readonly farmJsonInfos?: FarmJSON[]
   readonly isFarmJsonLoading?: boolean
   readonly farmInfos?: FarmSYNInfo[]

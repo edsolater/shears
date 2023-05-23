@@ -9,7 +9,7 @@ export type IStyle<Controller extends ValidController = {}> = MayArray<
 export function parseIStyles<Controller extends ValidController = {}>(
   styles: IStyle,
   controller: Controller = {} as Controller
-):JSX.HTMLAttributes<any>['style'] | undefined {
+): JSX.HTMLAttributes<any>['style'] | undefined {
   if (!styles) return undefined
   // @ts-expect-error no need to check
   return objectMerge(...shakeNil(flapDeep(styles).map((style) => shrinkFn(style, [controller]))))

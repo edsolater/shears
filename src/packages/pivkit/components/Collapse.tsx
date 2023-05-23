@@ -4,7 +4,7 @@ import { Piv } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { createToggle } from '../hooks/createToggle'
 
-type CollapseProps = {
+export interface CollapseProps {
   /** TODO: open still can't auto lock the trigger not controled component now */
   open?: boolean
   defaultOpen?: boolean
@@ -14,7 +14,7 @@ type CollapseProps = {
   onToggle?(): void
 }
 
-type CollapseController = {
+export interface CollapseController {
   readonly isOpen: boolean
   open(): void
   close(): void
@@ -61,7 +61,7 @@ export function Collapse(
   )
 }
 
-type CollapseFaceProps = {}
+interface CollapseFaceProps {}
 
 export function CollapseFace(
   rawProps: KitProps<
@@ -85,7 +85,7 @@ export function CollapseFace(
   )
 }
 
-type CollapseContentProps = {}
+interface CollapseContentProps {}
 
 export function CollapseContent(rawProps: KitProps<CollapseContentProps, { controller: CollapseController }>) {
   const controller = useContext(CollapseContext)

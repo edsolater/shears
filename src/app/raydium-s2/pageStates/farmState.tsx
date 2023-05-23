@@ -4,7 +4,7 @@ import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { useDataStore } from '../stores/data/store'
 import { FarmJSON } from '../stores/data/types/farm'
 
-export type FarmPageStates = {
+export interface FarmPageStates {
   // setters
   setDetailViewFarmId: Setter<string | undefined>
 

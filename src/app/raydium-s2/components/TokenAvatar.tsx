@@ -2,11 +2,11 @@ import { KitProps, Piv, addDefaultProps, useKitProps } from '../../../packages/p
 import { Image, ImageProps } from '../../../packages/pivkit'
 import { Token } from '../utils/dataStructures/Token'
 
-export type TokenAvatarProps = {
+export interface TokenAvatarProps extends ImageProps {
   token?: Token
   /** xs: 16px | sm: 20px | smi: 24px | md: 32px | lg: 48px | 2xl: 80px | (default: md) */
   size?: 'xs' | 'sm' | 'smi' | 'md' | 'lg' | '2xl'
-} & ImageProps
+}
 
 export function TokenAvatar(kitProps: KitProps<TokenAvatarProps>) {
   const { props: rawProps } = useKitProps(kitProps)

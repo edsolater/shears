@@ -5,11 +5,11 @@ import { ListContext } from './List'
 import { omit } from '../../../piv/utils/omit'
 import useResizeObserver from '../../hooks/useResizeObserver'
 
-export type ListItemProps = {
+export interface ListItemProps {
   children: () => JSX.Element
 }
 
-export type ListItemController = {
+export interface ListItemController {
   isIntersecting: Accessor<boolean>
 }
 /**

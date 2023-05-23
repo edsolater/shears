@@ -28,7 +28,7 @@ function encodeObject(data: object): any {
   return encodeRule.encodeFn?.(data as any /* force */, encode)
 }
 
-export type EncodeRule = {
+export interface EncodeRule {
   isTargetInstance?: (data: object) => boolean | undefined
   encodeFn?: (rawData: any, encodeInner: (innerValue: unknown) => any) => EncodedObject<any> | any /* can transport */
 }

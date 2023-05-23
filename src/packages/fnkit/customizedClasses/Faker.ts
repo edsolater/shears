@@ -1,4 +1,4 @@
-import { AnyFn } from '@edsolater/fnkit';
+import { AnyFn } from '@edsolater/fnkit'
 
 /**
  *
@@ -6,31 +6,30 @@ import { AnyFn } from '@edsolater/fnkit';
  * can pretend a function, but will only access it when it's called
  */
 export class Faker<T extends object | AnyFn> {
-  loadedObject = {} as T;
+  loadedObject = {} as T
   constructor(initObject?: T) {
-    if (initObject)
-      this.loadedObject = initObject;
+    if (initObject) this.loadedObject = initObject
   }
   load(determinedObject: T) {
-    this.loadedObject = determinedObject;
+    this.loadedObject = determinedObject
   }
   spawn() {
-    const getLoadedObject = () => this.loadedObject;
-    return new Proxy(() => { }, {
+    const getLoadedObject = () => this.loadedObject
+    return new Proxy(() => {}, {
       get(target, p, receiver) {
-        const determinedObject = getLoadedObject();
+        const determinedObject = getLoadedObject()
         if (!determinedObject) {
-          throw new Error(`can't access unloaded object`);
+          throw new Error(`can't access unloaded object`)
         }
-        return Reflect.get(determinedObject, p, receiver);
+        return Reflect.get(determinedObject, p, receiver)
       },
       apply(target, thisArg, argArray) {
-        const determinedObject = getLoadedObject();
+        const determinedObject = getLoadedObject()
         if (!determinedObject) {
-          throw new Error(`can't access unloaded object`);
+          throw new Error(`can't access unloaded object`)
         }
-        return Reflect.apply(determinedObject as any, undefined, argArray);
+        return Reflect.apply(determinedObject as any, undefined, argArray)
       }
-    }) as T;
+    }) as T
   }
 }

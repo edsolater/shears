@@ -1,7 +1,7 @@
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 import { Box, Text } from '../../../packages/pivkit'
 
-export type ExamplePanelProps = {
+export interface ExamplePanelProps {
   name?: string
 }
 

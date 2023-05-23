@@ -23,9 +23,9 @@ import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
 import { TokenAvatar } from './TokenAvatar'
 
-export type TokenAmountInputBoxController = {}
+export interface TokenAmountInputBoxController {}
 
-export type TokenAmountInputBoxProps = {
+export interface TokenAmountInputBoxProps {
   token?: Token
   tokenProps?: TextProps
   amount?: Numberish
@@ -36,6 +36,7 @@ export type TokenAmountInputBoxProps = {
 }
 
 export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>) {
+  console.log('rawProps: ', rawProps)
   const { props, lazyLoadController } = useKitProps(rawProps)
 
   const [token, setToken] = createMutableSignal({
@@ -76,9 +77,9 @@ export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>
   )
 }
 
-type TokenSelectorModalContentProps = {
+interface TokenSelectorModalContentProps extends BoxProps {
   onTokenSelect?(token: Token | undefined): void
-} & BoxProps
+}
 
 /**
  * hold state (store's tokens)

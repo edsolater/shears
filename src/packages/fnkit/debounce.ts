@@ -3,14 +3,14 @@ import { AnyFn, createCurrentTimestamp } from '@edsolater/fnkit'
 const defaultDebouneDelay = 400
 const defaultThrottleDelay = 400
 
-export type DebounceOptions = {
+export interface DebounceOptions {
   /** @default true */
   alwaysCalculateInFirstInvoke?: boolean
   /** @default 400 */
   delay?: number
 }
 
-export type ThrottleOptions = {
+export interface ThrottleOptions {
   /** @default 400 */
   delay?: number
 }

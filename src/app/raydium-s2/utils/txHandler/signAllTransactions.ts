@@ -5,7 +5,7 @@ import { TxHandlerPayload } from './txHandler'
 
 export async function signAllTransactions({
   transactions,
-  payload,
+  payload
 }: {
   transactions: (Transaction | InnerTransaction)[]
   payload: TxHandlerPayload

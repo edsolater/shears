@@ -1,4 +1,4 @@
-import { Token } from "./Token"
+import { Token } from './Token'
 
 export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */
@@ -12,13 +12,12 @@ export type BN = Fraction | bigint
 export type Price = Fraction
 
 // this structure is not mathematics elegant
-export type Decimal = {
+export interface Decimal {
   fraction: Numberish
   decimal: number
 }
 
-
-export type Fraction = {
+export interface Fraction {
   numerator: bigint
   denominator: bigint
 }

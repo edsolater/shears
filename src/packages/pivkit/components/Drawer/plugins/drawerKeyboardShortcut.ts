@@ -17,7 +17,7 @@ export const drawerKeyboardShortcut = createPlugin<DrawerProps>(() => {
     })
     return subscription.abort
   }, [])
-  return { domRef: setDivRef, controllerRef: setControllerRef } 
+  return { domRef: setDivRef, controllerRef: setControllerRef }
 })
 
 function keyboardFocusElement(el?: HTMLElement) {

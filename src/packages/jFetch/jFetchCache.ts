@@ -2,7 +2,7 @@ import { isFunction, forEachEntry } from '@edsolater/fnkit'
 import { getLocalStorageItem, setLocalStorageItem } from './utils/localStorage'
 
 type ResourceUrl = string
-export type JFetchCacheItem = {
+export interface JFetchCacheItem {
   /*
    * read .text() multi time will throw error, try to use rawText instead
    */

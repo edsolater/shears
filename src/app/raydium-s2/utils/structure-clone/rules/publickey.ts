@@ -5,7 +5,7 @@ import { addTransportRule } from '../addTransportRule'
 
 export const addRule = () =>
   addTransportRule({
-    isTargetInstance: (data) => data instanceof PublicKey || getType(data) as string === 'PublicKey',
+    isTargetInstance: (data) => data instanceof PublicKey || (getType(data) as string) === 'PublicKey',
     encodeFn: (rawData: PublicKey) => toPubString(rawData)
 
     // name: 'PublicKey',

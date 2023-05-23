@@ -1,13 +1,14 @@
-import { Numberish } from "../type"
-import { sub } from "./operations"
-import { toFraction } from "./toFraction"
+import { Numberish } from '../type'
+import { sub } from './operations'
+import { toFraction } from './toFraction'
 
 export function lt(a: Numberish | undefined, b: Numberish | undefined): boolean {
   if (a == null || b == null) return false
   const fa = toFraction(a)
   const fb = toFraction(b)
   const subResult = sub(fa, fb)
-  const isNegative = subResult.numerator < 0 && subResult.denominator > 0 || subResult.numerator > 0 && subResult.denominator < 0
+  const isNegative =
+    (subResult.numerator < 0 && subResult.denominator > 0) || (subResult.numerator > 0 && subResult.denominator < 0)
   return isNegative
 }
 
@@ -16,7 +17,8 @@ export function gt(a: Numberish | undefined, b: Numberish | undefined): boolean 
   const fa = toFraction(a)
   const fb = toFraction(b)
   const subResult = sub(fa, fb)
-  const isPositive = subResult.numerator > 0 && subResult.denominator > 0 || subResult.numerator < 0 && subResult.denominator < 0
+  const isPositive =
+    (subResult.numerator > 0 && subResult.denominator > 0) || (subResult.numerator < 0 && subResult.denominator < 0)
   return isPositive
 }
 

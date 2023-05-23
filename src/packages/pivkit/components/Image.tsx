@@ -1,7 +1,7 @@
 import { P } from 'vitest/dist/types-b7007192'
 import { KitProps, Piv, useKitProps } from '../../piv'
 
-export type ImageProps = {
+export interface ImageProps {
   /**
    *  also accept multi srcs
    */
@@ -13,7 +13,7 @@ export type ImageProps = {
   alt?: string
 }
 
-export type ImageController = {}
+export interface ImageController {}
 
 const defaultProps = {} as const satisfies Partial<ImageProps>
 

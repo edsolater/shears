@@ -1,6 +1,6 @@
 import { Piv, PivProps } from '../../piv'
 
-export type SectionProps = {}
+export interface SectionProps {}
 
 /**
  * if for layout , don't render important content in Box

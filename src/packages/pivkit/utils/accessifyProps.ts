@@ -28,7 +28,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
           const noNeedAccessify =
             isString(key) &&
             (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
-          return noNeedAccessify ? v :( typeof v === 'function' ? v(controller) : v)
+          return noNeedAccessify ? v : typeof v === 'function' ? v(controller) : v
         }
       }
       return acc

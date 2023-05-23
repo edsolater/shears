@@ -1,4 +1,4 @@
-export type FetchPairsOptions = {
+export interface FetchPairsOptions {
   force?: boolean
 }
 
@@ -31,7 +31,7 @@ export interface PairJson {
   volume30dQuote: number
 }
 
-export type PairsStore = {
+export interface PairsStore {
   readonly pairInfos?: PairJson[]
   readonly isPairInfoLoading?: boolean
 }

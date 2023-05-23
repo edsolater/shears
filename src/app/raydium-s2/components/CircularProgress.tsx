@@ -2,7 +2,7 @@ import { createMemo } from 'solid-js'
 import { KitProps, addDefaultProps, useKitProps } from '../../../packages/piv'
 import { createRef } from '../../../packages/pivkit'
 
-type CircularProgressProps = {
+interface CircularProgressProps {
   /** like animation run */
   run?: boolean
   /**

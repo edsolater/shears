@@ -52,14 +52,10 @@ export function SwapPage() {
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Card icss={[icss_card, icss_col({ gap: '.5em' })]}>
           <TokenAmountInputBox
-          
             token={token1}
             amount={tokenAmount1}
             onSelectToken={setToken1}
-            onAmountChange={(am) => {
-              console.log('am: ', am)
-              return setAmount1(am)
-            }}
+            onAmountChange={setAmount1}
           />
           <TokenAmountInputBox
             token={token2}

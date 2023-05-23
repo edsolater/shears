@@ -1,6 +1,6 @@
 import { BN, PublicKey } from '../../utils/dataStructures/type'
 
-export type SDKSplAccount = {
+export interface SDKSplAccount {
   owner: PublicKey
   state: number
   mint: PublicKey

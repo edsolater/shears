@@ -1,16 +1,16 @@
 import { asyncReduce, getTime, MayPromise, shakeNil, tryCatch, areShallowEqual } from '@edsolater/fnkit'
 import { jFetchCoreWithCache, JFetchCoreOptions } from './jFetchCoreWithCache'
 
-export type JFetchMiddlewareItem = {
+export interface JFetchMiddlewareItem {
   /** usually it's for data rename  */
   parseResponseRaw?: (rawText: string) => MayPromise<string>
   /** usually it's for data reshape  */
   parseResponseJson?: (data: any) => MayPromise<any>
 }
 
-export type JFetchOptions = {
+export interface JFetchOptions extends JFetchCoreOptions {
   middlewares?: JFetchMiddlewareItem[]
-} & JFetchCoreOptions
+}
 
 type JFetchResultCache = Map<
   string,

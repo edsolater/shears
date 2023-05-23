@@ -3,7 +3,7 @@ export * from './components/Box'
 export * from './components/Text'
 export * from './components/Image'
 export * from './components/Icon'
-export * from './components/RowItem'
+export * from './components/ItemBox'
 export * from './components/Collapse'
 export * from './components/List/List'
 

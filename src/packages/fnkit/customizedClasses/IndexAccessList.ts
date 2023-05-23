@@ -125,7 +125,7 @@ export class IndexAccessList<V extends object = object, BK extends keyof V = any
   }
 }
 
-export type IndexAccessListStructureCloneType = {
+export interface IndexAccessListStructureCloneType {
   items: any[]
   basicKey: keyof any
 }

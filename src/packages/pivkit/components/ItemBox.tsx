@@ -1,7 +1,7 @@
-import { KitProps, Piv, useKitProps } from '../../../packages/piv'
-import { JSXElement, createEffect } from 'solid-js'
+import { JSXElement } from 'solid-js'
+import { KitProps, Piv, useKitProps } from '../../piv'
 
-export type RowItemProps = {
+export interface ItemBoxProps {
   suffix?: JSXElement
   prefix?: JSXElement
 }
@@ -9,7 +9,7 @@ export type RowItemProps = {
 /**
  * if for layout , don't render important content in Box
  */
-export function RowItem(rawProps: KitProps<RowItemProps>) {
+export function ItemBox(rawProps: KitProps<ItemBoxProps>) {
   const { props } = useKitProps(rawProps)
   /* ---------------------------------- props --------------------------------- */
   return (

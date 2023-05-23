@@ -6,7 +6,7 @@ import { Numberish } from './type'
 import { div } from './basicMath/operations'
 import { ReplaceType } from '@edsolater/fnkit'
 
-export type TokenAmount = {
+export interface TokenAmount {
   token: Token
   /** value that is amount */
   amount: Numberish

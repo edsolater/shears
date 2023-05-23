@@ -1,11 +1,11 @@
 import { createEffect } from 'solid-js'
-import { Piv, PivProps } from '../../../packages/piv'
+import { Piv } from '../../../packages/piv'
 import { Box, Text } from '../../../packages/pivkit'
-import { Link } from './Link'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
+import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
 
-export type TopMenuBarProps = {
+export interface TopMenuBarProps {
   title?: string
 }
 

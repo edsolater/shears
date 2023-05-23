@@ -9,7 +9,7 @@ import { isArray, isObject } from '@edsolater/fnkit'
  * areShallowContain([1, 2], [1, 2, 3]) // => true (areShallowContain)
  * areShallowContain([1, 2, 3], [1, 2]) // => false
  * areShallowContain([1, 2, 3], [1, 2, 3]) // => true (equal)
- * 
+ *
  */
 export function areShallowContain(a: any, b: any): boolean {
   if (a === b) return true

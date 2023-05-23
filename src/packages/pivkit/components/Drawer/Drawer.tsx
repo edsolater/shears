@@ -4,7 +4,7 @@ import { createRef } from '../../hooks/createRef'
 import { drawerKeyboardShortcut } from './plugins/drawerKeyboardShortcut'
 import { PopPortal } from './PopPortal'
 
-export type DrawerController = {
+export interface DrawerController {
   isOpen: boolean
   placement: NonNullable<DrawerProps['placement']>
   open(): void
@@ -12,7 +12,7 @@ export type DrawerController = {
   toggle(): void
 }
 
-export type DrawerProps = {
+export interface DrawerProps {
   open?: boolean
   placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
 }

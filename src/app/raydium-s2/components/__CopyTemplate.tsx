@@ -1,8 +1,8 @@
 import { KitProps, useKitProps } from '../../../packages/piv'
 
-export type TokenAmountInputBoxController = {}
+export interface TokenAmountInputBoxController {}
 
-export type TokenAmountInputBoxProps = {}
+export interface TokenAmountInputBoxProps {}
 
 export function TokenAmountInputBox(rawProps: KitProps<TokenAmountInputBoxProps>) {
   const { props, lazyLoadController } = useKitProps(rawProps)

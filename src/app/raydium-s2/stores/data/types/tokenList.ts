@@ -1,11 +1,11 @@
-import { Token } from "../../../utils/dataStructures/Token"
+import { Token } from '../../../utils/dataStructures/Token'
 
-export type TokenWorkerData = {
+export interface TokenWorkerData {
   tokens: Token[]
   blacklist: string[]
 }
 
-export type FetchRaydiumTokenListOptions = {
+export interface FetchRaydiumTokenListOptions {
   url: string
   force?: boolean
 }
@@ -17,7 +17,7 @@ export interface RaydiumTokenListJsonFile {
   blacklist: string[]
 }
 
-export type TokenListStore = {
+export interface TokenListStore {
   isTokenLoading?: boolean
   allTokens?: Token[]
 }

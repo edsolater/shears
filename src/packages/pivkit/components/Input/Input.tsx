@@ -1,10 +1,9 @@
-import { createEffect, createMemo, createSignal, on, onCleanup, untrack } from 'solid-js'
-import { onEvent } from '../../../domkit'
+import { createEffect, createMemo, createSignal, on } from 'solid-js'
 import { KitProps, ParsedKitProps, Piv, PivProps, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
 
-export type InputProps = {
+export interface InputProps {
   /**
    * will not apply default icss: `min-width: 10em`
    * input will auto widen depends on content Text
@@ -32,7 +31,7 @@ export type InputProps = {
   onProgramInput?(utils: { text: string | undefined }): void
 }
 
-export type InputController = {
+export interface InputController {
   text: string
   /** set Input Value */
   setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void

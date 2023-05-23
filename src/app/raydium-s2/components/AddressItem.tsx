@@ -4,10 +4,10 @@ import copyToClipboard from '../../../packages/domkit/copyToClipboard'
 import { addDefaultPivProps, addDefaultProps } from '../../../packages/piv'
 import { GetRawProps, KitProps, useKitProps } from '../../../packages/piv/createKit'
 import { PivProps } from '../../../packages/piv/types/piv'
-import { IconProps, RowItemProps } from '../../../packages/pivkit'
+import { IconProps, ItemBoxProps } from '../../../packages/pivkit'
 import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
 
-export type AddressItemProps = {
+export interface AddressItemProps extends ItemBoxProps {
   publicKey: string
   showDigitCount?: number | 'all'
   addressType?: 'token' | 'account'
@@ -21,7 +21,7 @@ export type AddressItemProps = {
   iconProps?: IconProps
   iconRowProps?: PivProps
   onCopied?(text: string): void // TODO: imply it
-} & RowItemProps
+}
 
 const defaultProps = {
   iconSize: 'sm'

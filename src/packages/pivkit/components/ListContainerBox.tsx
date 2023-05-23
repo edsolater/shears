@@ -1,11 +1,11 @@
 import { Box } from '..'
 import { KitProps, useKitProps } from '../../piv'
 
-export type ListContainerBoxProps = {
+export interface ListContainerBoxProps {
   dir?: 'x' | 'y'
 }
 
-export type ListContainerBoxController = {}
+export interface ListContainerBoxController {}
 
 export type DefaultListContainerBoxProps = typeof defaultProps
 

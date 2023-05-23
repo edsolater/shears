@@ -117,14 +117,14 @@ export function calculateSwapRouteInfos({
   })
 }
 
-type BestResultStartTimeInfo = {
+interface BestResultStartTimeInfo {
   ammId: string
   startTime: number
   poolType: PoolType
   poolInfo: BestResultStartTimePoolInfo
 }
 
-type BestResultStartTimePoolInfo = {
+interface BestResultStartTimePoolInfo {
   rawInfo: AmmV3PoolInfo | ApiPoolInfoItem
   ammId: string
   quoteMint: string

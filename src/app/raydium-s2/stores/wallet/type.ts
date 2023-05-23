@@ -1,6 +1,6 @@
 import { WalletAdapter } from '@solana/wallet-adapter-base'
 
-export type WalletAdapterInterface = {
+export interface WalletAdapterInterface {
   adapter: WalletAdapter
 }
 

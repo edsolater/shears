@@ -1,7 +1,7 @@
 import { useNavigate } from '@solidjs/router'
 import { KitProps, Piv, useKitProps } from '../../../packages/piv'
 
-export type LinkProps = {
+export interface LinkProps {
   href?: string
   boxWrapper?: boolean
   innerRoute?: boolean

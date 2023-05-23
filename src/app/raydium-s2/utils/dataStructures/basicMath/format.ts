@@ -2,7 +2,7 @@ import { Numberish } from '../type'
 import { toFraction } from './toFraction'
 import { shakeUnnecessaryZero, shiftDecimal } from './utils'
 
-export type NumberishOption = {
+export interface NumberishOption {
   /**
    * if too much, turncate not care decimals
    * @example

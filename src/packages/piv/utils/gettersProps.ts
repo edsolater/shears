@@ -16,7 +16,7 @@ export function gettersProps<T extends object>(props: T): GettersProps<T> {
         enumerable: true,
         get() {
           //@ts-expect-error no need type check
-          const v = props[key] 
+          const v = props[key]
           return v?.()
         }
       }

@@ -1,18 +1,18 @@
 import { CSSInterpolation } from '@emotion/css'
 import { Accessor, Show, createEffect, createSignal } from 'solid-js'
-import { KitProps, Piv, useKitProps, } from '../../../piv'
+import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { useDOMEventListener } from '../../hooks/useDOMEventListener'
 
-export type ModalController = {
+export interface ModalController {
   isOpen: boolean
   open(): void
   close(): void
   toggle(): void
 }
 
-export type ModalProps = {
+export interface ModalProps {
   open?: boolean
   isModal?: boolean
 
