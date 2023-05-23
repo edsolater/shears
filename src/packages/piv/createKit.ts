@@ -44,7 +44,9 @@ type KitPropsInstance<
     keyof RawProps
   >
 
-/** just a shortcut of KitProps */
+/** just a shortcut of KitProps
+ * @deprecated use BaseKit instead
+ */
 export type KitProps<
   RawProps extends ValidProps,
   O extends {
@@ -62,6 +64,24 @@ export type KitProps<
   NonNullable<O['htmlPropsTagName']>,
   NonNullable<O['noNeedAccessifyChildren']>
 >
+
+export type UIKit<
+  O extends {
+    /** will auto-add props: */
+    controller?: ValidController
+    plugin?: MayArray<Plugin<any>>
+    htmlPropsTagName?: keyof HTMLElementTagNameMap
+    // /** default is false, only set when children must be function  */
+    noNeedAccessifyChildren?: boolean
+  } = {}
+> = KitPropsInstance<
+  {},
+  NonNullable<O['controller']>,
+  NonNullable<O['plugin']>,
+  NonNullable<O['htmlPropsTagName']>,
+  NonNullable<O['noNeedAccessifyChildren']>
+>
+
 export type KitPropsOptions<
   KitProps extends ValidProps,
   Controller extends ValidController = {},
@@ -105,7 +125,8 @@ function getParsedKitProps<
   // merge kit props
   const mergedGettersProps = pipe(
     defaultedProps,
-    (props) => useAccessifiedProps(props, proxyController, options?.noNeedDeAccessifyChildren ? ['children'] : undefined),
+    (props) =>
+      useAccessifiedProps(props, proxyController, options?.noNeedDeAccessifyChildren ? ['children'] : undefined),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
     // parse plugin of **options**

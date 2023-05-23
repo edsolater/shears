@@ -12,6 +12,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
+import { Switch } from '../../../packages/pivkit/components/Switch'
 
 export function PlaygroundPage() {
   return (
@@ -55,6 +56,10 @@ function PlaygoundList() {
 
       <ExamplePanel name='List'>
         <ListExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='Switch'>
+        <SwitchExample />
       </ExamplePanel>
     </Box>
   )
@@ -149,6 +154,17 @@ function InputExample() {
       onUserInput={({ text }) => {
         setControlledValue(text)
       }}
+    />
+  )
+}
+
+function SwitchExample() {
+  return (
+    <Switch
+      icss={[
+        ({ isChecked }) => ({ color: isChecked() ? 'crimson' : 'dodgerblue' }),
+        { cursor: 'pointer', userSelect: 'none' }
+      ]}
     />
   )
 }
