@@ -1,7 +1,7 @@
 import { createEffect, createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
-import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/pivkit'
+import { Box, Button, List, Text, createRef, icss_col, icss_row } from '../../../packages/pivkit'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
@@ -12,7 +12,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
-import { Switch } from '../../../packages/pivkit/components/Switch'
+import { Switch, SwitchController } from '../../../packages/pivkit/components/Switch'
 
 export function PlaygroundPage() {
   return (
@@ -159,12 +159,14 @@ function InputExample() {
 }
 
 function SwitchExample() {
+  const [checked, setChecked] = createSignal(false)
+  setInterval(() => {
+    setChecked((b) => !b)
+  }, 800)
   return (
     <Switch
-      icss={[
-        ({ isChecked }) => ({ color: isChecked() ? 'crimson' : 'dodgerblue' }),
-        { cursor: 'pointer', userSelect: 'none' }
-      ]}
+      isChecked={checked()}
+      style={{ color: checked() ? 'red' : 'blue' }} // <-- will cause rerender , why?
     />
   )
 }

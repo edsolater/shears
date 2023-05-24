@@ -4,7 +4,7 @@ import { ENDPOINT, MAINNET_PROGRAM_ID, RAYDIUM_MAINNET } from '@raydium-io/raydi
 import toPubString from '../dataStructures/Publickey'
 
 const apiTailUrls = RAYDIUM_MAINNET
-const apiBase = ENDPOINT
+const apiBase = 'https://uapi.raydium.io'
 const programIds = MAINNET_PROGRAM_ID
 
 export const appApiUrls = map(apiTailUrls, (url) => apiBase + url) as {

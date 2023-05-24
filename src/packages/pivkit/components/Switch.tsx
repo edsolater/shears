@@ -1,4 +1,4 @@
-import { Accessor } from 'solid-js'
+import { Accessor, createEffect } from 'solid-js'
 import { UIKit, KitProps, Piv, PivProps, useKitProps } from '../../piv'
 import { createSyncSignal } from '../hooks/createSyncSignal'
 import { Accessify } from '../utils/accessifyProps'
@@ -8,6 +8,7 @@ export interface SwitchController {
 }
 
 export interface SwitchProps extends UIKit<{ controller: SwitchController }> {
+  isChecked?: Accessify<boolean, SwitchController>
   isDefaultChecked?: Accessify<boolean, SwitchController>
   onChange?(utils: { isChecked: boolean }): void
 }
@@ -21,10 +22,13 @@ const defaultProps = {
 export function Switch(rawProps: SwitchProps) {
   const { props, lazyLoadController } = useKitProps(rawProps, { defaultProps })
   const [isChecked, setIsChecked] = createSyncSignal({
-    get: () => props.isDefaultChecked,
+    get: () => props.isChecked ?? props.isDefaultChecked,
     set(value) {
       props.onChange?.({ isChecked: value })
     }
+  })
+  createEffect(() => {
+    console.log('isChecked: ', isChecked())
   })
   lazyLoadController({
     isChecked
@@ -33,8 +37,8 @@ export function Switch(rawProps: SwitchProps) {
     <Label
       shadowProps={props}
       icss={{
-        width: '2em',
-        height: '1em',
+        width: '4em',
+        height: '2em',
         background: 'gray'
       }}
       onClick={() => {
@@ -45,11 +49,11 @@ export function Switch(rawProps: SwitchProps) {
       <Piv
         class='Switch'
         icss={{
-          width: '1em',
-          height: '1em',
+          width: '2em',
+          height: '2em',
           background: 'dodgerblue',
           translate: isChecked() ? '100%' : '0', //FIXME: why not work?
-          transition: '600ms'
+          transition: '300ms'
         }}
       />
     </Label>

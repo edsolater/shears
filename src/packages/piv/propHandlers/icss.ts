@@ -37,6 +37,7 @@ export function compressICSSToObj<Controller extends ValidController = {}>(
     return shrinkFn(l, [controller])
   }
 }
+
 export function mergeICSSObject<Controller extends ValidController = {}>(
   ...icsses: ICSSObject<Controller>[]
 ): ICSSObject<Controller> {

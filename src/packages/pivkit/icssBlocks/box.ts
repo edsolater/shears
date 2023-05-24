@@ -33,7 +33,7 @@ export const icss_clickable = (options?: {}) =>
 export const icss_label = (options?: { w: CSSObject['minWidth']; h: CSSObject['minHeight'] }) =>
   ({
     minWidth: options?.w ?? '5em',
-    minHeight: options?.h ?? 'calc(1.5em + 4px * 2)',
+    minHeight: options?.h ?? 'calc(2em)',
     textAlign: 'center',
     paddingBlock: '.25em',
     paddingInline: '.5em',
