@@ -32,11 +32,26 @@ export function Switch(rawProps: SwitchProps) {
   return (
     <Label
       shadowProps={props}
+      icss={{
+        width: '2em',
+        height: '1em',
+        background: 'gray'
+      }}
       onClick={() => {
         setIsChecked(!isChecked())
       }}
     >
-      {isChecked() ? 'on' : 'off'}
+      <AbsoluteCheckboxInput defaultChecked={props.isDefaultChecked} />
+      <Piv
+        class='Switch'
+        icss={{
+          width: '1em',
+          height: '1em',
+          background: 'dodgerblue',
+          translate: isChecked() ? '100%' : '0', //FIXME: why not work?
+          transition: '600ms'
+        }}
+      />
     </Label>
   )
 }
@@ -47,4 +62,33 @@ export function Switch(rawProps: SwitchProps) {
 function Label(rawProps: PivProps) {
   const { props } = useKitProps(rawProps)
   return <Piv class='Label' shadowProps={props} />
+}
+
+interface CheckBoxInputProps extends UIKit {
+  defaultChecked?: boolean
+}
+
+function AbsoluteCheckboxInput(rawProps: CheckBoxInputProps) {
+  const { props } = useKitProps(rawProps)
+  return (
+    <Piv
+      class='AbsoluteCheckboxInput'
+      as={(parsedPivProps) => <input {...parsedPivProps} />}
+      icss={{
+        position: 'absolute',
+        border: '0px',
+        outline: 'none',
+        opacity: 0,
+        width: '1px',
+        height: '1px',
+        margin: '-1px',
+        overflow: 'hidden'
+      }}
+      htmlProps={{
+        type: 'checkbox',
+        checked: props.defaultChecked
+      }}
+      shadowProps={props}
+    />
+  )
 }
