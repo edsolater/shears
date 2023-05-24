@@ -11,14 +11,15 @@ import { parseOnClick } from './onClick'
 import { handlePluginProps } from './plugin'
 import { handleShadowProps } from './shadowProps'
 
-// TODO: change props:icss will make all props to re-calc, this may cause performance issue
+// TODO: props should be lazy load, props.htmlProps should also be lazy load
 export function parsePivProps(rawProps: PivProps<any>) {
   const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
   const controller = (props.inputController ?? {}) as ValidController
   debugLog(rawProps, props, controller)
   return {
     ...parseHTMLProps(props.htmlProps, controller),
-    get class() { // getter for lazy solidjs render
+    get class() {
+      // getter for lazy solidjs render
       return (
         shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
         undefined
