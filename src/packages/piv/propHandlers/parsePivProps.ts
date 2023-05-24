@@ -1,4 +1,4 @@
-import { flap, flapDeep, hasProperty, pipe, shakeFalsy } from '@edsolater/fnkit'
+import { flap, pipe, shakeFalsy } from '@edsolater/fnkit'
 import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'

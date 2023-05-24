@@ -9,6 +9,7 @@ export interface SwitchController {
 
 export interface SwitchProps extends UIKit<{ controller: SwitchController }> {
   isChecked?: Accessify<boolean, SwitchController>
+  ariaLabel?: string
   isDefaultChecked?: Accessify<boolean, SwitchController>
   onChange?(utils: { isChecked: boolean }): void
 }
@@ -45,7 +46,7 @@ export function Switch(rawProps: SwitchProps) {
         setIsChecked(!isChecked())
       }}
     >
-      <AbsoluteCheckboxInput defaultChecked={props.isDefaultChecked} />
+      <AbsoluteCheckboxInput ariaLabel={props.ariaLabel} defaultChecked={props.isDefaultChecked} />
       <Piv
         class='Switch'
         icss={{
@@ -65,14 +66,15 @@ export function Switch(rawProps: SwitchProps) {
  */
 function Label(rawProps: PivProps) {
   const { props } = useKitProps(rawProps)
-  return <Piv class='Label' shadowProps={props} />
+  return <Piv class='Label' as={(parsedPivProps) => <label {...parsedPivProps} />} shadowProps={props} />
 }
 
-interface CheckBoxInputProps extends UIKit {
+interface AbsoluteCheckboxInputProps extends UIKit {
+  ariaLabel?: string
   defaultChecked?: boolean
 }
 
-function AbsoluteCheckboxInput(rawProps: CheckBoxInputProps) {
+function AbsoluteCheckboxInput(rawProps: AbsoluteCheckboxInputProps) {
   const { props } = useKitProps(rawProps)
   return (
     <Piv
@@ -90,7 +92,8 @@ function AbsoluteCheckboxInput(rawProps: CheckBoxInputProps) {
       }}
       htmlProps={{
         type: 'checkbox',
-        checked: props.defaultChecked
+        checked: props.defaultChecked,
+        'aria-label': props.ariaLabel ?? 'checkbox'
       }}
       shadowProps={props}
     />

@@ -163,9 +163,10 @@ function SwitchExample() {
 
   useIntervalEffect(() => {
     setChecked((b) => !b)
-  }, 800)
+  }, 2000)
   return (
     <Switch
+      ariaLabel='theme-switch'
       isChecked={checked()}
       style={{ color: checked() ? 'red' : 'blue' }} // <-- will cause rerender , why?
     />
