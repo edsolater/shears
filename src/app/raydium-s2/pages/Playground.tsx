@@ -1,4 +1,4 @@
-import { createEffect, createSignal } from 'solid-js'
+import { createEffect, createSignal, onCleanup } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
 import { Box, Button, List, Text, createRef, icss_col, icss_row } from '../../../packages/pivkit'
@@ -160,7 +160,8 @@ function InputExample() {
 
 function SwitchExample() {
   const [checked, setChecked] = createSignal(false)
-  setInterval(() => {
+
+  useIntervalEffect(() => {
     setChecked((b) => !b)
   }, 800)
   return (
@@ -171,6 +172,16 @@ function SwitchExample() {
   )
 }
 
+/**
+ * setInterval hook
+ * but auto clean
+ */
+function useIntervalEffect(fn: () => void, interval: number) {
+  createEffect(() => {
+    const id = setInterval(fn, interval)
+    onCleanup(() => clearInterval(id))
+  })
+}
 function ListExample() {
   const mockData = [
     { name: 'a', count: 1 },

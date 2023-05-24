@@ -18,13 +18,24 @@ export function parsePivProps(rawProps: PivProps<any>) {
   debugLog(rawProps, props, controller)
   return {
     ...parseHTMLProps(props.htmlProps, controller),
-    class:
-      shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
-      undefined /* don't render if empty string */,
-    ref: (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el),
-    style: parseIStyles(props.style, controller),
-    onClick: 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined,
-    children: applyPivController(props.children, controller)
+    get class() { // getter for lazy solidjs render
+      return (
+        shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
+        undefined
+      ) /* don't render if empty string */
+    },
+    get ref() {
+      return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
+    },
+    get style() {
+      return parseIStyles(props.style, controller)
+    },
+    get onClick() {
+      return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
+    },
+    get children() {
+      return applyPivController(props.children, controller)
+    }
   }
 }
 

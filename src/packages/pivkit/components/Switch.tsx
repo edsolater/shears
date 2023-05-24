@@ -51,7 +51,7 @@ export function Switch(rawProps: SwitchProps) {
         icss={{
           width: '2em',
           height: '2em',
-          background: 'dodgerblue',
+          background: 'currentColor',
           translate: isChecked() ? '100%' : '0', //FIXME: why not work?
           transition: '300ms'
         }}
