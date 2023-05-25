@@ -15,6 +15,8 @@ import { handleShadowProps } from './propHandlers/shadowProps'
 import { CRef, PivProps } from './types/piv'
 import { HTMLTag, ValidController, ValidProps } from './types/tools'
 import { AddDefaultPivProps, addDefaultPivProps } from './utils/addDefaultProps'
+import { pick } from './utils/pick'
+import { omit } from './utils/omit'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -93,8 +95,17 @@ export type KitPropsOptions<
   ) => any /* use any to avoid this type check (type check means type infer) */
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
-  /** default is false */
+  /** default is false
+   * @deprecated use `needAccessify` instead
+   */
   noNeedDeAccessifyChildren?: boolean
+  /** by default, all will check to Accessify */
+  needAccessify?: string[]
+  /**
+   * not selfProps means it's shadowProps,
+   * by default, all props are shadowProps(which can pass to shadowProps="")
+   */
+  selfProps?: string[]
 }
 
 /** return type of useKitProps */
@@ -126,7 +137,11 @@ function getParsedKitProps<
   const mergedGettersProps = pipe(
     defaultedProps,
     (props) =>
-      useAccessifiedProps(props, proxyController, options?.noNeedDeAccessifyChildren ? ['children'] : undefined),
+      useAccessifiedProps(
+        props,
+        proxyController,
+        options?.needAccessify ?? (options?.noNeedDeAccessifyChildren ? ['children'] : Object.keys(props))
+      ),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
     // parse plugin of **options**
@@ -161,6 +176,8 @@ export function useKitProps<
   props: P,
   options?: KitPropsOptions<GetDeAccessifiedProps<P>, Controller, DefaultProps>
 ): {
+  /** not declared self props means it's shadowProps */
+  shadowProps: any
   props: ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
     Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>
   lazyLoadController(controller: Controller | ((props: ParsedKitProps<GetDeAccessifiedProps<P>>) => Controller)): void
@@ -171,7 +188,8 @@ export function useKitProps<
     controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),
     ...options
   }) as any /* too difficult to type, no need to check */
-  return { props: composedProps, lazyLoadController: loadController }
+  const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
+  return { props: composedProps, shadowProps, lazyLoadController: loadController }
 }
 
 /**

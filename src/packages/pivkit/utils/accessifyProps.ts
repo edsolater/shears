@@ -1,11 +1,11 @@
-import { AnyFn, AnyObj, isObject, isString } from '@edsolater/fnkit'
+import { AnyFn, AnyObj, isFunction, isObject, isString } from '@edsolater/fnkit'
 import { ValidController } from '../../piv/types/tools'
 
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
 export type AccessifyProps<P extends AnyObj, Controller extends ValidController = {}> = {
-  [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef`
+  [K in keyof P]: K extends `on${string}` | `domRef` | `controllerRef`
     ? P[K]
     : P[K] extends Accessify<any, any>
     ? P[K]
@@ -14,17 +14,23 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
 
 export type Accessify<V, Controller extends ValidController = {}> = V | ((controller: Controller) => V)
 
-export type DeAccessify<V> =  V extends Accessify<infer T, any> ? T : V
+export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 
-export type DeAccessifyProps<P> = { [K in keyof P]: K extends `on${string}` | `ref` | `controllerRef`?P[K]: P[K] extends Accessify<infer T, any> ? T : P[K] }
+export type DeAccessifyProps<P> = {
+  [K in keyof P]: K extends `on${string}` | `domRef` | `controllerRef`
+    ? P[K]
+    : P[K] extends Accessify<infer T, any>
+    ? T
+    : P[K]
+}
 /**
  * propertyName start with 'on' will treate as function
  */
 export function useAccessifiedProps<P extends AnyObj, Controller extends ValidController = {}>(
   props: P,
   controller?: Controller,
-  /** default is on_ and domRef and controllerRef, but you can add more */
-  noNeedAccessifyProps?: string[]
+  /** default is on* and domRef and controllerRef, but you can add more */
+  needAccessifyProps?: string[]
 ): DeAccessifyProps<P> {
   const accessifiedProps = Object.defineProperties(
     {},
@@ -33,10 +39,11 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
         enumerable: true,
         get() {
           const v = props[key]
-          const noNeedAccessify =
+          const isPreferUseOriginalValue =
             isString(key) &&
-            (noNeedAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
-          return noNeedAccessify ? v : typeof v === 'function' ? v(controller) : v
+            (needAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
+          const needAccessify = isFunction(v) && !isPreferUseOriginalValue
+          return needAccessify ? v(controller) : v
         }
       }
       return acc
