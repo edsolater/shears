@@ -1,5 +1,5 @@
 import { Accessor, createEffect } from 'solid-js'
-import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
+import { DeKitProps, Piv, PivProps, UIKit, useKitProps } from '../../piv'
 import { createSyncSignal } from '../hooks/createSyncSignal'
 import { Accessify } from '../utils/accessifyProps'
 import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
@@ -53,6 +53,7 @@ export function Switch(rawProps: SwitchProps) {
       props.onChange?.({ isChecked: value })
     }
   })
+  const { wrapperLabelStyleProps, switchThumbStyleProps } = createSwitchStyle({ props, isChecked })
   // createEffect(() => {
   //   console.trace('isChecked: ', isChecked())
   // })
@@ -60,37 +61,34 @@ export function Switch(rawProps: SwitchProps) {
     isChecked
   })
   return (
-    <Label
-      shadowProps={[shadowProps, props['anatomy:Label']]}
-      icss={{
-        width: '4em',
-        height: '2em',
-        background: 'gray'
-      }}
-    >
+    <Label shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:Label']]}>
       <AbsoluteCheckboxInput
         shadowProps={props['anatomy:AbsoluteCheckboxInput']}
         ariaLabel={props.ariaLabel}
         defaultChecked={props.isDefaultChecked}
-        onClick={({ ev }) => {
+        onClick={() => {
           setIsChecked((b) => !b)
         }}
       />
 
       {/* SwitchThumb */}
-      <Piv
-        shadowProps={props['anatomy:SwitchThumb']}
-        class='Switch'
-        icss={{
-          width: '2em',
-          height: '2em',
-          background: 'currentColor',
-          translate: isChecked() ? '100%' : '0', //FIXME: why not work?
-          transition: '300ms'
-        }}
-      />
+      <Piv class='SwitchThumb' shadowProps={[switchThumbStyleProps, props['anatomy:SwitchThumb']]} />
     </Label>
   )
+}
+
+function createSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: Accessor<boolean> }) {
+  const wrapperLabelStyleProps: LabelProps = { icss: { width: '4em', height: '2em', background: 'gray' } }
+  const switchThumbStyleProps: PivProps = {
+    icss: {
+      width: '2em',
+      height: '2em',
+      background: 'currentColor',
+      translate: params.isChecked() ? '100%' : '0',
+      transition: '300ms'
+    }
+  }
+  return { wrapperLabelStyleProps, switchThumbStyleProps }
 }
 
 interface LabelProps extends PivProps {}

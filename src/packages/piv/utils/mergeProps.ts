@@ -1,6 +1,7 @@
-import { AnyObj, flap, mergeFunction, parallelSwitch, shakeNil, unifyItem } from '@edsolater/fnkit'
+import { AnyObj, flap, mergeFunction, parallelSwitch, shakeNil } from '@edsolater/fnkit'
 import { ValidProps } from '../types/tools'
 import { mergeRefs } from './mergeRefs'
+import { getKeys } from './getKeys'
 
 export function mergeProps<P1 = ValidProps, P2 = ValidProps>(...propsObjs: [P1, P2]): Exclude<P1 & P2, undefined>
 export function mergeProps<P1 = ValidProps, P2 = ValidProps, P3 = ValidProps>(
@@ -121,13 +122,4 @@ function getObjValue<T extends AnyObj>(
       if (v != null) return v
     }
   }
-}
-
-function getKeys<T extends object>(objs: T[]) {
-  return unifyItem(
-    objs.flatMap((obj) => {
-      const descriptors = Object.getOwnPropertyDescriptors(obj) // 🤔 necessary?
-      return Reflect.ownKeys(descriptors)
-    })
-  )
 }

@@ -178,8 +178,7 @@ export function useKitProps<
 ): {
   /** not declared self props means it's shadowProps */
   shadowProps: any
-  props: ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
-    Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>
+  props: DeKitProps<P, Controller, DefaultProps>
   lazyLoadController(controller: Controller | ((props: ParsedKitProps<GetDeAccessifiedProps<P>>) => Controller)): void
 } {
   type RawProps = GetDeAccessifiedProps<P>
@@ -203,3 +202,10 @@ function composeController<RawProps extends ValidProps, Controller extends Valid
   }
   return { loadController, getControllerCreator: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props) }
 }
+
+export type DeKitProps<
+  P extends ValidProps,
+  Controller extends ValidController = {},
+  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {}
+> = ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
+  Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>

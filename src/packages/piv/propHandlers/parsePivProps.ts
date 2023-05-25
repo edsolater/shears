@@ -4,7 +4,7 @@ import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'
 import { classname } from './classname'
 import { applyPivController } from './controller'
-import { parseHTMLProps } from './htmlProps'
+import { mergeObjects, parseHTMLProps } from './htmlProps'
 import { parseCSSToString } from './icss'
 import { parseIStyles } from './istyle'
 import { parseOnClick } from './onClick'
@@ -29,6 +29,8 @@ export function parsePivProps(rawProps: PivProps<any>) {
       return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
     },
     get style() {
+      const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
+      const controller = (props.inputController ?? {}) as ValidController
       return parseIStyles(props.style, controller)
     },
     get onClick() {

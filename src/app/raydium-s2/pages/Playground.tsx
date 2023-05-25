@@ -163,7 +163,7 @@ function SwitchExample() {
 
   useIntervalEffect(() => {
     setChecked((b) => !b)
-  }, 2000)
+  }, 800)
 
   return (
     <Switch
