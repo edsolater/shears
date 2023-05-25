@@ -36,7 +36,8 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
 
   return merged
 }
-function getPivPropsValue(objs: AnyObj[], key: keyof any) {
+
+export function getPivPropsValue(objs: AnyObj[], key: keyof any) {
   switch (key) {
     // -------- specific --------
     case 'children':

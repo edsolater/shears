@@ -1,9 +1,26 @@
-import { MayArray, flap } from '@edsolater/fnkit'
+import { MayArray, shakeNil } from '@edsolater/fnkit'
+import { pivPropsNames } from '../Piv'
 import { PivProps } from '../types/piv'
-import { mergeProps } from '../utils/mergeProps'
+import { getPivPropsValue } from '../utils/mergeProps'
 
 export type PivShadowProps<OriginalProps> = MayArray<Partial<Omit<OriginalProps, 'as' | 'children'>>>
 
-export function handleShadowProps<P extends Partial<PivProps<any>>>(props: P): Omit<P, 'shadowProps'> {
-  return 'shadowProps' in props ? mergeProps(props, ...flap(props.shadowProps)) : props
+export function handleShadowProps<P extends Partial<PivProps<any>>>(
+  props: P,
+  shadowPropNames: string[] = pivPropsNames
+): Omit<P, 'shadowProps'> {
+  const merged = Object.defineProperties(
+    {},
+    shadowPropNames.reduce((acc: any, key: any) => {
+      acc[key] = {
+        enumerable: true,
+        get() {
+          const candidates = shakeNil([props].concat(props.shadowProps))
+          return getPivPropsValue(candidates, key)
+        }
+      }
+      return acc
+    }, {} as PropertyDescriptorMap)
+  ) as Exclude<P, undefined>
+  return 'shadowProps' in props ? merged : props
 }

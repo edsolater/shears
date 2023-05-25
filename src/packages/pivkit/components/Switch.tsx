@@ -1,8 +1,7 @@
-import { Accessor, createEffect } from 'solid-js'
+import { Accessor, createMemo } from 'solid-js'
 import { DeKitProps, Piv, PivProps, UIKit, useKitProps } from '../../piv'
 import { createSyncSignal } from '../hooks/createSyncSignal'
 import { Accessify } from '../utils/accessifyProps'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
@@ -30,7 +29,8 @@ const selfProps = [
   'anatomy:AbsoluteCheckboxInput',
   'anatomy:SwitchThumb'
 ] satisfies (keyof SwitchProps)[]
-const needDeAccessifyPropNames = ['isChecked', 'isDefaultChecked'] satisfies (keyof SwitchProps)[]
+
+const accessifyPropNames = ['isChecked', 'isDefaultChecked'] satisfies (keyof SwitchProps)[]
 
 export type DefaultSwitchProps = typeof defaultProps
 
@@ -44,24 +44,24 @@ const defaultProps = {
 export function Switch(rawProps: SwitchProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, {
     defaultProps,
-    needAccessify: needDeAccessifyPropNames,
+    needAccessify: accessifyPropNames,
     selfProps: selfProps
   })
+
   const [isChecked, setIsChecked] = createSyncSignal({
     get: () => props.isChecked ?? props.isDefaultChecked,
     set(value) {
       props.onChange?.({ isChecked: value })
     }
   })
-  const { wrapperLabelStyleProps, switchThumbStyleProps } = createSwitchStyle({ props, isChecked })
-  // createEffect(() => {
-  //   console.trace('isChecked: ', isChecked())
-  // })
+
+  const { wrapperLabelStyleProps, switchThumbStyleProps } = useSwitchStyle({ props, isChecked })
+
   lazyLoadController({
     isChecked
   })
   return (
-    <Label shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:Label']]}>
+    <Label shadowProps={[wrapperLabelStyleProps(), shadowProps, props['anatomy:Label']]}>
       <AbsoluteCheckboxInput
         shadowProps={props['anatomy:AbsoluteCheckboxInput']}
         ariaLabel={props.ariaLabel}
@@ -72,14 +72,16 @@ export function Switch(rawProps: SwitchProps) {
       />
 
       {/* SwitchThumb */}
-      <Piv class='SwitchThumb' shadowProps={[switchThumbStyleProps, props['anatomy:SwitchThumb']]} />
+      <Piv class='SwitchThumb' shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]} />
     </Label>
   )
 }
 
-function createSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: Accessor<boolean> }) {
-  const wrapperLabelStyleProps: LabelProps = { icss: { width: '4em', height: '2em', background: 'gray' } }
-  const switchThumbStyleProps: PivProps = {
+/**
+ * hook for switch's style
+ */
+function useSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: Accessor<boolean> }) {
+  const switchThumbStyleProps: Accessor<PivProps> = createMemo(() => ({
     icss: {
       width: '2em',
       height: '2em',
@@ -87,7 +89,10 @@ function createSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: 
       translate: params.isChecked() ? '100%' : '0',
       transition: '300ms'
     }
-  }
+  }))
+  const wrapperLabelStyleProps: Accessor<LabelProps> = createMemo(() => ({
+    icss: { width: '4em', height: '2em', background: 'gray' }
+  }))
   return { wrapperLabelStyleProps, switchThumbStyleProps }
 }
 

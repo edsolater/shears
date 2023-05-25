@@ -150,7 +150,7 @@ function getParsedKitProps<
         ? mergePluginReturnedProps({ plugins: sortPluginByPriority(options!.plugin!), props })
         : props, // defined-time
     (props) => mergeProps(props, hasProperty(options, 'name') ? { class: options!.name } : {}), // defined-time
-    handleShadowProps, // outside-props-run-time // TODO: assume can't be promisify
+    (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
     handlePluginProps // outside-props-run-time // TODO: assume can't be promisify
   ) as any /* too difficult to type */
 
