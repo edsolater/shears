@@ -15,7 +15,7 @@ export interface SwitchProps extends UIKit<{ controller: SwitchController }> {
   /** for Chakra has, so i has */
   'anatomy:Label'?: LabelProps
   /** hidden HTML input(type=checkbox) for aria readbility */
-  'anatomy:AbsoluteCheckboxInput'?: AbsoluteCheckboxInputProps
+  'anatomy:AbsoluteCheckboxInput'?: HTMLCheckboxProps
   /** SwitchThumb */
   'anatomy:SwitchThumb'?: PivProps
 }
@@ -55,15 +55,15 @@ export function Switch(rawProps: SwitchProps) {
     }
   })
 
-  const { wrapperLabelStyleProps, switchThumbStyleProps } = useSwitchStyle({ props, isChecked })
+  const { wrapperLabelStyleProps, htmlCheckboxStyleProps, switchThumbStyleProps } = useSwitchStyle({ props, isChecked })
 
   lazyLoadController({
     isChecked
   })
   return (
     <Label shadowProps={[wrapperLabelStyleProps(), shadowProps, props['anatomy:Label']]}>
-      <AbsoluteCheckboxInput
-        shadowProps={props['anatomy:AbsoluteCheckboxInput']}
+      <HTMLCheckbox
+        shadowProps={[htmlCheckboxStyleProps(), props['anatomy:AbsoluteCheckboxInput']]}
         ariaLabel={props.ariaLabel}
         defaultChecked={props.isDefaultChecked}
         onClick={() => {
@@ -78,22 +78,47 @@ export function Switch(rawProps: SwitchProps) {
 }
 
 /**
- * hook for switch's style
+ * hook for switch's **style**
  */
 function useSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: Accessor<boolean> }) {
-  const switchThumbStyleProps: Accessor<PivProps> = createMemo(() => ({
-    icss: {
-      width: '2em',
-      height: '2em',
-      background: 'currentColor',
-      translate: params.isChecked() ? '100%' : '0',
-      transition: '300ms'
-    }
-  }))
-  const wrapperLabelStyleProps: Accessor<LabelProps> = createMemo(() => ({
-    icss: { width: '4em', height: '2em', background: 'gray' }
-  }))
-  return { wrapperLabelStyleProps, switchThumbStyleProps }
+  const wrapperLabelStyleProps = createMemo(
+    () =>
+      ({
+        icss: { width: '4em', height: '2em', background: 'gray', borderRadius: '999em', padding: 4 }
+      } satisfies Partial<LabelProps>)
+  )
+
+  const htmlCheckboxStyleProps = createMemo(
+    () =>
+      ({
+        icss: {
+          position: 'absolute',
+          border: '0px',
+          outline: 'none',
+          opacity: 0,
+          width: '1px',
+          height: '1px',
+          margin: '-1px',
+          overflow: 'hidden'
+        }
+      } satisfies Partial<HTMLCheckboxProps>)
+  )
+
+  const switchThumbStyleProps = createMemo(
+    () =>
+      ({
+        icss: {
+          height: '100%',
+          aspectRatio: '1',
+          borderRadius: '999em',
+          background: 'currentColor',
+          translate: params.isChecked() ? '100%' : '0',
+          transition: '300ms'
+        }
+      } satisfies Partial<PivProps>)
+  )
+
+  return { wrapperLabelStyleProps, htmlCheckboxStyleProps, switchThumbStyleProps }
 }
 
 interface LabelProps extends PivProps {}
@@ -113,27 +138,17 @@ function Label(rawProps: LabelProps) {
   )
 }
 
-interface AbsoluteCheckboxInputProps extends UIKit {
+interface HTMLCheckboxProps extends UIKit {
   ariaLabel?: string
   defaultChecked?: boolean
 }
 
-function AbsoluteCheckboxInput(rawProps: AbsoluteCheckboxInputProps) {
+function HTMLCheckbox(rawProps: HTMLCheckboxProps) {
   const { props } = useKitProps(rawProps)
   return (
     <Piv
-      class='AbsoluteCheckboxInput'
+      class='HTMLCheckbox'
       as={(parsedPivProps) => <input {...parsedPivProps} />}
-      icss={{
-        position: 'absolute',
-        border: '0px',
-        outline: 'none',
-        opacity: 0,
-        width: '1px',
-        height: '1px',
-        margin: '-1px',
-        overflow: 'hidden'
-      }}
       htmlProps={{
         type: 'checkbox',
         checked: props.defaultChecked,

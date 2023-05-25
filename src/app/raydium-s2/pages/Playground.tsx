@@ -161,15 +161,12 @@ function InputExample() {
 function SwitchExample() {
   const [checked, setChecked] = createSignal(false)
 
-  useIntervalEffect(() => {
-    setChecked((b) => !b)
-  }, 800)
 
   return (
     <Switch
       ariaLabel='theme-switch'
       isChecked={checked()}
-      style={({ isChecked }) => ({ color: isChecked() ? 'red' : 'blue' })} // <-- will cause rerender , why?
+      style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
     />
   )
 }
