@@ -2,6 +2,7 @@ import { Accessor, createEffect } from 'solid-js'
 import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
 import { createSyncSignal } from '../hooks/createSyncSignal'
 import { Accessify } from '../utils/accessifyProps'
+import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
@@ -37,6 +38,9 @@ const defaultProps = {
   isDefaultChecked: false
 } satisfies Partial<SwitchProps>
 
+/**
+ * Switch can illustrate a boolean value
+ */
 export function Switch(rawProps: SwitchProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, {
     defaultProps,
@@ -49,9 +53,9 @@ export function Switch(rawProps: SwitchProps) {
       props.onChange?.({ isChecked: value })
     }
   })
-  createEffect(() => {
-    console.trace('isChecked: ', isChecked())
-  })
+  // createEffect(() => {
+  //   console.trace('isChecked: ', isChecked())
+  // })
   lazyLoadController({
     isChecked
   })
@@ -65,7 +69,7 @@ export function Switch(rawProps: SwitchProps) {
       }}
       onClick={() => {
         console.log('222: ', 222)
-        setIsChecked(!isChecked())
+        setIsChecked((b) => !b)
       }}
     >
       <AbsoluteCheckboxInput
@@ -85,7 +89,6 @@ export function Switch(rawProps: SwitchProps) {
           translate: isChecked() ? '100%' : '0', //FIXME: why not work?
           transition: '300ms'
         }}
-        
       />
     </Label>
   )
@@ -97,7 +100,13 @@ interface LabelProps extends PivProps {}
  */
 function Label(rawProps: LabelProps) {
   const { props } = useKitProps(rawProps)
-  return <Piv class='Label' as={(parsedPivProps) => <label {...parsedPivProps} />} shadowProps={props} />
+  return (
+    <Piv
+      class='Label'
+      as={(parsedPivProps) => <label {...parsedPivProps} />} // why set as will render twice
+      shadowProps={props}
+    />
+  )
 }
 
 interface AbsoluteCheckboxInputProps extends UIKit {
