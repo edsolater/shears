@@ -67,15 +67,14 @@ export function Switch(rawProps: SwitchProps) {
         height: '2em',
         background: 'gray'
       }}
-      onClick={() => {
-        console.log('222: ', 222)
-        setIsChecked((b) => !b)
-      }}
     >
       <AbsoluteCheckboxInput
         shadowProps={props['anatomy:AbsoluteCheckboxInput']}
         ariaLabel={props.ariaLabel}
         defaultChecked={props.isDefaultChecked}
+        onClick={({ ev }) => {
+          setIsChecked((b) => !b)
+        }}
       />
 
       {/* SwitchThumb */}
@@ -97,6 +96,8 @@ export function Switch(rawProps: SwitchProps) {
 interface LabelProps extends PivProps {}
 /**
  * created for form widget component
+ *
+ * !`<label>` can transpond click/focus event for inner `<Input>`-like Node
  */
 function Label(rawProps: LabelProps) {
   const { props } = useKitProps(rawProps)

@@ -31,7 +31,9 @@ export function parsePivProps(rawProps: PivProps<any>) {
     get style() {
       return parseIStyles(props.style, controller)
     },
-    onClick: 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined,
+    get onClick() {
+      return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
+    },
     get children() {
       return applyPivController(props.children, controller)
     }

@@ -7,7 +7,7 @@ import { IStyle } from '../propHandlers/istyle'
 import { Plugin } from '../propHandlers/plugin'
 import { ControlledChild, HTMLTag, RawChild, ValidController } from './tools'
 
-export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = any> {
+export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> {
   /** @example
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */

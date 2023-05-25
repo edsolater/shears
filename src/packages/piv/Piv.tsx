@@ -31,7 +31,8 @@ export const Piv = <TagName extends keyof HTMLElementTagNameMap = keyof HTMLElem
 }
 
 function handleNormalPivProps(props: Omit<PivProps<any>, 'plugin' | 'shadowProps'>) {
-  return 'as' in props ? <Dynamic component={props.as} {...parsePivProps(props)} /> : <div {...parsePivProps(props)} />
+  const parsedPivProps = parsePivProps(props)
+  return 'as' in props ? <Dynamic component={props.as} {...parsedPivProps} /> : <div {...parsedPivProps} />
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any>): JSXElement {
