@@ -1,6 +1,6 @@
+import { addDefault } from '@edsolater/fnkit'
 import { Accessor, AccessorArray, createEffect, on, onCleanup } from 'solid-js'
 import { createRef } from './createRef'
-import { addDefault } from '@edsolater/fnkit'
 
 /**
  * Animates an element's movement when its position changes.
@@ -15,40 +15,41 @@ export function makeElementMoveSmooth(options: {
 }) {
   // TODO: addDefault should also accept undefined
   // TODO: addDefault should also be solid-js friendly, that means it should not access object property
-  const animateOptions = addDefault(options.animateOptions ?? {}, { duration: 1200, easing: 'ease-in-out' })
+  const animateOptions = addDefault(options.animateOptions ?? {}, { duration: 200, easing: 'linear' })
 
   const [squareRef, setSquareRef] = createRef<HTMLElement>()
 
-  let fromRectPositon: DOMRect | undefined = undefined
+  let fromX: DOMRect['x'] | undefined = undefined
+  let fromY: DOMRect['y'] | undefined = undefined
 
   // position change
   createEffect(
     on(options.observeOn, () => {
       const el = squareRef()
       if (!el) return
-      const toRect = el.getBoundingClientRect()
-      let animationControl: Animation | undefined
-      console.log('fromRectPositon: ', fromRectPositon?.x)
-      if (fromRectPositon && toRect && hasPositionChanged(fromRectPositon, toRect)) {
-        const deltaX = toRect.x - fromRectPositon.x
-        const deltaY = toRect.y - fromRectPositon.y
-        animationControl = el.animate(
+      const to = el.getBoundingClientRect()
+      const deltaX = fromX != null ? to.x - fromX : undefined
+      const deltaY = fromY != null ? to.y - fromY : undefined
+      const animationControl =
+        deltaX != null &&
+        deltaY != null &&
+        el.animate(
           [{ transform: `translate(${-deltaX}px, ${-deltaY}px)` }, { transform: '', offset: 1 }],
           animateOptions // iteration 1 can use to moke transition
         )
-      }
 
       onCleanup(() => {
         if (!animationControl || animationControl.playState === 'finished') {
           // record for next frame
-          fromRectPositon = toRect
-          console.log('set 0 fromRectPositon: ', fromRectPositon?.x)
+          fromX = to.x
+          fromY = to.y
         } else {
           // record for next frame
-          // FIXME: too late, next frame is start 
-          fromRectPositon = el.getBoundingClientRect()
-          console.log('set 1 fromRectPositon: ', fromRectPositon)
-          console.log('animationControl.playState: ', animationControl.playState)
+          // FIXME: too late, next frame is start
+          const time = animationControl.currentTime ?? undefined
+          const percent = time && time / animateOptions.duration // if it's not linear, this time percent is not exact enough
+          fromX = fromX && percent && fromX + deltaX * percent
+          fromY = fromY && percent && fromY + deltaY * percent
           animationControl?.cancel()
         }
       })
