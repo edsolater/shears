@@ -1,10 +1,11 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv/hooks/useComponentController'
-import { Box, Button, List, Text, createRef, icss_col, icss_row } from '../../../packages/pivkit'
+import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/pivkit'
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
+import { Switch } from '../../../packages/pivkit/components/Switch'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
 import { CircularProgress } from '../components/CircularProgress'
@@ -12,7 +13,6 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
-import { Switch, SwitchController } from '../../../packages/pivkit/components/Switch'
 
 export function PlaygroundPage() {
   return (
@@ -166,7 +166,7 @@ function SwitchExample() {
     <Switch
       ariaLabel='theme-switch'
       isChecked={checked()}
-      style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
+      style={({ isChecked }) => ({ color: isChecked() ? 'red' : 'blue' })} // <-- will cause rerender , why?
     />
   )
 }

@@ -1,5 +1,6 @@
 import { Accessor, AccessorArray, createEffect, on, onCleanup } from 'solid-js'
 import { createRef } from './createRef'
+import { addDefault } from '@edsolater/fnkit'
 
 /**
  * Animates an element's movement when its position changes.
@@ -12,7 +13,9 @@ export function makeElementMoveSmooth(options: {
   animateOptions?: KeyframeEffectOptions
   observeOn: Accessor<any> | AccessorArray<any>
 }) {
-  const animateOptions = { duration: 160, easing: 'ease-in-out', ...options?.animateOptions  }
+  // TODO: addDefault should also accept undefined
+  // TODO: addDefault should also be solid-js friendly, that means it should not access object property
+  const animateOptions = addDefault(options.animateOptions ?? {}, { duration: 1200, easing: 'ease-in-out' })
 
   const [squareRef, setSquareRef] = createRef<HTMLElement>()
 
@@ -25,6 +28,7 @@ export function makeElementMoveSmooth(options: {
       if (!el) return
       const toRect = el.getBoundingClientRect()
       let animationControl: Animation | undefined
+      console.log('fromRectPositon: ', fromRectPositon?.x)
       if (fromRectPositon && toRect && hasPositionChanged(fromRectPositon, toRect)) {
         const deltaX = toRect.x - fromRectPositon.x
         const deltaY = toRect.y - fromRectPositon.y
@@ -38,9 +42,13 @@ export function makeElementMoveSmooth(options: {
         if (!animationControl || animationControl.playState === 'finished') {
           // record for next frame
           fromRectPositon = toRect
+          console.log('set 0 fromRectPositon: ', fromRectPositon?.x)
         } else {
           // record for next frame
+          // FIXME: too late, next frame is start 
           fromRectPositon = el.getBoundingClientRect()
+          console.log('set 1 fromRectPositon: ', fromRectPositon)
+          console.log('animationControl.playState: ', animationControl.playState)
           animationControl?.cancel()
         }
       })
