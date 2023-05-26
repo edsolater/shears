@@ -2,6 +2,7 @@ import { Accessor, createMemo } from 'solid-js'
 import { DeKitProps, Piv, PivProps, UIKit, useKitProps } from '../../piv'
 import { createSyncSignal } from '../hooks/createSyncSignal'
 import { Accessify } from '../utils/accessifyProps'
+import { makeElementMoveSmooth } from '../hooks/makeElementMoveSmooth'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
@@ -57,9 +58,12 @@ export function Switch(rawProps: SwitchProps) {
 
   const { wrapperLabelStyleProps, htmlCheckboxStyleProps, switchThumbStyleProps } = useSwitchStyle({ props, isChecked })
 
+  const { setMotionTargetRef } = makeElementMoveSmooth({ observeOn: isChecked })
+
   lazyLoadController({
     isChecked
   })
+
   return (
     <Label shadowProps={[wrapperLabelStyleProps(), shadowProps, props['anatomy:Label']]}>
       <HTMLCheckbox
@@ -72,7 +76,11 @@ export function Switch(rawProps: SwitchProps) {
       />
 
       {/* SwitchThumb */}
-      <Piv class='SwitchThumb' shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]} />
+      <Piv
+        class='SwitchThumb'
+        domRef={setMotionTargetRef}
+        shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
+      />
     </Label>
   )
 }
@@ -112,7 +120,8 @@ function useSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: Acc
           aspectRatio: '1',
           borderRadius: '999em',
           background: 'currentColor',
-          translate: params.isChecked() ? '100%' : '0',
+          // translate: params.isChecked() ? '100%' : '0',
+          marginLeft: params.isChecked() ? 'auto' : '0',
           transition: '300ms'
         }
       } satisfies Partial<PivProps>)
