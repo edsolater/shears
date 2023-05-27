@@ -3,10 +3,10 @@ import { HTMLTag, LoadController, ValidController } from '../types/tools'
 import { JSX } from 'solid-js'
 import { objectMerge } from '../../fnkit/objectMerge'
 
-export type HTMLProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> = MayArray<
+export type HTMLProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown> = MayArray<
   LoadController<JSX.IntrinsicElements[TagName] | undefined, Controller>
 >
-export function parseHTMLProps<Controller extends ValidController = {}>(
+export function parseHTMLProps<Controller extends ValidController | unknown = unknown>(
   htmlProps: HTMLProps,
   controller: Controller = {} as Controller
 ) {

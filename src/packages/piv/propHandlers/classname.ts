@@ -1,12 +1,12 @@
 import { flap, isObjectLike, isTruthy, MayDeepArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { LoadController, ValidController } from '../types/tools'
 
-export type ClassName<Controller extends ValidController = {}> = LoadController<
+export type ClassName<Controller extends ValidController | unknown = unknown> = LoadController<
   any | { [classname: string]: LoadController<boolean, Controller> },
   Controller
 >
 
-export function classname<Controller extends ValidController = {}>(
+export function classname<Controller extends ValidController | unknown = unknown>(
   classNameArray: MayDeepArray<ClassName<Controller>>,
   controller?: Controller
 ) {

@@ -7,7 +7,7 @@ import { IStyle } from '../propHandlers/istyle'
 import { Plugin } from '../propHandlers/plugin'
 import { ControlledChild, HTMLTag, RawChild, ValidController } from './tools'
 
-export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = {}> {
+export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown> {
   /** @example
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */
@@ -60,7 +60,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    */
   htmlProps?: HTMLProps<TagName, Controller>
 
-  children?: ControlledChild<Controller>
+  children?: ControlledChild<unknown extends Controller ? any : Controller> // any is convient for <Piv>
 
   /**
    * auto merge by shadowProps
@@ -96,3 +96,5 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
 export type DangerousWrapperNodeFn = (node: JSXElement) => JSXElement // change outter wrapper element
 
 export type CRef<T> = (el: T) => void // not right
+
+type A = unknown extends unknown ? true : false

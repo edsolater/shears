@@ -19,8 +19,8 @@ export type ExtendsProps<
   P4 extends ValidProps = {}
 > = P1 & Omit<P2, keyof P1> & Omit<P3, keyof P1 | keyof P2> & Omit<P4, keyof P1 | keyof P2 | keyof P3>
 
-export type RawChild = Exclude<JSXElement, Array<any>> | string | number | boolean | null | undefined
-export type ControlledChild<Controller extends ValidController = {}> =
+export type RawChild = JSXElement | string | number | boolean | null | undefined
+export type ControlledChild<Controller extends ValidController | unknown = unknown> =
   | RawChild
   | ((controller: Controller) => RawChild)
   | ControlledChild<Controller>[]
@@ -34,4 +34,4 @@ export type SignalizeProps<T extends object | undefined> = {
   [K in keyof T]: T[K] extends AnyFn ? T[K] : () => T[K]
 }
 
-export type LoadController<Target, Controller extends ValidController = {}> = MayFn<Target, [Controller]>
+export type LoadController<Target, Controller extends ValidController | unknown = unknown> = MayFn<Target, [Controller]>

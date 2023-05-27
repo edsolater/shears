@@ -1,16 +1,16 @@
-import { P } from 'vitest/dist/types-b7007192'
-import { KitProps, Piv, useKitProps } from '../../piv'
+import { KitProps, Piv, UIKit, useKitProps } from '../../piv'
+import { Accessify } from '../utils/accessifyProps'
 
-export interface ImageProps {
+export interface ImageProps extends UIKit<{ controller: ImageController }> {
   /**
    *  also accept multi srcs
    */
-  src?: string | string[]
-  fallbackSrc?: string
+  src?: Accessify<string | string[] | undefined, ImageController>
+  fallbackSrc?: Accessify<string | undefined, ImageController>
   /**
    *  for readability
    */
-  alt?: string
+  alt?: Accessify<string | undefined, ImageController>
 }
 
 export interface ImageController {}
@@ -22,7 +22,7 @@ export type DefaultImageProps = typeof defaultProps
  * if for layout , don't render important content in Box
  * @todo add fallbackSrc
  */
-export function Image(rawProps: KitProps<ImageProps>) {
+export function Image(rawProps: ImageProps) {
   const { props } = useKitProps(rawProps, { defaultProps })
   /* ---------------------------------- props --------------------------------- */
   return (

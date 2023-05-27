@@ -4,7 +4,7 @@ import { ValidController } from '../../piv/types/tools'
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
-export type AccessifyProps<P extends AnyObj, Controller extends ValidController = {}> = {
+export type AccessifyProps<P extends AnyObj, Controller extends ValidController | unknown = unknown> = {
   [K in keyof P]: K extends `on${string}` | `domRef` | `controllerRef`
     ? P[K]
     : P[K] extends Accessify<any, any>
@@ -12,7 +12,7 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
     : Accessify<P[K], Controller>
 }
 
-export type Accessify<V, Controller extends ValidController = {}> = V | ((controller: Controller) => V)
+export type Accessify<V, Controller extends ValidController | unknown = unknown> = V | ((controller: Controller) => V)
 
 export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 
@@ -26,7 +26,7 @@ export type DeAccessifyProps<P> = {
 /**
  * propertyName start with 'on' will treate as function
  */
-export function useAccessifiedProps<P extends AnyObj, Controller extends ValidController = {}>(
+export function useAccessifiedProps<P extends AnyObj, Controller extends ValidController | unknown = unknown>(
   props: P,
   controller?: Controller,
   /** default is on* and domRef and controllerRef, but you can add more */

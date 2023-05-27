@@ -1,13 +1,13 @@
-import { shrinkFn } from '@edsolater/fnkit'
-import { createContext, createEffect, splitProps, useContext } from 'solid-js'
+import { createContext, createEffect, useContext } from 'solid-js'
 import { Piv, PivProps } from '../../piv'
-import { KitProps, useKitProps } from '../../piv/createKit'
+import { KitProps, UIKit, useKitProps } from '../../piv/createKit'
 import { createToggle } from '../hooks/createToggle'
+import { Accessify } from '../utils/accessifyProps'
 
-export interface CollapseProps {
+export interface CollapseProps extends UIKit<{ controller: CollapseController; htmlPropsTagName: 'details' }> {
   /** TODO: open still can't auto lock the trigger not controled component now */
-  open?: boolean
-  defaultOpen?: boolean
+  open?: Accessify<boolean | undefined, CollapseController>
+  defaultOpen?: Accessify<boolean | undefined, CollapseController>
   collapseDirection?: 'down' | 'up'
   onOpen?(): void
   onClose?(): void
@@ -24,9 +24,7 @@ export interface CollapseController {
 
 const CollapseContext = createContext<CollapseController>({} as CollapseController, { name: 'CollapseController' })
 
-export function Collapse(
-  rawProps: KitProps<CollapseProps, { controller: CollapseController; htmlPropsTagName: 'details' }>
-) {
+export function Collapse(rawProps: CollapseProps) {
   const { props } = useKitProps(rawProps, { controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(props.open ?? props.defaultOpen ?? false, {
@@ -75,10 +73,11 @@ export function CollapseFace(
   const controller = useContext(CollapseContext)
   const { props } = useKitProps(rawProps, { controller: () => controller })
   return (
-    <Piv<'summary'>
+    <Piv<'summary', CollapseController>
       as={(parsedPivProps) => <summary {...parsedPivProps} />}
       shadowProps={props}
       icss={{ listStyle: 'none' }}
+      inputController={controller}
     >
       {props.children}
     </Piv>

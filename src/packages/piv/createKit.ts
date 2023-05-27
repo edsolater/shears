@@ -86,7 +86,7 @@ export type UIKit<
 
 export type KitPropsOptions<
   KitProps extends ValidProps,
-  Controller extends ValidController = {},
+  Controller extends ValidController | unknown = unknown,
   DefaultProps extends Partial<KitProps> = {}
 > = {
   name?: string
@@ -121,7 +121,7 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
  */
 function getParsedKitProps<
   RawProps extends ValidProps,
-  Controller extends ValidController = {},
+  Controller extends ValidController | unknown = unknown,
   DefaultProps extends Partial<RawProps> = {}
 >(
   // too difficult to type here
@@ -170,7 +170,7 @@ export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>
  */
 export function useKitProps<
   P extends ValidProps,
-  Controller extends ValidController = {},
+  Controller extends ValidController | unknown = unknown,
   DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {}
 >(
   props: P,
@@ -194,10 +194,11 @@ export function useKitProps<
 /**
  * section 2: load controller
  */
-function composeController<RawProps extends ValidProps, Controller extends ValidController>() {
+function composeController<RawProps extends ValidProps, Controller extends ValidController | unknown>() {
   const controllerFaker = new Faker<(props: ParsedKitProps<RawProps>) => Controller>()
   const loadController = (inputController: Controller | ((props: ParsedKitProps<RawProps>) => Controller)) => {
     const controllerCreator = typeof inputController === 'function' ? inputController : () => inputController
+    //@ts-expect-error unknown ?
     controllerFaker.load(controllerCreator)
   }
   return { loadController, getControllerCreator: (props: ParsedKitProps<RawProps>) => controllerFaker.spawn()(props) }
@@ -205,7 +206,7 @@ function composeController<RawProps extends ValidProps, Controller extends Valid
 
 export type DeKitProps<
   P extends ValidProps,
-  Controller extends ValidController = {},
+  Controller extends ValidController | unknown = unknown,
   DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {}
 > = ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
   Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>

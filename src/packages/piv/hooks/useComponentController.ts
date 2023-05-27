@@ -3,14 +3,17 @@ import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { ValidController } from '../types/tools'
 import { createEffect, onCleanup } from 'solid-js'
 
-const recordedControllers = new Subscribable<WeakerMap<string, ValidController>>()
+const recordedControllers = new Subscribable<WeakerMap<string, ValidController | unknown>>()
 
 /**
  * only use it in {link useKitProps}
  * @param proxyController provide controller
  * @param id id for {@link useComponentController}
  */
-export function registerControllerInCreateKit(proxyController: ValidController | undefined, id: string | undefined) {
+export function registerControllerInCreateKit(
+  proxyController: ValidController | unknown | undefined,
+  id: string | undefined
+) {
   if (!proxyController) return
   if (!id) return
   createEffect(() => {
@@ -21,7 +24,10 @@ export function registerControllerInCreateKit(proxyController: ValidController |
   })
 }
 
-export function recordController<Controller extends ValidController>(id: string, proxyController: Controller) {
+export function recordController<Controller extends ValidController | unknown>(
+  id: string,
+  proxyController: Controller
+) {
   recordedControllers.inject((m) => (m ?? new WeakerMap()).set(id, proxyController))
 }
 
@@ -39,7 +45,7 @@ export function unregisterController(id?: string) {
  * **Hook:** get target component's controller
  * @param id component id
  */
-export function useComponentController<Controller extends ValidController>(id: string) {
+export function useComponentController<Controller extends ValidController | unknown>(id: string) {
   let recordController: Controller | undefined = undefined
   const controller = new Proxy(
     {},

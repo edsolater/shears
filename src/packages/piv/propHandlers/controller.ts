@@ -3,7 +3,7 @@ import { KitProps } from '../createKit'
 import { ValidController } from '../types/tools'
 import { JSXElement } from 'solid-js'
 
-export function loadPropsControllerRef<Controller extends ValidController>(
+export function loadPropsControllerRef<Controller extends ValidController | unknown>(
   props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>,
   providedController: Controller
 ) {
@@ -13,7 +13,9 @@ export function loadPropsControllerRef<Controller extends ValidController>(
 }
 
 /** for aviod access controller too early */
-export function toProxifyController<Controller extends ValidController>(getController: () => Controller): Controller {
+export function toProxifyController<Controller extends ValidController | unknown>(
+  getController: () => Controller
+): Controller {
   let controller: Controller | undefined = undefined
   return new Proxy(
     {},
@@ -29,7 +31,7 @@ export function toProxifyController<Controller extends ValidController>(getContr
 }
 
 export function parsePivChildren<
-  Controller extends ValidController,
+  Controller extends ValidController | unknown,
   P extends unknown | ((controller: Controller) => unknown)
 >(originalChildren: P, controller: Controller = {} as Controller): JSXElement {
   return isArray(originalChildren)

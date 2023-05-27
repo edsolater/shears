@@ -2,14 +2,14 @@ import { filter, flap, flapDeep, isObject, MayArray, mergeObjectsWithConfigs, sh
 import { css, CSSObject as _CSSObject } from '@emotion/css'
 import { LoadController, ValidController } from '../types/tools'
 
-export type ICSSObject<Controller extends ValidController = {}> = LoadController<CSSObject, Controller> // rename  for ICSSObject may be a superset of CSSObject
+export type ICSSObject<Controller extends ValidController | unknown = unknown> = LoadController<CSSObject, Controller> // rename  for ICSSObject may be a superset of CSSObject
 export type CSSObject = _CSSObject
 
-export type ICSS<Controller extends ValidController = {}> = MayArray<
+export type ICSS<Controller extends ValidController | unknown = unknown> = MayArray<
   LoadController<boolean | string | number | null | undefined, Controller> | ICSSObject<Controller>
 >
 
-export function parseCSSToString<Controller extends ValidController = {}>(
+export function parseCSSToString<Controller extends ValidController | unknown = unknown>(
   cssProp: ICSS<Controller>,
   controller: Controller = {} as Controller
 ) {
@@ -25,7 +25,7 @@ export function parseCSSToString<Controller extends ValidController = {}>(
 //   return icsses.length <= 1 ? icsses[0] : icsses.flat()
 // }
 
-export function compressICSSToObj<Controller extends ValidController = {}>(
+export function compressICSSToObj<Controller extends ValidController | unknown = unknown>(
   icss: ICSS<Controller>
 ): ICSSObject<Controller> {
   return (controller: Controller) => {
@@ -38,7 +38,7 @@ export function compressICSSToObj<Controller extends ValidController = {}>(
   }
 }
 
-export function mergeICSSObject<Controller extends ValidController = {}>(
+export function mergeICSSObject<Controller extends ValidController | unknown = unknown>(
   ...icsses: ICSSObject<Controller>[]
 ): ICSSObject<Controller> {
   return (controller: Controller) =>
