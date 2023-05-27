@@ -1,8 +1,8 @@
 import { flap, omit } from '@edsolater/fnkit'
-import { createComponent, JSX, JSXElement } from 'solid-js'
+import { JSXElement, createComponent } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
-import { PivProps } from './types/piv'
 import { parsePivProps } from './propHandlers/parsePivProps'
+import { PivProps } from './types/piv'
 
 export const pivPropsNames = [
   'as',
@@ -15,7 +15,10 @@ export const pivPropsNames = [
   'plugin',
   'domRef',
   'shadowProps',
-  'style'
+  'style',
+  'debugLog',
+  'inputController',
+  'id'
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <TagName extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap>(
@@ -25,7 +28,7 @@ export const Piv = <TagName extends keyof HTMLElementTagNameMap = keyof HTMLElem
   // if (!props) return null // just for type, logicly it will never happen
 
   // handle have return null
-  return props.dangerousRenderWrapperNode
+  return 'dangerousRenderWrapperNode' in props
     ? handleDangerousWrapperPluginsWithChildren(props)
     : handleNormalPivProps(props)
 }
@@ -41,3 +44,4 @@ function handleDangerousWrapperPluginsWithChildren(props: PivProps<any>): JSXEle
     createComponent(props.as ?? Piv, omit(props, 'dangerousRenderWrapperNode'))
   )
 }
+

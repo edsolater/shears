@@ -1,6 +1,7 @@
-import { AnyFn, hasProperty, shrinkFn } from '@edsolater/fnkit'
+import { AnyFn, hasProperty, isArray, isFunction, shrinkFn } from '@edsolater/fnkit'
 import { KitProps } from '../createKit'
 import { ValidController } from '../types/tools'
+import { JSXElement } from 'solid-js'
 
 export function loadPropsControllerRef<Controller extends ValidController>(
   props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>,
@@ -27,10 +28,22 @@ export function toProxifyController<Controller extends ValidController>(getContr
   ) as Controller
 }
 
-export function applyPivController<
+export function parsePivChildren<
   Controller extends ValidController,
   P extends unknown | ((controller: Controller) => unknown)
->(to: P, controller: Controller = {} as Controller): Exclude<P, AnyFn> {
-  // @ts-expect-error no need to check
-  return shrinkFn(to, [controller])
+>(originalChildren: P, controller: Controller = {} as Controller): JSXElement {
+  return isArray(originalChildren)
+    ? originalChildren.map((i) => parsePivChildren(i, controller))
+    : isNormalControllerChildren(originalChildren)
+    ? originalChildren(controller)
+    : originalChildren
+}
+
+/**
+ * solid children is normal children, so must have a judger function to distingrish normal function and solidjs children function
+ * @param node children
+ * @returns
+ */
+function isNormalControllerChildren(node: unknown): node is AnyFn {
+  return isFunction(node) && !node.name.includes('readSignal' /*  learn by window console.log */)
 }

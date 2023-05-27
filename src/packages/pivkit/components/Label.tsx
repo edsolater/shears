@@ -1,7 +1,7 @@
-import { Piv, PivProps, useKitProps } from '../../piv';
+import { Piv, PivProps, UIKit, useKitProps } from '../../piv';
 
 
-export interface LabelProps extends PivProps { }
+export interface LabelProps extends UIKit<{ controller: {sdf:number} }> { }
 /**
  * created for form widget component
  *

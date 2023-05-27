@@ -161,6 +161,9 @@ function InputExample() {
 function SwitchExample() {
   const [checked, setChecked] = createSignal(false)
 
+  useIntervalEffect(() => {
+    setChecked((b) => !b)
+  }, 1200)
 
   return (
     <Switch

@@ -60,7 +60,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    */
   htmlProps?: HTMLProps<TagName, Controller>
 
-  children?: RawChild | ControlledChild<Controller>
+  children?: ControlledChild<Controller>
 
   /**
    * auto merge by shadowProps
@@ -86,7 +86,11 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * auto merge by shadowProps
    * change outter wrapper element
    */
+  // 'render:outsideWrapper': MayArray<DangerousWrapperNodeFn>
   dangerousRenderWrapperNode?: MayArray<DangerousWrapperNodeFn>
+
+  'render:prepend'?: MayArray<ControlledChild<Controller>>
+  'render:append'?: MayArray<ControlledChild<Controller>>
 }
 
 export type DangerousWrapperNodeFn = (node: JSXElement) => JSXElement // change outter wrapper element

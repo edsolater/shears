@@ -3,17 +3,29 @@ import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'
 import { classname } from './classname'
-import { applyPivController } from './controller'
+import { parsePivChildren } from './controller'
 import { mergeObjects, parseHTMLProps } from './htmlProps'
 import { parseCSSToString } from './icss'
 import { parseIStyles } from './istyle'
 import { parseOnClick } from './onClick'
 import { handlePluginProps } from './plugin'
 import { handleShadowProps } from './shadowProps'
+import { children } from 'solid-js'
 
+/**
+ * Parses the PivProps object and returns an object with the parsed properties.
+ * @param rawProps - The raw PivProps object to be parsed.
+ * @returns An object with the parsed properties.
+ */
 // TODO: props should be lazy load, props.htmlProps should also be lazy load
 export function parsePivProps(rawProps: PivProps<any>) {
-  const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
+  const props = pipe(
+    rawProps as Partial<PivProps>,
+    handleShadowProps,
+    handlePluginProps,
+    parsePivRenderPrependChildren,
+    parsePivRenderAppandChildren
+  )
   const controller = (props.inputController ?? {}) as ValidController
   debugLog(rawProps, props, controller)
   return {
@@ -37,9 +49,53 @@ export function parsePivProps(rawProps: PivProps<any>) {
       return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
     },
     get children() {
-      return applyPivController(props.children, controller)
+      return parsePivChildren(props.children, controller)
     }
   }
+}
+
+/**
+ * Parses the PivProps's render:prepend.
+ * @param props - The raw PivProps object to be parsed.
+ * @param controller - The controller object to be used for parsing.
+ * @returns new props with the parsed properties and prepended children.
+ */
+function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
+  props: T
+): Omit<T, 'render:prepend'> {
+  if (!('render:prepend' in props)) return props
+  return Object.defineProperty(props, 'children', {
+    enumerable: true,
+    writable: true,
+    configurable: true,
+    get() {
+      // @ts-expect-error no need to be JSXElement
+      const newChildren = children(() => flap(props['render:prepend']).concat(props.children))
+      return newChildren
+    }
+  })
+}
+
+/**
+ * Parses the PivProps's render:append.
+ * @param props - The raw PivProps object to be parsed.
+ * @param controller - The controller object to be used for parsing.
+ * @returns new props with the parsed properties and appended children.
+ */
+function parsePivRenderAppandChildren<T extends Partial<PivProps<any, any>>>(
+  props: T
+): Omit<T, 'render:append'> {
+  if (!('render:append' in props)) return props
+  return Object.defineProperty(props, 'children', {
+    enumerable: true,
+    writable: true,
+    configurable: true,
+    get() {
+      // @ts-expect-error no need to be JSXElement
+      const newChildren = children(() => flat(props.children).concat(flap(props['render:append'])))
+      return newChildren
+    }
+  })
 }
 
 /**
@@ -75,6 +131,9 @@ function debugLog(rawProps: PivProps<any>, props: PivProps<any>, controller: Val
         props.onClick,
         'onClick' in props && parseOnClick(props.onClick!, controller)
       )
+    }
+    if (props.debugLog.includes('children')) {
+      console.debug('children', props.children)
     }
   }
 }

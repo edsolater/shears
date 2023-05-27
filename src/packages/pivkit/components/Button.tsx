@@ -4,7 +4,7 @@ import { objectMerge } from '../../fnkit/objectMerge'
 import { addDefaultProps, mergeProps } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { Piv } from '../../piv/Piv'
-import { applyPivController } from '../../piv/propHandlers/controller'
+import { parsePivChildren } from '../../piv/propHandlers/controller'
 import { compressICSSToObj, ICSS } from '../../piv/propHandlers/icss'
 import { omit } from '../../piv/utils/omit'
 import { createRef } from '../hooks/createRef'
@@ -186,7 +186,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     >
       {props.prefix}
       {/* TODO: no need. this is because kitProp don't support Access and Deaccess */}
-      {applyPivController(props.children, mergedController)}
+      {parsePivChildren(props.children, mergedController)}
       {props.suffix}
     </Piv>
   )

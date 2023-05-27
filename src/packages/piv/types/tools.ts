@@ -1,5 +1,5 @@
 import { AnyFn, AnyObj, MayFn } from '@edsolater/fnkit'
-import { JSX } from 'solid-js'
+import { JSX, JSXElement } from 'solid-js'
 
 export type ValidProps = Record<string, Exclude<any, Promise<any>>>
 
@@ -19,8 +19,11 @@ export type ExtendsProps<
   P4 extends ValidProps = {}
 > = P1 & Omit<P2, keyof P1> & Omit<P3, keyof P1 | keyof P2> & Omit<P4, keyof P1 | keyof P2 | keyof P3>
 
-export type RawChild = JSX.Element | string | number | boolean | null | undefined
-export type ControlledChild<Controller extends ValidController = {}> = (controller: Controller) => RawChild
+export type RawChild = Exclude<JSXElement, Array<any>> | string | number | boolean | null | undefined
+export type ControlledChild<Controller extends ValidController = {}> =
+  | RawChild
+  | ((controller: Controller) => RawChild)
+  | ControlledChild<Controller>[]
 /**
  * recursively
  * we use signal to make reading code clearer, as getter is magic, it's confusing in large APP, so
