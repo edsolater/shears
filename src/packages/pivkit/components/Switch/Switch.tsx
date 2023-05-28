@@ -73,6 +73,7 @@ export function Switch(rawProps: SwitchProps) {
     <Label shadowProps={[wrapperLabelStyleProps(), shadowProps, props['anatomy:Label']]}>
       <HTMLCheckbox
         shadowProps={[htmlCheckboxStyleProps(), props['anatomy:AbsoluteCheckboxInput']]}
+        innerController={switchController}
         ariaLabel={props.ariaLabel}
         defaultChecked={props.isDefaultChecked}
         onClick={() => {
@@ -82,10 +83,11 @@ export function Switch(rawProps: SwitchProps) {
 
       {/* SwitchThumb */}
       <Piv
+        shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
+        innerController={switchController}
         class='SwitchThumb'
         domRef={setMotionTargetRef}
-        innerController={switchController}
-        shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
+        icss={{ display: 'grid', placeContent: 'center' }}
       />
     </Label>
   )

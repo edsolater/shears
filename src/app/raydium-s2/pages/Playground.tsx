@@ -31,7 +31,7 @@ function PlaygoundList() {
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
         padding: '16px 32px 0',
-        gap: 16
+        gap: 16,
       }}
     >
       <ExamplePanel name='IntervalCircle'>
@@ -119,7 +119,7 @@ function CSSTransitionExample() {
     onAfterEnter() {},
     onBeforeEnter() {},
     fromProps: { icss: { width: '100px' } },
-    toProps: { icss: { width: '200px' } }
+    toProps: { icss: { width: '200px' } },
   })
 
   // createEffect(() => {
@@ -174,7 +174,7 @@ function SwitchExample() {
               color: 'dodgerblue',
               width: '0.5em',
               height: '0.5em',
-              backgroundColor: 'currentcolor'
+              backgroundColor: 'currentcolor',
             }}
           ></Piv>
         }
@@ -183,17 +183,19 @@ function SwitchExample() {
         ariaLabel='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-        anatomy:SwitchThumb={{ // it can be plugin
+        anatomy:SwitchThumb={{
+          // TODO: it can be plugin
           'render:appendChild': ({ isChecked }) => (
             <Piv
               icss={{
                 color: isChecked() ? 'dodgerblue' : 'crimson',
                 width: '0.5em',
                 height: '0.5em',
-                backgroundColor: 'currentcolor'
+                backgroundColor: 'currentcolor',
+                transition: '600ms',
               }}
             ></Piv>
-          )
+          ),
         }}
       />
     </>
@@ -263,7 +265,7 @@ function ListExample() {
     { name: 'aw', count: 26 + 23 },
     { name: 'ax', count: 26 + 24 },
     { name: 'ay', count: 26 + 25 },
-    { name: 'az', count: 26 + 26 }
+    { name: 'az', count: 26 + 26 },
   ]
   const [data, setData] = createSignal<typeof mockData>([])
   const increaseCount = createIncresingAccessor()
