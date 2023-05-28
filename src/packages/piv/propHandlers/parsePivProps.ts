@@ -1,16 +1,16 @@
 import { flap, pipe, shakeFalsy } from '@edsolater/fnkit'
+import { mutateByAdditionalObjectDescriptors } from '../../fnkit/mutateByAdditionalObjectDescriptors'
 import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'
 import { classname } from './classname'
 import { parsePivChildren } from './controller'
-import { mergeObjects, parseHTMLProps } from './htmlProps'
+import { parseHTMLProps } from './htmlProps'
 import { parseCSSToString } from './icss'
 import { parseIStyles } from './istyle'
 import { parseOnClick } from './onClick'
 import { handlePluginProps } from './plugin'
 import { handleShadowProps } from './shadowProps'
-import { children } from 'solid-js'
 
 /**
  * Parses the PivProps object and returns an object with the parsed properties.
@@ -21,10 +21,10 @@ import { children } from 'solid-js'
 export function parsePivProps(rawProps: PivProps<any>) {
   const props = pipe(
     rawProps as Partial<PivProps>,
-    handleShadowProps,
-    handlePluginProps,
     parsePivRenderPrependChildren,
-    parsePivRenderAppandChildren
+    parsePivRenderAppendChildren,
+    handleShadowProps,
+    handlePluginProps
   )
   const controller = (props.inputController ?? {}) as ValidController
   debugLog(rawProps, props, controller)
@@ -63,16 +63,10 @@ export function parsePivProps(rawProps: PivProps<any>) {
 function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
   props: T
 ): Omit<T, 'render:prependChild'> {
-  if (!('render:prependChild' in props)) return props
-  return Object.defineProperty(props, 'children', {
-    enumerable: true,
-    writable: true,
-    configurable: true,
-    get() {
-      // @ts-expect-error no need to be JSXElement
-      const newChildren = children(() => flap(props['render:prependChild']).concat(props.children))
-      return newChildren
-    }
+  if (!props['render:prependChild']) return props
+  return mutateByAdditionalObjectDescriptors(props, {
+    newGetters: { children: (props) => flap(props['render:prependChild']).concat(props.children) },
+    deletePropertyNames: ['render:prependChild']
   })
 }
 
@@ -82,19 +76,11 @@ function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
  * @param controller - The controller object to be used for parsing.
  * @returns new props with the parsed properties and appended children.
  */
-function parsePivRenderAppandChildren<T extends Partial<PivProps<any, any>>>(
-  props: T
-): Omit<T, 'render:appendChild'> {
-  if (!('render:appendChild' in props)) return props
-  return Object.defineProperty(props, 'children', {
-    enumerable: true,
-    writable: true,
-    configurable: true,
-    get() {
-      // @ts-expect-error no need to be JSXElement
-      const newChildren = children(() => flat(props.children).concat(flap(props['render:appendChild'])))
-      return newChildren
-    }
+function parsePivRenderAppendChildren<T extends Partial<PivProps<any, any>>>(props: T): Omit<T, 'render:appendChild'> {
+  if (!props['render:appendChild']) return props
+  return mutateByAdditionalObjectDescriptors(props, {
+    newGetters: { children: (props) => flap(props.children).concat(flap(props['render:appendChild'])) },
+    deletePropertyNames: ['render:appendChild']
   })
 }
 

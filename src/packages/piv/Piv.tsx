@@ -6,10 +6,10 @@ import { PivProps } from './types/piv'
 import { ValidController } from './types/tools'
 
 export const pivPropsNames = [
+  'id',
   'as',
   'children',
   'class',
-  'dangerousRenderWrapperNode',
   'htmlProps',
   'icss',
   'onClick',
@@ -19,7 +19,10 @@ export const pivPropsNames = [
   'style',
   'debugLog',
   'inputController',
-  'id'
+  
+  'dangerousRenderWrapperNode',
+  'render:prependChild',
+  'render:appendChild'
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <
@@ -45,6 +48,6 @@ function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadow
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {
   return flap(props.dangerousRenderWrapperNode).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
-    createComponent( Piv, omit(props, 'dangerousRenderWrapperNode'))
+    createComponent(Piv, omit(props, 'dangerousRenderWrapperNode'))
   )
 }

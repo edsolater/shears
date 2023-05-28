@@ -21,7 +21,7 @@ export interface SwitchProps extends UIKit<{ controller: SwitchController }> {
   /** hidden HTML input(type=checkbox) for aria readbility */
   'anatomy:AbsoluteCheckboxInput'?: HTMLCheckboxProps
   /** SwitchThumb */
-  'anatomy:SwitchThumb'?: PivProps
+  'anatomy:SwitchThumb'?: PivProps<any, SwitchController>
 }
 
 const selfProps = [

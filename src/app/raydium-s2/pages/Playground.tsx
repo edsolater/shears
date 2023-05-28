@@ -161,16 +161,42 @@ function InputExample() {
 function SwitchExample() {
   const [checked, setChecked] = createSignal(false)
 
-  useIntervalEffect(() => {
-    setChecked((b) => !b)
-  }, 1200)
+  // useIntervalEffect(() => {
+  //   setChecked((b) => !b)
+  // }, 1200)
 
   return (
-    <Switch
-      ariaLabel='theme-switch'
-      isChecked={checked()}
-      style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-    />
+    <>
+      <Piv
+        render:prependChild={
+          <Piv
+            icss={{
+              color: 'dodgerblue',
+              width: '0.5em',
+              height: '0.5em',
+              backgroundColor: 'currentcolor'
+            }}
+          ></Piv>
+        }
+      ></Piv>
+      <Switch
+        ariaLabel='theme-switch'
+        isChecked={checked()}
+        style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
+        anatomy:SwitchThumb={{
+          'render:prependChild': ({ isChecked }) => (
+            <Piv
+              icss={{
+                color: isChecked() ? 'dodgerblue' : 'crimson',
+                width: '0.5em',
+                height: '0.5em',
+                backgroundColor: 'currentcolor'
+              }}
+            ></Piv>
+          )
+        }}
+      />
+    </>
   )
 }
 
