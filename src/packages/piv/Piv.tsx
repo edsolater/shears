@@ -41,7 +41,8 @@ export const Piv = <
 }
 
 function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
-  const parsedPivProps = parsePivProps(props)
+  // console.log('1212: ', 1212, props)
+  const parsedPivProps =  parsePivProps(props)
   return 'as' in props ? <Dynamic component={props.as} {...parsedPivProps} /> : <div {...parsedPivProps} />
 }
 

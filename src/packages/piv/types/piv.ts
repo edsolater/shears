@@ -39,7 +39,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
         target: Element
       }
       el: HTMLElementTagNameMap[TagName]
-    } & Controller
+    } & Controller,
   ) => void // for accessifyProps, onClick can't be array
 
   /**
@@ -57,8 +57,10 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   /**
    * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
+   *
+   * htmlProps can't have controller, because if this props be a function. there is no way to detect which props it will finnaly use
    */
-  htmlProps?: HTMLProps<TagName, Controller>
+  htmlProps?: HTMLProps<TagName>
 
   children?: ControlledChild<unknown extends Controller ? any : Controller> // any is convient for <Piv>
 
@@ -96,4 +98,3 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
 export type DangerousWrapperNodeFn = (node: JSXElement) => JSXElement // change outter wrapper element
 
 export type CRef<T> = (el: T) => void // not right
-

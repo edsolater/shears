@@ -1,20 +1,29 @@
-import { AnyObj, MayArray, flapDeep, merge, shakeNil, shrinkFn } from '@edsolater/fnkit'
-import { HTMLTag, LoadController, ValidController } from '../types/tools'
+import { AnyObj, MayArray, flapDeep, isArray, shakeNil } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
 import { objectMerge } from '../../fnkit/objectMerge'
+import { HTMLTag } from '../types/tools'
 
-export type HTMLProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown> = MayArray<
-  LoadController<JSX.IntrinsicElements[TagName] | undefined, Controller>
->
-export function parseHTMLProps<Controller extends ValidController | unknown = unknown>(
-  htmlProps: HTMLProps,
-  controller: Controller = {} as Controller
-) {
+export type HTMLProps<TagName extends HTMLTag = HTMLTag> = MayArray<JSX.IntrinsicElements[TagName] | undefined>
+
+/**
+ * htmlProps can't have controller, because if this props be a function. there is no way to detect which props it will finnaly use
+ */
+export function parseHTMLProps(htmlProps: HTMLProps) {
   if (!htmlProps) return undefined
-  return objectMerge(...shakeNil(flapDeep(htmlProps).map((i) => shrinkFn(i, [controller]))))
+  return objectMerge(...shakeNil(flapDeep(htmlProps)))
 }
 
 // TODO: moveToFnkit
 export function mergeObjects<T extends AnyObj | undefined>(...objs: T[]): T {
   return Object.assign({}, ...objs)
+}
+
+/**
+ *
+ * detect it related HTML attribute key
+ * @todo has shadow props
+ */
+export function getHTMLPropsKeys(htmlProps: HTMLProps): string[] {
+  if (!htmlProps) return []
+  return isArray(htmlProps) ? htmlProps.map((i) => (i ? Object.keys(i) : [])).flat() : Object.keys(htmlProps)
 }

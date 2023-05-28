@@ -54,9 +54,9 @@ function PlaygoundList() {
         <ModalExample />
       </ExamplePanel>
 
-      <ExamplePanel name='List'>
+      {/* <ExamplePanel name='List'>
         <ListExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       <ExamplePanel name='Switch'>
         <SwitchExample />
@@ -161,22 +161,26 @@ function InputExample() {
 function SwitchExample() {
   const [checked, setChecked] = createSignal(false)
 
-  // useIntervalEffect(() => {
-  //   setChecked((b) => !b)
-  // }, 1200)
+  useIntervalEffect(() => {
+    setChecked((b) => !b)
+  }, 1200)
 
   return (
     <>
       <Piv
         render:prependChild={
-          <Piv
-            icss={{
-              color: 'dodgerblue',
-              width: '0.5em',
-              height: '0.5em',
-              backgroundColor: 'currentcolor',
-            }}
-          ></Piv>
+          (console.log(2),
+          (
+            <Piv
+              icss={{
+                color: checked() ? 'dodgerblue' : 'crimson',
+                width: '0.5em',
+                height: '0.5em',
+                backgroundColor: 'currentcolor',
+                transition: '300ms',
+              }}
+            ></Piv>
+          ))
         }
       ></Piv>
       <Switch
@@ -184,18 +188,24 @@ function SwitchExample() {
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
         anatomy:SwitchThumb={{
+          // icss: ({ isChecked }) => ({
+          //   backgroundColor: isChecked() ? 'dodgerblue' : 'crimson',
+          // }),
           // TODO: it can be plugin
-          'render:appendChild': ({ isChecked }) => (
-            <Piv
-              icss={{
-                color: isChecked() ? 'dodgerblue' : 'crimson',
-                width: '0.5em',
-                height: '0.5em',
-                backgroundColor: 'currentcolor',
-                transition: '600ms',
-              }}
-            ></Piv>
-          ),
+          // 'render:appendChild': ({ isChecked }) => {
+          //   console.count('1')
+          //   return (
+          //     <Piv
+          //       icss={{
+          //         color: isChecked() ? 'dodgerblue' : 'crimson',
+          //         width: '0.5em',
+          //         height: '0.5em',
+          //         backgroundColor: 'currentcolor',
+          //         transition: '600ms',
+          //       }}
+          //     ></Piv>
+          //   )
+          // },
         }}
       />
     </>

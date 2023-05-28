@@ -31,7 +31,7 @@ const selfProps = [
   'onChange',
   'anatomy:Label',
   'anatomy:AbsoluteCheckboxInput',
-  'anatomy:SwitchThumb'
+  'anatomy:SwitchThumb',
 ] satisfies (keyof SwitchProps)[]
 
 const accessifyPropNames = ['isChecked', 'isDefaultChecked'] satisfies (keyof SwitchProps)[]
@@ -39,7 +39,7 @@ const accessifyPropNames = ['isChecked', 'isDefaultChecked'] satisfies (keyof Sw
 export type SwitchDefaultSwitchProps = typeof defaultProps
 
 const defaultProps = {
-  isDefaultChecked: false
+  isDefaultChecked: false,
 } satisfies Partial<SwitchProps>
 
 /**
@@ -49,14 +49,14 @@ export function Switch(rawProps: SwitchProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, {
     defaultProps,
     needAccessify: accessifyPropNames,
-    selfProps: selfProps
+    selfProps: selfProps,
   })
 
   const [isChecked, setIsChecked] = createSyncSignal({
     get: () => props.isChecked ?? props.isDefaultChecked,
     set(value) {
       props.onChange?.({ isChecked: value })
-    }
+    },
   })
 
   const { wrapperLabelStyleProps, htmlCheckboxStyleProps, switchThumbStyleProps } = useSwitchStyle({ props, isChecked })
@@ -64,7 +64,7 @@ export function Switch(rawProps: SwitchProps) {
   const { setMotionTargetRef } = makeElementMoveSmooth({ observeOn: isChecked })
 
   const switchController = {
-    isChecked
+    isChecked,
   }
 
   lazyLoadController(switchController)
@@ -83,11 +83,25 @@ export function Switch(rawProps: SwitchProps) {
 
       {/* SwitchThumb */}
       <Piv
-        shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
+        shadowProps={[switchThumbStyleProps, props['anatomy:SwitchThumb']]}
         innerController={switchController}
         class='SwitchThumb'
         domRef={setMotionTargetRef}
         icss={{ display: 'grid', placeContent: 'center' }}
+        render:appendChild={({ isChecked }) => {
+          console.count('1')
+          return (
+            <Piv
+              icss={{
+                color: isChecked() ? 'dodgerblue' : 'crimson',
+                width: '0.5em',
+                height: '0.5em',
+                backgroundColor: 'currentcolor',
+                transition: '600ms',
+              }}
+            ></Piv>
+          )
+        }}
       />
     </Label>
   )
