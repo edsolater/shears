@@ -21,10 +21,10 @@ import { handleShadowProps } from './shadowProps'
 export function parsePivProps(rawProps: PivProps<any>) {
   const props = pipe(
     rawProps as Partial<PivProps>,
+    handleShadowProps,
+    handlePluginProps,
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
-    handleShadowProps,
-    handlePluginProps
   )
   const controller = (props.inputController ?? {}) as ValidController
   debugLog(rawProps, props, controller)

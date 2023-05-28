@@ -63,9 +63,11 @@ export function Switch(rawProps: SwitchProps) {
 
   const { setMotionTargetRef } = makeElementMoveSmooth({ observeOn: isChecked })
 
-  lazyLoadController({
+  const switchController = {
     isChecked
-  })
+  }
+
+  lazyLoadController(switchController)
 
   return (
     <Label shadowProps={[wrapperLabelStyleProps(), shadowProps, props['anatomy:Label']]}>
@@ -82,6 +84,7 @@ export function Switch(rawProps: SwitchProps) {
       <Piv
         class='SwitchThumb'
         domRef={setMotionTargetRef}
+        inputController={switchController}
         shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
       />
     </Label>

@@ -183,8 +183,8 @@ function SwitchExample() {
         ariaLabel='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-        anatomy:SwitchThumb={{
-          'render:prependChild': ({ isChecked }) => (
+        anatomy:SwitchThumb={{ // it can be plugin
+          'render:appendChild': ({ isChecked }) => (
             <Piv
               icss={{
                 color: isChecked() ? 'dodgerblue' : 'crimson',
