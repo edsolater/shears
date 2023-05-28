@@ -10,7 +10,7 @@ import { LabelProps } from "../../Label";
 export function useSwitchStyle(params: { props: DeKitProps<SwitchProps>; isChecked: Accessor<boolean>; }) {
   const wrapperLabelStyleProps = createMemo(
     () => ({
-      icss: { width: '14em', height: '2em', background: '#cbd5e0', borderRadius: '999em', padding: 4 }
+      icss: { width: '4em', height: '2em', background: '#cbd5e0', borderRadius: '999em', padding: 4 }
     } satisfies Partial<LabelProps>)
   );
 

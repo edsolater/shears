@@ -169,7 +169,7 @@ function SwitchExample() {
     <Switch
       ariaLabel='theme-switch'
       isChecked={checked()}
-      style={({ isChecked }) => ({ color: isChecked() ? 'red' : 'blue' })} // <-- will cause rerender , why?
+      style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
     />
   )
 }

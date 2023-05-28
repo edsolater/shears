@@ -45,6 +45,6 @@ function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadow
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {
   return flap(props.dangerousRenderWrapperNode).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
-    createComponent(props.as ?? Piv, omit(props, 'dangerousRenderWrapperNode'))
+    createComponent( Piv, omit(props, 'dangerousRenderWrapperNode'))
   )
 }

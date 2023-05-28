@@ -55,44 +55,44 @@ export function parsePivProps(rawProps: PivProps<any>) {
 }
 
 /**
- * Parses the PivProps's render:prepend.
+ * Parses the PivProps's render:prependChild.
  * @param props - The raw PivProps object to be parsed.
  * @param controller - The controller object to be used for parsing.
  * @returns new props with the parsed properties and prepended children.
  */
 function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
   props: T
-): Omit<T, 'render:prepend'> {
-  if (!('render:prepend' in props)) return props
+): Omit<T, 'render:prependChild'> {
+  if (!('render:prependChild' in props)) return props
   return Object.defineProperty(props, 'children', {
     enumerable: true,
     writable: true,
     configurable: true,
     get() {
       // @ts-expect-error no need to be JSXElement
-      const newChildren = children(() => flap(props['render:prepend']).concat(props.children))
+      const newChildren = children(() => flap(props['render:prependChild']).concat(props.children))
       return newChildren
     }
   })
 }
 
 /**
- * Parses the PivProps's render:append.
+ * Parses the PivProps's render:appendChild.
  * @param props - The raw PivProps object to be parsed.
  * @param controller - The controller object to be used for parsing.
  * @returns new props with the parsed properties and appended children.
  */
 function parsePivRenderAppandChildren<T extends Partial<PivProps<any, any>>>(
   props: T
-): Omit<T, 'render:append'> {
-  if (!('render:append' in props)) return props
+): Omit<T, 'render:appendChild'> {
+  if (!('render:appendChild' in props)) return props
   return Object.defineProperty(props, 'children', {
     enumerable: true,
     writable: true,
     configurable: true,
     get() {
       // @ts-expect-error no need to be JSXElement
-      const newChildren = children(() => flat(props.children).concat(flap(props['render:append'])))
+      const newChildren = children(() => flat(props.children).concat(flap(props['render:appendChild'])))
       return newChildren
     }
   })

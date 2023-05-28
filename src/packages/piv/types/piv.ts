@@ -89,12 +89,11 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   // 'render:outsideWrapper': MayArray<DangerousWrapperNodeFn>
   dangerousRenderWrapperNode?: MayArray<DangerousWrapperNodeFn>
 
-  'render:prepend'?: MayArray<ControlledChild<Controller>>
-  'render:append'?: MayArray<ControlledChild<Controller>>
+  'render:prependChild'?: MayArray<ControlledChild<Controller>>
+  'render:appendChild'?: MayArray<ControlledChild<Controller>>
 }
 
 export type DangerousWrapperNodeFn = (node: JSXElement) => JSXElement // change outter wrapper element
 
 export type CRef<T> = (el: T) => void // not right
 
-type A = unknown extends unknown ? true : false
