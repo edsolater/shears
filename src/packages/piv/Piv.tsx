@@ -18,7 +18,7 @@ export const pivPropsNames = [
   'shadowProps',
   'style',
   'debugLog',
-  'inputController',
+  'innerController',
   
   'dangerousRenderWrapperNode',
   'render:prependChild',

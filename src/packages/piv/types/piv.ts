@@ -80,7 +80,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   // -------- special prop --------
 
   /** only passed in parent component */
-  inputController?: Controller
+  innerController?: Controller
 
   /**
    * auto merge by shadowProps

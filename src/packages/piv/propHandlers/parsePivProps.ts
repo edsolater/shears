@@ -26,7 +26,7 @@ export function parsePivProps(rawProps: PivProps<any>) {
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
   )
-  const controller = (props.inputController ?? {}) as ValidController
+  const controller = (props.innerController ?? {}) as ValidController
   debugLog(rawProps, props, controller)
   return {
     ...parseHTMLProps(props.htmlProps, controller),
@@ -42,7 +42,7 @@ export function parsePivProps(rawProps: PivProps<any>) {
     },
     get style() {
       const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
-      const controller = (props.inputController ?? {}) as ValidController
+      const controller = (props.innerController ?? {}) as ValidController
       return parseIStyles(props.style, controller)
     },
     get onClick() {
@@ -108,8 +108,8 @@ function debugLog(rawProps: PivProps<any>, props: PivProps<any>, controller: Val
     if (props.debugLog.includes('class')) {
       console.debug('class (raw → parsed): ', props.class, classname(props.class, controller))
     }
-    if (props.debugLog.includes('inputController')) {
-      console.debug('inputController (raw → parsed): ', props.inputController)
+    if (props.debugLog.includes('innerController')) {
+      console.debug('innerController (raw → parsed): ', props.innerController)
     }
     if (props.debugLog.includes('onClick')) {
       console.debug(

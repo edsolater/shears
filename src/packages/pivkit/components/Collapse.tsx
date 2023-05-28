@@ -77,7 +77,7 @@ export function CollapseFace(
       as={(parsedPivProps) => <summary {...parsedPivProps} />}
       shadowProps={props}
       icss={{ listStyle: 'none' }}
-      inputController={controller}
+      innerController={controller}
     >
       {props.children}
     </Piv>
@@ -89,7 +89,7 @@ interface CollapseContentProps extends PivProps {}
 export function CollapseContent(rawProps: CollapseContentProps) {
   const controller = useContext(CollapseContext)
   const { props } = useKitProps(rawProps, { controller: () => controller })
-  return <Piv shadowProps={props} inputController={controller} />
+  return <Piv shadowProps={props} innerController={controller} />
 }
 
 Collapse.Face = CollapseFace

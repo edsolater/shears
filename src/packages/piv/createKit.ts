@@ -143,7 +143,7 @@ function getParsedKitProps<
         options?.needAccessify ?? (options?.noNeedDeAccessifyChildren ? ['children'] : Object.keys(props))
       ),
     // inject controller
-    (props) => (proxyController ? mergeProps(props, { inputController: proxyController } as PivProps) : props),
+    (props) => (proxyController ? mergeProps(props, { innerController: proxyController } as PivProps) : props),
     // parse plugin of **options**
     (props) =>
       hasProperty(options, 'plugin')

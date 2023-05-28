@@ -127,7 +127,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
   }[size]
 
   const mergedController =
-    'inputController' in props ? objectMerge(props.inputController!, innerController) : innerController
+    'innerController' in props ? objectMerge(props.innerController!, innerController) : innerController
   return (
     <Piv<'button'>
       class={Button.name}
