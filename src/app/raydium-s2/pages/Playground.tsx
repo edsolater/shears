@@ -168,7 +168,6 @@ function SwitchExample() {
   return (
     <>
       <Piv
-        debugLog={['shadowProps']}
         class={checked() ? 'checked' : ''}
         render:prependChild={
           (console.count('render prependChild'),

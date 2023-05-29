@@ -98,9 +98,6 @@ export function parsePivProps(rawProps: PivProps<any>) {
       return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
     },
     get children() {
-      if (rawProps.debugLog?.includes('shadowProps')) {
-        console.log(333)
-      }
       return parsePivChildren(props.children, controller)
     },
   }
