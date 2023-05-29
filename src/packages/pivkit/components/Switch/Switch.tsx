@@ -87,9 +87,9 @@ export function Switch(rawProps: SwitchProps) {
         innerController={switchController}
         class='SwitchThumb'
         domRef={setMotionTargetRef}
-        icss={{ display: 'grid', placeContent: 'center' }}
+        icss={[{ display: 'grid', placeContent: 'center' }]}
         render:appendChild={({ isChecked }) => {
-          console.count('1')
+          console.count('rerun thumb child')
           return (
             <Piv
               icss={{

@@ -11,6 +11,7 @@ import { parseIStyles } from './istyle'
 import { parseOnClick } from './onClick'
 import { handlePluginProps } from './plugin'
 import { handleShadowProps } from './shadowProps'
+import { untrack } from 'solid-js'
 
 /**
  * Parses the PivProps object and returns an object with the parsed properties.
@@ -68,36 +69,42 @@ export function parsePivProps(rawProps: PivProps<any>) {
   //     },
   //   },
   // )
-  const props = pipe(
-    rawProps as Partial<PivProps>,
-    handleShadowProps,
-    handlePluginProps,
-    parsePivRenderPrependChildren,
-    parsePivRenderAppendChildren,
-  )
-  const controller = (props.innerController ?? {}) as ValidController
+  function getProps(rawProps: Partial<PivProps>) {
+    const props = pipe(
+      rawProps as Partial<PivProps>,
+      handleShadowProps,
+      handlePluginProps,
+      parsePivRenderPrependChildren,
+      parsePivRenderAppendChildren,
+    )
+    const controller = (props.innerController ?? {}) as ValidController
+    return { props, controller }
+  }
   // debugLog(rawProps, props, controller)
   return {
-    ...parseHTMLProps(props.htmlProps),
+    // ...parseHTMLProps(props.htmlProps),
     get class() {
-      // getter for lazy solidjs render
+      const { props, controller } = getProps(rawProps)
+      // get ter for lazy solidjs render
       return (
         shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
         undefined
       ) /* don't render if empty string */
     },
     get ref() {
+      const { props, controller } = getProps(rawProps)
       return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
     },
     get style() {
-      const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
-      const controller = (props.innerController ?? {}) as ValidController
+      const { props, controller } = getProps(rawProps)
       return parseIStyles(props.style, controller)
     },
     get onClick() {
+      const { props, controller } = getProps(rawProps)
       return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
     },
     get children() {
+      const { props, controller } = getProps(rawProps) // 🤔: is children depend on shadow props, shadow props has createMemo, so solidjs engine will re-run this function evey time inner subscribiton changed?
       return parsePivChildren(props.children, controller)
     },
   }

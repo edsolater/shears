@@ -35,7 +35,7 @@ export function useSwitchStyle(params: { props: DeKitProps<SwitchProps>; isCheck
   const switchThumbStyleProps = createMemo(
     () =>
       ({
-        icss: {
+        icss: () => ({
           height: '100%',
           aspectRatio: '1',
           borderRadius: '999em',
@@ -43,7 +43,7 @@ export function useSwitchStyle(params: { props: DeKitProps<SwitchProps>; isCheck
           // translate: params.isChecked() ? '100%' : '0',
           marginLeft: params.isChecked() ? 'auto' : '0',
           transition: '300ms',
-        },
+        }),
       } satisfies Partial<PivProps>),
   )
 
