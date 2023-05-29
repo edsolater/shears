@@ -1,4 +1,4 @@
-import { AnyObj, flap, pipe, shakeFalsy } from '@edsolater/fnkit'
+import { AnyObj, flap, hasProperty, pipe, shakeFalsy } from '@edsolater/fnkit'
 import { mutateByAdditionalObjectDescriptors } from '../../fnkit/mutateByAdditionalObjectDescriptors'
 import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
@@ -19,88 +19,91 @@ import { handleShadowProps } from './shadowProps'
  */
 // TODO: props should be lazy load, props.htmlProps should also be lazy load
 export function parsePivProps(rawProps: PivProps<any>) {
-  let calcedProps: Partial<PivProps>
-  let calcedController: ValidController
-  let calcedHTMLProps: AnyObj | undefined
-  return new Proxy(
-    createEmptyObject(getHTMLPropsKeys(rawProps.htmlProps).concat(['class', 'ref', 'style', 'onClick', 'children'])),
-    {
-      get(target, p, receiver) {
-        if (!calcedProps || !calcedController) {
-          calcedProps = pipe(
-            rawProps as Partial<PivProps>,
-            handleShadowProps,
-            handlePluginProps,
-            parsePivRenderPrependChildren,
-            parsePivRenderAppendChildren,
-          )
-          calcedController = (calcedProps.innerController ?? {}) as ValidController
-        }
+  // let calcedProps: Partial<PivProps>
+  // let calcedController: ValidController
+  // let calcedHTMLProps: AnyObj | undefined
+  // return new Proxy(
+  //   createEmptyObject(getHTMLPropsKeys(rawProps.htmlProps).concat(['class', 'ref', 'style', 'onClick', 'children'])),
+  //   {
+  //     get(target, p, receiver) {
+  //       if (!calcedProps || !calcedController) {
+  //         calcedProps = pipe(
+  //           rawProps as Partial<PivProps>,
+  //           handleShadowProps,
+  //           handlePluginProps,
+  //           parsePivRenderPrependChildren,
+  //           parsePivRenderAppendChildren,
+  //         )
+  //         calcedController = (calcedProps.innerController ?? {}) as ValidController
+  //       }
 
-        switch (p) {
-          case 'class': {
-            return (
-              shakeFalsy([
-                classname(calcedProps.class, calcedController),
-                parseCSSToString(calcedProps.icss, calcedController),
-              ]).join(' ') || undefined
-            )
-          }
-          case 'ref': {
-            return (el: HTMLElement) => el && mergeRefs(...flap(calcedProps.domRef))(el)
-          }
-          case 'style': {
-            return parseIStyles(calcedProps.style, calcedController)
-          }
-          case 'onClick': {
-            return 'onClick' in calcedProps ? parseOnClick(calcedProps.onClick!, calcedController) : undefined
-          }
-          case 'children': {
-            return parsePivChildren(calcedProps.children, calcedController)
-          }
-          default: {
-            if (!calcedHTMLProps) {
-              calcedHTMLProps = parseHTMLProps(calcedProps.htmlProps)
-            }
-            return calcedHTMLProps && Reflect.get(calcedHTMLProps, p)
-          }
-        }
-      },
-    },
-  )
-  // const props = pipe(
-  //   rawProps as Partial<PivProps>,
-  //   handleShadowProps,
-  //   handlePluginProps,
-  //   parsePivRenderPrependChildren,
-  //   parsePivRenderAppendChildren,
+  //       switch (p) {
+  //         case 'class': {
+  //           return (
+  //             shakeFalsy([
+  //               classname(calcedProps.class, calcedController),
+  //               parseCSSToString(calcedProps.icss, calcedController),
+  //             ]).join(' ') || undefined
+  //           )
+  //         }
+  //         case 'ref': {
+  //           return (el: HTMLElement) => el && mergeRefs(...flap(calcedProps.domRef))(el)
+  //         }
+  //         case 'style': {
+  //           return parseIStyles(calcedProps.style, calcedController)
+  //         }
+  //         case 'onClick': {
+  //           return 'onClick' in calcedProps ? parseOnClick(calcedProps.onClick!, calcedController) : undefined
+  //         }
+  //         case 'children': {
+  //           return parsePivChildren(calcedProps.children, calcedController)
+  //         }
+  //         default: {
+  //           if (!calcedHTMLProps) {
+  //             calcedHTMLProps = parseHTMLProps(calcedProps.htmlProps)
+  //           }
+  //           return calcedHTMLProps && Reflect.get(calcedHTMLProps, p)
+  //         }
+  //       }
+  //     },
+  //   },
   // )
-  // const controller = (props.innerController ?? {}) as ValidController
+  const props = pipe(
+    rawProps as Partial<PivProps>,
+    handleShadowProps,
+    handlePluginProps,
+    parsePivRenderPrependChildren,
+    parsePivRenderAppendChildren,
+  )
+  const controller = (props.innerController ?? {}) as ValidController
   // debugLog(rawProps, props, controller)
-  // return {
-  //   ...parseHTMLProps(props.htmlProps),
-  //   get class() {
-  //     // getter for lazy solidjs render
-  //     return (
-  //       shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
-  //       undefined
-  //     ) /* don't render if empty string */
-  //   },
-  //   get ref() {
-  //     return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
-  //   },
-  //   get style() {
-  //     const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
-  //     const controller = (props.innerController ?? {}) as ValidController
-  //     return parseIStyles(props.style, controller)
-  //   },
-  //   get onClick() {
-  //     return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
-  //   },
-  //   get children() {
-  //     return parsePivChildren(props.children, controller)
-  //   },
-  // }
+  return {
+    ...parseHTMLProps(props.htmlProps),
+    get class() {
+      // getter for lazy solidjs render
+      return (
+        shakeFalsy([classname(props.class, controller), parseCSSToString(props.icss, controller)]).join(' ') ||
+        undefined
+      ) /* don't render if empty string */
+    },
+    get ref() {
+      return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
+    },
+    get style() {
+      const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
+      const controller = (props.innerController ?? {}) as ValidController
+      return parseIStyles(props.style, controller)
+    },
+    get onClick() {
+      return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
+    },
+    get children() {
+      if (rawProps.debugLog?.includes('shadowProps')) {
+        console.log(333)
+      }
+      return parsePivChildren(props.children, controller)
+    },
+  }
 }
 
 /**
@@ -124,11 +127,12 @@ export function createEmptyObject<T extends (keyof any)[]>(keys: T): { [K in T[n
 function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
   props: T,
 ): Omit<T, 'render:prependChild'> {
-  if (!props['render:prependChild']) return props
-  return mutateByAdditionalObjectDescriptors(props, {
-    newGetters: { children: (props) => flap(props['render:prependChild']).concat(props.children) },
-    deletePropertyNames: ['render:prependChild'],
-  })
+  return 'render:prependChild' in props
+    ? mutateByAdditionalObjectDescriptors(props, {
+        newGetters: { children: (props) => flap(props['render:prependChild']).concat(props.children) },
+        deletePropertyNames: ['render:prependChild'],
+      })
+    : props
 }
 
 /**
@@ -138,13 +142,14 @@ function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
  * @returns new props with the parsed properties and appended children.
  */
 function parsePivRenderAppendChildren<T extends Partial<PivProps<any, any>>>(props: T): Omit<T, 'render:appendChild'> {
-  if (!props['render:appendChild']) return props
-  return mutateByAdditionalObjectDescriptors(props, {
-    newGetters: {
-      children: (props) => flap(props.children).concat(flap(props['render:appendChild'])),
-    },
-    deletePropertyNames: ['render:appendChild'],
-  })
+  return 'render:appendChild' in props
+    ? mutateByAdditionalObjectDescriptors(props, {
+        newGetters: {
+          children: (props) => flap(props.children).concat(flap(props['render:appendChild'])),
+        },
+        deletePropertyNames: ['render:appendChild'],
+      })
+    : props
 }
 
 /**

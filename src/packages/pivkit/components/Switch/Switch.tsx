@@ -83,7 +83,7 @@ export function Switch(rawProps: SwitchProps) {
 
       {/* SwitchThumb */}
       <Piv
-        shadowProps={[switchThumbStyleProps, props['anatomy:SwitchThumb']]}
+        shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
         innerController={switchController}
         class='SwitchThumb'
         domRef={setMotionTargetRef}

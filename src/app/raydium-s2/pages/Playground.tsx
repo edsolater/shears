@@ -168,8 +168,10 @@ function SwitchExample() {
   return (
     <>
       <Piv
+        debugLog={['shadowProps']}
+        class={checked() ? 'checked' : ''}
         render:prependChild={
-          (console.log(2),
+          (console.count('render prependChild'),
           (
             <Piv
               icss={{
@@ -187,26 +189,28 @@ function SwitchExample() {
         ariaLabel='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-        anatomy:SwitchThumb={{
-          // icss: ({ isChecked }) => ({
-          //   backgroundColor: isChecked() ? 'dodgerblue' : 'crimson',
-          // }),
-          // TODO: it can be plugin
-          // 'render:appendChild': ({ isChecked }) => {
-          //   console.count('1')
-          //   return (
-          //     <Piv
-          //       icss={{
-          //         color: isChecked() ? 'dodgerblue' : 'crimson',
-          //         width: '0.5em',
-          //         height: '0.5em',
-          //         backgroundColor: 'currentcolor',
-          //         transition: '600ms',
-          //       }}
-          //     ></Piv>
-          //   )
-          // },
-        }}
+        anatomy:SwitchThumb={
+          {
+            // icss: ({ isChecked }) => ({
+            //   backgroundColor: isChecked() ? 'dodgerblue' : 'crimson',
+            // }),
+            // TODO: it can be plugin
+            // 'render:appendChild': ({ isChecked }) => {
+            //   console.count('1')
+            //   return (
+            //     <Piv
+            //       icss={{
+            //         color: isChecked() ? 'dodgerblue' : 'crimson',
+            //         width: '0.5em',
+            //         height: '0.5em',
+            //         backgroundColor: 'currentcolor',
+            //         transition: '600ms',
+            //       }}
+            //     ></Piv>
+            //   )
+            // },
+          }
+        }
       />
     </>
   )
