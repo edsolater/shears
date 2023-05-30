@@ -1,17 +1,16 @@
-import { AnyObj, flap, hasProperty, pipe, shakeFalsy } from '@edsolater/fnkit'
+import { flap, pipe, shakeFalsy } from '@edsolater/fnkit'
 import { mutateByAdditionalObjectDescriptors } from '../../fnkit/mutateByAdditionalObjectDescriptors'
 import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'
 import { classname } from './classname'
 import { parsePivChildren } from './controller'
-import { getHTMLPropsKeys, parseHTMLProps } from './htmlProps'
+import { parseHTMLProps } from './htmlProps'
 import { parseCSSToString } from './icss'
 import { parseIStyles } from './istyle'
 import { parseOnClick } from './onClick'
 import { handlePluginProps } from './plugin'
 import { handleShadowProps } from './shadowProps'
-import { untrack } from 'solid-js'
 
 /**
  * Parses the PivProps object and returns an object with the parsed properties.
@@ -80,9 +79,10 @@ export function parsePivProps(rawProps: PivProps<any>) {
     const controller = (props.innerController ?? {}) as ValidController
     return { props, controller }
   }
-  // debugLog(rawProps, props, controller)
+  const { props, controller } = getProps(rawProps)
+  debugLog(rawProps, props, controller)
   return {
-    // ...parseHTMLProps(props.htmlProps),
+    ...parseHTMLProps(props.htmlProps),
     get class() {
       const { props, controller } = getProps(rawProps)
       // get ter for lazy solidjs render

@@ -1,11 +1,11 @@
 import { Accessor } from 'solid-js'
 import { Piv, PivProps, UIKit, useKitProps } from '../../../piv'
 import { createSyncSignal } from '../../hooks/createSyncSignal'
-import { Accessify } from '../../utils/accessifyProps'
 import { makeElementMoveSmooth } from '../../hooks/makeElementMoveSmooth'
+import { Accessify } from '../../utils/accessifyProps'
+import { Label, LabelProps } from '../Label'
+import { HTMLCheckbox, HTMLCheckboxProps } from './HTMLCheckbox'
 import { useSwitchStyle } from './hooks/useSwitchStyle'
-import { LabelProps, Label } from '../Label'
-import { HTMLCheckboxProps, HTMLCheckbox } from './HTMLCheckbox'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
@@ -59,7 +59,7 @@ export function Switch(rawProps: SwitchProps) {
     },
   })
 
-  const { wrapperLabelStyleProps, htmlCheckboxStyleProps, switchThumbStyleProps } = useSwitchStyle({ props, isChecked })
+  const { wrapperLabelStyleProps, htmlCheckboxStyleProps, switchThumbStyleProps } = useSwitchStyle({ props })
 
   const { setMotionTargetRef } = makeElementMoveSmooth({ observeOn: isChecked })
 
@@ -70,9 +70,9 @@ export function Switch(rawProps: SwitchProps) {
   lazyLoadController(switchController)
 
   return (
-    <Label shadowProps={[wrapperLabelStyleProps(), shadowProps, props['anatomy:Label']]}>
+    <Label shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:Label']]}>
       <HTMLCheckbox
-        shadowProps={[htmlCheckboxStyleProps(), props['anatomy:AbsoluteCheckboxInput']]}
+        shadowProps={[htmlCheckboxStyleProps, props['anatomy:AbsoluteCheckboxInput']]}
         innerController={switchController}
         ariaLabel={props.ariaLabel}
         defaultChecked={props.isDefaultChecked}
@@ -83,7 +83,7 @@ export function Switch(rawProps: SwitchProps) {
 
       {/* SwitchThumb */}
       <Piv
-        shadowProps={[switchThumbStyleProps(), props['anatomy:SwitchThumb']]}
+        shadowProps={[switchThumbStyleProps, props['anatomy:SwitchThumb']]}
         innerController={switchController}
         class='SwitchThumb'
         domRef={setMotionTargetRef}
