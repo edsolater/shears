@@ -20,7 +20,7 @@ export const useSwapToken1 = createStoreAtom(RAYMint, {
         setter(USDC.mint) // FIXME 2023-04-23: why not update?
       }
     }, 1000)
-  }
+  },
 })
 
 export const useSwapToken2 = createStoreAtom(SOLMint)
@@ -47,7 +47,7 @@ export function useSwapAmountCalculator() {
     const subscribable = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
       input: inputToken,
       inputAmount,
-      output: outputToken
+      output: outputToken,
     })
     onCleanup(subscribable.abort)
     const s = subscribable.subscribe((info) => {
@@ -70,7 +70,7 @@ export function useSwapAmountCalculator() {
     const subscribable = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
       input: inputToken,
       inputAmount,
-      output: outputToken
+      output: outputToken,
     })
 
     onCleanup(subscribable.abort)

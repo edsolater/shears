@@ -28,10 +28,10 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
         enumerable: true,
         get() {
           return getPivPropsValue(trimedProps, key)
-        }
+        },
       }
       return acc
-    }, {} as PropertyDescriptorMap)
+    }, {} as PropertyDescriptorMap),
   ) as Exclude<P, undefined>
 
   return merged
@@ -86,7 +86,7 @@ export function getPivPropsValue(objs: AnyObj[], key: keyof any) {
 
 function mergeObjectsWithConfigs<T extends object>(
   objs: T[],
-  coverRules: [propertyName: string, fn: (valueA: unknown, valueB: unknown) => unknown][]
+  coverRules: [propertyName: string, fn: (valueA: unknown, valueB: unknown) => unknown][],
 ): T {
   if (objs.length === 0) return {} as T
   if (objs.length === 1) return objs[0]!
@@ -98,17 +98,17 @@ function mergeObjectsWithConfigs<T extends object>(
         enumerable: true,
         get() {
           return getObjValue(objs, key, coverRules)
-        }
+        },
       }
       return acc
-    }, {} as PropertyDescriptorMap)
+    }, {} as PropertyDescriptorMap),
   ) as T
 }
 
 function getObjValue<T extends AnyObj>(
   objs: T[],
   key: keyof any,
-  coverRules: [propertyName: keyof any, fn: (valueA: unknown, valueB: unknown) => unknown][]
+  coverRules: [propertyName: keyof any, fn: (valueA: unknown, valueB: unknown) => unknown][],
 ) {
   const targetCoverRule = coverRules.find(([propertyName]) => propertyName === key)?.[1]
   if (targetCoverRule) {

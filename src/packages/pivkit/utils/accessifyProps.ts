@@ -30,7 +30,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
   props: P,
   controller?: Controller,
   /** default is on* and domRef and controllerRef, but you can add more */
-  needAccessifyProps?: string[]
+  needAccessifyProps?: string[],
 ): DeAccessifyProps<P> {
   const accessifiedProps = Object.defineProperties(
     {},
@@ -44,10 +44,10 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
             (needAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
           const needAccessify = isFunction(v) && !isPreferUseOriginalValue
           return needAccessify ? v(controller) : v
-        }
+        },
       }
       return acc
-    }, {} as PropertyDescriptorMap)
+    }, {} as PropertyDescriptorMap),
   ) as DeAccessifyProps<P>
   return accessifiedProps
 }
@@ -55,7 +55,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
 function fixFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(originalFn: F, preParams: P): F {
   // @ts-expect-error no need to check
   return {
-    [originalFn.name]: (...args: unknown[]) => originalFn(...shallowMergeTwoArray(preParams, args))
+    [originalFn.name]: (...args: unknown[]) => originalFn(...shallowMergeTwoArray(preParams, args)),
   }[originalFn.name]
 }
 

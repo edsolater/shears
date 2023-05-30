@@ -68,28 +68,28 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     },
     focus: () => {
       ref()?.focus()
-    }
+    },
   }
   /* ---------------------------------- props --------------------------------- */
   const { props: rawProps } = useKitProps(kitProps, {
-    controller: () => innerController
+    controller: () => innerController,
   })
 
   const props = addDefaultProps(
     rawProps,
-    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
+    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button')),
   )
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
     isValuedArray(props.validators) || props.validators
       ? flap(props.validators!).find(({ should }) => !shrinkFn(should))
-      : undefined
+      : undefined,
   )
   const mergedProps = mergeProps(props, failedTestValidator()?.fallbackProps)
 
   const isActive = createMemo(
-    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled),
   )
 
   const mainBgColor = props.theme?.mainBgColor ?? cssColors.component_button_bg_primary
@@ -105,25 +105,25 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     lg: '14px 24px',
     md: '10px 16px',
     sm: '8px 16px',
-    xs: '2px 6px'
+    xs: '2px 6px',
   }[size]
   const cssFontSize = {
     lg: 16,
     md: 16,
     sm: 14,
-    xs: 12
+    xs: 12,
   }[size]
   const cssBorderRadius = {
     lg: 12,
     md: 8,
     sm: 8,
-    xs: 4
+    xs: 4,
   }[size]
   const cssOutlineWidth = {
     lg: 2,
     md: 2,
     sm: 1,
-    xs: 0.5
+    xs: 0.5,
   }[size]
 
   const mergedController =
@@ -143,44 +143,44 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
           display: 'inline-flex',
           gap: shrinkFn(contentGap, [mergedProps]),
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }, // center the items
         {
           cursor: 'pointer',
           userSelect: 'none',
-          width: 'max-content'
+          width: 'max-content',
         },
         !isActive() && {
           opacity: shrinkFn(disableOpacity, [mergedProps]),
-          cursor: 'not-allowed'
+          cursor: 'not-allowed',
         },
         {
           padding: cssPadding,
           fontSize: cssFontSize,
           borderRadius: cssBorderRadius,
-          fontWeight: 500
+          fontWeight: 500,
         },
         (!props.variant || props.variant === 'solid') && {
           backgroundColor: shrinkFn(mainBgColor, [mergedProps]),
           ':hover': {
-            filter: 'brightness(95%)'
+            filter: 'brightness(95%)',
           },
           ':active': {
             transform: 'scale(0.98)',
-            filter: 'brightness(90%)'
-          }
+            filter: 'brightness(90%)',
+          },
         },
         props.variant === 'outline' && {
           background: cssColors.transparent,
           outline: `${cssOutlineWidth} solid ${mainBgColor}`,
-          outlineOffset: `-${cssOutlineWidth}`
+          outlineOffset: `-${cssOutlineWidth}`,
         },
         props.variant === 'text' && {
           ':hover': {
-            backgroundColor: opacityCSSColor(shrinkFn(mainBgColor, [mergedProps]), 0.15)
-          }
+            backgroundColor: opacityCSSColor(shrinkFn(mainBgColor, [mergedProps]), 0.15),
+          },
         },
-        compressICSSToObj(shrinkFn(cssProps, [mergedProps]))
+        compressICSSToObj(shrinkFn(cssProps, [mergedProps])),
       ]}
       domRef={setRef}
     >

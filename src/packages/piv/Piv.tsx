@@ -19,17 +19,17 @@ export const pivPropsNames = [
   'style',
   'debugLog',
   'innerController',
-  
+
   'dangerousRenderWrapperNode',
   'render:prependChild',
-  'render:appendChild'
+  'render:appendChild',
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <
   TagName extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap,
-  Controller extends ValidController | unknown = unknown
+  Controller extends ValidController | unknown = unknown,
 >(
-  props: PivProps<TagName, Controller>
+  props: PivProps<TagName, Controller>,
 ) => {
   // const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)
   // if (!props) return null // just for type, logicly it will never happen
@@ -42,13 +42,13 @@ export const Piv = <
 
 function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
   // console.log('1212: ', 1212, props)
-  const parsedPivProps =  parsePivProps(props)
+  const parsedPivProps = parsePivProps(props)
   return 'as' in props ? <Dynamic component={props.as} {...parsedPivProps} /> : <div {...parsedPivProps} />
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {
   return flap(props.dangerousRenderWrapperNode).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
-    createComponent(Piv, omit(props, 'dangerousRenderWrapperNode'))
+    createComponent(Piv, omit(props, 'dangerousRenderWrapperNode')),
   )
 }

@@ -3,7 +3,7 @@ import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'sol
 import {
   KeyboardShortcutFn,
   KeybordShortcutKeys,
-  handleKeyboardShortcut
+  handleKeyboardShortcut,
 } from '../../domkit/gesture/handleKeyboardShortcut'
 import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
 import { createRef } from '../hooks/createRef'
@@ -21,7 +21,7 @@ export type DetailKeyboardShortcutSetting = Record<
 
 // hook info store, store registered keyboard shortcuts
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
-  new WeakerMap<HTMLElement, DetailKeyboardShortcutSetting>()
+  new WeakerMap<HTMLElement, DetailKeyboardShortcutSetting>(),
 )
 
 function registerLocalKeyboardShortcut(el: HTMLElement, settings: DetailKeyboardShortcutSetting): { remove(): void } {
@@ -29,7 +29,7 @@ function registerLocalKeyboardShortcut(el: HTMLElement, settings: DetailKeyboard
   return {
     remove() {
       registeredKeyboardShortcut.delete(el)
-    }
+    },
   }
 }
 
@@ -45,7 +45,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
         delete originalObject[key]
       })
       registeredKeyboardShortcut.set(el, originalObject)
-    }
+    },
   }
 }
 
@@ -72,7 +72,7 @@ export function useKeyboardShortcut(settings?: DetailKeyboardShortcutSetting) {
     setRef,
     setNewSettings(newSettings: DetailKeyboardShortcutSetting) {
       setCurrentSettings(newSettings)
-    }
+    },
   }
 }
 
@@ -96,13 +96,13 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
     setNewSettings(
       newSettings:
         | DetailKeyboardShortcutSetting
-        | ((prev: DetailKeyboardShortcutSetting) => DetailKeyboardShortcutSetting)
+        | ((prev: DetailKeyboardShortcutSetting) => DetailKeyboardShortcutSetting),
     ) {
       setCurrentSettings(newSettings)
     },
     get registeredGlobalShortcuts() {
       return useAllRegisteredGlobalShortcuts()
-    }
+    },
   }
 }
 
@@ -112,7 +112,7 @@ function parseShortcutConfigFromSettings(settings: DetailKeyboardShortcutSetting
 // TODO: should move to /fnkit
 function mapObjectEntry<T extends AnyObj, NK extends keyof any, NV>(
   o: T,
-  fn: (value: T[keyof T], key: keyof T) => [NK, NV]
+  fn: (value: T[keyof T], key: keyof T) => [NK, NV],
 ): Record<NK, NV> {
   return Object.fromEntries(Object.entries(o).map(([key, value]) => fn(value, key as keyof T))) as Record<NK, NV>
 }
@@ -154,7 +154,7 @@ export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue?:
  * @returns [proxiedObject, subscribable]
  */
 export function makeSubscriable<T extends AnyObj>(
-  originalObject: T
+  originalObject: T,
 ): [proxiedObject: T, subscribable: Subscribable<T>] {
   const mayCauseChangeKeys =
     originalObject instanceof Array
@@ -183,7 +183,7 @@ export function makeSubscriable<T extends AnyObj>(
       Reflect.set(target, prop, value)
       subscribable.inject(target)
       return true
-    }
+    },
   })
   return [proxiedValue, subscribable]
 }

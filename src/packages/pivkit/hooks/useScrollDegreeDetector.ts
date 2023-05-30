@@ -8,7 +8,7 @@ export interface UseScrollDegreeDetectorOptions {
 
 export function useScrollDegreeDetector(
   ref: Accessor<HTMLElement | null | undefined>,
-  options?: UseScrollDegreeDetectorOptions
+  options?: UseScrollDegreeDetectorOptions,
 ) {
   let isReachedBottom = false
 

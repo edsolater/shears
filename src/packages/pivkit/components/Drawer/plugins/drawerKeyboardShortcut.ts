@@ -13,7 +13,7 @@ export const drawerKeyboardShortcut = createPlugin<DrawerProps>(() => {
     if (!el) return
     keyboardFocusElement(el)
     const subscription = handleKeyboardShortcut(el, {
-      'Escape': () => drawerController()?.close()
+      'Escape': () => drawerController()?.close(),
     })
     return subscription.abort
   }, [])

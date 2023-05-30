@@ -40,7 +40,7 @@ export function ListItem(originalProps: ListItemProps) {
 
   //=== Controller
   const controller: ListItemController = {
-    isIntersecting
+    isIntersecting,
   }
   lazyLoadController(controller)
 
@@ -53,7 +53,7 @@ export function ListItem(originalProps: ListItemProps) {
       shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
       style={{
         height: isIntersecting() ? undefined : `${innerHeight()}px`,
-        width: isIntersecting() ? undefined : `${innerWidth()}px`
+        width: isIntersecting() ? undefined : `${innerWidth()}px`,
       }}
       icss={{ visibility: isIntersecting() ? 'visible' : 'hidden', width: '100%' }}
     >

@@ -29,17 +29,17 @@ export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; 
 
 function getFarmSYNInfosFromWorker(
   owner: WalletStore['owner'],
-  cb: WebworkerSubscribeCallback<DataStore['farmInfos']>
+  cb: WebworkerSubscribeCallback<DataStore['farmInfos']>,
 ) {
   const { abort } = subscribeWebWorker_Drepcated<DataStore['farmInfos'], CalculateSwapRouteInfosParams>(
     {
       description: 'get raydium farms syn infos',
       payload: {
         owner: owner,
-        rpcUrl: appRpcEndpointUrl
-      }
+        rpcUrl: appRpcEndpointUrl,
+      },
     },
-    cb
+    cb,
   )
   return { abort }
 }

@@ -13,7 +13,7 @@ export const modalKeyboardShortcut = createPlugin<ModalProps>(() => {
     if (!el) return
     keyboardFocusElement(el)
     const subscription = handleKeyboardShortcut(el, {
-      'Escape': () => modalController()?.close()
+      'Escape': () => modalController()?.close(),
     })
     return subscription.abort
   }, [])

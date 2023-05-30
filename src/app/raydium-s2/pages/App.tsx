@@ -19,7 +19,7 @@ export function App() {
 
   const settings = map(globalPageShortcuts, ({ to, shortcut }) => ({
     fn: () => navigate(to),
-    shortcut
+    shortcut,
   }))
   useKeyboardGlobalShortcut(settings)
 
@@ -57,7 +57,7 @@ function KeyboardShortcutPanel() {
               plugin={keyboardShortcutObserverPlugin({
                 onRecordShortcut(newShortcut) {
                   updateSetting(description, newShortcut)
-                }
+                },
               })}
             />
           </Box>

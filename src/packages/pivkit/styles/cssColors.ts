@@ -33,5 +33,5 @@ export const cssColors = {
   component_label_bg_default: '#e1e3e769',
 
   //---- input
-  component_input_bg_default: 'transparent'
+  component_input_bg_default: 'transparent',
 } as const

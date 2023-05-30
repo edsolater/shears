@@ -7,7 +7,7 @@ import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subsc
 const worker = new SDKWorker()
 
 export type WebworkerSubscribeCallback<ResultData = any> = (
-  data: ResultData
+  data: ResultData,
 ) => void | ((newData: ResultData) => void) /* clean fn */
 
 /**
@@ -15,7 +15,7 @@ export type WebworkerSubscribeCallback<ResultData = any> = (
  */
 export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any>(
   message: { description: WorkerDescription; payload?: PostOptions },
-  callback?: WebworkerSubscribeCallback<ResultData>
+  callback?: WebworkerSubscribeCallback<ResultData>,
 ): { abort(): void } {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
   worker.postMessage(message)
@@ -37,7 +37,7 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
 
 /**
  * a command sender and a receiver in mainThread-side
- * 
+ *
  * pass a command to webworker
  * @param messageDescription command
  * @param query payload
@@ -45,7 +45,7 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
  */
 export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   messageDescription: WorkerDescription,
-  query: PostOptions
+  query: PostOptions,
 ) {
   const subscribable = new Subscribable<ResultData>()
   worker.postMessage({ description: messageDescription, payload: query })

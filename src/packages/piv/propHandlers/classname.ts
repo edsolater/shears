@@ -8,7 +8,7 @@ export type ClassName<Controller extends ValidController | unknown = unknown> = 
 
 export function classname<Controller extends ValidController | unknown = unknown>(
   classNameArray: MayDeepArray<ClassName<Controller>>,
-  controller?: Controller
+  controller?: Controller,
 ) {
   return flap(classNameArray)
     .filter(isTruthy)

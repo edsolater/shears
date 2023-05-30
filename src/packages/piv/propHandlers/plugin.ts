@@ -70,15 +70,15 @@ export function createWrapperNodePlugin<T extends AnyObj>(
   options?: {
     /** for DEBUG */
     name?: string
-  }
+  },
 ): PluginCreator<T> {
   return overwriteFunctionName(
     (addtionalProps: any) => ({
       pluginCoreFn: (props: any) => ({
-        dangerousRenderWrapperNode: (node: any) => createrFn(node, mergeProps(addtionalProps, props))
-      })
+        dangerousRenderWrapperNode: (node: any) => createrFn(node, mergeProps(addtionalProps, props)),
+      }),
     }),
-    options?.name
+    options?.name,
   ) as any
 }
 
@@ -104,11 +104,11 @@ export function createPlugin<T extends AnyObj, C extends ValidController = {}>(
   options?: {
     priority?: number // NOTE -1:  it should be render after final prop has determine
     name?: string
-  }
+  },
 ): PluginCreator<T, C> {
   const fn = (addtionalProps: any) => ({
     pluginCoreFn: (props: any) => createrFn(mergeProps(addtionalProps, props)),
-    priority: options?.priority
+    priority: options?.priority,
   })
   return options?.name ? overwriteFunctionName(fn, options.name) : fn
 }

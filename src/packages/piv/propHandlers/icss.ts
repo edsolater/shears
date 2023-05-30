@@ -11,7 +11,7 @@ export type ICSS<Controller extends ValidController | unknown = unknown> = MayAr
 
 export function parseCSSToString<Controller extends ValidController | unknown = unknown>(
   cssProp: ICSS<Controller>,
-  controller: Controller = {} as Controller
+  controller: Controller = {} as Controller,
 ) {
   const cssObjList = flapDeep(cssProp)
     .map((i) => shrinkFn(i, [controller]))
@@ -26,12 +26,12 @@ export function parseCSSToString<Controller extends ValidController | unknown = 
 // }
 
 export function compressICSSToObj<Controller extends ValidController | unknown = unknown>(
-  icss: ICSS<Controller>
+  icss: ICSS<Controller>,
 ): ICSSObject<Controller> {
   return (controller: Controller) => {
     const cssObjList = filter(
       flap(icss).map((i) => shrinkFn(i, [controller])),
-      isObject
+      isObject,
     ) as ICSSObject<Controller>[]
     const l = cssObjList.reduce((acc, cur) => mergeICSSObject<Controller>(acc, cur), {} as ICSSObject<Controller>)
     return shrinkFn(l, [controller])
@@ -44,7 +44,7 @@ export function mergeICSSObject<Controller extends ValidController | unknown = u
   return (controller: Controller) =>
     mergeObjectsWithConfigs(
       icsses.map((ic) => shrinkFn(ic, [controller])),
-      ({ valueA: v1, valueB: v2 }) => v2 ?? v1
+      ({ valueA: v1, valueB: v2 }) => v2 ?? v1,
     )
 }
 export function mergeCSSObject(...icsses: CSSObject[]): CSSObject {

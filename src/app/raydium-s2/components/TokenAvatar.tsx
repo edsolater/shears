@@ -31,7 +31,7 @@ export function TokenAvatar(kitProps: KitProps<TokenAvatarProps>) {
             : '12px',
         width: 'var(--size)',
         height: 'var(--size)',
-        borderRadius: '50%'
+        borderRadius: '50%',
       }}
     />
   )

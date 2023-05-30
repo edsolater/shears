@@ -28,7 +28,7 @@ export function add(a: Numberish | undefined, b: Numberish | undefined): Fractio
   const fb = toFraction(b)
   return {
     numerator: fa.numerator * fb.denominator + fb.numerator * fa.denominator,
-    denominator: fa.denominator * fb.denominator
+    denominator: fa.denominator * fb.denominator,
   }
 }
 
@@ -40,7 +40,7 @@ export function sub(a: Numberish | undefined, b: Numberish | undefined): Fractio
   const fb = toFraction(b)
   return {
     numerator: fa.numerator * fb.denominator - fb.numerator * fa.denominator,
-    denominator: fa.denominator * fb.denominator
+    denominator: fa.denominator * fb.denominator,
   }
 }
 

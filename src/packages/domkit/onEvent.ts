@@ -21,7 +21,7 @@ const eventIdMap = new Map<
 
 export type EventCallback<
   K extends keyof HTMLElementEventMap,
-  El extends HTMLElement | Document | Window | undefined | null
+  El extends HTMLElement | Document | Window | undefined | null,
 > = {
   ev: HTMLElementEventMap[K]
   el: El
@@ -31,13 +31,13 @@ export type EventCallback<
 // TODO: !!! move to domkit
 export function onEvent<
   El extends HTMLElement | Document | Window | undefined | null,
-  K extends keyof HTMLElementEventMap
+  K extends keyof HTMLElementEventMap,
 >(
   el: El,
   eventName: K,
   fn: (payload: EventCallback<K, El>) => void,
   /** default is `{ passive: true }` */
-  options?: EventListenerOptions
+  options?: EventListenerOptions,
 ): EventListenerController {
   const defaultedOptions = { passive: true, ...options }
   const targetEventId = eventId++
@@ -45,7 +45,7 @@ export function onEvent<
     eventId: targetEventId,
     cancel() {
       abortEvent(targetEventId, options)
-    }
+    },
   } as EventListenerController
   const newEventCallback = (ev: Event) => {
     if (options?.stopPropergation) ev.stopPropagation()

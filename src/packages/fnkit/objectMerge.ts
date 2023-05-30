@@ -21,7 +21,7 @@ export function objectMerge<
   V extends AnyObj,
   W extends AnyObj,
   X extends AnyObj,
-  Y extends AnyObj
+  Y extends AnyObj,
 >(...objects: [T, U, V, W, X, Y]): T & U & V & W & X & Y
 export function objectMerge<
   T extends AnyObj,
@@ -30,12 +30,12 @@ export function objectMerge<
   W extends AnyObj,
   X extends AnyObj,
   Y extends AnyObj,
-  Z extends AnyObj
+  Z extends AnyObj,
 >(...objects: [T, U, V, W, X, Y, Z]): T & U & V & W & X & Y & Z
 export function objectMerge(...objects: AnyObj[]): AnyObj
 export function objectMerge(...objects: AnyObj[]) {
   return new Proxy(createEmptyObjectWithSpecificKeys(getKeys(objects)), {
-    get: (_target, key) => getValue(objects, key)
+    get: (_target, key) => getValue(objects, key),
   }) as any
 }
 
@@ -48,7 +48,7 @@ function getKeys(objs: AnyObj[]) {
     objs.flatMap((obj) => {
       const descriptors = Object.getOwnPropertyDescriptors(obj) // 🤔 necessary?
       return Reflect.ownKeys(descriptors)
-    })
+    }),
   )
 }
 

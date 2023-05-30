@@ -22,7 +22,7 @@ export function deUITokenAmount(tokenAmount: TokenAmount): _TokenAmount | Curren
       tokenAmount.token.mint,
       tokenAmount.token.decimals,
       tokenAmount.token.symbol,
-      tokenAmount.token.name
+      tokenAmount.token.name,
     )
     return new _TokenAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
   }
@@ -48,7 +48,7 @@ export function parseSDKTokenAmount(tokenAmount: CurrencyAmount | _TokenAmount):
     const ta = tokenAmount as _TokenAmount
     return {
       token: parseSDKToken(ta.token),
-      amount: div(parseSDKBN(ta.raw), 10 ** ta.token.decimals)
+      amount: div(parseSDKBN(ta.raw), 10 ** ta.token.decimals),
     }
   }
 }

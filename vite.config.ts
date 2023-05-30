@@ -9,15 +9,15 @@ export default defineConfig({
   plugins: [solidPlugin(), VitePWA({ registerType: 'autoUpdate' })],
   server: {
     port: 3000,
-    hmr: false
+    hmr: false,
   },
   resolve: {
-    conditions: ['development', 'browser']
+    conditions: ['development', 'browser'],
   },
   define: {
     'process.env': {
-      NODE_ENV: JSON.stringify(process.env.NODE_ENV)
-    }
+      NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+    },
   },
   test: {
     environment: 'jsdom',
@@ -29,9 +29,9 @@ export default defineConfig({
     // if you have few tests, try commenting one
     // or both out to improve performance:
     threads: false,
-    isolate: false
+    isolate: false,
   },
   build: {
-    target: 'esnext'
-  }
+    target: 'esnext',
+  },
 })

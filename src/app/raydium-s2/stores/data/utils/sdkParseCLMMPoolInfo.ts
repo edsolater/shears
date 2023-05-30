@@ -18,7 +18,7 @@ const parsedAmmV3PoolInfoCache = new Map<
 export async function sdkParseCLMMPoolInfo({
   connection,
   apiAmmPools,
-  chainTimeOffset = 0
+  chainTimeOffset = 0,
 }: {
   connection: Connection
   apiAmmPools: ApiAmmV3PoolsItem[]
@@ -31,7 +31,7 @@ export async function sdkParseCLMMPoolInfo({
       poolKeys: needRefetchApiAmmPools,
       connection,
       batchRequest: true,
-      chainTime: (Date.now() + chainTimeOffset) / 1000
+      chainTime: (Date.now() + chainTimeOffset) / 1000,
     })
     Object.values(sdkParsed).forEach((sdk) => {
       parsedAmmV3PoolInfoCache.set(toPubString(sdk.state.id), sdk)

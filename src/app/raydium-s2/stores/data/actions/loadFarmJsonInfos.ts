@@ -18,8 +18,8 @@ export function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<DataStore['
   return subscribeWebWorker_Drepcated<DataStore['farmJsonInfos'], FetchFarmsJSONPayloads>(
     {
       description: 'fetch raydium farms info',
-      payload: {}
+      payload: {},
     },
-    cb
+    cb,
   )
 }

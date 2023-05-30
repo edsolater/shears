@@ -18,9 +18,9 @@ export function gettersProps<T extends object>(props: T): GettersProps<T> {
           //@ts-expect-error no need type check
           const v = props[key]
           return v?.()
-        }
+        },
       }
       return acc
-    }, {} as PropertyDescriptorMap)
+    }, {} as PropertyDescriptorMap),
   ) as GettersProps<T>
 }

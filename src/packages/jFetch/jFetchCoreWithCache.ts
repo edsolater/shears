@@ -27,7 +27,7 @@ export async function jFetchCoreWithCache(input: RequestInfo, options?: JFetchCo
 
   const shouldUseCache = canJFetchUseCache({
     key,
-    cacheFreshDuraction: options?.cacheFreshTime ?? defaultCacheFreshTime
+    cacheFreshDuraction: options?.cacheFreshTime ?? defaultCacheFreshTime,
   })
 
   if (shouldUseCache) return resultCache.get(key)!.rawText
@@ -57,7 +57,7 @@ export async function jFetchCoreWithCache(input: RequestInfo, options?: JFetchCo
     const tempJFetchItem = {
       response,
       rawText,
-      timeStamp: Date.now()
+      timeStamp: Date.now(),
     } satisfies JFetchCacheItem
     resultCache.set(key, tempJFetchItem)
 
@@ -66,7 +66,7 @@ export async function jFetchCoreWithCache(input: RequestInfo, options?: JFetchCo
       const jFetchItem = {
         response,
         rawText,
-        timeStamp: Date.now()
+        timeStamp: Date.now(),
       } satisfies JFetchCacheItem
       resultCache.set(key, jFetchItem)
       return canJFetchUseCache({ key }) && resultCache.get(key)!.ok === true ? resultCache.get(key)!.rawText : rawText
@@ -75,7 +75,7 @@ export async function jFetchCoreWithCache(input: RequestInfo, options?: JFetchCo
         response,
         rawText,
         timeStamp: Date.now(),
-        ok: true
+        ok: true,
       } satisfies JFetchCacheItem
       resultCache.set(key, jFetchItem)
       return rawText
@@ -84,7 +84,7 @@ export async function jFetchCoreWithCache(input: RequestInfo, options?: JFetchCo
     const jFetchItem = {
       rawText: Promise.reject('jFetch failed2'),
       timeStamp: Date.now(),
-      ok: false
+      ok: false,
     } satisfies JFetchCacheItem
     resultCache.set(key, jFetchItem)
     return Promise.reject('jFetch failed3')

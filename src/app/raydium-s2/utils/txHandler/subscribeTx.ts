@@ -19,7 +19,7 @@ export function subscribeTx({
   txid,
   transaction, // payload
   connection,
-  extraTxidInfo
+  extraTxidInfo,
 }: {
   txid: string
   transaction: Transaction | VersionedTransaction
@@ -40,20 +40,20 @@ export function subscribeTx({
             signatureResult,
             context,
             error: signatureResult.err,
-            ...extraTxidInfo
-          }
+            ...extraTxidInfo,
+          },
         ])
         eventCenter.emit('txFinally', [
-          { txid, transaction, signatureResult, context, type: 'error', ...extraTxidInfo }
+          { txid, transaction, signatureResult, context, type: 'error', ...extraTxidInfo },
         ])
       } else {
         eventCenter.emit('txSuccess', [{ txid, transaction, signatureResult, context, ...extraTxidInfo }])
         eventCenter.emit('txFinally', [
-          { txid, transaction, signatureResult, context, type: 'success', ...extraTxidInfo }
+          { txid, transaction, signatureResult, context, type: 'success', ...extraTxidInfo },
         ])
       }
     },
-    'processed'
+    'processed',
   )
   connection.getSignatureStatus(txid)
   return eventCenter

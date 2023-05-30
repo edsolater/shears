@@ -10,6 +10,6 @@ export function signalize<T extends object | undefined>(props: T): SignalizeProp
         const value = Reflect.get(target, p, receiver)
         if (isFunction(value)) return value(...args)
         return value
-      }
+      },
   }) as any
 }

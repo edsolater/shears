@@ -8,7 +8,7 @@ export async function buildTransactionsFromSDKInnerTransactions({
   connection,
   owner,
   txVersion,
-  transactions
+  transactions,
 }: {
   connection: Connection
   owner: PublicKeyish
@@ -19,7 +19,7 @@ export async function buildTransactionsFromSDKInnerTransactions({
     connection,
     payer: toPub(owner),
     innerTransactions: transactions,
-    txType: getSDKTxVersion(txVersion)
+    txType: getSDKTxVersion(txVersion),
   })
   return spawnedTransactions
 }

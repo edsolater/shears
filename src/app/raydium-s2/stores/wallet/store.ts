@@ -40,7 +40,7 @@ export const useWalletStore = createCachedGlobalHook(() => {
     $setters: {
       setHasInited,
       setConnected,
-      setCurrentWallet
+      setCurrentWallet,
     },
     get hasInited() {
       return hasInited()
@@ -55,7 +55,7 @@ export const useWalletStore = createCachedGlobalHook(() => {
       return owner()
     },
     connect: connect,
-    disconnect: disconnect
+    disconnect: disconnect,
   }
   return store
 })

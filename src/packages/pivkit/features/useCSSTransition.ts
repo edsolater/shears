@@ -63,14 +63,14 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
     },
     get contentRef() {
       return contentDivRef()
-    }
+    },
   }
   const opts = useAccessifiedProps(additionalOpts, controller)
   const [contentDivRef, setContentDivRef] = createRef<HTMLElement>()
   const transitionPhaseProps = createMemo(() => {
     const baseTransitionICSS = {
       transition: `${opts.cssTransitionDurationMs ?? 250}ms`,
-      transitionTimingFunction: opts.cssTransitionTimingFunction
+      transitionTimingFunction: opts.cssTransitionTimingFunction,
     }
     const presets = flap(opts.presets)
     return {
@@ -78,32 +78,32 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
         presets.map((i) => shrinkFn(i)?.enterFromProps),
         opts.duringEnterProps,
         opts.enterFromProps || opts.fromProps,
-        { style: baseTransitionICSS } as PivProps
+        { style: baseTransitionICSS } as PivProps,
       ),
       enterTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.enterToProps),
         opts.duringEnterProps,
         opts.enterToProps || opts.toProps,
-        { style: baseTransitionICSS } as PivProps
+        { style: baseTransitionICSS } as PivProps,
       ),
       leaveFrom: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveFromProps),
         opts.duringLeaveProps,
         opts.leaveFromProps || opts.toProps,
-        { style: baseTransitionICSS } as PivProps
+        { style: baseTransitionICSS } as PivProps,
       ),
       leaveTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveToProps),
         opts.duringLeaveProps,
         opts.leaveToProps || opts.fromProps,
-        { style: baseTransitionICSS } as PivProps
-      )
+        { style: baseTransitionICSS } as PivProps,
+      ),
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
   const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? 'shown' : 'hidden')
   const targetPhase = () => (opts.show ? 'shown' : 'hidden') as TransitionTargetPhase
   const isInnerVisiable = createMemo(
-    () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown'
+    () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown',
   )
   const currentPhasePropsName = createMemo<TransitionCurrentPhasePropsName>(() =>
     targetPhase() === 'shown'
@@ -112,7 +112,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
         : 'enterTo'
       : currentPhase() === 'shown'
       ? 'leaveFrom'
-      : 'leaveTo'
+      : 'leaveTo',
   )
 
   // set data-** to element for semantic
@@ -130,7 +130,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
     const el = contentDivRef()
     if (!el) return
     const subscription = onEvent(el, 'transitionend', () => setCurrentPhase(targetPhase()), {
-      onlyTargetIsSelf: true // not event fired by bubbled
+      onlyTargetIsSelf: true, // not event fired by bubbled
     })
     onCleanup(() => subscription.cancel())
   })

@@ -240,5 +240,5 @@ export const tailwindPaletteColors = {
   rose600: '#e11d48',
   rose700: '#be123c',
   rose800: '#9f1239',
-  rose900: '#881337'
+  rose900: '#881337',
 }

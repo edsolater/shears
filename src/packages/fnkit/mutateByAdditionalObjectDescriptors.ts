@@ -14,7 +14,7 @@ export function mutateByAdditionalObjectDescriptors<T>(
       [K in keyof T]?: (obj: T) => any
     }
     deletePropertyNames?: (keyof T)[]
-  }
+  },
 ): T {
   const newDescriptors: PropertyDescriptorMap = {
     ...Object.getOwnPropertyDescriptors(obj),
@@ -26,9 +26,9 @@ export function mutateByAdditionalObjectDescriptors<T>(
           // @ts-ignore no need worry about it's type check
           const newValue = getter(obj)
           return newValue
-        }
+        },
       }
-    })
+    }),
   }
   if (descriptorSummery.deletePropertyNames) {
     for (const deletePropertyName of descriptorSummery.deletePropertyNames) {

@@ -25,15 +25,15 @@ export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
 
 const getTokenPriceInfoFromWorker = (
   tokens: TokenListStore['allTokens'],
-  cb: WebworkerSubscribeCallback<TokenPriceWorkerData>
+  cb: WebworkerSubscribeCallback<TokenPriceWorkerData>,
 ) =>
   subscribeWebWorker_Drepcated<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
     {
       description: 'get raydium token prices',
       payload: {
         url: appApiUrls.price,
-        tokens
-      }
+        tokens,
+      },
     },
-    cb
+    cb,
   )

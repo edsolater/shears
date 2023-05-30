@@ -8,7 +8,7 @@ export type IStyle<Controller extends ValidController | unknown = unknown> = May
 >
 export function parseIStyles<Controller extends ValidController | unknown = unknown>(
   styles: IStyle,
-  controller: Controller = {} as Controller
+  controller: Controller = {} as Controller,
 ): JSX.HTMLAttributes<any>['style'] | undefined {
   if (!styles) return undefined
   // @ts-expect-error no need to check

@@ -22,14 +22,14 @@ export function PairsPanel() {
           borderRadius: 4,
           display: 'flex',
           flexDirection: 'column',
-          gap: 4
+          gap: 4,
         }}
       >
         <List items={dataStore.pairInfos}>
           {(info) => (
             <Collapse
               icss={{
-                '&:nth-child(even)': { background: '#8080802e' }
+                '&:nth-child(even)': { background: '#8080802e' },
               }}
             >
               <Collapse.Face>
@@ -38,7 +38,7 @@ export function PairsPanel() {
                     display: 'grid',
                     cursor: 'pointer',
                     gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
-                    paddingBlock: 4
+                    paddingBlock: 4,
                   }}
                 >
                   <Piv>{info.name}</Piv>

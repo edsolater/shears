@@ -6,7 +6,7 @@ import { TokenListStore } from '../types/tokenList'
 
 export async function fetchTokenPrices(
   tokens: TokenListStore['allTokens'],
-  raydiumUrl: string
+  raydiumUrl: string,
 ): Promise<Map<string, Numberish>> {
   type CoingeckoPriceFile = Record<
     string /* coingeckoid */,
@@ -19,7 +19,7 @@ export async function fetchTokenPrices(
   const coingeckoIds = shakeFalsy(Array.from(tokens.values()).map((t) => t?.extensions?.coingeckoId))
   const [coingeckoPrices, raydiumPrices] = await parallelAsyncTasks([
     jFetch<CoingeckoPriceFile>(
-      `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoIds}&vs_currencies=usd`
+      `https://api.coingecko.com/api/v3/simple/price?ids=${coingeckoIds}&vs_currencies=usd`,
     ).then((coingeckoPrices) => {
       const coingeckoIdMap = Object.fromEntries(tokens.map((t) => [t.mint, t.extensions?.coingeckoId]))
       const reversedCoingeckoIdMap = new Map(Object.entries(coingeckoIdMap).map(([k, v]) => [v, k]))
@@ -28,7 +28,7 @@ export async function fetchTokenPrices(
         : undefined
       return coingeckoTokenPrices
     }),
-    jFetch<RaydiumPriceFile>(raydiumUrl)
+    jFetch<RaydiumPriceFile>(raydiumUrl),
   ])
   const prices = recordToMap(shakeNil({ ...coingeckoPrices, ...raydiumPrices }))
   return prices

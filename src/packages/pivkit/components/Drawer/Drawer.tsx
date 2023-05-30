@@ -40,8 +40,8 @@ export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerContr
           open()
           drawerRef()?.focus()
         }
-      }
-    })
+      },
+    }),
   })
   const props = addDefaultProps(rawProps, drawerDefaultProps)
   const [drawerRef, setDrawerRef] = createRef<HTMLDivElement>()

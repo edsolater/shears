@@ -26,13 +26,13 @@ const eventIdMap = new Map<
 // TODO: !!! move to domkit
 export function addEventListener<
   El extends HTMLElement | Document | Window | undefined | null,
-  K extends keyof HTMLElementEventMap
+  K extends keyof HTMLElementEventMap,
 >(
   el: El,
   eventName: K,
   fn: (payload: { ev: HTMLElementEventMap[K]; el: El; eventListenerController: EventListenerController }) => void,
   /** default is `{ passive: true }` */
-  options?: EventListenerOptions
+  options?: EventListenerOptions,
 ): EventListenerController {
   const defaultedOptions = { passive: true, ...options }
   const targetEventId = eventId++
@@ -40,7 +40,7 @@ export function addEventListener<
     eventId: targetEventId,
     abort() {
       abortEvent(targetEventId, options)
-    }
+    },
   }
   const newEventCallback = (ev: Event) => {
     if (options?.stopPropergation) ev.stopPropagation()
@@ -53,13 +53,13 @@ export function addEventListener<
 }
 
 export function composeMultiListenerControllers(
-  eventListenerControllers: EventListenerController[]
+  eventListenerControllers: EventListenerController[],
 ): ComposedEventListenerControllers {
   return {
     eventId: eventListenerControllers.map((c) => c.eventId),
     abort() {
       eventListenerControllers.forEach((c) => c.abort())
-    }
+    },
   }
 }
 

@@ -13,6 +13,6 @@ export function toGettersFromAccessor<T extends object>(getAccessorOfObj: () => 
         obj = getAccessorOfObj()
       }
       return Reflect.get(obj, p, receiver)
-    }
+    },
   }) as T
 }

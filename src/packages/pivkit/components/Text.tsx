@@ -14,7 +14,7 @@ export function Text(rawProps: TextProps) {
   return (
     <Piv
       icss={{
-        display: props.inline ? 'inline-block' : undefined
+        display: props.inline ? 'inline-block' : undefined,
       }}
       shadowProps={props}
       class={Text.name}

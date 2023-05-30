@@ -12,7 +12,7 @@ import { FlatSDKTokenAmount, isSDKTokenAmount, parseSDKTokenAmount } from '../da
  * @param sdkRawData input raw sdk data
  */
 export function flatSDKReturnedInfo<T>(
-  sdkRawData: T
+  sdkRawData: T,
 ): FlatSDKFraction<FlatSDKBN<FlatSDKPrice<FlatSDKDecimal<FlatSDKToken<FlatSDKTokenAmount<T>>>>>> {
   if (isPrimitive(sdkRawData)) {
     return sdkRawData as any

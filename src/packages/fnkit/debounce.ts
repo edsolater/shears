@@ -81,7 +81,7 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
 
 function promisedSetTimeout<T>(
   fn: () => T | Promise<T>,
-  delay: number
+  delay: number,
 ): { timer: Promise<ReturnType<typeof setTimeout>>; result: Promise<Awaited<T>> } {
   let timerPromiseResolve: (value: ReturnType<typeof setTimeout>) => void
   const timer = new Promise<ReturnType<typeof setTimeout>>((resolve, reject) => {

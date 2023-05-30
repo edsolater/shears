@@ -8,7 +8,7 @@ import { TxHandlerOptions, TxHandlerOption, MultiTxsOption, TransactionQueue, Tr
  * collector's aim: use `.add` method to load innerTransactions
  */
 export function innerTxCollector(
-  additionOptions?: Pick<TxHandlerOptions, 'additionalMultiOptionCallback' | 'additionalSingleOptionCallback'>
+  additionOptions?: Pick<TxHandlerOptions, 'additionalMultiOptionCallback' | 'additionalSingleOptionCallback'>,
 ) {
   const singleTxOptions = [] as TxHandlerOption[]
   const multiTxOption = {} as MultiTxsOption
@@ -41,7 +41,7 @@ export function innerTxCollector(
     const isQueue = isArray(transactions)
     if (isQueue) {
       const injectedTransactions: TransactionQueue = transactions.map((t) =>
-        isArray(t) ? [t[0], { ...option, ...t[1] }] : [t, option]
+        isArray(t) ? [t[0], { ...option, ...t[1] }] : [t, option],
       )
       addQueue(injectedTransactions, option)
     } else {
@@ -52,6 +52,6 @@ export function innerTxCollector(
   const transactionCollector: TransactionCollector = { add }
   return {
     transactionCollector,
-    collected: { collectedTransactions: innerTransactions, singleTxOptions, multiTxOption }
+    collected: { collectedTransactions: innerTransactions, singleTxOptions, multiTxOption },
   }
 }

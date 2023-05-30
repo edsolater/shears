@@ -28,7 +28,7 @@ export function createToggle(
     onOn?(): void
     /* usually it is for debug */
     onToggle?(isOn: boolean): void
-  } = {}
+  } = {},
 ): CreateToggleReturn {
   const opts = addDefaultProps(options, { delay: 800 })
   const [isOn, _setIsOn] = createSignal(shrinkFn(initValue))
@@ -91,7 +91,7 @@ export function createToggle(
     on,
     off,
     toggle,
-    set: setIsOn
+    set: setIsOn,
   }
   return [isOn, controller]
 }

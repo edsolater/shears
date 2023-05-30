@@ -20,7 +20,7 @@ import {
   SolongWalletAdapter,
   TokenPocketWalletAdapter,
   TorusWalletAdapter,
-  TrustWalletAdapter
+  TrustWalletAdapter,
 } from '@solana/wallet-adapter-wallets'
 import { WalletAdapterInterface } from '../type'
 
@@ -46,5 +46,5 @@ export const supportedWallets: WalletAdapterInterface[] = [
   { adapter: new CloverWalletAdapter() },
   { adapter: new CoinhubWalletAdapter() },
   { adapter: new BackpackWalletAdapter() },
-  { adapter: new BraveWalletAdapter() }
+  { adapter: new BraveWalletAdapter() },
 ]

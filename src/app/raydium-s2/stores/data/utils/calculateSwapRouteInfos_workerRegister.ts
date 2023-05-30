@@ -11,9 +11,9 @@ export function getWebworkerCalculateSwapRouteInfos_workerRegister() {
         inNextMainLoop((result) => {
           assertNotAborted()
           resolve(result)
-        })
+        }),
       )
       onClean(abort)
-    }
+    },
   )
 }

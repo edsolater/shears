@@ -30,7 +30,7 @@ export function Image(rawProps: ImageProps) {
       as={(parsedPivProps) => <img {...parsedPivProps} />}
       htmlProps={{ src: String(props.src), alt: props.alt }}
       icss={{
-        display: 'block'
+        display: 'block',
       }}
       shadowProps={props}
       class={Image.name}

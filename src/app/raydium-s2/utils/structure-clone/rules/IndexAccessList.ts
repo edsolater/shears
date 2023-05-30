@@ -1,7 +1,7 @@
 import { getType } from '@edsolater/fnkit'
 import {
   IndexAccessList,
-  IndexAccessListStructureCloneType
+  IndexAccessListStructureCloneType,
 } from '../../../../../packages/fnkit/customizedClasses/IndexAccessList'
 import { addTransportRule } from '../addTransportRule'
 import { EncodedObject } from '../type'
@@ -13,5 +13,5 @@ export const addRule = () =>
       rawData['_structureCloneEncode']?.((innerItems) => encodeInner(innerItems)),
     name: 'IndexAccessList',
     decodeFn: ({ _info }: EncodedObject<IndexAccessListStructureCloneType>, decodeInner): IndexAccessList =>
-      IndexAccessList._structureCloneDecode(decodeInner(_info))
+      IndexAccessList._structureCloneDecode(decodeInner(_info)),
   })

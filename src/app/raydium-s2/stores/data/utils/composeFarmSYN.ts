@@ -28,7 +28,7 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
         pools: farmJsonInfos.map(jsonInfo2PoolKeys),
         owner: toPub(payload.owner),
         config: { batchRequest: true, commitment: 'confirmed' },
-        chainTime: Date.now() / 1000 // TEMP for not create chainTime system yet
+        chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet
       }
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })
@@ -38,7 +38,7 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
         if (aborted()) return
         const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
         resolve(farmSYN)
-      }
+      },
     )
   })
 }
@@ -47,7 +47,7 @@ function hydrateFarmSYN({
   farmJsons,
   farmSDKs,
   liquidityJsons,
-  pairJsons
+  pairJsons,
 }: {
   farmJsons?: Awaited<ReturnType<typeof fetchFarmJsonInfo>>
   farmSDKs?: Awaited<ReturnType<(typeof Farm)['fetchMultipleInfoAndUpdate']>>
@@ -70,7 +70,7 @@ function hydrateFarmSYN({
       ({
         '24h': pairJson.apr24h,
         '30d': pairJson.apr30d,
-        '7d': pairJson.apr7d
+        '7d': pairJson.apr7d,
       } as FarmSYNInfo['rewards'][number]['apr'])
     return {
       hasLoad: [farmSDK ? 'sdk' : undefined, farmSDK?.ledger ? 'ledger' : undefined, 'api'],
@@ -85,7 +85,7 @@ function hydrateFarmSYN({
       userStakedLpAmount: farmSDK?.ledger
         ? {
             token: farmJson.lpMint,
-            amount: farmSDK.ledger.deposited
+            amount: farmSDK.ledger.deposited,
           }
         : undefined,
       rewards: farmJson.rewardInfos.map((rewardJson, idx) => {
@@ -95,7 +95,7 @@ function hydrateFarmSYN({
           userPendingReward: farmSDK?.wrapped?.pendingRewards.at(idx)
             ? {
                 token: rewardJson.rewardMint,
-                amount: farmSDK.wrapped.pendingRewards.at(idx)
+                amount: farmSDK.wrapped.pendingRewards.at(idx),
               }
             : undefined,
           apr,
@@ -103,9 +103,9 @@ function hydrateFarmSYN({
           type: rewardJson.rewardType,
           perSecond: rewardJson.rewardPerSecond,
           openTime: rewardJson.rewardOpenTime && new Date(rewardJson.rewardOpenTime * 1000),
-          endTime: rewardJson.rewardEndTime && new Date(rewardJson.rewardEndTime * 1000)
+          endTime: rewardJson.rewardEndTime && new Date(rewardJson.rewardEndTime * 1000),
         } as FarmSYNInfo['rewards'][number]
-      })
+      }),
     } as FarmSYNInfo
   })
 

@@ -81,7 +81,7 @@ export type KeyboardShortcutSettings = {
 }
 export function handleKeyboardShortcut(
   el: HTMLElement,
-  keyboardShortcutSettings: KeyboardShortcutSettings
+  keyboardShortcutSettings: KeyboardShortcutSettings,
 ): EventListenerController {
   addTabIndex(el) // keydown must have fousable element
   return addEventListener(el, 'keydown', ({ ev }) => {
@@ -98,7 +98,7 @@ export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
       ev.stopPropagation()
       ev.preventDefault()
     },
-    { capture: true }
+    { capture: true },
   )
 }
 

@@ -6,7 +6,7 @@ import {
   SignatureResult,
   Transaction,
   TransactionError,
-  VersionedTransaction
+  VersionedTransaction,
 } from '@solana/web3.js'
 import { produce } from 'immer'
 import { innerTxCollector } from './innerTxCollector'
@@ -188,7 +188,7 @@ export function isTransaction(x: any): x is Transaction {
 }
 
 export function isVersionedTransaction(
-  transaction: Transaction | VersionedTransaction
+  transaction: Transaction | VersionedTransaction,
 ): transaction is VersionedTransaction {
   return isObject(transaction) && 'version' in transaction
 }
@@ -199,7 +199,7 @@ export function isVersionedTransaction(
 export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHandlerOptions): TxHandlerEventCenter {
   const {
     transactionCollector,
-    collected: { collectedTransactions, singleTxOptions, multiTxOption }
+    collected: { collectedTransactions, singleTxOptions, multiTxOption },
   } = innerTxCollector(options)
 
   const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
@@ -213,7 +213,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     const parsedSignleTxOptions = makeMultiOptionIntoSignalOptions({
       transactions: collectedTransactions,
       singleOptions: singleTxOptions,
-      multiOption: multiTxOption
+      multiOption: multiTxOption,
     })
 
     eventCenter.on('txSuccess', (info: TxSuccessInfo) => {
@@ -242,7 +242,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
 
     const allSignedTransactions = await signAllTransactions({
       transactions: collectedTransactions,
-      payload
+      payload,
     })
 
     // load send tx function
@@ -263,8 +263,8 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
         },
         onTxSuccess(info) {
           eventCenter.emit('txSuccess', [info])
-        }
-      }
+        },
+      },
     })
 
     // send tx
@@ -285,7 +285,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
 function makeMultiOptionIntoSignalOptions({
   transactions,
   singleOptions,
-  multiOption
+  multiOption,
 }: {
   transactions: (Transaction | InnerTransaction)[]
   singleOptions: TxHandlerOption[]
@@ -306,19 +306,19 @@ function makeMultiOptionIntoSignalOptions({
         (({ txid }) => {
           txids.push(txid)
         }) as TxSentSuccessCallback,
-        option.onTxSentSuccess ?? (() => {})
+        option.onTxSentSuccess ?? (() => {}),
       )
       option.onTxError = mergeFunction(
         (() => {
           multiOption.onTxAnyError?.({ txids })
         }) as TxErrorCallback,
-        option.onTxError ?? (() => {})
+        option.onTxError ?? (() => {}),
       )
       option.onTxSuccess = mergeFunction(
         (({ txid }) => {
           pushSuccessTxid(txid)
         }) as TxSuccessCallback,
-        option.onTxSuccess ?? (() => {})
+        option.onTxSuccess ?? (() => {}),
       )
     })
   })
@@ -330,7 +330,7 @@ function composeTransactionSenderWithDifferentSendMode({
   sendMode,
   singleOptions,
   payload,
-  callbacks
+  callbacks,
 }: {
   transactions: (Transaction | VersionedTransaction)[]
   sendMode: MultiTxsOption['sendMode']
@@ -347,7 +347,7 @@ function composeTransactionSenderWithDifferentSendMode({
     isMulti: transactions.length > 1,
     passedMultiTxids: Array.from({ length: transactions.length }),
     multiTransactionLength: transactions.length,
-    transactions
+    transactions,
   }
   if (sendMode === 'parallel(dangerous-without-order)' || sendMode === 'parallel(batch-transactions)') {
     const parallelled = () => {
@@ -358,8 +358,8 @@ function composeTransactionSenderWithDifferentSendMode({
           payload,
           isBatched: sendMode === 'parallel(batch-transactions)',
           singleOption: singleOptions[idx],
-          callbacks
-        })
+          callbacks,
+        }),
       )
     }
     return parallelled
@@ -377,13 +377,13 @@ function composeTransactionSenderWithDifferentSendMode({
               callbacks: {
                 ...callbacks,
                 onTxSuccess: mergeFunction(fn, callbacks?.onTxSuccess ?? emptyFn),
-                onTxError: mergeFunction(fn, callbacks?.onTxError ?? emptyFn)
-              }
+                onTxError: mergeFunction(fn, callbacks?.onTxError ?? emptyFn),
+              },
             }),
-          method: singleOption.continueWhenPreviousTx ?? (sendMode === 'queue(all-settle)' ? 'finally' : 'success')
+          method: singleOption.continueWhenPreviousTx ?? (sendMode === 'queue(all-settle)' ? 'finally' : 'success'),
         }
       },
-      { fn: () => {}, method: 'success' }
+      { fn: () => {}, method: 'success' },
     )
     return queued.fn
   }
@@ -398,7 +398,7 @@ async function sendOneTransactionWithOptions({
   singleOption,
   callbacks,
   payload,
-  isBatched
+  isBatched,
 }: {
   transaction: Transaction | VersionedTransaction
   wholeTxidInfo: Omit<MultiTxExtraInfo, 'currentIndex'>
@@ -415,14 +415,14 @@ async function sendOneTransactionWithOptions({
   const currentIndex = wholeTxidInfo.transactions.indexOf(transaction)
   const extraTxidInfo: MultiTxExtraInfo = {
     ...wholeTxidInfo,
-    currentIndex
+    currentIndex,
   }
   try {
     const txid = await sendTransactionCore({
       transaction,
       payload,
       batchOptions: isBatched ? { allSignedTransactions: wholeTxidInfo.transactions } : undefined,
-      cache: Boolean(singleOption?.cacheTransaction)
+      cache: Boolean(singleOption?.cacheTransaction),
     })
     assert(txid, 'something went wrong in sending transaction, getted txid empty')
     callbacks?.onSentSuccess?.({ transaction, txid, ...extraTxidInfo })
@@ -432,7 +432,7 @@ async function sendOneTransactionWithOptions({
       txid,
       transaction,
       extraTxidInfo,
-      connection: payload.connection
+      connection: payload.connection,
     })
 
     // re-emit tx event

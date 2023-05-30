@@ -33,7 +33,7 @@ export function tryToPub<T>(v: T): T | PublicKey {
   return isString(v)
     ? tryCatch(
         () => new PublicKey(v),
-        () => v
+        () => v,
       )
     : v
 }

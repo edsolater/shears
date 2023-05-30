@@ -16,7 +16,7 @@ export const useFarmPageStates = createCachedGlobalHook(() => {
   const farmDataStore = useDataStore()
   const [detailViewFarmId, setDetailViewFarmId] = createSignal<string>()
   const detailViewFarmJsonInfo = createMemo(() =>
-    find(farmDataStore.farmJsonInfos, (info) => info.id === detailViewFarmId())
+    find(farmDataStore.farmJsonInfos, (info) => info.id === detailViewFarmId()),
   )
   const states: FarmPageStates = {
     // setters
@@ -26,7 +26,7 @@ export const useFarmPageStates = createCachedGlobalHook(() => {
     },
     get detailViewFarmJsonInfo() {
       return detailViewFarmJsonInfo()
-    }
+    },
   }
   return states
 })

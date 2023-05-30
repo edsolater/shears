@@ -7,7 +7,7 @@ import { Token } from '../../../utils/dataStructures/Token'
  */
 export async function fetchTokenJsonFile(options: { url: string }) {
   const res = await jFetch<RaydiumTokenListJsonFile>(options.url, {
-    cacheFreshTime: 5 * 60 * 1000
+    cacheFreshTime: 5 * 60 * 1000,
   })
   return res && handleRaydiumTokenJsonFile(res)
 }
@@ -16,7 +16,7 @@ function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerD
   const tokens = [
     ...(res.official.map((t) => ({ ...t, is: 'raydium-official' } ?? [])) as Token[]),
     ...(res.unOfficial.map((t) => ({ ...t, is: 'raydium-unofficial' } ?? [])) as Token[]),
-    ...(res.unNamed.map((t) => ({ ...t, is: 'raydium-unnamed' } ?? [])) as Token[])
+    ...(res.unNamed.map((t) => ({ ...t, is: 'raydium-unnamed' } ?? [])) as Token[]),
   ]
   return { tokens: tokens, blacklist: res.blacklist }
 }

@@ -6,7 +6,7 @@ let currentConnection: Connection | null = null
 
 export function getConnection(
   endpoint: string = appRpcEndpointUrl,
-  commitmentOrConfig: Commitment | ConnectionConfig = 'confirmed'
+  commitmentOrConfig: Commitment | ConnectionConfig = 'confirmed',
 ) {
   if (currentRpcUrl === endpoint && currentConnection) {
     return currentConnection

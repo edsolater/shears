@@ -29,7 +29,7 @@ export function sdkParseSwapAmmInfo({
   outputMint,
 
   apiPoolList,
-  sdkParsedAmmV3PoolInfo
+  sdkParsedAmmV3PoolInfo,
 }: {
   connection: Connection
   inputMint: string
@@ -44,12 +44,12 @@ export function sdkParseSwapAmmInfo({
       inputMint: toPub(inputMint),
       outputMint: toPub(outputMint),
       apiPoolList: apiPoolList,
-      ammV3List: Object.values(sdkParsedAmmV3PoolInfo).map((i) => i.state)
+      ammV3List: Object.values(sdkParsedAmmV3PoolInfo).map((i) => i.state),
     })
     const tickCache = AmmV3.fetchMultiplePoolTickArrays({
       connection,
       poolKeys: routes.needTickArray,
-      batchRequest: true
+      batchRequest: true,
     }).catch((err) => {
       sdkCaches.delete(key)
       return undefined
@@ -57,7 +57,7 @@ export function sdkParseSwapAmmInfo({
     const poolInfosCache = TradeV2.fetchMultipleInfo({
       connection,
       pools: routes.needSimulate,
-      batchRequest: true
+      batchRequest: true,
     }).catch((err) => {
       sdkCaches.delete(key)
       return undefined

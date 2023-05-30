@@ -16,12 +16,12 @@ export const routePath = {
   home: homeRoutePath,
   farms: farmsRoutePath,
   playground: playgroundRoutePath,
-  swap: swapRoutePath
+  swap: swapRoutePath,
 }
 export const routes: RouteDefinition[] = [
   { path: routePath.home, component: Home },
   { path: routePath.swap, component: SwapPage },
   { path: routePath.pools, component: PairsPanel },
   { path: routePath.farms, component: FarmPage },
-  { path: routePath.playground, component: PlaygroundPage }
+  { path: routePath.playground, component: PlaygroundPage },
 ]

@@ -5,7 +5,7 @@ import {
   PoolType,
   ReturnTypeFetchMultipleInfo,
   ReturnTypeGetAllRouteComputeAmountOut,
-  TradeV2
+  TradeV2,
 } from '@raydium-io/raydium-sdk'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString from '../../../utils/dataStructures/Publickey'
@@ -30,7 +30,7 @@ export function calculateSwapRouteInfos({
   slippageTolerance = 0.05,
   input,
   output,
-  inputAmount
+  inputAmount,
 }: {
   rpcAddress?: string
   slippageTolerance?: Numberish
@@ -73,8 +73,8 @@ export function calculateSwapRouteInfos({
           inputMint: input.mint,
           outputMint: output.mint,
           apiPoolList: apiPoolList,
-          sdkParsedAmmV3PoolInfo: sdkParsedAmmV3PoolInfo
-        })
+          sdkParsedAmmV3PoolInfo: sdkParsedAmmV3PoolInfo,
+        }),
       )
 
     const awaitedSimulateCache = sdkParsedSwapAmmInfo.then((info) => info.poolInfosCache)
@@ -97,7 +97,7 @@ export function calculateSwapRouteInfos({
           inputTokenAmount: deUITokenAmount(inputAmount),
           outputToken: deUIToken(output),
           slippage: toPercent(slippageTolerance),
-          chainTime
+          chainTime,
         })
       })
 
@@ -110,7 +110,7 @@ export function calculateSwapRouteInfos({
       .then(([routeList, best]) => ({
         routeList,
         bestResult: best?.bestResult,
-        bestResultStartTimes: best?.bestResultStartTimes
+        bestResultStartTimes: best?.bestResultStartTimes,
       }))
 
     return swapInfo.then(flatSDKReturnedInfo)
@@ -134,7 +134,7 @@ interface BestResultStartTimePoolInfo {
 function getBestCalcResult(
   routeList: ReturnTypeGetAllRouteComputeAmountOut,
   poolInfosCache: ReturnTypeFetchMultipleInfo | undefined,
-  chainTime: number
+  chainTime: number,
 ):
   | {
       bestResult: ReturnTypeGetAllRouteComputeAmountOut[number]
@@ -168,7 +168,7 @@ function getPoolInfoFromPoolType(poolType: PoolType): BestResultStartTimeInfo['p
     rawInfo: poolType,
     ammId: toPubString(poolType.id),
     baseMint: isAmmV3PoolInfo(poolType) ? toPubString(poolType.mintA.mint) : poolType.baseMint,
-    quoteMint: isAmmV3PoolInfo(poolType) ? toPubString(poolType.mintB.mint) : poolType.quoteMint
+    quoteMint: isAmmV3PoolInfo(poolType) ? toPubString(poolType.mintB.mint) : poolType.quoteMint,
   }
 }
 

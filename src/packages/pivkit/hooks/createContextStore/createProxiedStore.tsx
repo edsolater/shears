@@ -7,7 +7,7 @@ import {
   isObject,
   isPrimitive,
   MayArray,
-  MayDeepArray
+  MayDeepArray,
 } from '@edsolater/fnkit'
 import { batch } from 'solid-js'
 import { createStore, produce } from 'solid-js/store'
@@ -15,7 +15,7 @@ import { DefaultStoreValue, OnChangeCallback, OnFirstAccessCallback, Store } fro
 import { asyncInvoke } from './utils/asyncInvoke'
 
 function toCallbackMap<F extends AnyFn>(
-  pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined
+  pairs: MayDeepArray<{ propertyName: MayArray<string | number | symbol>; cb: F }> | undefined,
 ) {
   const map = new Map<keyof any, F[] | undefined>()
   function recordCallback(propertyName: string | number | symbol, cb: F) {
@@ -50,11 +50,11 @@ export type CreateProxiedStoreCallbacks<T extends Record<string, any>> = {
 /** CORE, please client createContextStore or createGlobalStore */
 export function createProxiedStore<T extends Record<string, any>>(
   defaultValue?: DefaultStoreValue<T>,
-  options?: CreateProxiedStoreCallbacks<T>
+  options?: CreateProxiedStoreCallbacks<T>,
 ): [
   proxiedStore: Store<T>,
   rawStore: T,
-  onPropertyChange: <K extends keyof T>(key: K, cb: OnChangeCallback<T, K>) => { abort(): void }
+  onPropertyChange: <K extends keyof T>(key: K, cb: OnChangeCallback<T, K>) => { abort(): void },
 ] {
   const onFirstAccessCallbackMap = new Map(toCallbackMap(options?.onFirstAccess))
   const onChangeCallbackMap = new Map(toCallbackMap(options?.onChange))
@@ -104,15 +104,15 @@ export function createProxiedStore<T extends Record<string, any>>(
                     setRawStore(
                       produce((draft: AnyObj) => {
                         draft[propertyName] = assignToNewValue(draft[propertyName], newValue)
-                      })
+                      }),
                     )
                   })
                 })
                 return proxiedStore
               },
               {
-                key: 'setStore'
-              }
+                key: 'setStore',
+              },
             )
         }
 
@@ -122,8 +122,8 @@ export function createProxiedStore<T extends Record<string, any>>(
           invokeOnFirstAccess(propertyName, value, proxiedStore)
           return value
         }
-      }
-    }
+      },
+    },
   ) as Store<T>
 
   // 🚧 use solid system to hold reactive system
@@ -141,9 +141,9 @@ export function createProxiedStore<T extends Record<string, any>>(
         const callbacks = onChangeCallbackMap.get(key) ?? []
         onChangeCallbackMap.set(
           key,
-          callbacks.filter((callback) => callback !== cb)
+          callbacks.filter((callback) => callback !== cb),
         )
-      }
+      },
     }
   }
   return [proxiedStore, rawStore as T, addOnChange]
@@ -167,7 +167,7 @@ function assignToNewValue(oldValue: unknown, newValue: unknown): unknown {
 function mutateTwoObj(
   oldObj: Record<keyof any, unknown>,
   newObj: Record<keyof any, unknown>,
-  mutateFn?: (oldItem: unknown, newItem: unknown) => unknown
+  mutateFn?: (oldItem: unknown, newItem: unknown) => unknown,
 ): Record<keyof any, unknown> {
   const result = oldObj
   Object.entries(newObj).forEach(([key, newValue]) => {

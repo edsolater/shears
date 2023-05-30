@@ -37,7 +37,7 @@ function FarmList() {
                   display: 'grid',
                   gridTemplateColumns: '.3fr 1fr 1fr 1fr 1fr',
                   padding: 6,
-                  borderRadius: 4
+                  borderRadius: 4,
                 }}
                 onClick={() => {
                   farmPageStates.setDetailViewFarmId(info.id)
@@ -51,7 +51,7 @@ function FarmList() {
                   icss={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 8
+                    gap: 8,
                   }}
                 >
                   <TokenAvatarPair token1={getToken(info.base)} token2={getToken(info.quote)} />

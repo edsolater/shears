@@ -10,7 +10,7 @@ import { Accessor, createEffect } from 'solid-js'
  */
 export default function useResizeObserver<El extends HTMLElement>(
   ref: Accessor<El | undefined>,
-  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown
+  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown,
 ): { destory: () => void } {
   const resizeObserver =
     'ResizeObserver' in globalThis

@@ -10,7 +10,7 @@ export interface ListContainerBoxController {}
 export type DefaultListContainerBoxProps = typeof defaultProps
 
 const defaultProps = {
-  dir: 'y'
+  dir: 'y',
 } as const satisfies Partial<ListContainerBoxProps>
 
 /**
@@ -24,7 +24,7 @@ export function ListContainerBox(rawProps: KitProps<ListContainerBoxProps, ListC
       shadowProps={props}
       icss={[
         { height: '50dvh' },
-        props.dir === 'x' ? { overflowY: 'hidden', overflowX: 'scroll' } : { overflowY: 'scroll', overflowX: 'hidden' }
+        props.dir === 'x' ? { overflowY: 'hidden', overflowX: 'scroll' } : { overflowY: 'scroll', overflowX: 'hidden' },
       ]}
     >
       {props.children}

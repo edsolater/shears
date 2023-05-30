@@ -5,6 +5,6 @@ export function wrapToLazyObject<T extends object>(getObj: () => T): T {
     get(_, prop, receiver) {
       resolvedBN = resolvedBN || getObj()
       return Reflect.get(resolvedBN, prop, receiver)
-    }
+    },
   })
 }

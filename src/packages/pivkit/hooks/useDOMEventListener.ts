@@ -16,7 +16,7 @@ export function useDOMEventListener<El extends ElementAccessors, K extends keyof
     eventListenerController: EventListenerController
   }) => void,
   /** default is `{ passive: true }` */
-  options?: EventListenerOptions
+  options?: EventListenerOptions,
 ) {
   createEffect(() => {
     const els = getElementsFromAccessors(el)
@@ -36,7 +36,7 @@ export function useDocumentEventListener<K extends keyof HTMLElementEventMap>(
   eventName: K,
   fn: (payload: { ev: HTMLElementEventMap[K]; el: Document; eventListenerController: EventListenerController }) => void,
   /** default is `{ passive: true }` */
-  options?: EventListenerOptions
+  options?: EventListenerOptions,
 ) {
   createEffect(() => {
     // @ts-expect-error no need to check
@@ -53,7 +53,7 @@ export function useWindowEventListener<K extends keyof HTMLElementEventMap>(
   eventName: K,
   fn: (payload: { ev: HTMLElementEventMap[K]; el: Window; eventListenerController: EventListenerController }) => void,
   /** default is `{ passive: true }` */
-  options?: EventListenerOptions
+  options?: EventListenerOptions,
 ) {
   createEffect(() => {
     // @ts-expect-error no need to check

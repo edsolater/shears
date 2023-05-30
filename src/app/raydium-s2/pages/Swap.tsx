@@ -10,7 +10,7 @@ import {
   useSwapToken1,
   useSwapToken2,
   useSwapTokenAmount1,
-  useSwapTokenAmount2
+  useSwapTokenAmount2,
 } from '../stores/data/atoms/swap'
 import { useDataStore } from '../stores/data/store'
 import { toString } from '../utils/dataStructures/basicMath/format'

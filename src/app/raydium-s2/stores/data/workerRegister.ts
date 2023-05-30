@@ -17,7 +17,7 @@ export function registInWorker() {
   getWebworkerCalculateSwapRouteInfos_workerRegister()
 
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ resolve }) =>
-    fetchFarmJsonInfo().then(resolve)
+    fetchFarmJsonInfo().then(resolve),
   )
 
   registMessageReceiver<CalculateSwapRouteInfosParams>(
@@ -26,11 +26,11 @@ export function registInWorker() {
       const { abort, resultSubscribable } = composeFarmSYN(payload)
       resultSubscribable.subscribe(resolve)
       onClean(abort)
-    }
+    },
   )
 
   registMessageReceiver<FetchPairsOptions>('fetch raydium pairs info', ({ payload, resolve }) =>
-    fetchPairJsonInfo().then(resolve)
+    fetchPairJsonInfo().then(resolve),
   )
 
   registMessageReceiver<FetchRaydiumTokenListOptions>(
@@ -40,12 +40,12 @@ export function registInWorker() {
       fetchTokenJsonFile(options).then((res) => {
         const availableTokens = res?.tokens.filter((t) => !res?.blacklist.includes(t.mint))
         availableTokens && resolve(availableTokens)
-      })
+      }),
   )
 
   registMessageReceiver<FetchRaydiumTokenPriceOptions>(
     'get raydium token prices',
     async ({ payload: options, resolve }) =>
-      fetchTokenPrices(options.tokens, options.url).then((res) => resolve({ prices: res }))
+      fetchTokenPrices(options.tokens, options.url).then((res) => resolve({ prices: res })),
   )
 }

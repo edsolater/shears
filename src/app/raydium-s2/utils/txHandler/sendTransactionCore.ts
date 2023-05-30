@@ -21,7 +21,7 @@ export async function sendTransactionCore({
   transaction,
   payload,
   batchOptions,
-  cache = true
+  cache = true,
 }: {
   transaction: Transaction | VersionedTransaction
   payload: TxHandlerPayload
@@ -38,7 +38,7 @@ export async function sendTransactionCore({
     if (tempBatchedTransactionsQueue.length === batchOptions.allSignedTransactions.length) {
       const txids = await sendBatchedTransactions(
         tempBatchedTransactionsQueue.map((b) => b.tx),
-        payload
+        payload,
       )
       // fulfilled promise
       tempBatchedTransactionsQueue.forEach(({ resolveFn }, idx) => {
@@ -56,18 +56,18 @@ export async function sendTransactionCore({
 async function sendSingleTransaction(
   transaction: Transaction | VersionedTransaction,
   payload: TxHandlerPayload,
-  cache: boolean
+  cache: boolean,
 ): Promise<Txid> {
   const tx = serializeTransaction(transaction, { cache })
   return await payload.connection.sendRawTransaction(tx, {
-    skipPreflight: true
+    skipPreflight: true,
   })
 }
 
 /** @deprecated */
 async function sendBatchedTransactions(
   allSignedTransactions: (Transaction | VersionedTransaction)[],
-  payload: TxHandlerPayload
+  payload: TxHandlerPayload,
 ): Promise<Txid[]> {
   const encodedTransactions = allSignedTransactions.map((i) => i.serialize().toString('base64'))
 

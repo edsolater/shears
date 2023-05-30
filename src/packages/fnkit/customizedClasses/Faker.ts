@@ -29,7 +29,7 @@ export class Faker<T extends object | AnyFn> {
           throw new Error(`can't access unloaded object`)
         }
         return Reflect.apply(determinedObject as any, undefined, argArray)
-      }
+      },
     }) as T
   }
 }

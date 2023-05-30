@@ -23,7 +23,7 @@ export const SOLToken = {
 
   symbol: 'sol',
   name: 'solana',
-  is: 'sol'
+  is: 'sol',
 } satisfies Token
 
 const WSOLMint = 'So11111111111111111111111111111111111111112'
@@ -34,7 +34,7 @@ export const TOKEN_SOL: Token = {
   decimals: 9,
   symbol: 'SOL',
   name: 'solana',
-  is: 'sol'
+  is: 'sol',
 }
 
 /** transaction for SDK: unWrap may QuantumSOL to Token or Currency */
@@ -61,7 +61,7 @@ export function parseSDKToken(token: Currency | _Token): Token {
       mint: t.mint.toString(),
       decimals: t.decimals,
       symbol: t.symbol,
-      name: t.name
+      name: t.name,
     }
   }
 }

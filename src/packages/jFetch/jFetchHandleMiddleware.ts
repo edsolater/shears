@@ -27,20 +27,20 @@ function storeInResultCache(
   input: RequestInfo,
   rawText: Promise<string | undefined>,
   options: JFetchOptions | undefined,
-  formattedData: any
+  formattedData: any,
 ) {
   const key = typeof input === 'string' ? input : input.url
   finalResultCache.set(key, {
     rawText,
     timeStamp: getTime(),
     options,
-    result: formattedData
+    result: formattedData,
   })
 }
 function getCachedSuitableResult(
   input: RequestInfo,
   rawText: Promise<string | undefined>,
-  options: JFetchOptions | undefined
+  options: JFetchOptions | undefined,
 ) {
   const key = typeof input === 'string' ? input : input.url
   if (finalResultCache.has(key)) {
@@ -56,7 +56,7 @@ function getCachedSuitableResult(
  */
 export default async function jFetch<Shape = any>(
   input: RequestInfo,
-  options?: JFetchOptions
+  options?: JFetchOptions,
 ): Promise<Shape | undefined> {
   const rawText = jFetchCoreWithCache(input, options)
 
@@ -66,7 +66,7 @@ export default async function jFetch<Shape = any>(
   const renamedText = await asyncReduce(
     shakeNil(options?.middlewares?.map((m) => m.parseResponseRaw) ?? []),
     (rawText, parseResponseRaw) => rawText && parseResponseRaw(rawText),
-    rawText
+    rawText,
   )
   if (!renamedText) return undefined
   try {
@@ -75,13 +75,13 @@ export default async function jFetch<Shape = any>(
       () =>
         tryCatch(
           () => new Function('return ' + renamedText)(),
-          () => undefined
-        )
+          () => undefined,
+        ),
     )
     const formattedData = await asyncReduce(
       shakeNil(options?.middlewares?.map((m) => m.parseResponseJson) ?? []),
       (rawJson, parseResponseJson) => parseResponseJson(rawJson),
-      rawJson
+      rawJson,
     )
 
     storeInResultCache(input, rawText, options, formattedData)

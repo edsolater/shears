@@ -44,7 +44,7 @@ export function createStoreAtom<T>(value?: T | (() => T), options?: StoreAtomOpt
   }
   Object.defineProperty(atom, 'value', {
     get: wrappedGetter,
-    set: setter
+    set: setter,
   })
   atom.set = setter
   return atom as any

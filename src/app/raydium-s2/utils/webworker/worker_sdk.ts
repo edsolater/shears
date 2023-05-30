@@ -14,7 +14,7 @@ const cleanFunctionMap = new WeakMap<onMessage<any>, (() => void)[]>()
 const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
 /**
- * 
+ *
  * register receiver utils in worker-side
  */
 function initMessageReceiver() {

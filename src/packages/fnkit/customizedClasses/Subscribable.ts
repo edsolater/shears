@@ -65,7 +65,7 @@ export class Subscribable<T> {
       disconnect: () => {
         this.extendedSubscribables.delete(weakRefAnother)
         unsubscribe()
-      }
+      },
     }
   }
 
@@ -86,7 +86,7 @@ export class Subscribable<T> {
   subscribe(callback: SubscribeCallbackFn<T>) {
     this._callbacks.add(callback)
     return {
-      unsubscribe: () => this._callbacks.delete(callback)
+      unsubscribe: () => this._callbacks.delete(callback),
     }
   }
 
@@ -156,7 +156,7 @@ type GetPromiseArrayItem<T extends Promise<any>[]> = T extends [Promise<infer F>
       Promise<infer P>,
       Promise<infer Q>,
       Promise<infer S>,
-      Promise<infer T>
+      Promise<infer T>,
     ]
   ? [F | undefined, R | undefined, P | undefined, Q | undefined, S | undefined, T | undefined]
   : never

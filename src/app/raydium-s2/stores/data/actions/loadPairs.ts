@@ -27,9 +27,9 @@ function getPairJsonFromWorker(cb: WebworkerSubscribeCallback<PairJson[]>) {
     {
       description: 'fetch raydium pairs info',
       payload: {
-        force: false
-      }
+        force: false,
+      },
     },
-    cb
+    cb,
   )
 }

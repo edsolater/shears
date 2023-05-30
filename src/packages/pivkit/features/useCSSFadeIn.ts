@@ -74,12 +74,12 @@ export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
       //TODO: complete it
       // innerStyle.current = [baseTransitionStyle, { position: 'absolute', opacity: '0' }] as DivProps['style']
       // onAfterLeave?.()
-    }
+    },
   })
 
   return {
     refSetter: refSetter,
-    transitionProps
+    transitionProps,
   }
 }
 
@@ -109,6 +109,6 @@ function useFadeInPaddingEffect({ heightOrWidth }: { heightOrWidth: 'height' | '
     applyClearUselessStyle: (el: HTMLElement) => {
       el.style.removeProperty(heightOrWidth)
       el.style.removeProperty('padding')
-    }
+    },
   }
 }

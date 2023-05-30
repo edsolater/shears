@@ -4,18 +4,18 @@ import { farmsRoutePath, homeRoutePath, pairsRoutePath, swapRoutePath } from './
 export const globalPageShortcuts = {
   'go to home': {
     shortcut: 'alt + /',
-    to: homeRoutePath
+    to: homeRoutePath,
   },
   'go to swap': {
     shortcut: 'alt + s',
-    to: swapRoutePath
+    to: swapRoutePath,
   },
   'go to pools': {
     shortcut: 'alt + p',
-    to: pairsRoutePath
+    to: pairsRoutePath,
   },
   'go to farms': {
     shortcut: 'alt + f',
-    to: farmsRoutePath
-  }
+    to: farmsRoutePath,
+  },
 } satisfies Record<string, { to: string; shortcut: KeybordShortcutKeys }>

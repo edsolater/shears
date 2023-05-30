@@ -18,8 +18,8 @@ export const getTokenJsonInfoFromWorker = (cb: WebworkerSubscribeCallback<DataSt
     {
       description: 'fetch raydium supported tokens',
       payload: {
-        url: appApiUrls.tokenInfo
-      }
+        url: appApiUrls.tokenInfo,
+      },
     },
-    cb
+    cb,
   )

@@ -12,7 +12,7 @@ const recordedControllers = new Subscribable<WeakerMap<string, ValidController |
  */
 export function registerControllerInCreateKit(
   proxyController: ValidController | unknown | undefined,
-  id: string | undefined
+  id: string | undefined,
 ) {
   if (!proxyController) return
   if (!id) return
@@ -26,7 +26,7 @@ export function registerControllerInCreateKit(
 
 export function recordController<Controller extends ValidController | unknown>(
   id: string,
-  proxyController: Controller
+  proxyController: Controller,
 ) {
   recordedControllers.inject((m) => (m ?? new WeakerMap()).set(id, proxyController))
 }
@@ -55,8 +55,8 @@ export function useComponentController<Controller extends ValidController | unkn
           throw new Error('controller not ready')
         }
         return Reflect.get(recordController, prop)
-      }
-    }
+      },
+    },
   )
   recordedControllers.subscribe((records) => {
     recordController = records?.get(id) as Controller | undefined

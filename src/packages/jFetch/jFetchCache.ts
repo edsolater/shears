@@ -42,8 +42,8 @@ function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
               'raydium-controller-jFetch-cache',
               (s) => ({
                 ...s,
-                [key]: { ...cacheItem, rawText: plainRawText, response: null }
-              })
+                [key]: { ...cacheItem, rawText: plainRawText, response: null },
+              }),
             )
           })
           return bindedOriginal(...args)
@@ -51,6 +51,6 @@ function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
       } else {
         return bindedOriginal
       }
-    }
+    },
   })
 }

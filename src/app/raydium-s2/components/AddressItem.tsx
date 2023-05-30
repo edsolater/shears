@@ -24,7 +24,7 @@ export interface AddressItemProps extends ItemBoxProps {
 }
 
 const defaultProps = {
-  iconSize: 'sm'
+  iconSize: 'sm',
 } satisfies Partial<AddressItemProps>
 
 export type DefaultAddressItemProps = typeof defaultProps

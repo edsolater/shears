@@ -11,7 +11,7 @@ import {
   icss_clickable,
   icss_inputType,
   icss_label,
-  icss_row
+  icss_row,
 } from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
 import { Input, InputProps } from '../../../packages/pivkit/components/Input'
@@ -42,13 +42,13 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
   const [token, setToken] = createSyncSignal({
     get: () => props.token,
-    set: (token) => props.onSelectToken?.(token)
+    set: (token) => props.onSelectToken?.(token),
   })
   const [amount, setAmount] = createSyncSignal({
     get: () => (props.amount != null ? toString(props.amount) : undefined),
     set: (amount) => {
       props.onAmountChange?.(amount)
-    }
+    },
   })
 
   const [modalRef, setModalRef] = createRef<ModalController>()
@@ -108,7 +108,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
 }
 
 function TokenSelectorModalContent_TokenItem(
-  rawProps: KitProps<{ token: Token; onSelect?(token: Token): void /* 🚧 meanly use `onClick` */ } & BoxProps>
+  rawProps: KitProps<{ token: Token; onSelect?(token: Token): void /* 🚧 meanly use `onClick` */ } & BoxProps>,
 ) {
   const { props } = useKitProps(rawProps)
   return (

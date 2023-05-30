@@ -21,6 +21,6 @@ export function addTabIndex(el: HTMLElement | undefined | null, options?: { tabI
         }
       }
     },
-    { capture: true }
+    { capture: true },
   )
 }

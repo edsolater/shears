@@ -13,6 +13,6 @@ export function initlyConnectPhantom() {
     },
     onAfterInit: () => {
       useWalletStore().$setters.setHasInited(true)
-    }
+    },
   })
 }
