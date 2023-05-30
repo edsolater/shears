@@ -15,7 +15,6 @@ import { handleShadowProps } from './propHandlers/shadowProps'
 import { CRef, PivProps } from './types/piv'
 import { HTMLTag, ValidController, ValidProps } from './types/tools'
 import { AddDefaultPivProps, addDefaultPivProps } from './utils/addDefaultProps'
-import { pick } from './utils/pick'
 import { omit } from './utils/omit'
 
 /**
@@ -29,10 +28,9 @@ type KitPropsInstance<
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
   TagName extends keyof HTMLElementTagNameMap,
-  NoNeedAccessifyChildren extends boolean,
-> = (NoNeedAccessifyChildren extends true
-  ? AccessifyProps<Omit<RawProps, 'children'>, Controller> & Pick<RawProps, 'children'>
-  : AccessifyProps<RawProps, Controller>) &
+  NeedAccessifyProps extends keyof RawProps,
+> = AccessifyProps<Pick<RawProps, NeedAccessifyProps>, Controller> &
+  Omit<RawProps, NeedAccessifyProps> &
   Omit<PivProps<TagName, Controller>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<GetPluginProps<Plugins>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<
@@ -46,8 +44,8 @@ type KitPropsInstance<
     keyof RawProps
   >
 
-/** just a shortcut of KitProps
- * @deprecated use BaseKit instead
+/**
+ *  just a shortcut of KitProps
  */
 export type KitProps<
   RawProps extends ValidProps,
@@ -56,17 +54,20 @@ export type KitProps<
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
-    // /** default is false, only set when children must be function  */
-    noNeedAccessifyChildren?: boolean
+    // default is auto detect, only set when auto is not ok
+    needAccessifyProps?: (keyof RawProps)[]
   } = {},
 > = KitPropsInstance<
   RawProps,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<O['htmlPropsTagName']>,
-  NonNullable<O['noNeedAccessifyChildren']>
+  NonNullable<O['needAccessifyProps'] extends string[] ? O['needAccessifyProps'][number] : keyof RawProps>
 >
 
+/**
+ * @deprecated use `KitProps` instead
+ */
 export type UIKit<
   O extends {
     componentProps?: ValidProps
@@ -75,14 +76,13 @@ export type UIKit<
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: keyof HTMLElementTagNameMap
     // /** default is false, only set when children must be function  */
-    noNeedAccessifyChildren?: boolean
   } = {},
 > = KitPropsInstance<
   NonNullable<O['componentProps']>,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<O['htmlPropsTagName']>,
-  NonNullable<O['noNeedAccessifyChildren']>
+  keyof NonNullable<O['componentProps']>
 >
 
 export type KitPropsOptions<
@@ -141,7 +141,8 @@ function getParsedKitProps<
       useAccessifiedProps(
         props,
         proxyController,
-        options?.needAccessify ?? (options?.noNeedDeAccessifyChildren ? ['children'] : Object.keys(props)),
+        options?.needAccessify ??
+          (options?.noNeedDeAccessifyChildren ? omitItems(Object.keys(props), ['children']) : Object.keys(props)),
       ),
     // inject controller
     (props) => (proxyController ? mergeProps(props, { innerController: proxyController } as PivProps) : props),
@@ -161,6 +162,17 @@ function getParsedKitProps<
   registerControllerInCreateKit(proxyController, props.id)
 
   return mergedGettersProps
+}
+
+/**
+ * Returns a new array with all elements of the input array except for the specified items.
+ * @param arr The input array to filter.
+ * @param items The item(s) to omit from the array.
+ * @returns A new array with all elements of the input array except for the specified items.
+ */
+export function omitItems<T>(arr: T[], items: T | T[]): T[] {
+  const omitSet = new Set(Array.isArray(items) ? items : [items])
+  return arr.filter((item) => !omitSet.has(item))
 }
 
 export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>

@@ -54,9 +54,9 @@ function PlaygoundList() {
         <ModalExample />
       </ExamplePanel>
 
-      {/* <ExamplePanel name='List'>
+      <ExamplePanel name='List'>
         <ListExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       <ExamplePanel name='Switch'>
         <SwitchExample />

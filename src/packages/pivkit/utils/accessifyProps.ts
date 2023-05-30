@@ -5,9 +5,9 @@ import { ValidController } from '../../piv/types/tools'
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
 export type AccessifyProps<P extends AnyObj, Controller extends ValidController | unknown = unknown> = {
-  [K in keyof P]: K extends `on${string}` | `domRef` | `controllerRef`
+  [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'
     ? P[K]
-    : P[K] extends Accessify<any, any>
+    : P[K] extends (controller: Controller) => any
     ? P[K]
     : Accessify<P[K], Controller>
 }
@@ -17,7 +17,7 @@ export type Accessify<V, Controller extends ValidController | unknown = unknown>
 export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 
 export type DeAccessifyProps<P> = {
-  [K in keyof P]: K extends `on${string}` | `domRef` | `controllerRef`
+  [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'
     ? P[K]
     : P[K] extends Accessify<infer T, any>
     ? T
@@ -41,7 +41,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
           const v = props[key]
           const isPreferUseOriginalValue =
             isString(key) &&
-            (needAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
+            (!needAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
           const needAccessify = isFunction(v) && !isPreferUseOriginalValue
           return needAccessify ? v(controller) : v
         },

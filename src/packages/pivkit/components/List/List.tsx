@@ -20,20 +20,25 @@ import { ListItem } from './ListItem'
 
 export interface ListController {}
 
-export interface ListProps<T> extends Omit<PivProps, 'children'> {
-  items?: Accessify<Iterable<T> | undefined, ListController>
-  children(item: T, index: () => number): JSXElement
+export type ListProps<T> = KitProps<
+  {
+    items?: Iterable<T>
+    children(item: T, index: () => number): JSXElement
 
-  /** @default 30 */
-  increaseRenderCount?: Accessify<number | undefined, ListController>
-  /**
-   * @default 30
-   * can accept Infinity
-   */
-  initRenderCount?: Accessify<number | undefined, ListController>
-  /** @default 50(px) */
-  reachBottomMargin?: Accessify<number | undefined, ListController>
-}
+    /** @default 30 */
+    increaseRenderCount?: number
+    /**
+     * @default 30
+     * can accept Infinity
+     */
+    initRenderCount?: number
+    /** @default 50(px) */
+    reachBottomMargin?: number
+  },
+  {
+    controller: ListController
+  }
+>
 
 export interface InnerListContext {
   observeFunction?: ObserveFn<HTMLElement>
@@ -45,7 +50,7 @@ export const ListContext = createContext<InnerListContext>({} as InnerListContex
 /**
  * if for layout , don't render important content in Box
  */
-export function List<T>(rawProps: KitProps<ListProps<T>, { noNeedAccessifyChildren: true }>) {
+export function List<T>(rawProps: ListProps<T>) {
   const { props } = useKitProps(rawProps, {
     noNeedDeAccessifyChildren: true,
     defaultProps: {

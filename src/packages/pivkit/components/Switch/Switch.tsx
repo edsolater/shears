@@ -24,7 +24,7 @@ export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }
   isDefaultChecked?: Accessify<boolean, SwitchController>
   onChange?(utils: { isChecked: boolean }): void
   /** for Chakra has, so i has */
-  'anatomy:Label'?: LabelProps
+  'anatomy:ContainerLabel'?: LabelProps
   /** hidden HTML input(type=checkbox) for aria readbility */
   'anatomy:AbsoluteCheckboxInput'?: HTMLCheckboxProps
   /** SwitchThumb */
@@ -36,7 +36,7 @@ const selfProps = [
   'ariaLabel',
   'isDefaultChecked',
   'onChange',
-  'anatomy:Label',
+  'anatomy:ContainerLabel',
   'anatomy:AbsoluteCheckboxInput',
   'anatomy:SwitchThumb',
 ] satisfies (keyof SwitchProps)[]
@@ -77,7 +77,7 @@ export function Switch(rawProps: SwitchProps) {
   lazyLoadController(switchController)
 
   return (
-    <Label shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:Label']]}>
+    <Label shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:ContainerLabel']]}>
       <HTMLCheckbox
         shadowProps={[htmlCheckboxStyleProps, props['anatomy:AbsoluteCheckboxInput']]}
         innerController={switchController}
