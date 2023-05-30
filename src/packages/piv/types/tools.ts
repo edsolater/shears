@@ -20,10 +20,10 @@ export type ExtendsProps<
 > = P1 & Omit<P2, keyof P1> & Omit<P3, keyof P1 | keyof P2> & Omit<P4, keyof P1 | keyof P2 | keyof P3>
 
 export type RawChild = JSXElement | string | number | boolean | null | undefined
-export type ControlledChild<Controller extends ValidController | unknown = unknown> =
+export type PivChild<Controller extends ValidController | unknown = unknown> =
   | RawChild
   | ((controller: Controller) => RawChild)
-  | ControlledChild<Controller>[]
+  | PivChild<Controller>[]
 /**
  * recursively
  * we use signal to make reading code clearer, as getter is magic, it's confusing in large APP, so

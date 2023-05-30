@@ -5,7 +5,7 @@ import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/p
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
-import { Switch, SwitchProps } from '../../../packages/pivkit/components/Switch'
+import { Switch } from '../../../packages/pivkit/components/Switch'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
 import { CircularProgress } from '../components/CircularProgress'
@@ -13,6 +13,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
+import { renderSwitchThumbPreset } from '../../../packages/pivkit/components/Switch/plugins/renderSwitchThumbPreset'
 
 export function PlaygroundPage() {
   return (
@@ -169,7 +170,7 @@ function SwitchExample() {
     <>
       <Piv
         class={checked() ? 'checked' : ''}
-        render:prependChild={
+        render:firstChild={
           (console.count('render prependChild'),
           (
             <Piv
@@ -194,27 +195,6 @@ function SwitchExample() {
   )
 }
 
-/**
- * can render switch Thumb
- */
-function renderSwitchThumbPreset(): SwitchProps['shadowProps'] {
-  return {
-    'anatomy:SwitchThumb': {
-      'render:appendChild': ({ isChecked }) => (
-        <Piv
-          icss={{
-            color: isChecked() ? 'dodgerblue' : 'crimson',
-            width: '0.5em',
-            height: '0.5em',
-            backgroundColor: 'currentcolor',
-            transition: '600ms',
-            borderRadius: '999px',
-          }}
-        ></Piv>
-      ),
-    },
-  }
-}
 /**
  * setInterval hook
  * but auto clean

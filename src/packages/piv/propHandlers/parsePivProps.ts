@@ -123,35 +123,35 @@ export function createEmptyObject<T extends (keyof any)[]>(keys: T): { [K in T[n
 }
 
 /**
- * Parses the PivProps's render:prependChild.
+ * Parses the PivProps's render:firstChild.
  * @param props - The raw PivProps object to be parsed.
  * @param controller - The controller object to be used for parsing.
  * @returns new props with the parsed properties and prepended children.
  */
 function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
   props: T,
-): Omit<T, 'render:prependChild'> {
-  return 'render:prependChild' in props
+): Omit<T, 'render:firstChild'> {
+  return 'render:firstChild' in props
     ? mutateByAdditionalObjectDescriptors(props, {
-        newGetters: { children: (props) => flap(props['render:prependChild']).concat(props.children) },
-        deletePropertyNames: ['render:prependChild'],
+        newGetters: { children: (props) => flap(props['render:firstChild']).concat(props.children) },
+        deletePropertyNames: ['render:firstChild'],
       })
     : props
 }
 
 /**
- * Parses the PivProps's render:appendChild.
+ * Parses the PivProps's render:lastChild.
  * @param props - The raw PivProps object to be parsed.
  * @param controller - The controller object to be used for parsing.
  * @returns new props with the parsed properties and appended children.
  */
-function parsePivRenderAppendChildren<T extends Partial<PivProps<any, any>>>(props: T): Omit<T, 'render:appendChild'> {
-  return 'render:appendChild' in props
+function parsePivRenderAppendChildren<T extends Partial<PivProps<any, any>>>(props: T): Omit<T, 'render:lastChild'> {
+  return 'render:lastChild' in props
     ? mutateByAdditionalObjectDescriptors(props, {
         newGetters: {
-          children: (props) => flap(props.children).concat(flap(props['render:appendChild'])),
+          children: (props) => flap(props.children).concat(flap(props['render:lastChild'])),
         },
-        deletePropertyNames: ['render:appendChild'],
+        deletePropertyNames: ['render:lastChild'],
       })
     : props
 }

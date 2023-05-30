@@ -20,9 +20,9 @@ export const pivPropsNames = [
   'debugLog',
   'innerController',
 
-  'dangerousRenderWrapperNode',
-  'render:prependChild',
-  'render:appendChild',
+  'render:nodeWrapper',
+  'render:firstChild',
+  'render:lastChild',
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <
@@ -47,8 +47,8 @@ function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadow
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {
-  return flap(props.dangerousRenderWrapperNode).reduce(
+  return flap(props['render:nodeWrapper']).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
-    createComponent(Piv, omit(props, 'dangerousRenderWrapperNode')),
+    createComponent(Piv, omit(props, 'render:nodeWrapper')),
   )
 }

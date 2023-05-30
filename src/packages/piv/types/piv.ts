@@ -5,7 +5,7 @@ import { HTMLProps } from '../propHandlers/htmlProps'
 import { ICSS } from '../propHandlers/icss'
 import { IStyle } from '../propHandlers/istyle'
 import { Plugin } from '../propHandlers/plugin'
-import { ControlledChild, HTMLTag, RawChild, ValidController } from './tools'
+import { HTMLTag, PivChild, ValidController } from './tools'
 
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown> {
   /** @example
@@ -62,7 +62,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    */
   htmlProps?: HTMLProps<TagName>
 
-  children?: ControlledChild<unknown extends Controller ? any : Controller> // any is convient for <Piv>
+  children?: PivChild<unknown extends Controller ? any : Controller> // any is convient for <Piv>
 
   /**
    * auto merge by shadowProps
@@ -88,13 +88,11 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * auto merge by shadowProps
    * change outter wrapper element
    */
-  // 'render:outsideWrapper': MayArray<DangerousWrapperNodeFn>
-  dangerousRenderWrapperNode?: MayArray<DangerousWrapperNodeFn>
-
-  'render:prependChild'?: MayArray<ControlledChild<Controller>>
-  'render:appendChild'?: MayArray<ControlledChild<Controller>>
+  'render:nodeWrapper'?: MayArray<DangerousWrapperNodeFn>
+  'render:firstChild'?: MayArray<PivChild<Controller>>
+  'render:lastChild'?: MayArray<PivChild<Controller>>
 }
 
-export type DangerousWrapperNodeFn = (node: JSXElement) => JSXElement // change outter wrapper element
+export type DangerousWrapperNodeFn = (originalChildren: JSXElement) => JSXElement // change outter wrapper element
 
 export type CRef<T> = (el: T) => void // not right
