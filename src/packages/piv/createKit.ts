@@ -38,7 +38,7 @@ type KitPropsInstance<
   Omit<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: MayArray<Partial<AccessifyProps<RawProps, Controller>>> // component must merged before `<Div>`
+      shadowProps?: RawProps // component must merged before `<Div>`
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>
@@ -69,6 +69,7 @@ export type KitProps<
 
 export type UIKit<
   O extends {
+    componentProps?: ValidProps
     /** will auto-add props: */
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
@@ -77,7 +78,7 @@ export type UIKit<
     noNeedAccessifyChildren?: boolean
   } = {},
 > = KitPropsInstance<
-  {},
+  NonNullable<O['componentProps']>,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<O['htmlPropsTagName']>,

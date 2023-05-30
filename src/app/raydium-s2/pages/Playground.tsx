@@ -5,7 +5,7 @@ import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/p
 import { Drawer, DrawerController } from '../../../packages/pivkit/components/Drawer'
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
-import { Switch } from '../../../packages/pivkit/components/Switch'
+import { Switch, SwitchProps } from '../../../packages/pivkit/components/Switch'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
 import { CircularProgress } from '../components/CircularProgress'
@@ -188,33 +188,33 @@ function SwitchExample() {
         ariaLabel='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-        anatomy:SwitchThumb={
-          {
-            // icss: ({ isChecked }) => ({
-            //   backgroundColor: isChecked() ? 'dodgerblue' : 'crimson',
-            // }),
-            // TODO: it can be plugin
-            // 'render:appendChild': ({ isChecked }) => {
-            //   console.count('1')
-            //   return (
-            //     <Piv
-            //       icss={{
-            //         color: isChecked() ? 'dodgerblue' : 'crimson',
-            //         width: '0.5em',
-            //         height: '0.5em',
-            //         backgroundColor: 'currentcolor',
-            //         transition: '600ms',
-            //       }}
-            //     ></Piv>
-            //   )
-            // },
-          }
-        }
+        shadowProps={renderSwitchThumbPreset()}
       />
     </>
   )
 }
 
+/**
+ * can render switch Thumb
+ */
+function renderSwitchThumbPreset(): SwitchProps['shadowProps'] {
+  return {
+    'anatomy:SwitchThumb': {
+      'render:appendChild': ({ isChecked }) => (
+        <Piv
+          icss={{
+            color: isChecked() ? 'dodgerblue' : 'crimson',
+            width: '0.5em',
+            height: '0.5em',
+            backgroundColor: 'currentcolor',
+            transition: '600ms',
+            borderRadius: '999px',
+          }}
+        ></Piv>
+      ),
+    },
+  }
+}
 /**
  * setInterval hook
  * but auto clean

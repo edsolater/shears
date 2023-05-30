@@ -11,7 +11,14 @@ export interface SwitchController {
   isChecked: Accessor<boolean>
 }
 
-export interface SwitchProps extends UIKit<{ controller: SwitchController }> {
+/**
+ * every uikit should have this
+ */
+interface BaseComponentProps {
+  shadowProps?: Partial<SwitchProps>
+}
+
+export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }>, 'shadowProps'>, BaseComponentProps {
   isChecked?: Accessify<boolean, SwitchController>
   ariaLabel?: string
   isDefaultChecked?: Accessify<boolean, SwitchController>
@@ -88,20 +95,20 @@ export function Switch(rawProps: SwitchProps) {
         class='SwitchThumb'
         domRef={setMotionTargetRef}
         icss={[{ display: 'grid', placeContent: 'center' }]}
-        render:appendChild={({ isChecked }) => {
-          console.count('rerun thumb child')
-          return (
-            <Piv
-              icss={{
-                color: isChecked() ? 'dodgerblue' : 'crimson',
-                width: '0.5em',
-                height: '0.5em',
-                backgroundColor: 'currentcolor',
-                transition: '600ms',
-              }}
-            ></Piv>
-          )
-        }}
+        // render:appendChild={({ isChecked }) => {
+        //   console.count('rerun thumb child')
+        //   return (
+        //     <Piv
+        //       icss={{
+        //         color: isChecked() ? 'dodgerblue' : 'crimson',
+        //         width: '0.5em',
+        //         height: '0.5em',
+        //         backgroundColor: 'currentcolor',
+        //         transition: '600ms',
+        //       }}
+        //     ></Piv>
+        //   )
+        // }}
       />
     </Label>
   )
