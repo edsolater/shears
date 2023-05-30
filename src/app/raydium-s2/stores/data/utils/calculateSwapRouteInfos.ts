@@ -5,7 +5,7 @@ import { isObjectLiteral } from '@edsolater/fnkit'
 import { map } from '@edsolater/fnkit'
 import { unwrap } from 'solid-js/store'
 
-export function getWebworkerCalculateSwapRouteInfos_mainThreadReceiver(params: CalculateSwapRouteInfosParams) {
+export function getWebworkerCalculateSwapRouteInfos(params: CalculateSwapRouteInfosParams) {
   return subscribeWebWorker<CalculateSwapRouteInfosResult, CalculateSwapRouteInfosParams>(
     'get webworker calculate swap route infos',
     deepUnwrapSolidProxy(params),

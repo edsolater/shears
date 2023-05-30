@@ -4,7 +4,7 @@ import { RAYMint, SOLMint, USDCMint } from '../../../configs/wellknowns'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { getToken } from '../methods/getToken'
 import { useDataStore } from '../store'
-import { getWebworkerCalculateSwapRouteInfos_mainThreadReceiver } from '../utils/calculateSwapRouteInfos_mainThreadReceiver'
+import { getWebworkerCalculateSwapRouteInfos } from '../utils/calculateSwapRouteInfos'
 import { Numberish } from '../../../utils/dataStructures/type'
 import { notZero } from '@edsolater/fnkit'
 
@@ -44,7 +44,7 @@ export function useSwapAmountCalculator() {
     if (!outputToken) return
     const inputAmount: TokenAmount = { token: inputToken, amount: 1 }
 
-    const subscribable = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
+    const subscribable = getWebworkerCalculateSwapRouteInfos({
       input: inputToken,
       inputAmount,
       output: outputToken,
@@ -67,7 +67,7 @@ export function useSwapAmountCalculator() {
     if (!outputToken) return
     if (!amount) return
     const inputAmount: TokenAmount = { token: inputToken, amount }
-    const subscribable = getWebworkerCalculateSwapRouteInfos_mainThreadReceiver({
+    const subscribable = getWebworkerCalculateSwapRouteInfos({
       input: inputToken,
       inputAmount,
       output: outputToken,
