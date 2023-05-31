@@ -11,6 +11,7 @@ import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
+import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 type BooleanLike = unknown
 
 export interface ButtonController {
@@ -131,7 +132,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
   return (
     <Piv<'button'>
       class={Button.name}
-      render:self={(parsedPivProps) => <button {...parsedPivProps} />}
+      render:self={(selfProps) => <button {...parsePivProps(selfProps)} />}
       shadowProps={omit(props, 'onClick')} // omit onClick for need to invoke the function manually, see below 👇
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}

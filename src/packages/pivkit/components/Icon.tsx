@@ -1,4 +1,5 @@
 import { KitProps, Piv, useKitProps } from '../../piv'
+import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 
 export interface IconProps {
   name?: string
@@ -16,7 +17,7 @@ export function Icon(rawProps: KitProps<IconProps>) {
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>
-      render:self={(parsedPivProps) => <img {...parsedPivProps} />}
+      render:self={(selfProps) => <img {...parsePivProps(selfProps)} />}
       htmlProps={{ alt: props.name, src: props.src }}
       icss={{ display: 'block' }}
       shadowProps={props}

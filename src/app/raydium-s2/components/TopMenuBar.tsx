@@ -4,6 +4,7 @@ import { Box, Text } from '../../../packages/pivkit'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
+import { parsePivProps } from '../../../packages/piv/propHandlers/parsePivProps'
 
 export interface TopMenuBarProps {
   title?: string
@@ -18,7 +19,7 @@ export function TopMenuBar(props: TopMenuBarProps) {
   return (
     <Piv<'nav'>
       icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
-      render:self={(parsedPivProps) => <nav {...parsedPivProps} />}
+      render:self={(selfProps) => <nav {...parsePivProps(selfProps)} />}
     >
       <Box icss={threeGridSlotBoxICSS}>
         <Box icss={{ display: 'flex', gap: 64 }}>

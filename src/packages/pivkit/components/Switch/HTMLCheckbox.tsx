@@ -1,4 +1,5 @@
 import { Piv, UIKit, useKitProps } from '../../../piv'
+import { parsePivProps } from '../../../piv/propHandlers/parsePivProps'
 
 export interface HTMLCheckboxProps extends UIKit {
   ariaLabel?: string
@@ -9,7 +10,7 @@ export function HTMLCheckbox(rawProps: HTMLCheckboxProps) {
   return (
     <Piv
       class='HTMLCheckbox'
-      render:self={(parsedPivProps) => <input {...parsedPivProps} />}
+      render:self={(selfProps) => <input {...parsePivProps(selfProps)} />}
       htmlProps={{
         type: 'checkbox',
         checked: props.defaultChecked,

@@ -4,6 +4,7 @@ import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { useDOMEventListener } from '../../hooks/useDOMEventListener'
+import { parsePivProps } from '../../../piv/propHandlers/parsePivProps'
 
 export interface ModalController {
   isOpen: boolean
@@ -91,7 +92,7 @@ export function Modal(rawProps: KitProps<ModalProps>) {
   return (
     <Show when={shouldRenderDOM()}>
       <Piv
-        render:self={(parsedPivProps) => <dialog {...parsedPivProps} open={props.open && !props.isModal} />}
+        render:self={(selfProps) => <dialog {...parsePivProps(selfProps)} open={props.open && !props.isModal} />}
         shadowProps={props}
         icss={[props.backdropICSS && { '&::backdrop': props.backdropICSS }]}
         domRef={setDialogRef}

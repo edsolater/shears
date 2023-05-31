@@ -1,4 +1,5 @@
 import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
+import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 
 export interface LabelProps extends UIKit<{ controller: { sdf: number } }> {}
 /**
@@ -11,7 +12,7 @@ export function Label(rawProps: LabelProps) {
   return (
     <Piv
       class='Label'
-      render:self={(parsedPivProps) => <label {...parsedPivProps} />} // why set as will render twice
+      render:self={(selfProps) => <label {...parsePivProps(selfProps)} />} // why set as will render twice
       shadowProps={props}
     />
   )

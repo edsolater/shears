@@ -3,6 +3,7 @@ import { Piv, PivProps } from '../../piv'
 import { KitProps, UIKit, useKitProps } from '../../piv/createKit'
 import { createToggle } from '../hooks/createToggle'
 import { Accessify } from '../utils/accessifyProps'
+import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 
 export interface CollapseProps extends UIKit<{ controller: CollapseController; htmlPropsTagName: 'details' }> {
   /** TODO: open still can't auto lock the trigger not controled component now */
@@ -50,7 +51,7 @@ export function Collapse(rawProps: CollapseProps) {
   return (
     <CollapseContext.Provider value={controller}>
       <Piv<'details'>
-        render:self={(parsedPivProps) => <details {...parsedPivProps} />}
+        render:self={(selfProps) => <details {...parsePivProps(selfProps)} />}
         shadowProps={props}
         onClick={toggle}
         htmlProps={{ open: innerOpen() }}
@@ -74,7 +75,7 @@ export function CollapseFace(
   const { props } = useKitProps(rawProps, { controller: () => controller })
   return (
     <Piv<'summary', CollapseController>
-      render:self={(parsedPivProps) => <summary {...parsedPivProps} />}
+      render:self={(selfProps) => <summary {...parsePivProps(selfProps)} />}
       shadowProps={props}
       icss={{ listStyle: 'none' }}
       innerController={controller}

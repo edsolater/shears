@@ -1,4 +1,5 @@
 import { KitProps, Piv, UIKit, useKitProps } from '../../piv'
+import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
 import { Accessify } from '../utils/accessifyProps'
 
 export interface ImageProps extends UIKit<{ controller: ImageController }> {
@@ -27,7 +28,7 @@ export function Image(rawProps: ImageProps) {
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>
-      render:self={(parsedPivProps) => <img {...parsedPivProps} />}
+      render:self={(selfProps) => <img {...parsePivProps(selfProps)} />}
       htmlProps={{ src: String(props.src), alt: props.alt }}
       icss={{
         display: 'block',

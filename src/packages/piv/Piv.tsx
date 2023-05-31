@@ -43,11 +43,7 @@ export const Piv = <
 function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
   // console.log('1212: ', 1212, props)
   const parsedPivProps = parsePivProps(props)
-  return 'render:self' in props ? (
-    <Dynamic component={props['render:self']} {...parsedPivProps} />
-  ) : (
-    <div {...parsedPivProps} />
-  )
+  return 'render:self' in props ? props['render:self']?.(props) : <div {...parsedPivProps} />
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {
