@@ -13,7 +13,7 @@ export function Link(rawProps: KitProps<LinkProps>) {
   return (
     <Piv<'a'>
       icss={{ textDecoration: 'none', transition: '150ms', cursor: 'pointer' }}
-      as={(parsedPivProps) =>
+      render:self={(parsedPivProps) =>
         props.innerRoute ? (
           <span {...parsedPivProps} />
         ) : (

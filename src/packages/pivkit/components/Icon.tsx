@@ -16,7 +16,7 @@ export function Icon(rawProps: KitProps<IconProps>) {
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>
-      as={(parsedPivProps) => <img {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <img {...parsedPivProps} />}
       htmlProps={{ alt: props.name, src: props.src }}
       icss={{ display: 'block' }}
       shadowProps={props}

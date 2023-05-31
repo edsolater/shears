@@ -50,7 +50,7 @@ export function Collapse(rawProps: CollapseProps) {
   return (
     <CollapseContext.Provider value={controller}>
       <Piv<'details'>
-        as={(parsedPivProps) => <details {...parsedPivProps} />}
+        render:self={(parsedPivProps) => <details {...parsedPivProps} />}
         shadowProps={props}
         onClick={toggle}
         htmlProps={{ open: innerOpen() }}
@@ -74,7 +74,7 @@ export function CollapseFace(
   const { props } = useKitProps(rawProps, { controller: () => controller })
   return (
     <Piv<'summary', CollapseController>
-      as={(parsedPivProps) => <summary {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <summary {...parsedPivProps} />}
       shadowProps={props}
       icss={{ listStyle: 'none' }}
       innerController={controller}

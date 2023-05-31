@@ -11,7 +11,7 @@ export function Label(rawProps: LabelProps) {
   return (
     <Piv
       class='Label'
-      as={(parsedPivProps) => <label {...parsedPivProps} />} // why set as will render twice
+      render:self={(parsedPivProps) => <label {...parsedPivProps} />} // why set as will render twice
       shadowProps={props}
     />
   )

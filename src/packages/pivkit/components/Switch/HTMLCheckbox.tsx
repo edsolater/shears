@@ -9,7 +9,7 @@ export function HTMLCheckbox(rawProps: HTMLCheckboxProps) {
   return (
     <Piv
       class='HTMLCheckbox'
-      as={(parsedPivProps) => <input {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <input {...parsedPivProps} />}
       htmlProps={{
         type: 'checkbox',
         checked: props.defaultChecked,

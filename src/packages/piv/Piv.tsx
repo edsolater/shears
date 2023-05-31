@@ -7,7 +7,6 @@ import { ValidController } from './types/tools'
 
 export const pivPropsNames = [
   'id',
-  'as',
   'children',
   'class',
   'htmlProps',
@@ -20,6 +19,7 @@ export const pivPropsNames = [
   'debugLog',
   'innerController',
 
+  'render:self',
   'render:nodeWrapper',
   'render:firstChild',
   'render:lastChild',
@@ -43,7 +43,11 @@ export const Piv = <
 function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
   // console.log('1212: ', 1212, props)
   const parsedPivProps = parsePivProps(props)
-  return 'as' in props ? <Dynamic component={props.as} {...parsedPivProps} /> : <div {...parsedPivProps} />
+  return 'render:self' in props ? (
+    <Dynamic component={props['render:self']} {...parsedPivProps} />
+  ) : (
+    <div {...parsedPivProps} />
+  )
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {

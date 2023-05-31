@@ -91,7 +91,7 @@ export function Modal(rawProps: KitProps<ModalProps>) {
   return (
     <Show when={shouldRenderDOM()}>
       <Piv
-        as={(parsedPivProps) => <dialog {...parsedPivProps} open={props.open && !props.isModal} />}
+        render:self={(parsedPivProps) => <dialog {...parsedPivProps} open={props.open && !props.isModal} />}
         shadowProps={props}
         icss={[props.backdropICSS && { '&::backdrop': props.backdropICSS }]}
         domRef={setDialogRef}

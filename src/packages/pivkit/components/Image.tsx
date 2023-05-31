@@ -27,7 +27,7 @@ export function Image(rawProps: ImageProps) {
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>
-      as={(parsedPivProps) => <img {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <img {...parsedPivProps} />}
       htmlProps={{ src: String(props.src), alt: props.alt }}
       icss={{
         display: 'block',

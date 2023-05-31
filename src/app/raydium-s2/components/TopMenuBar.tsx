@@ -18,7 +18,7 @@ export function TopMenuBar(props: TopMenuBarProps) {
   return (
     <Piv<'nav'>
       icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
-      as={(parsedPivProps) => <nav {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <nav {...parsedPivProps} />}
     >
       <Box icss={threeGridSlotBoxICSS}>
         <Box icss={{ display: 'flex', gap: 64 }}>

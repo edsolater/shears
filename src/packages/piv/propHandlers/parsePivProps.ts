@@ -128,9 +128,7 @@ export function createEmptyObject<T extends (keyof any)[]>(keys: T): { [K in T[n
  * @param controller - The controller object to be used for parsing.
  * @returns new props with the parsed properties and prepended children.
  */
-function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(
-  props: T,
-): Omit<T, 'render:firstChild'> {
+function parsePivRenderPrependChildren<T extends Partial<PivProps<any, any>>>(props: T): Omit<T, 'render:firstChild'> {
   return 'render:firstChild' in props
     ? mutateByAdditionalObjectDescriptors(props, {
         newGetters: { children: (props) => flap(props['render:firstChild']).concat(props.children) },

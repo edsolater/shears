@@ -131,7 +131,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
   return (
     <Piv<'button'>
       class={Button.name}
-      as={(parsedPivProps) => <button {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <button {...parsedPivProps} />}
       shadowProps={omit(props, 'onClick')} // omit onClick for need to invoke the function manually, see below 👇
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}

@@ -57,7 +57,7 @@ export function Input(rawProps: InputProps) {
 
   return (
     <Piv<'input'>
-      as={(parsedPivProps) => <input {...parsedPivProps} />}
+      render:self={(parsedPivProps) => <input {...parsedPivProps} />}
       shadowProps={[props, additionalProps()]}
       class={Input.name}
       icss={[

@@ -11,7 +11,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
   /** @example
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */
-  as?: (props: object) => JSX.Element // assume a function return ReactNode is a Component
+  'render:self'?: (props: object) => JSX.Element // assume a function return ReactNode is a Component
 
   debugLog?: (keyof PivProps)[]
 

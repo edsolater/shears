@@ -171,20 +171,17 @@ function SwitchExample() {
       <Piv
         class={checked() ? 'checked' : ''}
         render:firstChild={
-          (console.count('render prependChild'),
-          (
-            <Piv
-              icss={{
-                color: checked() ? 'dodgerblue' : 'crimson',
-                width: '0.5em',
-                height: '0.5em',
-                backgroundColor: 'currentcolor',
-                transition: '300ms',
-              }}
-            ></Piv>
-          ))
+          <Piv
+            icss={{
+              color: checked() ? 'dodgerblue' : 'crimson',
+              width: '0.5em',
+              height: '0.5em',
+              backgroundColor: 'currentcolor',
+              transition: '300ms',
+            }}
+          />
         }
-      ></Piv>
+      />
       <Switch
         ariaLabel='theme-switch'
         isChecked={checked()}
