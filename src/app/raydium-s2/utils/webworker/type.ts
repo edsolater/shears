@@ -9,4 +9,4 @@ export type WorkerDescription =
   | 'fetch raydium farms info'
   | 'get raydium farms syn infos'
   | 'get raydium token prices'
-  | 'get webworker calculate swap route infos'
+  | 'let webworker calculate swap route infos'

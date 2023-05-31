@@ -1,10 +1,10 @@
 import { inNextMainLoop } from '../../../../../packages/fnkit/inNextMainLoop'
 import { registMessageReceiver } from '../../../utils/webworker/worker_sdk'
-import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from './calculateGetSwapInfos'
+import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from './calculateSwapRouteInfos'
 
-export function getWebworkerCalculateSwapRouteInfos_workerRegister() {
+export function calculateSwapRouteInfos_worker() {
   return registMessageReceiver<CalculateSwapRouteInfosParams>(
-    'get webworker calculate swap route infos',
+    'let webworker calculate swap route infos',
     async ({ payload, resolve, onClean }) => {
       const { abort, result, assertNotAborted } = calculateSwapRouteInfos(payload)
       result.then(

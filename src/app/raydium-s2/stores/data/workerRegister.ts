@@ -8,13 +8,13 @@ import { FetchRaydiumTokenListOptions } from './types/tokenList'
 import { fetchTokenJsonFile } from './utils/fetchTokenJson'
 import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
-import { getWebworkerCalculateSwapRouteInfos_workerRegister } from './utils/calculateSwapRouteInfos_workerRegister'
+import { calculateSwapRouteInfos_worker } from './utils/calculateSwapRouteInfos_worker'
 
 /**
  * register receiver functions in worker-side
  */
 export function registInWorker() {
-  getWebworkerCalculateSwapRouteInfos_workerRegister()
+  calculateSwapRouteInfos_worker()
 
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ resolve }) =>
     fetchFarmJsonInfo().then(resolve),
