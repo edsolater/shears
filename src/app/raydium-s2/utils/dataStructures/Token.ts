@@ -38,7 +38,7 @@ export const TOKEN_SOL: Token = {
 }
 
 /** transaction for SDK: unWrap may QuantumSOL to Token or Currency */
-export function deUIToken(token: Token): _Token | Currency {
+export function toSDKToken(token: Token): _Token | Currency {
   if (token.is === 'sol') return SDK_CURRENCY_SOL
   return new _Token(token.mint, token.decimals, token.symbol, token.name)
 }

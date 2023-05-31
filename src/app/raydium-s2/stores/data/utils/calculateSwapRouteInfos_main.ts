@@ -3,7 +3,7 @@ import { unwrap } from 'solid-js/store'
 import { subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
 import { CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult } from './calculateSwapRouteInfos'
 
-export function getCalculatedSwapRouteInfos(params: CalculateSwapRouteInfosParams) {
+export function calculatedSwapRouteInfos_main(params: CalculateSwapRouteInfosParams) {
   return subscribeWebWorker<CalculateSwapRouteInfosResult, CalculateSwapRouteInfosParams>(
     'let webworker calculate swap route infos',
     deepUnwrapSolidProxy(params),

@@ -10,7 +10,7 @@ import {
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import { toPercent } from '../../../utils/dataStructures/Percent'
-import { Token, deUIToken } from '../../../utils/dataStructures/Token'
+import { Token, toSDKToken } from '../../../utils/dataStructures/Token'
 import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
@@ -95,7 +95,7 @@ export function calculateSwapRouteInfos({
           simulateCache: awaitedPoolInfosCache,
           tickCache: awaitedTickCache,
           inputTokenAmount: deUITokenAmount(inputAmount),
-          outputToken: deUIToken(output),
+          outputToken: toSDKToken(output),
           slippage: toPercent(slippageTolerance),
           chainTime,
         })
