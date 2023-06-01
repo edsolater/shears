@@ -2,8 +2,9 @@ import { registMessageReceiver } from '../../../utils/webworker/worker_sdk'
 import { TxSwapOptions, txSwap_getInnerTransaction } from './txSwap'
 
 export function txSwap_worker() {
-  return registMessageReceiver<TxSwapOptions>('txSwap start', async ({ payload: txOptions, resolve, onClean }) => {
-    const txSubscribable = txSwap_getInnerTransaction(txOptions)
+  return registMessageReceiver<TxSwapOptions>('txSwap start', async ({ payload: txSwapOptions, resolve, onClean }) => {
+    console.log('receive tx swap option: ', txSwapOptions)
+    const txSubscribable = txSwap_getInnerTransaction(txSwapOptions)
     console.log(
       'txSubscribable: ',
       txSubscribable.onTxSuccess(({ txid }) => {

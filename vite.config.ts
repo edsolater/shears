@@ -19,6 +19,9 @@ export default defineConfig({
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     },
   },
+  worker: {
+    format: 'es',
+  },
   test: {
     environment: 'jsdom',
     globals: true,

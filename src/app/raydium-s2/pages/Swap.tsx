@@ -71,6 +71,7 @@ export function SwapPage() {
 
           <Button
             onClick={() => {
+              console.info('start swap')
               const coin1 = token1()
               assert(coin1, 'coin1 is undefined')
               const coin2 = token2()
@@ -80,6 +81,7 @@ export function SwapPage() {
               const walletOwner = owner()
               assert(walletOwner, 'walletOwner is undefined')
 
+              
               txSwap_main({
                 owner: walletOwner,
                 checkInfo: {

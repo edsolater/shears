@@ -9,12 +9,14 @@ import { fetchTokenJsonFile } from './utils/fetchTokenJson'
 import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
 import { calculateSwapRouteInfos_worker } from './utils/calculateSwapRouteInfos_worker'
+import { txSwap_worker } from './utils/txSwap_worker'
 
 /**
  * register receiver functions in worker-side
  */
 export function registInWorker() {
   calculateSwapRouteInfos_worker()
+  txSwap_worker()
 
   registMessageReceiver<FetchFarmsJSONPayloads>('fetch raydium farms info', ({ resolve }) =>
     fetchFarmJsonInfo().then(resolve),
