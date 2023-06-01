@@ -26,13 +26,13 @@ export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateS
  * swap core calculation algorithm
  */
 export function calculateSwapRouteInfos({
-  rpcAddress = 'https://rpc.asdf1234.win',
+  rpcUrl = 'https://rpc.asdf1234.win',
   slippageTolerance = 0.05,
   input,
   output,
   inputAmount,
 }: {
-  rpcAddress?: string
+  rpcUrl?: string
   slippageTolerance?: Numberish
   input: Token
   output: Token
@@ -58,7 +58,7 @@ export function calculateSwapRouteInfos({
         assert(apiPoolList, 'liquidity api must be loaded')
         return apiPoolList
       })
-    const connection = getConnection(rpcAddress)
+    const connection = getConnection(rpcUrl)
     const chainTime = Date.now() / 1000
 
     const sdkParsedAmmV3PoolInfoPromise = ammV3Promise
@@ -113,7 +113,7 @@ export function calculateSwapRouteInfos({
         bestResultStartTimes: best?.bestResultStartTimes,
       }))
 
-    return swapInfo.then(flatSDKReturnedInfo)
+    return swapInfo.then((i) => flatSDKReturnedInfo(i))
   })
 }
 

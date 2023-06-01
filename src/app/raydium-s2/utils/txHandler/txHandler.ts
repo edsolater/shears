@@ -1,14 +1,16 @@
 import { EventCenter, MayPromise, assert, createEventCenter, emptyFn, isObject, mergeFunction } from '@edsolater/fnkit'
-import { InnerTransaction, PublicKeyish } from '@raydium-io/raydium-sdk'
+import { PublicKeyish, InnerTransaction as SDKInnerTransaction } from '@raydium-io/raydium-sdk'
 import {
   Connection,
   Context,
+  PublicKey,
   SignatureResult,
   Transaction,
   TransactionError,
   VersionedTransaction,
 } from '@solana/web3.js'
 import { produce } from 'immer'
+import { toPub } from '../dataStructures/Publickey'
 import { innerTxCollector } from './innerTxCollector'
 import { sendTransactionCore } from './sendTransactionCore'
 import { signAllTransactions } from './signAllTransactions'
@@ -69,7 +71,8 @@ export interface TxFinalBatchErrorInfo {
 
 export type TxFn = (utils: {
   eventCenter: TxHandlerEventCenter
-}) => MayPromise<TransactionQueue | Transaction | InnerTransaction>
+  baseUtils: { owner: PublicKey; connection: Connection }
+}) => MayPromise<TransactionQueue | Transaction | SDKInnerTransaction>
 
 //#region ------------------- callbacks -------------------
 type TxSuccessCallback = (info: TxSuccessInfo) => void
@@ -138,13 +141,16 @@ export interface MultiTxCallbacks {
 }
 
 export type TransactionQueue = (
-  | [tx: InnerTransaction | Transaction, singleTxOptions?: TxHandlerOption]
-  | InnerTransaction
+  | [tx: SDKInnerTransaction | Transaction, singleTxOptions?: TxHandlerOption]
+  | SDKInnerTransaction
   | Transaction
 )[]
 
 export interface TransactionCollector {
-  add(transaction: TransactionQueue | Transaction | InnerTransaction, options?: TxHandlerOption & MultiTxsOption): void
+  add(
+    transaction: TransactionQueue | Transaction | SDKInnerTransaction,
+    options?: TxHandlerOption & MultiTxsOption,
+  ): void
 }
 
 // TODO: should also export addTxSuccessListener() and addTxErrorListener() and addTxFinallyListener()
@@ -207,7 +213,10 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
   ;(async () => {
     assert(payload.connection, 'provided connection not working')
     assert(payload.owner, 'wallet not connected')
-    const userLoadedTransactionQueue = await txFn({ eventCenter })
+    const userLoadedTransactionQueue = await txFn({
+      eventCenter,
+      baseUtils: { owner: toPub(payload.owner), connection: payload.connection },
+    })
     transactionCollector.add(userLoadedTransactionQueue)
 
     const parsedSignleTxOptions = makeMultiOptionIntoSignalOptions({
@@ -287,7 +296,7 @@ function makeMultiOptionIntoSignalOptions({
   singleOptions,
   multiOption,
 }: {
-  transactions: (Transaction | InnerTransaction)[]
+  transactions: (Transaction | SDKInnerTransaction)[]
   singleOptions: TxHandlerOption[]
   multiOption: MultiTxsOption
 }): TxHandlerOption[] {

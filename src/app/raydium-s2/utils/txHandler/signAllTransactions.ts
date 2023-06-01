@@ -19,6 +19,6 @@ export async function signAllTransactions({
       })
     : (transactions as Transaction[])
 
-  const allSignedTransactions = await payload.signAllTransactions(buildedTransactions)
+  const allSignedTransactions = await payload.signAllTransactions(buildedTransactions) // sign transactions 
   return allSignedTransactions
 }

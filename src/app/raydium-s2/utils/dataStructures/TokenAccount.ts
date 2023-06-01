@@ -44,7 +44,7 @@ export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
  * core logic
  * just relay on connection
  */
-export async function getWalletTokenAccounts({
+export async function getOwnerTokenAccounts({
   connection,
   owner,
   config,
