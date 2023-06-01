@@ -29,22 +29,30 @@ type CacheKey = `${Mint}-${Mint}`
 
 export type SDKBestResult = ComputeAmountOutAmmLayout | ComputeAmountOutRouteLayout
 
-const swapBestResultCache = new Map<
-  CacheKey,
-  // TODO: it should be a max length cache map
-  {
+// TODO: it should be a max length cache map
+interface SwapBestResultItem {
+  params: {
     /** there will be only baseAmount or quoteAmount */
     input: Token
     output: Token
     inputAmount: TokenAmount
-    sdkBestResult: SDKBestResult
-    timestamp: number
     slippageTolerance: Numberish
+    rpcUrl: string
   }
+  sdkBestResult: SDKBestResult
+  timestamp: number
+}
+
+const swapBestResultCache = new Map<
+  CacheKey,
+  // TODO: it should be a max length cache map
+  SwapBestResultItem
 >()
 
-export function getBestCalcResultFromCache(params: { input: Token; output: Token }) {
-  return swapBestResultCache.get(`${params.input.mint}-${params.output.mint}`)?.sdkBestResult
+let neariestSwapBestResultCache: SwapBestResultItem | undefined = undefined
+
+export function getBestCalcResultCache() {
+  return neariestSwapBestResultCache
 }
 /**
  * swap core calculation algorithm
@@ -139,16 +147,22 @@ export function calculateSwapRouteInfos({
 
     // record swapInfo
     swapInfo.then(({ bestResult: sdkBestResult }) => {
+      if (!canContinue()) return
       if (!sdkBestResult) return
       const cacheKey = `${input.mint}-${output.mint}` as CacheKey
-      swapBestResultCache.set(cacheKey, {
-        input,
-        output,
-        inputAmount,
+      const bestResultItem = {
+        params: {
+          input,
+          output,
+          inputAmount,
+          slippageTolerance,
+          rpcUrl
+        },
         sdkBestResult,
         timestamp: Date.now(),
-        slippageTolerance,
-      })
+      }
+      swapBestResultCache.set(cacheKey, bestResultItem)
+      neariestSwapBestResultCache = bestResultItem
     })
     return swapInfo.then((i) => flatSDKReturnedInfo(i))
   })

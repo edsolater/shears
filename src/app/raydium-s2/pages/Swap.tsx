@@ -16,8 +16,12 @@ import { useDataStore } from '../stores/data/store'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Token } from '../utils/dataStructures/Token'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
+import { assert } from '@edsolater/fnkit'
+import { useWalletOwner } from '../stores/wallet/store'
+import { notZero } from '../utils/dataStructures/basicMath/compare'
 
 export function SwapPage() {
+  const owner = useWalletOwner()
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
   const dataStore = useDataStore()
   const [token1Mint, setToken1Mint] = useSwapToken1()
@@ -65,7 +69,31 @@ export function SwapPage() {
             onAmountChange={setAmount2}
           />
 
-          <Button onClick={()=>{txSwap_main({})}}>Swap</Button>
+          <Button
+            onClick={() => {
+              const coin1 = token1()
+              assert(coin1, 'coin1 is undefined')
+              const coin2 = token2()
+              assert(coin2, 'coin2 is undefined')
+              const amount1 = tokenAmount1()
+              assert(notZero(amount1), 'amount1 is undefined or zero')
+              const walletOwner = owner()
+              assert(walletOwner, 'walletOwner is undefined')
+
+              txSwap_main({
+                owner: walletOwner,
+                checkInfo: {
+                  rpcUrl: 'https://rpc.asdf1234.win',
+                  coin1,
+                  coin2,
+                  amount1,
+                  direction: '1 → 2',
+                },
+              })
+            }}
+          >
+            Swap
+          </Button>
         </Card>
       </Section>
     </Piv>

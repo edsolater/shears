@@ -7,25 +7,31 @@ import { getOwnerTokenAccounts } from '../../../utils/dataStructures/TokenAccoun
 import { Numberish } from '../../../utils/dataStructures/type'
 import { txHandler } from '../../../utils/txHandler'
 import { getTxHandlerBudgetConfig } from '../../../utils/txHandler/getTxHandlerBudgetConfig'
-import { getBestCalcResultFromCache } from './calculateSwapRouteInfos'
+import { getBestCalcResultCache } from './calculateSwapRouteInfos'
+import { eq } from '../../../utils/dataStructures/basicMath/compare'
 
 export interface TxSwapOptions {
-  rpcUrl: string
   owner: string
-  coin1: Token
-  coin2: Token
-  amount1: Numberish
-  amount2: Numberish
-  direction: '1 → 2' | '2 → 1'
+  checkInfo: {
+    rpcUrl: string
+    coin1: Token
+    coin2: Token
+    amount1: Numberish
+    // amount2: Numberish
+    direction: '1 → 2' | '2 → 1'
+  }
 }
 
 export function txSwap_getInnerTransaction(options: TxSwapOptions) {
-  const connection = getConnection(options.rpcUrl)
-  const swapInfo = getBestCalcResultFromCache({
-    input: options.coin1,
-    output: options.coin2,
-  })
-  assert(swapInfo, 'swapInfo not found')
+  const connection = getConnection(options.checkInfo.rpcUrl)
+  const neariestSwapBestResultCache = getBestCalcResultCache()
+  assert(neariestSwapBestResultCache, 'swapInfo not found')
+  assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, 'coin1 is not match')
+  assert(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, 'coin2 is not match')
+  assert(
+    eq(neariestSwapBestResultCache.params.inputAmount.amount, options.checkInfo.amount1),
+    'inputAmount is not match',
+  )
 
   return txHandler(
     {
@@ -43,7 +49,7 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
       const { sdkTokenAccounts } = await getOwnerTokenAccounts({ connection, owner: toPubString(owner) })
       const { innerTransactions } = await TradeV2.makeSwapInstructionSimple({
         connection,
-        swapInfo,
+        swapInfo: neariestSwapBestResultCache.sdkBestResult,
         ownerInfo: {
           wallet: owner,
           tokenAccounts: sdkTokenAccounts,

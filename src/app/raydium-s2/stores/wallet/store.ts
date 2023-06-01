@@ -59,3 +59,6 @@ export const useWalletStore = createCachedGlobalHook(() => {
   }
   return store
 })
+
+// TODO: use atom-like
+export const useWalletOwner = () => createMemo(() => useWalletStore().owner)
