@@ -6,6 +6,8 @@ import {
   ReturnTypeFetchMultipleInfo,
   ReturnTypeGetAllRouteComputeAmountOut,
   TradeV2,
+  ComputeAmountOutAmmLayout,
+  ComputeAmountOutRouteLayout,
 } from '@raydium-io/raydium-sdk'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString from '../../../utils/dataStructures/Publickey'
@@ -18,10 +20,32 @@ import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 import { makeTaskAbortable } from '../../../../../packages/fnkit/makeTaskAbortable'
 import { inNextMainLoop } from '../../../../../packages/fnkit/inNextMainLoop'
+import { Mint } from '../../../utils/dataStructures/type'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
 export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>['result']>
 
+type CacheKey = `${Mint}-${Mint}`
+
+export type SDKBestResult = ComputeAmountOutAmmLayout | ComputeAmountOutRouteLayout
+
+const swapBestResultCache = new Map<
+  CacheKey,
+  // TODO: it should be a max length cache map
+  {
+    /** there will be only baseAmount or quoteAmount */
+    input: Token
+    output: Token
+    inputAmount: TokenAmount
+    sdkBestResult: SDKBestResult
+    timestamp: number
+    slippageTolerance: Numberish
+  }
+>()
+
+export function getBestCalcResultFromCache(params: { input: Token; output: Token }) {
+  return swapBestResultCache.get(`${params.input.mint}-${params.output.mint}`)?.sdkBestResult
+}
 /**
  * swap core calculation algorithm
  */
@@ -113,6 +137,19 @@ export function calculateSwapRouteInfos({
         bestResultStartTimes: best?.bestResultStartTimes,
       }))
 
+    // record swapInfo
+    swapInfo.then(({ bestResult: sdkBestResult }) => {
+      if (!sdkBestResult) return
+      const cacheKey = `${input.mint}-${output.mint}` as CacheKey
+      swapBestResultCache.set(cacheKey, {
+        input,
+        output,
+        inputAmount,
+        sdkBestResult,
+        timestamp: Date.now(),
+        slippageTolerance,
+      })
+    })
     return swapInfo.then((i) => flatSDKReturnedInfo(i))
   })
 }

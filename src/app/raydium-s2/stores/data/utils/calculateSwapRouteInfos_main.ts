@@ -1,7 +1,7 @@
-import { isObject, isObjectLiteral, map } from '@edsolater/fnkit'
-import { unwrap } from 'solid-js/store'
+import { isObject } from '@edsolater/fnkit'
 import { subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
 import { CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult } from './calculateSwapRouteInfos'
+import { deepUnwrapSolidProxy } from '../../../utils/txHandler/deepUnwrapSolidProxy'
 
 export function calculatedSwapRouteInfos_main(params: CalculateSwapRouteInfosParams) {
   return subscribeWebWorker<CalculateSwapRouteInfosResult, CalculateSwapRouteInfosParams>(
@@ -10,19 +10,8 @@ export function calculatedSwapRouteInfos_main(params: CalculateSwapRouteInfosPar
   )
 }
 
-/** solidjs utils */
-function deepUnwrapSolidProxy<T>(data: T): T {
-  if (isObjectLiteral(data)) {
-    return map(data, (v) => deepUnwrapSolidProxy(v)) as T
-  } else if (isProxy(data)) {
-    return unwrap(data)
-  } else {
-    return data
-  }
-}
-
 // fnkit already has
-function isProxy(target: unknown): Record<string | number | symbol, any> {
+export function isProxy(target: unknown): Record<string | number | symbol, any> {
   // @ts-ignore
   return isObject(target) && target instanceof Proxy
 }

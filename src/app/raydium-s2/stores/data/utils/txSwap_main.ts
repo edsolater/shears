@@ -1,18 +1,10 @@
-import { registMessageReceiver } from '../../../utils/webworker/worker_sdk'
+import { deepUnwrapSolidProxy } from '../../../utils/txHandler/deepUnwrapSolidProxy'
+import { subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
+import { TxSwapOptions } from './txSwap'
 
-export function txSwap_main() {
-  throw new Error('not implemented')
-  // return registMessageReceiver<CalculateSwapRouteInfosParams>(
-  //   'txSwap start',
-  //   async ({ payload, resolve, onClean }) => {
-  //     const { abort, result, assertNotAborted } = calculateSwapRouteInfos(payload)
-  //     result.then(
-  //       inNextMainLoop((result) => {
-  //         assertNotAborted()
-  //         resolve(result)
-  //       }),
-  //     )
-  //     onClean(abort)
-  //   },
-  // )
+export function txSwap_main(txOptions: TxSwapOptions) {
+  return subscribeWebWorker<any, any>(
+    'txSwap start',
+    deepUnwrapSolidProxy(txOptions),
+  )
 }

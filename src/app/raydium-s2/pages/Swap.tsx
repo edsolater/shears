@@ -15,6 +15,7 @@ import {
 import { useDataStore } from '../stores/data/store'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Token } from '../utils/dataStructures/Token'
+import { txSwap_main } from '../stores/data/utils/txSwap_main'
 
 export function SwapPage() {
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
@@ -64,7 +65,7 @@ export function SwapPage() {
             onAmountChange={setAmount2}
           />
 
-          <Button>Swap</Button>
+          <Button onClick={()=>{txSwap_main({})}}>Swap</Button>
         </Card>
       </Section>
     </Piv>
