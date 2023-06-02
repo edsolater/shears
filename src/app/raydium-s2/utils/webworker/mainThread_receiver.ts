@@ -1,9 +1,9 @@
 import { isFunction } from '@edsolater/fnkit'
 import { decode } from '../structure-clone/decode'
 import { WorkerDescription, WorkerMessage } from './type'
-import SDKWorker from './worker_sdk?worker'
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
 
+import SDKWorker from './worker_sdk?worker'
 const worker = new SDKWorker()
 
 export type WebworkerSubscribeCallback<ResultData = any> = (

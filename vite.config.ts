@@ -6,14 +6,32 @@ import solidPlugin from 'vite-plugin-solid'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
-  plugins: [solidPlugin(), VitePWA({ registerType: 'autoUpdate' })],
+  optimizeDeps: {
+    include: ['@edsolater/fnkit', '@raydium-io/raydium-sdk'],
+  },
+  plugins: [
+    solidPlugin(),
+    VitePWA({ registerType: 'autoUpdate' }),
+    // your plugins,
+    // https://github.com/vitejs/vite/issues/3033#issuecomment-1360691044
+    {
+      name: 'singleHMR',
+      handleHotUpdate({ modules }) {
+        modules.map((m) => {
+          m.importedModules = new Set()
+          m.importers = new Set()
+        })
+
+        return modules
+      },
+    },
+  ],
   server: {
     port: 3000,
-    hmr: false,
   },
-  resolve: {
-    conditions: ['development', 'browser'],
-  },
+  // resolve: {
+  //   conditions: ['development', 'browser'],
+  // },
   define: {
     'process.env': {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
