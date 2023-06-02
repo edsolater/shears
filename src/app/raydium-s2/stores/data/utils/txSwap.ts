@@ -1,4 +1,4 @@
-import { assert as asserts } from '@edsolater/fnkit'
+import { assert } from '@edsolater/fnkit'
 import { TradeV2 } from '@raydium-io/raydium-sdk'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString from '../../../utils/dataStructures/Publickey'
@@ -25,11 +25,11 @@ export interface TxSwapOptions {
 export function txSwap_getInnerTransaction(options: TxSwapOptions) {
   const connection = getConnection(options.checkInfo.rpcUrl)
   const neariestSwapBestResultCache = getBestCalcResultCache()
-  console.log('assert: ', asserts)
-  asserts(neariestSwapBestResultCache, 'swapInfo not found')
-  asserts(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, 'coin1 is not match')
-  asserts(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, 'coin2 is not match')
-  asserts(
+  console.log('assert: ', assert)
+  assert(neariestSwapBestResultCache, 'swapInfo not found')
+  assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, 'coin1 is not match')
+  assert(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, 'coin2 is not match')
+  assert(
     eq(neariestSwapBestResultCache.params.inputAmount.amount, options.checkInfo.amount1),
     'inputAmount is not match',
   )
