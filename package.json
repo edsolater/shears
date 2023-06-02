@@ -10,7 +10,8 @@
     "serve": "vite preview",
     "test": "vitest",
     "type-check": "tsc --pretty --noEmit",
-    "prettier": "prettier --write ."
+    "prettier": "prettier --write .",
+    "analyzer": "vite-bundle-visualizer"
   },
   "license": "MIT",
   "resolutions": {
@@ -29,6 +30,7 @@
     "prettier": "^2.8.8",
     "typescript": "^5.0.4",
     "vite": "^4.3.9",
+    "vite-bundle-visualizer": "^0.7.0",
     "vite-plugin-pwa": "^0.15.1",
     "vite-plugin-solid": "^2.7.0",
     "vitest": "^0.31.2"
