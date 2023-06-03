@@ -1,9 +1,5 @@
 import { RouteDefinition } from '@solidjs/router'
-import { FarmPage } from '../pages/Farms'
-import { Home } from '../pages/Home'
-import { PairsPanel } from '../pages/Pairs'
-import { PlaygroundPage } from '../pages/Playground'
-import { SwapPage } from '../pages/Swap'
+import { lazy } from 'solid-js'
 
 export const pairsRoutePath = '/pools'
 export const homeRoutePath = '/'
@@ -19,9 +15,9 @@ export const routePath = {
   swap: swapRoutePath,
 }
 export const routes: RouteDefinition[] = [
-  { path: routePath.home, component: Home },
-  { path: routePath.swap, component: SwapPage },
-  { path: routePath.pools, component: PairsPanel },
-  { path: routePath.farms, component: FarmPage },
-  { path: routePath.playground, component: PlaygroundPage },
+  { path: routePath.home, component: lazy(() => import('../pages/Home')) },
+  { path: routePath.swap, component: lazy(() => import('../pages/Swap')) },
+  { path: routePath.pools, component: lazy(() => import('../pages/Pairs')) },
+  { path: routePath.farms, component: lazy(() => import('../pages/Farms')) },
+  { path: routePath.playground, component: lazy(() => import('../pages/Playground')) },
 ]

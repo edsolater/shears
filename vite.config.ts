@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   optimizeDeps: {
-    include: ['@edsolater/fnkit', '@raydium-io/raydium-sdk'],
+    // include: ['@edsolater/fnkit', '@raydium-io/raydium-sdk'],
   },
   plugins: [
     solidPlugin(),
@@ -40,18 +40,18 @@ export default defineConfig({
   worker: {
     format: 'es',
   },
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    transformMode: { web: [/\.[jt]sx?$/] },
-    setupFiles: ['node_modules/@testing-library/jest-dom/extend-expect.js'],
-    // otherwise, solid would be loaded twice:
-    deps: { registerNodeLoader: true },
-    // if you have few tests, try commenting one
-    // or both out to improve performance:
-    threads: false,
-    isolate: false,
-  },
+  // test: {
+  //   environment: 'jsdom',
+  //   globals: true,
+  //   transformMode: { web: [/\.[jt]sx?$/] },
+  //   setupFiles: ['node_modules/@testing-library/jest-dom/extend-expect.js'],
+  //   // otherwise, solid would be loaded twice:
+  //   deps: { registerNodeLoader: true },
+  //   // if you have few tests, try commenting one
+  //   // or both out to improve performance:
+  //   threads: false,
+  //   isolate: false,
+  // },
   build: {
     target: 'esnext',
   },

@@ -4,7 +4,7 @@ import { Collapse, createRef, List, useElementSize } from '../../../packages/piv
 import { NavBar } from '../components/NavBar'
 import { useDataStore } from '../stores/data/store'
 
-export function PairsPanel() {
+export default function PairsPanel() {
   const dataStore = useDataStore()
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()

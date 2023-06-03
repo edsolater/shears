@@ -15,7 +15,7 @@ import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
 import { renderSwitchThumbPreset } from '../../../packages/pivkit/components/Switch/plugins/renderSwitchThumbPreset'
 
-export function PlaygroundPage() {
+export default function PlaygroundPage() {
   return (
     <Piv>
       <NavBar title='Playground' />

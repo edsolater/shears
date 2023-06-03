@@ -20,7 +20,7 @@ import { assert } from '@edsolater/fnkit'
 import { useWalletOwner } from '../stores/wallet/store'
 import { notZero } from '../utils/dataStructures/basicMath/compare'
 
-export function SwapPage() {
+export default function SwapPage() {
   const owner = useWalletOwner()
   const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
   const dataStore = useDataStore()
@@ -73,13 +73,13 @@ export function SwapPage() {
             onClick={() => {
               console.info('start swap')
               const coin1 = token1()
-              // assert(coin1, 'coin1 is undefined')
+              assert(coin1, 'coin1 is undefined')
               const coin2 = token2()
-              // assert(coin2, 'coin2 is undefined')
+              assert(coin2, 'coin2 is undefined')
               const amount1 = tokenAmount1()
-              // assert(notZero(amount1), 'amount1 is undefined or zero')
+              assert(notZero(amount1), 'amount1 is undefined or zero')
               const walletOwner = owner()
-              // assert(walletOwner, 'walletOwner is undefined')
+              assert(walletOwner, 'walletOwner is undefined')
 
               
               txSwap_main({

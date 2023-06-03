@@ -6,7 +6,7 @@ import { routePath } from '../configs/routes'
 import { useDataStore } from '../stores/data/store'
 import { useWalletStore } from '../stores/wallet/store'
 
-export function Home() {
+export default function Home() {
   const dataStore = useDataStore()
   const walletStore = useWalletStore()
   return (

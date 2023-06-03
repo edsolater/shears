@@ -3,8 +3,7 @@ import { decode } from '../structure-clone/decode'
 import { WorkerDescription, WorkerMessage } from './type'
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
 
-import SDKWorker from './worker_sdk?worker'
-const worker = new SDKWorker()
+const workerP = import('./worker_sdk?worker').then((module) => new module.default())
 
 export type WebworkerSubscribeCallback<ResultData = any> = (
   data: ResultData,
@@ -18,7 +17,7 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
   callback?: WebworkerSubscribeCallback<ResultData>,
 ): { abort(): void } {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
-  worker.postMessage(message)
+  workerP.then((worker) => worker.postMessage(message))
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
     if (body.description === message.description) {
@@ -31,8 +30,12 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
     }
   }
   // TODO: this will regist multi time, only need regist one time d
-  worker.addEventListener('message', messageHandler)
-  return { abort: () => worker.removeEventListener('message', messageHandler) }
+  workerP.then((worker) => worker.addEventListener('message', messageHandler))
+  return {
+    abort: () => {
+      workerP.then((worker) => worker.removeEventListener('message', messageHandler))
+    },
+  }
 }
 
 /**
@@ -48,7 +51,7 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   query: PostOptions,
 ) {
   const subscribable = new Subscribable<ResultData>()
-  worker.postMessage({ description: messageDescription, payload: query })
+  workerP.then((worker) => worker.postMessage({ description: messageDescription, payload: query }))
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
     if (body.description === messageDescription) {
@@ -59,6 +62,10 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
     }
   }
   // TODO: this will regist multi time, only need regist one time d
-  worker.addEventListener('message', messageHandler)
-  return Object.assign(subscribable, { abort: () => worker.removeEventListener('message', messageHandler) })
+  workerP.then((worker) => worker.addEventListener('message', messageHandler))
+  return Object.assign(subscribable, {
+    abort: () => {
+      workerP.then((worker) => worker.removeEventListener('message', messageHandler))
+    },
+  })
 }
