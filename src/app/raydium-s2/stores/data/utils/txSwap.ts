@@ -46,8 +46,11 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
     },
     async ({ baseUtils: { owner, connection } }) => {
       //TODO: no two fetch await
+      console.log(1)
       const txBudgetConfig = await getTxHandlerBudgetConfig()
+      console.log(2)
       const { sdkTokenAccounts } = await getOwnerTokenAccounts({ connection, owner: toPubString(owner) })
+      console.log(3)
       const { innerTransactions } = await TradeV2.makeSwapInstructionSimple({
         connection,
         swapInfo: neariestSwapBestResultCache.sdkBestResult,
@@ -60,6 +63,7 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
         checkTransaction: true,
         computeBudgetConfig: txBudgetConfig,
       })
+      console.log('innerTransactions: ', innerTransactions)
       return innerTransactions
     },
     { sendMode: 'queue(all-settle)' },

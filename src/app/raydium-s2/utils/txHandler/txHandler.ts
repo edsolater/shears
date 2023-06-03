@@ -209,8 +209,9 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
   } = innerTxCollector(options)
 
   const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
-
+  console.log('start 1')
   ;(async () => {
+    console.log('start 2')
     assert(payload.connection, 'provided connection not working')
     assert(payload.owner, 'wallet not connected')
     const userLoadedTransactionQueue = await txFn({
@@ -218,12 +219,14 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       baseUtils: { owner: toPub(payload.owner), connection: payload.connection },
     })
     transactionCollector.add(userLoadedTransactionQueue)
+    console.log('userLoadedTransactionQueue: ', userLoadedTransactionQueue)
 
     const parsedSignleTxOptions = makeMultiOptionIntoSignalOptions({
       transactions: collectedTransactions,
       singleOptions: singleTxOptions,
       multiOption: multiTxOption,
     })
+    console.log('parsedSignleTxOptions: ', parsedSignleTxOptions)
 
     eventCenter.on('txSuccess', (info: TxSuccessInfo) => {
       parsedSignleTxOptions[info.currentIndex]?.onTxSuccess?.(info)
@@ -248,6 +251,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       multiTxOption?.onTxAnyError?.(info)
     })
     // FIXME: where is onTxAllSuccess?
+    console.log('prepare to sign all transactions')
 
     const allSignedTransactions = await signAllTransactions({
       transactions: collectedTransactions,
@@ -302,6 +306,7 @@ function makeMultiOptionIntoSignalOptions({
 }): TxHandlerOption[] {
   const txids = [] as string[]
   const successTxids = [] as typeof txids
+  
   const pushSuccessTxid = (txid: string) => {
     successTxids.push(txid)
     if (successTxids.length === transactions.length) {
@@ -309,7 +314,8 @@ function makeMultiOptionIntoSignalOptions({
     }
   }
 
-  const parseMultiOptionsIntoSingleOptions = produce({ ...singleOptions }, (options) => {
+  const parseMultiOptionsIntoSingleOptions = produce(singleOptions, (options) => {
+    console.log('inside produce')
     options.forEach((option) => {
       option.onTxSentSuccess = mergeFunction(
         (({ txid }) => {
@@ -331,6 +337,7 @@ function makeMultiOptionIntoSignalOptions({
       )
     })
   })
+  console.log('parseMultiOptionsIntoSingleOptions', parseMultiOptionsIntoSingleOptions)
   return parseMultiOptionsIntoSingleOptions
 }
 
@@ -373,6 +380,7 @@ function composeTransactionSenderWithDifferentSendMode({
     }
     return parallelled
   } else {
+    console.log('12: ', 12)
     const queued = transactions.reduceRight(
       ({ fn, method }, tx, idx) => {
         const singleOption = singleOptions[idx]
