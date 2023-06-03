@@ -1,35 +1,27 @@
+import { notZero } from '@edsolater/fnkit'
 import { createEffect, onCleanup } from 'solid-js'
 import { StoreAtom, createStoreAtom } from '../../../../../packages/pivkit/hooks/createStoreAtom'
-import { RAYMint, SOLMint, USDCMint } from '../../../configs/wellknowns'
+import { RAYMint, SOLMint } from '../../../configs/wellknowns'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
+import { Mint, Numberish } from '../../../utils/dataStructures/type'
 import { getToken } from '../methods/getToken'
-import { useDataStore } from '../store'
 import { calculatedSwapRouteInfos_main } from '../utils/calculateSwapRouteInfos_main'
-import { Numberish } from '../../../utils/dataStructures/type'
-import { notZero } from '@edsolater/fnkit'
 
-export const useSwapToken1 = createStoreAtom(RAYMint, {
-  onFirstAccess(getter, setter) {
-    let hasLoaded: boolean = false
-    setInterval(() => {
-      const dataStore = useDataStore()
-      const USDC = dataStore.allTokens?.find((t) => t.mint === USDCMint)
-      if (USDC && hasLoaded === false) {
-        hasLoaded = true
-
-        setter(USDC.mint) // FIXME 2023-04-23: why not update?
-      }
-    }, 1000)
-  },
-})
-
-export const useSwapToken2 = createStoreAtom(SOLMint)
+export const useSwapToken1 = createStoreAtom<Mint | undefined>(RAYMint)
+export const useSwapToken2 = createStoreAtom<Mint | undefined>(SOLMint)
 export const useSwapTokenAmount1 = createStoreAtom<Numberish | undefined>()
 export const useSwapTokenAmount2 = createStoreAtom<Numberish | undefined>()
 
 type AtomAccessor<Atom extends StoreAtom<any>> = ReturnType<Atom>[0]
 type AtomSetter<Atom extends StoreAtom<any>> = ReturnType<Atom>[1]
 
+/**
+ * storeState:
+ * - {@link useSwapToken1}
+ * - {@link useSwapToken2}
+ * - {@link useSwapTokenAmount1}
+ * - {@link useSwapTokenAmount2}
+ */
 export function useSwapAmountCalculator() {
   const [token1, setToken1] = useSwapToken1()
   const [token2, setToken2] = useSwapToken2()

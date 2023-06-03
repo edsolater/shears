@@ -6,6 +6,7 @@ export function calculateSwapRouteInfos_worker() {
   return registMessageReceiver<CalculateSwapRouteInfosParams>(
     'let webworker calculate swap route infos',
     async ({ payload, resolve, onClean }) => {
+      console.log('payload: ', payload)
       const { abort, result, assertNotAborted } = calculateSwapRouteInfos(payload)
       result.then(
         inNextMainLoop((result) => {

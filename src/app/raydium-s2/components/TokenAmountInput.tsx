@@ -37,12 +37,13 @@ export interface TokenAmountInputBoxProps {
 }
 
 export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
-  console.log('rawProps: ', rawProps)
   const { props, lazyLoadController } = useKitProps(rawProps)
 
   const [token, setToken] = createSyncSignal({
     get: () => props.token,
-    set: (token) => props.onSelectToken?.(token),
+    set: (token) => {
+      props.onSelectToken?.(token)
+    },
   })
   const [amount, setAmount] = createSyncSignal({
     get: () => (props.amount != null ? toString(props.amount) : undefined),

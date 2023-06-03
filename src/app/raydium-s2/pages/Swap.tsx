@@ -1,4 +1,4 @@
-import { createEffect } from 'solid-js'
+import { Accessor, createEffect, createMemo, createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Button, icss_card, icss_col, icss_row } from '../../../packages/pivkit'
 import { Card } from '../../../packages/pivkit/components/Card'
@@ -6,7 +6,7 @@ import { Section } from '../../../packages/pivkit/components/Section'
 import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import {
-  useSwapAmountCalculator,
+  useSwapAmountCalculator as useSwapAmountCalculatorEffect,
   useSwapToken1,
   useSwapToken2,
   useSwapTokenAmount1,
@@ -19,20 +19,28 @@ import { txSwap_main } from '../stores/data/utils/txSwap_main'
 import { assert } from '@edsolater/fnkit'
 import { useWalletOwner } from '../stores/wallet/store'
 import { notZero } from '../utils/dataStructures/basicMath/compare'
+/**
+ * transform mint to token
+ * @param mint token mint
+ * @returns
+ */
+function useTokenByMint(mint: Accessor<string | undefined>) {
+  const dataStore = useDataStore()
+  const token = createMemo(() => dataStore.allTokens?.find((t) => t.mint === mint()))
+  return token
+}
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const [swapToken1, setSwapToken1] = useSwapToken1() // here token is just mint
-  const dataStore = useDataStore()
   const [token1Mint, setToken1Mint] = useSwapToken1()
   const [token2Mint, setToken2Mint] = useSwapToken2()
-  const token1 = () => dataStore.allTokens?.find((t) => t.mint === token1Mint())
-  const token2 = () => dataStore.allTokens?.find((t) => t.mint === token2Mint())
+  const token1 = useTokenByMint(token1Mint)
+  const token2 = useTokenByMint(token2Mint)
   const setToken1 = (token: Token | undefined) => {
-    token?.mint && setToken1Mint(token?.mint)
+    setToken1Mint(token?.mint)
   }
   const setToken2 = (token: Token | undefined) => {
-    token?.mint && setToken1Mint(token?.mint)
+    setToken2Mint(token?.mint)
   }
 
   const [amount1, setAmount1] = useSwapTokenAmount1()
@@ -40,7 +48,7 @@ export default function SwapPage() {
   const tokenAmount1 = () => (amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined)
   const tokenAmount2 = () => (amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined)
 
-  useSwapAmountCalculator()
+  useSwapAmountCalculatorEffect()
 
   createEffect(() => {
     console.log('tokenAmount1(): ', tokenAmount1())
@@ -81,7 +89,6 @@ export default function SwapPage() {
               const walletOwner = owner()
               assert(walletOwner, 'walletOwner is undefined')
 
-              
               txSwap_main({
                 owner: walletOwner,
                 checkInfo: {
