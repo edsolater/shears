@@ -5,7 +5,7 @@ import toPubString from '../../../utils/dataStructures/Publickey'
 import { Token } from '../../../utils/dataStructures/Token'
 import { getOwnerTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
 import { Numberish } from '../../../utils/dataStructures/type'
-import { txHandler } from '../../../utils/txHandler'
+import { SignAllTransactionsFunction, txHandler } from '../../../utils/txHandler'
 import { getTxHandlerBudgetConfig } from '../../../utils/txHandler/getTxHandlerBudgetConfig'
 import { getBestCalcResultCache } from './calculateSwapRouteInfos'
 import { eq } from '../../../utils/dataStructures/basicMath/compare'
@@ -25,7 +25,6 @@ export interface TxSwapOptions {
 export function txSwap_getInnerTransaction(options: TxSwapOptions) {
   const connection = getConnection(options.checkInfo.rpcUrl)
   const neariestSwapBestResultCache = getBestCalcResultCache()
-  console.log('assert: ', assert)
   assert(neariestSwapBestResultCache, 'swapInfo not found')
   assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, 'coin1 is not match')
   assert(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, 'coin2 is not match')
@@ -40,7 +39,7 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
       owner: options.owner,
       txVersion: 'V0',
       signAllTransactions: (transactions) => {
-        console.log('transactions: ', transactions)
+        console.log('transactions: ', transactions, structuredClone(transactions))
         return Promise.reject('not implemented')
       },
     },

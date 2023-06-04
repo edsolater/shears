@@ -167,7 +167,7 @@ export interface TxHandlerOptions extends MultiTxCallbacks, MultiTxsOption {
   additionalMultiOptionCallback?: MultiTxCallbacks
 }
 
-type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(transactions: T[]) => Promise<T[]>
+export type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(transactions: T[]) => Promise<T[]>
 
 export interface TxHandlerPayload {
   connection: Connection

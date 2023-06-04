@@ -7,10 +7,9 @@ import { encode } from '../structure-clone/encode'
 import { WorkerDescription, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
 
-type onMessage<D> = (utils: { payload: D; onClean(cleanFn: () => void): void; resolve(value: any): void }) => void
+type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
 const callbackMap = new Map<string, onMessage<any>>()
-const cleanFunctionMap = new WeakMap<onMessage<any>, (() => void)[]>()
 const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
 /**
@@ -24,23 +23,10 @@ function initMessageReceiver() {
     const onMessage = callbackMap.get(description)
     if (!onMessage) return
 
-    const invokePrevCleanUps = (onMessage: onMessage<any>) => {
-      const prevCleanUps = cleanFunctionMap.get(onMessage) || []
-      prevCleanUps.forEach((cleanFn) => cleanFn())
-      cleanFunctionMap.delete(onMessage)
-    }
-
-    const onClean = (cleanFn: () => void) => {
-      const cleanFns = cleanFunctionMap.get(onMessage) || []
-      cleanFns.push(cleanFn)
-      cleanFunctionMap.set(onMessage, cleanFns)
-    }
-
     const subscribable = new Subscribable()
     returnValueMap.set(onMessage, subscribable)
 
-    invokePrevCleanUps(onMessage)
-    invoke(onMessage, { payload, onClean, resolve: subscribable.inject.bind(subscribable) })
+    invoke(onMessage, { payload, resolve: subscribable.inject.bind(subscribable) })
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)

@@ -10,6 +10,7 @@ import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
 import { calculateSwapRouteInfos_worker } from './utils/calculateSwapRouteInfos_worker'
 import { txSwap_worker } from './utils/txSwap_worker'
+import { createCleanUpFunctionBucket } from '../../../../packages/pivkit/utils/createCleanUpFunctionBucket'
 
 /**
  * register receiver functions in worker-side
@@ -22,14 +23,13 @@ export function registInWorker() {
     fetchFarmJsonInfo().then(resolve),
   )
 
-  registMessageReceiver<CalculateSwapRouteInfosParams>(
-    'get raydium farms syn infos',
-    async ({ payload, resolve, onClean }) => {
-      const { abort, resultSubscribable } = composeFarmSYN(payload)
-      resultSubscribable.subscribe(resolve)
-      onClean(abort)
-    },
-  )
+  const storedCleanUpFunctions = createCleanUpFunctionBucket()
+  registMessageReceiver<CalculateSwapRouteInfosParams>('get raydium farms syn infos', async ({ payload, resolve }) => {
+    storedCleanUpFunctions.invokeStoredAndClear()
+    const { abort, resultSubscribable } = composeFarmSYN(payload)
+    resultSubscribable.subscribe(resolve)
+    storedCleanUpFunctions.add(abort)
+  })
 
   registMessageReceiver<FetchPairsOptions>('fetch raydium pairs info', ({ payload, resolve }) =>
     fetchPairJsonInfo().then(resolve),
