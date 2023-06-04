@@ -3,7 +3,7 @@ import { JSXElement, createComponent } from 'solid-js'
 import { Dynamic } from 'solid-js/web'
 import { parsePivProps } from './propHandlers/parsePivProps'
 import { PivProps } from './types/piv'
-import { ValidController } from './types/tools'
+import { HTMLTag, ValidController } from './types/tools'
 
 export const pivPropsNames = [
   'id',
@@ -25,10 +25,7 @@ export const pivPropsNames = [
   'render:lastChild',
 ] satisfies (keyof PivProps<any>)[]
 
-export const Piv = <
-  TagName extends keyof HTMLElementTagNameMap = keyof HTMLElementTagNameMap,
-  Controller extends ValidController | unknown = unknown,
->(
+export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown>(
   props: PivProps<TagName, Controller>,
 ) => {
   // const props = pipe(rawProps as Partial<PivProps>, handleShadowProps, handlePluginProps)

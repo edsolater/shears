@@ -27,7 +27,7 @@ type KitPropsInstance<
   RawProps extends ValidProps,
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
-  TagName extends keyof HTMLElementTagNameMap,
+  TagName extends HTMLTag,
   NeedAccessifyProps extends keyof RawProps,
 > = AccessifyProps<Pick<RawProps, NeedAccessifyProps>, Controller> &
   Omit<RawProps, NeedAccessifyProps> &
@@ -53,7 +53,7 @@ export type KitProps<
     /** will auto-add props: */
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
-    htmlPropsTagName?: keyof HTMLElementTagNameMap
+    htmlPropsTagName?: HTMLTag
     // default is auto detect, only set when auto is not ok
     needAccessifyProps?: (keyof RawProps)[]
   } = {},
@@ -74,7 +74,7 @@ export type UIKit<
     /** will auto-add props: */
     controller?: ValidController
     plugin?: MayArray<Plugin<any>>
-    htmlPropsTagName?: keyof HTMLElementTagNameMap
+    htmlPropsTagName?: HTMLTag
     // /** default is false, only set when children must be function  */
   } = {},
 > = KitPropsInstance<

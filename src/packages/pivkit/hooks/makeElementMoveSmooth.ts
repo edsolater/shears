@@ -47,7 +47,7 @@ export function makeElementMoveSmooth(options: {
           // record for next frame
           // FIXME: too late, next frame is start
           const time = animationControl.currentTime ?? undefined
-          const percent = time && time / animateOptions.duration // if it's not linear, this time percent is not exact enough
+          const percent = time && Number(time) / animateOptions.duration // if it's not linear, this time percent is not exact enough
           fromX = fromX && percent && fromX + deltaX * percent
           fromY = fromY && percent && fromY + deltaY * percent
           animationControl?.cancel()
