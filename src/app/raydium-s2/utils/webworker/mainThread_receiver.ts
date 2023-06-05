@@ -1,5 +1,5 @@
 import { isFunction } from '@edsolater/fnkit'
-import { parseTransiable } from '../dataTransmit/handlers'
+import { decode } from '../dataTransmit/handlers'
 import { WorkerDescription, WorkerMessage } from './type'
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
 import { signAllTransactionReceiver } from '../txHandler/signAllTransactions_main'
@@ -25,7 +25,7 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
     if (isReceiveMessage(body) && body.command === message.command) {
-      const decodedData = parseTransiable(body.payload)
+      const decodedData = decode(body.payload)
       console.log('decodedData: ', decodedData)
       // LOG
       // console.log(`receving ${message.description}...`, 'from', body.data, 'to', decodedData)
@@ -61,7 +61,7 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
     if (isReceiveMessage(body) && body.command === messageDescription) {
-      const decodedData = parseTransiable(body.payload)
+      const decodedData = decode(body.payload)
       // LOG
       // console.log(`receving ${message.description}...`, 'from', body.data, 'to', decodedData)
       subscribable.inject(decodedData)

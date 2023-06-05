@@ -1,5 +1,6 @@
 import { MayPromise } from '@edsolater/fnkit'
 import { cachelyGetMapValue } from '../../../../packages/fnkit/cachelyGetMapValue'
+import { encode } from '../dataTransmit/handlers'
 
 interface SenderMessage<Query = any> {
   command: string
@@ -32,7 +33,7 @@ export function getMessageSender<P extends SenderMessage>(
   function createNewWorkerMessageSender<P extends SenderMessage>(command: string): WorkerMessageSender<P> {
     return {
       query(payload) {
-        Promise.resolve(to).then((targetPort) => targetPort.postMessage({ command, payload }))
+        Promise.resolve(to).then((targetPort) => targetPort.postMessage({ command, payload: encode(payload) }))
       },
     }
   }

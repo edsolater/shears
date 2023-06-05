@@ -1,7 +1,7 @@
 import { MayPromise } from '@edsolater/fnkit'
 import { cachelyGetMapValue } from '../../../../packages/fnkit/cachelyGetMapValue'
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
-import { parseTransiable } from '../dataTransmit/handlers'
+import { decode } from '../dataTransmit/handlers'
 
 interface ReceiveMessage<Data = any> {
   command: string
@@ -38,8 +38,7 @@ export function getMessageReceiver<R extends ReceiveMessage>(
     const messageHandler = (ev: MessageEvent<any>): void => {
       const body = ev.data as ReceiveMessage<R['payload']>
       if (body.command === command) {
-        const decodedData = parseTransiable(body.payload)
-        console.log(`command: ${body.command} | `, 'from', body.payload, 'to', decodedData)
+        const decodedData = decode(body.payload)
         subscribable.inject(decodedData)
       }
     }

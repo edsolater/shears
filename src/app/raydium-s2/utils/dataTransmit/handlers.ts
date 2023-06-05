@@ -1,9 +1,9 @@
 import { isArray, isObjectLiteral, map } from '@edsolater/fnkit'
 import { rules } from './TransmitRule'
 
-export function parseTransiable(data: unknown): any {
+export function decode(data: unknown): any {
   // literal need to deeply parse
-  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => parseTransiable(v))
+  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => decode(v))
 
   // try to match rule
   for (const rule of rules) {
@@ -16,7 +16,7 @@ export function parseTransiable(data: unknown): any {
   return data
 }
 
-export function toTransiable(data: unknown): any {
+export function encode(data: unknown): any {
   // try to match rule
   for (const rule of rules) {
     if (rule.canEncode?.(data)) {
@@ -25,7 +25,7 @@ export function toTransiable(data: unknown): any {
   }
 
   // literal need to deeply parse
-  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => toTransiable(v))
+  if (isObjectLiteral(data) || isArray(data)) return map(data, (v) => encode(v))
 
   // no match rule
   return data
