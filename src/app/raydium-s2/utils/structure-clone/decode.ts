@@ -33,5 +33,5 @@ function isEncodedObject(data: any): data is EncodedObject<any> {
 
 export interface DecodeRule {
   name?: string
-  decodeFn?: (encodedData: EncodedObject<any>, decodeInner: (innerValue: unknown) => any) => any
+  decodeFn?: (encodedData: EncodedObject<any>, decodeObject: (innerValue: unknown) => any) => any
 }

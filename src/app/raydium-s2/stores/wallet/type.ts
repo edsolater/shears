@@ -1,29 +1,12 @@
-import { WalletAdapter } from '@solana/wallet-adapter-base'
+import {
+  LedgerWalletAdapter,
+  PhantomWalletAdapter,
+  SolflareWalletAdapter,
+  TrustWalletAdapter,
+} from '@solana/wallet-adapter-wallets'
 
 export interface WalletAdapterInterface {
-  adapter: WalletAdapter
+  adapter: PhantomWalletAdapter | TrustWalletAdapter | SolflareWalletAdapter | LedgerWalletAdapter
 }
 
-export type WalletsNames =
-  | 'Phantom'
-  | 'Trust'
-  | 'Solflare'
-  | 'Sollet'
-  | 'Torus'
-  | 'Ledger'
-  | 'SolletExtension'
-  | 'Math'
-  | 'TokenPocket'
-  | 'Coinbase'
-  | 'Solong'
-  | 'Coin98'
-  | 'SafePal'
-  | 'Slope'
-  | 'Bitpie'
-  | 'Glow'
-  | 'BitKeep'
-  | 'Exodus'
-  | 'Clover'
-  | 'Coinhub'
-  | 'Backpack'
-  | 'Brave'
+export type WalletsNames = 'Phantom' | 'Trust' | 'Solflare' | 'Ledger'

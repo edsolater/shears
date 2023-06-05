@@ -30,5 +30,5 @@ function encodeObject(data: object): any {
 
 export interface EncodeRule {
   isTargetInstance?: (data: object) => boolean | undefined
-  encodeFn?: (rawData: any, encodeInner: (innerValue: unknown) => any) => EncodedObject<any> | any /* can transport */
+  encodeFn?: (rawData: any, encodeObject: (innerValue: unknown) => any) => EncodedObject<any> | any /* can transport */
 }
