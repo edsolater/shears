@@ -9,7 +9,12 @@ interface ReceiveMessage<Data = any> {
 }
 
 export function isReceiveMessage(v: unknown): v is ReceiveMessage {
-  return typeof v === 'object' && v !== null && 'command' in v && 'data' in v
+  return (
+    typeof v === 'object' &&
+    v !== null &&
+    ('command' satisfies keyof ReceiveMessage) in v &&
+    ('payload' satisfies keyof ReceiveMessage) in v
+  )
 }
 
 type WorkerMessageReceiver<R extends ReceiveMessage> = Subscribable<R['payload']>

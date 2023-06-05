@@ -18,7 +18,6 @@ const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
  * register receiver utils in worker-side
  */
 function initMessageReceiver() {
-  console.log('hello 3', globalThis.postMessage)
   globalThis.addEventListener('message', async (ev) => {
     const messageBody = ev.data
     if (!isSenderMessage(messageBody)) return
