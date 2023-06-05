@@ -33,7 +33,7 @@ function getFarmSYNInfosFromWorker(
 ) {
   const { abort } = subscribeWebWorker_Drepcated<DataStore['farmInfos'], CalculateSwapRouteInfosParams>(
     {
-      description: 'get raydium farms syn infos',
+      command: 'get raydium farms syn infos',
       payload: {
         owner: owner,
         rpcUrl: appRpcEndpointUrl,

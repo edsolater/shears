@@ -2,8 +2,12 @@ import { isFunction } from '@edsolater/fnkit'
 import { decode } from '../structure-clone/decode'
 import { WorkerDescription, WorkerMessage } from './type'
 import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
+import { signAllTransactionReceiver } from '../txHandler/signAllTransactions_main'
+import { isReceiveMessage } from './getMessageReceiver'
 
-const workerP = import('./worker_sdk?worker').then((module) => new module.default())
+export const sdkworker = import('./worker_sdk?worker').then((module) => new module.default())
+
+signAllTransactionReceiver()
 
 export type WebworkerSubscribeCallback<ResultData = any> = (
   data: ResultData,
@@ -13,15 +17,16 @@ export type WebworkerSubscribeCallback<ResultData = any> = (
  * @deprecated prefer use {@link subscribeWebWorker}
  */
 export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any>(
-  message: { description: WorkerDescription; payload?: PostOptions },
+  message: { command: WorkerDescription; payload?: PostOptions },
   callback?: WebworkerSubscribeCallback<ResultData>,
 ): { abort(): void } {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
-  workerP.then((worker) => worker.postMessage(message))
+  sdkworker.then((worker) => worker.postMessage(message))
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
-    if (body.command === message.description) {
-      const decodedData = decode(body.data)
+    if (isReceiveMessage(body) && body.command === message.command) {
+      const decodedData = decode(body.payload)
+      console.log('decodedData: ', decodedData)
       // LOG
       // console.log(`receving ${message.description}...`, 'from', body.data, 'to', decodedData)
       if (isFunction(cleanFn)) cleanFn(decodedData)
@@ -30,10 +35,10 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
     }
   }
   // TODO: this will regist multi time, only need regist one time d
-  workerP.then((worker) => worker.addEventListener('message', messageHandler))
+  sdkworker.then((worker) => worker.addEventListener('message', messageHandler))
   return {
     abort: () => {
-      workerP.then((worker) => worker.removeEventListener('message', messageHandler))
+      sdkworker.then((worker) => worker.removeEventListener('message', messageHandler))
     },
   }
 }
@@ -52,23 +57,21 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
   query: PostOptions,
 ) {
   const subscribable = new Subscribable<ResultData>()
-  workerP.then((worker) => worker.postMessage({ description: messageDescription, payload: query }))
+  sdkworker.then((worker) => worker.postMessage({ command: messageDescription, payload: query }))
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
-    if (body.command === messageDescription) {
-      const decodedData = decode(body.data)
+    if (isReceiveMessage(body) && body.command === messageDescription) {
+      const decodedData = decode(body.payload)
       // LOG
       // console.log(`receving ${message.description}...`, 'from', body.data, 'to', decodedData)
       subscribable.inject(decodedData)
     }
   }
   // TODO: this will regist multi time, only need regist one time d
-  workerP.then((worker) => worker.addEventListener('message', messageHandler))
+  sdkworker.then((worker) => worker.addEventListener('message', messageHandler))
   return Object.assign(subscribable, {
     abort: () => {
-      workerP.then((worker) => worker.removeEventListener('message', messageHandler))
+      sdkworker.then((worker) => worker.removeEventListener('message', messageHandler))
     },
   })
 }
-
-

@@ -2,7 +2,7 @@ import { MayEnum } from '@edsolater/fnkit'
 
 export type WorkerMessage<T = any> = {
   command: string
-  data: T
+  payload: T
 }
 
 export type WorkerDescription = MayEnum<

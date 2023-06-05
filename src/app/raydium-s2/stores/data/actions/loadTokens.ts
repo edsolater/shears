@@ -16,7 +16,7 @@ export function loadTokensInfos(store: Store<DataStore>) {
 export const getTokenJsonInfoFromWorker = (cb: WebworkerSubscribeCallback<DataStore['allTokens']>) =>
   subscribeWebWorker_Drepcated<DataStore['allTokens'], FetchRaydiumTokenListOptions>(
     {
-      description: 'fetch raydium supported tokens',
+      command: 'fetch raydium supported tokens',
       payload: {
         url: appApiUrls.tokenInfo,
       },

@@ -17,7 +17,7 @@ export function loadFarmJsonInfos(store: Store<DataStore>) {
 export function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<DataStore['farmJsonInfos']>) {
   return subscribeWebWorker_Drepcated<DataStore['farmJsonInfos'], FetchFarmsJSONPayloads>(
     {
-      description: 'fetch raydium farms info',
+      command: 'fetch raydium farms info',
       payload: {},
     },
     cb,

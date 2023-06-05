@@ -38,10 +38,6 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
       connection,
       owner: options.owner,
       txVersion: 'V0',
-      signAllTransactions: (transactions) => {
-        console.log('transactions: ', transactions, structuredClone(transactions))
-        return Promise.reject('not implemented')
-      },
     },
     async ({ baseUtils: { owner, connection } }) => {
       //TODO: no two fetch await

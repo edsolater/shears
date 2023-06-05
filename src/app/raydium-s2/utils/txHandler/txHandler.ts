@@ -13,7 +13,7 @@ import { produce } from 'immer'
 import { toPub } from '../dataStructures/Publickey'
 import { innerTxCollector } from './innerTxCollector'
 import { sendTransactionCore } from './sendTransactionCore'
-import { signAllTransactions } from './signAllTransactions'
+import { signAllTransactions } from './signAllTransactions_worker'
 import { subscribeTx } from './subscribeTx'
 
 export type TxVersion = 'V0' | 'LEGACY'
@@ -167,13 +167,14 @@ export interface TxHandlerOptions extends MultiTxCallbacks, MultiTxsOption {
   additionalMultiOptionCallback?: MultiTxCallbacks
 }
 
-export type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(transactions: T[]) => Promise<T[]>
+export type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(
+  transactions: T[],
+) => Promise<T[]>
 
 export interface TxHandlerPayload {
   connection: Connection
   owner: PublicKeyish
   txVersion: TxVersion
-  signAllTransactions: SignAllTransactionsFunction
 }
 
 export interface TxHandlerEventCenter
@@ -253,6 +254,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     // FIXME: where is onTxAllSuccess?
     console.log('prepare to sign all transactions')
 
+    // sign all transactions
     const allSignedTransactions = await signAllTransactions({
       transactions: collectedTransactions,
       payload,
@@ -306,7 +308,7 @@ function makeMultiOptionIntoSignalOptions({
 }): TxHandlerOption[] {
   const txids = [] as string[]
   const successTxids = [] as typeof txids
-  
+
   const pushSuccessTxid = (txid: string) => {
     successTxids.push(txid)
     if (successTxids.length === transactions.length) {

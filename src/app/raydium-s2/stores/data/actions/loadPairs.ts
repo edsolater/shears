@@ -25,7 +25,7 @@ export function loadPairs(store: Store<DataStore>) {
 function getPairJsonFromWorker(cb: WebworkerSubscribeCallback<PairJson[]>) {
   return subscribeWebWorker_Drepcated<PairJson[], FetchPairsOptions>(
     {
-      description: 'fetch raydium pairs info',
+      command: 'fetch raydium pairs info',
       payload: {
         force: false,
       },

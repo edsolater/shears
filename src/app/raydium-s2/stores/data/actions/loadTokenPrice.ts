@@ -29,7 +29,7 @@ const getTokenPriceInfoFromWorker = (
 ) =>
   subscribeWebWorker_Drepcated<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
     {
-      description: 'get raydium token prices',
+      command: 'get raydium token prices',
       payload: {
         url: appApiUrls.price,
         tokens,

@@ -6,7 +6,7 @@ import { invoke } from '../../../../packages/fnkit/invoke'
 import { encode } from '../structure-clone/encode'
 import { WorkerDescription, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
-import { isSenderMessage } from './workerMessageSender'
+import { isSenderMessage } from './getMessageSender'
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
@@ -18,6 +18,7 @@ const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
  * register receiver utils in worker-side
  */
 function initMessageReceiver() {
+  console.log('hello 3', globalThis.postMessage)
   globalThis.addEventListener('message', async (ev) => {
     const messageBody = ev.data
     if (!isSenderMessage(messageBody)) return
@@ -34,7 +35,7 @@ function initMessageReceiver() {
       const encodedData = encode(outputData)
       // LOG
       // console.log(`transforming ${description}...`, outputData, 'to', encodedData)
-      globalThis.postMessage({ command: command, data: encodedData } as WorkerMessage)
+      globalThis.postMessage({ command, payload: encodedData } as WorkerMessage)
     })
   })
 }
