@@ -1,6 +1,6 @@
 export interface TransmitRule {
   canEncode?: (data: any) => boolean
-  encodeFn?: (data: any) => any
+  encode?: (data: any) => any
   canDecode?: (data: any) => boolean
-  decodeFn?: (data: any) => any
+  decode?: (data: any) => any
 }

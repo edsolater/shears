@@ -11,6 +11,7 @@ export function signAllTransactionReceiver() {
   receiver.subscribe((transactions) => {
     console.log('[main thread] receive transactions: ', transactions)
     const signedTransactions = signTrancations(transactions)
+    console.log('signedTransactions: ', signedTransactions)
   })
 }
 
