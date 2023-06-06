@@ -14,10 +14,26 @@ export const routePath = {
   playground: playgroundRoutePath,
   swap: swapRoutePath,
 }
+
+const PageComponentHome = import('../pages/Home')
+const PageComponentSwap = import('../pages/Swap')
+const PageComponentPairs = import('../pages/Pairs')
+const PageComponentFarms = import('../pages/Farms')
+const PageComponentPlayground = import('../pages/Playground')
+
+// preload all pages
+Promise.allSettled([
+  PageComponentHome,
+  PageComponentSwap,
+  PageComponentPairs,
+  PageComponentFarms,
+  PageComponentPlayground,
+])
+
 export const routes: RouteDefinition[] = [
-  { path: routePath.home, component: lazy(() => import('../pages/Home')) },
-  { path: routePath.swap, component: lazy(() => import('../pages/Swap')) },
-  { path: routePath.pools, component: lazy(() => import('../pages/Pairs')) },
-  { path: routePath.farms, component: lazy(() => import('../pages/Farms')) },
-  { path: routePath.playground, component: lazy(() => import('../pages/Playground')) },
+  { path: routePath.home, component: lazy(() => PageComponentHome) },
+  { path: routePath.swap, component: lazy(() => PageComponentSwap) },
+  { path: routePath.pools, component: lazy(() => PageComponentPairs) },
+  { path: routePath.farms, component: lazy(() => PageComponentFarms) },
+  { path: routePath.playground, component: lazy(() => PageComponentPlayground) },
 ]
