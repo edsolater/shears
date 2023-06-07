@@ -317,7 +317,6 @@ function makeMultiOptionIntoSignalOptions({
   }
 
   const parseMultiOptionsIntoSingleOptions = produce(singleOptions, (options) => {
-    console.log('inside produce')
     options.forEach((option) => {
       option.onTxSentSuccess = mergeFunction(
         (({ txid }) => {
@@ -382,7 +381,6 @@ function composeTransactionSenderWithDifferentSendMode({
     }
     return parallelled
   } else {
-    console.log('12: ', 12)
     const queued = transactions.reduceRight(
       ({ fn, method }, tx, idx) => {
         const singleOption = singleOptions[idx]

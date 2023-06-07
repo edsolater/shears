@@ -11,6 +11,7 @@ import { fetchTokenPrices } from './utils/fetchTokenPrices'
 import { calculateSwapRouteInfos_worker } from './utils/calculateSwapRouteInfos_worker'
 import { txSwap_worker } from './utils/txSwap_worker'
 import { createCleanUpFunctionBucket } from '../../../../packages/pivkit/utils/createCleanUpFunctionBucket'
+import { SOLToken } from '../../utils/dataStructures/Token'
 
 /**
  * register receiver functions in worker-side
@@ -35,12 +36,15 @@ export function registInWorker() {
     fetchPairJsonInfo().then(resolve),
   )
 
+  // TODO: logic should not be here, it's not gao nei ju de
   registMessageReceiver<FetchRaydiumTokenListOptions>(
     'fetch raydium supported tokens',
     async ({ payload: options, resolve }) =>
       /* TODO: currently only mainnet raydium token list was supported*/
       fetchTokenJsonFile(options).then((res) => {
-        const availableTokens = res?.tokens.filter((t) => !res?.blacklist.includes(t.mint))
+        const availableTokens = res?.tokens
+          .filter((t) => !res?.blacklist.includes(t.mint) || t.name === 'Native Solana')
+          .concat(SOLToken) // replace api mistakely add SOL
         availableTokens && resolve(availableTokens)
       }),
   )
