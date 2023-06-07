@@ -1,14 +1,14 @@
 import { notZero } from '@edsolater/fnkit'
 import { createEffect, onCleanup } from 'solid-js'
 import { StoreAtom, createStoreAtom } from '../../../../../packages/pivkit/hooks/createStoreAtom'
-import { RAYMint, SOLMint } from '../../../configs/wellknowns'
+import { RAYMint, SOLMint, USDCMint } from '../../../configs/wellknowns'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { Mint, Numberish } from '../../../utils/dataStructures/type'
 import { getToken } from '../methods/getToken'
 import { calculatedSwapRouteInfos_main } from '../utils/calculateSwapRouteInfos_main'
 
 export const useSwapToken1 = createStoreAtom<Mint | undefined>(RAYMint)
-export const useSwapToken2 = createStoreAtom<Mint | undefined>(SOLMint)
+export const useSwapToken2 = createStoreAtom<Mint | undefined>(USDCMint)
 export const useSwapTokenAmount1 = createStoreAtom<Numberish | undefined>()
 export const useSwapTokenAmount2 = createStoreAtom<Numberish | undefined>()
 
