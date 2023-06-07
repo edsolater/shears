@@ -21,6 +21,7 @@ import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo
 import { makeTaskAbortable } from '../../../../../packages/fnkit/makeTaskAbortable'
 import { inNextMainLoop } from '../../../../../packages/fnkit/inNextMainLoop'
 import { Mint } from '../../../utils/dataStructures/type'
+import { appRpcUrl } from '../../../utils/common/config'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
 export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>['result']>
@@ -58,7 +59,7 @@ export function getBestCalcResultCache() {
  * swap core calculation algorithm
  */
 export function calculateSwapRouteInfos({
-  rpcUrl = 'https://rpc.asdf1234.win',
+  rpcUrl = appRpcUrl,
   slippageTolerance = 0.05,
   input,
   output,

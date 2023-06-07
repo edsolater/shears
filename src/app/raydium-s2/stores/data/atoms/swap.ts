@@ -8,7 +8,7 @@ import { getToken } from '../methods/getToken'
 import { calculatedSwapRouteInfos_main } from '../utils/calculateSwapRouteInfos_main'
 
 export const useSwapToken1 = createStoreAtom<Mint | undefined>(RAYMint)
-export const useSwapToken2 = createStoreAtom<Mint | undefined>(USDCMint)
+export const useSwapToken2 = createStoreAtom<Mint | undefined>(SOLMint)
 export const useSwapTokenAmount1 = createStoreAtom<Numberish | undefined>()
 export const useSwapTokenAmount2 = createStoreAtom<Numberish | undefined>()
 

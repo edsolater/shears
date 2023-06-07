@@ -1,11 +1,11 @@
 import { Commitment, Connection, ConnectionConfig } from '@solana/web3.js'
-import { appRpcEndpointUrl } from './config'
+import { appRpcUrl } from './config'
 
 let currentRpcUrl: string | null = null
 let currentConnection: Connection | null = null
 
 export function getConnection(
-  endpoint: string = appRpcEndpointUrl,
+  endpoint: string = appRpcUrl,
   commitmentOrConfig: Commitment | ConnectionConfig = 'confirmed',
 ) {
   if (currentRpcUrl === endpoint && currentConnection) {

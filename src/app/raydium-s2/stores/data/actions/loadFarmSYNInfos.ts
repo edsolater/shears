@@ -1,6 +1,6 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { createOnFirstAccess, Store } from '../../../../../packages/pivkit'
-import { appRpcEndpointUrl } from '../../../utils/common/config'
+import { appRpcUrl } from '../../../utils/common/config'
 import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
 import { useWalletStore, WalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
@@ -36,7 +36,7 @@ function getFarmSYNInfosFromWorker(
       command: 'get raydium farms syn infos',
       payload: {
         owner: owner,
-        rpcUrl: appRpcEndpointUrl,
+        rpcUrl: appRpcUrl,
       },
     },
     cb,

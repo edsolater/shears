@@ -1,7 +1,8 @@
-import { AmmV3, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-io/raydium-sdk'
+import { AmmV3, PublicKeyish, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-io/raydium-sdk'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { ApiPoolInfo } from '../types/ammPools'
-import { Connection } from '@solana/web3.js'
+import { Connection, PublicKey } from '@solana/web3.js'
+import { SOLMint } from '../../../configs/wellknowns'
 
 type SimulatePoolCacheType = Promise<Awaited<ReturnType<(typeof TradeV2)['fetchMultipleInfo']>> | undefined>
 type TickCache = Promise<ReturnTypeFetchMultiplePoolTickArrays | undefined>
@@ -41,8 +42,8 @@ export function sdkParseSwapAmmInfo({
   const key = toPubString(inputMint) + toPubString(outputMint)
   if (!sdkCaches.has(key)) {
     const routes = TradeV2.getAllRoute({
-      inputMint: toPub(inputMint),
-      outputMint: toPub(outputMint),
+      inputMint: inputMint === SOLMint ? PublicKey.default : toPub(inputMint),
+      outputMint: outputMint === SOLMint ? PublicKey.default : toPub(outputMint),
       apiPoolList: apiPoolList,
       ammV3List: Object.values(sdkParsedAmmV3PoolInfo).map((i) => i.state),
     })

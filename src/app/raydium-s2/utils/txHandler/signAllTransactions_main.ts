@@ -5,7 +5,7 @@ import { getMessageReceiver } from '../webworker/getMessageReceiver'
 import { getMessageSender } from '../webworker/getMessageSender'
 import { sdkworker } from '../webworker/mainThread_receiver'
 import { getConnection } from '../common/getConnection'
-import { appRpcEndpointUrl } from '../common/config'
+import { appRpcUrl } from '../common/config'
 
 export function signAllTransactionReceiver() {
   const receiver = getMessageReceiver(sdkworker, 'sign transaction in main thread')
@@ -15,7 +15,7 @@ export function signAllTransactionReceiver() {
     const signedTransactions = signTrancations(transactions)
     console.log('signedTransactions: ', signedTransactions)
     signedTransactions?.then((signedTrancation) => {
-      getConnection(appRpcEndpointUrl)
+      getConnection(appRpcUrl)
         .sendRawTransaction(signedTrancation[0].serialize(), { skipPreflight: true })
         .then((txid) => {
           console.log('txid: ', txid)
