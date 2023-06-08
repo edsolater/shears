@@ -12,8 +12,8 @@ export const useSwapToken2 = createStoreAtom<Mint | undefined>(SOLMint)
 export const useSwapTokenAmount1 = createStoreAtom<Numberish | undefined>()
 export const useSwapTokenAmount2 = createStoreAtom<Numberish | undefined>()
 
-type AtomAccessor<Atom extends StoreAtom<any>> = ReturnType<Atom>[0]
-type AtomSetter<Atom extends StoreAtom<any>> = ReturnType<Atom>[1]
+type AtomAccessor<Atom extends StoreAtom<any>> = ReturnType<Atom>['val']
+type AtomSetter<Atom extends StoreAtom<any>> = ReturnType<Atom>['set']
 
 /**
  * storeState:
@@ -23,10 +23,10 @@ type AtomSetter<Atom extends StoreAtom<any>> = ReturnType<Atom>[1]
  * - {@link useSwapTokenAmount2}
  */
 export function useSwapAmountCalculator() {
-  const [token1, setToken1] = useSwapToken1()
-  const [token2, setToken2] = useSwapToken2()
-  const [amount1, setAmount1] = useSwapTokenAmount1()
-  const [amount2, setAmount2] = useSwapTokenAmount2()
+  const { val: token1, set: setToken1 } = useSwapToken1()
+  const { val: token2, set: setToken2 } = useSwapToken2()
+  const { val: amount1, set: setAmount1 } = useSwapTokenAmount1()
+  const { val: amount2, set: setAmount2 } = useSwapTokenAmount2()
 
   // preflight
   createEffect(() => {

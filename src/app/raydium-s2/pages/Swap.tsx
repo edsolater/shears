@@ -32,8 +32,8 @@ function useTokenByMint(mint: Accessor<string | undefined>) {
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const [token1Mint, setToken1Mint] = useSwapToken1()
-  const [token2Mint, setToken2Mint] = useSwapToken2()
+  const { val: token1Mint, set: setToken1Mint } = useSwapToken1()
+  const { val: token2Mint, set: setToken2Mint } = useSwapToken2()
   const token1 = useTokenByMint(token1Mint)
   const token2 = useTokenByMint(token2Mint)
   const setToken1 = (token: Token | undefined) => {
@@ -43,8 +43,8 @@ export default function SwapPage() {
     setToken2Mint(token?.mint)
   }
 
-  const [amount1, setAmount1] = useSwapTokenAmount1()
-  const [amount2, setAmount2] = useSwapTokenAmount2()
+  const { val: amount1, set: setAmount1 } = useSwapTokenAmount1()
+  const { val: amount2, set: setAmount2 } = useSwapTokenAmount2()
   const tokenAmount1 = () => (amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined)
   const tokenAmount2 = () => (amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined)
 

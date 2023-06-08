@@ -4,7 +4,7 @@
  */
 
 import { assert } from '@edsolater/fnkit'
-import { createEncodedObject } from '../../../app/raydium-s2/utils/structure-clone/createEncodedObject'
+// import { createEncodedObject } from '../../../app/raydium-s2/utils/structure-clone/createEncodedObject'
 
 export class IndexAccessList<V extends object = object, BK extends keyof V = any> {
   // get faster access
@@ -112,13 +112,13 @@ export class IndexAccessList<V extends object = object, BK extends keyof V = any
     return this.#innerMap.values()
   }
 
-  _structureCloneEncode(handleInnerValue: (innerValue: unknown) => any = (i) => i) {
-    const items = this.toArray()
-    return createEncodedObject('IndexAccessList', {
-      items: handleInnerValue(items),
-      basicKey: this.#basicKeyIndexAccessMap,
-    } satisfies IndexAccessListStructureCloneType)
-  }
+  // _structureCloneEncode(handleInnerValue: (innerValue: unknown) => any = (i) => i) {
+  //   const items = this.toArray()
+  //   return createEncodedObject('IndexAccessList', {
+  //     items: handleInnerValue(items),
+  //     basicKey: this.#basicKeyIndexAccessMap,
+  //   } satisfies IndexAccessListStructureCloneType)
+  // }
 
   static _structureCloneDecode(transformed: IndexAccessListStructureCloneType) {
     return new IndexAccessList(transformed.items, transformed.basicKey)

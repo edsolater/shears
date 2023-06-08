@@ -2,18 +2,26 @@ import { isFunction } from '@edsolater/fnkit'
 import { Setter, Signal, SignalOptions, createSignal } from 'solid-js'
 import { createLazySignal } from './createLazySignal'
 
+type AtomPlugin<T> = (accessor: () => T, setter: Setter<T>) => Record<string, any> // <-- will merge to atoms
+
 type StoreAtomOptions<T> = SignalOptions<T> & {
   onFirstAccess?: (getCurrentValue: () => T | undefined, setNew: Setter<T>) => void
   /** default value when lazy is true */
   lazyDefaultValue?: T
+  plugins?: AtomPlugin<T>[] // TODO: imply it !!!
 }
 
 export type StoreAtomAccessor<T> = Signal<T>[0]
 export type StoreAtomSetter<T> = Signal<T>[1]
 
+type StoreAtomFn<T> = {
+  val: StoreAtomAccessor<T>
+  set: StoreAtomSetter<T>
+}
+
 export type StoreAtom<T> = {
-  (): [getter: StoreAtomAccessor<T>, setter: StoreAtomSetter<T>]
-  value: Signal<T>
+  (): StoreAtomFn<T>
+  val: Signal<T>
   set(patcher: T | ((prev: T) => T)): void
 }
 /**
@@ -40,12 +48,12 @@ export function createStoreAtom<T>(value?: T | (() => T), options?: StoreAtomOpt
   }
 
   function atom() {
-    return [wrappedGetter, setter]
+    return { val: wrappedGetter, set: setter } as StoreAtomFn<T>
   }
-  Object.defineProperty(atom, 'value', {
+  Object.defineProperty(atom, 'val', {
     get: wrappedGetter,
     set: setter,
   })
   atom.set = setter
-  return atom as any
+  return atom as unknown as StoreAtom<T>
 }
