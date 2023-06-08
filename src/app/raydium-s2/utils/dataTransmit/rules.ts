@@ -73,17 +73,25 @@ function decodeVersionedTransaction(rawData: ReturnType<typeof encodeVersionedTr
 }
 
 const BNRule: TransmitRule = {
-  canEncode: (data) => data instanceof BN || (getType(data) as string) === 'BN',
+  canEncode: (data) =>
+    isObject(data) && (data instanceof BN || (getType(data) as string) === 'BN' || data.constructor === BN),
   encode: encodeBN,
 }
 
 const PublickeyRule: TransmitRule = {
-  canEncode: (data) => data instanceof PublicKey || (getType(data) as string) === 'PublicKey',
+  canEncode: (data) =>
+    isObject(data) &&
+    (data instanceof PublicKey || (getType(data) as string).startsWith('PublicKey') || data.constructor === PublicKey),
   encode: encodePublicKey,
 }
 
 const VersionedTransactionRule: TransmitRule = {
-  canEncode: (data) => data instanceof VersionedTransaction || (getType(data) as string) === 'VersionedTransaction',
+  canEncode: (data) =>
+    isObject(data) &&
+    (data instanceof VersionedTransaction ||
+      (getType(data) as string) === 'VersionedTransaction' ||
+      data.constructor === VersionedTransaction ||
+      (hasProperty(data, 'message') && hasProperty(data, 'signatures'))),
   encode: encodeVersionedTransaction,
   canDecode: (data) =>
     isObject(data) && '_type' in data && '_info' in data && data._type === 'encoded VersionedTransaction',

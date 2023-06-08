@@ -15,6 +15,7 @@ export function isSenderMessage(v: unknown): v is SenderMessage {
  */
 interface WorkerMessageSender<P extends SenderMessage> {
   query(payload: P['payload']): void
+  // onMessageBack(payload: any): Promise<unknown> //TODO: imply it later
 }
 // cache store
 const registeredWorkerMessageSender = new Map<string, WorkerMessageSender<any>>()

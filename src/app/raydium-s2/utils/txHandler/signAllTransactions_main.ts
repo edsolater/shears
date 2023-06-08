@@ -4,22 +4,14 @@ import { useWalletAdapter } from '../../stores/wallet/store'
 import { getMessageReceiver } from '../webworker/getMessageReceiver'
 import { getMessageSender } from '../webworker/getMessageSender'
 import { sdkworker } from '../webworker/mainThread_receiver'
-import { getConnection } from '../common/getConnection'
-import { appRpcUrl } from '../common/config'
 
 export function signAllTransactionReceiver() {
   const receiver = getMessageReceiver(sdkworker, 'sign transaction in main thread')
   const sender = getMessageSender(sdkworker, 'sign transaction in main thread')
   receiver.subscribe((transactions) => {
-    console.log('[main thread] receive transactions: ', transactions)
     const signedTransactions = signTrancations(transactions)
-    console.log('signedTransactions: ', signedTransactions)
     signedTransactions?.then((signedTrancation) => {
-      getConnection(appRpcUrl)
-        .sendRawTransaction(signedTrancation[0].serialize(), { skipPreflight: true })
-        .then((txid) => {
-          console.log('txid: ', txid)
-        })
+      sender.query(signedTrancation)
     })
   })
 }

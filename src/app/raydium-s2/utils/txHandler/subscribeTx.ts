@@ -14,6 +14,9 @@ type TxSubscribeEventCenter = EventCenter<{
   txFinally: (info: TxFinalInfo) => void
 }>
 
+// @ts-ignore
+globalThis['window'] = globalThis // load for connection rpc use window 😥
+
 export function subscribeTx({
   txid,
   transaction, // payload
