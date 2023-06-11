@@ -17,7 +17,7 @@ export function Text(rawProps: TextProps) {
         display: props.inline ? 'inline-block' : undefined,
       }}
       shadowProps={props}
-      class={Text.name}
+      class='Text'
     />
   )
 }

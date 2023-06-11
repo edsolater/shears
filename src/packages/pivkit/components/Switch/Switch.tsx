@@ -20,7 +20,7 @@ interface BaseComponentProps {
 
 export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }>, 'shadowProps'>, BaseComponentProps {
   isChecked?: Accessify<boolean, SwitchController>
-  ariaLabel?: string
+  label?: string
   isDefaultChecked?: Accessify<boolean, SwitchController>
   onChange?(utils: { isChecked: boolean }): void
   /** for Chakra has, so i has */
@@ -33,7 +33,7 @@ export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }
 
 const selfProps = [
   'isChecked',
-  'ariaLabel',
+  'label',
   'isDefaultChecked',
   'onChange',
   'anatomy:ContainerLabel',
@@ -81,7 +81,7 @@ export function Switch(rawProps: SwitchProps) {
       <HTMLCheckbox
         shadowProps={[htmlCheckboxStyleProps, props['anatomy:AbsoluteCheckboxInput']]}
         innerController={switchController}
-        ariaLabel={props.ariaLabel}
+        label={props.label}
         defaultChecked={props.isDefaultChecked}
         onClick={() => {
           setIsChecked((b) => !b)

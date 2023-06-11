@@ -1,20 +1,20 @@
 import { Piv, UIKit, useKitProps } from '../../../piv'
 import { parsePivProps } from '../../../piv/propHandlers/parsePivProps'
 
-export interface HTMLCheckboxProps extends UIKit {
+export interface HTMLInputRadioProps extends UIKit {
   label?: string
   defaultChecked?: boolean
 }
-export function HTMLCheckbox(rawProps: HTMLCheckboxProps) {
+export function HTMLInputRadio(rawProps: HTMLInputRadioProps) {
   const { props } = useKitProps(rawProps)
   return (
     <Piv
       class='HTMLCheckbox'
       render:self={(selfProps) => <input {...parsePivProps(selfProps)} />}
       htmlProps={{
-        type: 'checkbox',
+        type: 'radio',
         checked: props.defaultChecked,
-        'aria-label': props.label ?? 'checkbox',
+        'aria-label': props.label ?? 'radio',
       }}
       shadowProps={props}
     />

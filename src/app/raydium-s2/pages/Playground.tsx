@@ -183,7 +183,7 @@ function SwitchExample() {
         }
       />
       <Switch
-        ariaLabel='theme-switch'
+        label='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
         shadowProps={renderSwitchThumbPreset()}

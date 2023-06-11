@@ -36,7 +36,7 @@ type KitPropsInstance<
   Omit<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: RawProps // component must merged before `<Div>`
+      shadowProps?: Partial<RawProps> // component must merged before `<Div>`
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>
@@ -103,6 +103,7 @@ export type KitPropsOptions<
   /** by default, all will check to Accessify */
   needAccessify?: string[]
   /**
+   * detect which props is shadowProps
    * not selfProps means it's shadowProps,
    * by default, all props are shadowProps(which can pass to shadowProps="")
    */
