@@ -22,7 +22,7 @@ type FormWidgetEnum =
       isDisabled?: boolean
       required?: boolean
       /** if less than 4 items, default is radio; else, default is select  */
-      kit?: 'radio' | 'select' | 'auto'
+      kit?: 'radios' | 'select' | 'auto'
       options: FormWidgetEnumOptionItem[]
     }
   | FormWidgetEnumOptionItem[]
