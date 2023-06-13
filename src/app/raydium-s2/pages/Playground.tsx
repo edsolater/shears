@@ -51,6 +51,10 @@ function PlaygoundList() {
         <InputExample />
       </ExamplePanel>
 
+      <ExamplePanel name='Text'>
+        <TextExample />
+      </ExamplePanel>
+
       <ExamplePanel name='Modal'>
         <ModalExample />
       </ExamplePanel>
@@ -192,6 +196,10 @@ function SwitchExample() {
   )
 }
 
+function TextExample() {
+  return <Text editable>hello world</Text>
+}
+
 /**
  * setInterval hook
  * but auto clean
@@ -202,6 +210,7 @@ function useIntervalEffect(fn: () => void, interval: number) {
     onCleanup(() => clearInterval(id))
   })
 }
+
 function ListExample() {
   const mockData = [
     { name: 'a', count: 1 },
