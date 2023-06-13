@@ -197,7 +197,7 @@ function SwitchExample() {
 }
 
 function TextExample() {
-  return <Text editable>hello world</Text>
+  return <Text editable>can edit content</Text>
 }
 
 /**
