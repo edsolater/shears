@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, on } from 'solid-js'
-import { Piv, PivProps, useKitProps } from '../../../piv'
+import { KitProps, Piv, PivProps, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
 import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
@@ -11,34 +11,42 @@ export interface InputController {
   setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
 }
 
-export interface InputProps extends PivProps<'input'> {
-  /**
-   * will not apply default icss: `min-width: 10em`
-   * input will auto widen depends on content Text
-   * @todo
-   */
-  isFluid?: Accessify<boolean | undefined, InputController>
+export type InputProps = KitProps<
+  {
+    /**
+     * will not apply default icss: `min-width: 10em`
+     * input will auto widen depends on content Text
+     * @todo
+     */
+    isFluid?: boolean
 
-  // -------- handle by useInputInnerValue --------
-  /** only after `<Input>` created */
-  defaultValue?: Accessify<string | undefined, InputController>
+    // -------- handle by useInputInnerValue --------
+    /** only after `<Input>` created */
+    defaultValue?: string
 
-  /** when change, affact to ui*/
-  value?: Accessify<string | undefined, InputController>
+    /** when change, affact to ui*/
+    value?: string
 
-  disableOutsideValueUpdateWhenUserInput?: Accessify<boolean | undefined, InputController>
+    /** default is true */
+    disableOutsideValueUpdateWhenUserInput?: boolean
 
-  disableUserInput?: Accessify<boolean | undefined, InputController>
+    disableUserInput?: boolean
 
-  disabled?: Accessify<boolean | undefined, InputController>
+    // TODO: imply it !!!
+    disableOutSideValue?: boolean
 
-  // only user can trigger this callback
-  onUserInput?(utils: { text: string | undefined }): void
-  // both user and program can trigger this callback
-  onInput?(utils: { text: string | undefined; byUser: boolean }): void
-  // only program can trigger this callback
-  onProgramInput?(utils: { text: string | undefined }): void
-}
+    /** disabled = disableOutSideValue + disableUserInput */
+    disabled?: boolean
+
+    // only user can trigger this callback
+    onUserInput?(utils: { text: string | undefined }): void
+    // both user and program can trigger this callback
+    onInput?(utils: { text: string | undefined; byUser: boolean }): void
+    // only program can trigger this callback
+    onProgramInput?(utils: { text: string | undefined }): void
+  },
+  { controller: InputController }
+>
 
 /**
  * if for layout , don't render important content in Box
@@ -73,19 +81,7 @@ export function Input(rawProps: InputProps) {
 /**
  *  handle `<Input>`'s value
  */
-function useInputInnerValue(
-  props: Pick<
-    DeAccessifyProps<InputProps>,
-    | 'defaultValue'
-    | 'disableOutsideValueUpdateWhenUserInput'
-    | 'disableUserInput'
-    | 'disabled'
-    | 'value'
-    | 'onUserInput'
-    | 'onInput'
-    | 'onProgramInput'
-  >,
-) {
+function useInputInnerValue(props: DeAccessifyProps<InputProps>) {
   const [inputRef, setInputRef] = createRef<HTMLInputElement>()
   // if user is inputing or just input, no need to update upon out-side value
   const [isFocused, { on: focusInput, off: unfocusInput }] = createToggle()
