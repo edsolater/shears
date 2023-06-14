@@ -7,17 +7,18 @@ import { HTMLTag, ValidController } from './types/tools'
 
 export const pivPropsNames = [
   'id',
-  'children',
+  'domRef',
   'class',
   'htmlProps',
   'icss',
   'onClick',
   'plugin',
-  'domRef',
   'shadowProps',
   'style',
   'debugLog',
+  
   'innerController',
+  'children',
 
   'render:self',
   'render:nodeWrapper',
