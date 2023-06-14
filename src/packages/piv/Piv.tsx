@@ -1,6 +1,5 @@
 import { flap, omit } from '@edsolater/fnkit'
 import { JSXElement, createComponent } from 'solid-js'
-import { Dynamic } from 'solid-js/web'
 import { parsePivProps } from './propHandlers/parsePivProps'
 import { PivProps } from './types/piv'
 import { HTMLTag, ValidController } from './types/tools'
@@ -16,12 +15,12 @@ export const pivPropsNames = [
   'shadowProps',
   'style',
   'debugLog',
-  
+
   'innerController',
   'children',
 
   'render:self',
-  'render:nodeWrapper',
+  'render:outWrapper',
   'render:firstChild',
   'render:lastChild',
 ] satisfies (keyof PivProps<any>)[]
@@ -39,14 +38,13 @@ export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidC
 }
 
 function handleNormalPivProps(props: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
-  // console.log('1212: ', 1212, props)
   const parsedPivProps = parsePivProps(props)
   return 'render:self' in props ? props['render:self']?.(props) : <div {...parsedPivProps} />
 }
 
 function handleDangerousWrapperPluginsWithChildren(props: PivProps<any, any>): JSXElement {
-  return flap(props['render:nodeWrapper']).reduce(
+  return flap(props['render:outWrapper']).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
-    createComponent(Piv, omit(props, 'render:nodeWrapper')),
+    createComponent(Piv, omit(props, 'render:outWrapper')),
   )
 }

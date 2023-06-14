@@ -88,7 +88,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * auto merge by shadowProps
    * change outter wrapper element
    */
-  'render:nodeWrapper'?: MayArray<DangerousWrapperNodeFn>
+  'render:outWrapper'?: MayArray<DangerousWrapperNodeFn>
   'render:firstChild'?: MayArray<PivChild<Controller>>
   'render:lastChild'?: MayArray<PivChild<Controller>>
 }
