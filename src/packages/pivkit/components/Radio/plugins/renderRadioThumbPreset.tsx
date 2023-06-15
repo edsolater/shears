@@ -2,10 +2,11 @@ import { PivChild, Piv } from '../../../../piv'
 import { RadioController, RadioProps } from '..'
 
 /**
+ * component plugin
  * can render radio Thumb
  * @todo it should be plugin
  */
-export function renderRadioThumbPreset(
+export function renderRadioThumb(
   renderContent: PivChild<RadioController> = ({ isChecked }) => (
     <Piv
       icss={{

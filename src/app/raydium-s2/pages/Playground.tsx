@@ -13,7 +13,7 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
-import { renderSwitchThumbPreset } from '../../../packages/pivkit/components/Switch/plugins/renderSwitchThumbPreset'
+import { renderSwitchThumb } from '../../../packages/pivkit/components/Switch/plugins/renderSwitchThumbPreset'
 
 export default function PlaygroundPage() {
   return (
@@ -190,7 +190,7 @@ function SwitchExample() {
         label='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-        shadowProps={renderSwitchThumbPreset()}
+        shadowProps={renderSwitchThumb()}
       />
     </>
   )
