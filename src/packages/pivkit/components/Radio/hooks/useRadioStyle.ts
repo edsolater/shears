@@ -3,6 +3,9 @@ import { LabelProps } from '../../Label'
 import { HTMLInputRadioProps } from '../HTMLInputRadio'
 import { RadioProps } from '../Radio'
 
+/** {@link RadioProps} should extends this  */
+export type RadioStyleProps = {}
+
 /**
  * hook for radio's **style**
  */
