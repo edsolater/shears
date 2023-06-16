@@ -1,5 +1,5 @@
 import { KitProps, Piv, UIKit, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../piv'
 import { Accessify } from '../utils/accessifyProps'
 
 export interface ImageProps extends UIKit<{ controller: ImageController }> {

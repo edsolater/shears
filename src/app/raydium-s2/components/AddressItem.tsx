@@ -1,10 +1,10 @@
 import { AnyFn } from '@edsolater/fnkit'
 import { createEffect } from 'solid-js'
 import { copyToClipboard } from '../../../packages/domkit'
-import { KitProps, useKitProps } from '../../../packages/piv/createKit'
-import { PivProps } from '../../../packages/piv/types/piv'
+import { KitProps, useKitProps } from '../../../packages/piv'
+import { PivProps } from '../../../packages/piv'
 import { IconProps, ItemBoxProps } from '../../../packages/pivkit'
-import { createToggle } from '../../../packages/pivkit/hooks/createToggle'
+import { createToggle } from '../../../packages/pivkit'
 
 export interface AddressItemProps extends ItemBoxProps {
   publicKey: string

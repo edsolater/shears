@@ -131,7 +131,7 @@ export function useAllRegisteredGlobalShortcuts() {
   })
 }
 
-// TODO: move to pivkit/hooks
+// TODO: move to pivkit
 export function useSubscribable<T>(subscribable: Subscribable<T>): Accessor<T | undefined>
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue: T): Accessor<T>
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue?: T) {

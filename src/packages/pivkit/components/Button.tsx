@@ -2,16 +2,16 @@ import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit
 import { createMemo, JSX } from 'solid-js'
 import { objectMerge } from '../../fnkit'
 import { addDefaultProps, mergeProps } from '../../piv'
-import { KitProps, useKitProps } from '../../piv/createKit'
-import { Piv } from '../../piv/Piv'
-import { parsePivChildren } from '../../piv/propHandlers/controller'
-import { compressICSSToObj, ICSS } from '../../piv/propHandlers/icss'
-import { omit } from '../../piv/utils/omit'
+import { KitProps, useKitProps } from '../../piv'
+import { Piv } from '../../piv'
+import { parsePivChildren } from '../../piv'
+import { compressICSSToObj, ICSS } from '../../piv'
+import { omit } from '../../piv'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../piv'
 type BooleanLike = unknown
 
 export interface ButtonController {

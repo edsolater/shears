@@ -1,4 +1,4 @@
-import { CSSObject, ICSSObject } from '../../piv/propHandlers/icss'
+import { CSSObject, ICSSObject } from '../../piv'
 import { cssColors } from '../styles/cssColors'
 
 export const icss_row = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>

@@ -1,5 +1,5 @@
 import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../piv'
 import { Text } from './Text'
 
 export interface LabelProps extends UIKit<{ controller: { sdf: number } }> {}

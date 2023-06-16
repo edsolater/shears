@@ -5,7 +5,7 @@ import {
   getShorcutStringFromKeyboardEvent,
 } from '../../../../domkit'
 import { Subscribable } from '../../../../fnkit'
-import { createPlugin } from '../../../../piv/propHandlers/plugin'
+import { createPlugin } from '../../../../piv'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 import { InputController, InputProps } from '../Input'

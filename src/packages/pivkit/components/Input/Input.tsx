@@ -3,7 +3,7 @@ import { KitProps, Piv, PivProps, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
 import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
-import { parsePivProps } from '../../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../../piv'
 
 export interface InputController {
   text: string

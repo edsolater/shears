@@ -10,7 +10,7 @@ import { FetchRaydiumTokenPriceOptions } from './types/tokenPrice'
 import { fetchTokenPrices } from './utils/fetchTokenPrices'
 import { calculateSwapRouteInfos_worker } from './utils/calculateSwapRouteInfos_worker'
 import { txSwap_worker } from './utils/txSwap_worker'
-import { createCleanUpFunctionBucket } from '../../../../packages/pivkit/utils/createCleanUpFunctionBucket'
+import { createCleanUpFunctionBucket } from '../../../../packages/pivkit'
 import { SOLToken } from '../../utils/dataStructures/Token'
 
 /**

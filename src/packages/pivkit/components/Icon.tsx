@@ -1,5 +1,5 @@
 import { KitProps, Piv, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../piv'
 
 export interface IconProps {
   name?: string

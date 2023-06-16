@@ -1,8 +1,8 @@
 import { Accessor, createEffect, createMemo, createSignal } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { Button, icss_card, icss_col, icss_row } from '../../../packages/pivkit'
-import { Card } from '../../../packages/pivkit/components/Card'
-import { Section } from '../../../packages/pivkit/components/Section'
+import { Card } from '../../../packages/pivkit'
+import { Section } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import {

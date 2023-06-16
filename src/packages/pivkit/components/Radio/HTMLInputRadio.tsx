@@ -1,5 +1,5 @@
 import { Piv, UIKit, useKitProps } from '../../../piv'
-import { parsePivProps } from '../../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../../piv'
 
 export interface HTMLInputRadioProps extends UIKit {
   label?: string

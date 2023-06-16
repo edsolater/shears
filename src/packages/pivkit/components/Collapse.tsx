@@ -1,9 +1,9 @@
 import { createContext, createEffect, useContext } from 'solid-js'
 import { Piv, PivProps } from '../../piv'
-import { KitProps, UIKit, useKitProps } from '../../piv/createKit'
+import { KitProps, UIKit, useKitProps } from '../../piv'
 import { createToggle } from '../hooks/createToggle'
 import { Accessify } from '../utils/accessifyProps'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../piv'
 
 export interface CollapseProps extends UIKit<{ controller: CollapseController; htmlPropsTagName: 'details' }> {
   /** TODO: open still can't auto lock the trigger not controled component now */

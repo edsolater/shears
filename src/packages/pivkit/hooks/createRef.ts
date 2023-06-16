@@ -1,5 +1,5 @@
 import { Accessor, createSignal } from 'solid-js'
-import { ValidController } from '../../piv/types/tools'
+import { ValidController } from '../../piv'
 
 /** for semantic API is like `createSignal()`  */
 export function createRef<T extends HTMLOrSVGElement | ValidController = any>(): [

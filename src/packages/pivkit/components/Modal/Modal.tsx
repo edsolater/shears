@@ -4,7 +4,7 @@ import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { useDOMEventListener } from '../../hooks/useDOMEventListener'
-import { parsePivProps } from '../../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../../piv'
 
 export interface ModalController {
   isOpen: boolean

@@ -1,5 +1,5 @@
-import { CRef } from '../../piv/types/piv'
-import { ValidController } from '../../piv/types/tools'
+import { CRef } from '../../piv'
+import { ValidController } from '../../piv'
 
 export function useControllerRef(propsRef: CRef<any> | undefined, componentController: ValidController) {
   propsRef?.(componentController)

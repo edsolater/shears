@@ -4,7 +4,7 @@ import { Box, Text } from '../../../packages/pivkit'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
-import { parsePivProps } from '../../../packages/piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../../packages/piv'
 
 export interface TopMenuBarProps {
   title?: string

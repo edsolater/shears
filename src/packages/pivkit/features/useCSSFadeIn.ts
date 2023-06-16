@@ -1,5 +1,5 @@
 import { createEffect, createSignal } from 'solid-js'
-import { mergeRefs } from '../../piv/utils/mergeRefs'
+import { mergeRefs } from '../../piv'
 import { AccessifyProps, useAccessifiedProps } from '../utils/accessifyProps'
 import { createRef } from '../hooks/createRef'
 import { useCSSTransition } from './useCSSTransition'

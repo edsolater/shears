@@ -1,5 +1,5 @@
 import { KitProps, Piv, PivProps, UIKit, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv/propHandlers/parsePivProps'
+import { parsePivProps } from '../../piv'
 
 export type LabelBoxProps = KitProps<{}>
 /**
