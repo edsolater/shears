@@ -1,6 +1,6 @@
 import { MayPromise } from '@edsolater/fnkit'
-import { cachelyGetMapValue } from '../../../../packages/fnkit/cachelyGetMapValue'
-import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
+import { cachelyGetMapValue } from '../../../../packages/fnkit'
+import { Subscribable } from '../../../../packages/fnkit'
 import { decode } from '../dataTransmit/handlers'
 
 interface ReceiveMessage<Data = any> {

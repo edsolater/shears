@@ -1,5 +1,5 @@
 import { WeakerMap } from '@edsolater/fnkit'
-import { Subscribable } from '../../fnkit/customizedClasses/Subscribable'
+import { Subscribable } from '../../fnkit'
 import { ValidController } from '../types/tools'
 import { createEffect, onCleanup } from 'solid-js'
 

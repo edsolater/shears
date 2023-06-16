@@ -1,8 +1,8 @@
 /// <reference lib="webworker" />
 import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
-import { invoke } from '../../../../packages/fnkit/invoke'
+import { Subscribable } from '../../../../packages/fnkit'
+import { invoke } from '../../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
 import { WorkerDescription, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'

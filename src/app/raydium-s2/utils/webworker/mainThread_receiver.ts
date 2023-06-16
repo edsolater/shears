@@ -1,7 +1,7 @@
 import { isFunction } from '@edsolater/fnkit'
 import { decode } from '../dataTransmit/handlers'
 import { WorkerDescription, WorkerMessage } from './type'
-import { Subscribable } from '../../../../packages/fnkit/customizedClasses/Subscribable'
+import { Subscribable } from '../../../../packages/fnkit'
 import { signAllTransactionReceiver } from '../txHandler/signAllTransactions_main'
 import { isReceiveMessage } from './getMessageReceiver'
 

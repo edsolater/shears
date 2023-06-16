@@ -1,6 +1,6 @@
 import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createMemo, JSX } from 'solid-js'
-import { objectMerge } from '../../fnkit/objectMerge'
+import { objectMerge } from '../../fnkit'
 import { addDefaultProps, mergeProps } from '../../piv'
 import { KitProps, useKitProps } from '../../piv/createKit'
 import { Piv } from '../../piv/Piv'

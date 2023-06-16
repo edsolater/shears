@@ -1,5 +1,5 @@
 import { MayPromise } from '@edsolater/fnkit'
-import { cachelyGetMapValue } from '../../../../packages/fnkit/cachelyGetMapValue'
+import { cachelyGetMapValue } from '../../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
 
 interface SenderMessage<Query = any> {

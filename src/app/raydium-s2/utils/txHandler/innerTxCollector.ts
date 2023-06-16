@@ -1,7 +1,7 @@
 import { isArray } from '@edsolater/fnkit'
 import { InnerTransaction } from '@raydium-io/raydium-sdk'
 import { Transaction } from '@solana/web3.js'
-import { objectMerge } from '../../../../packages/fnkit/objectMerge'
+import { objectMerge } from '../../../../packages/fnkit'
 import { TxHandlerOptions, TxHandlerOption, MultiTxsOption, TransactionQueue, TransactionCollector } from './txHandler'
 
 /**

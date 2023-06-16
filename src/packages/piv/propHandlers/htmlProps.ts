@@ -1,6 +1,6 @@
 import { AnyObj, MayArray, flapDeep, isArray, shakeNil } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
-import { objectMerge } from '../../fnkit/objectMerge'
+import { objectMerge } from '../../fnkit'
 import { HTMLTag } from '../types/tools'
 
 export type HTMLProps<TagName extends HTMLTag = HTMLTag> = MayArray<JSX.IntrinsicElements[TagName] | undefined>

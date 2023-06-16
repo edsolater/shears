@@ -54,7 +54,7 @@ function getCachedSuitableResult(
 /**
  * same interface as original fetch, but, customized version have cache
  */
-export default async function jFetch<Shape = any>(
+export async function jFetch<Shape = any>(
   input: RequestInfo,
   options?: JFetchOptions,
 ): Promise<Shape | undefined> {

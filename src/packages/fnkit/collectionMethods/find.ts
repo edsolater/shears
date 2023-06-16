@@ -7,20 +7,20 @@ import { AnyObj, isArray } from '@edsolater/fnkit'
  * find([1, 2], (v) => v > 1) // 1
  * find({ a: 1, b: 2}, (v) => v > 1)) // 1
  */
-export default function find<T>(arr: T[] | undefined, predicate: (item: T, index: number) => boolean): T | undefined
-export default function find<T>(set: Set<T> | undefined, predicate: (item: T, index: number) => boolean): T | undefined
-export default function find<S extends Map<any, any>>(
+export function find<T>(arr: T[] | undefined, predicate: (item: T, index: number) => boolean): T | undefined
+export function find<T>(set: Set<T> | undefined, predicate: (item: T, index: number) => boolean): T | undefined
+export function find<S extends Map<any, any>>(
   set: S | undefined,
   predicate: (
     item: S extends Map<any, infer F> ? F : unknown,
     index: S extends Map<infer K, any> ? K : unknown,
   ) => boolean,
 ): (S extends Map<any, infer F> ? F : unknown) | undefined
-export default function find<O extends Record<any, any>>(
+export function find<O extends Record<any, any>>(
   obj: O | undefined,
   predicate: (value: O[keyof O], key: keyof O) => boolean,
 ): O[keyof O] | undefined
-export default function find(collection: any, predicate: any) {
+export function find(collection: any, predicate: any) {
   if (!collection) return
   return isArray(collection)
     ? collection.find(predicate)

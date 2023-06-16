@@ -1,7 +1,7 @@
 import { MayArray, flapDeep, merge, shakeNil, shrinkFn } from '@edsolater/fnkit'
 import { LoadController, ValidController } from '../types/tools'
 import { JSX } from 'solid-js'
-import { objectMerge } from '../../fnkit/objectMerge'
+import { objectMerge } from '../../fnkit'
 
 export type IStyle<Controller extends ValidController | unknown = unknown> = MayArray<
   LoadController<JSX.HTMLAttributes<any>['style'] | undefined, Controller>

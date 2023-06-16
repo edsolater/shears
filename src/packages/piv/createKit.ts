@@ -1,6 +1,6 @@
 import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
 import { mergeProps } from 'solid-js'
-import { Faker } from '../fnkit/customizedClasses/Faker'
+import { Faker } from '../fnkit'
 import { AccessifyProps, DeAccessifyProps, useAccessifiedProps } from '../pivkit/utils/accessifyProps'
 import { registerControllerInCreateKit } from './hooks/useComponentController'
 import { loadPropsControllerRef, toProxifyController } from './propHandlers/controller'

@@ -1,5 +1,5 @@
 import { createMemo, createSignal, Setter } from 'solid-js'
-import find from '../../../packages/fnkit/collectionMethods/find'
+import { find } from '../../../packages/fnkit'
 import { createCachedGlobalHook } from '../../../packages/pivkit'
 import { useDataStore } from '../stores/data/store'
 import { FarmJSON } from '../stores/data/types/farm'

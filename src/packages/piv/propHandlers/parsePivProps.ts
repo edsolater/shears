@@ -1,5 +1,5 @@
 import { flap, pipe, shakeFalsy } from '@edsolater/fnkit'
-import { mutateByAdditionalObjectDescriptors } from '../../fnkit/mutateByAdditionalObjectDescriptors'
+import { mutateByAdditionalObjectDescriptors } from '../../fnkit'
 import { PivProps } from '../types/piv'
 import { ValidController } from '../types/tools'
 import { mergeRefs } from '../utils/mergeRefs'
