@@ -19,7 +19,7 @@ export function useClickOutside(els: ElementAccessors, options?: UseClickOutside
   const getOption = () => parasedOptions
   createEffect(() => {
     const targetElements = getElementsFromAccessors(els)
-    const { cancel } = onEvent(
+    const { abort: cancel } = onEvent(
       globalThis.document,
       'click',
       (payload) => {

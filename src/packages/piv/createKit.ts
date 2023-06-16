@@ -36,7 +36,7 @@ type KitPropsInstance<
   Omit<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
-      shadowProps?: Partial<RawProps> // component must merged before `<Div>`
+      shadowProps?: Partial<AccessifyProps<Pick<RawProps, NeedAccessifyProps>, Controller>> // component must merged before `<Div>`
       // -------- additional --------
       // auto inject controller to it
       controllerRef?: CRef<Controller>

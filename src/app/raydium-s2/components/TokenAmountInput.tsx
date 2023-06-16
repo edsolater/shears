@@ -1,6 +1,6 @@
 import { isStringNumber } from '@edsolater/fnkit'
 import { createEffect, createMemo } from 'solid-js'
-import { KitProps, Piv, PivProps, useKitProps } from '../../../packages/piv'
+import { KitProps, useKitProps } from '../../../packages/piv'
 import {
   Box,
   BoxProps,
@@ -17,12 +17,12 @@ import { Card } from '../../../packages/pivkit/components/Card'
 import { Input, InputProps } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 import { createSyncSignal } from '../../../packages/pivkit/hooks/createSyncSignal'
+import { Accessify } from '../../../packages/pivkit/utils/accessifyProps'
 import { useDataStore } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
 import { TokenAvatar } from './TokenAvatar'
-import { Accessify } from '../../../packages/pivkit/utils/accessifyProps'
 
 export interface TokenAmountInputBoxController {}
 
@@ -30,8 +30,8 @@ export interface TokenAmountInputBoxProps {
   token?: Accessify<Token | undefined, TokenAmountInputBoxController>
   tokenProps?: TextProps
   amount?: Accessify<Numberish | undefined, TokenAmountInputBoxController>
-  amountInputProps?: InputProps
-  tokenSelectorModalContentProps?: TokenSelectorModalContentProps
+  'props:amountInput'?: InputProps
+  'props:tokenSelectorModalContent'?: TokenSelectorModalContentProps
   onSelectToken?: (token: Token | undefined) => void
   onAmountChange?: (amount: Numberish | undefined) => void
 }
@@ -63,7 +63,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
       {/* token amount info */}
       <Input
-        shadowProps={props.amountInputProps}
+        shadowProps={props['props:amountInput']}
         icss={icss_inputType()}
         value={amount}
         onUserInput={({ text }) => {
@@ -73,7 +73,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
       {/* modal dialog */}
       <Modal controllerRef={setModalRef} isModal>
-        <TokenSelectorModalContent shadowProps={props.tokenSelectorModalContentProps} onTokenSelect={setToken} />
+        <TokenSelectorModalContent shadowProps={props['props:tokenSelectorModalContent']} onTokenSelect={setToken} />
       </Modal>
     </Box>
   )

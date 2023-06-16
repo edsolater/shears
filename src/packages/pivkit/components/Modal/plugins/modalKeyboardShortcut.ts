@@ -1,6 +1,6 @@
 import { createEffect } from 'solid-js'
 import { ModalController, ModalProps } from '..'
-import { handleKeyboardShortcut } from '../../../../domkit/gesture/handleKeyboardShortcut'
+import { handleKeyboardShortcut } from '../../../../domkit'
 import { createPlugin } from '../../../../piv/propHandlers/plugin'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'

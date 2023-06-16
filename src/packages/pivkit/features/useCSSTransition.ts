@@ -132,7 +132,7 @@ export const useCSSTransition = (additionalOpts: UseCSSTransactionOptions) => {
     const subscription = onEvent(el, 'transitionend', () => setCurrentPhase(targetPhase()), {
       onlyTargetIsSelf: true, // not event fired by bubbled
     })
-    onCleanup(() => subscription.cancel())
+    onCleanup(() => subscription.abort())
   })
 
   // change current phase by target phase

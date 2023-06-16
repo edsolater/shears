@@ -6,6 +6,7 @@ import { Drawer, DrawerController } from '../../../packages/pivkit/components/Dr
 import { Input } from '../../../packages/pivkit/components/Input'
 import { Modal, ModalController } from '../../../packages/pivkit/components/Modal'
 import { Switch } from '../../../packages/pivkit/components/Switch'
+import { renderSwitchThumb } from '../../../packages/pivkit/components/Switch/plugins/renderSwitchThumbPreset'
 import { useCSSTransition } from '../../../packages/pivkit/features/useCSSTransition'
 import { createIncresingAccessor } from '../../../packages/pivkit/hooks/createIncreasingAccessor'
 import { CircularProgress } from '../components/CircularProgress'
@@ -13,7 +14,6 @@ import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { useDataStore } from '../stores/data/store'
-import { renderSwitchThumb } from '../../../packages/pivkit/components/Switch/plugins/renderSwitchThumbPreset'
 
 export default function PlaygroundPage() {
   return (

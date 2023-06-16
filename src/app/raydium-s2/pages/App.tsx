@@ -1,7 +1,7 @@
 import { map } from '@edsolater/fnkit'
 import { useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
-import { KeybordShortcutKeys } from '../../../packages/domkit/gesture/handleKeyboardShortcut'
+import { KeybordShortcutKeys } from '../../../packages/domkit'
 import { Piv } from '../../../packages/piv'
 import { Box, List, Text } from '../../../packages/pivkit'
 import { Input } from '../../../packages/pivkit/components/Input'

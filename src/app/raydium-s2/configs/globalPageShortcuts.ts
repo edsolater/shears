@@ -1,4 +1,4 @@
-import { KeybordShortcutKeys } from '../../../packages/domkit/gesture/handleKeyboardShortcut'
+import { KeybordShortcutKeys } from '../../../packages/domkit'
 import { farmsRoutePath, homeRoutePath, pairsRoutePath, swapRoutePath } from './routes'
 
 export const globalPageShortcuts = {

@@ -4,7 +4,7 @@ let eventId = 1
 
 export interface EventListenerController {
   eventId: number
-  cancel(): void
+  abort(): void
 }
 
 export interface EventListenerOptions extends AddEventListenerOptions {
@@ -43,7 +43,7 @@ export function onEvent<
   const targetEventId = eventId++
   const controller = {
     eventId: targetEventId,
-    cancel() {
+    abort() {
       abortEvent(targetEventId, options)
     },
   } as EventListenerController

@@ -1,5 +1,5 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js'
-import { requestLoopAnimationFrame } from '../../../packages/domkit/requestLoopAnimationFrame'
+import { requestLoopAnimationFrame } from '../../../packages/domkit'
 
 /**
  * 0 ~ 1

@@ -3,7 +3,7 @@ import { onEvent } from '../../../../domkit'
 import {
   KeybordShortcutKeys,
   getShorcutStringFromKeyboardEvent,
-} from '../../../../domkit/gesture/handleKeyboardShortcut'
+} from '../../../../domkit'
 import { Subscribable } from '../../../../fnkit/customizedClasses/Subscribable'
 import { createPlugin } from '../../../../piv/propHandlers/plugin'
 import { createControllerRef } from '../../../hooks/createControllerRef'

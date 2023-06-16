@@ -1,6 +1,6 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { onEvent } from '../../domkit'
-import { EventListenerController } from '../../domkit/gesture/addEventListener'
+import { EventListenerController } from '../../domkit'
 import { ElementAccessors, GetElementsFromElementAccessors, getElementsFromAccessors } from '../utils/elementAccessors'
 
 /**
@@ -22,7 +22,7 @@ export function useDOMEventListener<El extends ElementAccessors, K extends keyof
     const els = getElementsFromAccessors(el)
     els.forEach((el) => {
       // @ts-expect-error no need to check
-      const { cancel } = onEvent(el, eventName, fn, options)
+      const { abort: cancel } = onEvent(el, eventName, fn, options)
       onCleanup(cancel)
     })
   })
@@ -39,8 +39,7 @@ export function useDocumentEventListener<K extends keyof HTMLElementEventMap>(
   options?: EventListenerOptions,
 ) {
   createEffect(() => {
-    // @ts-expect-error no need to check
-    const { cancel } = onEvent(globalThis.document, eventName, fn, options)
+    const { abort: cancel } = onEvent(globalThis.document, eventName, fn, options)
     onCleanup(cancel)
   })
 }
@@ -56,8 +55,7 @@ export function useWindowEventListener<K extends keyof HTMLElementEventMap>(
   options?: EventListenerOptions,
 ) {
   createEffect(() => {
-    // @ts-expect-error no need to check
-    const { cancel } = onEvent(globalThis.window, eventName, fn, options)
+    const { abort: cancel } = onEvent(globalThis.window, eventName, fn, options)
     onCleanup(cancel)
   })
 }
