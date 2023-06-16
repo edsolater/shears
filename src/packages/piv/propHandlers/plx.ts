@@ -13,7 +13,7 @@ type Plx = PlxInnerFn | PlxInnerObj
 
 export function handlePlxProps<P extends AnyObj>(props: P) {
   if (!props?.plx) return props
-  
+
   function mergePlxReturnedProps<T extends AnyObj>(utils: {
     plxs: MayDeepArray<Plx | undefined>
     props: T & PivProps

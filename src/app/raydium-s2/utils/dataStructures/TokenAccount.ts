@@ -39,7 +39,6 @@ export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
   return queriedOwner.has(owner)
 }
 
-
 /**
  * core logic
  * just relay on connection

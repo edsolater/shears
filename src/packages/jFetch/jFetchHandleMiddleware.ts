@@ -54,10 +54,7 @@ function getCachedSuitableResult(
 /**
  * same interface as original fetch, but, customized version have cache
  */
-export async function jFetch<Shape = any>(
-  input: RequestInfo,
-  options?: JFetchOptions,
-): Promise<Shape | undefined> {
+export async function jFetch<Shape = any>(input: RequestInfo, options?: JFetchOptions): Promise<Shape | undefined> {
   const rawText = jFetchCoreWithCache(input, options)
 
   /* ----------see if cache have result to avoid return same content but different object */

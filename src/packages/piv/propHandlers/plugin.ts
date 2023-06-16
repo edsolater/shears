@@ -1,11 +1,4 @@
-import {
-  AnyObj,
-  flapDeep,
-  isFunction,
-  MayDeepArray,
-  overwriteFunctionName,
-  shakeNil
-} from '@edsolater/fnkit'
+import { AnyObj, flapDeep, isFunction, MayDeepArray, overwriteFunctionName, shakeNil } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'

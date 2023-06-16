@@ -157,7 +157,7 @@ export function calculateSwapRouteInfos({
           output,
           inputAmount,
           slippageTolerance,
-          rpcUrl
+          rpcUrl,
         },
         sdkBestResult,
         timestamp: Date.now(),
