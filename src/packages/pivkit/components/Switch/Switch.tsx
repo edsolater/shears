@@ -54,6 +54,7 @@ const defaultProps = {
  */
 export function Switch(rawProps: SwitchProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, {
+    name: 'Switch',
     defaultProps,
     needAccessify: accessifyPropNames,
     selfProps: selfProps,

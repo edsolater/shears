@@ -190,7 +190,7 @@ function SwitchExample() {
         label='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
-        shadowProps={renderSwitchThumb()}
+        plugin={renderSwitchThumb()}
       />
     </>
   )

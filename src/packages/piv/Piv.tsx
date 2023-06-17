@@ -11,8 +11,10 @@ export const pivPropsNames = [
   'htmlProps',
   'icss',
   'onClick',
+
   'plugin',
   'shadowProps',
+
   'style',
   'debugLog',
 

@@ -2,11 +2,11 @@ import { AnyObj, flapDeep, isFunction, MayDeepArray, overwriteFunctionName, shak
 import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'
-import { ValidController } from '../types/tools'
+import { ValidController, ValidProps } from '../types/tools'
 import { mergeProps } from '../utils/mergeProps'
 import { omit } from '../utils/omit'
 
-export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
+export type GetPluginCreatorParams<T> = T extends PluginCreator<infer Px1>
   ? Px1
   : T extends PluginCreator<infer Px1>[]
   ? Px1
@@ -31,13 +31,13 @@ export type GetPluginProps<T> = T extends PluginCreator<infer Px1>
   ? Px1 & Px2 & Px3 & Px4 & Px5
   : unknown
 
-export type PluginCreator<T extends AnyObj, C extends ValidController = {}> = (props?: T) => Plugin<T, C>
-export type Plugin<T extends AnyObj, C extends ValidController = {}> =
+export type PluginCreator<PluginParams extends Record<string, any>> = (params?: PluginParams) => Plugin<any>
+export type Plugin<T extends ValidProps = ValidProps, C extends ValidController = {}> =
   | {
       pluginCoreFn?: (props: T) => Partial<KitProps<T, C>> // TODO: should support 'plugin' and 'shadowProps' too
       priority?: number
     }
-  | ((props: T) => Partial<KitProps<T, C>>) // TODO: should support 'plugin' and 'shadowProps' for easier compose
+  | ((props: T) => Partial<KitProps<T, C>> | undefined) // TODO: should support 'plugin' and 'shadowProps' for easier compose
 // TODO2: not accessify yet
 
 export function handlePluginProps<P extends AnyObj>(props: P) {
@@ -52,34 +52,20 @@ function invokePlugin(plugin: Plugin<any>, props: KitProps<any>) {
 /**
  * merge additional props from plugin
  */
-export function mergePluginReturnedProps<T extends AnyObj>(utils: {
+export function mergePluginReturnedProps<T extends AnyObj>({
+  plugins,
+  props,
+}: {
   plugins: MayDeepArray<Plugin<T> | undefined>
   props: T & PivProps
 }): T & PivProps {
-  return utils.plugins
-    ? shakeNil(flapDeep(utils.plugins)).reduce((acc, plugin) => mergeProps(acc, invokePlugin(plugin, acc)), utils.props)
-    : utils.props
-}
-
-/**
- * create special plugin
- * it will merge returned dangerousRenderWrapperNode props
- */
-export function createWrapperNodePlugin<T extends AnyObj>(
-  createrFn: (insideNode: JSX.Element, outsideProps: T) => JSX.Element,
-  options?: {
-    /** for DEBUG */
-    name?: string
-  },
-): PluginCreator<T> {
-  return overwriteFunctionName(
-    (addtionalProps: any) => ({
-      pluginCoreFn: (props: any) => ({
-        dangerousRenderWrapperNode: (node: any) => createrFn(node, mergeProps(addtionalProps, props)),
-      }),
-    }),
-    options?.name,
-  ) as any
+  return plugins
+    ? shakeNil(flapDeep(plugins)).reduce((acc, plugin) => {
+        console.log('plugin: ', plugin)
+        const pluginProps = invokePlugin(plugin, acc)
+        return pluginProps ? mergeProps(acc, pluginProps) : acc
+      }, props)
+    : props
 }
 
 /**
@@ -99,22 +85,23 @@ export function createWrapperNodePlugin<T extends AnyObj>(
  *    ]}
  *  />
  */
-export function createPlugin<T extends AnyObj, C extends ValidController = {}>(
-  createrFn: (props: T) => Partial<KitProps<T, C>>, // return a function , in this function can exist hooks
+export function createPluginCreator<Params extends AnyObj, Props extends ValidProps = ValidProps>(
+  createrFn: (params: Params) => (props: Props) => Partial<Props>, // return a function , in this function can exist hooks
   options?: {
     priority?: number // NOTE -1:  it should be render after final prop has determine
     name?: string
   },
-): PluginCreator<T, C> {
-  const fn = (addtionalProps: any) => ({
-    pluginCoreFn: (props: any) => createrFn(mergeProps(addtionalProps, props)),
+): PluginCreator<Params> {
+  const factory = (params: Params) => ({
+    pluginCoreFn: createrFn(params),
     priority: options?.priority,
   })
-  return options?.name ? overwriteFunctionName(fn, options.name) : fn
+  // @ts-expect-error no need to check
+  return options?.name ? overwriteFunctionName(factory, options.name) : factory
 }
 
-export function sortPluginByPriority(deepPluginList: MayDeepArray<Plugin<any>>) {
-  const plugins = flapDeep(deepPluginList)
+export function sortPluginByPriority(deepPluginList?: MayDeepArray<Plugin<any>>) {
+  const plugins = shakeNil(flapDeep(deepPluginList))
   if (plugins.length <= 1) return plugins
   if (plugins.every((p) => isFunction(p) || !p.priority)) return plugins
 

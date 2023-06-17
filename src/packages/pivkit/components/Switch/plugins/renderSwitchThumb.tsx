@@ -1,6 +1,5 @@
-import { PivChild, Piv } from '../../../../piv'
 import { SwitchController, SwitchProps } from '..'
-import { createEffect, createSignal } from 'solid-js'
+import { Piv, PivChild } from '../../../../piv'
 
 /**
  * **Plugin** for Switch
@@ -8,7 +7,7 @@ import { createEffect, createSignal } from 'solid-js'
  * @todo it should be plugin
  */
 export function renderSwitchThumb(
-  renderContent: PivChild<SwitchController> = ({ isChecked }) => (
+  renderThumbContent: PivChild<SwitchController> = ({ isChecked }) => (
     <Piv
       icss={{
         color: isChecked() ? 'dodgerblue' : 'crimson',
@@ -20,15 +19,10 @@ export function renderSwitchThumb(
       }}
     ></Piv>
   ),
-): SwitchProps['shadowProps'] {
-  const [count, setCount] = createSignal(0)
-  createEffect(() => {
-    console.log('count: ', count())
-  })
-
-  return {
+): () => SwitchProps {
+  return () => ({
     'anatomy:SwitchThumb': {
-      'render:lastChild': renderContent,
+      'render:lastChild': renderThumbContent,
     },
-  }
+  })
 }

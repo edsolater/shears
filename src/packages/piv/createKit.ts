@@ -5,7 +5,7 @@ import { AccessifyProps, DeAccessifyProps, useAccessifiedProps } from '../pivkit
 import { registerControllerInCreateKit } from './hooks/useComponentController'
 import { loadPropsControllerRef, toProxifyController } from './propHandlers/controller'
 import {
-  GetPluginProps,
+  GetPluginCreatorParams,
   handlePluginProps,
   mergePluginReturnedProps,
   Plugin,
@@ -32,7 +32,7 @@ type KitPropsInstance<
 > = AccessifyProps<Pick<RawProps, NeedAccessifyProps>, Controller> &
   Omit<RawProps, NeedAccessifyProps> &
   Omit<PivProps<TagName, Controller>, keyof RawProps | 'plugin' | 'shadowProps'> &
-  Omit<GetPluginProps<Plugins>, keyof RawProps | 'plugin' | 'shadowProps'> &
+  Omit<GetPluginCreatorParams<Plugins>, keyof RawProps | 'plugin' | 'shadowProps'> &
   Omit<
     {
       plugin?: MayArray<Plugin<any /* too difficult to type */>>
@@ -150,7 +150,8 @@ function getParsedKitProps<
     // parse plugin of **options**
     (props) =>
       hasProperty(options, 'plugin')
-        ? mergePluginReturnedProps({ plugins: sortPluginByPriority(options!.plugin!), props })
+        ? (console.log(props, options?.name),
+          mergePluginReturnedProps({ plugins: sortPluginByPriority(options!.plugin), props }))
         : props, // defined-time
     (props) => mergeProps(props, hasProperty(options, 'name') ? { class: options!.name } : {}), // defined-time
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify

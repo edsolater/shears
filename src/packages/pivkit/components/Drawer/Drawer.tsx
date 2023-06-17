@@ -12,15 +12,18 @@ export interface DrawerController {
   toggle(): void
 }
 
-export interface DrawerProps {
-  open?: boolean
-  placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
-}
+export type DrawerProps = KitProps<
+  {
+    open?: boolean
+    placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
+  },
+  { controller: DrawerController }
+>
 const drawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
 
 export type DrawerDefaultProps = typeof drawerDefaultProps
 
-export function Drawer(kitProps: KitProps<DrawerProps, { controller: DrawerController }>) {
+export function Drawer(kitProps: DrawerProps) {
   const { props: rawProps } = useKitProps(kitProps, {
     plugin: [drawerKeyboardShortcut()],
     controller: (mergedProps) => ({

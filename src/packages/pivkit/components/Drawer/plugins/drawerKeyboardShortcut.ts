@@ -1,11 +1,11 @@
 import { createEffect } from 'solid-js'
 import { DrawerController, DrawerProps } from '..'
 import { handleKeyboardShortcut } from '../../../../domkit'
-import { createPlugin } from '../../../../piv'
+import { createPluginCreator } from '../../../../piv'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 
-export const drawerKeyboardShortcut = createPlugin<DrawerProps>(() => {
+export const drawerKeyboardShortcut = createPluginCreator<{}, DrawerProps>(() => (props) => {
   const [divRef, setDivRef] = createRef<HTMLDivElement>()
   const [drawerController, setControllerRef] = createControllerRef<DrawerController>()
   createEffect(() => {
