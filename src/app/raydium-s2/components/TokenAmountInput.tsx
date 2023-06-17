@@ -30,8 +30,8 @@ export interface TokenAmountInputBoxProps {
   token?: Accessify<Token | undefined, TokenAmountInputBoxController>
   tokenProps?: TextProps
   amount?: Accessify<Numberish | undefined, TokenAmountInputBoxController>
-  'props:amountInput'?: InputProps
-  'props:tokenSelectorModalContent'?: TokenSelectorModalContentProps
+  'anatomy:amountInput'?: InputProps
+  'anatomy:tokenSelectorModalContent'?: TokenSelectorModalContentProps
   onSelectToken?: (token: Token | undefined) => void
   onAmountChange?: (amount: Numberish | undefined) => void
 }
@@ -63,7 +63,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
       {/* token amount info */}
       <Input
-        shadowProps={props['props:amountInput']}
+        shadowProps={props['anatomy:amountInput']}
         icss={icss_inputType()}
         value={amount}
         onUserInput={({ text }) => {
@@ -73,7 +73,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
       {/* modal dialog */}
       <Modal controllerRef={setModalRef} isModal>
-        <TokenSelectorModalContent shadowProps={props['props:tokenSelectorModalContent']} onTokenSelect={setToken} />
+        <TokenSelectorModalContent shadowProps={props['anatomy:tokenSelectorModalContent']} onTokenSelect={setToken} />
       </Modal>
     </Box>
   )
