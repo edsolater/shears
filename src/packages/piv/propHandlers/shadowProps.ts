@@ -6,6 +6,7 @@ import { getPivPropsValue } from '../utils/mergeProps'
 export type PivShadowProps<OriginalProps> = MayArray<Partial<Omit<OriginalProps, 'as' | 'children'>>>
 
 /** as will only calculate props when access, so, return verbose big object is ok */
+// TODO: just like plugin, which use `mergeProps`
 export function handleShadowProps<P extends Partial<PivProps<any>>>(
   props: P,
   additionalShadowPropNames?: string[],

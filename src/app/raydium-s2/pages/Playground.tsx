@@ -1,7 +1,7 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js'
 import { Piv } from '../../../packages/piv'
 import { useComponentController } from '../../../packages/piv'
-import { Box, Button, List, Text, icss_col, icss_row } from '../../../packages/pivkit'
+import { Box, Button, List, Radio, Text, createIntervalEffect, icss_col, icss_row } from '../../../packages/pivkit'
 import { Drawer, DrawerController } from '../../../packages/pivkit'
 import { Input } from '../../../packages/pivkit'
 import { Modal, ModalController } from '../../../packages/pivkit'
@@ -65,6 +65,10 @@ function PlaygoundList() {
 
       <ExamplePanel name='Switch'>
         <SwitchExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='Radio'>
+        <RadioExample />
       </ExamplePanel>
     </Box>
   )
@@ -166,7 +170,7 @@ function InputExample() {
 function SwitchExample() {
   const [checked, setChecked] = createSignal(false)
 
-  useIntervalEffect(() => {
+  createIntervalEffect(() => {
     setChecked((b) => !b)
   }, 1200)
 
@@ -187,7 +191,7 @@ function SwitchExample() {
         }
       />
       <Switch
-        label='theme-switch'
+        name='theme-switch'
         isChecked={checked()}
         style={({ isChecked }) => ({ color: isChecked() ? 'snow' : 'white' })} // <-- will cause rerender , why?
         plugin={renderSwitchThumb()}
@@ -198,17 +202,6 @@ function SwitchExample() {
 
 function TextExample() {
   return <Text editable>can edit content</Text>
-}
-
-/**
- * setInterval hook
- * but auto clean
- */
-function useIntervalEffect(fn: () => void, interval: number) {
-  createEffect(() => {
-    const id = setInterval(fn, interval)
-    onCleanup(() => clearInterval(id))
-  })
 }
 
 function ListExample() {
@@ -286,4 +279,14 @@ function ListExample() {
       }}
     </List>
   )
+}
+
+function RadioExample() {
+  const [checked, setChecked] = createSignal(false)
+
+  createIntervalEffect(() => {
+    setChecked((b) => !b)
+  }, 1200)
+
+  return <Radio name='gender' isChecked={checked()} />
 }

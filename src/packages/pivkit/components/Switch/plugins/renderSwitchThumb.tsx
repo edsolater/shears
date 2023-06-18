@@ -21,7 +21,7 @@ export function renderSwitchThumb(
   ),
 ): () => SwitchProps {
   return () => ({
-    'anatomy:SwitchThumb': {
+    'anatomy:Thumb': {
       'render:lastChild': renderThumbContent,
     },
   })

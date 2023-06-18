@@ -5,24 +5,24 @@ import { makeElementMoveSmooth } from '../../hooks/makeElementMoveSmooth'
 import { Label, LabelProps } from '../Label'
 import { LabelBox, LabelBoxProps } from '../LabelBox'
 import { HTMLInputRadio, HTMLInputRadioProps } from './HTMLInputRadio'
-import { useRadioStyle } from './hooks/useRadioStyle'
+import { createRadioStyle } from './hooks/createRadioStyle'
 
 export interface RadioController {
   name: string
   isChecked: Accessor<boolean>
 }
 
-export type RadioProps<PassedController extends ValidController = RadioController> = KitProps<
+export type RadioProps<Controller extends ValidController = RadioController> = KitProps<
   {
     name: string
     isChecked?: boolean
     onChange?(utils: { name: string; isChecked: boolean }): void
-    'anatomy:container'?: LabelBoxProps
-    'anatomy:htmlRadioInput'?: HTMLInputRadioProps
-    'anatomy:control'?: PivProps<'div', PassedController>
-    'anatomy:label'?: LabelProps
+    'anatomy:ContainerBox'?: LabelBoxProps
+    'anatomy:HTMLRadio'?: HTMLInputRadioProps
+    'anatomy:Checkbox'?: PivProps<'div', Controller>
+    'anatomy:OptionLabel'?: LabelProps
   },
-  { controller: PassedController }
+  { controller: Controller }
 >
 
 const selfProps = ['isChecked', 'name', 'onChange'] satisfies (keyof RadioProps)[]
@@ -49,9 +49,8 @@ export function Radio(rawProps: RadioProps) {
     },
   })
 
-  const { wrapperLabelStyleProps, htmlCheckboxStyleProps, radioThumbStyleProps } = useRadioStyle({ props })
-
-  const { setMotionTargetRef } = makeElementMoveSmooth({ observeOn: isChecked })
+  const { containerBoxStyleProps, htmlCheckboxStyleProps, radioCheckboxStyleProps, radioLabelStyleProps } =
+    createRadioStyle({ props })
 
   const radioController = {
     isChecked,
@@ -60,9 +59,9 @@ export function Radio(rawProps: RadioProps) {
   lazyLoadController(radioController)
 
   return (
-    <LabelBox shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:container']]}>
+    <LabelBox shadowProps={[containerBoxStyleProps, shadowProps, props['anatomy:ContainerBox']]}>
       <HTMLInputRadio
-        shadowProps={[htmlCheckboxStyleProps, props['anatomy:htmlRadioInput']]}
+        shadowProps={[htmlCheckboxStyleProps, props['anatomy:HTMLRadio']]}
         innerController={radioController}
         label={props.name}
         defaultChecked={props.isChecked}
@@ -71,17 +70,16 @@ export function Radio(rawProps: RadioProps) {
         }}
       />
 
-      {/* RadioThumb */}
+      {/* Radio Checkbox */}
       <Piv
-        shadowProps={[radioThumbStyleProps, props['anatomy:control']]}
+        shadowProps={[radioCheckboxStyleProps, props['anatomy:Checkbox']]}
         innerController={radioController}
-        class='RadioThumb'
-        domRef={setMotionTargetRef}
+        class='RadioCheckbox'
         icss={[{ display: 'grid', placeContent: 'center' }]}
       />
 
-      {/* RadioLabel */}
-      <Label shadowProps={[props['anatomy:label']]}>{props.name}</Label>
+      {/* Radio Label */}
+      <Label shadowProps={[radioLabelStyleProps, props['anatomy:OptionLabel']]}>{props.name}</Label>
     </LabelBox>
   )
 }

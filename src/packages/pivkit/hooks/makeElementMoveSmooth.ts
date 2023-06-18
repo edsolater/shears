@@ -9,6 +9,7 @@ import { createRef } from './createRef'
  * @param options.observeOn - The accessor or accessor array to observe for changes in position.
  * @returns An object with a `setRef` function to set the element reference.
  */
+// TODO: makeElementMoveSmooth should be a plugin instead of a hook
 export function makeElementMoveSmooth(options: {
   animateOptions?: KeyframeEffectOptions
   observeOn: Accessor<any> | AccessorArray<any>

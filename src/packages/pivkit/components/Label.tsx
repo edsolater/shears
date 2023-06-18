@@ -1,8 +1,10 @@
-import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv'
+import { KitProps, PivChild, useKitProps } from '../../piv'
 import { Text } from './Text'
 
-export interface LabelProps extends UIKit<{ controller: { sdf: number } }> {}
+export type LabelProps = KitProps<{
+  value?:string
+  render?: (value: string) => PivChild
+}>
 /**
  * created for form widget component
  *

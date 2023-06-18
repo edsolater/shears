@@ -1,5 +1,4 @@
 import { AnyObj, flapDeep, isFunction, MayDeepArray, overwriteFunctionName, shakeNil } from '@edsolater/fnkit'
-import { JSX } from 'solid-js'
 import { KitProps } from '../createKit'
 import { PivProps } from '../types/piv'
 import { ValidController, ValidProps } from '../types/tools'
@@ -61,7 +60,6 @@ export function mergePluginReturnedProps<T extends AnyObj>({
 }): T & PivProps {
   return plugins
     ? shakeNil(flapDeep(plugins)).reduce((acc, plugin) => {
-        console.log('plugin: ', plugin)
         const pluginProps = invokePlugin(plugin, acc)
         return pluginProps ? mergeProps(acc, pluginProps) : acc
       }, props)

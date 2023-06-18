@@ -6,6 +6,7 @@ import { Accessify } from '../../utils/accessifyProps'
 import { Label, LabelProps } from '../Label'
 import { HTMLCheckbox, HTMLCheckboxProps } from './HTMLCheckbox'
 import { useSwitchStyle } from './hooks/useSwitchStyle'
+import { LabelBox } from '../LabelBox'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
@@ -20,25 +21,25 @@ interface BaseComponentProps {
 
 export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }>, 'shadowProps'>, BaseComponentProps {
   isChecked?: Accessify<boolean, SwitchController>
-  label?: string
+  name?: string
   isDefaultChecked?: Accessify<boolean, SwitchController>
   onChange?(utils: { isChecked: boolean }): void
   /** for Chakra has, so i has */
-  'anatomy:ContainerLabel'?: LabelProps
+  'anatomy:ContainerBox'?: LabelProps
   /** hidden HTML input(type=checkbox) for aria readbility */
-  'anatomy:AbsoluteCheckboxInput'?: HTMLCheckboxProps
+  'anatomy:HTMLCheckbox'?: HTMLCheckboxProps
   /** SwitchThumb */
-  'anatomy:SwitchThumb'?: PivProps<any, SwitchController>
+  'anatomy:Thumb'?: PivProps<any, SwitchController>
 }
 
 const selfProps = [
   'isChecked',
-  'label',
+  'name',
   'isDefaultChecked',
   'onChange',
-  'anatomy:ContainerLabel',
-  'anatomy:AbsoluteCheckboxInput',
-  'anatomy:SwitchThumb',
+  'anatomy:ContainerBox',
+  'anatomy:HTMLCheckbox',
+  'anatomy:Thumb',
 ] satisfies (keyof SwitchProps)[]
 
 const accessifyPropNames = ['isChecked', 'isDefaultChecked'] satisfies (keyof SwitchProps)[]
@@ -78,11 +79,11 @@ export function Switch(rawProps: SwitchProps) {
   lazyLoadController(switchController)
 
   return (
-    <Label shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:ContainerLabel']]}>
+    <LabelBox shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:ContainerBox']]}>
       <HTMLCheckbox
-        shadowProps={[htmlCheckboxStyleProps, props['anatomy:AbsoluteCheckboxInput']]}
+        shadowProps={[htmlCheckboxStyleProps, props['anatomy:HTMLCheckbox']]}
         innerController={switchController}
-        label={props.label}
+        label={props.name}
         defaultChecked={props.isDefaultChecked}
         onClick={() => {
           setIsChecked((b) => !b)
@@ -91,7 +92,7 @@ export function Switch(rawProps: SwitchProps) {
 
       {/* SwitchThumb */}
       <Piv
-        shadowProps={[switchThumbStyleProps, props['anatomy:SwitchThumb']]}
+        shadowProps={[switchThumbStyleProps, props['anatomy:Thumb']]}
         innerController={switchController}
         class='SwitchThumb'
         domRef={setMotionTargetRef}
@@ -111,6 +112,6 @@ export function Switch(rawProps: SwitchProps) {
         //   )
         // }}
       />
-    </Label>
+    </LabelBox>
   )
 }

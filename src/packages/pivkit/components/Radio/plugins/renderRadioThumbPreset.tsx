@@ -21,7 +21,7 @@ export function renderRadioThumb(
   ),
 ): RadioProps['shadowProps'] {
   return {
-    'anatomy:control': {
+    'anatomy:Thumb': {
       'render:lastChild': renderContent,
     },
   }
