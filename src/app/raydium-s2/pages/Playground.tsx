@@ -288,5 +288,5 @@ function RadioExample() {
     setChecked((b) => !b)
   }, 1200)
 
-  return <Radio name='gender' isChecked={checked()} />
+  return <Radio option='gender' isChecked={checked()} />
 }

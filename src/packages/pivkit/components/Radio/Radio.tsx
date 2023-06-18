@@ -1,20 +1,19 @@
 import { Accessor } from 'solid-js'
 import { KitProps, Piv, PivProps, ValidController, useKitProps } from '../../../piv'
 import { createSyncSignal } from '../../hooks/createSyncSignal'
-import { makeElementMoveSmooth } from '../../hooks/makeElementMoveSmooth'
 import { Label, LabelProps } from '../Label'
 import { LabelBox, LabelBoxProps } from '../LabelBox'
 import { HTMLInputRadio, HTMLInputRadioProps } from './HTMLInputRadio'
 import { createRadioStyle } from './hooks/createRadioStyle'
 
 export interface RadioController {
-  name: string
+  option: string
   isChecked: Accessor<boolean>
 }
 
 export type RadioProps<Controller extends ValidController = RadioController> = KitProps<
   {
-    name: string
+    option: string
     isChecked?: boolean
     onChange?(utils: { name: string; isChecked: boolean }): void
     'anatomy:ContainerBox'?: LabelBoxProps
@@ -25,7 +24,7 @@ export type RadioProps<Controller extends ValidController = RadioController> = K
   { controller: Controller }
 >
 
-const selfProps = ['isChecked', 'name', 'onChange'] satisfies (keyof RadioProps)[]
+const selfProps = ['isChecked', 'option', 'onChange'] satisfies (keyof RadioProps)[]
 
 export type RadioDefaultRadioProps = typeof defaultProps
 
@@ -45,7 +44,7 @@ export function Radio(rawProps: RadioProps) {
   const [isChecked, setIsChecked] = createSyncSignal({
     get: () => props.isChecked,
     set(value) {
-      props.onChange?.({ isChecked: value, name: props.name ?? '' })
+      props.onChange?.({ isChecked: value, name: props.option ?? '' })
     },
   })
 
@@ -63,7 +62,7 @@ export function Radio(rawProps: RadioProps) {
       <HTMLInputRadio
         shadowProps={[htmlCheckboxStyleProps, props['anatomy:HTMLRadio']]}
         innerController={radioController}
-        label={props.name}
+        label={props.option}
         defaultChecked={props.isChecked}
         onClick={() => {
           setIsChecked((b) => !b)
@@ -79,7 +78,7 @@ export function Radio(rawProps: RadioProps) {
       />
 
       {/* Radio Label */}
-      <Label shadowProps={[radioLabelStyleProps, props['anatomy:OptionLabel']]}>{props.name}</Label>
+      <Label shadowProps={[radioLabelStyleProps, props['anatomy:OptionLabel']]}>{props.option}</Label>
     </LabelBox>
   )
 }
