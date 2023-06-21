@@ -14,7 +14,7 @@ export function createRadioStyle(params: { props: DeKitProps<RadioProps> }) {
     icss: {
       display: 'flex',
       gap: '.25em',
-      alignItems:'center',
+      alignItems: 'center',
       ':hover': {
         filter: 'brightness(1.1)',
       },

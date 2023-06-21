@@ -2,7 +2,7 @@ import { KitProps, PivChild, useKitProps } from '../../piv'
 import { Text } from './Text'
 
 export type LabelProps = KitProps<{
-  value?:string
+  value?: string
   render?: (value: string) => PivChild
 }>
 /**
