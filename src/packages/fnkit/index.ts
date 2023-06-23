@@ -13,3 +13,5 @@ export * from './objectMerge'
 export * from './parallelAsyncTasks'
 export * from './recordAndMap'
 export * from './wrapToLazyObject'
+
+export * from './type'
