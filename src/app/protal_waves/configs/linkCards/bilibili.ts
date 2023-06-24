@@ -1,22 +1,4 @@
-import { Tuples } from '../../../packages/fnkit'
-
-type LinkCardItem = {
-  name: string
-  /* default is other */
-  category?: 'video' | 'game' | 'music' | 'shopping' | 'news' | 'social' | 'other'
-  description: string
-  keywords: string[]
-  headerLogo?: string
-  favicon: string
-  howToDo?: string | string[]
-  searchUrl?: {
-    breif: string
-    regex: RegExp
-    vars: {
-      [key: string]: unknown
-    }
-  }
-}
+import { LinkCardItem } from '.'
 
 interface BilibiliLinkCardItem extends LinkCardItem {
   name: 'bilibili'
@@ -61,5 +43,3 @@ export const bilibiliLinkCardItem: BilibiliLinkCardItem = {
     },
   },
 }
-
-export const linkCards = [bilibiliLinkCardItem] satisfies Tuples

@@ -3,6 +3,7 @@ import { Box, Card, Input, Section, icss_card, icss_col } from '../../../package
 import { NavBar } from '../components/NavBar'
 
 export default function HomePage() {
+
   return (
     <Piv>
       <NavBar title='Home' />
