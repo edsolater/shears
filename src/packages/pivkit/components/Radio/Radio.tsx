@@ -9,17 +9,19 @@ import { createRadioStyle } from './hooks/createRadioStyle'
 export interface RadioController {
   option: string
   isChecked: Accessor<boolean>
+  check: () => void
+  uncheck: () => void
 }
 
 export type RadioProps<Controller extends ValidController = RadioController> = KitProps<
   {
     option: string
     isChecked?: boolean
-    onChange?(utils: { name: string; isChecked: boolean }): void
+    onChange?(utils: { option: string; isChecked: boolean }): void
     'anatomy:ContainerBox'?: LabelBoxProps
     'anatomy:HTMLRadio'?: HTMLInputRadioProps
     'anatomy:Checkbox'?: PivProps<'div', Controller>
-    'anatomy:OptionLabel'?: LabelProps
+    'anatomy:Option'?: LabelProps
   },
   { controller: Controller }
 >
@@ -44,15 +46,23 @@ export function Radio(rawProps: RadioProps) {
   const [isChecked, setIsChecked] = createSyncSignal({
     get: () => props.isChecked,
     set(value) {
-      props.onChange?.({ isChecked: value, name: props.option ?? '' })
+      props.onChange?.({ isChecked: value, option: props.option ?? '' })
     },
   })
+
+  const check = () => setIsChecked(true)
+  const uncheck = () => setIsChecked(false)
 
   const { containerBoxStyleProps, htmlCheckboxStyleProps, radioCheckboxStyleProps, radioLabelStyleProps } =
     createRadioStyle({ props })
 
   const radioController = {
     isChecked,
+    check,
+    uncheck,
+    get option() {
+      return props.option
+    },
   }
 
   lazyLoadController(radioController)
@@ -78,7 +88,7 @@ export function Radio(rawProps: RadioProps) {
       />
 
       {/* Radio Label */}
-      <Label shadowProps={[radioLabelStyleProps, props['anatomy:OptionLabel']]}>{props.option}</Label>
+      <Label shadowProps={[radioLabelStyleProps, props['anatomy:Option']]}>{props.option}</Label>
     </LabelBox>
   )
 }
