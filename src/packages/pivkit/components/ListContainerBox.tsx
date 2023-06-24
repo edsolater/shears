@@ -23,7 +23,6 @@ export function ListContainerBox(rawProps: KitProps<ListContainerBoxProps, ListC
     <Box
       shadowProps={props}
       icss={[
-        { height: '50dvh' },
         props.dir === 'x' ? { overflowY: 'hidden', overflowX: 'scroll' } : { overflowY: 'scroll', overflowX: 'hidden' },
       ]}
     >

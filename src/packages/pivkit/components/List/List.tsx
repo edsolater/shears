@@ -57,12 +57,15 @@ export function List<T>(rawProps: ListProps<T>) {
       reachBottomMargin: 50,
     },
   })
+
   // [configs]
   const allItems = createMemo(() => (isArray(props.items) ? props.items : [...(props.items ?? [])]))
   const increaseRenderCount = createMemo(
     () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),
   )
-  const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(Math.floor(allItems().length / 5), 50))
+  const initRenderCount = createMemo(
+    () => props.initRenderCount ?? (allItems().length / 5 > 50 ? 50 : allItems().length),
+  )
 
   // [list ref]
   const [listRef, setRef] = createRef<HTMLElement>()
@@ -77,7 +80,6 @@ export function List<T>(rawProps: ListProps<T>) {
   // [scroll handler]
   const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
-      console.log('33: ', 33)
       setRenderItemLength((n) => n + increaseRenderCount())
     },
     reachBottomMargin: props.reachBottomMargin,
@@ -103,7 +105,7 @@ export function List<T>(rawProps: ListProps<T>) {
   }
   return (
     <ListContext.Provider value={{ observeFunction: observe, renderItemLength }}>
-      <Piv domRef={setRef} shadowProps={props} icss={{ height: '50dvh', overflow: 'scroll', contain: 'paint' }}>
+      <Piv domRef={setRef} shadowProps={props} icss={{ overflow: 'auto', contain: 'paint' }}>
         <For each={allItems()}>{renderListItems}</For>
       </Piv>
     </ListContext.Provider>
