@@ -1,6 +1,6 @@
 import { createEffect } from 'solid-js'
 import { Piv } from '../../../packages/piv'
-import { Box, Text } from '../../../packages/pivkit'
+import { Box, Icon, Text, icss_row } from '../../../packages/pivkit'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { Link } from './Link'
 import { parsePivProps } from '../../../packages/piv'
@@ -14,38 +14,37 @@ export interface TopMenuBarProps {
  */
 
 export function TopMenuBar(props: TopMenuBarProps) {
-  useMetaTitle(() => props.title)
+  useHTMLDocumentMetaTitle(() => props.title)
   return (
     <Piv<'nav'>
-      icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
+      icss={[
+        icss_row({ items: 'center' }),
+        { userSelect: 'none', padding: '16px 32px', transition: '150ms' },
+        threeGridSlotBoxICSS,
+      ]}
       render:self={(selfProps) => <nav {...parsePivProps(selfProps)} />}
     >
-      <Box icss={threeGridSlotBoxICSS}>
-        <Box icss={{ display: 'flex', gap: 64 }}>
-          <Text icss={{ fontSize: 36, fontWeight: 800 }}>{props.title}</Text>
-        </Box>
+      <Box icss={icss_row({ gap: 32 })}>
+        <Link href='/' innerRoute>
+          <Icon src='/logo-with-text.svg' icss={{ height: '32px' }} />
+        </Link>
+        {/* <Text icss={{ fontSize: 36, fontWeight: 800 }}>{props.title}</Text> */}
+      </Box>
 
-        {/* tabs */}
-        <Box icss={{ display: 'flex', gap: 16 }}>
-          <Link href='/swap' innerRoute>
-            Swap
-          </Link>
-          <Link href='/pools' innerRoute>
-            Pools
-          </Link>
-          <Link href='/farms' innerRoute /* TODO: active style */>
-            Farms
-          </Link>
-          <Link href='/playground' innerRoute>
-            Playground
-          </Link>
-        </Box>
+      {/* tabs */}
+      <Box icss={{ display: 'flex', gap: 16 }}>
+        <Link href='/' innerRoute>
+          Home
+        </Link>
+        <Link href='/playground' innerRoute>
+          Playground
+        </Link>
       </Box>
     </Piv>
   )
 }
 
-function useMetaTitle(title?: () => string | undefined) {
+function useHTMLDocumentMetaTitle(title?: () => string | undefined) {
   createEffect(() => {
     if (globalThis.document && title?.()) Reflect.set(globalThis.document, 'title', `${title()} - shears`)
   })
