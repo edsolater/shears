@@ -1,4 +1,16 @@
-import { MayArray, MayFn, isNumber, isObject, isString, map, omit, shakeNil, shrinkToValue } from '@edsolater/fnkit'
+import {
+  MayArray,
+  MayFn,
+  flap,
+  isNumber,
+  isObject,
+  isString,
+  map,
+  omit,
+  shakeNil,
+  shrinkFn,
+  shrinkToValue,
+} from '@edsolater/fnkit'
 import { isStringInsensitivelyEqual, isStringInsensitivelyContain } from './isStringEqual'
 
 type SearchConfigItemObj = {
@@ -10,7 +22,7 @@ export type SearchConfigItem = SearchConfigItemObj | string | undefined
 
 export type SearchOptions<T> = {
   text?: string /* for controlled component */
-  matchConfigs?: MayFn<MayArray<SearchConfigItem>, [item: T]>
+  matchConfigs?: MayArray<MayFn<MayArray<SearchConfigItem>, [item: T]>>
 }
 /**
  * Searches an array of items for those that match a set of search options.
@@ -23,12 +35,9 @@ export type SearchOptions<T> = {
 export function searchItems<T>(items: T[], options?: SearchOptions<T>): T[] {
   if (!options) return items
   if (!options.text) return items
-  console.log('items: ', items)
-  console.log('options: ', options)
   const allMatchedStatusInfos = shakeNil(
     items.map((item) => getMatchedInfos(item, options.text!, options?.matchConfigs ?? extractItemBeSearchedText(item))),
   )
-  console.log('allMatchedStatusInfos: ', allMatchedStatusInfos)
   const meaningfulMatchedInfos = allMatchedStatusInfos.filter((m) => m?.matched)
   const sortedMatchedInfos = sortByMatchedInfos<T>(meaningfulMatchedInfos)
   const shaked = shakeNil(sortedMatchedInfos.map((m) => m.item))
@@ -44,15 +53,18 @@ function extractItemBeSearchedText(item: unknown): SearchConfigItemObj[] {
   }
   return [{ text: '' }]
 }
+
 function getMatchedInfos<T>(item: T, searchText: string, searchTarget: NonNullable<SearchOptions<T>['matchConfigs']>) {
   const searchKeyWords = String(searchText).trim().split(/\s|-/)
-  const searchConfigs = shakeNil(
-    [shrinkToValue(searchTarget, [item])]
-      .flat()
-      .map((c) => (isString(c) ? { text: c } : c) as SearchConfigItemObj | undefined),
+  const searchConfigs: SearchConfigItemObj[] = shakeNil(
+    flap(searchTarget)
+      .map((i) => shrinkFn(i, [item]))
+      .flatMap((i) => flap(i))
+      .map((c) => (isString(c) ? { text: c } : c)),
   )
   return patchSearchInfos({ item, searchKeyWords, searchConfigs })
 }
+
 type MatchedStatus<T> = {
   item: T
   matched: boolean

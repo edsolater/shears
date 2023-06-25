@@ -7,7 +7,7 @@ import { linkCards } from '../configs/linkCards'
 
 export default function HomePage() {
   const [searchText, setSearchText] = createSignal<string>()
-  const links = useSearch(() => linkCards, searchText, { matchConfigs: (item) => [item.name, ...item.keywords] })
+  const links = useSearch(() => linkCards, searchText, { matchConfigs: [(i) => i.name, (i) => i.keywords] })
   return (
     <Piv>
       <NavBar title='Home' />
