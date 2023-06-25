@@ -1,17 +1,20 @@
+import { createSignal } from 'solid-js'
+import { useSearch } from '../../../packages/features/search'
 import { Piv } from '../../../packages/piv'
-import { Box, Card, Text, Input, List, Section, icss_card, icss_col, icss_row } from '../../../packages/pivkit'
+import { Box, Card, Input, List, Section, Text, icss_card, icss_row } from '../../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { linkCards } from '../configs/linkCards'
 
 export default function HomePage() {
-  const links = linkCards
-
+  const [searchText, setSearchText] = createSignal<string>()
+  const links = useSearch(() => linkCards, searchText, { matchConfigs: (item) => [item.name, ...item.keywords] })
   return (
     <Piv>
       <NavBar title='Home' />
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
-        <Box>
-          <Input />
+        <Box icss={[icss_row({ gap: 4 }), { marginBottom: 8 }]}>
+          <Text>search tags:</Text>
+          <Input onUserInput={({ text }) => setSearchText(text)} />
         </Box>
         <Piv icss={{ width: '80vw', height: '60vh' }}>
           <List items={links}>

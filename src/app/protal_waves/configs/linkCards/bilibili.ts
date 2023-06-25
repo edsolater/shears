@@ -1,13 +1,6 @@
 import { LinkCardItem } from '.'
 
 interface BilibiliLinkCardItem extends LinkCardItem {
-  name: 'bilibili'
-  category: 'video'
-  description: 'bilibili web site'
-  keywords: ['bilibili', 'video', 'anime', 'game']
-  headerLogo: '/protal-icons/bilibili/header-logo.svg'
-  favicon: '/protal-icons/bilibili/favicon.svg'
-  howToDo: 'search the text'
   searchUrl: {
     breif: 'https://search.bilibili.com/all'
     regex: RegExp
@@ -31,10 +24,11 @@ export const bilibiliLinkCardItem: BilibiliLinkCardItem = {
   name: 'bilibili',
   category: 'video',
   description: 'bilibili web site',
-  keywords: ['bilibili', 'video', 'anime', 'game'],
+  keywords: ['video', 'anime', 'game'],
   headerLogo: '/protal-icons/bilibili/header-logo.svg',
   favicon: '/protal-icons/bilibili/favicon.svg',
   howToDo: 'search the text',
+  // TODO: not elegant!!!
   searchUrl: {
     breif: 'https://search.bilibili.com/all',
     regex: /https:\/\/search\.bilibili\.com\/(<?category>all|video|bangui|pgc|live|article|upuser)/,
