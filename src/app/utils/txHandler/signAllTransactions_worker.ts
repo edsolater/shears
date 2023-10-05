@@ -2,8 +2,8 @@ import { InnerTransaction } from '@raydium-io/raydium-sdk'
 import { Transaction, VersionedTransaction } from '@solana/web3.js'
 import { buildTransactionsFromSDKInnerTransactions, isInnerTransaction } from './createVersionedTransaction'
 import { TxHandlerPayload } from './txHandler'
-import { getMessageSender } from '../webworker/getMessageSender'
-import { getMessageReceiver } from '../webworker/getMessageReceiver'
+import { getMessageSender } from '../webworker/getMessage_sender'
+import { getMessageReceiver } from '../webworker/getMessage_receiver'
 
 export async function signAllTransactions({
   transactions,

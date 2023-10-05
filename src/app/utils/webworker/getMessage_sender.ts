@@ -1,5 +1,5 @@
 import { MayPromise } from '@edsolater/fnkit'
-import { cachelyGetMapValue } from '../../../packages/fnkit'
+import { cacheMapGet } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
 
 interface SenderMessage<Query = any> {
@@ -22,21 +22,21 @@ const registeredWorkerMessageSender = new Map<string, WorkerMessageSender<any>>(
 
 /**
  *
- * @param to function to get the worker instance
+ * @param towardsTarget function to get the worker instance
  * @param command an action id
  * @returns
  * @pureFN
  */
 export function getMessageSender<P extends SenderMessage>(
-  to: MayPromise<Worker | ServiceWorker | typeof globalThis>,
+  towardsTarget: MayPromise<Worker | ServiceWorker | typeof globalThis>,
   command: string,
 ): WorkerMessageSender<P> {
   function createNewWorkerMessageSender<P extends SenderMessage>(command: string): WorkerMessageSender<P> {
     return {
       query(payload) {
-        Promise.resolve(to).then((targetPort) => targetPort.postMessage({ command, payload: encode(payload) }))
+        Promise.resolve(towardsTarget).then((targetPort) => targetPort.postMessage({ command, payload: encode(payload) }))
       },
     }
   }
-  return cachelyGetMapValue(registeredWorkerMessageSender, command, () => createNewWorkerMessageSender<P>(command))
+  return cacheMapGet(registeredWorkerMessageSender, command, () => createNewWorkerMessageSender<P>(command))
 }

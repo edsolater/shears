@@ -1,7 +1,7 @@
 import { createSubscribable, isFunction } from '@edsolater/fnkit'
 import { decode } from '../dataTransmit/handlers'
 import { signAllTransactionReceiver } from '../txHandler/signAllTransactions_main'
-import { isReceiveMessage } from './getMessageReceiver'
+import { isReceiveMessage } from './getMessage_receiver'
 import { WorkerDescription, WorkerMessage } from './type'
 
 export const sdkworker = import('./worker_sdk?worker').then((module) => new module.default())
@@ -13,7 +13,7 @@ export type WebworkerSubscribeCallback<ResultData = any> = (
 ) => void | ((newData: ResultData) => void) /* clean fn */
 
 /**
- * @deprecated prefer use {@link subscribeWebWorker}
+ * @deprecated prefer use {@link openMessagePortToWorker}
  */
 export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any>(
   message: { command: WorkerDescription; payload?: PostOptions },
@@ -49,11 +49,15 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
  * @param messageDescription command
  * @param query payload
  * @returns a subscribable, which will emit the result data
- * @deprecated also is old, prefer use {@link getWorkerMessageListener}
+ * @deprecated also is old, prefer use {@link getMessageReceiver}
  */
-export function subscribeWebWorker<ResultData = any, PostOptions = any>(
+export function openMessagePortToWorker<ResultData = any, PostOptions = any>(
   messageDescription: WorkerDescription,
   query: PostOptions,
+  option?: {
+    /** no need log */
+    mute?: boolean
+  },
 ) {
   const [subscribable, inject] = createSubscribable<ResultData>()
   sdkworker.then((worker) => worker.postMessage({ command: messageDescription, payload: query }))
@@ -61,8 +65,9 @@ export function subscribeWebWorker<ResultData = any, PostOptions = any>(
     const body = ev.data as WorkerMessage<ResultData>
     if (isReceiveMessage(body) && body.command === messageDescription) {
       const decodedData = decode(body.payload)
-      // LOG
-      // console.log(`receving ${message.description}...`, 'from', body.data, 'to', decodedData)
+      if (!option?.mute) {
+        console.log(`[main thread]${messageDescription}: ${decodedData}`)
+      }
       inject(decodedData)
     }
   }

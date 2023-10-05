@@ -14,7 +14,6 @@ export * from './parallelAsyncTasks'
 export * from './recordAndMap'
 export * from './wrapToLazyObject'
 export * from './switchCase'
-export * from './createSubscribable'
 export * from './createOnRunObject'
 
 export * from './type'

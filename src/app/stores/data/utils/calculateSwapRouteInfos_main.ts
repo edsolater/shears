@@ -1,10 +1,10 @@
 import { isObject } from '@edsolater/fnkit'
-import { subscribeWebWorker } from '../../../utils/webworker/mainThread_receiver'
+import { openMessagePortToWorker } from '../../../utils/webworker/loadWorkerFromMainThread'
 import { CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult } from './calculateSwapRouteInfos'
 import { deepUnwrapSolidProxy } from '../../../utils/txHandler/deepUnwrapSolidProxy'
 
 export function calculatedSwapRouteInfos_main(params: CalculateSwapRouteInfosParams) {
-  return subscribeWebWorker<CalculateSwapRouteInfosResult, CalculateSwapRouteInfosParams>(
+  return openMessagePortToWorker<CalculateSwapRouteInfosResult, CalculateSwapRouteInfosParams>(
     'let webworker calculate swap route infos',
     deepUnwrapSolidProxy(params),
   )

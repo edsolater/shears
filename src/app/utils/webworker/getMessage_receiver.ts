@@ -1,5 +1,5 @@
-import { MayPromise } from '@edsolater/fnkit'
-import { Subscribable, cachelyGetMapValue } from '../../../packages/fnkit'
+import { MayPromise, Subscribable, createSubscribable } from '@edsolater/fnkit'
+import { cacheMapGet } from '../../../packages/fnkit'
 import { decode } from '../dataTransmit/handlers'
 
 interface ReceiveMessage<Data = any> {
@@ -23,29 +23,34 @@ const registeredWorkerMessageReceiver = new Map<string, WorkerMessageReceiver<an
 
 /**
  * receive data from worker
- * @param from function to get the worker instance
+ * @param towards function to get the worker instance
  * @param command an action id
  * @returns a subscribable object, which can be subscribed to get the data from worker
  * @pureFN
  */
 export function getMessageReceiver<R extends ReceiveMessage>(
-  from: MayPromise<Worker | ServiceWorker | typeof globalThis>,
+  towards: MayPromise<Worker | ServiceWorker | typeof globalThis>,
   command: string,
 ): WorkerMessageReceiver<R> {
-  function createNewWorkerMessageReceiver<R extends ReceiveMessage>(command: string): WorkerMessageReceiver<R> {
-    const subscribable = new Subscribable<R['payload']>()
+  /**
+   *
+   * @param command one message command combine one message receiver
+   * @returns subscribable
+   */
+  function createNewMessageReceiver<R extends ReceiveMessage>(command: string): WorkerMessageReceiver<R> {
+    const [subscribable, inject] = createSubscribable<R['payload']>()
     const messageHandler = (ev: MessageEvent<any>): void => {
       const body = ev.data as ReceiveMessage<R['payload']>
       if (body.command === command) {
         const decodedData = decode(body.payload)
-        subscribable.inject(decodedData)
+        inject(decodedData)
       }
     }
-    Promise.resolve(from).then((worker) =>
+    Promise.resolve(towards).then((worker) =>
       worker.addEventListener('message', messageHandler as any /*  seems it's typescript's fault */),
     )
     return subscribable
   }
 
-  return cachelyGetMapValue(registeredWorkerMessageReceiver, command, () => createNewWorkerMessageReceiver<R>(command))
+  return cacheMapGet(registeredWorkerMessageReceiver, command, () => createNewMessageReceiver<R>(command))
 }

@@ -1,9 +1,9 @@
 import { LedgerWalletAdapter, PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets'
 import { Transaction, VersionedTransaction } from '@solana/web3.js'
 import { useWalletAdapter } from '../../stores/wallet/store'
-import { getMessageReceiver } from '../webworker/getMessageReceiver'
-import { getMessageSender } from '../webworker/getMessageSender'
-import { sdkworker } from '../webworker/mainThread_receiver'
+import { getMessageReceiver } from '../webworker/getMessage_receiver'
+import { getMessageSender } from '../webworker/getMessage_sender'
+import { sdkworker } from '../webworker/loadWorkerFromMainThread'
 
 export function signAllTransactionReceiver() {
   const receiver = getMessageReceiver(sdkworker, 'sign transaction in main thread')

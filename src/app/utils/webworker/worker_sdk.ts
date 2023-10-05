@@ -1,12 +1,11 @@
 /// <reference lib="webworker" />
-import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import './worker_polyfill'; // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { Subscribable } from '../../../packages/fnkit'
-import { invoke } from '../../../packages/fnkit'
+import { Subscribable, createSubscribable, invoke } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
+import { isSenderMessage } from './getMessage_sender'
 import { WorkerDescription, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
-import { isSenderMessage } from './getMessageSender'
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
@@ -25,10 +24,10 @@ function initMessageReceiver() {
     const onMessage = callbackMap.get(command)
     if (!onMessage) return
 
-    const subscribable = new Subscribable()
+    const [subscribable, inject] = createSubscribable()
     returnValueMap.set(onMessage, subscribable)
 
-    invoke(onMessage, { payload, resolve: subscribable.inject.bind(subscribable) })
+    invoke(onMessage, { payload, resolve: inject })
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)

@@ -1,10 +1,9 @@
 import { createEffect, createSignal, on, onCleanup } from 'solid-js'
-import { onEvent } from '../../../domkit'
-import { KeybordShortcutKeys, getShorcutStringFromKeyboardEvent } from '../../../domkit'
-import { Subscribable } from '../../../../fnkit'
-import { createPlugin } from '../../../piv'
+import { createSubscribable } from '../../../../fnkit'
+import { KeybordShortcutKeys, getShorcutStringFromKeyboardEvent, onEvent } from '../../../domkit'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
+import { createPlugin } from '../../../piv'
 import { InputController, InputKitProps } from '../Input'
 
 // NOTE: plugin is a function accept props and return additional props
@@ -29,7 +28,7 @@ export const keyboardShortcutObserverPlugin = (options: {
     createEffect(
       on(recordedShortcut, () => {
         controllerRef()?.setText(recordedShortcut())
-      })
+      }),
     )
 
     const handleKeydownKeyboardShortcut = (text: string) => {
@@ -42,17 +41,17 @@ export const keyboardShortcutObserverPlugin = (options: {
   })
 
 function subscribeKeyboardShortcut(el: HTMLElement) {
-  const subscri = new Subscribable<string>()
+  const [subscri, inject] = createSubscribable<string>()
   onEvent(el, 'keydown', ({ ev }) => {
     ev.stopPropagation()
     const shortcut = getShorcutStringFromKeyboardEvent(ev)
-    if (isValidShortcut(ev)) subscri.inject(shortcut)
+    if (isValidShortcut(ev)) inject(shortcut)
   })
   return subscri
 }
 
 function isValidShortcut(ev: KeyboardEvent, options?: { banedKeywords?: string[] }): boolean {
   return ['control', 'alt', 'shift', 'meta', 'backspace', 'enter', ...(options?.banedKeywords ?? [])].every(
-    (key) => !ev.key.toLowerCase().includes(key.toLowerCase())
+    (key) => !ev.key.toLowerCase().includes(key.toLowerCase()),
   )
 }

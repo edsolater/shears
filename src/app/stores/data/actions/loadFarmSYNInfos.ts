@@ -1,7 +1,7 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { appRpcUrl } from '../../../utils/common/config'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerFromMainThread'
 import { useWalletStore, WalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
 import { CalculateSwapRouteInfosParams } from '../types/farm'

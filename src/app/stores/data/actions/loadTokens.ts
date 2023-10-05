@@ -1,6 +1,6 @@
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/mainThread_receiver'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerFromMainThread'
 import { DataStore } from '../store'
 import { FetchRaydiumTokenListOptions } from '../types/tokenList'
 
