@@ -7,12 +7,15 @@ import { isSenderMessage } from './genMessageSender'
 import { WorkerCommand, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
 import { Subscribable, createSubscribable } from '@edsolater/fnkit'
+import { createMessagePortTransforers } from './createMessagePortTransforers'
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
 const callbackMap = new Map<string, onMessage<any>>()
 const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
+export const { getReceiver: getMessageReceiver, getSender: getMessageSender } =
+  createMessagePortTransforers(globalThis)
 /**
  *
  * register receiver utils in worker-side

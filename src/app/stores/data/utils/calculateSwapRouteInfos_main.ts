@@ -1,5 +1,5 @@
 import { isObject } from '@edsolater/fnkit'
-import { openMessagePortToWorker } from '../../../utils/webworker/loadWorkerFromMainThread'
+import { openMessagePortToWorker } from '../../../utils/webworker/loadWorkerInMainThread'
 import { CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult } from './calculateSwapRouteInfos'
 import { deepUnwrapSolidProxy } from '../../../utils/txHandler/deepUnwrapSolidProxy'
 

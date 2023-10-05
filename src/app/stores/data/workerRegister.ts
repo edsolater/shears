@@ -1,4 +1,4 @@
-import { registMessageReceiver } from '../../utils/webworker/worker_sdk'
+import { registMessageReceiver } from '../../utils/webworker/loadSDKWorker'
 import { FetchFarmsJSONPayloads, CalculateSwapRouteInfosParams } from './types/farm'
 import { fetchFarmJsonInfo } from './utils/fetchFarmJson'
 import { composeFarmSYN } from './utils/composeFarmSYN'

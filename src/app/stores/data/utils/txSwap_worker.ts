@@ -1,4 +1,4 @@
-import { registMessageReceiver } from '../../../utils/webworker/worker_sdk'
+import { registMessageReceiver } from '../../../utils/webworker/loadSDKWorker'
 import { TxSwapOptions, txSwap_getInnerTransaction } from './txSwap'
 
 export function txSwap_worker() {

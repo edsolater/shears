@@ -13,12 +13,12 @@ export function isSenderMessage(v: unknown): v is SenderMessage {
 /**
  * send a command to webworker
  */
-interface WorkerMessageSender<P extends SenderMessage> {
+interface Sender<P extends SenderMessage> {
   query(payload: P['payload']): void
   // onMessageBack(payload: any): Promise<unknown> //TODO: imply it later
 }
 // cache store
-const registeredWorkerMessageSender = new Map<string, WorkerMessageSender<any>>()
+const registeredWorkerMessageSender = new Map<string, Sender<any>>()
 
 /**
  *
@@ -27,11 +27,11 @@ const registeredWorkerMessageSender = new Map<string, WorkerMessageSender<any>>(
  * @returns
  * @pureFN
  */
-export function getMessageSender<P extends SenderMessage>(
+export function createMessageSender<P extends SenderMessage>(
   towardsTarget: MayPromise<Worker | ServiceWorker | typeof globalThis>,
   command: string,
-): WorkerMessageSender<P> {
-  function createNewWorkerMessageSender<P extends SenderMessage>(command: string): WorkerMessageSender<P> {
+): Sender<P> {
+  function createNewWorkerMessageSender<P extends SenderMessage>(command: string): Sender<P> {
     return {
       query(payload) {
         Promise.resolve(towardsTarget).then((targetPort) => targetPort.postMessage({ command, payload: encode(payload) }))

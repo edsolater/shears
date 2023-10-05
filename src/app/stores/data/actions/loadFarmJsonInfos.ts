@@ -1,5 +1,5 @@
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerFromMainThread'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerInMainThread'
 import { DataStore } from '../store'
 import { FetchFarmsJSONPayloads } from '../types/farm'
 

@@ -1,5 +1,5 @@
 import { inNextMainLoop } from '../../../../packages/fnkit'
-import { registMessageReceiver } from '../../../utils/webworker/worker_sdk'
+import { registMessageReceiver } from '../../../utils/webworker/loadSDKWorker'
 import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from './calculateSwapRouteInfos'
 import { createCleanUpFunctionBucket } from '../../../../packages/pivkit'
 

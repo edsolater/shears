@@ -1,20 +1,18 @@
 import { createSubscribable, isFunction } from '@edsolater/fnkit'
 import { decode } from '../dataTransmit/handlers'
-import { signAllTransactionReceiver } from '../txHandler/signAllTransactions_main'
-import { isReceiveMessage } from './genMessageReceiver'
+import { createSignTransactionPortInMainThread } from '../txHandler/signAllTransactions_main'
+import { createMessagePortTransforers, isReceiveMessage } from './createMessagePortTransforers'
 import { WorkerCommand, WorkerMessage } from './type'
 
-export const sdkworker = import('./worker_sdk?worker').then((module) => new module.default())
+export const sdkworker = import('./loadSDKWorker?worker').then((module) => new module.default())
+export const { getReceiver: getMessageReceiver, getSender: getMessageSender } = createMessagePortTransforers(sdkworker)
 
-signAllTransactionReceiver(sdkworker)
+createSignTransactionPortInMainThread()
 
 export type WebworkerSubscribeCallback<ResultData = any> = (
   data: ResultData,
 ) => void | ((newData: ResultData) => void) /* clean fn */
 
-/**
- * @deprecated prefer use {@link openMessagePortToWorker}
- */
 export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any>(
   message: { command: WorkerCommand; payload?: PostOptions },
   callback?: WebworkerSubscribeCallback<ResultData>,

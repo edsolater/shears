@@ -1,7 +1,10 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { appRpcUrl } from '../../../utils/common/config'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerFromMainThread'
+import {
+  subscribeWebWorker_Drepcated,
+  WebworkerSubscribeCallback,
+} from '../../../utils/webworker/loadWorkerInMainThread'
 import { useWalletStore, WalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
 import { CalculateSwapRouteInfosParams } from '../types/farm'
@@ -21,17 +24,17 @@ export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; 
   abort?(): void
 } {
   store.set({ isFarmInfosLoading: true })
-  const subscription = getFarmSYNInfosFromWorker(owner, (allFarmSYNInfos) => {
+  getFarmSYNInfosFromWorker(owner, (allFarmSYNInfos) => {
     store.set({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
   })
-  return { abort: subscription?.abort }
+  return { abort() {} }
 }
 
 function getFarmSYNInfosFromWorker(
   owner: WalletStore['owner'],
   cb: WebworkerSubscribeCallback<DataStore['farmInfos']>,
 ) {
-  const { abort } = subscribeWebWorker_Drepcated<DataStore['farmInfos'], CalculateSwapRouteInfosParams>(
+  subscribeWebWorker_Drepcated<DataStore['farmInfos'], CalculateSwapRouteInfosParams>(
     {
       command: 'get raydium farms syn infos',
       payload: {
@@ -41,5 +44,4 @@ function getFarmSYNInfosFromWorker(
     },
     cb,
   )
-  return { abort }
 }

@@ -1,7 +1,7 @@
 import { createEffect } from 'solid-js'
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerFromMainThread'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerInMainThread'
 import { DataStore } from '../store'
 import { TokenListStore } from '../types/tokenList'
 import { Token } from '../../../utils/dataStructures/Token'

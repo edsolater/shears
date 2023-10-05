@@ -1,4 +1,4 @@
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerFromMainThread'
+import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerInMainThread'
 import { FetchPairsOptions, PairJson } from '../types/pairs'
 import { DataStore } from '../store'
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
