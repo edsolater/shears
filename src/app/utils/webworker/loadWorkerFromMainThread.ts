@@ -1,12 +1,12 @@
 import { createSubscribable, isFunction } from '@edsolater/fnkit'
 import { decode } from '../dataTransmit/handlers'
 import { signAllTransactionReceiver } from '../txHandler/signAllTransactions_main'
-import { isReceiveMessage } from './getMessage_receiver'
-import { WorkerDescription, WorkerMessage } from './type'
+import { isReceiveMessage } from './genMessageReceiver'
+import { WorkerCommand, WorkerMessage } from './type'
 
 export const sdkworker = import('./worker_sdk?worker').then((module) => new module.default())
 
-signAllTransactionReceiver()
+signAllTransactionReceiver(sdkworker)
 
 export type WebworkerSubscribeCallback<ResultData = any> = (
   data: ResultData,
@@ -16,7 +16,7 @@ export type WebworkerSubscribeCallback<ResultData = any> = (
  * @deprecated prefer use {@link openMessagePortToWorker}
  */
 export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any>(
-  message: { command: WorkerDescription; payload?: PostOptions },
+  message: { command: WorkerCommand; payload?: PostOptions },
   callback?: WebworkerSubscribeCallback<ResultData>,
 ): { abort(): void } {
   let cleanFn: ((newData: ResultData) => void) | void | undefined = undefined
@@ -46,13 +46,13 @@ export function subscribeWebWorker_Drepcated<ResultData = any, PostOptions = any
  * a command sender and a receiver in mainThread-side
  *
  * pass a command to webworker
- * @param messageDescription command
+ * @param command command
  * @param query payload
  * @returns a subscribable, which will emit the result data
  * @deprecated also is old, prefer use {@link getMessageReceiver}
  */
 export function openMessagePortToWorker<ResultData = any, PostOptions = any>(
-  messageDescription: WorkerDescription,
+  command: WorkerCommand,
   query: PostOptions,
   option?: {
     /** no need log */
@@ -60,13 +60,13 @@ export function openMessagePortToWorker<ResultData = any, PostOptions = any>(
   },
 ) {
   const [subscribable, inject] = createSubscribable<ResultData>()
-  sdkworker.then((worker) => worker.postMessage({ command: messageDescription, payload: query }))
+  sdkworker.then((worker) => worker.postMessage({ command: command, payload: query }))
   const messageHandler = (ev: MessageEvent<any>): void => {
     const body = ev.data as WorkerMessage<ResultData>
-    if (isReceiveMessage(body) && body.command === messageDescription) {
+    if (isReceiveMessage(body) && body.command === command) {
       const decodedData = decode(body.payload)
       if (!option?.mute) {
-        console.log(`[main thread]${messageDescription}: ${decodedData}`)
+        console.log(`[main thread]${command}: ${decodedData}`)
       }
       inject(decodedData)
     }

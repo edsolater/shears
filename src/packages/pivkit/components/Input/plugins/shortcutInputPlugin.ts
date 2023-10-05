@@ -1,5 +1,5 @@
 import { createEffect, createSignal, on, onCleanup } from 'solid-js'
-import { createSubscribable } from '../../../../fnkit'
+import { createSubscribable } from '@edsolater/fnkit'
 import { KeybordShortcutKeys, getShorcutStringFromKeyboardEvent, onEvent } from '../../../domkit'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'

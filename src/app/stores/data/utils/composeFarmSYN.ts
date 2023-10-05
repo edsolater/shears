@@ -1,6 +1,6 @@
-import { listToJSMap, map } from '@edsolater/fnkit'
+import { createSubscribableFromPromise, listToJSMap, map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
-import { createAbortableAsyncTask, createSubscribableFromPromise } from '../../../../packages/fnkit'
+import { createAbortableAsyncTask } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'

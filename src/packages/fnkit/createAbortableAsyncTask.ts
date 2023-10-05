@@ -1,5 +1,5 @@
-import { Subscribable, createSubscribable } from './customizedClasses/Subscribable';
-import { invoke } from './invoke';
+import { Subscribable, createSubscribable } from '@edsolater/fnkit'
+import { invoke } from './invoke'
 
 /**
  * make it  possiable to abort inside the progress of task

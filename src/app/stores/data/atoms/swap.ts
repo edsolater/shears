@@ -45,7 +45,7 @@ export function useSwapAmountCalculator() {
     const s = subscribable.subscribe((info) => {
       if (!info) return
       const { bestResult } = info
-      s.abort()
+      s.unsubscribe()
     })
   })
 

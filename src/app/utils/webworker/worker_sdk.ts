@@ -1,11 +1,12 @@
 /// <reference lib="webworker" />
-import './worker_polyfill'; // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { Subscribable, createSubscribable, invoke } from '../../../packages/fnkit'
+import { invoke } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
-import { isSenderMessage } from './getMessage_sender'
-import { WorkerDescription, WorkerMessage } from './type'
+import { isSenderMessage } from './genMessageSender'
+import { WorkerCommand, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
+import { Subscribable, createSubscribable } from '@edsolater/fnkit'
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
@@ -41,7 +42,7 @@ function initMessageReceiver() {
 // only need to regist once in the worker thread
 initMessageReceiver()
 
-export function registMessageReceiver<D = any>(description: WorkerDescription, onMessage: onMessage<D>) {
+export function registMessageReceiver<D = any>(description: WorkerCommand, onMessage: onMessage<D>) {
   callbackMap.set(description, onMessage)
 }
 

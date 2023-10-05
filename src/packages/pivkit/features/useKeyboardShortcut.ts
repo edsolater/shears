@@ -1,6 +1,5 @@
-import { AnyObj, WeakerMap, WeakerSet, isFunction, isString, shakeNil } from '@edsolater/fnkit'
+import { AnyObj, Subscribable, WeakerMap, WeakerSet, createSubscribable, isFunction, isString, shakeNil } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { Subscribable, createSubscribable } from '../../fnkit'
 import { KeyboardShortcutFn, KeybordShortcutKeys, handleKeyboardShortcut } from '../domkit'
 import { createRef } from '../hooks/createRef'
 import { createSharedSignal } from '../hooks/createSharedSignal'

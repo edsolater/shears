@@ -6,6 +6,10 @@ interface ReceiveMessage<Data = any> {
   command: string
   payload: Data
 }
+type MessageReceiver<R extends ReceiveMessage> = Subscribable<R['payload']>
+
+// cache store to record all registered message receivers
+const registeredWorkerMessageReceiver = new Map<string, MessageReceiver<any>>()
 
 export function isReceiveMessage(v: unknown): v is ReceiveMessage {
   return (
@@ -16,28 +20,23 @@ export function isReceiveMessage(v: unknown): v is ReceiveMessage {
   )
 }
 
-type WorkerMessageReceiver<R extends ReceiveMessage> = Subscribable<R['payload']>
-
-// cache store
-const registeredWorkerMessageReceiver = new Map<string, WorkerMessageReceiver<any>>()
-
 /**
- * receive data from worker
- * @param towards function to get the worker instance
- * @param command an action id
+ * get(may auto create) a message receiver
+ * @param towardsTarget function to get the worker instance
+ * @param receiverCommand an action id
  * @returns a subscribable object, which can be subscribed to get the data from worker
  * @pureFN
  */
 export function getMessageReceiver<R extends ReceiveMessage>(
-  towards: MayPromise<Worker | ServiceWorker | typeof globalThis>,
-  command: string,
-): WorkerMessageReceiver<R> {
+  towardsTarget: MayPromise<Worker | ServiceWorker | typeof globalThis>,
+  receiverCommand: string,
+): MessageReceiver<R> {
   /**
    *
    * @param command one message command combine one message receiver
    * @returns subscribable
    */
-  function createNewMessageReceiver<R extends ReceiveMessage>(command: string): WorkerMessageReceiver<R> {
+  function createNewMessageReceiver<R extends ReceiveMessage>(command: string): MessageReceiver<R> {
     const [subscribable, inject] = createSubscribable<R['payload']>()
     const messageHandler = (ev: MessageEvent<any>): void => {
       const body = ev.data as ReceiveMessage<R['payload']>
@@ -46,11 +45,13 @@ export function getMessageReceiver<R extends ReceiveMessage>(
         inject(decodedData)
       }
     }
-    Promise.resolve(towards).then((worker) =>
+    Promise.resolve(towardsTarget).then((worker) =>
       worker.addEventListener('message', messageHandler as any /*  seems it's typescript's fault */),
     )
     return subscribable
   }
 
-  return cacheMapGet(registeredWorkerMessageReceiver, command, () => createNewMessageReceiver<R>(command))
+  return cacheMapGet(registeredWorkerMessageReceiver, receiverCommand, () =>
+    createNewMessageReceiver<R>(receiverCommand),
+  )
 }

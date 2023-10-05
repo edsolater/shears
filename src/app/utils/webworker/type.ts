@@ -5,7 +5,7 @@ export type WorkerMessage<T = any> = {
   payload: T
 }
 
-export type WorkerDescription = MayEnum<
+export type WorkerCommand = MayEnum<
   | 'fetch raydium supported tokens'
   | 'fetch raydium pairs info'
   | 'fetch raydium farms info'
