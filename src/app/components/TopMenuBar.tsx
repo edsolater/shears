@@ -1,8 +1,8 @@
 import { createEffect } from 'solid-js'
+import { Box, Piv, Text, renderHTMLDOM } from '../../packages/pivkit'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
-import { Piv, parsePivProps, Box, Text } from '../../packages/pivkit'
 
 export interface TopMenuBarProps {
   title?: string
@@ -17,7 +17,7 @@ export function TopMenuBar(props: TopMenuBarProps) {
   return (
     <Piv<'nav'>
       icss={{ userSelect: 'none', padding: '16px 48px', transition: '150ms' }}
-      render:self={(selfProps) => <nav {...parsePivProps(selfProps)} />}
+      render:self={(selfProps) => renderHTMLDOM('nav', selfProps)}
     >
       <Box icss={threeGridSlotBoxICSS}>
         <Box icss={{ display: 'flex', gap: '64px' }}>

@@ -16,82 +16,90 @@ import { getPropsFromPropContextContext } from '../PropContext'
 import { handleMergifyOnCallbackProps } from './mergifyProps'
 
 export type NativeProps = ReturnType<typeof parsePivProps>['props']
+
+// first step of parse
+function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
+  const parsedPivProps = pipe(
+    raw as Partial<PivProps>,
+    handleShadowProps,
+    handlePluginProps,
+    parsePivRenderPrependChildren,
+    parsePivRenderAppendChildren,
+    handleMergifyOnCallbackProps,
+  )
+  const controller = (parsedPivProps.innerController ?? {}) as ValidController
+  const ifOnlyNeedRenderChildren = 'if' in parsedPivProps ? Boolean(parsedPivProps.if) : undefined
+  const ifOnlyNeedRenderSelf =
+    ('ifSelfShown' as keyof PivProps) in parsedPivProps ? Boolean(parsedPivProps.ifSelfShown) : undefined
+  const selfCoverNode =
+    'render:self' in parsedPivProps ? parsedPivProps['render:self']?.(omit(parsedPivProps, ['render:self'])) : undefined
+  return { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
+}
+
+// second step of parse
+function getNativeHTMLPropsFromParsedPivProp(props: any, controller: ValidController) {
+  return 'htmlProps' in props // 💩 currently urgly now
+    ? {
+        get htmlProps() {
+          return parseHTMLProps(props.htmlProps)
+        },
+        get class() {
+          // get ter for lazy solidjs render
+          return (
+            shakeFalsy([classname(props.class, controller), handleICSSProps(props.icss, controller)]).join(' ') ||
+            undefined
+          ) /* don't render if empty string */
+        },
+        get ref() {
+          return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
+        },
+        get style() {
+          return parseIStyles(props.style, controller)
+        },
+        get onClick() {
+          return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
+        },
+        get children() {
+          return parsePivChildren(props.children, controller)
+        },
+      }
+    : {
+        get class() {
+          // get ter for lazy solidjs render
+          return (
+            shakeFalsy([classname(props.class, controller), handleICSSProps(props.icss, controller)]).join(' ') ||
+            undefined
+          ) /* don't render if empty string */
+        },
+        get ref() {
+          return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
+        },
+        get style() {
+          return parseIStyles(props.style, controller)
+        },
+        get onClick() {
+          return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
+        },
+        get children() {
+          return parsePivChildren(props.children, controller)
+        },
+      }
+}
 /**
  * Parses the PivProps object and returns an object with the parsed properties.
  * @param rawProps - The raw PivProps object to be parsed.
  * @returns An object with the parsed properties.
  */
 // TODO: props should be lazy load, props.htmlProps should also be lazy load
-export function parsePivProps(rawProps: PivProps<any>):any {
+export function parsePivProps(rawProps: PivProps<any>): any {
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: 'Piv' })
   const mergedContextProps = contextProps ? mergeProps(contextProps, rawProps) : rawProps
 
-  function getPropsInfo(raw: Partial<PivProps>) {
-    const props = pipe(
-      raw as Partial<PivProps>,
-      handleShadowProps,
-      handlePluginProps,
-      parsePivRenderPrependChildren,
-      parsePivRenderAppendChildren,
-      handleMergifyOnCallbackProps,
-    )
-    const controller = (props.innerController ?? {}) as ValidController
-    const ifOnlyNeedRenderChildren = 'if' in props ? Boolean(props.if) : undefined
-    const ifOnlyNeedRenderSelf = ('ifSelfShown' as keyof PivProps) in props ? Boolean(props.ifSelfShown) : undefined
-    const selfCoverNode = 'render:self' in props ? props['render:self']?.(omit(props, ['render:self'])) : undefined
-    return { props, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
-  }
-  const { props, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } =
-    getPropsInfo(mergedContextProps)
-  debugLog(mergedContextProps, props, controller)
-  const nativeProps =
-    'htmlProps' in props // 💩 currently urgly now
-      ? {
-          get htmlProps() {
-            return parseHTMLProps(props.htmlProps)
-          },
-          get class() {
-            // get ter for lazy solidjs render
-            return (
-              shakeFalsy([classname(props.class, controller), handleICSSProps(props.icss, controller)]).join(' ') ||
-              undefined
-            ) /* don't render if empty string */
-          },
-          get ref() {
-            return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
-          },
-          get style() {
-            return parseIStyles(props.style, controller)
-          },
-          get onClick() {
-            return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
-          },
-          get children() {
-            return parsePivChildren(props.children, controller)
-          },
-        }
-      : {
-          get class() {
-            // get ter for lazy solidjs render
-            return (
-              shakeFalsy([classname(props.class, controller), handleICSSProps(props.icss, controller)]).join(' ') ||
-              undefined
-            ) /* don't render if empty string */
-          },
-          get ref() {
-            return (el: HTMLElement) => el && mergeRefs(...flap(props.domRef))(el)
-          },
-          get style() {
-            return parseIStyles(props.style, controller)
-          },
-          get onClick() {
-            return 'onClick' in props ? parseOnClick(props.onClick!, controller) : undefined
-          },
-          get children() {
-            return parsePivChildren(props.children, controller)
-          },
-        }
+  const { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } =
+    getPropsInfoOfRawPivProps(mergedContextProps)
+  debugLog(mergedContextProps, parsedPivProps, controller)
+  const nativeProps = getNativeHTMLPropsFromParsedPivProp(parsedPivProps, controller)
 
   return { props: nativeProps, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
 }
@@ -171,7 +179,7 @@ function debugLog(rawProps: PivProps<any>, props: PivProps<any>, controller: Val
       console.debug(
         'onClick (raw → parsed): ',
         props.onClick,
-        'onClick' in props && parseOnClick(props.onClick!, controller)
+        'onClick' in props && parseOnClick(props.onClick!, controller),
       )
     }
     if (props.debugLog.includes('children')) {
