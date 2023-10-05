@@ -29,7 +29,7 @@
     "jsdom": "^22.1.0",
     "prettier": "^3.0.3",
     "typescript": "^5.2.2",
-    "vite": "^4.4.9",
+    "vite": "^4.4.10",
     "vite-bundle-visualizer": "^0.10.0",
     "vite-plugin-pwa": "^0.16.5",
     "vite-plugin-solid": "^2.7.0",
@@ -37,18 +37,18 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.1",
-    "@edsolater/fnkit": "^0.1.46",
+    "@edsolater/fnkit": "^0.1.47",
     "@emotion/css": "^11.11.2",
     "@raydium-io/raydium-sdk": "1.3.1-beta.20",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-wallets": "^0.19.22",
-    "@solana/web3.js": "^1.78.5",
+    "@solana/web3.js": "^1.78.7",
     "@solidjs/router": "^0.8.3",
     "bn.js": "^5.2.1",
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "decimal.js": "^10.4.3",
-    "immer": "^10.0.2",
+    "immer": "^10.0.3",
     "solid-js": "^1.7.12"
   }
 }
