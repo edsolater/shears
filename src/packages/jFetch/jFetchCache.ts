@@ -43,7 +43,7 @@ function syncWithLocalStorage(map: Map<ResourceUrl, JFetchCacheItem>) {
               (s) => ({
                 ...s,
                 [key]: { ...cacheItem, rawText: plainRawText, response: null },
-              }),
+              })
             )
           })
           return bindedOriginal(...args)

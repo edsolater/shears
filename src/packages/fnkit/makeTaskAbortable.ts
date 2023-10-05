@@ -30,7 +30,7 @@ export function makeTaskAbortable<T>(task: (canContinue: () => boolean) => T | P
     },
     () => {
       hasAbort = true
-    },
+    }
   ) as Promise<Awaited<T | undefined>> // typescript v4.8.3 isn't very cleaver
   return { abort, result, hasFinished, hasAborted, assertNotAborted: () => assert(!hasAbort, 'has aborted') }
 }

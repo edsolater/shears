@@ -7,7 +7,7 @@ export function asyncInvoke<T>(
   options?: {
     /** same key tasks will only invoke once in one event loop */
     key?: string | number | symbol
-  },
+  }
 ): Promise<T> {
   const key = options?.key
   if (key) {

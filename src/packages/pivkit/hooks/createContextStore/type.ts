@@ -8,7 +8,7 @@ export type Store<T extends Record<string, any>> = T & {
 
 export type DefaultStoreValue<T extends Record<string, any>> = (
   /** only work in property method */
-  store: Store<T>,
+  store: Store<T>
 ) => Partial<T>
 
 // callback in createContextStore
@@ -20,5 +20,5 @@ export type OnStoreInitCallback<T extends Record<string, any>> = (store: Store<T
 export type OnChangeCallback<T extends Record<string, any>, K extends keyof T = keyof T> = (
   value: T[K],
   prevValue: T[K] | undefined,
-  store: Store<T>,
+  store: Store<T>
 ) => void | (() => void) /* clean function */

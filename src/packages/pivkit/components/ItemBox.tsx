@@ -1,16 +1,18 @@
 import { JSXElement } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../piv'
+import { KitProps, Piv, useKitProps } from '../piv'
 
 export interface ItemBoxProps {
   suffix?: JSXElement
   prefix?: JSXElement
 }
 
+export type ItemBoxKitProps = KitProps<ItemBoxProps>
+
 /**
  * if for layout , don't render important content in Box
  */
-export function ItemBox(rawProps: KitProps<ItemBoxProps>) {
-  const { props } = useKitProps(rawProps)
+export function ItemBox(rawProps: ItemBoxKitProps) {
+  const { props } = useKitProps(rawProps, { name: 'ItemBox' })
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv shadowProps={props} icss={{ display: 'flex', alignItems: 'center' }}>

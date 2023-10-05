@@ -14,7 +14,7 @@ export function mutateByAdditionalObjectDescriptors<T>(
       [K in keyof T]?: (obj: T) => any
     }
     deletePropertyNames?: (keyof T)[]
-  },
+  }
 ): T {
   const newDescriptors: PropertyDescriptorMap = {
     ...Object.getOwnPropertyDescriptors(obj),

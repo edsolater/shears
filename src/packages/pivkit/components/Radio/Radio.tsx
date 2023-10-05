@@ -1,10 +1,12 @@
 import { Accessor } from 'solid-js'
-import { KitProps, Piv, PivProps, ValidController, useKitProps } from '../../../piv'
 import { createSyncSignal } from '../../hooks/createSyncSignal'
-import { Label, LabelProps } from '../Label'
-import { LabelBox, LabelBoxProps } from '../LabelBox'
+import { Label, LabelKitProps } from '../Label'
+import { LabelBox, LabelBoxKitProps } from '../LabelBox'
 import { HTMLInputRadio, HTMLInputRadioProps } from './HTMLInputRadio'
 import { createRadioStyle } from './hooks/createRadioStyle'
+import { ValidController } from '../../piv/typeTools'
+import { Piv, PivProps } from '../../piv/Piv'
+import { KitProps, useKitProps } from '../../createKit'
 
 export interface RadioController {
   option: string
@@ -13,39 +15,42 @@ export interface RadioController {
   uncheck: () => void
 }
 
-export type RadioProps<Controller extends ValidController = RadioController> = KitProps<
-  {
-    option: string
-    isChecked?: boolean
-    onChange?(utils: { option: string; isChecked: boolean }): void
-    'anatomy:ContainerBox'?: LabelBoxProps
-    'anatomy:HTMLRadio'?: HTMLInputRadioProps
-    'anatomy:Checkbox'?: PivProps<'div', Controller>
-    'anatomy:Option'?: LabelProps
-  },
+type RadioProps<Controller extends ValidController> = {
+  option: string
+  isChecked?: boolean
+  onChange?(utils: { option: string; isChecked: boolean }): void
+  'anatomy:ContainerBox'?: LabelBoxKitProps
+  'anatomy:HTMLRadio'?: HTMLInputRadioProps
+  'anatomy:Checkbox'?: PivProps<'div', Controller>
+  'anatomy:Option'?: LabelKitProps
+}
+
+export type RadioKitProps<Controller extends ValidController = RadioController> = KitProps<
+  RadioProps<Controller>,
   { controller: Controller }
 >
 
-const selfProps = ['isChecked', 'option', 'onChange'] satisfies (keyof RadioProps)[]
+const selfProps = ['isChecked', 'option', 'onChange'] satisfies (keyof RadioKitProps)[]
 
 export type RadioDefaultRadioProps = typeof defaultProps
 
 const defaultProps = {
   isChecked: false,
-} satisfies Partial<RadioProps>
+} satisfies Partial<RadioKitProps>
 
 /**
  * Radio can illustrate a boolean value
  */
-export function Radio(rawProps: RadioProps) {
-  const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, {
+export function Radio(kitProps: RadioKitProps) {
+  const { props, shadowProps, lazyLoadController } = useKitProps(kitProps, {
+    name: 'Radio',
     defaultProps,
     selfProps: selfProps,
   })
 
   const [isChecked, setIsChecked] = createSyncSignal({
-    get: () => props.isChecked,
-    set(value) {
+    getValueFromOutside: () => props.isChecked,
+    onInvokeSetter(value) {
       props.onChange?.({ isChecked: value, option: props.option ?? '' })
     },
   })

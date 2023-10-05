@@ -6,7 +6,7 @@ import { invoke } from './invoke'
  * inner use basic subscribable
  */
 export function createAbortableAsyncTask<T>(
-  task: (utils: { resolve: (value: T | PromiseLike<T>) => void; aborted: () => boolean }) => void,
+  task: (utils: { resolve: (value: T | PromiseLike<T>) => void; aborted: () => boolean }) => void
 ): {
   abort(): void
   resultSubscribable: Subscribable<T>

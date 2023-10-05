@@ -1,9 +1,9 @@
 import { createContext, createEffect, useContext } from 'solid-js'
-import { Piv, PivProps } from '../../piv'
-import { KitProps, UIKit, useKitProps } from '../../piv'
+import { Piv, PivProps } from '../piv'
+import { KitProps, UIKit, useKitProps } from '../piv'
 import { createToggle } from '../hooks/createToggle'
 import { Accessify } from '../utils/accessifyProps'
-import { parsePivProps } from '../../piv'
+import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 
 export interface CollapseProps extends UIKit<{ controller: CollapseController; htmlPropsTagName: 'details' }> {
   /** TODO: open still can't auto lock the trigger not controled component now */
@@ -26,7 +26,7 @@ export interface CollapseController {
 const CollapseContext = createContext<CollapseController>({} as CollapseController, { name: 'CollapseController' })
 
 export function Collapse(rawProps: CollapseProps) {
-  const { props } = useKitProps(rawProps, { controller: () => controller })
+  const { props } = useKitProps(rawProps, { name: 'Collapse', controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(props.open ?? props.defaultOpen ?? false, {
     onOff: props.onClose,
@@ -51,7 +51,7 @@ export function Collapse(rawProps: CollapseProps) {
   return (
     <CollapseContext.Provider value={controller}>
       <Piv<'details'>
-        render:self={(selfProps) => <details {...parsePivProps(selfProps)} />}
+        render:self={(selfProps) => renderHTMLDOM('details', selfProps)}
         shadowProps={props}
         onClick={toggle}
         htmlProps={{ open: innerOpen() }}
@@ -69,13 +69,13 @@ export function CollapseFace(
       controller: CollapseController
       htmlPropsTagName: 'summary'
     }
-  >,
+  >
 ) {
   const controller = useContext(CollapseContext)
-  const { props } = useKitProps(rawProps, { controller: () => controller })
+  const { props } = useKitProps(rawProps, { name: 'CollapseFase', controller: () => controller })
   return (
     <Piv<'summary', CollapseController>
-      render:self={(selfProps) => <summary {...parsePivProps(selfProps)} />}
+      render:self={(selfProps) => renderHTMLDOM('summary', selfProps)}
       shadowProps={props}
       icss={{ listStyle: 'none' }}
       innerController={controller}
@@ -89,7 +89,7 @@ interface CollapseContentProps extends PivProps {}
 
 export function CollapseContent(rawProps: CollapseContentProps) {
   const controller = useContext(CollapseContext)
-  const { props } = useKitProps(rawProps, { controller: () => controller })
+  const { props } = useKitProps(rawProps, { name: 'CollapseContent', controller: () => controller })
   return <Piv shadowProps={props} innerController={controller} />
 }
 

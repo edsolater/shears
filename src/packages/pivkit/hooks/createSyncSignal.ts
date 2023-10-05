@@ -4,27 +4,42 @@ import { Signal, createEffect, createSignal, on } from 'solid-js'
  * a shortcut
  */
 export function createSyncSignal<T>(options: {
+  defaultValue(): T
+  getValueFromOutside: (prev?: T) => T | undefined
+  onInvokeSetter?: (value: T) => void
+}): Signal<T>
+export function createSyncSignal<T>(options: {
   defaultValue?(): T
-  get: (prev?: T) => T
-  set?: (value: T) => void
+  getValueFromOutside: (prev?: T) => T
+  onInvokeSetter?: (value: T) => void
+}): Signal<T>
+export function createSyncSignal<T>(options: {
+  defaultValue?(): T
+  getValueFromOutside: (prev?: T) => T | undefined
+  onInvokeSetter?: (value: T) => void
 }): Signal<T> {
-  const [signal, setSignal] = createSignal(
-    'defaultValue' in options ? options.defaultValue?.() ?? options.get() : options.get(),
+  const [accessor, setAccessor] = createSignal(
+    'defaultValue' in options
+      ? options.defaultValue?.() ?? options.getValueFromOutside()
+      : options.getValueFromOutside()
   )
+
   // invoke `get`
-  createEffect(() => setSignal((prev) => options.get(prev)))
+  createEffect(() => setAccessor((prev) => options.getValueFromOutside(prev) ?? prev))
+
   // invoke `set`
   createEffect(
     on(
-      signal,
+      accessor,
       (newValue, prevValue) => {
         // same as input so no need to invoke the setter fn
-        if (newValue === options.get()) return
-        options.set?.(newValue)
+        if (newValue === options.getValueFromOutside()) return
+        options.onInvokeSetter?.(newValue as T)
       },
-      { defer: true },
-    ),
+      { defer: true }
+    )
   )
 
-  return [signal, setSignal]
+  // @ts-expect-error no need to check
+  return [accessor, setAccessor]
 }

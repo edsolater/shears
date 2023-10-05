@@ -18,7 +18,7 @@ export function areShallowContain(a: any, b: any): boolean {
     return a.every((item) => setB.has(item))
   }
   if (isObject(a) && isObject(b)) {
-    return Object.keys(a).every((key) => a[key] === b[key])
+    return Object.getOwnPropertyNames(a).every((key) => a[key] === b[key])
   }
   return false
 }

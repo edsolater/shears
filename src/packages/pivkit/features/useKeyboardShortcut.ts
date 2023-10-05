@@ -1,6 +1,6 @@
 import { AnyObj, WeakerMap, WeakerSet, isFunction, isString, shakeNil } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { KeyboardShortcutFn, KeybordShortcutKeys, handleKeyboardShortcut } from '../../domkit'
+import { KeyboardShortcutFn, KeybordShortcutKeys, handleKeyboardShortcut } from '../domkit'
 import { Subscribable } from '../../fnkit'
 import { createRef } from '../hooks/createRef'
 import { createSharedSignal } from '../hooks/createSharedSignal'
@@ -17,7 +17,7 @@ export type DetailKeyboardShortcutSetting = Record<
 
 // hook info store, store registered keyboard shortcuts
 const [registeredKeyboardShortcut, registeredKeyboardShortcutSubscribable] = makeSubscriable(
-  new WeakerMap<HTMLElement, DetailKeyboardShortcutSetting>(),
+  new WeakerMap<HTMLElement, DetailKeyboardShortcutSetting>()
 )
 
 function registerLocalKeyboardShortcut(el: HTMLElement, settings: DetailKeyboardShortcutSetting): { remove(): void } {
@@ -36,7 +36,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
   return {
     remove() {
       if (!originalObject) return
-      const removedKeys = Object.keys(settings) as KeybordShortcutKeys[]
+      const removedKeys = Object.getOwnPropertyNames(settings) as KeybordShortcutKeys[]
       removedKeys.forEach((key) => {
         delete originalObject[key]
       })
@@ -92,7 +92,7 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
     setNewSettings(
       newSettings:
         | DetailKeyboardShortcutSetting
-        | ((prev: DetailKeyboardShortcutSetting) => DetailKeyboardShortcutSetting),
+        | ((prev: DetailKeyboardShortcutSetting) => DetailKeyboardShortcutSetting)
     ) {
       setCurrentSettings(newSettings)
     },
@@ -108,7 +108,7 @@ function parseShortcutConfigFromSettings(settings: DetailKeyboardShortcutSetting
 // TODO: should move to /fnkit
 function mapObjectEntry<T extends AnyObj, NK extends keyof any, NV>(
   o: T,
-  fn: (value: T[keyof T], key: keyof T) => [NK, NV],
+  fn: (value: T[keyof T], key: keyof T) => [NK, NV]
 ): Record<NK, NV> {
   return Object.fromEntries(Object.entries(o).map(([key, value]) => fn(value, key as keyof T))) as Record<NK, NV>
 }
@@ -150,7 +150,7 @@ export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue?:
  * @returns [proxiedObject, subscribable]
  */
 export function makeSubscriable<T extends AnyObj>(
-  originalObject: T,
+  originalObject: T
 ): [proxiedObject: T, subscribable: Subscribable<T>] {
   const mayCauseChangeKeys =
     originalObject instanceof Array
@@ -159,7 +159,7 @@ export function makeSubscriable<T extends AnyObj>(
       ? ['add', 'delete']
       : originalObject instanceof Map || originalObject instanceof WeakMap || originalObject instanceof WeakerMap
       ? ['set', 'delete']
-      : Object.keys(originalObject)
+      : Object.getOwnPropertyNames(originalObject)
   const subscribable = new Subscribable<T>()
   const proxiedValue = new Proxy(originalObject, {
     get(target, prop) {

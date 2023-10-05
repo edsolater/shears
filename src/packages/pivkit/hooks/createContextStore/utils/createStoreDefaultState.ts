@@ -6,7 +6,7 @@ import { Store } from '../type'
  */
 
 export function createStoreDefault<T extends Record<string, any>>(
-  defaultState: Partial<T> | ((store: Store<T>) => Partial<T>),
+  defaultState: Partial<T> | ((store: Store<T>) => Partial<T>)
 ): (store: Store<T>) => Partial<T> {
   return isObject(defaultState) ? () => defaultState as Partial<T> : defaultState
 }

@@ -1,5 +1,5 @@
-import { KitProps, Piv, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv'
+import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
+import { KitProps, Piv, useKitProps } from '../piv'
 
 export interface IconProps {
   name?: string
@@ -13,11 +13,11 @@ export interface IconProps {
  * @todo add fallbackSrc
  */
 export function Icon(rawProps: KitProps<IconProps>) {
-  const { props } = useKitProps(rawProps)
+  const { props } = useKitProps(rawProps, { name: 'Icon' })
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>
-      render:self={(selfProps) => <img {...parsePivProps(selfProps)} />}
+      render:self={(selfProps) => renderHTMLDOM('img', selfProps)}
       htmlProps={{ alt: props.name, src: props.src }}
       icss={{ display: 'block' }}
       shadowProps={props}

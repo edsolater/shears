@@ -1,6 +1,5 @@
 import { createEffect, onCleanup } from 'solid-js'
-import { onEvent } from '../../domkit'
-import { EventListenerController } from '../../domkit'
+import { EventListenerController, onEvent } from '../domkit'
 import { ElementAccessors, GetElementsFromElementAccessors, getElementsFromAccessors } from '../utils/elementAccessors'
 
 /**

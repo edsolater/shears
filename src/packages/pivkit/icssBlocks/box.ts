@@ -1,4 +1,4 @@
-import { CSSObject, ICSSObject } from '../../piv'
+import { CSSObject, ICSSObject } from '../piv'
 import { cssColors } from '../styles/cssColors'
 
 export const icss_row = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>
@@ -6,7 +6,7 @@ export const icss_row = (options?: { gap?: CSSObject['gap']; items?: CSSObject['
     display: 'flex',
     alignItems: options?.items ?? 'center',
     gap: options?.gap,
-  } satisfies ICSSObject)
+  }) satisfies ICSSObject
 
 export const icss_col = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>
   ({
@@ -14,21 +14,21 @@ export const icss_col = (options?: { gap?: CSSObject['gap']; items?: CSSObject['
     flexDirection: 'column',
     alignItems: options?.items ?? 'center',
     gap: options?.gap,
-  } satisfies ICSSObject)
+  }) satisfies ICSSObject
 
 export const icss_card = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>
   ({
     display: 'grid',
     border: 'solid',
-    padding: 24,
-    borderRadius: 16,
-  } satisfies ICSSObject)
+    padding: '24px',
+    borderRadius: '16px',
+  }) satisfies ICSSObject
 
 export const icss_clickable = (options?: {}) =>
   ({
     cursor: 'pointer',
     ':is(:hover,:active)': { backdropFilter: 'brightness(0.9)', filter: 'brightness(0.9)' },
-  } satisfies ICSSObject)
+  }) satisfies ICSSObject
 
 export const icss_label = (options?: { w: CSSObject['minWidth']; h: CSSObject['minHeight'] }) =>
   ({
@@ -37,9 +37,9 @@ export const icss_label = (options?: { w: CSSObject['minWidth']; h: CSSObject['m
     textAlign: 'center',
     paddingBlock: '.25em',
     paddingInline: '.5em',
-    borderRadius: 4,
+    borderRadius: '4px',
     background: cssColors.component_label_bg_default,
-  } satisfies ICSSObject)
+  }) satisfies ICSSObject
 
 export const icss_inputType = (options?: { w: CSSObject['minWidth']; h: CSSObject['minHeight'] }) =>
   ({
@@ -50,4 +50,4 @@ export const icss_inputType = (options?: { w: CSSObject['minWidth']; h: CSSObjec
     // background: cssColors.component_input_bg_default,
     // outlineColor: cssColors.dodgerBlue,
     borderBottom: 'solid',
-  } satisfies ICSSObject)
+  }) satisfies ICSSObject

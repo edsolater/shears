@@ -51,7 +51,7 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
   let cachedFnResult: ReturnType<F> | undefined = undefined
 
   const invokeFn = () => {
-    const result = fn(...middleParams[middleParams.length - 1])
+    const result = fn(...(middleParams.at(-1) ?? []))
     middleParams.length = 0 // clear middleParams
     currentTimoutId = null // clear Timeout Id
     remainDelayTime = options?.delay ?? defaultThrottleDelay // reset remain time
@@ -81,7 +81,7 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
 
 function promisedSetTimeout<T>(
   fn: () => T | Promise<T>,
-  delay: number,
+  delay: number
 ): { timer: Promise<ReturnType<typeof setTimeout>>; result: Promise<Awaited<T>> } {
   let timerPromiseResolve: (value: ReturnType<typeof setTimeout>) => void
   const timer = new Promise<ReturnType<typeof setTimeout>>((resolve, reject) => {

@@ -1,17 +1,23 @@
 import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
-import { createMemo, JSX } from 'solid-js'
+import { createMemo } from 'solid-js'
 import { objectMerge } from '../../fnkit'
-import { addDefaultProps, mergeProps } from '../../piv'
-import { KitProps, useKitProps } from '../../piv'
-import { Piv } from '../../piv'
-import { parsePivChildren } from '../../piv'
-import { compressICSSToObj, ICSS } from '../../piv'
-import { omit } from '../../piv'
 import { createRef } from '../hooks/createRef'
 import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
+import {
+  addDefaultProps,
+  compressICSSToObj,
+  ICSS,
+  KitProps,
+  mergeProps,
+  omit,
+  parsePivChildren,
+  Piv,
+  PivChild,
+  useKitProps,
+} from '../piv'
+import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
-import { parsePivProps } from '../../piv'
 type BooleanLike = unknown
 
 export interface ButtonController {
@@ -54,15 +60,17 @@ export interface ButtonProps {
     fallbackProps?: Omit<ButtonProps, 'validators' | 'disabled'>
   }>
   /** normally, it's an icon  */
-  prefix?: JSX.Element
+  prefix?: PivChild
   /** normally, it's an icon  */
-  suffix?: JSX.Element
+  suffix?: PivChild
 }
+
+export type ButtonKitProps = KitProps<ButtonProps, { controller: ButtonController }>
 
 /**
  * feat: build-in click ui effect
  */
-export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonController }>) {
+export function Button(kitProps: ButtonKitProps) {
   const innerController: ButtonController = {
     click: () => {
       ref()?.click()
@@ -74,23 +82,24 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
   /* ---------------------------------- props --------------------------------- */
   const { props: rawProps } = useKitProps(kitProps, {
     controller: () => innerController,
+    name: 'Button',
   })
 
   const props = addDefaultProps(
     rawProps,
-    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button')),
+    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
   )
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
     isValuedArray(props.validators) || props.validators
       ? flap(props.validators!).find(({ should }) => !shrinkFn(should))
-      : undefined,
+      : undefined
   )
   const mergedProps = mergeProps(props, failedTestValidator()?.fallbackProps)
 
   const isActive = createMemo(
-    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled),
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
   )
 
   const mainBgColor = props.theme?.mainBgColor ?? cssColors.component_button_bg_primary
@@ -109,22 +118,22 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
     xs: '2px 6px',
   }[size]
   const cssFontSize = {
-    lg: 16,
-    md: 16,
-    sm: 14,
-    xs: 12,
+    lg: '16px',
+    md: '16px',
+    sm: '14px',
+    xs: '12px',
   }[size]
   const cssBorderRadius = {
-    lg: 12,
-    md: 8,
-    sm: 8,
-    xs: 4,
+    lg: '12px',
+    md: '8px',
+    sm: '8px',
+    xs: '4px',
   }[size]
   const cssOutlineWidth = {
-    lg: 2,
-    md: 2,
-    sm: 1,
-    xs: 0.5,
+    lg: '2px',
+    md: '2px',
+    sm: '1px',
+    xs: '0.5px',
   }[size]
 
   const mergedController =
@@ -132,25 +141,25 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
   return (
     <Piv<'button'>
       class={Button.name}
-      render:self={(selfProps) => <button {...parsePivProps(selfProps)} />}
+      render:self={(selfProps) => renderHTMLDOM('button', selfProps)}
       shadowProps={omit(props, 'onClick')} // omit onClick for need to invoke the function manually, see below 👇
       onClick={(...args) => isActive() && props.onClick?.(...args)}
       htmlProps={{ type: 'button' }}
       icss={[
-        { transition: `50ms ${cssTransitionTimeFnOutCubic}` }, // make it's change smooth
-        { border: 'none' }, // initialize
-        { color: shrinkFn(mainTextColor, [mergedProps]) }, // light mode
+        {
+          transition: `50ms ${cssTransitionTimeFnOutCubic}`, // make it's change smooth
+          border: 'none',
+          color: shrinkFn(mainTextColor, [mergedProps]), // light mode
+          cursor: 'pointer',
+          userSelect: 'none',
+          width: 'max-content',
+        },
         {
           display: 'inline-flex',
           gap: shrinkFn(contentGap, [mergedProps]),
           alignItems: 'center',
           justifyContent: 'center',
         }, // center the items
-        {
-          cursor: 'pointer',
-          userSelect: 'none',
-          width: 'max-content',
-        },
         !isActive() && {
           opacity: shrinkFn(disableOpacity, [mergedProps]),
           cursor: 'not-allowed',
@@ -159,14 +168,14 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
           padding: cssPadding,
           fontSize: cssFontSize,
           borderRadius: cssBorderRadius,
-          fontWeight: 500,
+          fontWeight: '500px',
         },
         (!props.variant || props.variant === 'solid') && {
           backgroundColor: shrinkFn(mainBgColor, [mergedProps]),
-          ':hover': {
+          '&:hover': {
             filter: 'brightness(95%)',
           },
-          ':active': {
+          '&:active': {
             transform: 'scale(0.98)',
             filter: 'brightness(90%)',
           },
@@ -177,7 +186,7 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
           outlineOffset: `-${cssOutlineWidth}`,
         },
         props.variant === 'text' && {
-          ':hover': {
+          '&:hover': {
             backgroundColor: opacityCSSColor(shrinkFn(mainBgColor, [mergedProps]), 0.15),
           },
         },
@@ -185,10 +194,10 @@ export function Button(kitProps: KitProps<ButtonProps, { controller: ButtonContr
       ]}
       domRef={setRef}
     >
-      {props.prefix}
+      {parsePivChildren(props.prefix, mergedController)}
       {/* TODO: no need. this is because kitProp don't support Access and Deaccess */}
       {parsePivChildren(props.children, mergedController)}
-      {props.suffix}
+      {parsePivChildren(props.suffix, mergedController)}
     </Piv>
   )
 }

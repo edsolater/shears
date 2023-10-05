@@ -18,7 +18,6 @@ export default defineConfig({
       name: 'singleHMR',
       handleHotUpdate({ modules }) {
         modules.map((m) => {
-          m.importedModules = new Set()
           m.importers = new Set()
         })
 

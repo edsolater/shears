@@ -1,10 +1,9 @@
-import { CSSInterpolation } from '@emotion/css'
 import { Accessor, Show, createEffect, createSignal } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../../../piv'
 import { createRef } from '../../hooks/createRef'
-import { useClickOutside } from '../../hooks/useClickOutside'
-import { useDOMEventListener } from '../../hooks/useDOMEventListener'
-import { parsePivProps } from '../../../piv'
+import { useClickOutside } from '../../domkit/hooks/useClickOutside'
+import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
+import { ICSS, KitProps, Piv, useKitProps } from '../../piv'
+import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 
 export interface ModalController {
   isOpen: boolean
@@ -20,7 +19,7 @@ export interface ModalProps {
   onClose?(): void
 
   /** style of backdrop */
-  backdropICSS?: CSSInterpolation
+  backdropICSS?: ICSS
 
   /**
    * control when to render DOM
@@ -32,8 +31,12 @@ export interface ModalProps {
     | 'always' // always stay DOM
 }
 
-export function Modal(rawProps: KitProps<ModalProps>) {
-  const { props, lazyLoadController } = useKitProps(rawProps)
+export type ModalKitProps = KitProps<ModalProps>
+
+export function Modal(kitProps: ModalKitProps) {
+  const { props, lazyLoadController } = useKitProps(kitProps, {
+    name: 'Modal',
+  })
   lazyLoadController(() => ({
     get isOpen() {
       return innerOpen()
@@ -92,9 +95,11 @@ export function Modal(rawProps: KitProps<ModalProps>) {
   return (
     <Show when={shouldRenderDOM()}>
       <Piv
-        render:self={(selfProps) => <dialog {...parsePivProps(selfProps)} open={props.open && !props.isModal} />}
+        render:self={(selfProps) => renderHTMLDOM('dialog', selfProps, { open: props.open && !props.isModal })}
         shadowProps={props}
-        icss={[props.backdropICSS && { '&::backdrop': props.backdropICSS }]}
+        // TODO fix this
+        // @ts-expect-error lack of icss type
+        icss={{ '&::backdrop': props.backdropICSS }}
         domRef={setDialogRef}
       >
         <Piv domRef={setDialogContentRef} icss={{ display: 'contents' }}>

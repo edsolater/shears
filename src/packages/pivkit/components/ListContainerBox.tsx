@@ -1,5 +1,5 @@
 import { Box } from '..'
-import { KitProps, useKitProps } from '../../piv'
+import { KitProps, useKitProps } from '../piv'
 
 export interface ListContainerBoxProps {
   dir?: 'x' | 'y'
@@ -13,12 +13,14 @@ const defaultProps = {
   dir: 'y',
 } as const satisfies Partial<ListContainerBoxProps>
 
+export type ListContainerBoxKitProps = KitProps<ListContainerBoxProps, ListContainerBoxController>
+
 /**
  * box for list
  * @deprecated , just use {@link List}
  */
-export function ListContainerBox(rawProps: KitProps<ListContainerBoxProps, ListContainerBoxController>) {
-  const { props, lazyLoadController } = useKitProps(rawProps, { defaultProps })
+export function ListContainerBox(kitProps: ListContainerBoxKitProps) {
+  const { props, lazyLoadController } = useKitProps(kitProps, { defaultProps, name: 'ListContainerBox' })
   return (
     <Box
       shadowProps={props}

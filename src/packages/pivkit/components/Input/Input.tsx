@@ -1,9 +1,9 @@
 import { createEffect, createMemo, createSignal, on } from 'solid-js'
-import { KitProps, Piv, PivProps, useKitProps } from '../../../piv'
+import { KitProps, Piv, PivProps, useKitProps } from '../../piv'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
 import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
-import { parsePivProps } from '../../../piv'
+import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 
 export interface InputController {
   text: string
@@ -11,48 +11,41 @@ export interface InputController {
   setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
 }
 
-export type InputProps = KitProps<
-  {
-    /**
-     * will not apply default icss: `min-width: 10em`
-     * input will auto widen depends on content Text
-     * @todo
-     */
-    isFluid?: boolean
+export type InputProps = {
+  /**
+   * will not apply default icss: `min-width: 10em`
+   * input will auto widen depends on content Text
+   * @todo
+   */
+  isFluid?: boolean
+  // -------- handle by useInputInnerValue --------
+  /** only after `<Input>` created */
+  defaultValue?: string
+  /** when change, affact to ui*/
+  value?: string
+  /** default is true */
+  disableOutsideValueUpdateWhenUserInput?: boolean
+  disableUserInput?: boolean
+  // TODO: imply it !!!
+  disableOutSideValue?: boolean
+  /** disabled = disableOutSideValue + disableUserInput */
+  disabled?: boolean
+  // only user can trigger this callback
+  onUserInput?(utils: { text: string | undefined }): void
+  // both user and program can trigger this callback
+  onInput?(utils: { text: string | undefined; byUser: boolean }): void
+  // only program can trigger this callback
+  onProgramInput?(utils: { text: string | undefined }): void
+}
 
-    // -------- handle by useInputInnerValue --------
-    /** only after `<Input>` created */
-    defaultValue?: string
-
-    /** when change, affact to ui*/
-    value?: string
-
-    /** default is true */
-    disableOutsideValueUpdateWhenUserInput?: boolean
-
-    disableUserInput?: boolean
-
-    // TODO: imply it !!!
-    disableOutSideValue?: boolean
-
-    /** disabled = disableOutSideValue + disableUserInput */
-    disabled?: boolean
-
-    // only user can trigger this callback
-    onUserInput?(utils: { text: string | undefined }): void
-    // both user and program can trigger this callback
-    onInput?(utils: { text: string | undefined; byUser: boolean }): void
-    // only program can trigger this callback
-    onProgramInput?(utils: { text: string | undefined }): void
-  },
-  { controller: InputController }
->
+export type InputKitProps = KitProps<InputProps, { controller: InputController }>
 
 /**
  * if for layout , don't render important content in Box
  */
-export function Input(rawProps: InputProps) {
+export function Input(rawProps: InputKitProps) {
   const { props } = useKitProps(rawProps, {
+    name: 'Input',
     controller: (mergedProps) =>
       ({
         get text() {
@@ -66,13 +59,13 @@ export function Input(rawProps: InputProps) {
 
   return (
     <Piv<'input'>
-      render:self={(selfProps) => <input {...parsePivProps(selfProps)} />}
+      render:self={(selfProps) => renderHTMLDOM('input', selfProps)}
       shadowProps={[props, additionalProps()]}
       class={Input.name}
       icss={[
         { flex: 1, background: 'transparent', minWidth: props.isFluid ? undefined : '14em' },
         /* initialize */
-        { border: 'none', padding: 8 },
+        { border: 'none', padding: '8px', fontSize: '0.8333em' },
       ]}
     />
   )
@@ -81,7 +74,7 @@ export function Input(rawProps: InputProps) {
 /**
  *  handle `<Input>`'s value
  */
-function useInputInnerValue(props: DeAccessifyProps<InputProps>) {
+function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
   const [inputRef, setInputRef] = createRef<HTMLInputElement>()
   // if user is inputing or just input, no need to update upon out-side value
   const [isFocused, { on: focusInput, off: unfocusInput }] = createToggle()
@@ -144,8 +137,8 @@ function useInputInnerValue(props: DeAccessifyProps<InputProps>) {
       () => props.value,
       (newValue) => {
         updateTextDOM(newValue)
-      },
-    ),
+      }
+    )
   )
 
   // update when lose focus
@@ -154,8 +147,8 @@ function useInputInnerValue(props: DeAccessifyProps<InputProps>) {
       () => isFocused() === false,
       () => {
         setCachedOutsideValue(props.value)
-      },
-    ),
+      }
+    )
   )
 
   const additionalProps = createMemo(
@@ -179,7 +172,7 @@ function useInputInnerValue(props: DeAccessifyProps<InputProps>) {
           onFocus: focusInput,
           onBlur: unfocusInput,
         },
-      } as PivProps<'input'>),
+      } as PivProps<'input'>)
   )
   return [
     additionalProps,

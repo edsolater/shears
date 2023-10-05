@@ -1,3 +1,3 @@
-export * from './Faker'
+export * from './LazyLoadObj'
 export * from './IndexAccessList'
 export * from './Subscribable'

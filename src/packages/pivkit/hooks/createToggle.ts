@@ -1,6 +1,6 @@
 import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createSignal } from 'solid-js'
-import { addDefaultProps } from '../../piv'
+import { addDefaultProps } from '../piv'
 
 interface ToggleController {
   delayOn(options?: { forceDelayTime?: number }): void
@@ -28,7 +28,7 @@ export function createToggle(
     onOn?(): void
     /* usually it is for debug */
     onToggle?(isOn: boolean): void
-  } = {},
+  } = {}
 ): CreateToggleReturn {
   const opts = addDefaultProps(options, { delay: 800 })
   const [isOn, _setIsOn] = createSignal(shrinkFn(initValue))

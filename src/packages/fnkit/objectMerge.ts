@@ -48,7 +48,7 @@ function getKeys(objs: AnyObj[]) {
     objs.flatMap((obj) => {
       const descriptors = Object.getOwnPropertyDescriptors(obj) // 🤔 necessary?
       return Reflect.ownKeys(descriptors)
-    }),
+    })
   )
 }
 

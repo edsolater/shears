@@ -1,12 +1,8 @@
-import { Accessor, createSignal } from 'solid-js'
-import { Piv } from '../../../../piv/Piv'
-import { KitProps, useKitProps } from '../../../../piv/createKit'
-import { ValidController } from '../../../../piv/types'
-import { createSyncSignal } from '../../../hooks'
-import { Label } from '../../Label'
-import { LabelBox } from '../../LabelBox'
-import { Box } from '../../Box'
-import { icss_col, icss_row } from '../../../icssBlocks'
+import { createSignal } from 'solid-js'
+import { KitProps, useKitProps } from '../../../createKit'
+import { ValidController } from '../../../piv/typeTools'
+import { icssCol } from '../../../styles/icssBlocks'
+import { Box } from '../../Boxes/Box'
 
 export interface RadioGroupController {
   name: string
@@ -16,31 +12,30 @@ export interface RadioGroupController {
   uncheck: () => void
 }
 
-export type RadioGroupProps<Controller extends ValidController = RadioGroupController> = KitProps<
-  {
-    name: string
-    option?: string
-    defaultOption?: string
-    onChange?(utils: { option: string; isChecked: boolean }): void
-    // 'anatomy:ContainerBox'?: LabelBoxProps
-    // 'anatomy:HTMLRadioGroup'?: HTMLInputRadioGroupProps
-    // 'anatomy:Checkbox'?: PivProps<'div', Controller>
-    // 'anatomy:Option'?: LabelProps
-  },
+export type RadioGroupProps = {
+  name: string
+  option?: string
+  defaultOption?: string
+  onChange?(utils: { option: string; isChecked: boolean }): void
+}
+
+export type RadioGroupKitProps<Controller extends ValidController = RadioGroupController> = KitProps<
+  RadioGroupProps,
   { controller: Controller }
 >
 
-const selfProps = ['name', 'option', 'defaultOption', 'onChange'] satisfies (keyof RadioGroupProps)[]
+const selfProps = ['name', 'option', 'defaultOption', 'onChange'] satisfies (keyof RadioGroupKitProps)[]
 
 const defaultProps = {
   name: 'unknown radio group',
-} satisfies Partial<RadioGroupProps>
+} satisfies Partial<RadioGroupKitProps>
 
 /**
  * RadioGroup can illustrate a boolean value
  */
-export function RadioGroup(rawProps: RadioGroupProps) {
-  const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, {
+export function RadioGroup(kitProps: RadioGroupKitProps) {
+  const { props, shadowProps, lazyLoadController } = useKitProps(kitProps, {
+    name: 'RadioGroup',
     defaultProps,
     selfProps: selfProps,
   })
@@ -55,5 +50,5 @@ export function RadioGroup(rawProps: RadioGroupProps) {
 
   lazyLoadController(radioGroupController)
 
-  return <Box class='RadioGroup' shadowProps={shadowProps} icss={icss_col()}></Box>
+  return <Box class='RadioGroup' shadowProps={shadowProps} icss={icssCol()} />
 }

@@ -1,12 +1,14 @@
 import { Accessor, JSX, createEffect, createMemo, createSignal, onCleanup, splitProps, useContext } from 'solid-js'
-import { Piv, PivProps, useKitProps } from '../../../piv'
-import { omit } from '../../../piv'
+import { Piv, PivProps, useKitProps } from '../../piv'
+import { omit } from '../../piv'
 import { createRef } from '../../hooks/createRef'
-import useResizeObserver from '../../hooks/useResizeObserver'
+import useResizeObserver from '../../domkit/hooks/useResizeObserver'
 import { ListContext } from './List'
 
 export interface ListItemProps extends Omit<PivProps, 'children'> {
   children: () => JSX.Element
+  // TODO: just forceVisiable is not enough, should have more control props
+  forceVisiable?: boolean
 }
 
 export interface ListItemController {
@@ -19,14 +21,13 @@ export interface ListItemController {
 export function ListItem(originalProps: ListItemProps) {
   const [childrenProps, rawProps] = splitProps(originalProps, ['children'])
   const children = childrenProps.children
-  // console.count('render ListItem')
-  const { props, lazyLoadController } = useKitProps(rawProps)
+  const { props, lazyLoadController } = useKitProps(rawProps, { name: 'ListItem' })
 
   const [itemRef, setRef] = createRef<HTMLElement>()
 
   //=== isIntersecting with parent `<List>`'s intersectionObserver
   const listContext = useContext(ListContext)
-  const [isIntersecting, setIsIntersecting] = createSignal(false)
+  const [isIntersecting, setIsIntersecting] = createSignal(Boolean(props.forceVisiable))
   createEffect(() => {
     const el = itemRef()
     if (!el) return
@@ -39,16 +40,15 @@ export function ListItem(originalProps: ListItemProps) {
   const { setRef: setSizeDetectorTarget, innerHeight, innerWidth } = useElementSizeDetector()
 
   //=== Controller
-  const controller: ListItemController = {
-    isIntersecting,
-  }
+  const controller: ListItemController = { isIntersecting }
   lazyLoadController(controller)
 
   //=== render children
   const childContent = createMemo(() => children())
+
   return (
     <Piv
-      debugLog={[]}
+      class='ListItem'
       domRef={[setRef, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
       shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
       style={{
@@ -72,7 +72,6 @@ function useElementSizeDetector() {
   const { destory } = useResizeObserver(ref, ({ el }) => {
     detectSize(el)
   })
-  onCleanup(destory)
 
   function detectSize(el: HTMLElement) {
     if (!el) return

@@ -1,9 +1,9 @@
 import { Accessor } from 'solid-js'
-import { Piv, PivProps, UIKit, useKitProps } from '../../../piv'
+import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
 import { createSyncSignal } from '../../hooks/createSyncSignal'
-import { makeElementMoveSmooth } from '../../hooks/makeElementMoveSmooth'
+import { makeElementMoveSmooth } from '../../domkit/utils/makeElementMoveSmooth'
 import { Accessify } from '../../utils/accessifyProps'
-import { Label, LabelProps } from '../Label'
+import { Label, LabelKitProps } from '../Label'
 import { HTMLCheckbox, HTMLCheckboxProps } from './HTMLCheckbox'
 import { useSwitchStyle } from './hooks/useSwitchStyle'
 import { LabelBox } from '../LabelBox'
@@ -25,7 +25,7 @@ export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }
   isDefaultChecked?: Accessify<boolean, SwitchController>
   onChange?(utils: { isChecked: boolean }): void
   /** for Chakra has, so i has */
-  'anatomy:ContainerBox'?: LabelProps
+  'anatomy:ContainerBox'?: LabelKitProps
   /** hidden HTML input(type=checkbox) for aria readbility */
   'anatomy:HTMLCheckbox'?: HTMLCheckboxProps
   /** SwitchThumb */
@@ -62,8 +62,8 @@ export function Switch(rawProps: SwitchProps) {
   })
 
   const [isChecked, setIsChecked] = createSyncSignal({
-    get: () => props.isChecked ?? props.isDefaultChecked,
-    set(value) {
+    getValueFromOutside: () => props.isChecked ?? props.isDefaultChecked,
+    onInvokeSetter(value) {
       props.onChange?.({ isChecked: value })
     },
   })
@@ -79,7 +79,10 @@ export function Switch(rawProps: SwitchProps) {
   lazyLoadController(switchController)
 
   return (
-    <LabelBox shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:ContainerBox']]}>
+    <LabelBox
+      innerController={switchController}
+      shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:ContainerBox']]}
+    >
       <HTMLCheckbox
         shadowProps={[htmlCheckboxStyleProps, props['anatomy:HTMLCheckbox']]}
         innerController={switchController}
@@ -108,7 +111,7 @@ export function Switch(rawProps: SwitchProps) {
         //         backgroundColor: 'currentcolor',
         //         transition: '600ms',
         //       }}
-        //     ></Piv>
+        //     />
         //   )
         // }}
       />

@@ -1,5 +1,5 @@
-import { DeKitProps } from '../../../../piv'
-import { LabelProps } from '../../Label'
+import { DeKitProps } from '../../../piv'
+import { cssColors } from '../../../styles'
 import { HTMLCheckboxProps } from '../HTMLCheckbox'
 import { SwitchProps } from '../Switch'
 
@@ -8,8 +8,24 @@ import { SwitchProps } from '../Switch'
  */
 export function useSwitchStyle(params: { props: DeKitProps<SwitchProps> }) {
   const wrapperLabelStyleProps = {
-    icss: { width: '4em', height: '2em', background: '#cbd5e0', borderRadius: '999em', padding: 4 },
-  } satisfies Partial<LabelProps>
+    icss: ({ isChecked }) => ({
+      '@layer default-variable': {
+        '--accent-color': cssColors.accentColor,
+        '--switch-width': '2em',
+        '--slot-bg-active': 'color-mix(in srgb, var(--accent-color), #fff 80%)',
+        '--slot-bg-inactive': 'color-mix(in srgb, color-mix(in srgb, var(--accent-color), #fff 80%), #ddd 90%)',
+        '--thumb-bg-active': 'var(--accent-color)',
+        '--thumb-bg-inactive': '#fff',
+      },
+      display: 'block',
+      width: 'var(--switch-width)',
+      height: 'calc(var(--switch-width) / 2)',
+      background: isChecked() ? 'var(--slot-bg-active)' : 'var(--slot-bg-inactive)',
+      borderRadius: '999em',
+      padding: 'calc(var(--switch-width) / 9) ',
+      transition: 'background 300ms',
+    }),
+  } satisfies Partial<SwitchProps>
 
   const htmlCheckboxStyleProps = {
     icss: {
@@ -24,14 +40,12 @@ export function useSwitchStyle(params: { props: DeKitProps<SwitchProps> }) {
     },
   } satisfies Partial<HTMLCheckboxProps>
 
-  // FIXME: why not a createMemo is ok ?
   const switchThumbStyleProps = {
     icss: ({ isChecked }) => ({
       height: '100%',
       aspectRatio: '1',
       borderRadius: '999em',
-      background: 'currentColor',
-      // translate: params.isChecked() ? '100%' : '0',
+      background: isChecked() ? 'var(--thumb-bg-active)' : 'var(--thumb-bg-inactive)',
       marginLeft: isChecked() ? 'auto' : '0',
       transition: '300ms',
     }),

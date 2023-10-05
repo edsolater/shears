@@ -1,14 +1,15 @@
 import { Signal, createEffect, createSignal } from 'solid-js'
 
 /**
- *  if it's promise, default is undefined
- *  lazyValue is in track scope
+ * signal's action will only load when first access the acessor
+ * if it's promise, default is undefined
+ * lazyValue is in track scope
  */
 // TODO: haven't test yet
-export function createLazySignal<V>(lazyValue: () => V, defaultValue?: V): Signal<V> {
+export function createLazySignal<V>(lazyLoadInitValue: () => V | Promise<V>, defaultValue?: V): Signal<V> {
   const [hasAccessed, setHasAccessed] = createSignal(false)
-  let innerOnFirstAccessFunction = lazyValue
-  const [signal, _setSignal] = createSignal<any>(defaultValue) // no need to type check
+  let innerOnFirstAccessFunction = lazyLoadInitValue
+  const [signal, _setSignal] = createSignal<V | undefined>(defaultValue) // no need to type check
   const getSignal = () => {
     if (!hasAccessed()) {
       setHasAccessed(true)
@@ -18,9 +19,9 @@ export function createLazySignal<V>(lazyValue: () => V, defaultValue?: V): Signa
     }
     return signal()
   }
-  createEffect(() => {
+  createEffect(async () => {
     if (!hasAccessed()) return
-    const value = innerOnFirstAccessFunction()
+    const value = await innerOnFirstAccessFunction()
     _setSignal(() => value)
   })
   const setSignal = (...args: Parameters<typeof _setSignal>) => {

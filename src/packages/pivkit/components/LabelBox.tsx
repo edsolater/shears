@@ -1,17 +1,19 @@
-import { KitProps, Piv, PivProps, UIKit, useKitProps } from '../../piv'
-import { parsePivProps } from '../../piv'
+import { KitProps, Piv, useKitProps } from '../piv'
+import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 
-export type LabelBoxProps = KitProps<{}>
+export type LabelBoxProps = {}
+
+export type LabelBoxKitProps = KitProps<LabelBoxProps>
 /**
  * created for form widget component
  *
  * !`<label>` can transpond click/focus event for inner `<Input>`-like Node
  */
-export function LabelBox(rawProps: LabelBoxProps) {
-  const { props, shadowProps } = useKitProps(rawProps)
+export function LabelBox(kitProps: LabelBoxKitProps) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'LabelBox' })
   return (
     <Piv
-      render:self={(selfProps) => <label {...parsePivProps(selfProps)} />} // why set as will render twice
+      render:self={(selfProps) => renderHTMLDOM('label', selfProps)} // why set as will render twice
       shadowProps={shadowProps}
     />
   )

@@ -1,5 +1,5 @@
 import { AnyFn, AnyObj, isFunction, isObject, isString } from '@edsolater/fnkit'
-import { ValidController } from '../../piv'
+import { ValidController } from '../piv/typeTools'
 
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
@@ -30,7 +30,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
   props: P,
   controller?: Controller,
   /** default is on* and domRef and controllerRef, but you can add more */
-  needAccessifyProps?: string[],
+  needAccessifyProps?: string[]
 ): DeAccessifyProps<P> {
   const accessifiedProps = Object.defineProperties(
     {},
@@ -41,13 +41,20 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
           const v = props[key]
           const isPreferUseOriginalValue =
             isString(key) &&
-            (!needAccessifyProps?.includes(key) || key.startsWith('on') || key === 'domRef' || key === 'controllerRef')
+            ((needAccessifyProps ? !needAccessifyProps?.includes(key) : false) ||
+              key.startsWith('on') ||
+              key.startsWith('render:') ||
+              key.startsWith('merge:') ||
+              key === 'domRef' ||
+              key === 'controllerRef' ||
+              key === 'plugin' ||
+              key === 'shadowProps')
           const needAccessify = isFunction(v) && !isPreferUseOriginalValue
           return needAccessify ? v(controller) : v
         },
       }
       return acc
-    }, {} as PropertyDescriptorMap),
+    }, {} as PropertyDescriptorMap)
   ) as DeAccessifyProps<P>
   return accessifiedProps
 }

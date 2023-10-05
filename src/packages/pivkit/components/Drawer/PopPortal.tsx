@@ -2,7 +2,7 @@ import { createEffect } from 'solid-js'
 import { Portal } from 'solid-js/web'
 import { createRef } from '../..'
 import isClientSide from '../../../jFetch/utils/isSSR'
-import { RawChild } from '../../../piv'
+import { RawChild } from '../../piv/typeTools'
 
 export function PopPortal(props: { id: string; children?: RawChild }) {
   const element = createPopStackHTMLElement(props.id)

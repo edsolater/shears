@@ -1,16 +1,19 @@
-import { KitProps, PivChild, useKitProps } from '../../piv'
+import { KitProps, useKitProps } from '../piv'
+import { PivChild } from '../piv/typeTools'
 import { Text } from './Text'
 
-export type LabelProps = KitProps<{
+export type LabelProps = {
   value?: string
   render?: (value: string) => PivChild
-}>
+}
+
+export type LabelKitProps = KitProps<LabelProps>
 /**
  * created for form widget component
  *
  * !`<label>` can transpond click/focus event for inner `<Input>`-like Node
  */
-export function Label(rawProps: LabelProps) {
-  const { shadowProps, props } = useKitProps(rawProps)
+export function Label(kitProps: LabelKitProps) {
+  const { shadowProps, props } = useKitProps(kitProps, { name: 'Label' })
   return <Text class='Label' shadowProps={shadowProps} />
 }

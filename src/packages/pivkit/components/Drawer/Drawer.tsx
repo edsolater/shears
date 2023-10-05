@@ -1,31 +1,28 @@
 import { createSignal, Show } from 'solid-js'
-import { addDefaultProps, KitProps, Piv, useKitProps } from '../../../piv'
+import { addDefaultProps, KitProps, Piv, useKitProps } from '../../piv'
 import { createRef } from '../../hooks/createRef'
 import { drawerKeyboardShortcut } from './plugins/drawerKeyboardShortcut'
 import { PopPortal } from './PopPortal'
 
 export interface DrawerController {
   isOpen: boolean
-  placement: NonNullable<DrawerProps['placement']>
+  placement: NonNullable<DrawerKitProps['placement']>
   open(): void
   close(): void
   toggle(): void
 }
-
-export type DrawerProps = KitProps<
-  {
-    open?: boolean
-    placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
-  },
-  { controller: DrawerController }
->
-const drawerDefaultProps = { placement: 'from-right' } satisfies DrawerProps
-
+export type DrawerProps = {
+  open?: boolean
+  placement?: 'from-left' | 'from-bottom' | 'from-top' | 'from-right'
+}
+export type DrawerKitProps = KitProps<DrawerProps, { controller: DrawerController }>
+const drawerDefaultProps = { placement: 'from-right' } satisfies DrawerKitProps
 export type DrawerDefaultProps = typeof drawerDefaultProps
 
-export function Drawer(kitProps: DrawerProps) {
+export function Drawer(kitProps: DrawerKitProps) {
   const { props: rawProps } = useKitProps(kitProps, {
-    plugin: [drawerKeyboardShortcut()],
+    name: 'Drawer',
+    plugin: drawerKeyboardShortcut,
     controller: (mergedProps) => ({
       get isOpen() {
         return Boolean(isOpen())
@@ -57,8 +54,8 @@ export function Drawer(kitProps: DrawerProps) {
         <Piv
           domRef={setDrawerRef}
           shadowProps={props}
-          icss={{ width: isOpen() ? 300 : 400, height: '100dvh', background: 'dodgerblue' }}
-        ></Piv>
+          icss={{ width: isOpen() ? '300px' : '400px', height: '100dvh', background: 'dodgerblue' }}
+        />
       </Show>
     </PopPortal>
   )

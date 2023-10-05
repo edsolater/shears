@@ -1,4 +1,4 @@
-export * from './Box'
+export * from './Boxes'
 export * from './Button'
 export * from './Card'
 export * from './Collapse'
@@ -16,3 +16,7 @@ export * from './Radio'
 export * from './Section'
 export * from './Switch'
 export * from './Text'
+export * from './Loop'
+export * from './Tabs'
+
+export * from './ComponentFatory'

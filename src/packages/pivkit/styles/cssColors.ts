@@ -34,4 +34,7 @@ export const cssColors = {
 
   //---- input
   component_input_bg_default: 'transparent',
+
+  accentColor: 'dodgerblue',
+  // accentColorInactive: 'dodgerblue',
 } as const

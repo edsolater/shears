@@ -1,39 +1,64 @@
-import { Piv, UIKit, parsePivProps, useKitProps } from '../../piv'
-import { Accessify } from '../utils/accessifyProps'
-
-export interface ImageProps extends UIKit<{ controller: ImageController }> {
-  /**
-   *  also accept multi srcs
-   */
-  src?: Accessify<string | string[] | undefined, ImageController>
-  fallbackSrc?: Accessify<string | undefined, ImageController>
-  /**
-   *  for readability
-   */
-  alt?: Accessify<string | undefined, ImageController>
-}
+import { createEffect, createSignal, onCleanup } from 'solid-js'
+import { onEvent as addEventListener } from '../domkit'
+import { createRef } from '../hooks'
+import { KitProps, Piv, useKitProps } from '../piv'
+import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 
 export interface ImageController {}
 
-const defaultProps = {} as const satisfies Partial<ImageProps>
+export interface ImageProps {
+  /**
+   *  also accept multi srcs
+   */
+  src?: string | string[] | undefined
+  fallbackSrc?: string | undefined
+  /**
+   *  for readability
+   */
+  alt?: string | undefined
+
+  // TODO: imply it!!!
+  resizeable?: boolean
+  /** @default 'lazy' */
+  loading?: 'lazy' | 'eager'
+
+  'css:width'?: string
+  'css:height'?: string
+}
+
+export type ImageKitProps = KitProps<ImageProps, { controller: ImageController }>
+
+const defaultProps = {} as const satisfies Partial<ImageKitProps>
 
 export type DefaultImageProps = typeof defaultProps
 /**
  * if for layout , don't render important content in Box
  * @todo add fallbackSrc
  */
-export function Image(rawProps: ImageProps) {
-  const { props } = useKitProps(rawProps, { defaultProps })
+export function Image(rawProps: ImageKitProps) {
+  // TODO is load
+  const [isLoaded, setIsLoaded] = createSignal(false)
+  const [dom, setDom] = createRef<HTMLImageElement>()
+  const { props, shadowProps } = useKitProps(rawProps, { name: 'Image', defaultProps })
+
+  createEffect(() => {
+    const { abort } = addEventListener(dom(), 'load', () => {
+      setIsLoaded(true)
+    })
+    onCleanup(abort)
+  })
   /* ---------------------------------- props --------------------------------- */
   return (
     <Piv<'img'>
-      render:self={(selfProps) => <img {...parsePivProps(selfProps)} />}
-      htmlProps={{ src: String(props.src), alt: props.alt }}
+      domRef={setDom}
+      class='Image'
+      render:self={(selfProps) => renderHTMLDOM('img', selfProps)}
+      htmlProps={{ src: String(props.src), alt: props.alt, loading: props.loading ?? 'lazy' }}
       icss={{
         display: 'block',
+        opacity: isLoaded() ? undefined : '0',
       }}
-      shadowProps={props}
-      class={Image.name}
+      shadowProps={shadowProps}
     />
   )
 }

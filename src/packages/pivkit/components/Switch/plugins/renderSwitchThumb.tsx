@@ -1,28 +1,16 @@
 import { SwitchController, SwitchProps } from '..'
-import { Piv, PivChild } from '../../../../piv'
+import { createPlugin } from '../../../piv'
+import { PivChild } from '../../../piv/typeTools'
 
 /**
  * **Plugin** for Switch
  * can render switch Thumb
- * @todo it should be plugin
  */
-export function renderSwitchThumb(
-  renderThumbContent: PivChild<SwitchController> = ({ isChecked }) => (
-    <Piv
-      icss={{
-        color: isChecked() ? 'dodgerblue' : 'crimson',
-        width: '0.5em',
-        height: '0.5em',
-        backgroundColor: 'currentcolor',
-        transition: '600ms',
-        borderRadius: '999px',
-      }}
-    ></Piv>
-  ),
-): () => SwitchProps {
-  return () => ({
-    'anatomy:Thumb': {
-      'render:lastChild': renderThumbContent,
-    },
-  })
-}
+export const renderSwitchThumb = createPlugin<{ renderThumbContent?: PivChild<SwitchController> }, any, SwitchProps>(
+  ({ renderThumbContent }) =>
+    () => ({
+      'anatomy:Thumb': {
+        'render:lastChild': renderThumbContent,
+      },
+    })
+)
