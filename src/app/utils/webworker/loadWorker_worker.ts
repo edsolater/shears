@@ -6,7 +6,7 @@ import { invoke } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
 import { createMessagePortTransforers } from './createMessagePortTransforers'
 import { isSenderMessage } from './genMessageSender'
-import { WorkerCommand, WorkerMessage } from './type'
+import { WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
@@ -43,10 +43,4 @@ function initMessageReceiver() {
 
 // only need to regist once in the worker thread
 initMessageReceiver()
-
-export function registMessageReceiver<D = any>(description: WorkerCommand, onMessage: onMessage<D>) {
-  callbackMap.set(description, onMessage)
-}
-
-console.log('registering webworker registers...')
-applyWebworkerRegisters({getMessagePort, getMessageReceiver, getMessageSender})
+applyWebworkerRegisters({ getMessagePort, getMessageReceiver, getMessageSender })

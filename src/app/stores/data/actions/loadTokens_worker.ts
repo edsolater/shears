@@ -1,19 +1,19 @@
-import { registMessageReceiver } from '../../../utils/webworker/loadWorker_worker';
-import { FetchRaydiumTokenListOptions } from '../types/tokenList';
-import { fetchTokenJsonFile } from '../utils/fetchTokenJson';
-import { SOLToken } from '../../../utils/dataStructures/Token';
-import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers';
+import { SOLToken } from '../../../utils/dataStructures/Token'
+import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
+import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
 
 export function loadTokens_worker(transformers: MessagePortTransformers) {
-  registMessageReceiver<FetchRaydiumTokenListOptions>(
-    'fetch raydium supported tokens',
-    async ({ payload: options, resolve }) =>
-      /* TODO: currently only mainnet raydium token list was supported*/
-      fetchTokenJsonFile(options).then((res) => {
+  const { receiver, sender } = transformers.getMessagePort('fetch raydium supported tokens')
+  console.log('loadTokens_worker')
+  receiver.subscribe((options) => {
+    /* TODO: currently only mainnet raydium token list was supported*/
+    fetchTokenJsonFile(options)
+      .then((res) => {
         const availableTokens = res?.tokens
           .filter((t) => !res?.blacklist.includes(t.mint) || t.name === 'Native Solana')
-          .concat(SOLToken); // replace api mistakely add SOL
-        availableTokens && resolve(availableTokens);
+          .concat(SOLToken) // replace api mistakely add SOL
+        return availableTokens ?? []
       })
-  );
+      .then(sender.query)
+  })
 }

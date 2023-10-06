@@ -1,6 +1,6 @@
+import { Dynamic } from 'solid-js/web'
 import { NativeProps } from '..'
 import { AnyObj, omit, mergeObjects, hasProperty } from '@edsolater/fnkit'
-import { Dynamic } from 'solid-js/web'
 
 export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) => ({
   div: () =>
