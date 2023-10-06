@@ -1,11 +1,10 @@
 import { createEffect } from 'solid-js'
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerInMainThread'
+import { Token } from '../../../utils/dataStructures/Token'
+import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
 import { DataStore } from '../store'
 import { TokenListStore } from '../types/tokenList'
-import { Token } from '../../../utils/dataStructures/Token'
-import { FetchRaydiumTokenPriceOptions, TokenPriceWorkerData } from '../types/tokenPrice'
 
 export const onAccessTokensPrice = createOnFirstAccess<DataStore>(['prices'], (store) => {
   createEffect(() => {
@@ -18,22 +17,17 @@ export const onAccessTokensPrice = createOnFirstAccess<DataStore>(['prices'], (s
 
 export function loadTokenPrice(store: Store<DataStore>, tokens: Token[]) {
   store.set({ isTokenLoading: true })
-  getTokenPriceInfoFromWorker(tokens, (workerResult) => {
+  getTokenPriceInfoFromWorker(tokens).subscribe((workerResult) => {
     store.set({ isTokenLoading: false, prices: workerResult.prices })
   })
 }
 
-const getTokenPriceInfoFromWorker = (
-  tokens: TokenListStore['allTokens'],
-  cb: WebworkerSubscribeCallback<TokenPriceWorkerData>,
-) =>
-  subscribeWebWorker_Drepcated<TokenPriceWorkerData, FetchRaydiumTokenPriceOptions>(
-    {
-      command: 'get raydium token prices',
-      payload: {
-        url: appApiUrls.price,
-        tokens,
-      },
-    },
-    cb,
-  )
+const getTokenPriceInfoFromWorker = (tokens: TokenListStore['allTokens']) => {
+  const sender = getMessageSender('get raydium token prices')
+  sender.query({
+    url: appApiUrls.price,
+    tokens,
+  })
+  const receiver = getMessageReceiver('get raydium token prices')
+  return receiver
+}

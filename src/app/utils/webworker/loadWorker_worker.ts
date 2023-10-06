@@ -1,21 +1,20 @@
 /// <reference lib="webworker" />
 import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
+import { Subscribable, createSubscribable } from '@edsolater/fnkit'
 import { invoke } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
+import { createMessagePortTransforers } from './createMessagePortTransforers'
 import { isSenderMessage } from './genMessageSender'
 import { WorkerCommand, WorkerMessage } from './type'
 import { applyWebworkerRegisters } from './worker_registers'
-import { Subscribable, createSubscribable } from '@edsolater/fnkit'
-import { createMessagePortTransforers } from './createMessagePortTransforers'
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
 const callbackMap = new Map<string, onMessage<any>>()
 const returnValueMap = new WeakMap<onMessage<any>, Subscribable<any>>()
 
-export const { getReceiver: getMessageReceiver, getSender: getMessageSender } =
-  createMessagePortTransforers(globalThis)
+export const { getMessageReceiver, getMessageSender, getMessagePort } = createMessagePortTransforers(globalThis)
 /**
  *
  * register receiver utils in worker-side
@@ -49,4 +48,5 @@ export function registMessageReceiver<D = any>(description: WorkerCommand, onMes
   callbackMap.set(description, onMessage)
 }
 
-applyWebworkerRegisters()
+console.log('registering webworker registers...')
+applyWebworkerRegisters({getMessagePort, getMessageReceiver, getMessageSender})

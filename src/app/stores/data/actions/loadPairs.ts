@@ -1,7 +1,9 @@
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerInMainThread'
-import { FetchPairsOptions, PairJson } from '../types/pairs'
-import { DataStore } from '../store'
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
+import {
+  getMessageReceiver,
+  getMessageSender
+} from '../../../utils/webworker/loadWorker_main'
+import { DataStore } from '../store'
 
 export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {
   loadPairs(store)
@@ -9,7 +11,7 @@ export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], 
 
 export function loadPairs(store: Store<DataStore>) {
   store.set({ isPairInfoLoading: true })
-  getPairJsonFromWorker((allPairJsonInfos) => {
+  getPairJsonFromWorker().subscribe((allPairJsonInfos) => {
     store.set({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 50) })
     let count = 0
     const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
@@ -22,14 +24,12 @@ export function loadPairs(store: Store<DataStore>) {
   })
 }
 
-function getPairJsonFromWorker(cb: WebworkerSubscribeCallback<PairJson[]>) {
-  return subscribeWebWorker_Drepcated<PairJson[], FetchPairsOptions>(
-    {
-      command: 'fetch raydium pairs info',
-      payload: {
-        force: false,
-      },
-    },
-    cb,
-  )
+function getPairJsonFromWorker() {
+  const sender = getMessageSender('fetch raydium pairs info')
+  sender.query({
+    force: false,
+  })
+
+  const receiver = getMessageReceiver('fetch raydium pairs info')
+  return receiver
 }

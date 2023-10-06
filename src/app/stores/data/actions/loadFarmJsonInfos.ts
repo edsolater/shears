@@ -1,7 +1,6 @@
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
-import { subscribeWebWorker_Drepcated, WebworkerSubscribeCallback } from '../../../utils/webworker/loadWorkerInMainThread'
+import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
 import { DataStore } from '../store'
-import { FetchFarmsJSONPayloads } from '../types/farm'
 
 export const onAccessFarmJsonInfos = createOnFirstAccess<DataStore>(['farmJsonInfos', 'farmInfos'], (store) => {
   loadFarmJsonInfos(store)
@@ -9,17 +8,15 @@ export const onAccessFarmJsonInfos = createOnFirstAccess<DataStore>(['farmJsonIn
 
 export function loadFarmJsonInfos(store: Store<DataStore>) {
   store.set({ isFarmJsonLoading: true })
-  getFarmJsonFromWorker((allFarmJsonInfos) => {
+  getFarmJsonFromWorker().subscribe((allFarmJsonInfos) => {
     store.set({ isFarmJsonLoading: false, farmJsonInfos: allFarmJsonInfos })
   })
 }
 
-export function getFarmJsonFromWorker(cb: WebworkerSubscribeCallback<DataStore['farmJsonInfos']>) {
-  return subscribeWebWorker_Drepcated<DataStore['farmJsonInfos'], FetchFarmsJSONPayloads>(
-    {
-      command: 'fetch raydium farms info',
-      payload: {},
-    },
-    cb,
-  )
+export function getFarmJsonFromWorker() {
+  const sender = getMessageSender('fetch raydium farms info')
+  sender.query()
+
+  const receiver = getMessageReceiver('fetch raydium farms info')
+  return receiver
 }

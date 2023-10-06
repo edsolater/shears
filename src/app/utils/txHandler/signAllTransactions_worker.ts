@@ -1,6 +1,6 @@
 import { InnerTransaction } from '@raydium-io/raydium-sdk'
 import { Transaction, VersionedTransaction } from '@solana/web3.js'
-import { getMessageReceiver, getMessageSender } from '../webworker/loadSDKWorker'
+import { getMessageReceiver, getMessageSender } from '../webworker/loadWorker_worker'
 import { buildTransactionsFromSDKInnerTransactions, isInnerTransaction } from './createVersionedTransaction'
 import { TxHandlerPayload } from './txHandler'
 

@@ -1,4 +1,4 @@
-import { ReplaceType, isObject } from '@edsolater/fnkit'
+import { ReplaceType } from '@edsolater/fnkit'
 import { Currency, Token as _Token } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
 

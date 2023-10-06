@@ -1,47 +1,41 @@
 import { createEffect, onCleanup } from 'solid-js'
-import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
+import { Store, createOnFirstAccess } from '../../../../packages/pivkit'
 import { appRpcUrl } from '../../../utils/common/config'
 import {
-  subscribeWebWorker_Drepcated,
-  WebworkerSubscribeCallback,
-} from '../../../utils/webworker/loadWorkerInMainThread'
-import { useWalletStore, WalletStore } from '../../wallet/store'
+  getMessageReceiver,
+  getMessageSender
+} from '../../../utils/webworker/loadWorker_main'
+import { WalletStore, useWalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
-import { CalculateSwapRouteInfosParams } from '../types/farm'
 
 // 💡 subscribe wallet change
 export const onAccessFarmSYNInfos = createOnFirstAccess<DataStore>(['farmInfos'], (store) => {
   createEffect(() => {
     const walletStore = useWalletStore()
-    const { abort } = loadFarmSYNInfos({ owner: walletStore.owner, store })
+    const { unsubscribe } = loadFarmSYNInfos({ owner: walletStore.owner, store })
     onCleanup(() => {
-      abort?.()
+      unsubscribe?.()
     })
   })
 })
 
 export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; store: Store<DataStore> }): {
-  abort?(): void
+  unsubscribe?(): void
 } {
   store.set({ isFarmInfosLoading: true })
-  getFarmSYNInfosFromWorker(owner, (allFarmSYNInfos) => {
+  const { unsubscribe } = getFarmSYNInfosFromWorker(owner).subscribe((allFarmSYNInfos) => {
     store.set({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
   })
-  return { abort() {} }
+  return { unsubscribe }
 }
 
-function getFarmSYNInfosFromWorker(
-  owner: WalletStore['owner'],
-  cb: WebworkerSubscribeCallback<DataStore['farmInfos']>,
-) {
-  subscribeWebWorker_Drepcated<DataStore['farmInfos'], CalculateSwapRouteInfosParams>(
-    {
-      command: 'get raydium farms syn infos',
-      payload: {
-        owner: owner,
-        rpcUrl: appRpcUrl,
-      },
-    },
-    cb,
-  )
+function getFarmSYNInfosFromWorker(owner: WalletStore['owner']) {
+  const sender = getMessageSender('get raydium farms syn infos')
+  sender.query({
+    owner: owner,
+    rpcUrl: appRpcUrl,
+  })
+
+  const receiver = getMessageReceiver('get raydium farms syn infos')
+  return receiver
 }

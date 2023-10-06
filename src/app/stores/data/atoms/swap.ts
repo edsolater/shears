@@ -41,7 +41,6 @@ export function useSwapAmountCalculator() {
       inputAmount,
       output: outputToken,
     })
-    onCleanup(subscribable.abort)
     const s = subscribable.subscribe((info) => {
       if (!info) return
       const { bestResult } = info
@@ -65,7 +64,6 @@ export function useSwapAmountCalculator() {
       output: outputToken,
     })
 
-    onCleanup(subscribable.abort)
     subscribable.subscribe((info) => {
       if (!info) return
       const { bestResult } = info

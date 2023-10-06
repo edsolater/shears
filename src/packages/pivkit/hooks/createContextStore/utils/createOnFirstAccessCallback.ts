@@ -3,6 +3,7 @@ import { OnFirstAccessCallback } from '../type'
 
 /**
  * type utils function
+ * not mind stright forward
  */
 export function createOnFirstAccess<T extends Record<string, any>>(
   propertyName: MayArray<keyof T>,

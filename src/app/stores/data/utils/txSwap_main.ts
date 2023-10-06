@@ -1,7 +1,7 @@
 import { deepUnwrapSolidProxy } from '../../../utils/txHandler/deepUnwrapSolidProxy'
-import { openMessagePortToWorker } from '../../../utils/webworker/loadWorkerInMainThread'
+import { getMessageSender } from '../../../utils/webworker/loadWorker_main'
 import { TxSwapOptions } from './txSwap'
 
 export function txSwap_main(txOptions: TxSwapOptions) {
-  return openMessagePortToWorker<any, any>('txSwap start', deepUnwrapSolidProxy(txOptions))
+  return getMessageSender('txSwap start').query(deepUnwrapSolidProxy(txOptions))
 }

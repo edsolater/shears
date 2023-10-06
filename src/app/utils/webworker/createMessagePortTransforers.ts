@@ -2,18 +2,30 @@ import { MayPromise, Subscribable, createSubscribable, hasProperty } from '@edso
 import { cacheMapGet } from '../../../packages/fnkit'
 import { decode, encode } from '../dataTransmit/handlers'
 
-interface ReceiveMessage<Data = any> {
+export interface ReceiveMessage<Data = any> {
   command: string
   payload: Data
 }
-interface SenderMessage<Query = any> {
+export interface SenderMessage<Query = any> {
   command: string
   payload?: Query
 }
-type Receiver<R extends ReceiveMessage> = Subscribable<R['payload']>
-type Sender<P extends SenderMessage> = {
-  query(payload: P['payload']): void
-  // onMessageBack(payload: any): Promise<unknown> //TODO: imply it later
+export type Receiver<R extends ReceiveMessage> = Subscribable<R['payload']>
+export type Sender<P extends SenderMessage, R extends ReceiveMessage = any> = {
+  query(payload?: P['payload']): Receiver<R>
+}
+export type GetMessagePortFn = <Payload = any, Query = any>(
+  command: string,
+) => {
+  receiver: Receiver<ReceiveMessage<Payload>>
+  sender: Sender<SenderMessage<Query>, any>
+}
+export type GetMessageReceiverFn = <Payload = any>(command: string) => Receiver<ReceiveMessage<Payload>>
+export type GetMessageSenderFn = <Query = any>(command: string) => Sender<SenderMessage<Query>, any>
+export type MessagePortTransformers = {
+  getMessageReceiver: GetMessageReceiverFn
+  getMessageSender: GetMessageSenderFn
+  getMessagePort: GetMessagePortFn
 }
 
 // store all registered message receivers
@@ -35,14 +47,21 @@ export function isReceiveMessage(v: unknown): v is ReceiveMessage {
   return hasProperty(v, 'command') && hasProperty(v, 'payload')
 }
 
-export function createMessagePortTransforers<
-  PortMessage extends { receiverMessage: ReceiveMessage; senderMessage: SenderMessage },
->(towrardsTarget: MayPromise<Worker | ServiceWorker | typeof globalThis>) {
-  const getReceiver = (command: string) =>
-    createMessageReceiver<PortMessage['receiverMessage']>(towrardsTarget, command)
-  const getSender = (command: string) => createMessageSender<PortMessage['senderMessage']>(towrardsTarget, command)
-  
-  return { getReceiver, getSender }
+export function createMessagePortTransforers(towrardsTarget: MayPromise<Worker | ServiceWorker | typeof globalThis>): {
+  getMessageReceiver: <Payload = any>(command: string) => Receiver<ReceiveMessage<Payload>>
+  getMessageSender: <Query = any>(command: string) => Sender<SenderMessage<Query>, any>
+  getMessagePort: <Payload = any, Query = any>(
+    command: string,
+  ) => { receiver: Receiver<ReceiveMessage<Payload>>; sender: Sender<SenderMessage<Query>, any> }
+} {
+  const getReceiver = <Payload = any>(command: string) =>
+    createMessageReceiver<ReceiveMessage<Payload>>(towrardsTarget, command)
+  const getSender = <Query = any>(command: string) => createMessageSender<SenderMessage<Query>>(towrardsTarget, command)
+  const getPort = <Payload = any, Query = any>(command: string) => ({
+    receiver: getReceiver<Payload>(command),
+    sender: getSender<Query>(command),
+  })
+  return { getMessageReceiver: getReceiver, getMessageSender: getSender, getMessagePort: getPort }
 }
 
 /**
@@ -98,6 +117,7 @@ function createMessageSender<P extends SenderMessage>(
         Promise.resolve(towardsTarget).then((targetPort) =>
           targetPort.postMessage({ command, payload: encode(payload) }),
         )
+        return createMessageReceiver(towardsTarget, command)
       },
     }
   }
