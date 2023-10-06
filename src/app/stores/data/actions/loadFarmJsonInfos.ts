@@ -8,7 +8,8 @@ export const onAccessFarmJsonInfos = createOnFirstAccess<DataStore>(['farmJsonIn
 
 export function loadFarmJsonInfos(store: Store<DataStore>) {
   store.set({ isFarmJsonLoading: true })
-  getFarmJsonFromWorker().subscribe((allFarmJsonInfos) => {
+  const receiver = getFarmJsonFromWorker()
+  receiver.subscribe((allFarmJsonInfos) => {
     store.set({ isFarmJsonLoading: false, farmJsonInfos: allFarmJsonInfos })
   })
 }

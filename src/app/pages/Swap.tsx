@@ -1,15 +1,15 @@
 import { assert } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo } from 'solid-js'
-import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
+import { Button, Card, Piv, Section, icss_card, icss_col, useAtom } from '../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import {
-  useSwapAmountCalculator as useSwapAmountCalculatorEffect,
-  useSwapToken1,
-  useSwapToken2,
-  useSwapTokenAmount1,
-  useSwapTokenAmount2,
+  swapToken1,
+  swapToken2,
+  swapTokenAmount1,
+  swapTokenAmount2,
 } from '../stores/data/atoms/swap'
+import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { useDataStore } from '../stores/data/store'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
 import { useWalletOwner } from '../stores/wallet/store'
@@ -29,8 +29,8 @@ function useTokenByMint(mint: Accessor<string | undefined>) {
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const { val: token1Mint, set: setToken1Mint } = useSwapToken1()
-  const { val: token2Mint, set: setToken2Mint } = useSwapToken2()
+  const { get: token1Mint, set: setToken1Mint } = useAtom(swapToken1)
+  const { get: token2Mint, set: setToken2Mint } = useAtom(swapToken2)
   const token1 = useTokenByMint(token1Mint)
   const token2 = useTokenByMint(token2Mint)
   const setToken1 = (token: Token | undefined) => {
@@ -40,8 +40,8 @@ export default function SwapPage() {
     setToken2Mint(token?.mint)
   }
 
-  const { val: amount1, set: setAmount1 } = useSwapTokenAmount1()
-  const { val: amount2, set: setAmount2 } = useSwapTokenAmount2()
+  const { get: amount1, set: setAmount1 } = useAtom(swapTokenAmount1)
+  const { get: amount2, set: setAmount2 } = useAtom(swapTokenAmount2)
   const tokenAmount1 = () => (amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined)
   const tokenAmount2 = () => (amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined)
 
