@@ -142,7 +142,7 @@ export interface FarmSYNInfo {
 
   // wrapped?: {
   //   pendingRewards: BN[]
-  // }
+  // }x
 }
 
 export interface FarmStore {
