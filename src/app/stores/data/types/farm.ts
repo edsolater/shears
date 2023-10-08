@@ -59,18 +59,18 @@ export interface FarmJSONFile {
 }
 
 export interface FarmSYNInfo {
-  hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load state
-  base: Mint
-  quote: Mint
-  lp: Mint
-  lpPrice: Price
-
   id: PublicKey
   name: string
   ammId: PublicKey
   programId: PublicKey
   authority: PublicKey
+
   category: 'stake' | 'raydium' | 'fusion' | 'ecosystem' // add by UI for unify the interface
+  hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load state
+  base: Mint
+  quote: Mint
+  lp: Mint
+  lpPrice: Price
 
   /** only for v3/v5 */
   isDualFusionPool: boolean
@@ -79,7 +79,7 @@ export interface FarmSYNInfo {
   isStakePool: boolean
   isUpcomingPool: boolean
   isStablePool: boolean
-  /** new pool shoud sort in highest  */
+  /** new pool should sort in highest  */
   isNewPool: boolean
 
   raydiumFeeApr: {

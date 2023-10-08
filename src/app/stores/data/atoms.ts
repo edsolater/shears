@@ -17,5 +17,5 @@ export const farmInfosAtom = createAtom<FarmSYNInfo[]>()
 export const isFarmInfosLoadingAtom = createAtom(false)
 
 // -------- #pair --------
-export const pairInfosAtom = createAtom<PairJson[]>()
+export const pairInfosAtom = createAtom<PairJson[]>([], { state: 'solid-store' })
 export const isPairInfoLoadingAtom = createAtom(false)

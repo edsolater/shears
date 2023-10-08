@@ -1,4 +1,4 @@
-import { Subscription, isFunction } from '@edsolater/fnkit'
+import { Subscription, isArray, isFunction } from '@edsolater/fnkit'
 import {
   Accessor,
   Setter,
@@ -10,6 +10,7 @@ import {
   onCleanup as solidOnCleanup,
 } from 'solid-js'
 import { createLazySignal } from './createLazySignal'
+import { createStore } from 'solid-js/store'
 
 type AtomPlugin<T> = (accessor: () => T, setter: Setter<T>) => Record<string, any> // <-- will merge to atoms
 
@@ -22,6 +23,11 @@ type AtomOnChangeCallback<T> = (
 ) => void
 
 type CreateAtomOptions<T> = {
+  /**
+   * @default 'solid-signal'
+   */
+  state: 'solid-store' /* createStore */ | 'solid-signal' /* createSignal */
+
   signalOptions?: SignalOptions<T>
 
   /** default value when lazy is true */
@@ -66,11 +72,17 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
   // get basic getter and setter
   // -------- basic state --------
   const shouldLazyLoad = isFunction(value)
-  const createInnerStateSignal = () =>
-    shouldLazyLoad
+  const createStoreSignal = () =>
+    (shouldLazyLoad
       ? createLazySignal(value, options?.lazyDefaultValue)
-      : createSignal<T>(value as any, options?.signalOptions)
+      : createStore<T & object>(value as any, options?.signalOptions)) as [getter: Accessor<T>, setter: Setter<T>]
+  const createNormalSignalSignal = () =>
+    (shouldLazyLoad
+      ? createLazySignal(value, options?.lazyDefaultValue)
+      : createSignal<T>(value as any, options?.signalOptions)) as [getter: Accessor<T>, setter: Setter<T>]
 
+  const createInnerStateSignal = () =>
+    options?.state === 'solid-store' ? createStoreSignal() : createNormalSignalSignal()
   const [accessor, setter] = createInnerStateSignal()
 
   const [accessCount, setAccessCount] = createSignal(0)
@@ -101,7 +113,6 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
   const wrappedSetter = ((...args: Parameters<typeof setter>) => {
     setSetCount((n) => n + 1)
     setter(...args)
-    console.log('set: ', args)
   }) as typeof setter
 
   createEffect(
@@ -173,4 +184,10 @@ type AtomHistory<T> = {
 export function useAtom<T>(atom: Atom<T>): AtomHook<T> {
   const { getAccessor, set } = atom
   return { get: getAccessor, set: set }
+}
+
+function createSignalLikeStore<T>(value?: T, storeOptions?: any) {
+  const [get, set] = createStore(value, storeOptions)
+  const create
+  return { get, set }
 }
