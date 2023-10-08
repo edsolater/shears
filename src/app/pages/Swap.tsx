@@ -3,12 +3,7 @@ import { Accessor, createEffect, createMemo } from 'solid-js'
 import { Button, Card, Piv, Section, icss_card, icss_col, useAtom } from '../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import {
-  swapToken1,
-  swapToken2,
-  swapTokenAmount1,
-  swapTokenAmount2,
-} from '../stores/data/atoms/swap'
+import { swapToken1Atom, swapToken2Atom, swapTokenAmount1Atom, swapTokenAmount2Atom } from '../stores/data/atoms'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { useDataStore } from '../stores/data/store'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
@@ -29,8 +24,8 @@ function useTokenByMint(mint: Accessor<string | undefined>) {
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const { get: token1Mint, set: setToken1Mint } = useAtom(swapToken1)
-  const { get: token2Mint, set: setToken2Mint } = useAtom(swapToken2)
+  const { get: token1Mint, set: setToken1Mint } = useAtom(swapToken1Atom)
+  const { get: token2Mint, set: setToken2Mint } = useAtom(swapToken2Atom)
   const token1 = useTokenByMint(token1Mint)
   const token2 = useTokenByMint(token2Mint)
   const setToken1 = (token: Token | undefined) => {
@@ -40,13 +35,17 @@ export default function SwapPage() {
     setToken2Mint(token?.mint)
   }
 
-  const { get: amount1, set: setAmount1 } = useAtom(swapTokenAmount1)
-  const { get: amount2, set: setAmount2 } = useAtom(swapTokenAmount2)
-  const tokenAmount1 = () => (amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined)
-  const tokenAmount2 = () => (amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined)
+  const { get: amount1, set: setAmount1 } = useAtom(swapTokenAmount1Atom)
+  const { get: amount2, set: setAmount2 } = useAtom(swapTokenAmount2Atom)
+  const tokenAmount1 = createMemo(() =>
+    amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined,
+  )
+  const tokenAmount2 = createMemo(() =>
+    amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined,
+  )
 
-  useSwapAmountCalculatorEffect()
-
+  // useSwapAmountCalculatorEffect()
+  console.log('2333: ', 2333)
   createEffect(() => {
     console.log('tokenAmount1(): ', tokenAmount1())
     console.log('amount1(): ', amount1())

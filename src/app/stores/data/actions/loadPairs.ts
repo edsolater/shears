@@ -1,21 +1,28 @@
 import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
+import { isPairInfoLoadingAtom, pairInfosAtom } from '../atoms'
 import { DataStore } from '../store'
 
 export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {
-  loadPairs(store)
 })
 
-export function loadPairs(store: Store<DataStore>) {
-  store.set({ isPairInfoLoading: true })
+pairInfosAtom.onFirstAccess(loadPairs)
+
+export function loadPairs() {
+  isPairInfoLoadingAtom.set(true)
   getPairJsonFromWorker().subscribe((allPairJsonInfos) => {
     console.log('get pools count', allPairJsonInfos.length)
-    store.set({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 150) })
+    isPairInfoLoadingAtom.set(false)
+    pairInfosAtom.set(allPairJsonInfos.slice(0, 150))
     let count = 0
     const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
     const timeoutId = setInterval(() => {
       const newPairs = clonedAllPairJsonInfos?.slice(0, 150).map((i) => ({ ...i, name: i.name + count }))
-      newPairs && store.set({ isPairInfoLoading: false, pairInfos: newPairs })
+      if (newPairs) {
+        console.log('get pools count', newPairs.length)
+        isPairInfoLoadingAtom.set(false)
+        pairInfosAtom.set(newPairs)
+      }
       count++
     }, 1000)
     return () => clearInterval(timeoutId)

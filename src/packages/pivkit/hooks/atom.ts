@@ -42,16 +42,17 @@ type CreateAtomOptions<T> = {
 
 /** handle state */
 export type Atom<T = any> = {
-  accessor: Accessor<T>
-  setter: Setter<T>
-  current: T
+  getAccessor: Accessor<T>
+  set: Setter<T>
+  get: T
   onFirstAccess(callback: AtomOnFirstAccessCallback<T>): Subscription
   onAccess(callback: AtomOnAccessCallback<T>): Subscription
   onChange(callback: AtomOnChangeCallback<T>): Subscription
 }
 
 /**
- * small piece of store state of an app
+ * small piece of store state of an app \
+ * usually in mainthread
  * @param value if it's function, it will be called only when first access. ()
  */
 export function createAtom<T>(): Atom<T | undefined>
@@ -74,7 +75,7 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
 
   const [accessCount, setAccessCount] = createSignal(0)
 
-  // -------- method: wrappedGetter --------
+  // -------- [method] wrappedGetter --------
   const callbackInfo = { get: accessor, set: setter }
   const wrappedGetter = ((...args) => {
     setAccessCount((n) => n + 1)
@@ -88,7 +89,7 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
     return accessor(...args)
   }) as typeof accessor
 
-  // -------- method: wrappedSetter --------
+  // -------- [method] wrappedSetter --------
   const [setCount, setSetCount] = createSignal(0)
   const wrappedSetter = ((...args: Parameters<typeof setter>) => {
     setSetCount((n) => n + 1)
@@ -102,7 +103,7 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
     }),
   )
 
-  // -------- method: subscribeOnFirstAccessCallback --------
+  // -------- [method] subscribeOnFirstAccessCallback --------
   function subscribeOnFirstAccessCallback(callback: AtomOnFirstAccessCallback<T>) {
     onFirstAccessCallbacks.add(callback)
     return {
@@ -112,7 +113,7 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
     }
   }
 
-  // -------- method: subscribeOnAccessCallback --------
+  // -------- [method] subscribeOnAccessCallback --------
   function subscribeOnAccessCallback(callback: AtomOnAccessCallback<T>) {
     onAccessCallbacks.add(callback)
     return {
@@ -122,7 +123,7 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
     }
   }
 
-  // -------- method: subscribeOnChangeCallback --------
+  // -------- [method] subscribeOnChangeCallback --------
   function subscribeOnChangeCallback(callback: AtomOnChangeCallback<T>) {
     onChangeCallbacks.add(callback)
     return {
@@ -133,9 +134,14 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
   }
 
   return {
-    accessor: wrappedGetter,
-    setter: wrappedSetter,
-    get current() {
+    getAccessor(...args) {
+      return wrappedGetter(...args)
+    },
+    //@ts-ignore no need to check
+    set(...args) {
+      return wrappedSetter(...(args as any))
+    },
+    get() {
       return untrack(() => accessor())
     },
     onFirstAccess: subscribeOnFirstAccessCallback,
@@ -161,6 +167,6 @@ type AtomHistory<T> = {
  * @returns
  */
 export function useAtom<T>(atom: Atom<T>): AtomHook<T> {
-  const { accessor, setter } = atom
-  return { get: accessor, set: setter }
+  const { getAccessor, set } = atom
+  return { get: getAccessor, set: set }
 }

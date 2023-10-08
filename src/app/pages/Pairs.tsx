@@ -1,10 +1,10 @@
 import { createMemo } from 'solid-js'
+import { Collapse, List, Piv, createRef, useAtom, useElementSize } from '../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
-import { useDataStore } from '../stores/data/store'
-import { createRef, useElementSize, Piv, List, Collapse } from '../../packages/pivkit'
+import { pairInfosAtom } from '../stores/data/atoms'
 
 export default function PairsPanel() {
-  const dataStore = useDataStore()
+  const { get: pairInfos } = useAtom(pairInfosAtom)
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
@@ -24,7 +24,7 @@ export default function PairsPanel() {
           gap: '4px',
         }}
       >
-        <List items={dataStore.pairInfos}>
+        <List items={pairInfos}>
           {(info) => (
             <Collapse
               icss={{

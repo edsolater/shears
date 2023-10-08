@@ -1,5 +1,5 @@
 import { useDataStore } from '../store'
-import { loadFarmJsonInfos } from '../actions/loadFarmJsonInfos'
+import { loadFarmJsonInfos } from '../featureHooks/loadFarmJsonInfos'
 
 export function refetchJsonInfos() {
   const store = useDataStore()
