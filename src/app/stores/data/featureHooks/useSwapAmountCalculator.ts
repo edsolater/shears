@@ -3,21 +3,21 @@ import { createEffect } from 'solid-js'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { getToken } from '../methods/getToken'
 import { calculatedSwapRouteInfos_main } from '../utils/calculateSwapRouteInfos_main'
-import { swapToken1Atom, swapToken2Atom, swapTokenAmount1Atom, swapTokenAmount2Atom } from '../atoms'
+import { swapInputToken1Atom, swapInputToken2Atom, swapInputTokenAmount1Atom, swapInputTokenAmount2Atom } from '../atoms'
 import { useAtom } from '../../../../packages/pivkit'
 
 /**
  * storeState:
- * - {@link swapToken1Atom}
- * - {@link swapToken2Atom}
- * - {@link swapTokenAmount1Atom}
- * - {@link swapTokenAmount2Atom}
+ * - {@link swapInputToken1Atom}
+ * - {@link swapInputToken2Atom}
+ * - {@link swapInputTokenAmount1Atom}
+ * - {@link swapInputTokenAmount2Atom}
  */
 export function useSwapAmountCalculator() {
-  const { get: token1, set: setToken1 } = useAtom(swapToken1Atom)
-  const { get: token2, set: setToken2 } = useAtom(swapToken2Atom)
-  const { get: amount1, set: setAmount1 } = useAtom(swapTokenAmount1Atom)
-  const { get: amount2, set: setAmount2 } = useAtom(swapTokenAmount2Atom)
+  const { get: token1, set: setToken1 } = useAtom(swapInputToken1Atom)
+  const { get: token2, set: setToken2 } = useAtom(swapInputToken2Atom)
+  const { get: amount1, set: setAmount1 } = useAtom(swapInputTokenAmount1Atom)
+  const { get: amount2, set: setAmount2 } = useAtom(swapInputTokenAmount2Atom)
 
   // preflight
   createEffect(() => {

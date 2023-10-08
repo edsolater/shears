@@ -77,23 +77,31 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
 
   // -------- [method] wrappedGetter --------
   const callbackInfo = { get: accessor, set: setter }
-  const wrappedGetter = ((...args) => {
+
+  /**
+   * wrapped getter that can hand onAccess and onFirstAccess callback
+   * @param args
+   * @returns
+   */
+  function wrappedGetter(...args) {
     setAccessCount((n) => n + 1)
 
     // handle  'onChange' callback
     onAccessCallbacks.forEach((cb) => cb?.({ ...callbackInfo, accessCount }))
-    if (accessCount() === 1) {
+    if (untrack(accessCount) === 1) {
       // handle  'onChange' callback
       onFirstAccessCallbacks.forEach((cb) => cb?.(callbackInfo))
     }
+    // @ts-ignore no need to check
     return accessor(...args)
-  }) as typeof accessor
+  }
 
   // -------- [method] wrappedSetter --------
   const [setCount, setSetCount] = createSignal(0)
   const wrappedSetter = ((...args: Parameters<typeof setter>) => {
     setSetCount((n) => n + 1)
     setter(...args)
+    console.log('set: ', args)
   }) as typeof setter
 
   createEffect(
@@ -134,15 +142,11 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
   }
 
   return {
-    getAccessor(...args) {
-      return wrappedGetter(...args)
-    },
+    getAccessor: wrappedGetter,
     //@ts-ignore no need to check
-    set(...args) {
-      return wrappedSetter(...(args as any))
-    },
+    set: wrappedSetter,
     get() {
-      return untrack(() => accessor())
+      return untrack(accessor)
     },
     onFirstAccess: subscribeOnFirstAccessCallback,
     onAccess: subscribeOnAccessCallback,

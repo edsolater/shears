@@ -5,10 +5,10 @@ import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
 
 // -------- #swap --------
-export const swapToken1Atom = createAtom<Mint | undefined>(RAYMint)
-export const swapToken2Atom = createAtom<Mint | undefined>(SOLMint)
-export const swapTokenAmount1Atom = createAtom<Numberish | undefined>()
-export const swapTokenAmount2Atom = createAtom<Numberish | undefined>()
+export const swapInputToken1Atom = createAtom<Mint | undefined>(RAYMint)
+export const swapInputToken2Atom = createAtom<Mint | undefined>(SOLMint)
+export const swapInputTokenAmount1Atom = createAtom<Numberish | undefined>()
+export const swapInputTokenAmount2Atom = createAtom<Numberish | undefined>()
 
 // -------- #farm --------
 export const farmJsonInfosAtom = createAtom<FarmJSON[]>()
