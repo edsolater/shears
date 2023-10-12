@@ -79,24 +79,19 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
     setCount: setCount,
     callbackBasicInfo: { value: () => atomValue.current, set: setAtomValue },
   }
+  const basicAtomInfo = {
+    atomValueSubscribable: atomValue,
+    value: () => atomValue.current,
+    set: setAtomValue,
+    accessCountSubscribable: accessCount,
+    setAccessCount,
+    setCountSubscribable: setCount,
+    setSetCount,
+  }
   const onFirstAccessProps = createAtom_onFirstAccess(featurePayloads)
   const onAccessProps = createAtom_onAccess(featurePayloads)
   const onChangeProps = createAtom_onChange(featurePayloads)
-
-  return mergeObjects(
-    {
-      atomValueSubscribable: atomValue,
-      value: () => atomValue.current,
-      set: setAtomValue,
-      accessCountSubscribable: accessCount,
-      setAccessCount,
-      setCountSubscribable: setCount,
-      setSetCount,
-    },
-    onFirstAccessProps,
-    onAccessProps,
-    onChangeProps,
-  )
+  return mergeObjects(basicAtomInfo, onFirstAccessProps, onAccessProps, onChangeProps)
 }
 
 type AtomHook<T> = {
