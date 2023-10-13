@@ -1,7 +1,8 @@
 import { createEffect, onCleanup } from 'solid-js'
-import type { Atom, CreateAtomFeaturePayloads } from '..'
+import type { Atom, CreateAtomFeaturePayloads } from '../createAtom'
+import { Subscribable } from '@edsolater/fnkit'
 
-export type AtomCallbackInfo<T> = { value(): T; set: (dispatcher: T | ((prev: T) => T)) => void }
+export type AtomCallbackInfo<T> = { atomValue: Subscribable<T> }
 type AtomOnFirstAccessCallback<T> = (info: AtomCallbackInfo<T>) => void
 type AtomOnChangeCallback<T> = (
   info: AtomCallbackInfo<T> & { prev(): T | undefined; onCleanup(cb: () => void): void },

@@ -27,10 +27,10 @@ function initMessageReceiver() {
     const onMessage = callbackMap.get(command)
     if (!onMessage) return
 
-    const [subscribable, inject] = createSubscribable()
+    const subscribable = createSubscribable()
     returnValueMap.set(onMessage, subscribable)
 
-    invoke(onMessage, { payload, resolve: inject })
+    invoke(onMessage, { payload, resolve: subscribable.set })
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)

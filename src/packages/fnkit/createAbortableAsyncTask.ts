@@ -9,16 +9,16 @@ export function createAbortableAsyncTask<T>(
   task: (utils: { resolve: (value: T | PromiseLike<T>) => void; aborted: () => boolean }) => void,
 ): {
   abort(): void
-  resultSubscribable: Subscribable<T>
+  resultSubscribable: Subscribable<T | undefined>
   injectToSubscribable(value: T): void
 } {
   let isTaskAborted = false
   const innerResolve: (value: T | PromiseLike<T>) => void = async (asyncValue) => {
     const value = await asyncValue
     if (isTaskAborted) return // case: abort before value promise fulfilled
-    inject(value)
+    taskResultSubscribable.set(value)
   }
-  const [taskResultSubscribable, inject] = createSubscribable<T>()
+  const taskResultSubscribable = createSubscribable<T>()
   const utils = { resolve: innerResolve, aborted: () => isTaskAborted }
   invoke(task, utils)
   return {
@@ -26,6 +26,6 @@ export function createAbortableAsyncTask<T>(
       isTaskAborted = true
     },
     resultSubscribable: taskResultSubscribable,
-    injectToSubscribable: inject,
+    injectToSubscribable: taskResultSubscribable.set,
   }
 }

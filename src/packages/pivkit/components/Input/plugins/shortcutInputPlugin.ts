@@ -41,13 +41,13 @@ export const keyboardShortcutObserverPlugin = (options: {
   })
 
 function subscribeKeyboardShortcut(el: HTMLElement) {
-  const [subscri, inject] = createSubscribable<string>()
+  const subscribable = createSubscribable<string>()
   onEvent(el, 'keydown', ({ ev }) => {
     ev.stopPropagation()
     const shortcut = getShorcutStringFromKeyboardEvent(ev)
-    if (isValidShortcut(ev)) inject(shortcut)
+    if (isValidShortcut(ev)) subscribable.set(shortcut)
   })
-  return subscri
+  return subscribable
 }
 
 function isValidShortcut(ev: KeyboardEvent, options?: { banedKeywords?: string[] }): boolean {

@@ -32,9 +32,10 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })
 
-    const [combinedSubscribable] = createSubscribableFromPromise(Promise.all([fetchedAPIPromise, farmSDKPromise]))
+    const combinedSubscribable = createSubscribableFromPromise(Promise.all([fetchedAPIPromise, farmSDKPromise]))
 
-    combinedSubscribable.subscribe(([[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs]) => {
+    combinedSubscribable.subscribe((v) => {
+      const [[farmJsons, liquidityJsons, pairJsons] = [], farmSDKs] = v
       if (aborted()) return
       const farmSYN = hydrateFarmSYN({ farmJsons, liquidityJsons, pairJsons, farmSDKs })
       resolve(farmSYN)

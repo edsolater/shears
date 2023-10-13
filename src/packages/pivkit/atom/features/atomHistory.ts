@@ -1,4 +1,4 @@
-import { Atom } from '..'
+import { Atom } from '../createAtom'
 
 export type CreateAtomOptions_AtomHistory<T> = {
   // TODO: imply it!!!

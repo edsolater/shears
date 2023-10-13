@@ -1,4 +1,13 @@
-import { AnyObj, Subscribable, WeakerMap, WeakerSet, createSubscribable, isFunction, isString, shakeNil } from '@edsolater/fnkit'
+import {
+  AnyObj,
+  Subscribable,
+  WeakerMap,
+  WeakerSet,
+  createSubscribable,
+  isFunction,
+  isString,
+  shakeNil,
+} from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { KeyboardShortcutFn, KeybordShortcutKeys, handleKeyboardShortcut } from '../domkit'
 import { createRef } from '../hooks/createRef'
@@ -159,7 +168,7 @@ export function makeSubscriable<T extends AnyObj>(
       : originalObject instanceof Map || originalObject instanceof WeakMap || originalObject instanceof WeakerMap
       ? ['set', 'delete']
       : Object.getOwnPropertyNames(originalObject)
-  const [subscribable, inject] = createSubscribable<T>()
+  const subscribable = createSubscribable<T>() as Subscribable<T>
   const proxiedValue = new Proxy(originalObject, {
     get(target, prop) {
       const v = Reflect.get(target, prop) as unknown
@@ -167,7 +176,7 @@ export function makeSubscriable<T extends AnyObj>(
       if (isFunction(v) && isString(prop) && mayCauseChangeKeys.includes(prop)) {
         return ((...args: Parameters<typeof v>) => {
           const result = Reflect.apply(v, target, args)
-          inject(target)
+          subscribable.set(target)
           return result
         }).bind(target)
       } else {
@@ -176,7 +185,7 @@ export function makeSubscriable<T extends AnyObj>(
     },
     set(target, prop, value) {
       Reflect.set(target, prop, value)
-      inject(target)
+      subscribable.set(target)
       return true
     },
   })

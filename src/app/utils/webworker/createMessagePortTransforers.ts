@@ -81,12 +81,12 @@ function createMessageReceiver<R extends ReceiveMessage>(
    * @returns subscribable
    */
   function createNewMessageReceiver<R extends ReceiveMessage>(command: string): Receiver<R> {
-    const [subscribable, inject] = createSubscribable<R['payload']>()
+    const subscribable = createSubscribable<R['payload']>()
     const messageHandler = (ev: MessageEvent<any>): void => {
       const body = ev.data as ReceiveMessage<R['payload']>
       if (body.command === command) {
         const decodedData = decode(body.payload)
-        inject(decodedData)
+        subscribable.set(decodedData)
       }
     }
     Promise.resolve(towardsTarget).then((worker) =>
