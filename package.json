@@ -16,8 +16,8 @@
   "license": "MIT",
   "resolutions": {
     "@solana/spl-token": "^0.3.6",
-    "@solana/wallet-adapter-base": "^0.9.20",
-    "@solana/web3.js": "^1.73.0",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/web3.js": "^1.78.7",
     "decimal.js": "^10.4.3",
     "bn.js": "^5.2.1"
   },
