@@ -77,11 +77,11 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
     atomValue: atomValue,
     accessCount: accessCount,
     setCount: setCount,
-    callbackBasicInfo: { value: () => atomValue.current, set: setAtomValue },
+    callbackBasicInfo: { value: atomValue.value, set: setAtomValue },
   }
   const basicAtomInfo = {
     atomValueSubscribable: atomValue,
-    value: () => atomValue.current,
+    value: atomValue.value,
     set: setAtomValue,
     accessCountSubscribable: accessCount,
     setAccessCount,
@@ -108,7 +108,7 @@ type AtomHook<T> = {
  * @returns
  */
 export function useAtom<T>(atom: Atom<T>): AtomHook<T> {
-  const [value, setValue] = createSignal(atom.atomValueSubscribable.current)
+  const [value, setValue] = createSignal(atom.atomValueSubscribable.value())
   createEffect(() => {
     const subscription = atom.atomValueSubscribable.subscribe(setValue)
     onCleanup(subscription.unsubscribe)

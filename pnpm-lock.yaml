@@ -16,8 +16,8 @@ dependencies:
     specifier: ^7.23.1
     version: 7.23.1
   '@edsolater/fnkit':
-    specifier: ^0.1.48
-    version: 0.1.48
+    specifier: ^0.1.50
+    version: 0.1.50
   '@raydium-io/raydium-sdk':
     specifier: 1.3.0-beta.20
     version: 1.3.0-beta.20
@@ -1343,8 +1343,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@edsolater/fnkit@0.1.48:
-    resolution: {integrity: sha512-+VRx6iRVJBq0B+gPvfFozSWQrCPNx5QTorie75FpPOdL6uWjViK9ZYGnhNJtgzlDrIn5UwV450xxj3bSD0G7Kg==}
+  /@edsolater/fnkit@0.1.50:
+    resolution: {integrity: sha512-rF4zWuytPj9A0AnXv52t2THkSauBmZHd6HLiSf9U0ly99nQIl3oP1KsmhOmtkY58gWQGs/noZ9de2DadQKQ6LQ==}
     dev: false
 
   /@esbuild/android-arm64@0.18.20:
