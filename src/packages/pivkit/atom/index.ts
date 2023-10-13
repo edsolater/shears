@@ -1,5 +1,5 @@
-import { createSubscribable, mergeObjects, shrinkFn, type Subscribable } from '@edsolater/fnkit'
-import { createEffect, createSignal, onCleanup } from 'solid-js'
+import { createSubscribable, isFunction, mergeObjects, shrinkFn, type Subscribable } from '@edsolater/fnkit'
+import { batch, createEffect, createSignal, onCleanup } from 'solid-js'
 import { useAtomHistory, type AtomHook_AtomHistory, type CreateAtomOptions_AtomHistory } from './features/atomHistory'
 import {
   createAtom_onAccess,
@@ -19,6 +19,8 @@ import {
   type CreateAtomOptions_OnChange,
   type CreateAtomOptions_OnFirstAccess,
 } from './features/registerCallbacks'
+import { createStore } from 'solid-js/store'
+import { createProxiedStore } from '../hooks'
 
 type AtomPlugin<T> = (get: () => T, set: (dispatcher: T | ((prev: T) => T)) => void) => Record<string, any> // <-- will merge to atoms
 
@@ -32,11 +34,11 @@ type CreateAtomOptions<T> = {
   CreateAtomOptions_OnChange<T>
 
 /** handle state */
-export type Atom<T = any> = {
+export type Atom<T = any> = Subscribable<T> & {
   value: () => T
   set: (value: T | ((prev: T) => T)) => void
   /** for inner */
-  atomValueSubscribable: Subscribable<T>
+  subscribable: Subscribable<T>
 
   /** for inner */
   accessCountSubscribable: Subscribable<number>
@@ -103,14 +105,16 @@ type AtomHook<T> = {
   AtomHook_OnChange<T>
 
 /**
- * for readablity
  * @param atom atom
  * @returns
  */
 export function useAtom<T>(atom: Atom<T>): AtomHook<T> {
-  const [value, setValue] = createSignal(atom.atomValueSubscribable.value())
+  const defaultValue = atom.subscribable.value()
+
+  const [value, setValue] = createSignal(defaultValue)
+
   createEffect(() => {
-    const subscription = atom.atomValueSubscribable.subscribe(setValue)
+    const subscription = atom.subscribable.subscribe(setValue)
     onCleanup(subscription.unsubscribe)
   })
   function wrappedSetter(...args: Parameters<typeof atom.set>) {
@@ -132,4 +136,46 @@ export function useAtom<T>(atom: Atom<T>): AtomHook<T> {
     onAccessCallback,
     onChangeCallback,
   )
+}
+
+export function useStoreAtom<T>(atom: Atom<T>): AtomHook<T> {
+  const defaultValue = atom.subscribable.value() ?? {}
+
+  const [value, setValue] = createStore(defaultValue)
+
+  createEffect(() => {
+    const subscription = atom.subscribable.subscribe(setValue)
+    onCleanup(subscription.unsubscribe)
+  })
+  function wrappedSetter(...args: Parameters<typeof atom.set>) {
+    atom.setSetCount((n) => n + 1)
+    return atom.set(...args)
+  }
+  function wrappedGetter() {
+    atom.setAccessCount((n) => n + 1)
+    return value()
+  }
+  const onFirstAccessCallback = useAtom_onFirstAccessCallback(atom)
+  const onAccessCallback = useAtom_onAccessCallback(atom)
+  const onChangeCallback = useAtom_onChangeCallback(atom)
+  const featureReturn = useAtomHistory(atom)
+  return mergeObjects(
+    { get: wrappedGetter, set: wrappedSetter },
+    featureReturn,
+    onFirstAccessCallback,
+    onAccessCallback,
+    onChangeCallback,
+  )
+}
+
+function createAtomStore<T extends object>(atom: Atom<T>) {
+  const [proxiedStore, rawStore] = createProxiedStore(() => atom.value() ?? {})
+  function set(value: () => T) {
+    proxiedStore.set(() => value())
+  }
+  atom.subscribable.subscribe((s) => {
+    proxiedStore.set(() => s)
+  })
+
+  return [proxiedStore, set]
 }
