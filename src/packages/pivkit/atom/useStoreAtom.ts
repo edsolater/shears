@@ -1,7 +1,7 @@
 import { mergeObjects } from '@edsolater/fnkit'
 import { createEffect, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { createProxiedStore } from '../hooks'
+import { createSmartStore } from '../hooks'
 import type { Atom } from './createAtom'
 import { useAtomHistory, type AtomHook_AtomHistory } from './features/atomHistory'
 import {
@@ -22,19 +22,12 @@ export type StoreAtomHook<T> = {
   AtomHook_OnChange<T>
 
 export function useStoreAtom<T extends object>(atom: Atom<T>): StoreAtomHook<T> {
-  const defaultValue = atom.value()
-
-  const [store, rudelySetStore] = createStore(defaultValue)
-
-  /** make change properties of store is smooth  */
-  const smartlySetStore = (newStore: T) => {
-    // TODO imply it!!
-    return rudelySetStore(newStore)
-  }
+  const { store, set } = createSmartStore<T>(atom.value())
   createEffect(() => {
-    const subscription = atom.subscribe((v) => smartlySetStore(v))
+    const subscription = atom.subscribe((v) => set(v))
     onCleanup(subscription.unsubscribe)
   })
+
   function wrappedSetter(...args: Parameters<typeof atom.set>) {
     atom.setCount.set((n) => n + 1)
     return atom.set(...args)
@@ -60,13 +53,4 @@ export function useStoreAtom<T extends object>(atom: Atom<T>): StoreAtomHook<T> 
     onAccessCallback,
     onChangeCallback,
   )
-}
-function createAtomStore<T extends number>(atom: Atom<T>) {
-  const [proxiedStore, rawStore] = createProxiedStore(() => atom.value() ?? {})
-  function set(value: () => T) {
-    proxiedStore.set(() => value())
-  }
-  atom.subscribe((s) => {})
-
-  return [proxiedStore, set]
 }

@@ -6,10 +6,10 @@ export function asyncInvoke<T>(
   fn: () => T,
   options?: {
     /** same key tasks will only invoke once in one event loop */
-    key?: string | number | symbol
+    taskName?: string | number | symbol
   }
 ): Promise<T> {
-  const key = options?.key
+  const key = options?.taskName
   if (key) {
     queueTask.set(key, fn)
     return Promise.resolve().then(() => {
