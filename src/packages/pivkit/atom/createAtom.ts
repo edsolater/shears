@@ -72,3 +72,34 @@ export function createAtom<T>(value?: T | (() => T), options?: CreateAtomOptions
   const onChangeProps = createAtom_onChange(featurePayloads)
   return mergeObjects(basicAtomInfo, onFirstAccessProps, onAccessProps, onChangeProps)
 }
+
+/**
+ * whole store state of an app \
+ * usually in mainthread
+ * @param value if it's function, it will be called only when first access. ()
+ */
+export function createStoreAtom<T extends object>(): Atom<T | undefined>
+export function createStoreAtom<T extends object>(value: T | (() => T), options?: CreateAtomOptions<T>): Atom<T>
+export function createStoreAtom<T extends object>(value?: T | (() => T), options?: CreateAtomOptions<T>): Atom {
+  // -------- basic state --------
+  const atomValue = createSubscribable(shrinkFn(value) as T)
+  const accessCount = createSubscribable(0)
+  const setCount = createSubscribable(0)
+
+  // -------- callbacks --------
+  const featurePayloads: CreateAtomFeaturePayloads<T> = {
+    createAtomOption: options,
+    atomValue: atomValue,
+    accessCount: accessCount,
+    setCount: setCount,
+    callbackBasicInfo: { atomValue },
+  }
+  const basicAtomInfo = mergeObjects(atomValue, {
+    accessCount,
+    setCount,
+  })
+  const onFirstAccessProps = createAtom_onFirstAccess(featurePayloads)
+  const onAccessProps = createAtom_onAccess(featurePayloads)
+  const onChangeProps = createAtom_onChange(featurePayloads)
+  return mergeObjects(basicAtomInfo, onFirstAccessProps, onAccessProps, onChangeProps)
+}

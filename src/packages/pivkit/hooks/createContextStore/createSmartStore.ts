@@ -9,13 +9,13 @@ import {
   type MayArray,
 } from '@edsolater/fnkit'
 import { batch } from 'solid-js'
-import { createStore, produce, type SetStoreFunction } from 'solid-js/store'
-import type { DefaultStoreValue, OnChangeCallback, Store } from './type'
+import { createStore, produce, unwrap, type SetStoreFunction } from 'solid-js/store'
+import type { OnChangeCallback, Store } from './type'
 import { asyncInvoke } from './utils/asyncInvoke'
 
 export type CreateProxiedStoreCallbacks<T extends Record<string, any>> = {
-  onInit?: { cb: (store: Store<T>) => void }[]
-  onChange?: {
+  onInit?: MayArray<{ cb: (store: Store<T>) => void }>
+  onPropertyChange?: {
     [K in keyof T]?: MayArray<OnChangeCallback<T, K>>
   }
 }
@@ -29,39 +29,40 @@ export type CreateProxiedStoreCallbacks<T extends Record<string, any>> = {
  *
  */
 export function createSmartStore<T extends Record<string, any>>(
-  defaultValue?: DefaultStoreValue<T>,
+  defaultValue: T,
   options?: CreateProxiedStoreCallbacks<T>,
 ): {
-  store: Store<T>
+  store: T
+  unwrappedStore: T
+  setStore(dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>): Promise<Store<T>>
   onPropertyChange: <K extends keyof T>(key: K, cb: OnChangeCallback<T, K>) => { abort(): void }
-  set(dispatch: ((prevValue?: unknown) => unknown) | unknown): Promise<Store<T>>
 
   /** don't use. as much as possible, it's unwrapped solidjs/store setStore */
   _rawStore: T
   /** don't use. as much as possible, it's unwrapped solidjs/store setStore */
-  _rawSetStore: SetStoreFunction<object>
+  _rawSetStore: SetStoreFunction<T>
 } {
-  const [rawStore, rawSetStore] = createStore(defaultValue)
-  const inputOnChangeCallbacks = Object.entries(options?.onChange ?? {}).map(([propertyName, callbacks]) => [
+  const [rawStore, rawSetStore] = createStore<T>(defaultValue)
+  const inputOnChangeCallbacks = Object.entries(options?.onPropertyChange ?? {}).map(([propertyName, callbacks]) => [
     propertyName,
     flap(callbacks),
   ]) as [keyof T, OnChangeCallback<T, keyof T>[]][]
   const onChangeCallbackMap = new Map<keyof T, OnChangeCallback<T, keyof T>[]>(inputOnChangeCallbacks)
   const onChangeCleanFnMap = new Map<OnChangeCallback<T, keyof T>, () => void>()
 
-  function proxiedStoreSet(dispatch: ((prevValue?: unknown) => unknown) | unknown): Promise<Store<T>> {
+  function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): Promise<Store<T>> {
     return asyncInvoke(
       () => {
         const prevStore = rawStore
-        const newStore = isFunction(dispatch) ? dispatch(rawStore) : dispatch
-        if (!newStore) return proxiedStore // no need to update store with the same value
-        Object.entries(newStore).forEach(([propertyName, newValue]) => {
+        const newStorePieces = isFunction(dispatch) ? dispatch(unwrap(rawStore)) : dispatch
+        if (!newStorePieces) return store // no need to update store with the same value
+        Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
           // @ts-ignore
           const prevValue = prevStore[propertyName]
-          invokeOnChanges(propertyName, newValue, prevValue, proxiedStore)
+          invokeOnChanges(propertyName, newValue, prevValue, store)
         })
         batch(() => {
-          Object.entries(newStore).forEach(([propertyName, newValue]) => {
+          Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
             rawSetStore(
               produce((draft: AnyObj) => {
                 draft[propertyName] = assignToNewValue(draft[propertyName], newValue)
@@ -69,13 +70,13 @@ export function createSmartStore<T extends Record<string, any>>(
             )
           })
         })
-        return proxiedStore
+        return store
       },
       { taskName: 'setStore' },
     )
   }
 
-  const proxiedStore = new Proxy(
+  const store = new Proxy(
     {},
     {
       // result contain keys info
@@ -120,13 +121,24 @@ export function createSmartStore<T extends Record<string, any>>(
   }
 
   // invoke onStoreInit callbacks
-  options?.onInit?.forEach(({ cb }) => cb(proxiedStore))
+  if (options?.onInit) {
+    flap(options.onInit).forEach(({ cb }) => cb(store))
+  }
+
+  const unwrappedStore = new Proxy(store, {
+    get(target, p, receiver) {
+      const pureStore = unwrap(target)
+      return Reflect.get(pureStore, p, receiver)
+    },
+  })
 
   return {
-    store: proxiedStore,
-    _rawStore: rawStore as T,
+    store: store,
+    unwrappedStore: unwrappedStore,
+    setStore: setStore,
     onPropertyChange: addListenerPropertyChange,
-    set: proxiedStoreSet,
+
+    _rawStore: rawStore as T,
     _rawSetStore: rawSetStore,
   }
 }

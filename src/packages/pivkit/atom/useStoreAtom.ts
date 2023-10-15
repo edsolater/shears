@@ -21,9 +21,9 @@ export type StoreAtomHook<T> = {
   AtomHook_OnChange<T>
 
 export function useStoreAtom<T extends object>(atom: Atom<T>): StoreAtomHook<T> {
-  const { store, set } = createSmartStore<T>(atom.value())
+  const { store, setStore } = createSmartStore<T>(atom.value())
   createEffect(() => {
-    const subscription = atom.subscribe((v) => set(v))
+    const subscription = atom.subscribe((v) => setStore(v))
     onCleanup(subscription.unsubscribe)
   })
 
