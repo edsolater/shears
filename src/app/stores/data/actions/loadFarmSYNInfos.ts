@@ -1,30 +1,29 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { Store, createOnFirstAccess } from '../../../../packages/pivkit'
 import { appRpcUrl } from '../../../utils/common/config'
-import {
-  getMessageReceiver,
-  getMessageSender
-} from '../../../utils/webworker/loadWorker_main'
+import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
 import { WalletStore, useWalletStore } from '../../wallet/store'
 import { DataStore } from '../store'
+import { setStore } from '../atoms'
 
 // 💡 subscribe wallet change
 export const onAccessFarmSYNInfos = createOnFirstAccess<DataStore>(['farmInfos'], (store) => {
   createEffect(() => {
-    const walletStore = useWalletStore()
-    const { unsubscribe } = loadFarmSYNInfos({ owner: walletStore.owner, store })
+    const { unsubscribe } = loadFarmSYNInfos()
     onCleanup(() => {
       unsubscribe?.()
     })
   })
 })
 
-export function loadFarmSYNInfos({ owner, store }: { owner: string | undefined; store: Store<DataStore> }): {
+export function loadFarmSYNInfos(): {
   unsubscribe?(): void
 } {
-  store.set({ isFarmInfosLoading: true })
+  const walletStore = useWalletStore()
+  const owner = walletStore.owner
+  setStore({ isFarmInfosLoading: true })
   const { unsubscribe } = getFarmSYNInfosFromWorker(owner).subscribe((allFarmSYNInfos) => {
-    store.set({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
+    setStore({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
   })
   return { unsubscribe }
 }

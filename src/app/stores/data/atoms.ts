@@ -5,6 +5,7 @@ import { Mint, Numberish } from '../../utils/dataStructures/type'
 import { loadPairs } from './actions/loadPairs'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
+import { loadFarmJsonInfos } from './featureHooks/loadFarmJsonInfos'
 
 // -------- #swap --------
 export const swapInputToken1Atom = createAtom<Mint | undefined>(RAYMint)
@@ -40,22 +41,16 @@ type AppStore = {
   isPairInfoLoading?: boolean
 }
 
-export const appStore = createStoreAtom<AppStore>({
-  swapInputToken1: RAYMint,
-  swapInputToken2: SOLMint,
-})
-
 export const {
-  store,
-  unwrappedStore,
+  store: store,
+  unwrappedStore: storeData,
   setStore: setStore,
 } = createSmartStore<AppStore>({
   swapInputToken1: RAYMint,
   swapInputToken2: SOLMint,
-})
-export const untrackedStore = new Proxy(store, {
-  get(target, p, receiver) {
-    const pureStore = unwrap(target)
-    return Reflect.get(pureStore, p, receiver)
-  },
+},{
+  onFirstAccess:{
+    farmJsonInfos: loadFarmJsonInfos,
+    farmInfos: loadFarmJsonInfos,
+  }
 })

@@ -9,10 +9,10 @@ import { PairsStore } from './types/pairs'
 import { TokenListStore } from './types/tokenList'
 import { TokenPriceStore } from './types/tokenPrice'
 
-export type DataStore = FarmStore & PairsStore & TokenListStore & TokenPriceStore
-const defaultStore = {}
+// export type DataStore = FarmStore & PairsStore & TokenListStore & TokenPriceStore
+// const defaultStore = {}
 // this format is old , please use atom format
-export const [useDataStore] = createGlobalStore<DataStore>(defaultStore, {
+// export const [useDataStore] = createGlobalStore<DataStore>(defaultStore, {
   // deprecated
   // onFirstAccess: [onAccessFarmJsonInfos, onAccessFarmSYNInfos, onAccessPairsInfos, onAccessTokens, onAccessTokensPrice],
-})
+// })
