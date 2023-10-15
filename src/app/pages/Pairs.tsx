@@ -1,10 +1,10 @@
 import { createMemo } from 'solid-js'
-import { Collapse, List, Piv, createRef, useAtom, useElementSize } from '../../packages/pivkit'
+import { Collapse, List, Piv, createRef, useAtom, useElementSize, useStoreAtom } from '../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { pairInfosAtom } from '../stores/data/atoms'
 
 export default function PairsPanel() {
-  const { get: pairInfos } = useAtom(pairInfosAtom)
+  const { store: pairInfos } = useStoreAtom(pairInfosAtom)
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)

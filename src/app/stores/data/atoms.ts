@@ -1,6 +1,7 @@
 import { createAtom } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellknowns'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
+import { loadPairs } from './actions/loadPairs'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
 
@@ -17,5 +18,5 @@ export const farmInfosAtom = createAtom<FarmSYNInfo[]>()
 export const isFarmInfosLoadingAtom = createAtom(false)
 
 // -------- #pair --------
-export const pairInfosAtom = createAtom<PairJson[]>()
+export const pairInfosAtom = createAtom<PairJson[]>([], { onFirstAccess: loadPairs })
 export const isPairInfoLoadingAtom = createAtom(false)

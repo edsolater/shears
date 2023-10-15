@@ -1,14 +1,12 @@
-import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
-import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
+import { createOnFirstAccess } from '../../../../packages/pivkit'
+import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { isPairInfoLoadingAtom, pairInfosAtom } from '../atoms'
 import { DataStore } from '../store'
 
-export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {
-})
-
-pairInfosAtom.onFirstAccess(loadPairs)
+export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {})
 
 export function loadPairs() {
+  console.log('[main] load pairs')
   isPairInfoLoadingAtom.set(true)
   getPairJsonFromWorker().subscribe((allPairJsonInfos) => {
     console.log('get pools count', allPairJsonInfos.length)
@@ -30,11 +28,7 @@ export function loadPairs() {
 }
 
 function getPairJsonFromWorker() {
-  const sender = getMessageSender('fetch raydium pairs info')
-  sender.query({
-    force: false,
-  })
-
-  const receiver = getMessageReceiver('fetch raydium pairs info')
+  const { sender, receiver } = getMessagePort('fetch raydium pairs info')
+  sender.query({ force: false })
   return receiver
 }

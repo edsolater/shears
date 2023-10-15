@@ -35,7 +35,9 @@ export function createAtom_onFirstAccess<T>({
     onFirstAccessCallbacks.forEach((cb) => cb?.(info))
   }
   accessCount.subscribe((count) => {
+    console.log('count: ', count)
     if (count === 1) {
+      console.log('onFirstAccessCallbacks.size: ', onFirstAccessCallbacks)
       invokeFirstAccessCallback(callbackBasicInfo)
     }
   })

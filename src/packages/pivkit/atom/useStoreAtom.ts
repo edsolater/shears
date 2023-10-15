@@ -1,6 +1,5 @@
 import { mergeObjects } from '@edsolater/fnkit'
 import { createEffect, onCleanup } from 'solid-js'
-import { createStore } from 'solid-js/store'
 import { createSmartStore } from '../hooks'
 import type { Atom } from './createAtom'
 import { useAtomHistory, type AtomHook_AtomHistory } from './features/atomHistory'
