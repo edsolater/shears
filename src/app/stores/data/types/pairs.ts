@@ -30,3 +30,8 @@ export interface PairJson {
   volume30d: number
   volume30dQuote: number
 }
+
+export interface PairsStore {
+  readonly pairInfos?: PairJson[]
+  readonly isPairInfoLoading?: boolean
+}

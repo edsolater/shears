@@ -1,5 +1,4 @@
-export * from './createSmartStore'
-export * from './createContextStore'
+export * from '../smartStore/createSmartStore'
 export * from './createGlobalStore'
 export * from './utils/createOnFirstAccessCallback'
 export * from './utils/createOnChangeCallback'
