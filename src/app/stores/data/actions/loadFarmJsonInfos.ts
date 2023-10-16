@@ -1,7 +1,19 @@
-import { createOnFirstAccess } from '../../../../packages/pivkit'
-import { DataStore } from '../store'
-import { loadFarmJsonInfos } from '../featureHooks/loadFarmJsonInfos'
+import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
+import { setStore } from '../dataStore'
 
-export const onAccessFarmJsonInfos = createOnFirstAccess<DataStore>(['farmJsonInfos', 'farmInfos'], (store) => {
-  loadFarmJsonInfos()
-})
+/** u can see which this hook related to by checking import */
+export function loadFarmJsonInfos() {
+  setStore({ isFarmJsonLoading: true })
+  const receiver = getFarmJsonFromWorker()
+  receiver.subscribe((allFarmJsonInfos) => {
+    setStore({ isFarmJsonLoading: false, farmJsonInfos: allFarmJsonInfos })
+  })
+}
+
+export function getFarmJsonFromWorker() {
+  const sender = getMessageSender('fetch raydium farms info')
+  sender.query()
+
+  const receiver = getMessageReceiver('fetch raydium farms info')
+  return receiver
+}

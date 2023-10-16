@@ -1,9 +1,6 @@
-import { createOnFirstAccess } from '../../../../packages/pivkit'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
-import { isPairInfoLoadingAtom, pairInfosAtom, setStore } from '../atoms'
-import { DataStore } from '../store'
+import { setStore } from '../dataStore'
 
-export const onAccessPairsInfos = createOnFirstAccess<DataStore>(['pairInfos'], (store) => {})
 
 export function loadPairs() {
   console.log('[main] load pairs')

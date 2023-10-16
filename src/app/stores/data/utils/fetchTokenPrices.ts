@@ -5,7 +5,7 @@ import { jFetch } from '../../../../packages/jFetch'
 import { TokenListStore } from '../types/tokenList'
 
 export async function fetchTokenPrices(
-  tokens: TokenListStore['allTokens'],
+  tokens: TokenListStore['tokens'],
   raydiumUrl: string,
 ): Promise<Map<string, Numberish>> {
   type CoingeckoPriceFile = Record<

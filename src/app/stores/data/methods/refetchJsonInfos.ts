@@ -1,3 +1,3 @@
-import { loadFarmJsonInfos } from '../featureHooks/loadFarmJsonInfos'
+import { loadFarmJsonInfos } from '../actions/loadFarmJsonInfos'
 
 export const refetchJsonInfos = loadFarmJsonInfos

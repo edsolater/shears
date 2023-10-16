@@ -1,13 +1,13 @@
 import { WeakerMap } from '@edsolater/fnkit'
-import { useDataStore } from '../store'
 import { Token } from '../../../utils/dataStructures/Token'
+import { storeData } from '../dataStore'
 
 const mintWeakerMap = new WeakerMap<string, Token>()
 /**
  * @todo should link to a proxy that may return when token is aviliable in future
  */
 export function getToken(mint: string | undefined) {
-  const storeTokens = useDataStore().allTokens
+  const storeTokens = storeData.tokens
   if (mintWeakerMap.size !== storeTokens?.length) {
     mintWeakerMap.clear()
     storeTokens?.forEach((token) => {

@@ -5,7 +5,6 @@ import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
-import { DataStore } from '../store'
 import { FarmSYNInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 import { fetchLiquidityJson } from './fetchLiquidityJson'
@@ -15,7 +14,7 @@ import { fetchPairJsonInfo } from './fetchPairJson'
  * use LiquidityJson to get
  */
 export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
-  return createAbortableAsyncTask<DataStore['farmInfos']>(async ({ resolve, aborted }) => {
+  return createAbortableAsyncTask(async ({ resolve, aborted }) => {
     const farmJsonPromise = fetchFarmJsonInfo()
     const liquidityJsonPromise = fetchLiquidityJson()
     const pairJsonInfoPromise = fetchPairJsonInfo()

@@ -1,20 +1,7 @@
-import { createEffect, onCleanup } from 'solid-js'
-import { Store, createOnFirstAccess } from '../../../../packages/pivkit'
 import { appRpcUrl } from '../../../utils/common/config'
 import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
 import { WalletStore, useWalletStore } from '../../wallet/store'
-import { DataStore } from '../store'
-import { setStore } from '../atoms'
-
-// 💡 subscribe wallet change
-export const onAccessFarmSYNInfos = createOnFirstAccess<DataStore>(['farmInfos'], (store) => {
-  createEffect(() => {
-    const { unsubscribe } = loadFarmSYNInfos()
-    onCleanup(() => {
-      unsubscribe?.()
-    })
-  })
-})
+import { setStore } from '../dataStore'
 
 export function loadFarmSYNInfos(): {
   unsubscribe?(): void

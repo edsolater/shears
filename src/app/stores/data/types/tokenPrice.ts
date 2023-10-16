@@ -1,6 +1,5 @@
 import { Numberish } from '@edsolater/fnkit'
 import { TokenListStore } from './tokenList'
-import { Token } from '../../../utils/dataStructures/Token'
 
 export interface TokenPriceWorkerData {
   prices: TokenPriceStore['prices']
@@ -9,7 +8,7 @@ export interface TokenPriceWorkerData {
 
 export interface FetchRaydiumTokenPriceOptions {
   url: string
-  tokens: TokenListStore['allTokens']
+  tokens: TokenListStore['tokens']
 }
 
 export interface TokenPriceStore {

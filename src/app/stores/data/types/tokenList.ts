@@ -19,5 +19,5 @@ export interface RaydiumTokenListJsonFile {
 
 export interface TokenListStore {
   isTokenLoading?: boolean
-  allTokens?: Token[]
+  tokens?: Token[]
 }

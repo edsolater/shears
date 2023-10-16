@@ -1,5 +1,4 @@
 import { isStringNumber } from '@edsolater/fnkit'
-import { createEffect, createMemo } from 'solid-js'
 import {
   Accessify,
   Box,
@@ -12,7 +11,6 @@ import {
   List,
   Modal,
   ModalController,
-  PivProps,
   Text,
   TextProps,
   createRef,
@@ -21,9 +19,9 @@ import {
   icss_inputType,
   icss_label,
   icss_row,
-  useKitProps,
+  useKitProps
 } from '../../packages/pivkit'
-import { useDataStore } from '../stores/data/store'
+import { store } from '../stores/data/dataStore'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
@@ -93,11 +91,7 @@ interface TokenSelectorModalContentProps extends BoxKitProps {
  */
 function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props } = useKitProps(rawProps)
-  const dataStore = useDataStore()
-  const tokens = createMemo(() => dataStore.allTokens)
-  createEffect(() => {
-    console.log('tokens(): ', tokens())
-  })
+  const tokens = store.tokens
   return (
     <Card>
       <Box>

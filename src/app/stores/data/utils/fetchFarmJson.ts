@@ -1,9 +1,9 @@
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
+import { StoreData } from '../dataStore'
 import { FarmJSON, FarmJSONFile } from '../types/farm'
-import { DataStore } from '../store'
 
-export async function fetchFarmJsonInfo(): Promise<DataStore['farmJsonInfos']> {
+export async function fetchFarmJsonInfo(): Promise<StoreData['farmJsonInfos']> {
   const result = await fetchFarmJsonFile()
   if (!result) return
   const stateInfos = result.stake.map((i) => ({ ...i, category: 'stake' })) as FarmJSON[]

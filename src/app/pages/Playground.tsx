@@ -1,30 +1,29 @@
-import { createEffect, createSignal, onCleanup } from 'solid-js'
+import { createEffect, createSignal } from 'solid-js'
+import {
+  Box,
+  Button,
+  Drawer,
+  DrawerController,
+  Input,
+  List,
+  Modal,
+  ModalController,
+  Piv,
+  Radio,
+  Switch,
+  Text,
+  createIncresingAccessor,
+  createIntervalEffect,
+  icss_col,
+  icss_row,
+  renderSwitchThumb,
+  useCSSTransition,
+  useControllerByID,
+} from '../../packages/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { useDataStore } from '../stores/data/store'
-import {
-  Switch,
-  Text,
-  Piv,
-  Box,
-  DrawerController,
-  Button,
-  Drawer,
-  ModalController,
-  createIncresingAccessor,
-  Modal,
-  useCSSTransition,
-  Input,
-  createIntervalEffect,
-  renderSwitchThumb,
-  List,
-  icss_col,
-  icss_row,
-  Radio,
-  useControllerByID,
-} from '../../packages/pivkit'
 
 export default function PlaygroundPage() {
   return (
@@ -36,7 +35,6 @@ export default function PlaygroundPage() {
 }
 
 function PlaygoundList() {
-  const dataStore = useDataStore()
   return (
     <Box
       icss={{

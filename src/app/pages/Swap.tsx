@@ -1,11 +1,10 @@
 import { assert } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo } from 'solid-js'
-import { Button, Card, Piv, Section, icss_card, icss_col, useAtom } from '../../packages/pivkit'
+import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import { swapInputToken1Atom, swapInputToken2Atom, swapInputTokenAmount1Atom, swapInputTokenAmount2Atom } from '../stores/data/atoms'
+import { createStorePropertySetter, createStorePropertySignal, store } from '../stores/data/dataStore'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
-import { useDataStore } from '../stores/data/store'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
 import { useWalletOwner } from '../stores/wallet/store'
 import { Token } from '../utils/dataStructures/Token'
@@ -17,26 +16,29 @@ import { toString } from '../utils/dataStructures/basicMath/format'
  * @returns
  */
 function useTokenByMint(mint: Accessor<string | undefined>) {
-  const dataStore = useDataStore()
-  const token = createMemo(() => dataStore.allTokens?.find((t) => t.mint === mint()))
+  const token = createMemo(() => store.tokens?.find((t) => t.mint === mint()))
   return token
 }
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const { get: token1Mint, set: setToken1Mint } = useAtom(swapInputToken1Atom)
-  const { get: token2Mint, set: setToken2Mint } = useAtom(swapInputToken2Atom)
+  const token1Mint = createStorePropertySignal((s) => s.swapInputToken1)
+  const token2Mint = createStorePropertySignal((s) => s.swapInputToken2)
+  const setToken1Mint = createStorePropertySetter((s) => s.swapInputToken1)
+  const setToken2Mint = createStorePropertySetter((s) => s.swapInputToken2)
   const token1 = useTokenByMint(token1Mint)
   const token2 = useTokenByMint(token2Mint)
   const setToken1 = (token: Token | undefined) => {
-    setToken1Mint(token?.mint)
+    token && setToken1Mint(token.mint)
   }
   const setToken2 = (token: Token | undefined) => {
-    setToken2Mint(token?.mint)
+    token && setToken2Mint(token.mint)
   }
 
-  const { get: amount1, set: setAmount1 } = useAtom(swapInputTokenAmount1Atom)
-  const { get: amount2, set: setAmount2 } = useAtom(swapInputTokenAmount2Atom)
+  const amount1 = createStorePropertySignal((s) => s.swapInputTokenAmount1)
+  const amount2 = createStorePropertySignal((s) => s.swapInputTokenAmount2)
+  const setAmount1 = createStorePropertySetter((s) => s.swapInputTokenAmount1)
+  const setAmount2 = createStorePropertySetter((s) => s.swapInputTokenAmount2)
   const tokenAmount1 = createMemo(() =>
     amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined,
   )

@@ -1,14 +1,12 @@
-import { createOnFirstAccess, Store } from '../../../../packages/pivkit'
 import { appApiUrls } from '../../../utils/common/config'
 import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
-import { DataStore } from '../store'
+import { setStore } from '../dataStore'
 
-export const onAccessTokens = createOnFirstAccess<DataStore>(['allTokens'], loadTokensInfos)
 
-export function loadTokensInfos(store: Store<DataStore>) {
-  store.set({ isTokenLoading: true })
+export function loadTokensInfos() {
+  setStore({ isTokenListLoading: true })
   getTokenJsonInfoFromWorker().subscribe((allTokens) => {
-    store.set({ isTokenLoading: false, allTokens: allTokens })
+    setStore({ isTokenListLoading: false, tokens: allTokens })
   })
 }
 

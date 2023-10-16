@@ -1,22 +1,22 @@
-import { isFunction, isNullish, isObject, isPrimitive, type AnyObj, type MayArray } from '@edsolater/fnkit'
-import { batch } from 'solid-js'
+import { isFunction, isNullish, isObject, isPrimitive, type AnyObj } from '@edsolater/fnkit'
+import { batch, createMemo } from 'solid-js'
 import { createStore, produce, unwrap, type SetStoreFunction } from 'solid-js/store'
 import { asyncInvoke } from '../createContextStore/utils/asyncInvoke'
 import {
-  CreateSmartStoreOptions_OnPropertyChange,
-  StoreCallbackRegisterer_OnPropertyChange,
-  createSmartStore_onPropertyChange,
-} from './features/onPropertyChange'
-import {
-  CreateSmartStoreOptions_OnStoreInit,
-  StoreCallbackRegisterer_OnStoreInit,
-  createSmartStore_onStoreInit,
-} from './features/onStoreInit'
-import {
-  CreateSmartStoreOptions_OnFirstAccess,
+  type CreateSmartStoreOptions_OnFirstAccess,
   StoreCallbackRegisterer_OnFirstAccess,
   createSmartStore_onFirstAccess,
 } from './features/onFirstAccess'
+import {
+  type CreateSmartStoreOptions_OnPropertyChange,
+  type StoreCallbackRegisterer_OnPropertyChange,
+  createSmartStore_onPropertyChange,
+} from './features/onPropertyChange'
+import {
+  type CreateSmartStoreOptions_OnStoreInit,
+  type StoreCallbackRegisterer_OnStoreInit,
+  createSmartStore_onStoreInit,
+} from './features/onStoreInit'
 
 export type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
 export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T> &
@@ -33,8 +33,15 @@ export type SmartStore<T extends Record<string, any>> = {
   unwrappedStore: T
   setStore: SmartSetStore<T>
 
+  /** dangerous shortcut, just use store as much as you can  */
+  createStorePropertySignal<F>(pick: (store: T) => F): () => F
+
+  /** dangerous shortcut, just use store as much as you can  */
+  createStorePropertySetter<F>(pick: (store: T) => F): (dispatcher: F | ((prev: F) => F)) => void
+
   /** don't use. as much as possible, it's unwrapped solidjs/store setStore */
   _rawStore: T
+
   /** don't use. as much as possible, it's unwrapped solidjs/store setStore */
   _rawSetStore: SetStoreFunction<T>
 } & StoreCallbackRegisterer_OnPropertyChange<T> &
@@ -64,23 +71,28 @@ export function createSmartStore<T extends Record<string, any>>(
   const { invoke: invokeOnFirstAccess, addListener: addListenerFirstAccess } =
     createSmartStore_onFirstAccess<T>(options)
 
-  const store = new Proxy(
-    {},
-    {
-      // result contain keys info
-      get: (_, p, receiver) => {
-        accessCount[p] = (accessCount[p] ?? 0) + 1
-        if (accessCount[p] === 1) {
-          invokeOnFirstAccess(p as string, rawStore[p as string], rawStore, setStore)
-        }
-        const propertyName = p as string
-        const value = Reflect.get(rawStore, propertyName, receiver)
-        return value
-      },
+  const store = new Proxy(rawStore, {
+    get: (target, p, receiver) => {
+      accessCount[p] = (accessCount[p] ?? 0) + 1
+      if (accessCount[p] === 1) {
+        invokeOnFirstAccess(p as string, rawStore[p as string], rawStore, setStore)
+      }
+      const propertyName = p as string
+      const value = Reflect.get(target, propertyName, receiver)
+      return value
     },
-  ) as T
+  }) as T
 
-  const unwrappedStore = new Proxy(store, {
+  // access unwrappedStore will not change accessCount
+  const store2 = new Proxy(rawStore, {
+    get: (target, p, receiver) => {
+      const propertyName = p as string
+      const value = Reflect.get(target, propertyName, receiver)
+      return value
+    },
+  }) as T
+
+  const unwrappedStore = new Proxy(store2, {
     get(target, p, receiver) {
       const pureStore = unwrap(target)
       return Reflect.get(pureStore, p, receiver)
@@ -116,12 +128,40 @@ export function createSmartStore<T extends Record<string, any>>(
     )
   }
 
+  function createStorePropertySignal<F>(pick: (store: T) => F): () => F {
+    return createMemo(() => pick(store))
+  }
+
+  function createStorePropertySetter<F>(pick: (store: T) => F): (dispatcher: F | ((prev: F) => F)) => void {
+    return (dispatcher) => {
+      let propertyName: keyof T | undefined = undefined
+      const prevValue = pick(
+        new Proxy(store, {
+          get(target, p, receiver) {
+            propertyName = p as string
+            return Reflect.get(target, p, receiver)
+          },
+        }),
+      )
+      const newValue = isFunction(dispatcher) ? dispatcher(prevValue) : dispatcher
+      if (propertyName) {
+        // @ts-expect-error don't know why
+        setStore({ [propertyName]: newValue })
+      }
+    }
+  }
+
   invokeOnStoreInit(store, setStore)
 
   return {
     store: store,
     unwrappedStore: unwrappedStore,
     setStore: setStore,
+
+    // shortcut
+    createStorePropertySignal: createStorePropertySignal,
+    createStorePropertySetter: createStorePropertySetter,
+
     onStoreInit: addListenerStoreInit,
     onPropertyChange: addListenerPropertyChange,
     onFirstAccess: addListenerFirstAccess,
