@@ -1,13 +1,12 @@
-import { AnyFn, MayArray, flap } from '@edsolater/fnkit'
+import { MayArray } from '@edsolater/fnkit'
 import { CreateSmartStoreOptions_BasicOptions, SmartSetStore } from '../createSmartStore'
+import { createCallbacksStoreWithKeys } from '../utils/createCallbackStore'
 
-type OnFirstAccessCallback<T extends Record<string, any>, K extends keyof T = keyof T> = (payload: {
+type OnFirstAccessCallback<T extends Record<string, any>, K extends keyof T = any> = (payload: {
   value: T[K]
   store: T
   setStore: SmartSetStore<T>
-  onCleanUp: (registeredCallback: () => void) => void
-}) => void /* clean function */
-
+}) => void | (() => void) /* clean function */
 export type CreateSmartStoreOptions_OnFirstAccess<T extends Record<string, any>> = {
   onFirstAccess?: {
     [K in keyof T]?: MayArray<OnFirstAccessCallback<T, K>>
@@ -20,40 +19,15 @@ export type StoreCallbackRegisterer_OnFirstAccess<T extends Record<string, any>>
 export function createSmartStore_onFirstAccess<T extends Record<string, any>>(
   options?: CreateSmartStoreOptions_BasicOptions<T> & CreateSmartStoreOptions_OnFirstAccess<T>,
 ) {
-  const registeredCallbacks = new Map<keyof T, OnFirstAccessCallback<T, keyof T>[]>(
-    Object.entries(options?.onFirstAccess ?? {}).map(([propertyName, callbacks]) => [propertyName, flap(callbacks)]),
-  )
-  const registeredCleanFn = new Map<OnFirstAccessCallback<T, keyof T>, () => void>()
+  const keyedCallbackStore = createCallbacksStoreWithKeys<keyof T, OnFirstAccessCallback<T>>({
+    initCallbacks: options?.onFirstAccess,
+  })
 
   function invoke(propertyName: keyof T, newValue: any, store: T, setStore: SmartSetStore<T>) {
-    registeredCallbacks.get(propertyName)?.forEach((cb) => {
-      const prevCleanFn = registeredCleanFn.get(cb)
-      prevCleanFn?.()
-      registeredCleanFn.delete(cb)
-      const onCleanUp = (cleanFn: AnyFn) => {
-        registeredCleanFn.set(cb, cleanFn)
-      }
-      cb({
-        value: newValue,
-        store,
-        setStore,
-        onCleanUp: onCleanUp,
-      })
-    })
+    return keyedCallbackStore.invoke(propertyName)({ value: newValue, store, setStore })
   }
   function addListener<K extends keyof T>(key: K, cb: OnFirstAccessCallback<T, K>) {
-    const callbacks = registeredCallbacks.get(key) ?? []
-    callbacks.push(cb as OnFirstAccessCallback<T>)
-    registeredCallbacks.set(key, callbacks)
-    return {
-      remove() {
-        const callbacks = registeredCallbacks.get(key) ?? []
-        registeredCallbacks.set(
-          key,
-          callbacks.filter((callback) => callback !== cb),
-        )
-      },
-    }
+    return keyedCallbackStore.addListener(key)(cb)
   }
   return { invoke, addListener }
 }

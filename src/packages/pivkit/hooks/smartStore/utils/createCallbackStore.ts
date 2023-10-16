@@ -1,17 +1,8 @@
-import { AnyFn, MayArray, flap, isMap, isObject, isUndefined, mergeObjects } from '@edsolater/fnkit'
-
-type Tail<T extends any[]> = T extends [any, ...infer E] ? E : never
-type WithOnCleanUpFn<Callback extends AnyFn> = Parameters<Callback>[0] extends object
-  ? (
-      ...params: [{ onCleanUp(): void } & Parameters<Callback>[0], ...Tail<Parameters<Callback>>]
-    ) => ReturnType<Callback>
-  : Parameters<Callback>[0] extends undefined
-  ? (...params: [{ onCleanUp(): void }, ...Tail<Parameters<Callback>>]) => ReturnType<Callback>
-  : Callback
+import { AnyFn, MayArray, flap, shakeUndefinedItem } from '@edsolater/fnkit'
 
 interface CallbackStore<Callback extends AnyFn> {
   invoke(...params: Parameters<Callback>): void
-  addListener(cb: WithOnCleanUpFn<Callback>): {
+  addListener(cb: Callback): {
     remove(): void
   }
   releaseStored(): void
@@ -23,28 +14,21 @@ interface CallbackStore<Callback extends AnyFn> {
  * util for handle Callbacks faster\
  *  will attach onCleanUp in first param of callback, if it is object or undefined
  * */
-export function createCallbacksStore<Callback extends AnyFn>(options?: {
-  initCallbacks?: MayArray<Callback>
+export function createCallbacksStore<Callback extends (...params: any[]) => void | (() => void)>(options?: {
+  initCallbacks?: MayArray<Callback | undefined>
 }): CallbackStore<Callback> {
   const registeredCallbacks = options?.initCallbacks
-    ? new Set<Callback>(flap(options.initCallbacks))
+    ? new Set<Callback>(shakeUndefinedItem(flap(options.initCallbacks)))
     : new Set<Callback>()
   const registeredCleanFn = new WeakMap<Callback, () => void>()
   function invoke(...params: Parameters<Callback>) {
     registeredCallbacks.forEach((cb) => {
       const prevCleanFn = registeredCleanFn.get(cb)
       prevCleanFn?.()
-      function onCleanUp(cleanFn: () => void) {
+      const cleanFn = cb(...params)
+      if (cleanFn) {
         registeredCleanFn.set(cb, cleanFn)
       }
-      // attach onCleanUp in first param of callback, if it is object or undefined
-      const args = isObject(params[0])
-        ? [mergeObjects({ onCleanUp }, params[0]), ...params.slice(1)]
-        : isUndefined(params[0])
-        ? [{ onCleanUp }, ...params.slice(1)]
-        : params
-
-      cb(...args)
     })
   }
   function addListener(cb: Callback) {
@@ -68,15 +52,17 @@ export function createCallbacksStore<Callback extends AnyFn>(options?: {
 /**
  * like {@link createCallbacksStore}, but have key(currently must be string)
  */
-export function createCallbacksStoreWithKeys<Key extends string, Callback extends AnyFn>(options?: {
-  initCallbacks?: Record<Key, MayArray<Callback>>
+export function createCallbacksStoreWithKeys<Key extends keyof any, Callback extends AnyFn>(options?: {
+  initCallbacks?: {
+    [K in Key]?: MayArray<Callback | undefined>
+  }
 }) {
   const registeredCallbacks = (
     options?.initCallbacks
       ? new Map(
           Object.entries(options.initCallbacks).map(([k, mcb]) => [
             k as Key,
-            createCallbacksStore({ initCallbacks: mcb as MayArray<Callback> }),
+            createCallbacksStore({ initCallbacks: mcb as MayArray<Callback | undefined> }),
           ]),
         )
       : new Map()
