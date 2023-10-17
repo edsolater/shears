@@ -27,7 +27,8 @@ export const icss_card = (options?: { gap?: CSSObject['gap']; items?: CSSObject[
 export const icss_clickable = (options?: {}) =>
   ({
     cursor: 'pointer',
-    ':is(:hover,:active)': { backdropFilter: 'brightness(0.9)', filter: 'brightness(0.9)' },
+    transition: 'all 80ms',
+    '&:is(:hover,:active)': { backdropFilter: 'brightness(0.95)', filter: 'brightness(0.95)' },
   }) satisfies ICSSObject
 
 export const icss_label = (options?: { w: CSSObject['minWidth']; h: CSSObject['minHeight'] }) =>
