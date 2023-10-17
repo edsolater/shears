@@ -23,13 +23,7 @@ export const renderHTMLDOM = (
   if (selfCoverNode) return selfCoverNode
 
   if (ifOnlyNeedRenderChildren === undefined && ifOnlyNeedRenderSelf === undefined) {
-    // in most case
-
-    return (
-      <div onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </div>
-    )
+    // most case
     return getSolidJSXNode(type, props, additionalProps)
   } else if (ifOnlyNeedRenderSelf === undefined) {
     return <Show when={ifOnlyNeedRenderChildren}>{getSolidJSXNode(type, props, additionalProps)}</Show>

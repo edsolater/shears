@@ -59,9 +59,6 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
   const [modalRef, setModalRef] = createRef<ModalController>()
 
-  createEffect(() => {
-    console.log('result token(): ', token())
-  })
   return (
     <Box icss={icss_row({ gap: '8px' })}>
       {/* show current token info */}
@@ -75,8 +72,6 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
           icss: { color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' },
         }}
       ></Piv>
-      <Piv icss={{ color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' }}>{token()?.symbol}</Piv>
-      <div style={{ color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' }}>{token()?.symbol}</div>
 
       {/* token amount info */}
       <Input

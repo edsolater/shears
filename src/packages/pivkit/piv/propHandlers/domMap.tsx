@@ -1,16 +1,10 @@
+import { AnyObj, hasProperty, mergeObjects, omit } from '@edsolater/fnkit'
 import { Dynamic } from 'solid-js/web'
 import { NativeProps } from '..'
-import { AnyObj, omit, mergeObjects, MayArray, isArray, isObject } from '@edsolater/fnkit'
-
-function hasProperty<T, K extends keyof T | (string & {}) | symbol>(obj: T, key: MayArray<K>): boolean {
-  return (
-    isObject(obj) && (isArray(key) ? key.every((objKey) => Reflect.has(obj as any, objKey)) : Reflect.has(obj, key))
-  )
-}
 
 export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) => ({
   div: () =>
-    additionalProps || 'htmlProps' in props ? (
+    additionalProps || hasProperty(props, 'htmlProps') ? (
       <Dynamic component='div' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
     ) : (
       <div onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>

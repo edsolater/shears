@@ -25,18 +25,7 @@ export function createSyncSignal<T>(options: {
   )
 
   // invoke `get`
-  createEffect(() => {
-    console.log('invoke get')
-    return setAccessor((prev) => {
-      const newValue = options.getValueFromOutside(prev)
-      console.log('newValue: ', newValue)
-      return newValue ?? prev
-    })
-  })
-
-  createEffect(() => {
-    console.log('accessor(): ', accessor())
-  })
+  createEffect(() => setAccessor((prev) => options.getValueFromOutside(prev) ?? prev))
 
   // invoke `set`
   createEffect(
