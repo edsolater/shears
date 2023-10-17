@@ -1,7 +1,7 @@
 import { MayArray, flap, pipe } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
 import { handlePropsInnerController } from './ControllerContext'
-import { ClassName, HTMLProps, ICSS, IStyle, Plugin, handlePluginProps, handleShadowProps } from './propHandlers'
+import { ClassName, HTMLProps, ICSS, IStyle, Plugin, handlePluginProps, handleShadowProps, parsePivProps } from './propHandlers'
 import { renderHTMLDOM } from './propHandlers/renderHTMLDOM'
 import { HTMLTag, PivChild, ValidController } from './typeTools'
 import { omit } from './utils'
@@ -157,11 +157,9 @@ export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidC
   return 'render:outWrapper' in props ? handlePropRenderOutWrapper(props) : handleNormalPivProps(props)
 }
 
-function handleNormalPivProps(props?: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
-  if (!props) return
-  return renderHTMLDOM('div', props)
-  // const { props: parsedProps, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } = parsePivProps(props)
-  // return selfCoverNode ? selfCoverNode : renderHTMLDiv(parsedProps, ifOnlyNeedRenderChildren, ifOnlyNeedRenderSelf)
+function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
+  if (!rawProps) return
+  return renderHTMLDOM('div', rawProps)
 }
 
 function handlePropRenderOutWrapper(props: PivProps<any, any>): JSXElement {

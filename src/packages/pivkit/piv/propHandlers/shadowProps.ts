@@ -24,17 +24,18 @@ function createCachedFunction<F extends AnyFn>(fn: F): F {
 export function handleShadowProps<P extends Partial<PivProps<any>>>(
   props: P,
   /** @deprecated no need,  */
-  additionalShadowPropNames?: string[]
+  additionalShadowPropNames?: string[],
 ): Omit<P, 'shadowProps'> {
   if (!('shadowProps' in props)) return props
 
-  const candidates = createCachedFunction(() => shakeNil([props].concat(props.shadowProps)))
-  const getOwnKeys = createCachedFunction(() => {
+  const candidates = () => shakeNil([props].concat(props.shadowProps)) // 🚧 use cache will breake the solidjs's getter logic
+  const getOwnKeys = () => {
     const keysArray = getNeedToMergeKeys(props)
+
     const keys = new Set(keysArray)
     const uniqueKeys = Array.from(keys)
     return { set: keys, arr: uniqueKeys }
-  })
+  }
 
   return new Proxy(
     {},
@@ -49,7 +50,7 @@ export function handleShadowProps<P extends Partial<PivProps<any>>>(
         configurable: true,
         get: () => getPivPropsValue(candidates(), key),
       }),
-    }
+    },
   ) as any
 }
 

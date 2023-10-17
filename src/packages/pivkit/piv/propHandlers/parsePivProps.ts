@@ -13,7 +13,6 @@ import { handleShadowProps } from './shadowProps'
 import { mergeProps, omit } from '../utils'
 import { PivProps } from '../Piv'
 import { getPropsFromPropContextContext } from '../PropContext'
-import { handleMergifyOnCallbackProps } from './mergifyProps'
 
 export type NativeProps = ReturnType<typeof parsePivProps>['props']
 
@@ -25,7 +24,6 @@ function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
     handlePluginProps,
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
-    handleMergifyOnCallbackProps,
   )
   const controller = (parsedPivProps.innerController ?? {}) as ValidController
   const ifOnlyNeedRenderChildren = 'if' in parsedPivProps ? Boolean(parsedPivProps.if) : undefined
@@ -99,9 +97,9 @@ export function parsePivProps(rawProps: PivProps<any>): any {
   const { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } =
     getPropsInfoOfRawPivProps(mergedContextProps)
   debugLog(mergedContextProps, parsedPivProps, controller)
-  const nativeProps = getNativeHTMLPropsFromParsedPivProp(parsedPivProps, controller)
+  const propsForOriginalSolidjs = getNativeHTMLPropsFromParsedPivProp(parsedPivProps, controller)
 
-  return { props: nativeProps, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
+  return { props: propsForOriginalSolidjs, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
 }
 
 /**
@@ -155,35 +153,35 @@ function parsePivRenderAppendChildren<T extends Partial<PivProps<any, any>>>(pro
 function debugLog(rawProps: PivProps<any>, props: PivProps<any>, controller: ValidController) {
   if (props.debugLog) {
     if (props.debugLog.includes('shadowProps')) {
-      console.debug('shadowProps (raw): ', rawProps.shadowProps)
+      console.debug('[piv debug] shadowProps (raw): ', rawProps.shadowProps)
     }
     if (props.debugLog.includes('plugin')) {
-      console.debug('plugin (raw): ', rawProps.plugin)
+      console.debug('[piv debug] plugin (raw): ', rawProps.plugin)
     }
     if (props.debugLog.includes('htmlProps')) {
-      console.debug('htmlProps (raw → parsed): ', props.htmlProps, { ...parseHTMLProps(props.htmlProps) })
+      console.debug('[piv debug] htmlProps (raw → parsed): ', props.htmlProps, { ...parseHTMLProps(props.htmlProps) })
     }
     if (props.debugLog.includes('icss')) {
-      console.debug('icss (raw → parsed): ', props.icss, handleICSSProps(props.icss, controller))
+      console.debug('[piv debug] icss (raw → parsed): ', props.icss, handleICSSProps(props.icss, controller))
     }
     if (props.debugLog.includes('style')) {
-      console.debug('style (raw → parsed): ', props.style, parseIStyles(props.style, controller))
+      console.debug('[piv debug] style (raw → parsed): ', props.style, parseIStyles(props.style, controller))
     }
     if (props.debugLog.includes('class')) {
-      console.debug('class (raw → parsed): ', props.class, classname(props.class, controller))
+      console.debug('[piv debug] class (raw → parsed): ', props.class, classname(props.class, controller))
     }
     if (props.debugLog.includes('innerController')) {
-      console.debug('innerController (raw → parsed): ', props.innerController)
+      console.debug('[piv debug] innerController (raw → parsed): ', props.innerController)
     }
     if (props.debugLog.includes('onClick')) {
       console.debug(
-        'onClick (raw → parsed): ',
+        '[piv debug] onClick (raw → parsed): ',
         props.onClick,
         'onClick' in props && parseOnClick(props.onClick!, controller),
       )
     }
     if (props.debugLog.includes('children')) {
-      console.debug('children', props.children)
+      console.debug('[piv debug] children', props.children)
     }
   }
 }

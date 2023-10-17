@@ -16,7 +16,7 @@ function getSolidJSXNode(type: HTMLTag, parsedProps: NativeProps, additionalProp
 export const renderHTMLDOM = (
   type: HTMLTag,
   rawProps: PivProps<any, any>,
-  additionalProps?: Record<any, any>
+  additionalProps?: Record<any, any>,
 ): JSXElement => {
   const { props, ifOnlyNeedRenderChildren, ifOnlyNeedRenderSelf, selfCoverNode } = parsePivProps(rawProps)
 
@@ -24,6 +24,12 @@ export const renderHTMLDOM = (
 
   if (ifOnlyNeedRenderChildren === undefined && ifOnlyNeedRenderSelf === undefined) {
     // in most case
+
+    return (
+      <div onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
+        {props.children}
+      </div>
+    )
     return getSolidJSXNode(type, props, additionalProps)
   } else if (ifOnlyNeedRenderSelf === undefined) {
     return <Show when={ifOnlyNeedRenderChildren}>{getSolidJSXNode(type, props, additionalProps)}</Show>

@@ -1,4 +1,4 @@
-import { isStringNumber } from '@edsolater/fnkit'
+import { isStringNumber, mergeFunction } from '@edsolater/fnkit'
 import {
   Accessify,
   Box,
@@ -11,6 +11,7 @@ import {
   List,
   Modal,
   ModalController,
+  Piv,
   Text,
   TextProps,
   createRef,
@@ -57,15 +58,25 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   })
 
   const [modalRef, setModalRef] = createRef<ModalController>()
-createEffect(() => {
-  console.log('result token(): ', token())
-})
+
+  createEffect(() => {
+    console.log('result token(): ', token())
+  })
   return (
     <Box icss={icss_row({ gap: '8px' })}>
       {/* show current token info */}
-      <Text shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label(), icss_clickable()]}>
+      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label(), icss_clickable()]}>
         {token()?.symbol}
-      </Text>
+      </Box>
+      <Piv
+        debugLog={['children']}
+        shadowProps={{
+          children: token()?.symbol,
+          icss: { color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' },
+        }}
+      ></Piv>
+      <Piv icss={{ color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' }}>{token()?.symbol}</Piv>
+      <div style={{ color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' }}>{token()?.symbol}</div>
 
       {/* token amount info */}
       <Input
@@ -79,7 +90,12 @@ createEffect(() => {
 
       {/* modal dialog */}
       <Modal controllerRef={setModalRef} isModal>
-        <TokenSelectorModalContent shadowProps={props['anatomy:tokenSelectorModalContent']} onTokenSelect={setToken} />
+        <TokenSelectorModalContent
+          shadowProps={props['anatomy:tokenSelectorModalContent']}
+          onTokenSelect={mergeFunction(setToken, () => {
+            modalRef()?.close()
+          })}
+        />
       </Modal>
     </Box>
   )
@@ -96,7 +112,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props } = useKitProps(rawProps)
   const tokens = store.tokens
   return (
-    <Card >
+    <Card>
       <Box>
         search: <Input icss={{ border: 'solid' }} />
       </Box>
