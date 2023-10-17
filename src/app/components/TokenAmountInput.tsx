@@ -19,13 +19,14 @@ import {
   icss_inputType,
   icss_label,
   icss_row,
-  useKitProps
+  useKitProps,
 } from '../../packages/pivkit'
 import { store } from '../stores/data/dataStore'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
 import { TokenAvatar } from './TokenAvatar'
+import { createEffect } from 'solid-js'
 
 export interface TokenAmountInputBoxController {}
 
@@ -56,7 +57,9 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   })
 
   const [modalRef, setModalRef] = createRef<ModalController>()
-
+createEffect(() => {
+  console.log('result token(): ', token())
+})
   return (
     <Box icss={icss_row({ gap: '8px' })}>
       {/* show current token info */}
@@ -93,9 +96,9 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props } = useKitProps(rawProps)
   const tokens = store.tokens
   return (
-    <Card>
+    <Card >
       <Box>
-        search: <Input />
+        search: <Input icss={{ border: 'solid' }} />
       </Box>
 
       <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>

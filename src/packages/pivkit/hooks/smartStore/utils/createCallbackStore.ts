@@ -81,8 +81,7 @@ export function createCallbacksStoreWithKeys<Key extends keyof any, Callback ext
         registeredCallbacks.set(propertyName, createCallbacksStore<Callback>())
       }
       const cbs = registeredCallbacks.get(propertyName)!
-      const remove = cbs.addListener(cb)
-      return { remove }
+      return cbs.addListener(cb)
     }
   }
 

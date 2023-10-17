@@ -21,11 +21,22 @@ export function createSyncSignal<T>(options: {
   const [accessor, setAccessor] = createSignal(
     'defaultValue' in options
       ? options.defaultValue?.() ?? options.getValueFromOutside()
-      : options.getValueFromOutside()
+      : options.getValueFromOutside(),
   )
 
   // invoke `get`
-  createEffect(() => setAccessor((prev) => options.getValueFromOutside(prev) ?? prev))
+  createEffect(() => {
+    console.log('invoke get')
+    return setAccessor((prev) => {
+      const newValue = options.getValueFromOutside(prev)
+      console.log('newValue: ', newValue)
+      return newValue ?? prev
+    })
+  })
+
+  createEffect(() => {
+    console.log('accessor(): ', accessor())
+  })
 
   // invoke `set`
   createEffect(
@@ -36,8 +47,8 @@ export function createSyncSignal<T>(options: {
         if (newValue === options.getValueFromOutside()) return
         options.onInvokeSetter?.(newValue as T)
       },
-      { defer: true }
-    )
+      { defer: true },
+    ),
   )
 
   // @ts-expect-error no need to check

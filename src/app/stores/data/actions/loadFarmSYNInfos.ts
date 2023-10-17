@@ -3,16 +3,14 @@ import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/l
 import { WalletStore, useWalletStore } from '../../wallet/store'
 import { setStore } from '../dataStore'
 
-export function loadFarmSYNInfos(): {
-  unsubscribe?(): void
-} {
+export function loadFarmSYNInfos() {
   const walletStore = useWalletStore()
   const owner = walletStore.owner
   setStore({ isFarmInfosLoading: true })
   const { unsubscribe } = getFarmSYNInfosFromWorker(owner).subscribe((allFarmSYNInfos) => {
     setStore({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
   })
-  return { unsubscribe }
+  return unsubscribe
 }
 
 function getFarmSYNInfosFromWorker(owner: WalletStore['owner']) {

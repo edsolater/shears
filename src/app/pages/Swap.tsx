@@ -3,7 +3,7 @@ import { Accessor, createEffect, createMemo } from 'solid-js'
 import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
 import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import { createStorePropertySetter, createStorePropertySignal, store } from '../stores/data/dataStore'
+import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../stores/data/dataStore'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
 import { useWalletOwner } from '../stores/wallet/store'
@@ -22,17 +22,15 @@ function useTokenByMint(mint: Accessor<string | undefined>) {
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const token1Mint = createStorePropertySignal((s) => s.swapInputToken1)
+  const token1Mint = createMemo(() => store.swapInputToken1)
   const token2Mint = createStorePropertySignal((s) => s.swapInputToken2)
-  const setToken1Mint = createStorePropertySetter((s) => s.swapInputToken1)
-  const setToken2Mint = createStorePropertySetter((s) => s.swapInputToken2)
   const token1 = useTokenByMint(token1Mint)
   const token2 = useTokenByMint(token2Mint)
   const setToken1 = (token: Token | undefined) => {
-    token && setToken1Mint(token.mint)
+    token && setStore({ swapInputToken1: token.mint })
   }
   const setToken2 = (token: Token | undefined) => {
-    token && setToken2Mint(token.mint)
+    token && setStore({ swapInputToken2: token.mint })
   }
 
   const amount1 = createStorePropertySignal((s) => s.swapInputTokenAmount1)
@@ -47,6 +45,9 @@ export default function SwapPage() {
   )
 
   useSwapAmountCalculatorEffect()
+  createEffect(() => {
+    console.log('token1(): ', token1())
+  })
   createEffect(() => {
     console.log('tokenAmount1(): ', tokenAmount1())
     console.log('amount1(): ', amount1())

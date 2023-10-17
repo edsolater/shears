@@ -19,49 +19,49 @@ export function useSwapAmountCalculator() {
   const setAmount1 = createStorePropertySetter((s) => s.swapInputTokenAmount1)
   const setAmount2 = createStorePropertySetter((s) => s.swapInputTokenAmount2)
 
-  // preflight
-  createEffect(() => {
-    console.log('preflight')
-    const inputToken = getToken(token1())
-    const outputToken = getToken(token2())
-    if (!inputToken) return
-    if (!outputToken) return
-    const inputAmount: TokenAmount = { token: inputToken, amount: 1 }
+  // // preflight
+  // createEffect(() => {
+  //   console.log('preflight')
+  //   const inputToken = getToken(token1())
+  //   const outputToken = getToken(token2())
+  //   if (!inputToken) return
+  //   if (!outputToken) return
+  //   const inputAmount: TokenAmount = { token: inputToken, amount: 1 }
 
-    const subscribable = calculatedSwapRouteInfos_main({
-      input: inputToken,
-      inputAmount,
-      output: outputToken,
-    })
-    const s = subscribable.subscribe((info) => {
-      if (!info) return
-      const { bestResult } = info
-    })
-  })
+  //   const subscribable = calculatedSwapRouteInfos_main({
+  //     input: inputToken,
+  //     inputAmount,
+  //     output: outputToken,
+  //   })
+  //   const s = subscribable.subscribe((info) => {
+  //     if (!info) return
+  //     const { bestResult } = info
+  //   })
+  // })
 
-  // swap calc
-  createEffect(() => {
-    console.log('swap calc')
-    const inputToken = getToken(token1())
-    const outputToken = getToken(token2())
-    const amount = amount1()
+  // // swap calc
+  // createEffect(() => {
+  //   console.log('swap calc')
+  //   const inputToken = getToken(token1())
+  //   const outputToken = getToken(token2())
+  //   const amount = amount1()
 
-    if (!inputToken) return
-    if (!outputToken) return
-    if (!amount) return
-    const inputAmount: TokenAmount = { token: inputToken, amount }
-    const subscribable = calculatedSwapRouteInfos_main({
-      input: inputToken,
-      inputAmount,
-      output: outputToken,
-    })
+  //   if (!inputToken) return
+  //   if (!outputToken) return
+  //   if (!amount) return
+  //   const inputAmount: TokenAmount = { token: inputToken, amount }
+  //   const subscribable = calculatedSwapRouteInfos_main({
+  //     input: inputToken,
+  //     inputAmount,
+  //     output: outputToken,
+  //   })
 
-    subscribable.subscribe((info) => {
-      if (!info) return
-      const { bestResult } = info
-      const tokenAmount = bestResult?.amountOut.amount
-      const n = tokenAmount
-      if (notZero(n)) setAmount2(n)
-    })
-  })
+  //   subscribable.subscribe((info) => {
+  //     if (!info) return
+  //     const { bestResult } = info
+  //     const tokenAmount = bestResult?.amountOut.amount
+  //     const n = tokenAmount
+  //     if (notZero(n)) setAmount2(n)
+  //   })
+  // })
 }

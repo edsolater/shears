@@ -113,15 +113,13 @@ export function createSmartStore<T extends Record<string, any>>(
             invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
           }
         })
-        batch(() => {
-          Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-            rawSetStore(
-              produce((draft: AnyObj) => {
-                draft[propertyName] = assignToNewValue(draft[propertyName], newValue)
-              }),
-            )
-          })
-        })
+        rawSetStore(
+          produce((draft: AnyObj) => {
+            Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
+              draft[propertyName] = assignToNewValue(draft[propertyName], newValue)
+            })
+          }),
+        )
         return store
       },
       { taskName: 'setSmartStore' },
