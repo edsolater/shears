@@ -1,4 +1,5 @@
-import { AnyFn, MayArray, flap, shakeUndefinedItem } from '@edsolater/fnkit'
+import { AnyFn, MayArray, MayPromise, flap, shakeUndefinedItem } from '@edsolater/fnkit'
+import { invokeInMicroTaskLoop } from './invokeInMicroTaskLoop'
 
 interface CallbackStore<Callback extends AnyFn> {
   invoke(...params: Parameters<Callback>): void
@@ -20,12 +21,13 @@ export function createCallbacksStore<Callback extends (...params: any[]) => void
   const registeredCallbacks = options?.initCallbacks
     ? new Set<Callback>(shakeUndefinedItem(flap(options.initCallbacks)))
     : new Set<Callback>()
-  const registeredCleanFn = new WeakMap<Callback, () => void>()
+  const registeredCleanFn = new WeakMap<Callback, MayPromise<(() => void) | void>>()
+  /** don't need to worry about callback registed multi times, will invoke in micro  */
   function invoke(...params: Parameters<Callback>) {
     registeredCallbacks.forEach((cb) => {
       const prevCleanFn = registeredCleanFn.get(cb)
-      prevCleanFn?.()
-      const cleanFn = cb(...params)
+      Promise.resolve(prevCleanFn).then((cleanFn) => cleanFn?.())
+      const cleanFn = invokeInMicroTaskLoop(() => cb(...params), { taskKey: cb })
       if (cleanFn) {
         registeredCleanFn.set(cb, cleanFn)
       }

@@ -51,6 +51,7 @@ export const {
       farmJsonInfos: loadFarmJsonInfos,
       farmInfos: loadFarmSYNInfos,
       isPairInfoLoading: loadPairs,
+      pairInfos: loadPairs,
       prices: loadPairs,
       tokens: loadTokensInfos,
     },

@@ -8,6 +8,7 @@ type OnFirstAccessCallback<T extends Record<string, any>, K extends keyof T = an
   setStore: SmartSetStore<T>
 }) => void | (() => void) /* clean function */
 export type CreateSmartStoreOptions_OnFirstAccess<T extends Record<string, any>> = {
+  /** don't need to worry about callback registed multi times, will invoke in micro  */
   onFirstAccess?: {
     [K in keyof T]?: MayArray<OnFirstAccessCallback<T, K>>
   }
