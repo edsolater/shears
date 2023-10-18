@@ -1,3 +1,4 @@
+import { createMemo } from 'solid-js'
 import { KitProps, Piv, useKitProps } from '../piv'
 
 export interface TextProps {
@@ -20,14 +21,15 @@ export type TextKitProps = KitProps<TextProps>
 export function Text(kitProps: TextKitProps) {
   const { props } = useKitProps(kitProps, { name: 'Text' })
 
-  const contentEditableValue =
+  const contentEditableValue = createMemo(() =>
     props.editable != null
       ? props.editable
         ? props.editable === 'text' || props.editable === true
           ? 'plaintext-only'
           : 'true'
         : 'false'
-      : undefined
+      : undefined,
+  )
 
   return (
     <Piv
@@ -36,9 +38,11 @@ export function Text(kitProps: TextKitProps) {
       }}
       // @ts-ignore no need this check
       htmlProps={{
-        contentEditable: contentEditableValue,
+        contentEditable: contentEditableValue(),
       }}
       shadowProps={props}
-    />
+    >
+      {kitProps.children}
+    </Piv>
   )
 }

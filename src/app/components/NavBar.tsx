@@ -1,7 +1,7 @@
-import { TopMenuBar, TopMenuBarProps } from './TopMenuBar'
+import { NavBar_PageNavMenu, NavBar_PageNavMenuProps } from './NavBar_PageNavMenu'
 
-export type NavBarProps = TopMenuBarProps
+export type NavBarProps = NavBar_PageNavMenuProps
 
 export function NavBar(props: NavBarProps) {
-  return <TopMenuBar {...props} />
+  return <NavBar_PageNavMenu {...props} />
 }

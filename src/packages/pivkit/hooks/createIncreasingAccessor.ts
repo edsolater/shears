@@ -1,7 +1,7 @@
 import { createSignal, createEffect } from 'solid-js'
 
 /**
- * usually for debug
+ * **for debug**
  * n will increasing every second (in default, n start from 0)
  */
 export function createIncresingAccessor(options?: { start?: number; eachTime?: number /* ms */ }) {
@@ -11,7 +11,7 @@ export function createIncresingAccessor(options?: { start?: number; eachTime?: n
       () => {
         setI((s) => s + 1)
       },
-      options?.eachTime ?? 1000
+      options?.eachTime ?? 1000,
     )
   })
   return increasing

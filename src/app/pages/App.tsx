@@ -1,4 +1,4 @@
-import { map } from '@edsolater/fnkit'
+import { capitalize, map } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
 import { switchCase } from '../../packages/fnkit'
@@ -29,10 +29,9 @@ export function App() {
     shortcut,
   }))
   useKeyboardGlobalShortcut(settings)
-  const title = createMemo(() => {
-    console.log('location.pathname: ', location.pathname)
-    return switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').join(' '))
-  })
+  const title = createMemo(() =>
+    switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
+  )
   return (
     <Piv>
       <NavBar title={title()} />

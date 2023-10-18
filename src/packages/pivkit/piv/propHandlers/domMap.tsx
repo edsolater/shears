@@ -1,140 +1,221 @@
-import { AnyObj, hasProperty, mergeObjects, omit } from '@edsolater/fnkit'
+import { AnyObj } from '@edsolater/fnkit'
 import { Dynamic } from 'solid-js/web'
 import { NativeProps } from '..'
 
 export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) => ({
-  div: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='div' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <div onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </div>
-    ),
+  div: () => (
+    <div
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </div>
+  ),
 
-  span: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='span' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <span onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </span>
-    ),
-  p: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='p' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <p onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </p>
-    ),
-  nav: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='nav' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <nav onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </nav>
-    ),
-  img: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='img' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <img onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </img>
-    ),
-  a: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='a' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <a onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </a>
-    ),
-  button: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='button' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <button onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </button>
-    ),
-  input: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='input' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <input onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </input>
-    ),
-  details: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='details' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <details onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </details>
-    ),
-  summary: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='summary' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <summary onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </summary>
-    ),
-  dialog: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='dialog' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <dialog onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </dialog>
-    ),
-  label: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='label' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <label onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </label>
-    ),
-  form: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='form' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <form onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </form>
-    ),
-  iframe: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='iframe' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <iframe onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </iframe>
-    ),
-  canvas: () =>
-    additionalProps || hasProperty(props, 'htmlProps') ? (
-      <Dynamic component='canvas' {...mergeObjects(props.htmlProps, omit(props, 'htmlProps'), additionalProps)} />
-    ) : (
-      <canvas onClick={props.onClick} ref={props.ref} class={props.class} style={props.style}>
-        {props.children}
-      </canvas>
-    ),
-  // span: () => <span {...props} {...additionalProps} />,
-  // p: () => <p {...props} {...additionalProps} />,
-  // nav: () => <nav {...props} {...additionalProps} />,
-  // img: () => <img {...props} {...additionalProps} />,
-  // button: () => <button {...props} {...additionalProps} />,
-  // input: () => <input {...props} {...additionalProps} />,
-  // details: () => <details {...props} {...additionalProps} />,
-  // summary: () => <summary {...props} {...additionalProps} />,
-  // dialog: () => <dialog {...props} {...additionalProps} />,
-  // label: () => <label {...props} {...additionalProps} />,
-  // form: () => <form {...props} {...additionalProps} />,
-  // iframe: () => <iframe {...props} {...additionalProps} />,
-  // canvas: () => <canvas {...props} {...additionalProps} />, // for lazy invoke
+  span: () => (
+    <span
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </span>
+  ),
+  p: () => (
+    <p
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </p>
+  ),
+  button: () => (
+    <button
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </button>
+  ),
+  input: () => (
+    <input
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    />
+  ),
+  textarea: () => (
+    <textarea
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    />
+  ),
+  select: () => (
+    <select
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </select>
+  ),
+  nav: () => (
+    <nav
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </nav>
+  ),
+  ul: () => (
+    <ul
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </ul>
+  ),
+  li: () => (
+    <li
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      style={props.style}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </li>
+  ),
+  img: () => (
+    <img
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    />
+  ),
+  svg: () => (
+    <svg
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    />
+  ),
+  a: () => (
+    <a
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </a>
+  ),
+  iframe: () => (
+    <iframe
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    />
+  ),
+  Dynamic: () => (
+    <Dynamic
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    />
+  ),
+  label: () => (
+    <label
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </label>
+  ),
+  summary: () => (
+    <summary
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </summary>
+  ),
+  datails: () => (
+    <details
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </details>
+  ),
 })

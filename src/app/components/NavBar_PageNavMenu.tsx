@@ -4,7 +4,7 @@ import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { Link } from './Link'
 import { WalletWidget } from './WalletWidget'
 
-export interface TopMenuBarProps {
+export interface NavBar_PageNavMenuProps {
   title?: string
 }
 
@@ -12,7 +12,7 @@ export interface TopMenuBarProps {
  * have navbar(route bar) toggle button and wallet connect button
  */
 
-export function TopMenuBar(props: TopMenuBarProps) {
+export function NavBar_PageNavMenu(props: NavBar_PageNavMenuProps) {
   useMetaTitle(() => props.title)
   return (
     <Piv<'nav'>
