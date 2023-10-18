@@ -2,7 +2,8 @@ import { WeakerMap } from '@edsolater/fnkit'
 import { Token } from '../../../utils/dataStructures/Token'
 import { storeData } from '../dataStore'
 
-const mintWeakerMap = new WeakerMap<string, Token>()
+const mintWeakerMap = new Map<string, Token>()
+
 /**
  * @todo should link to a proxy that may return when token is aviliable in future
  */

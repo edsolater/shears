@@ -17,18 +17,18 @@ export type StoreData = {
   swapInputTokenAmount2?: Numberish
 
   // -------- farms --------
-  farmJsonInfos?: FarmJSON[]
+  farmJsonInfos?: Map<FarmJSON['id'], FarmJSON>
   isFarmJsonLoading?: boolean
-  farmInfos?: FarmSYNInfo[]
+  farmInfos?: Map<FarmSYNInfo['id'], FarmSYNInfo>
   isFarmInfosLoading?: boolean
 
   // -------- pairs --------
-  pairInfos?: PairJson[]
+  pairInfos?: Map<PairJson['ammId'], PairJson>
   isPairInfoLoading?: boolean
 
   // -------- token --------
   isTokenListLoading?: boolean
-  tokens?: Token[]
+  tokens?: Map<Token['mint'], Token>
 
   // -------- price --------
   isTokenPriceLoading?: boolean

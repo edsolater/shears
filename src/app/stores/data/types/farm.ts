@@ -1,6 +1,6 @@
 import { ApiFarmApr } from '@raydium-io/raydium-sdk'
 import { BN } from '../../../utils/dataStructures/BN'
-import { Mint, Numberish, Percent, Price, PublicKey } from '../../../utils/dataStructures/type'
+import { Mint, Numberish, Percent, Price, PublicKey as PublicKeyString } from '../../../utils/dataStructures/type'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 
 export interface FetchFarmsJSONPayloads {
@@ -65,11 +65,11 @@ export interface FarmSYNInfo {
   lp: Mint
   lpPrice: Price
 
-  id: PublicKey
+  id: PublicKeyString
   name: string
-  ammId: PublicKey
-  programId: PublicKey
-  authority: PublicKey
+  ammId: PublicKeyString
+  programId: PublicKeyString
+  authority: PublicKeyString
   category: 'stake' | 'raydium' | 'fusion' | 'ecosystem' // add by UI for unify the interface
 
   /** only for v3/v5 */
@@ -105,7 +105,7 @@ export interface FarmSYNInfo {
     /** only when user have deposited and connected wallet */
     userPendingReward: TokenAmount | undefined
     farmVersion: 3 | 5 | 6
-    rewardVault: PublicKey
+    rewardVault: PublicKeyString
     openTime?: Date // v6
     endTime?: Date // v6
     // this reward is sent by who
@@ -133,8 +133,8 @@ export interface FarmSYNInfo {
 
   /** only when user have deposited and connected wallet */
   ledger?: {
-    id: PublicKey
-    owner: PublicKey
+    id: PublicKeyString
+    owner: PublicKeyString
     state: BN
     deposited: BN
     rewardDebts: BN[]
