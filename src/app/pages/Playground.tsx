@@ -22,13 +22,11 @@ import {
 } from '../../packages/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
-import { NavBar } from '../components/NavBar'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 
 export default function PlaygroundPage() {
   return (
     <Piv>
-      <NavBar title='Playground' />
       <PlaygoundList />
     </Piv>
   )

@@ -1,6 +1,5 @@
 import { createMemo } from 'solid-js'
 import { Collapse, List, Piv, createRef, useElementSize } from '../../packages/pivkit'
-import { NavBar } from '../components/NavBar'
 import { createStorePropertySignal } from '../stores/data/dataStore'
 
 export default function PairsPanel() {
@@ -13,7 +12,6 @@ export default function PairsPanel() {
 
   return (
     <Piv>
-      <NavBar title='Pools' />
       <Piv
         domRef={setRef}
         icss={{

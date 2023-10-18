@@ -15,7 +15,6 @@ const icssSmoothBoxShadow =
 export default function FarmPage() {
   return (
     <Piv>
-      <NavBar title='Farms' />
       <FarmList />
     </Piv>
   )

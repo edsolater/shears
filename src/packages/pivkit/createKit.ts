@@ -1,4 +1,4 @@
-import { hasProperty, MayArray, MayDeepArray, pipe } from '@edsolater/fnkit'
+import { hasProperty, MayArray, MayDeepArray, mergeObjects, pipe } from '@edsolater/fnkit'
 import { AccessifyProps, DeAccessifyProps, useAccessifiedProps } from '.'
 import { createOnRunObject, LazyLoadObj } from '../fnkit'
 import { createUUID, UUID } from './hooks/utils/createUUID'
@@ -27,7 +27,7 @@ type KitPropsInstance<
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,
   TagName extends HTMLTag,
-  NeedAccessifyProps extends keyof RawProps
+  NeedAccessifyProps extends keyof RawProps,
 > = AccessifyProps<Pick<RawProps, NeedAccessifyProps>, Controller> &
   Omit<RawProps, NeedAccessifyProps> &
   Omit<PivProps<TagName, Controller>, keyof RawProps | 'plugin' | 'shadowProps'> &
@@ -54,7 +54,7 @@ export type KitProps<
     htmlPropsTagName?: HTMLTag
     // default is auto detect, only set when auto is not ok
     needAccessifyProps?: (keyof RawProps)[]
-  } = {}
+  } = {},
 > = KitPropsInstance<
   MergifyProps<RawProps>,
   NonNullable<O['controller']>,
@@ -74,7 +74,7 @@ export type UIKit<
     plugin?: MayArray<Plugin<any>>
     htmlPropsTagName?: HTMLTag
     // /** default is false, only set when children must be function  */
-  } = {}
+  } = {},
 > = KitPropsInstance<
   NonNullable<O['componentProps']>,
   NonNullable<O['controller']>,
@@ -86,11 +86,11 @@ export type UIKit<
 export type KitPropsOptions<
   KitProps extends ValidProps,
   Controller extends ValidController | unknown = unknown,
-  DefaultProps extends Partial<KitProps> = {}
+  DefaultProps extends Partial<KitProps> = {},
 > = {
   name?: string
   controller?: (
-    props: ParsedKitProps<KitProps>
+    props: ParsedKitProps<KitProps>,
   ) => any /* use any to avoid this type check (type check means type infer) */
   defaultProps?: DefaultProps
   plugin?: MayArray<Plugin<any>>
@@ -122,11 +122,11 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
 function getParsedKitProps<
   RawProps extends ValidProps,
   Controller extends ValidController | unknown = unknown,
-  DefaultProps extends Partial<RawProps> = {}
+  DefaultProps extends Partial<RawProps> = {},
 >(
   // too difficult to type here
   props: any,
-  options?: KitPropsOptions<RawProps, Controller, DefaultProps>
+  options?: KitPropsOptions<RawProps, Controller, DefaultProps>,
 ): ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
   const proxyController = options?.controller ? createOnRunObject(() => options.controller!(mergedGettersProps)) : {}
   const defaultedProps = options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props
@@ -140,12 +140,11 @@ function getParsedKitProps<
         options?.needAccessify ??
           (options?.noNeedDeAccessifyChildren
             ? omitItems(Object.getOwnPropertyNames(props), ['children'])
-            : Object.getOwnPropertyNames(props))
+            : Object.getOwnPropertyNames(props)),
       ),
 
     // inject controller (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
     (props) => mergeProps(props, { innerController: proxyController } as PivProps),
-
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
     (props) => handleMergifyOnCallbackProps(props),
     // parse plugin of **options**
@@ -153,11 +152,11 @@ function getParsedKitProps<
       handlePluginProps(
         props,
         () => options?.plugin,
-        () => hasProperty(options, 'plugin')
+        () => hasProperty(options, 'plugin'),
       ), // defined-time
     (props) => (hasProperty(options, 'name') ? mergeProps(props, { class: options!.name }) : props), // defined-time
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
-    (props) => handlePluginProps(props) // outside-props-run-time // TODO: assume can't be promisify
+    (props) => handlePluginProps(props), // outside-props-run-time // TODO: assume can't be promisify
   ) as any /* too difficult to type */
 
   // load controller
@@ -189,10 +188,10 @@ export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>
 export function useKitProps<
   P extends ValidProps,
   Controller extends ValidController | unknown = unknown,
-  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {}
+  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {},
 >(
   kitProps: P,
-  options?: KitPropsOptions<GetDeAccessifiedProps<P>, Controller, DefaultProps>
+  options?: KitPropsOptions<GetDeAccessifiedProps<P>, Controller, DefaultProps>,
 ): {
   /** not declared self props means it's shadowProps */
   shadowProps: any
@@ -216,10 +215,10 @@ export function useKitProps<
   //   console.log('kitProps raw: ', { ...propContextParsedProps })
   // }
   const { loadController, getControllerCreator } = createComponentController<RawProps, Controller>()
-  const composedProps = getParsedKitProps(propContextParsedProps, {
-    controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props),
-    ...options,
-  }) as any /* too difficult to type, no need to check */
+  const composedProps = getParsedKitProps(
+    propContextParsedProps,
+    mergeObjects({ controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) }, options),
+  ) as any /* too difficult to type, no need to check */
   const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
   return {
     props: composedProps,
@@ -253,7 +252,7 @@ function createComponentController<RawProps extends ValidProps, Controller exten
 export type DeKitProps<
   P extends ValidProps,
   Controller extends ValidController | unknown = unknown,
-  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {}
+  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {},
 > = ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
   Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>
 

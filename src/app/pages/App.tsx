@@ -1,35 +1,42 @@
 import { map } from '@edsolater/fnkit'
-import { useNavigate, useRoutes } from '@solidjs/router'
+import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
+import { switchCase } from '../../packages/fnkit'
+import {
+  Box,
+  Input,
+  List,
+  Piv,
+  Text,
+  createIncresingAccessor,
+  cssColors,
+  keyboardShortcutObserverPlugin,
+  useKeyboardGlobalShortcut,
+} from '../../packages/pivkit'
+import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
+import { NavBar } from '../components/NavBar'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../configs/routes'
 import './style.css'
-import {
-  useKeyboardGlobalShortcut,
-  Piv,
-  createIncresingAccessor,
-  Box,
-  List,
-  cssColors,
-  Input,
-  keyboardShortcutObserverPlugin,
-  Text
-} from '../../packages/pivkit'
-import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
 
 export function App() {
   const Routes = useRoutes(routes)
   const navigate = useNavigate()
+  const location = useLocation()
 
   const settings = map(globalPageShortcuts, ({ to, shortcut }) => ({
     fn: () => navigate(to),
     shortcut,
   }))
   useKeyboardGlobalShortcut(settings)
-
+  const title = createMemo(() => {
+    console.log('location.pathname: ', location.pathname)
+    return switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').join(' '))
+  })
   return (
     <Piv>
-      {/* <KeyboardShortcutPanel /> */}
+      <NavBar title={title()} />
+      <KeyboardShortcutPanel />
       <Routes />
     </Piv>
   )

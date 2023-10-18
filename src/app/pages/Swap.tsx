@@ -1,7 +1,6 @@
 import { assert } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo } from 'solid-js'
 import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
-import { NavBar } from '../components/NavBar'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../stores/data/dataStore'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
@@ -59,7 +58,6 @@ export default function SwapPage() {
 
   return (
     <Piv>
-      <NavBar title='Swap' />
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Card icss={[icss_card, icss_col({ gap: '.5em' })]}>
           <TokenAmountInputBox

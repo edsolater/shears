@@ -1,17 +1,14 @@
-import { Box, Piv } from '../../packages/pivkit'
+import { Box, Modal, Piv } from '../../packages/pivkit'
 import { Link } from '../components/Link'
-import { NavBar } from '../components/NavBar'
 import { routePath } from '../configs/routes'
 import { store } from '../stores/data/dataStore'
 import { useWalletStore } from '../stores/wallet/store'
 
 export default function Home() {
-
   const walletStore = useWalletStore()
   return (
     <div>
-      <NavBar title='Home' />
-
+      
       <Box icss={{ margin: '8px' }}>
         {/* info */}
         <Piv>token count: {store.isTokenListLoading ? '(loading)' : store.tokens?.length}</Piv>
@@ -28,5 +25,13 @@ export default function Home() {
         </Piv>
       </Box>
     </div>
+  )
+}
+
+function SettingPanel() {
+  return (
+    <Modal>
+      <Piv>setting</Piv>
+    </Modal>
   )
 }
