@@ -3,7 +3,7 @@ import { useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../configs/routes'
-import '../styles/index.css'
+import './style.css'
 import {
   useKeyboardGlobalShortcut,
   Piv,

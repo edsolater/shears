@@ -1,3 +1,79 @@
+html,
+body,
+#root,
+.app {
+  height: 100%;
+}
+body {
+  font-family: system-ui;
+  color: var(--primary);
+  background-color: var(--bg-border);
+  margin: 0;
+}
+/* make it not scroll to like a app */
+body {
+  position: fixed;
+  overflow: hidden;
+  width: 100%;
+  height: 100dvh;
+
+  /* https://developer.mozilla.org/zh-CN/docs/Web/CSS/touch-action#manipulation */
+  touch-action: manipulation;
+}
+
+:root {
+  font-size: 16px;
+}
+* {
+  box-sizing: border-box;
+  transition-property: color, background-color, filter, backdrop-filter, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+/* Firefox
+input[type='number'] {
+  -moz-appearance: textfield;
+} */
+
+@media (min-width: 1000px) {
+  ::-webkit-scrollbar {
+    background-color: transparent;
+    width: 7px;
+    height: 7px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: rgba(110, 110, 110, 0.5);
+    border-radius: 8px;
+  }
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/SpaceGrotesk[wght].woff2') format('woff2');
+  font-weight: 300;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/SpaceGrotesk[wght].woff2') format('woff2');
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/SpaceGrotesk[wght].woff2') format('woff2');
+  font-weight: 500;
+}
+@font-face {
+  font-family: 'Space Grotesk';
+  src: url('/SpaceGrotesk[wght].woff2') format('woff2');
+  font-weight: 700;
+}
+
 /* For the darkmode, or tailwindcss urgly and tedious `:dark` */
 :root {
   --primary: black;
