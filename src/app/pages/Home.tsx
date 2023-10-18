@@ -11,9 +11,9 @@ export default function Home() {
       
       <Box icss={{ margin: '8px' }}>
         {/* info */}
-        <Piv>token count: {store.isTokenListLoading ? '(loading)' : store.tokens?.length}</Piv>
+        <Piv>token count: {store.isTokenListLoading ? '(loading)' : store.tokens?.size}</Piv>
         <Piv>current owner: {walletStore.owner}</Piv>
-        <Piv>pair count: {store.isPairInfoLoading ? '(loading)' : store.pairInfos?.length}</Piv>
+        <Piv>pair count: {store.isPairInfoLoading ? '(loading)' : store.pairInfos?.size}</Piv>
         <Piv>
           nav:
           <Link innerRoute href={routePath.farms}>

@@ -114,7 +114,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
 
       <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>
 
-      <List items={tokens}>
+      <List items={tokens?.values}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
       </List>
     </Card>

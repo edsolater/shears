@@ -1,14 +1,15 @@
 import { appApiUrls } from '../../../utils/common/config'
+import { toItems } from '../../../utils/dataTransmit/getItems'
 import { getMessageReceiver, getMessageSender } from '../../../utils/webworker/loadWorker_main'
 import { setStore, storeData } from '../dataStore'
 import { TokenListStore } from '../types/tokenList'
 
 export function loadTokenPrice() {
   const allTokens = storeData.tokens
-  const hasAnyToken = Boolean(allTokens?.length)
+  const hasAnyToken = Boolean(allTokens?.size)
   if (!hasAnyToken) return
   setStore({ isTokenPriceLoading: true })
-  getTokenPriceInfoFromWorker(allTokens).subscribe((workerResult) => {
+  getTokenPriceInfoFromWorker(toItems(allTokens)).subscribe((workerResult) => {
     setStore({ isTokenPriceLoading: false, prices: workerResult.prices })
   })
 }

@@ -10,7 +10,11 @@ export async function fetchFarmJsonInfo(): Promise<StoreData['farmJsonInfos']> {
   const raydiumInfos = result.raydium.map((i) => ({ ...i, category: 'raydium' })) as FarmJSON[]
   const fusionInfos = result.fusion.map((i) => ({ ...i, category: 'fusion' })) as FarmJSON[]
   const ecosystemInfos = result.ecosystem.map((i) => ({ ...i, category: 'ecosystem' })) as FarmJSON[]
-  return [...stateInfos, ...raydiumInfos, ...fusionInfos, ...ecosystemInfos]
+  const resultFarmJsonInfos = new Map() satisfies StoreData['farmJsonInfos']
+  for (const item of stateInfos.concat(raydiumInfos).concat(fusionInfos).concat(ecosystemInfos)) {
+    resultFarmJsonInfos.set(item.id, item)
+  }
+  return resultFarmJsonInfos
 }
 
 function fetchFarmJsonFile() {

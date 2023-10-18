@@ -1,4 +1,4 @@
-import { MayFn, shrinkFn } from '@edsolater/fnkit'
+import { MayFn, isMap, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, For, JSXElement, Show, createContext, createEffect, createMemo, createSignal, on } from 'solid-js'
 import { createRef } from '../../hooks/createRef'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
@@ -9,7 +9,7 @@ import { ListItem } from './ListItem'
 export interface ListController {}
 export type ListProps<T> = {
   children(item: T, index: () => number): JSXElement
-  items?: MayFn<Iterable<T>>
+  items?: MayFn<Iterable<T> | Map<any, T>>
   /**
    * only meaningfull when turnOnScrollObserver is true
    * @default 30
@@ -49,9 +49,12 @@ export function List<T>(kitProps: ListKitProps<T>) {
   })
 
   // [configs]
-  const allItems = createMemo(() => Array.from(shrinkFn(props.items ?? [])))
+  const allItems = createMemo(() => {
+    const items = shrinkFn(props.items ?? [])
+    return isMap(items) ? Array.from(items.values()) : Array.from(items)
+  })
   const increaseRenderCount = createMemo(
-    () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30)
+    () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),
   )
   const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(allItems().length, 50))
 
@@ -82,8 +85,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
       () => {
         setRenderItemLength(initRenderCount())
         forceCalculate()
-      }
-    )
+      },
+    ),
   )
 
   const renderListItems = (item: T, idx: () => number) => {

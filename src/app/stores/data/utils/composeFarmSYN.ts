@@ -1,4 +1,4 @@
-import { createSubscribableFromPromise, listToJSMap, map } from '@edsolater/fnkit'
+import { createSubscribableFromPromise, isArray, isMap, listToJSMap, map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { createAbortableAsyncTask } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
@@ -9,6 +9,7 @@ import { FarmSYNInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 import { fetchLiquidityJson } from './fetchLiquidityJson'
 import { fetchPairJsonInfo } from './fetchPairJson'
+import { toItems } from '../../../utils/dataTransmit/getItems'
 
 /**
  * use LiquidityJson to get
@@ -23,7 +24,7 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
       if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
         connection: getConnection(payload.rpcUrl),
-        pools: farmJsonInfos.map(jsonInfo2PoolKeys),
+        pools: toItems(farmJsonInfos).map(jsonInfo2PoolKeys),
         owner: toPub(payload.owner),
         config: { batchRequest: true, commitment: 'confirmed' },
         chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet
@@ -108,6 +109,31 @@ function hydrateFarmSYN({
     } as FarmSYNInfo
   })
 
-  const indexAccessList = rawList.slice(0, 20)
+  const indexAccessList = slice(rawList, [0, 20])
   return indexAccessList
+}
+
+/**
+ * @todo move to fnkit
+ */
+function slice<T>(collection: T, range?: [start: number, end?: number]) {
+  if (!range) return collection
+  if (isMap(collection)) {
+    const newMap = new Map()
+    const [startIndex, endIndex] = range
+    let i = 0
+    for (const [key, iterator] of collection) {
+      i++
+      if (i >= startIndex && (endIndex ? i < endIndex : true)) {
+        newMap.set(key, iterator)
+      } else {
+        break
+      }
+    }
+    return newMap
+  } else if (isArray(collection)) {
+    return collection.slice(...range)
+  } else {
+    return collection
+  }
 }

@@ -29,13 +29,13 @@ export function handleShadowProps<P extends Partial<PivProps<any>>>(
   if (!('shadowProps' in props)) return props
 
   const candidates = () => shakeNil([props].concat(props.shadowProps)) // 🚧 use cache will breake the solidjs's getter logic
-  const getOwnKeys = () => {
+  const getOwnKeys = createCachedFunction(() => {
     const keysArray = getNeedToMergeKeys(props)
 
     const keys = new Set(keysArray)
     const uniqueKeys = Array.from(keys)
     return { set: keys, arr: uniqueKeys }
-  }
+  })
 
   return new Proxy(
     {},
