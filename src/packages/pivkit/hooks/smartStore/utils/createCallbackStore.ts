@@ -1,5 +1,5 @@
 import { AnyFn, MayArray, MayPromise, flap, shakeUndefinedItem } from '@edsolater/fnkit'
-import { invokeInMicroTaskLoop } from './invokeInMicroTaskLoop'
+import { delayDo } from './invokeInMicroTaskLoop'
 
 interface CallbackStore<Callback extends AnyFn> {
   invoke(...params: Parameters<Callback>): void
@@ -27,7 +27,7 @@ export function createCallbacksStore<Callback extends (...params: any[]) => void
     registeredCallbacks.forEach((cb) => {
       const prevCleanFn = registeredCleanFn.get(cb)
       Promise.resolve(prevCleanFn).then((cleanFn) => cleanFn?.())
-      const cleanFn = invokeInMicroTaskLoop(() => cb(...params), { taskKey: cb })
+      const cleanFn = delayDo(() => cb(...params), { taskKey: cb })
       if (cleanFn) {
         registeredCleanFn.set(cb, cleanFn)
       }
