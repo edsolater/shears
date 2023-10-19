@@ -1,4 +1,4 @@
-import { isArray, isIterable, isMap, isSet, isUndefined } from '@edsolater/fnkit'
+import { isArray, isIterable, isMap, isNumber, isSet, isUndefined } from '@edsolater/fnkit'
 
 export type Itemsable<T> = Map<any, T> | Set<T> | T[] | Record<keyof any, T> | IterableIterator<T> | undefined
 /** accept all may iterable data type */
@@ -71,4 +71,31 @@ export function getSize(i: Itemsable<any>) {
     return count
   }
   return Object.keys(i).length
+}
+
+/**
+ * get value of Itemsable, regardless of order
+ */
+export function getByKey(i: Itemsable<any>, key: string | number) {
+  if (isUndefined(i)) return undefined
+  if (isMap(i)) return i.get(key)
+  if (isArray(i) && isNumber(key)) return i[key]
+  if (isSet(i) && isNumber(key)) return [...i.values()][key]
+  if (isIterable(i) && isNumber(key)) {
+    let index = 0
+    for (const item of i) {
+      if (index === key) return item
+      index++
+    }
+  }
+  return i[key]
+}
+
+/**
+ * get first value of Itemsable
+ */
+export function getByIndex(i: Itemsable<any>, order: number) {
+  if (isUndefined(i)) return undefined
+  const key = isUndefined(i) || isArray(i) || isSet(i) || isIterable(i) ? order : Object.keys(i)[order]
+  return getByKey(i, key)
 }
