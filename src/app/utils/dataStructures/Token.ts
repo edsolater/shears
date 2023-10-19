@@ -69,3 +69,7 @@ export function parseSDKToken(token: Currency | _Token): Token {
 function isSDKTokenSOL(token: Currency | _Token): token is typeof TOKEN_SOL {
   return token.name === 'solana' && token.symbol?.toLowerCase() === 'SOL'.toLowerCase()
 }
+
+export function isToken(token: unknown): token is Token {
+  return typeof token === 'object' && token !== null && typeof (token as Token).mint === 'string'
+}

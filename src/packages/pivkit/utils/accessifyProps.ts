@@ -23,6 +23,7 @@ export type DeAccessifyProps<P> = {
     ? T
     : P[K]
 }
+
 /**
  * propertyName start with 'on' will treate as function
  */
@@ -30,7 +31,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
   props: P,
   controller?: Controller,
   /** default is on* and domRef and controllerRef, but you can add more */
-  needAccessifyProps?: string[]
+  needAccessifyProps?: string[],
 ): DeAccessifyProps<P> {
   const accessifiedProps = Object.defineProperties(
     {},
@@ -54,7 +55,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
         },
       }
       return acc
-    }, {} as PropertyDescriptorMap)
+    }, {} as PropertyDescriptorMap),
   ) as DeAccessifyProps<P>
   return accessifiedProps
 }
@@ -64,6 +65,10 @@ function fixFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(ori
   return {
     [originalFn.name]: (...args: unknown[]) => originalFn(...shallowMergeTwoArray(preParams, args)),
   }[originalFn.name]
+}
+
+export function deAccessify<V>(v: Accessify<V, any>, controller?: object): V {
+  return isFunction(v) ? v(controller) : v
 }
 
 // TODO: move to fnkit
