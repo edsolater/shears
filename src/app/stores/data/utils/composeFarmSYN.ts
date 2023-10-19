@@ -9,7 +9,7 @@ import { FarmSYNInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 import { fetchLiquidityJson } from './fetchLiquidityJson'
 import { fetchPairJsonInfo } from './fetchPairJson'
-import { toItems } from '../../../utils/dataTransmit/getItems'
+import { toArray } from '../../../utils/dataTransmit/getItems'
 
 /**
  * use LiquidityJson to get
@@ -24,7 +24,7 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
       if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
         connection: getConnection(payload.rpcUrl),
-        pools: toItems(farmJsonInfos).map(jsonInfo2PoolKeys),
+        pools: toArray(farmJsonInfos).map(jsonInfo2PoolKeys),
         owner: toPub(payload.owner),
         config: { batchRequest: true, commitment: 'confirmed' },
         chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet

@@ -9,14 +9,14 @@ import { useWalletOwner } from '../stores/wallet/store'
 import { Token } from '../utils/dataStructures/Token'
 import { notZero } from '../utils/dataStructures/basicMath/compare'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { toItems } from '../utils/dataTransmit/getItems'
+import { toArray } from '../utils/dataTransmit/getItems'
 /**
  * transform mint to token
  * @param mint token mint
  * @returns
  */
 function useTokenByMint(mint: Accessor<string | undefined>) {
-  const token = createMemo(() => toItems(store.tokens)?.find((t) => t.mint === mint()))
+  const token = createMemo(() => toArray(store.tokens)?.find((t) => t.mint === mint()))
   return token
 }
 

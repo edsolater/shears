@@ -27,7 +27,6 @@ import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
 import { TokenAvatar } from './TokenAvatar'
-import { createEffect } from 'solid-js'
 
 export interface TokenAmountInputBoxController {}
 
@@ -69,7 +68,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
         debugLog={['children']}
         shadowProps={{
           children: token()?.symbol,
-          icss: { color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' },
+          icss: { color: token()?.symbol === 'sol' ? 'dodgerblue' : 'crimson' },
         }}
       ></Piv>
 
@@ -114,7 +113,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
 
       <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>
 
-      <List items={tokens?.values}>
+      <List items={tokens}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
       </List>
     </Card>

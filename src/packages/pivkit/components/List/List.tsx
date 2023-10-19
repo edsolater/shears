@@ -5,11 +5,12 @@ import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useInters
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
 import { KitProps, Piv, useKitProps } from '../../piv'
 import { ListItem } from './ListItem'
+import { Itemsable, toArray } from '../../../../app/utils/dataTransmit/getItems'
 
 export interface ListController {}
 export type ListProps<T> = {
   children(item: T, index: () => number): JSXElement
-  items?: MayFn<Iterable<T> | Map<any, T>>
+  items?: MayFn<Itemsable<T>>
   /**
    * only meaningfull when turnOnScrollObserver is true
    * @default 30
@@ -51,7 +52,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [configs]
   const allItems = createMemo(() => {
     const items = shrinkFn(props.items ?? [])
-    return isMap(items) ? Array.from(items.values()) : Array.from(items)
+    return toArray(items)
   })
   const increaseRenderCount = createMemo(
     () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),
