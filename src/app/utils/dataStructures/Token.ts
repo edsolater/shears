@@ -37,7 +37,7 @@ export const TOKEN_SOL: Token = {
   is: 'sol',
 }
 
-/** transaction for SDK: unWrap may QuantumSOL to Token or Currency */
+/** only for SDK: unWrap may QuantumSOL to Token or Currency */
 export function toSDKToken(token: Token): _Token | Currency {
   if (token.is === 'sol') return SDK_CURRENCY_SOL
   return new _Token(token.mint, token.decimals, token.symbol, token.name)
@@ -72,4 +72,17 @@ function isSDKTokenSOL(token: Currency | _Token): token is typeof TOKEN_SOL {
 
 export function isToken(token: unknown): token is Token {
   return typeof token === 'object' && token !== null && typeof (token as Token).mint === 'string'
+}
+
+/** for easier use, usually as defaut value */
+export const emptyToken = {
+  mint: '',
+  decimals: 0,
+  symbol: '--',
+  name: '--',
+  icon: '',
+} satisfies Token
+
+export function isEmptyToken(token: Token): boolean {
+  return token.mint === ''
 }

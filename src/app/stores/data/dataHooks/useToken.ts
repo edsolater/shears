@@ -2,13 +2,13 @@ import { isString } from '@edsolater/fnkit'
 import { createEffect, createMemo } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { Accessify, deAccessify } from '../../../../packages/pivkit'
-import { Token, isToken } from '../../../utils/dataStructures/Token'
+import { Token, emptyToken, isToken } from '../../../utils/dataStructures/Token'
 import { store } from '../dataStore'
 
 /** easy to use & easy to read */
-export function useToken(mint: Accessify<string | Token> | undefined) {
+export function useToken(options?: { mint?: Accessify<string | Token> | undefined }) {
   const intputedToken = createMemo(() => {
-    const mintValue = deAccessify(mint)
+    const mintValue = deAccessify(options?.mint)
     if (isString(mintValue)) {
       const dataStoreToken = store.tokens?.[mintValue]
       return dataStoreToken
@@ -16,7 +16,8 @@ export function useToken(mint: Accessify<string | Token> | undefined) {
       return mintValue
     }
   })
-  const [storeToken, setStoreToken] = createStore<Token | {}>(intputedToken() ?? {})
+
+  const [storeToken, setStoreToken] = createStore<Token>(intputedToken() ?? emptyToken)
 
   createEffect(() => {
     const newToken = intputedToken()
