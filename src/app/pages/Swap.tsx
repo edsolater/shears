@@ -1,36 +1,26 @@
 import { assert } from '@edsolater/fnkit'
-import { Accessor, createEffect, createMemo } from 'solid-js'
+import { createEffect, createMemo } from 'solid-js'
 import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
+import { useToken } from '../stores/data/dataHooks/useToken'
 import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../stores/data/dataStore'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
 import { useWalletOwner } from '../stores/wallet/store'
-import { Token } from '../utils/dataStructures/Token'
+import { Token, createTokenLiteral } from '../utils/dataStructures/Token'
 import { notZero } from '../utils/dataStructures/basicMath/compare'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { toArray } from '../utils/dataTransmit/getItems'
-/**
- * transform mint to token
- * @param mint token mint
- * @returns
- */
-function useTokenByMint(mint: Accessor<string | undefined>) {
-  const token = createMemo(() => toArray(store.tokens)?.find((t) => t.mint === mint()))
-  return token
-}
+
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const token1Mint = createMemo(() => store.swapInputToken1)
-  const token2Mint = createStorePropertySignal((s) => s.swapInputToken2)
-  const token1 = useTokenByMint(token1Mint)
-  const token2 = useTokenByMint(token2Mint)
+  const { token: token1 } = useToken({ mint: () => store.swapInputToken1.mint })
+  const { token: token2 } = useToken({ mint: () => store.swapInputToken2.mint })
   const setToken1 = (token: Token | undefined) => {
-    token && setStore({ swapInputToken1: token.mint })
+    token && setStore({ swapInputToken1: createTokenLiteral(token.mint) })
   }
   const setToken2 = (token: Token | undefined) => {
-    token && setStore({ swapInputToken2: token.mint })
+    token && setStore({ swapInputToken2: createTokenLiteral(token.mint) })
   }
 
   const amount1 = createStorePropertySignal((s) => s.swapInputTokenAmount1)
@@ -46,7 +36,10 @@ export default function SwapPage() {
 
   useSwapAmountCalculatorEffect()
   createEffect(() => {
-    console.log('token1(): ', token1())
+    console.log('token1(): ', token1().symbol)
+  })
+  createEffect(() => {
+    console.log('token2(): ', token2().symbol)
   })
   createEffect(() => {
     console.log('tokenAmount1(): ', tokenAmount1())
