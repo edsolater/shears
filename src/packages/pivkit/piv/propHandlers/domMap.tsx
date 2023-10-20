@@ -218,4 +218,16 @@ export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) 
       {props.children}
     </details>
   ),
+  dialog: () => (
+    <dialog
+      // solidjs prefer solid props for variable reactive
+      onClick={props.onClick}
+      ref={props.ref}
+      class={props.class}
+      {...props.htmlProps}
+      {...additionalProps}
+    >
+      {props.children}
+    </dialog>
+  ),
 })

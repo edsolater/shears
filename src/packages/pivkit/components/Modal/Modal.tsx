@@ -94,10 +94,9 @@ export function Modal(kitProps: ModalKitProps) {
 
   return (
     <Show when={shouldRenderDOM()}>
-      <Piv
+      <Piv<'dialog'>
         render:self={(selfProps) => renderHTMLDOM('dialog', selfProps, { open: props.open && !props.isModal })}
         shadowProps={props}
-        // TODO fix this
         // @ts-expect-error lack of icss type
         icss={{ '&::backdrop': props.backdropICSS }}
         domRef={setDialogRef}
