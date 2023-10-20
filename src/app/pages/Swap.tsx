@@ -1,5 +1,5 @@
 import { assert } from '@edsolater/fnkit'
-import { createEffect, createMemo } from 'solid-js'
+import { createEffect, createMemo, untrack } from 'solid-js'
 import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import { useToken } from '../stores/data/dataHooks/useToken'
@@ -7,20 +7,19 @@ import { createStorePropertySetter, createStorePropertySignal, setStore, store }
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../stores/data/utils/txSwap_main'
 import { useWalletOwner } from '../stores/wallet/store'
-import { Token, createTokenLiteral } from '../utils/dataStructures/Token'
+import { Token } from '../utils/dataStructures/Token'
 import { notZero } from '../utils/dataStructures/basicMath/compare'
 import { toString } from '../utils/dataStructures/basicMath/format'
 
-
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const { token: token1 } = useToken({ mint: () => store.swapInputToken1.mint })
-  const { token: token2 } = useToken({ mint: () => store.swapInputToken2.mint })
+  const token1 = useToken(() => store.swapInputToken1) // it still can work, but why?
+  const token2 = useToken(() => store.swapInputToken2) // it still can work, but why?
   const setToken1 = (token: Token | undefined) => {
-    token && setStore({ swapInputToken1: createTokenLiteral(token.mint) })
+    token && setStore({ swapInputToken1: token })
   }
   const setToken2 = (token: Token | undefined) => {
-    token && setStore({ swapInputToken2: createTokenLiteral(token.mint) })
+    token && setStore({ swapInputToken2: token })
   }
 
   const amount1 = createStorePropertySignal((s) => s.swapInputTokenAmount1)
@@ -28,10 +27,10 @@ export default function SwapPage() {
   const setAmount1 = createStorePropertySetter((s) => s.swapInputTokenAmount1)
   const setAmount2 = createStorePropertySetter((s) => s.swapInputTokenAmount2)
   const tokenAmount1 = createMemo(() =>
-    amount1() ? toString(amount1(), { decimalLength: token1()?.decimals }) : undefined,
+    amount1() ? toString(amount1(), { decimalLength: token1().decimals }) : undefined,
   )
   const tokenAmount2 = createMemo(() =>
-    amount2() ? toString(amount2(), { decimalLength: token2()?.decimals }) : undefined,
+    amount2() ? toString(amount2(), { decimalLength: token2().decimals }) : undefined,
   )
 
   useSwapAmountCalculatorEffect()

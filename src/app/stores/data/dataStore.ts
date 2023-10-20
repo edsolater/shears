@@ -1,6 +1,6 @@
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellknowns'
-import { Token, TokenLiteral, createTokenLiteral } from '../../utils/dataStructures/Token'
+import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
 import { loadFarmJsonInfos } from './actions/loadFarmJsonInfos'
 import { loadFarmSYNInfos } from './actions/loadFarmSYNInfos'
@@ -11,8 +11,8 @@ import { PairJson } from './types/pairs'
 
 export type StoreData = {
   // -------- swap --------
-  swapInputToken1: TokenLiteral
-  swapInputToken2: TokenLiteral
+  swapInputToken1: Mint | Token
+  swapInputToken2: Mint | Token
   swapInputTokenAmount1?: Numberish
   swapInputTokenAmount2?: Numberish
 
@@ -43,8 +43,8 @@ export const {
   createStorePropertySetter,
 } = createSmartStore<StoreData>(
   {
-    swapInputToken1: createTokenLiteral(RAYMint),
-    swapInputToken2: createTokenLiteral(SOLMint),
+    swapInputToken1: RAYMint,
+    swapInputToken2: SOLMint,
   },
   {
     onFirstAccess: {

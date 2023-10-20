@@ -1,4 +1,4 @@
-import { ReplaceType } from '@edsolater/fnkit'
+import { ReplaceType, isObject, isString } from '@edsolater/fnkit'
 import { Currency, Token as _Token } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
 import { Mint } from './type'
@@ -72,15 +72,15 @@ function isSDKTokenSOL(token: Currency | _Token): token is typeof TOKEN_SOL {
 }
 
 export function isToken(token: unknown): token is Token {
-  return isTokenLiteral(token) && 'decimals' in token
+  return isObject(token) && isString((token as Token).mint) && typeof (token as Token).decimals === 'number'
 }
 
 /** for easier use, usually as defaut value */
 export const emptyToken = {
   mint: '',
   decimals: 0,
-  symbol: '--',
-  name: '--',
+  symbol: '',
+  name: '',
   icon: '',
 } satisfies Token
 
@@ -91,18 +91,4 @@ export const emptyToken = {
  */
 export function isEmptyToken(token: Token): boolean {
   return token.mint === ''
-}
-
-/**
- * info write by hand (without API or SDK),
- * is nativest info of token, just a mint address
- */
-export type TokenLiteral = { mint: Mint }
-
-export function isTokenLiteral(token: unknown): token is TokenLiteral {
-  return typeof token === 'object' && token !== null && typeof (token as TokenLiteral).mint === 'string'
-}
-
-export function createTokenLiteral(mint: Mint): TokenLiteral {
-  return { mint }
 }

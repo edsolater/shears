@@ -1,6 +1,9 @@
 import { AnyFn, AnyObj, isFunction, isObject, isString } from '@edsolater/fnkit'
 import { ValidController } from '../piv/typeTools'
 
+export type Accessify<V, Controller extends ValidController | unknown = unknown> = V | ((controller: Controller) => V)
+export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
+
 /**
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
@@ -11,10 +14,6 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
     ? P[K]
     : Accessify<P[K], Controller>
 }
-
-export type Accessify<V, Controller extends ValidController | unknown = unknown> = V | ((controller: Controller) => V)
-
-export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 
 export type DeAccessifyProps<P> = {
   [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'

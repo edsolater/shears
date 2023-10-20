@@ -1,4 +1,4 @@
-import { isArray, isIterable, isMap, isNumber, isSet, isUndefined } from '@edsolater/fnkit'
+import { isArray, isIterable, isMap, isNumber, isObject, isSet, isUndefined } from '@edsolater/fnkit'
 
 export type Itemsable<T> = Map<any, T> | Set<T> | T[] | Record<keyof any, T> | IterableIterator<T> | undefined
 /** accept all may iterable data type */
@@ -76,7 +76,7 @@ export function getSize(i: Itemsable<any>) {
 /**
  * get value of Itemsable, regardless of order
  */
-export function getByKey(i: Itemsable<any>, key: string | number) {
+export function getByKey<T>(i: Itemsable<T>, key: string | number): T | undefined {
   if (isUndefined(i)) return undefined
   if (isMap(i)) return i.get(key)
   if (isArray(i) && isNumber(key)) return i[key]
@@ -98,4 +98,46 @@ export function getByIndex(i: Itemsable<any>, order: number) {
   if (isUndefined(i)) return undefined
   const key = isUndefined(i) || isArray(i) || isSet(i) || isIterable(i) ? order : Object.keys(i)[order]
   return getByKey(i, key)
+}
+
+/**
+ * like set/map's has, but can use for all Itemsable
+ */
+export function has<T>(i: Itemsable<T>, item: T) {
+  if (isUndefined(i)) return false
+  if (isMap(i)) return new Set(i.values()).has(item)
+  if (isArray(i)) return i.includes(item)
+  if (isSet(i)) return i.has(item)
+  if (isIterable(i)) {
+    for (const _item of i) {
+      if (_item === item) return true
+    }
+    return false
+  }
+  if (isObject(i)) {
+    for (const _item of Object.values(i)) {
+      if (_item === item) return true
+    }
+    return false
+  }
+  return false
+}
+
+/**
+ * {@link has} is for value, this is for key
+ */
+export function hasKey<T>(i: Itemsable<T>, key: any) {
+  if (isUndefined(i)) return false
+  if (isMap(i)) return i.has(key)
+  if (isArray(i) && isNumber(key)) return i[key] !== undefined
+  if (isSet(i) && isNumber(key)) return i.size > key
+  if (isIterable(i) && isNumber(key)) {
+    let index = 0
+    for (const _ of i) {
+      if (index === key) return true
+      index++
+    }
+    return false
+  }
+  return i[key] !== undefined
 }
