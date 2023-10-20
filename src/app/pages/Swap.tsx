@@ -34,33 +34,20 @@ export default function SwapPage() {
   )
 
   useSwapAmountCalculatorEffect()
-  createEffect(() => {
-    console.log('token1(): ', token1.symbol)
-  })
-  createEffect(() => {
-    console.log('token2(): ', token2.symbol)
-  })
-  // createEffect(() => {
-  //   console.log('tokenAmount1(): ', tokenAmount1())
-  //   console.log('amount1(): ', amount1())
-  // })
-  // createEffect(() => {
-  //   console.log('tokenAmount2(): ', tokenAmount2())
-  //   console.log('amount2(): ', amount2())
-  // })
+
 
   return (
     <Piv>
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Card icss={[icss_card, icss_col({ gap: '.5em' })]}>
           <TokenAmountInputBox
-            token={() => token1}
+            token={token1}
             amount={tokenAmount1}
             onSelectToken={setToken1}
             onAmountChange={setAmount1}
           />
           <TokenAmountInputBox
-            token={() => token2}
+            token={token2}
             amount={tokenAmount2}
             onSelectToken={setToken2}
             onAmountChange={setAmount2}
