@@ -27,40 +27,40 @@ export default function SwapPage() {
   const setAmount1 = createStorePropertySetter((s) => s.swapInputTokenAmount1)
   const setAmount2 = createStorePropertySetter((s) => s.swapInputTokenAmount2)
   const tokenAmount1 = createMemo(() =>
-    amount1() ? toString(amount1(), { decimalLength: token1().decimals }) : undefined,
+    amount1() ? toString(amount1(), { decimalLength: token1.decimals }) : undefined,
   )
   const tokenAmount2 = createMemo(() =>
-    amount2() ? toString(amount2(), { decimalLength: token2().decimals }) : undefined,
+    amount2() ? toString(amount2(), { decimalLength: token2.decimals }) : undefined,
   )
 
   useSwapAmountCalculatorEffect()
   createEffect(() => {
-    console.log('token1(): ', token1().symbol)
+    console.log('token1(): ', token1.symbol)
   })
   createEffect(() => {
-    console.log('token2(): ', token2().symbol)
+    console.log('token2(): ', token2.symbol)
   })
-  createEffect(() => {
-    console.log('tokenAmount1(): ', tokenAmount1())
-    console.log('amount1(): ', amount1())
-  })
-  createEffect(() => {
-    console.log('tokenAmount2(): ', tokenAmount2())
-    console.log('amount2(): ', amount2())
-  })
+  // createEffect(() => {
+  //   console.log('tokenAmount1(): ', tokenAmount1())
+  //   console.log('amount1(): ', amount1())
+  // })
+  // createEffect(() => {
+  //   console.log('tokenAmount2(): ', tokenAmount2())
+  //   console.log('amount2(): ', amount2())
+  // })
 
   return (
     <Piv>
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Card icss={[icss_card, icss_col({ gap: '.5em' })]}>
           <TokenAmountInputBox
-            token={token1}
+            token={() => token1}
             amount={tokenAmount1}
             onSelectToken={setToken1}
             onAmountChange={setAmount1}
           />
           <TokenAmountInputBox
-            token={token2}
+            token={() => token2}
             amount={tokenAmount2}
             onSelectToken={setToken2}
             onAmountChange={setAmount2}
@@ -69,9 +69,9 @@ export default function SwapPage() {
           <Button
             onClick={() => {
               console.info('start swap')
-              const coin1 = token1()
+              const coin1 = token1
               assert(coin1, 'coin1 is undefined')
-              const coin2 = token2()
+              const coin2 = token2
               assert(coin2, 'coin2 is undefined')
               const amount1 = tokenAmount1()
               assert(notZero(amount1), 'amount1 is undefined or zero')

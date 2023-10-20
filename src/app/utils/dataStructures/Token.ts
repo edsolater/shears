@@ -1,7 +1,6 @@
 import { ReplaceType, isObject, isString } from '@edsolater/fnkit'
 import { Currency, Token as _Token } from '@raydium-io/raydium-sdk'
 import { PublicKey } from '@solana/web3.js'
-import { Mint } from './type'
 
 export interface Token {
   mint: string
@@ -22,7 +21,7 @@ export const SOLToken = {
   mint: PublicKey.default.toString(),
   decimals: 9,
 
-  symbol: 'sol',
+  symbol: 'SOL',
   name: 'solana',
   is: 'sol',
 } satisfies Token
@@ -75,14 +74,19 @@ export function isToken(token: unknown): token is Token {
   return isObject(token) && isString((token as Token).mint) && typeof (token as Token).decimals === 'number'
 }
 
-/** for easier use, usually as defaut value */
-export const emptyToken = {
-  mint: '',
-  decimals: 0,
-  symbol: '',
-  name: '',
-  icon: '',
-} satisfies Token
+/**
+ * for easier use, usually as defaut value
+ * if alway use same emptyToken, it will make some bug of solidjs's createStore, so have to be a function
+ */
+export function emptyToken(): Token {
+  return {
+    mint: '',
+    decimals: 0,
+    symbol: '',
+    name: '',
+    icon: '',
+  }
+}
 
 /**
  * check whether token is default {@link emptyToken}

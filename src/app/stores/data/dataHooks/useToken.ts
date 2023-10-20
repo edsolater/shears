@@ -1,6 +1,6 @@
 import { isString, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, createEffect, createMemo, createSignal } from 'solid-js'
-import { Accessify } from '../../../../packages/pivkit'
+import { Accessor, createEffect, createMemo, createSignal, untrack } from 'solid-js'
+import { Accessify, createSmartStore } from '../../../../packages/pivkit'
 import { Token, emptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
 import { getByKey, hasKey } from '../../../utils/dataTransmit/getItems'
@@ -9,9 +9,7 @@ import { store } from '../dataStore'
 /** easy to use & easy to read
  * whether loaded or not, it will return a token (even emptyToken)
  */
-export function useToken(
-  v?: Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>,
-): Accessor<Token> /* TODO: better to  Just return Token object */ {
+export function useToken(v?: Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>): Token {
   const intputedToken = createMemo(() => {
     const inputParam = shrinkFn(v)
     if (isString(inputParam)) {
@@ -24,7 +22,9 @@ export function useToken(
   })
 
   /** every use Token should give back a solidjs store */
-  const [storeToken, setStoreToken] = createSignal<Token>(intputedToken() ?? emptyToken)
+  const { store: storeToken} = createSmartStore(
+    () => (intputedToken() ?? emptyToken())
+  )
 
   /**
    * can detect whether token is default empty token
@@ -35,16 +35,6 @@ export function useToken(
     return hasKey(store.tokens, mint)
   })
 
-  createEffect(() => {
-    const newToken = intputedToken()
-    console.log('intputedToken: ', intputedToken)
-    if (newToken) {
-      setStoreToken(newToken)
-    }
-  })
-  createEffect(() => {
-    console.log('v: ', v)
-  })
 
   return storeToken
 }

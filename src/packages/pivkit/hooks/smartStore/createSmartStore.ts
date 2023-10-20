@@ -1,5 +1,5 @@
-import { isFunction, isNullish, isObject, isPrimitive, type AnyObj } from '@edsolater/fnkit'
-import { batch, createMemo } from 'solid-js'
+import { isFunction, isNullish, isObject, isPrimitive, type AnyObj, shrinkFn } from '@edsolater/fnkit'
+import { Accessor, batch, createEffect, createMemo, on, untrack } from 'solid-js'
 import { createStore, produce, unwrap, type SetStoreFunction } from 'solid-js/store'
 import { asyncInvoke } from '../createContextStore/utils/asyncInvoke'
 import {
@@ -17,6 +17,7 @@ import {
   type StoreCallbackRegisterer_OnStoreInit,
   createSmartStore_onStoreInit,
 } from './features/onStoreInit'
+import { Accessify } from '../../utils'
 
 export type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
 export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T> &
@@ -26,7 +27,7 @@ export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmart
 
 export type SmartSetStore<T extends Record<string, any>> = (
   dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>,
-) => Promise<T>
+) => void
 
 export type SmartStore<T extends Record<string, any>> = {
   store: T
@@ -57,10 +58,17 @@ export type SmartStore<T extends Record<string, any>> = {
  *
  */
 export function createSmartStore<T extends Record<string, any>>(
-  defaultValue: T,
+  defaultValue: T | Accessor<T>,
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
-  const [rawStore, rawSetStore] = createStore<T>(defaultValue)
+  const [rawStore, rawSetStore] = createStore<T>(shrinkFn(defaultValue))
+  /** if pass a function, it will be trate with createEffect to track reactive */
+  if (isFunction(defaultValue)) {
+    createEffect(() => {
+      const newValue = shrinkFn(defaultValue)
+      setStore(newValue)
+    })
+  }
   let accessCount: Record<string | symbol, number> = {}
   let setCount: Record<string | symbol, number> = {}
 
@@ -99,31 +107,31 @@ export function createSmartStore<T extends Record<string, any>>(
     },
   })
 
-  function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): Promise<T> {
-    return asyncInvoke(
-      () => {
-        const prevStore = rawStore
-        const newStorePieces = isFunction(dispatch) ? dispatch(unwrap(rawStore)) : dispatch
-        if (!newStorePieces) return store // no need to update store with the same value
-        Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-          setCount[propertyName] = (setCount[propertyName] ?? 0) + 1
-          // @ts-ignore
-          const prevValue = prevStore[propertyName]
-          if (prevValue !== newValue) {
-            invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
-          }
-        })
-        rawSetStore(
-          produce((draft: AnyObj) => {
-            Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-              draft[propertyName] = assignToNewValue(draft[propertyName], newValue)
-            })
-          }),
-        )
-        return store
-      },
-      { taskName: 'setSmartStore' },
-    )
+  function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
+    const prevStore = untrack(() => rawStore)
+    const newStorePieces = isFunction(dispatch) ? dispatch(prevStore) : dispatch
+    if (!newStorePieces) return // no need to update store with the same value
+    Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
+      setCount[propertyName] = (setCount[propertyName] ?? 0) + 1
+      // @ts-ignore
+      const prevValue = prevStore[propertyName]
+      if (prevValue !== newValue) {
+        invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
+      }
+    })
+    setTimeout(() => {
+      rawSetStore(
+        produce((draft: AnyObj) => {
+          Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
+            const oldValue = draft[propertyName]
+            if (oldValue === newValue) return
+            const mergedValue = assignToNewValue(oldValue, newValue)
+            draft[propertyName] = mergedValue
+            // TODO lack of deep merge
+          })
+        }),
+      )
+    }, Math.random() * 1000)
   }
 
   function createStorePropertySignal<F>(pick: (store: T) => F): () => F {

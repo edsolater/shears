@@ -64,13 +64,13 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label(), icss_clickable()]}>
         {token()?.symbol}
       </Box>
-      <Piv
+      {/* <Piv
         debugLog={['children']}
         shadowProps={{
           children: token()?.symbol,
-          icss: { color: token()?.symbol === 'sol' ? 'dodgerblue' : 'crimson' },
+          icss: { color: token()?.symbol === 'SOL' ? 'dodgerblue' : 'crimson' },
         }}
-      ></Piv>
+      ></Piv> */}
 
       {/* token amount info */}
       <Input
