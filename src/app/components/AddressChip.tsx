@@ -29,7 +29,7 @@ export type DefaultAddressItemProps = typeof defaultProps
  * base on {@link RowItem}
  * @todo it should be a props:plugin
  */
-export function AddressItem(kitProps: KitProps<AddressItemProps>) {
+export function AddressChip(kitProps: KitProps<AddressItemProps>) {
   const { props } = useKitProps(kitProps, { defaultProps })
 
   const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })
