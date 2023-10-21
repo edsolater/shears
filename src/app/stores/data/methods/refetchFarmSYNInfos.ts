@@ -1,3 +1,3 @@
-import { loadFarmSYNInfos } from '../actions/loadFarmSYNInfos_main'
+import { loadFarmSYNInfos } from '../portActions/loadFarmSYNInfos_main'
 
 export const refetchFarmSYNInfos = loadFarmSYNInfos

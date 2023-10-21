@@ -1,3 +1,3 @@
-import { loadFarmJsonInfos } from '../actions/loadFarmJsonInfos_main'
+import { loadFarmJsonInfos } from '../portActions/loadFarmJsonInfos_main'
 
 export const refetchJsonInfos = loadFarmJsonInfos

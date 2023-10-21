@@ -1,10 +1,10 @@
-import { loadFarmJsonInfos_worker } from '../../stores/data/actions/loadFarmJsonInfos_worker'
-import { loadFarmSYNInfos_worker } from '../../stores/data/actions/loadFarmSYNInfos_worker'
-import { loadPairs_worker } from '../../stores/data/actions/loadPairs_worker'
-import { loadTokenPrice_worker } from '../../stores/data/actions/loadTokenPrice_worker'
-import { loadTokens_worker } from '../../stores/data/actions/loadTokens_worker'
-import { calculateSwapRouteInfos_worker } from '../../stores/data/actions/calculateSwapRouteInfos_worker'
-import { txSwap_worker } from '../../stores/data/actions/txSwap_worker'
+import { loadFarmJsonInfos_worker } from '../../stores/data/portActions/loadFarmJsonInfos_worker'
+import { loadFarmSYNInfos_worker } from '../../stores/data/portActions/loadFarmSYNInfos_worker'
+import { loadPairs_worker } from '../../stores/data/portActions/loadPairs_worker'
+import { loadTokenPrice_worker } from '../../stores/data/portActions/loadTokenPrice_worker'
+import { loadTokens_worker } from '../../stores/data/portActions/loadTokens_worker'
+import { calculateSwapRouteInfos_worker } from '../../stores/data/portActions/calculateSwapRouteInfos_worker'
+import { txSwap_worker } from '../../stores/data/portActions/txSwap_worker'
 import { MessagePortTransformers } from './createMessagePortTransforers'
 
 export function applyWebworkerRegisters(messageTransformers: MessagePortTransformers) {
