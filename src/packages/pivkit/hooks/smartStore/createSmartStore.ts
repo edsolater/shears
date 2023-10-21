@@ -119,19 +119,17 @@ export function createSmartStore<T extends Record<string, any>>(
         invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
       }
     })
-    setTimeout(() => {
-      rawSetStore(
-        produce((draft: AnyObj) => {
-          Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-            const oldValue = draft[propertyName]
-            if (oldValue === newValue) return
-            const mergedValue = assignToNewValue(oldValue, newValue)
-            draft[propertyName] = mergedValue
-            // TODO lack of deep merge
-          })
-        }),
-      )
-    }, Math.random() * 1000)
+    rawSetStore(
+      produce((draft: AnyObj) => {
+        Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
+          const oldValue = draft[propertyName]
+          if (oldValue === newValue) return
+          const mergedValue = assignNewValue(oldValue, newValue)
+          draft[propertyName] = mergedValue
+          // TODO lack of deep merge
+        })
+      }),
+    )
   }
 
   function createStorePropertySignal<F>(pick: (store: T) => F): () => F {
@@ -182,11 +180,11 @@ export function createSmartStore<T extends Record<string, any>>(
  * @param oldValue may be mutated
  * @param newValue provide new values
  */
-function assignToNewValue(oldValue: unknown, newValue: unknown): unknown {
+function assignNewValue(oldValue: unknown, newValue: unknown): unknown {
   if (isNullish(oldValue) || isPrimitive(oldValue)) return newValue
   if (isFunction(oldValue) && isFunction(newValue)) return newValue
   if (isObject(oldValue) && isObject(newValue)) {
-    const newMutatedObj = mutateTwoObj(oldValue, newValue, assignToNewValue)
+    const newMutatedObj = mutateTwoObj(oldValue, newValue, assignNewValue)
     return newMutatedObj
   }
   return newValue
