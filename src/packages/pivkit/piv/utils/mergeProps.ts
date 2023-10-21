@@ -58,7 +58,7 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
           return getPivPropsValue(props, key)
         },
       }),
-    }
+    },
   ) as any
 }
 
@@ -68,6 +68,7 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
 export function getPivPropsValue(objs: AnyObj[], key: keyof any) {
   switch (key) {
     // -------- specific --------
+    // inside define's  children's priority is higher than outside define's
     case 'children':
       for (let i = 0; i < objs.length; i++) {
         const obj = objs[i]
@@ -102,6 +103,7 @@ export function getPivPropsValue(objs: AnyObj[], key: keyof any) {
         }, undefined as unknown)
       } else {
         // -------- very normal props --------
+        // outside define's props priority is higher than inside define's
         for (let i = objs.length - 1; i >= 0; i--) {
           const obj = objs[i]
           const v = obj?.[key]

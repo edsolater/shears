@@ -16,7 +16,7 @@ import {
 import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
 import { NavBar } from '../components/NavBar'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
-import { routes } from '../configs/routes'
+import { routes } from '../routes'
 import './style.css'
 
 export function App() {

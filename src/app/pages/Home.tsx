@@ -1,6 +1,6 @@
 import { Box, Modal, Piv } from '../../packages/pivkit'
 import { Link } from '../components/Link'
-import { routePath } from '../configs/routes'
+import { routePath } from '../routes'
 import { store } from '../stores/data/dataStore'
 import { useWalletStore } from '../stores/wallet/store'
 import { getSize } from '../utils/dataTransmit/getItems'

@@ -1,6 +1,6 @@
 import { AmmV3, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-io/raydium-sdk'
 import { Connection } from '@solana/web3.js'
-import { SOLMint, WSOLMint } from '../../../configs/wellknowns'
+import { SOLMint, WSOLMint } from '../../../configs/wellKnownMints'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { ApiPoolInfo } from '../types/ammPools'
 

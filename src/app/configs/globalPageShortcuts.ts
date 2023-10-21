@@ -1,5 +1,5 @@
 import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
-import { farmsRoutePath, homeRoutePath, pairsRoutePath, swapRoutePath } from './routes'
+import { farmsRoutePath, homeRoutePath, pairsRoutePath, swapRoutePath } from '../routes'
 
 export const globalPageShortcuts = {
   'go to home': {

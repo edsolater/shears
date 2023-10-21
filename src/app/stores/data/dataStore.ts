@@ -1,5 +1,5 @@
 import { createSmartStore } from '../../../packages/pivkit'
-import { RAYMint, SOLMint } from '../../configs/wellknowns'
+import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
 import { loadFarmJsonInfos } from './actions/loadFarmJsonInfos'
