@@ -7,7 +7,7 @@ import { getToken } from '../stores/data/methods/getToken'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { add } from '../utils/dataStructures/basicMath/operations'
 import { Piv, List, Collapse, CollapseFace, Box } from '../../packages/pivkit'
-import { store } from '../stores/data/dataStore'
+import { store } from '../stores/data/store'
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'

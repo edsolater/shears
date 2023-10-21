@@ -22,7 +22,7 @@ import {
   icss_row,
   useKitProps,
 } from '../../packages/pivkit'
-import { store } from '../stores/data/dataStore'
+import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'

@@ -4,7 +4,7 @@ import { Accessify, createSmartStore } from '../../../../packages/pivkit'
 import { Token, emptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
 import { getByKey, hasKey } from '../../../utils/dataTransmit/getItems'
-import { store } from '../dataStore'
+import { store } from '../store'
 
 /** easy to use & easy to read
  * whether loaded or not, it will return a token (even emptyToken)

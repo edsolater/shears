@@ -1,6 +1,7 @@
+import { createEffect } from 'solid-js'
+import { createAbortableAsyncTask } from '../../../packages/fnkit'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
-import { getConnection } from '../../utils/common/getConnection'
 import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
@@ -12,26 +13,31 @@ import { PairJson } from './types/pairs'
 
 export type StoreData = {
   // -------- swap --------
+  swapLoadCount?: number // not good, should change automaticly. change this will start loading swap related info
   swapInputToken1: Mint | Token
   swapInputToken2: Mint | Token
   swapInputTokenAmount1?: Numberish
   swapInputTokenAmount2?: Numberish
 
   // -------- farms --------
+  farmLoadCount?: number // not good, should change automaticly. change this will start loading farm related info
   farmJsonInfos?: Record<FarmJSON['id'], FarmJSON>
   isFarmJsonLoading?: boolean
   farmInfos?: Record<FarmSYNInfo['id'], FarmSYNInfo>
   isFarmInfosLoading?: boolean
 
   // -------- pairs --------
+  pairLoadCount?: number // not good, should change automaticly. change this will start loading pair related info
   pairInfos?: Record<PairJson['ammId'], PairJson>
   isPairInfoLoading?: boolean
 
   // -------- token --------
+  tokenLoadCount?: number // not good, should change automaticly. change this will start loading token related info
   isTokenListLoading?: boolean
   tokens?: Record<Token['mint'], Token>
 
   // -------- price --------
+  priceLoadCount?: number // not good, should change automaticly. change this will start loading price related info
   isTokenPriceLoading?: boolean
   prices?: { mint: string; price: Numberish }[]
 
@@ -55,6 +61,18 @@ export const {
       pairInfos: loadPairs,
       prices: loadPairs,
       tokens: loadTokensInfos,
-    }
+    },
   },
 )
+
+/**
+ * use this to track accessed store properties
+ */
+// @ts-expect-error 🍺
+function createGetAciveProperties<T extends Record<string, any>>(store: T): keyof StoreData[] {}
+
+const { abort, resultSubscribable } = createAbortableAsyncTask(async () => {
+  createEffect(() => {
+    const _track1 = store.pairInfos
+  })
+})

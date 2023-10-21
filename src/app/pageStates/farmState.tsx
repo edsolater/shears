@@ -2,7 +2,7 @@ import { createMemo, createSignal, Setter } from 'solid-js'
 import { FarmJSON } from '../stores/data/types/farm'
 import { find } from '@edsolater/fnkit'
 import { createCachedGlobalHook } from '../../packages/pivkit'
-import { store } from '../stores/data/dataStore'
+import { store } from '../stores/data/store'
 
 export interface FarmPageStates {
   // setters

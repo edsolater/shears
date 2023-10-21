@@ -13,7 +13,7 @@ import {
 } from '../../packages/pivkit'
 import { useControllerRef } from '../../packages/pivkit/hooks/useControllerRef'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
-import { setStore, store } from '../stores/data/dataStore'
+import { setStore, store } from '../stores/data/store'
 import { AppLogo } from './AppLogo'
 import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
 import { RoutesButtons } from './RoutesButtons'

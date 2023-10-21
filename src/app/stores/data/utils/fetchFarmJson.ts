@@ -1,7 +1,7 @@
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
 import { toRecord } from '../../../utils/dataTransmit/getItems'
-import { StoreData } from '../dataStore'
+import { StoreData } from '../store'
 import { FarmJSON, FarmJSONFile } from '../types/farm'
 
 export async function fetchFarmJsonInfo(): Promise<StoreData['farmJsonInfos']> {

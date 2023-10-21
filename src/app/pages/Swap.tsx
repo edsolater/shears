@@ -1,11 +1,11 @@
 import { assert } from '@edsolater/fnkit'
-import { createEffect, createMemo, untrack } from 'solid-js'
+import { createMemo } from 'solid-js'
 import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import { useToken } from '../stores/data/dataHooks/useToken'
-import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../stores/data/dataStore'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../stores/data/portActions/txSwap_main'
+import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../stores/data/store'
 import { useWalletOwner } from '../stores/wallet/store'
 import { Token } from '../utils/dataStructures/Token'
 import { notZero } from '../utils/dataStructures/basicMath/compare'
@@ -34,7 +34,6 @@ export default function SwapPage() {
   )
 
   useSwapAmountCalculatorEffect()
-
 
   return (
     <Piv>
