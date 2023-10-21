@@ -1,17 +1,18 @@
 import { Subscribable, createSubscribable } from '@edsolater/fnkit'
 import { invoke } from './invoke'
 
+export type AbortableTask<T> = {
+  abort(): void
+  resultSubscribable: Subscribable<T | undefined>
+}
+
 /**
  * make it  possiable to abort inside the progress of task
  * inner use basic subscribable
  */
 export function createAbortableAsyncTask<T>(
   task: (utils: { resolve: (value: T | PromiseLike<T>) => void; aborted: () => boolean }) => void,
-): {
-  abort(): void
-  resultSubscribable: Subscribable<T | undefined>
-  injectToSubscribable(value: T): void
-} {
+): AbortableTask<T> {
   let isTaskAborted = false
   const innerResolve: (value: T | PromiseLike<T>) => void = async (asyncValue) => {
     const value = await asyncValue
@@ -26,6 +27,5 @@ export function createAbortableAsyncTask<T>(
       isTaskAborted = true
     },
     resultSubscribable: taskResultSubscribable,
-    injectToSubscribable: taskResultSubscribable.set,
   }
 }

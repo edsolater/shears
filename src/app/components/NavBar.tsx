@@ -46,12 +46,12 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px' }, icss_clickable]}
+        icss={[{ padding: '8px', marginInline: '8px', borderRadius:'8px' }, icss_clickable]}
         onClick={() => {
           appSettingsModalControllers()?.open()
         }}
       >
-        s
+        ⚙️
       </Box>
       <SettingsPanelDialog></SettingsPanelDialog>
     </Fragnment>

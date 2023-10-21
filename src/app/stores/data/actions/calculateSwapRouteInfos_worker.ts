@@ -1,7 +1,7 @@
 import { AnyFn } from '@edsolater/fnkit'
 import { inNextMainLoop } from '../../../../packages/fnkit'
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
-import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from './calculateSwapRouteInfos'
+import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from '../utils/calculateSwapRouteInfos'
 
 let storedCleanUpFunction: AnyFn | undefined = undefined
 

@@ -1,5 +1,5 @@
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
-import { TxSwapOptions, txSwap_getInnerTransaction } from './txSwap'
+import { TxSwapOptions, txSwap_getInnerTransaction } from '../utils/txSwap'
 
 export function txSwap_worker(transformers: MessagePortTransformers) {
   const { receiver, sender } = transformers.getMessagePort<TxSwapOptions>('txSwap start')

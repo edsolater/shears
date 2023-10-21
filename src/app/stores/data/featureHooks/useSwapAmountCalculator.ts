@@ -3,7 +3,7 @@ import { createEffect } from 'solid-js'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { createStorePropertySetter, createStorePropertySignal } from '../dataStore'
 import { getToken } from '../methods/getToken'
-import { calculatedSwapRouteInfos_main } from '../utils/calculateSwapRouteInfos_main'
+import { calculatedSwapRouteInfos_main } from '../actions/calculateSwapRouteInfos_main'
 
 /**
  * calculate swap amount from up to down

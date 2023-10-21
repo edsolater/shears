@@ -1,7 +1,6 @@
 import { capitalize, map } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
-import { switchCase } from '../../packages/fnkit'
 import {
   Box,
   Input,
@@ -18,6 +17,7 @@ import { NavBar } from '../components/NavBar'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../routes'
 import './style.css'
+import { switchCase } from '../../packages/fnkit'
 
 export function App() {
   const Routes = useRoutes(routes)

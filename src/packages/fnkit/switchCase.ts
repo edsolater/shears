@@ -1,5 +1,9 @@
 import { isArray, isFunction, isMap } from '@edsolater/fnkit'
 
+/**
+ *
+ * @deprecated already in fnkit
+ */
 export function switchCase<T extends keyof any, R>(
   key: T,
   rules: Partial<Record<T, R>> /** only invoked if none matched */,

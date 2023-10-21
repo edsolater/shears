@@ -1,21 +1,27 @@
-import { createSubscribableFromPromise, isArray, isMap, listToJSMap, map } from '@edsolater/fnkit'
+import { createSubscribableFromPromise, listToJSMap, map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { createAbortableAsyncTask } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
+import { slice, toArray, toRecord } from '../../../utils/dataTransmit/getItems'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { FarmSYNInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 import { fetchLiquidityJson } from './fetchLiquidityJson'
 import { fetchPairJsonInfo } from './fetchPairJson'
-import { toArray } from '../../../utils/dataTransmit/getItems'
+
+export type ComposedFarmSYNInfos = Record<string, FarmSYNInfo> | undefined
+export type ComposeFarmSYNInfoQuery = {
+  owner?: string
+  rpcUrl: string
+}
 
 /**
  * use LiquidityJson to get
  */
-export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
-  return createAbortableAsyncTask(async ({ resolve, aborted }) => {
+export function composeFarmSYN(query: ComposeFarmSYNInfoQuery) {
+  return createAbortableAsyncTask<ComposedFarmSYNInfos>(async ({ resolve, aborted }) => {
     const farmJsonPromise = fetchFarmJsonInfo()
     const liquidityJsonPromise = fetchLiquidityJson()
     const pairJsonInfoPromise = fetchPairJsonInfo()
@@ -23,9 +29,9 @@ export function composeFarmSYN(payload: { owner?: string; rpcUrl: string }) {
     const farmSDKPromise = farmJsonPromise.then((farmJsonInfos) => {
       if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
-        connection: getConnection(payload.rpcUrl),
+        connection: getConnection(query.rpcUrl),
         pools: toArray(farmJsonInfos).map(jsonInfo2PoolKeys),
-        owner: toPub(payload.owner),
+        owner: toPub(query.owner),
         config: { batchRequest: true, commitment: 'confirmed' },
         chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet
       }
@@ -109,31 +115,9 @@ function hydrateFarmSYN({
     } as FarmSYNInfo
   })
 
-  const indexAccessList = slice(rawList, [0, 20])
+  const indexAccessList = slice(
+    toRecord(rawList, (i) => i.id),
+    [0, 20],
+  )
   return indexAccessList
-}
-
-/**
- * @todo move to fnkit
- */
-function slice<T>(collection: T, range?: [start: number, end?: number]) {
-  if (!range) return collection
-  if (isMap(collection)) {
-    const newMap = new Map()
-    const [startIndex, endIndex] = range
-    let i = 0
-    for (const [key, iterator] of collection) {
-      i++
-      if (i >= startIndex && (endIndex ? i < endIndex : true)) {
-        newMap.set(key, iterator)
-      } else {
-        break
-      }
-    }
-    return newMap
-  } else if (isArray(collection)) {
-    return collection.slice(...range)
-  } else {
-    return collection
-  }
 }

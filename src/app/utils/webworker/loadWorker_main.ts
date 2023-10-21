@@ -2,5 +2,5 @@ import { createSignTransactionPortInMainThread } from '../txHandler/signAllTrans
 import { createMessagePortTransforers } from './createMessagePortTransforers'
 
 export const sdkworker = import('./loadWorker_worker?worker').then((module) => new module.default())
-export const { getMessageReceiver, getMessageSender, getMessagePort } = createMessagePortTransforers(sdkworker)
+export const { getMessagePort, getMessageReceiver, getMessageSender } = createMessagePortTransforers(sdkworker)
 createSignTransactionPortInMainThread()

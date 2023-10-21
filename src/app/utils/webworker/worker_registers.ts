@@ -3,8 +3,8 @@ import { loadFarmSYNInfos_worker } from '../../stores/data/actions/loadFarmSYNIn
 import { loadPairs_worker } from '../../stores/data/actions/loadPairs_worker'
 import { loadTokenPrice_worker } from '../../stores/data/actions/loadTokenPrice_worker'
 import { loadTokens_worker } from '../../stores/data/actions/loadTokens_worker'
-import { calculateSwapRouteInfos_worker } from '../../stores/data/utils/calculateSwapRouteInfos_worker'
-import { txSwap_worker } from '../../stores/data/utils/txSwap_worker'
+import { calculateSwapRouteInfos_worker } from '../../stores/data/actions/calculateSwapRouteInfos_worker'
+import { txSwap_worker } from '../../stores/data/actions/txSwap_worker'
 import { MessagePortTransformers } from './createMessagePortTransforers'
 
 export function applyWebworkerRegisters(messageTransformers: MessagePortTransformers) {

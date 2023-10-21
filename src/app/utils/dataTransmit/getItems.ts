@@ -1,4 +1,4 @@
-import { isArray, isIterable, isMap, isNumber, isObject, isSet, isUndefined } from '@edsolater/fnkit'
+import { isArray, isIterable, isMap, isNumber, isObject, isSet, isUndefined, omit, pick } from '@edsolater/fnkit'
 
 export type Itemsable<T> = Map<any, T> | Set<T> | T[] | Record<keyof any, T> | IterableIterator<T> | undefined
 /** accept all may iterable data type */
@@ -24,8 +24,8 @@ export function toMap<T>(i: Itemsable<T>, key?: (item: T) => any) {
   return new Map(Object.entries(i))
 }
 
-export function toRecord<T>(i: Itemsable<T>, key: (item: T, key: unknown) => any) {
-  if (isUndefined(i)) return {}
+export function toRecord<T, K extends keyof any>(i: Itemsable<T>, key: (item: T, key: unknown) => K): Record<K, T> {
+  if (isUndefined(i)) return {} as Record<K, T>
   if (isMap(i)) {
     const result = {} as Record<keyof any, T>
     for (const [k, v] of i.entries()) {
@@ -140,4 +140,27 @@ export function hasKey<T>(i: Itemsable<T>, key: any) {
     return false
   }
   return i[key] !== undefined
+}
+
+export function slice<T extends Itemsable<any>>(i: T, range?: [start: number, end?: number]): T {
+  if (!range) return i
+  if (isUndefined(i)) return i
+  if (isMap(i)) return new Map([...i.entries()].slice(...range)) as T
+  if (isArray(i)) return i.slice(...range) as T
+  if (isSet(i)) return new Set([...i.values()].slice(...range)) as T
+  if (isIterable(i)) {
+    const result = new Set<T>()
+    let index = 0
+    for (const item of i) {
+      if (index >= range[0] && (isUndefined(range[1]) || index < range[1])) {
+        result.add(item)
+      }
+      index++
+    }
+    return result.values() as T
+  }
+  else {
+    const newKeys = Object.keys(i).slice(...range)
+    return pick(i, newKeys) as T
+  }
 }

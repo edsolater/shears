@@ -1,11 +1,12 @@
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { setStore } from '../dataStore'
 
-
 export function loadPairs() {
   console.log('[main] load pairs')
   setStore({ isPairInfoLoading: true })
-  getPairJsonFromWorker().subscribe((allPairJsonInfos) => {
+  const { sender, receiver } = getMessagePort('fetch raydium pairs info')
+  sender.query({ force: false })
+  receiver.subscribe((allPairJsonInfos) => {
     console.log('get pools count', allPairJsonInfos.length)
     setStore({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 150) })
     let count = 0
@@ -20,10 +21,4 @@ export function loadPairs() {
     }, 1000)
     return () => clearInterval(timeoutId)
   })
-}
-
-function getPairJsonFromWorker() {
-  const { sender, receiver } = getMessagePort('fetch raydium pairs info')
-  sender.query({ force: false })
-  return receiver
 }
