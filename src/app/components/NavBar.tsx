@@ -1,8 +1,22 @@
-import { Box } from '../../packages/pivkit'
+import {
+  Box,
+  Fragnment,
+  Input,
+  ItemBox,
+  Modal,
+  ModalController,
+  Section,
+  Text,
+  createControllerRef,
+  icss_clickable,
+  icss_row,
+} from '../../packages/pivkit'
+import { useControllerRef } from '../../packages/pivkit/hooks/useControllerRef'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
+import { setStore, store } from '../stores/data/dataStore'
+import { AppLogo } from './AppLogo'
 import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
 import { RoutesButtons } from './RoutesButtons'
-import { AppLogo } from './AppLogo'
 import { WalletWidget } from './WalletWidget'
 
 export type NavBarProps = NavWrapBoxProps
@@ -16,8 +30,64 @@ export function NavBar(props: NavBarProps) {
         {/* tabs */}
         <RoutesButtons />
 
-        <WalletWidget />
+        <ItemBox icss={icss_row}>
+          <SettingButtonTrigger />
+          <WalletWidget />
+        </ItemBox>
       </Box>
     </NavWrapBox>
+  )
+}
+
+/**
+ * triggers
+ */
+function SettingButtonTrigger() {
+  return (
+    <Fragnment>
+      <Box
+        icss={[{ padding: '8px' }, icss_clickable]}
+        onClick={() => {
+          appSettingsModalControllers()?.open()
+        }}
+      >
+        s
+      </Box>
+      <SettingsPanelDialog></SettingsPanelDialog>
+    </Fragnment>
+  )
+}
+
+const [appSettingsModalControllers, setSettingControllerRef] = createControllerRef<ModalController>()
+
+/**
+ * modal
+ */
+function SettingsPanelDialog() {
+  return (
+    <Modal controllerRef={setSettingControllerRef}>
+      <SettingsContent />
+    </Modal>
+  )
+}
+
+/**
+ * setting form details
+ */
+function SettingsContent() {
+  return (
+    <Box>
+      <Section>
+        <ItemBox>
+          <Text>RPC:</Text>
+          <Input
+            value={store.rpcUrl}
+            onInput={({ text }) => {
+              setStore({ rpcUrl: text })
+            }}
+          />
+        </ItemBox>
+      </Section>
+    </Box>
   )
 }

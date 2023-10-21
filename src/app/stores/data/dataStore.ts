@@ -33,6 +33,9 @@ export type StoreData = {
   // -------- price --------
   isTokenPriceLoading?: boolean
   prices?: { mint: string; price: Numberish }[]
+
+  // -------- app setting --------
+  rpcUrl?: string
 }
 
 export const {
@@ -42,10 +45,7 @@ export const {
   createStorePropertySignal,
   createStorePropertySetter,
 } = createSmartStore<StoreData>(
-  {
-    swapInputToken1: RAYMint,
-    swapInputToken2: SOLMint,
-  },
+  { swapInputToken1: RAYMint, swapInputToken2: SOLMint },
   {
     onFirstAccess: {
       farmJsonInfos: loadFarmJsonInfos,

@@ -42,6 +42,7 @@ export function unregisterController(id?: string) {
 
 /**
  * **Hook:** get target component's controller
+ * @deprecated just use useController is ok
  * @param componentID component id
  */
 export function useControllerByID<Controller extends ValidController | unknown>(componentID: string) {

@@ -115,11 +115,11 @@ function ModalExample() {
   return (
     <>
       <Button onClick={() => modalController.toggle?.()}>Open</Button>
-      <Modal id='example-modal' isModal>
+      <Modal id='example-modal'>
         Modal1
       </Modal>
       <Button onClick={() => modalController2.toggle?.()}>Open</Button>
-      <Modal id='example-modal2' isModal>
+      <Modal id='example-modal2'>
         Modal2 + {couter()}
       </Modal>
     </>

@@ -83,7 +83,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       />
 
       {/* modal dialog */}
-      <Modal controllerRef={setModalRef} isModal>
+      <Modal controllerRef={setModalRef}>
         <TokenSelectorModalContent
           shadowProps={props['anatomy:tokenSelectorModalContent']}
           onTokenSelect={mergeFunction(setToken, () => {

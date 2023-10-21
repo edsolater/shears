@@ -12,5 +12,5 @@ export type SectionKitProps = KitProps<SectionProps>
 export function Section(rawProps: SectionKitProps) {
   const { shadowProps, props } = useKitProps(rawProps, { name: 'Section' })
   /* ---------------------------------- props --------------------------------- */
-  return <Piv class={`Section ${props.name ?? ''}`} shadowProps={shadowProps} />
+  return <Piv class={props.name} shadowProps={shadowProps} />
 }

@@ -14,7 +14,6 @@ export interface ModalController {
 
 export interface ModalProps {
   open?: boolean
-  isModal?: boolean
 
   onClose?(): void
 
@@ -71,7 +70,7 @@ export function Modal(kitProps: ModalKitProps) {
   // user action: open dialog
   const openDialog = () => {
     setInnerOpen(true)
-    props.isModal ? dialogRef()?.showModal() : dialogRef()?.show()
+    dialogRef()?.showModal()
   }
 
   // user action: close dialog
@@ -95,7 +94,7 @@ export function Modal(kitProps: ModalKitProps) {
   return (
     <Show when={shouldRenderDOM()}>
       <Piv<'dialog'>
-        render:self={(selfProps) => renderHTMLDOM('dialog', selfProps, { open: props.open && !props.isModal })}
+        render:self={(selfProps) => renderHTMLDOM('dialog', selfProps, { open: props.open })}
         shadowProps={props}
         // @ts-expect-error lack of icss type
         icss={{ '&::backdrop': props.backdropICSS }}
