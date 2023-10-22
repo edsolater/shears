@@ -1,5 +1,4 @@
-import { createEffect, createMemo } from 'solid-js'
-import { createAbortableAsyncTask } from '../../../packages/fnkit'
+import { untrack } from 'solid-js/web'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
@@ -8,8 +7,10 @@ import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
 import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokensInfos } from './portActions/loadTokens_main'
+import { createStoreEffect } from './storeEffects/utils'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
+import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 
 export type StoreData = {
   // -------- swap --------
@@ -48,20 +49,48 @@ export type StoreData = {
 export const {
   store: store,
   unwrappedStore: storeData,
+  storeAccessCount,
   setStore: setStore,
+  setStoreCount,
   createStorePropertySignal,
   createStorePropertySetter,
-} = createSmartStore<StoreData>(
-  { swapInputToken1: RAYMint, swapInputToken2: SOLMint },
-  {
-    onFirstAccess: {
-      farmJsonInfos: loadFarmJsonInfos,
-      farmInfos: loadFarmSYNInfos,
-      isPairInfoLoading: loadPairs,
-      pairInfos: loadPairs,
-      prices: loadPairs,
-      tokens: loadTokensInfos,
-    },
-  },
-)
+} = createSmartStore<StoreData>({ swapInputToken1: RAYMint, swapInputToken2: SOLMint })
 
+// should after apply worker registers
+setTimeout(() => {
+  createStoreEffect(
+    () => storeAccessCount.farmJsonInfos,
+    () => {
+      loadFarmJsonInfos()
+    },
+  )
+
+  // createStoreEffect(
+  //   () => storeAccessCount.farmInfos,
+  //   () => {
+  //     loadFarmSYNInfos()
+  //   },
+  // )
+
+  // createStoreEffect(
+  //   () => storeAccessCount.isPairInfoLoading || storeAccessCount.pairInfos,
+  //   () => {
+  //     loadPairs()
+  //   },
+  // )
+
+  // createStoreEffect(
+  //   () => storeAccessCount.prices,
+  //   () => {
+  //     loadTokenPrice()
+  //   },
+  // )
+
+  createStoreEffect(
+    () => storeAccessCount.tokens,
+    () => {
+      console.log('loading tokens')
+      loadTokensInfos()
+    },
+  )
+}, 0)

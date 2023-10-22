@@ -11,17 +11,11 @@ import {
   type CreateSmartStoreOptions_OnPropertyChange,
   type StoreCallbackRegisterer_OnPropertyChange,
 } from './features/onPropertyChange'
-import {
-  createSmartStore_onStoreInit,
-  type CreateSmartStoreOptions_OnStoreInit,
-  type StoreCallbackRegisterer_OnStoreInit,
-} from './features/onStoreInit'
 
 export type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
 export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T> &
   CreateSmartStoreOptions_OnPropertyChange<T> &
-  CreateSmartStoreOptions_OnFirstAccess<T> &
-  CreateSmartStoreOptions_OnStoreInit<T>
+  CreateSmartStoreOptions_OnFirstAccess<T>
 
 export type SmartSetStore<T extends Record<string, any>> = (
   dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>,
@@ -29,8 +23,10 @@ export type SmartSetStore<T extends Record<string, any>> = (
 
 export type SmartStore<T extends Record<string, any>> = {
   store: T
+  storeAccessCount: Record<keyof T, number | undefined>
   unwrappedStore: T
   setStore: SmartSetStore<T>
+  setStoreCount: Record<keyof T, number | undefined>
 
   /** dangerous shortcut, just use store as much as you can  */
   createStorePropertySignal<F>(pick: (store: T) => F): () => F
@@ -44,7 +40,6 @@ export type SmartStore<T extends Record<string, any>> = {
   /** don't use. as much as possible, it's unwrapped solidjs/store setStore */
   _rawSetStore: SetStoreFunction<T>
 } & StoreCallbackRegisterer_OnPropertyChange<T> &
-  StoreCallbackRegisterer_OnStoreInit<T> &
   StoreCallbackRegisterer_OnFirstAccess<T>
 
 /** CORE, please client createContextStore or createGlobalStore\
@@ -59,7 +54,7 @@ export function createSmartStore<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
-  const [rawStore, rawSetStore] = createStore<T>(shrinkFn(defaultValue))
+  const [rawStore, rawSetStore] = createStore<T>(shrinkFn(defaultValue)) // action cost 0.05ms
   /** if pass a function, it will be trate with createEffect to track reactive */
   if (isFunction(defaultValue)) {
     createEffect(() => {
@@ -67,13 +62,14 @@ export function createSmartStore<T extends Record<string, any>>(
       setStore(newValue)
     })
   }
-  let accessCount: Record<string | symbol, number> = {}
-  let setCount: Record<string | symbol, number> = {}
+  const [storeAccessCount, setStoreAccessCount] = createStore<Record<keyof any, number>>(
+    {} as Record<keyof any, number>,
+  )
+  const [setStoreCount, setSetStoreCount] = createStore<Record<keyof any, number>>({} as Record<keyof any, number>)
 
   // -------- features --------
   const { invoke: invokeOnChanges, addListener: addListenerPropertyChange } =
     createSmartStore_onPropertyChange<T>(options)
-  const { invoke: invokeOnStoreInit, addListener: addListenerStoreInit } = createSmartStore_onStoreInit<T>(options)
   const {
     invokeFirstAccess: invokeOnFirstAccess,
     addFirstAccessListener: addListenerFirstAccess,
@@ -83,8 +79,8 @@ export function createSmartStore<T extends Record<string, any>>(
 
   const store = new Proxy(rawStore, {
     get: (target, p, receiver) => {
-      accessCount[p] = (accessCount[p] ?? 0) + 1
-      if (accessCount[p] === 1) {
+      setStoreAccessCount((s) => ({ [p]: (s[p] ?? 0) + 1 }))
+      if (storeAccessCount[p] === 1) {
         invokeOnFirstAccess(p as string, rawStore[p as string], rawStore, setStore)
       }
       invokeOnAccess(p as string, rawStore[p as string], rawStore, setStore)
@@ -111,28 +107,30 @@ export function createSmartStore<T extends Record<string, any>>(
   })
 
   function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
-    const prevStore = untrack(() => rawStore)
-    const newStorePieces = isFunction(dispatch) ? dispatch(prevStore) : dispatch
-    if (!newStorePieces) return // no need to update store with the same value
-    Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-      setCount[propertyName] = (setCount[propertyName] ?? 0) + 1
-      // @ts-ignore
-      const prevValue = prevStore[propertyName]
-      if (prevValue !== newValue) {
-        invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
-      }
+    untrack(() => {
+      const prevStore = rawStore
+      const newStorePieces = isFunction(dispatch) ? dispatch(prevStore) : dispatch
+      if (!newStorePieces) return // no need to update store with the same value
+      Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
+        setSetStoreCount((s) => ({ [propertyName]: (s[propertyName] ?? 0) + 1 }))
+        // @ts-ignore
+        const prevValue = prevStore[propertyName]
+        if (prevValue !== newValue) {
+          invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
+        }
+      })
+      rawSetStore(
+        produce((draft: AnyObj) => {
+          Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
+            const oldValue = draft[propertyName]
+            if (oldValue === newValue) return
+            const mergedValue = assignNewValue(oldValue, newValue)
+            draft[propertyName] = mergedValue
+            // TODO lack of deep merge
+          })
+        }),
+      )
     })
-    rawSetStore(
-      produce((draft: AnyObj) => {
-        Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-          const oldValue = draft[propertyName]
-          if (oldValue === newValue) return
-          const mergedValue = assignNewValue(oldValue, newValue)
-          draft[propertyName] = mergedValue
-          // TODO lack of deep merge
-        })
-      }),
-    )
   }
 
   function createStorePropertySignal<F>(pick: (store: T) => F): () => F {
@@ -158,18 +156,17 @@ export function createSmartStore<T extends Record<string, any>>(
     }
   }
 
-  invokeOnStoreInit(store, setStore)
-
   return {
     store: store,
+    storeAccessCount,
     unwrappedStore: unwrappedStore,
     setStore: setStore,
+    setStoreCount,
 
     // shortcut
     createStorePropertySignal: createStorePropertySignal,
     createStorePropertySetter: createStorePropertySetter,
 
-    onStoreInit: addListenerStoreInit,
     onPropertyChange: addListenerPropertyChange,
     onFirstAccess: addListenerFirstAccess,
     onAccess: addListenerAccess,
