@@ -1,23 +1,21 @@
-import { isFunction, isNullish, isObject, isPrimitive, type AnyObj, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, batch, createEffect, createMemo, on, untrack } from 'solid-js'
+import { isFunction, isNullish, isObject, isPrimitive, shrinkFn, type AnyObj } from '@edsolater/fnkit'
+import { Accessor, createEffect, createMemo, untrack } from 'solid-js'
 import { createStore, produce, unwrap, type SetStoreFunction } from 'solid-js/store'
-import { asyncInvoke } from '../createContextStore/utils/asyncInvoke'
 import {
-  type CreateSmartStoreOptions_OnFirstAccess,
   StoreCallbackRegisterer_OnFirstAccess,
-  createSmartStore_onFirstAccess,
+  createSmartStore_onAccess,
+  type CreateSmartStoreOptions_OnFirstAccess,
 } from './features/onFirstAccess'
 import {
+  createSmartStore_onPropertyChange,
   type CreateSmartStoreOptions_OnPropertyChange,
   type StoreCallbackRegisterer_OnPropertyChange,
-  createSmartStore_onPropertyChange,
 } from './features/onPropertyChange'
 import {
+  createSmartStore_onStoreInit,
   type CreateSmartStoreOptions_OnStoreInit,
   type StoreCallbackRegisterer_OnStoreInit,
-  createSmartStore_onStoreInit,
 } from './features/onStoreInit'
-import { Accessify } from '../../utils'
 
 export type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
 export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T> &
@@ -76,8 +74,12 @@ export function createSmartStore<T extends Record<string, any>>(
   const { invoke: invokeOnChanges, addListener: addListenerPropertyChange } =
     createSmartStore_onPropertyChange<T>(options)
   const { invoke: invokeOnStoreInit, addListener: addListenerStoreInit } = createSmartStore_onStoreInit<T>(options)
-  const { invoke: invokeOnFirstAccess, addListener: addListenerFirstAccess } =
-    createSmartStore_onFirstAccess<T>(options)
+  const {
+    invokeFirstAccess: invokeOnFirstAccess,
+    addFirstAccessListener: addListenerFirstAccess,
+    invokeAccess: invokeOnAccess,
+    addAccessListener: addListenerAccess,
+  } = createSmartStore_onAccess<T>(options)
 
   const store = new Proxy(rawStore, {
     get: (target, p, receiver) => {
@@ -85,6 +87,7 @@ export function createSmartStore<T extends Record<string, any>>(
       if (accessCount[p] === 1) {
         invokeOnFirstAccess(p as string, rawStore[p as string], rawStore, setStore)
       }
+      invokeOnAccess(p as string, rawStore[p as string], rawStore, setStore)
       const propertyName = p as string
       const value = Reflect.get(target, propertyName, receiver)
       return value
@@ -169,6 +172,7 @@ export function createSmartStore<T extends Record<string, any>>(
     onStoreInit: addListenerStoreInit,
     onPropertyChange: addListenerPropertyChange,
     onFirstAccess: addListenerFirstAccess,
+    onAccess: addListenerAccess,
 
     _rawStore: rawStore as T,
     _rawSetStore: rawSetStore,

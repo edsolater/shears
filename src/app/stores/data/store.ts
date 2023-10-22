@@ -1,4 +1,4 @@
-import { createEffect } from 'solid-js'
+import { createEffect, createMemo } from 'solid-js'
 import { createAbortableAsyncTask } from '../../../packages/fnkit'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
@@ -65,14 +65,3 @@ export const {
   },
 )
 
-/**
- * use this to track accessed store properties
- */
-// @ts-expect-error 🍺
-function createGetAciveProperties<T extends Record<string, any>>(store: T): keyof StoreData[] {}
-
-const { abort, resultSubscribable } = createAbortableAsyncTask(async () => {
-  createEffect(() => {
-    const _track1 = store.pairInfos
-  })
-})

@@ -1,12 +1,14 @@
 import { isString, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, createEffect, createMemo, createSignal, untrack } from 'solid-js'
+import { createMemo } from 'solid-js'
 import { Accessify, createSmartStore } from '../../../../packages/pivkit'
 import { Token, emptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
 import { getByKey, hasKey } from '../../../utils/dataTransmit/getItems'
 import { store } from '../store'
 
-/** easy to use & easy to read
+/** 
+ * easy to use & easy to read
+ * turn a short info (only token'mint) into rich
  * whether loaded or not, it will return a token (even emptyToken)
  */
 export function useToken(v?: Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>): Token {
@@ -38,6 +40,7 @@ export function useToken(v?: Accessify<Mint> | Accessify<Token> | Accessify<Mint
 
   return storeToken
 }
+
 
 // /** 🤔is it neccessory? just useTokenInfo is ok? */
 // type RawTokenInfo = {
