@@ -1,11 +1,10 @@
-
 /**
  * use this to track accessed store properties
  */
 
-import { createAbortableAsyncTask } from "@edsolater/fnkit"
-import { createEffect, createMemo } from "solid-js"
-import { store, StoreData } from "../store"
+import { createAbortableAsyncTask } from '@edsolater/fnkit'
+import { createEffect, createMemo } from 'solid-js'
+import { store, StoreData } from '../store'
 
 // @ts-expect-error 🍺
 function createGetAciveProperties<T extends object>(store: T): (keyof T)[] {}
@@ -18,16 +17,16 @@ function createGetAciveProperties<T extends object>(store: T): (keyof T)[] {}
 
 /**
  * only run effect when store properties in needToAccess are accessed
- * @param willChangeProperties
+ * @param runWhen
  * @param effect
  */
 function createStoreEffect<Store extends object>(
-  willChangeProperties: (keyof Store)[] /* TODO this can define manually , but how to get current page using variables?🤔 */,
+  runWhen: () =>
+    | boolean
+    | undefined /* TODO this can define manually , but how to get current page using variables?🤔 */,
   effect: () => void,
 ) {
-  const shouldInvoke = createMemo(() =>
-    willChangeProperties.some((key) => createGetAciveProperties(store).includes(key as keyof StoreData)),
-  )
+  const shouldInvoke = createMemo(runWhen)
   createEffect(() => {
     if (shouldInvoke()) {
       effect()
