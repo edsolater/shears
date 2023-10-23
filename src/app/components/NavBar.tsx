@@ -65,7 +65,7 @@ const [appSettingsModalControllers, setSettingControllerRef] = createControllerR
  */
 function SettingsPanelDialog() {
   return (
-    <Modal controllerRef={setSettingControllerRef}>
+    <Modal controllerRef={setSettingControllerRef} open>
       <SettingsContent />
     </Modal>
   )

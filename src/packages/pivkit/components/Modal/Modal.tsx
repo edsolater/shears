@@ -1,4 +1,4 @@
-import { Accessor, Show, createEffect, createSignal } from 'solid-js'
+import { Accessor, Show, createEffect, createSignal, onMount } from 'solid-js'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
@@ -46,7 +46,7 @@ export function Modal(kitProps: ModalKitProps) {
   }))
   const [dialogRef, setDialogRef] = createRef<HTMLDialogElement>()
   const [dialogContentRef, setDialogContentRef] = createRef<HTMLDivElement>()
-  const [innerOpen, setInnerOpen] = createSignal(props.open ?? false)
+  const [innerOpen, setInnerOpen] = createSignal(Boolean(props.open))
   const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
   // initly load modal show
@@ -56,6 +56,11 @@ export function Modal(kitProps: ModalKitProps) {
     }
   })
 
+  onMount(() => {
+    if (innerOpen()) {
+      openDialog()
+    }
+  })
   // register onClose callback
   useDOMEventListener(dialogRef, 'close', () => closeDialog({ witDOMChange: false }))
 
@@ -94,7 +99,7 @@ export function Modal(kitProps: ModalKitProps) {
   return (
     <Show when={shouldRenderDOM()}>
       <Piv<'dialog'>
-        render:self={(selfProps) => renderHTMLDOM('dialog', selfProps, { open: props.open })}
+        render:self={(selfProps) => renderHTMLDOM('dialog', selfProps)}
         shadowProps={props}
         // @ts-expect-error lack of icss type
         icss={{ '&::backdrop': props.backdropICSS }}

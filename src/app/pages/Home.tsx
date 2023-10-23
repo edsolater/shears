@@ -27,11 +27,3 @@ export default function Home() {
     </div>
   )
 }
-
-function SettingPanel() {
-  return (
-    <Modal>
-      <Piv>setting</Piv>
-    </Modal>
-  )
-}
