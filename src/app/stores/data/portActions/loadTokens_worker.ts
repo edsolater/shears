@@ -1,11 +1,12 @@
 import { SOLToken } from '../../../utils/dataStructures/Token'
 import { toRecord } from '../../../utils/dataTransmit/getItems'
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
+import { workerCommands } from '../../../utils/webworker/type'
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
 
 export function loadTokens_worker(transformers: MessagePortTransformers) {
-  const { receiver, sender } = transformers.getMessagePort('fetch raydium supported tokens')
+  const { receiver, sender } = transformers.getMessagePort(workerCommands['fetch raydium supported tokens'])
   console.log('loadTokens_worker')
   receiver.subscribe((options) => {
     /* TODO: currently only mainnet raydium token list was supported*/

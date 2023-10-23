@@ -58,12 +58,12 @@ export const {
 
 // should after apply worker registers
 setTimeout(() => {
-  createStoreEffect(
-    () => storeAccessCount.farmJsonInfos,
-    () => {
-      loadFarmJsonInfos()
-    },
-  )
+  // createStoreEffect(
+  //   () => storeAccessCount.farmJsonInfos,
+  //   () => {
+  //     loadFarmJsonInfos()
+  //   },
+  // )
 
   // createStoreEffect(
   //   () => storeAccessCount.farmInfos,
@@ -89,6 +89,16 @@ setTimeout(() => {
   createStoreEffect(
     () => storeAccessCount.tokens,
     () => {
+      let needDo: boolean = true
+      untrack(() => {
+        console.log('storeAccessCount: ', storeAccessCount.tokens)
+        if ((storeAccessCount.tokens ?? 0) > 3) {
+          needDo = false
+        }
+      })
+      if (!needDo) {
+        return
+      }
       console.log('loading tokens')
       loadTokensInfos()
     },
