@@ -7,9 +7,10 @@ import { Mint, Numberish } from '../../utils/dataStructures/type'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
 import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
-import { loadTokensInfos } from './portActions/loadTokens_main'
+import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
+import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 
 export type StoreData = {
   // -------- swap --------
@@ -59,8 +60,8 @@ export const {
       farmInfos: loadFarmSYNInfos,
       isPairInfoLoading: loadPairs,
       pairInfos: loadPairs,
-      prices: loadPairs,
-      tokens: loadTokensInfos,
+      prices: loadTokenPrice,
+      tokens: loadTokens,
     },
   },
 )

@@ -74,6 +74,11 @@ input[type='number'] {
   font-weight: 700;
 }
 
+/* reset default style */
+input:focus-visible {
+  outline: none;
+}
+
 /* For the darkmode, or tailwindcss urgly and tedious `:dark` */
 :root {
   --primary: black;

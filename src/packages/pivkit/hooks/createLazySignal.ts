@@ -1,4 +1,4 @@
-import { Signal, createEffect, createSignal } from 'solid-js'
+import { Signal, createEffect, createSignal, on } from 'solid-js'
 
 /**
  * signal's action will only load when first access the acessor
@@ -6,35 +6,39 @@ import { Signal, createEffect, createSignal } from 'solid-js'
  * lazyValue is in track scope
  */
 // TODO: haven't test yet
-export function createLazySignal<V>(lazyLoadInitValue: () => V | Promise<V>, defaultValue?: V): Signal<V> {
+export function createLazySignal<V>(lazyLoadInitValue: () => V): Signal<V> {
   const [hasAccessed, setHasAccessed] = createSignal(false)
   let innerOnFirstAccessFunction = lazyLoadInitValue
-  const [signal, _setSignal] = createSignal<V | undefined>(defaultValue) // no need to type check
-  const getSignal = () => {
+  const [value, _setValue] = createSignal<V | undefined>(undefined) // no need to type check
+
+  function get() {
     if (!hasAccessed()) {
       setHasAccessed(true)
       // Don't know how to avoid init get value twice
-      // const value = innerOnFirstAccessFunction()
-      // _setSignal(() => value)
+      const value = innerOnFirstAccessFunction()
+      _setValue(() => value)
     }
-    return signal()
+    return value()
   }
-  createEffect(async () => {
-    if (!hasAccessed()) return
-    const value = await innerOnFirstAccessFunction()
-    _setSignal(() => value)
-  })
-  const setSignal = (...args: Parameters<typeof _setSignal>) => {
+
+  function set(...args: Parameters<typeof _setValue>) {
     if (hasAccessed()) {
-      return _setSignal(...args)
+      return _setValue(...args)
     } else {
+      const oldInnerOnFirstAccessFunction = innerOnFirstAccessFunction
       innerOnFirstAccessFunction = () => {
-        innerOnFirstAccessFunction()
-        _setSignal(...args)
-        return signal() as V
+        oldInnerOnFirstAccessFunction()
+        _setValue(...args)
+        return value() as V
       }
     }
   }
+
+  createEffect(() => {
+    if (!hasAccessed()) return
+    const value = lazyLoadInitValue()
+    _setValue(() => value)
+  })
   // @ts-expect-error force
-  return [getSignal, setSignal]
+  return [get, set]
 }

@@ -2,7 +2,7 @@
 import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
 import { Subscribable, createSubscribable } from '@edsolater/fnkit'
-import { invoke } from '../../../packages/fnkit'
+import { invoke, invokeOnce } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
 import { createMessagePortTransforers } from './createMessagePortTransforers'
 import { isSenderMessage } from './genMessageSender'
@@ -42,5 +42,5 @@ function initMessageReceiver() {
 }
 
 // only need to regist once in the worker thread
-initMessageReceiver()
-applyWebworkerRegisters({ getMessagePort, getMessageReceiver, getMessageSender })
+invokeOnce(initMessageReceiver)
+invokeOnce(applyWebworkerRegisters, { getMessagePort, getMessageReceiver, getMessageSender })

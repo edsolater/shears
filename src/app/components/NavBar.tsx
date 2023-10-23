@@ -1,3 +1,4 @@
+import { createEffect, createSignal } from 'solid-js'
 import {
   Box,
   Fragnment,
@@ -8,6 +9,7 @@ import {
   Section,
   Text,
   createControllerRef,
+  createLazySignal,
   icss_clickable,
   icss_row,
 } from '../../packages/pivkit'
@@ -18,6 +20,7 @@ import { AppLogo } from './AppLogo'
 import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
 import { RoutesButtons } from './RoutesButtons'
 import { WalletWidget } from './WalletWidget'
+import { useURL } from '../hooks/useURL'
 
 export type NavBarProps = NavWrapBoxProps
 
@@ -46,7 +49,7 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px', marginInline: '8px', borderRadius:'8px' }, icss_clickable]}
+        icss={[{ padding: '8px', marginInline: '8px', borderRadius: '8px' }, icss_clickable]}
         onClick={() => {
           appSettingsModalControllers()?.open()
         }}
@@ -75,6 +78,14 @@ function SettingsPanelDialog() {
  * setting form details
  */
 function SettingsContent() {
+  const [tempUrl, setTempUrl] = createSignal(store.rpcUrl)
+  const { isValid, origin } = useURL(tempUrl)
+  createEffect(() => {
+    console.log('origin: ', origin())
+  })
+  createEffect(() => {
+    console.log('isValid: ', isValid())
+  })
   return (
     <Box>
       <Section>
@@ -83,8 +94,9 @@ function SettingsContent() {
           <Input
             value={store.rpcUrl}
             onInput={({ text }) => {
-              setStore({ rpcUrl: text })
+              setTempUrl(text)
             }}
+            icss={{ borderStyle: 'solid', borderColor: isValid() ? 'green' : 'crimson' }}
           />
         </ItemBox>
       </Section>

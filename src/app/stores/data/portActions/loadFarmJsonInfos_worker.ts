@@ -4,8 +4,9 @@ import { fetchFarmJsonInfo } from '../utils/fetchFarmJson'
 
 export function loadFarmJsonInfos_worker({ getMessagePort }: MessagePortTransformers) {
   const { receiver, sender } = getMessagePort(workerCommands['fetch raydium farms info'])
-  console.log('loadTokens_worker')
+  console.log('[worker] registered load farm port')
   receiver.subscribe((options) => {
+    console.log('[worker] start loading farms')
     fetchFarmJsonInfo().then(sender.query)
   })
 }
