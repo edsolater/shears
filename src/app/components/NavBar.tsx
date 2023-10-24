@@ -9,18 +9,16 @@ import {
   Section,
   Text,
   createControllerRef,
-  createLazySignal,
   icss_clickable,
   icss_row,
 } from '../../packages/pivkit'
-import { useControllerRef } from '../../packages/pivkit/hooks/useControllerRef'
+import { useURL } from '../hooks/useURL'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
-import { setStore, store } from '../stores/data/store'
+import { store } from '../stores/data/store'
 import { AppLogo } from './AppLogo'
 import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
 import { RoutesButtons } from './RoutesButtons'
 import { WalletWidget } from './WalletWidget'
-import { useURL } from '../hooks/useURL'
 
 export type NavBarProps = NavWrapBoxProps
 
@@ -78,7 +76,7 @@ function SettingsPanelDialog() {
  * setting form details
  */
 function SettingsContent() {
-  const [tempUrl, setTempUrl] = createSignal('')
+  const [tempUrl, setTempUrl] = createSignal(store.rpcUrl)
   const { isValid, origin } = useURL(tempUrl)
   createEffect(() => {
     console.log('origin: ', origin())
@@ -97,7 +95,6 @@ function SettingsContent() {
           <Input
             value={store.rpcUrl}
             onInput={({ text }) => {
-              console.log('text: ', text)
               setTempUrl(text)
             }}
             icss={{ borderStyle: 'solid', borderColor: isValid() ? 'green' : 'crimson' }}
@@ -107,3 +104,5 @@ function SettingsContent() {
     </Box>
   )
 }
+
+

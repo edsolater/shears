@@ -1,5 +1,4 @@
-import { Accessor, createEffect, createMemo } from 'solid-js'
-import { Accessify, deAccessify } from '../../packages/pivkit'
+import { Accessor, createMemo } from 'solid-js'
 import { createLazyMemoFromObjectAccessor } from '../../packages/pivkit/hooks/createLazyMemoFromObjectAccessor'
 
 /**
@@ -10,13 +9,7 @@ import { createLazyMemoFromObjectAccessor } from '../../packages/pivkit/hooks/cr
 export function useURL(checkTargetUrl: Accessor<string | undefined>) {
   const parsed = createMemo(() => {
     const _url = checkTargetUrl()
-    console.log('_url: ', _url)
     return _url ? parseUrl(_url) : undefined
-  })
-  createEffect(() => {
-    const _url = checkTargetUrl()
-    console.log('_url2: ', _url)
-    
   })
 
   const isValid = createMemo(() => parsed()?.isValid)
@@ -28,7 +21,10 @@ export function useURL(checkTargetUrl: Accessor<string | undefined>) {
  * utils
  */
 function parseUrl(url: string): { isValid: boolean } & Partial<URL> {
-  if (!URL.canParse(url)) return { isValid: false }
-  const urlObj = new URL(url)
-  return { isValid: true, ...urlObj }
+  try {
+    const urlObj = new URL(url)
+    return { isValid: true, ...urlObj }
+  } catch {
+    return { isValid: false }
+  }
 }

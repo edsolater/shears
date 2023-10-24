@@ -7,7 +7,6 @@ export function loadPairs() {
   const { sender, receiver } = getMessagePort('fetch raydium pairs info')
   sender.query({ force: false })
   receiver.subscribe((allPairJsonInfos) => {
-    console.log('get pools count', allPairJsonInfos.length)
     setStore({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 150) })
     let count = 0
     const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
@@ -18,7 +17,7 @@ export function loadPairs() {
         setStore({ isPairInfoLoading: false, pairInfos: newPairs })
       }
       count++
-    }, 1000)
+    }, 4000)
     return () => clearInterval(timeoutId)
   })
 }
