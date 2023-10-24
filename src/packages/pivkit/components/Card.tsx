@@ -6,5 +6,5 @@ export interface CardProps {}
 export function Card(rawProps: KitProps<CardProps>) {
   const { props } = useKitProps(rawProps, { name: 'Card' })
   /* ---------------------------------- props --------------------------------- */
-  return <Piv class={Card.name} shadowProps={props} />
+  return <Piv shadowProps={props} />
 }
