@@ -6,9 +6,10 @@ import { loadTokens_worker } from '../../stores/data/portActions/loadTokens_work
 import { calculateSwapRouteInfos_worker } from '../../stores/data/portActions/calculateSwapRouteInfos_worker'
 import { txSwap_worker } from '../../stores/data/portActions/txSwap_worker'
 import { MessagePortTransformers } from './createMessagePortTransforers'
+import { logMessage } from '../../logger/logMessage'
 
 export function applyWebworkerRegisters(messageTransformers: MessagePortTransformers) {
-  console.log('apply webworker registers')
+  logMessage({ from: '👾worker', twoWordTitle: 'messge port', detailDescription: 'registered load farm port' })
   calculateSwapRouteInfos_worker(messageTransformers)
   txSwap_worker(messageTransformers)
   loadFarmJsonInfos_worker(messageTransformers)

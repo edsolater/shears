@@ -2,7 +2,7 @@ import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { setStore } from '../store'
 
 export function loadPairs() {
-  console.log('[main] load pairs')
+  console.log('[main] start loading pairs')
   setStore({ isPairInfoLoading: true })
   const { sender, receiver } = getMessagePort('fetch raydium pairs info')
   sender.query({ force: false })
