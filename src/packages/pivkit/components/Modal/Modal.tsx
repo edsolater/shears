@@ -63,6 +63,10 @@ export function Modal(kitProps: ModalKitProps) {
   })
   // register onClose callback
   useDOMEventListener(dialogRef, 'close', () => closeDialog({ witDOMChange: false }))
+  useDOMEventListener(dialogRef, 'keydown', ({ ev }) => {
+    ev.stopPropagation()
+    return ev.preventDefault()
+  })
 
   // register click outside
   useClickOutside(dialogContentRef, {
@@ -101,6 +105,9 @@ export function Modal(kitProps: ModalKitProps) {
       <Piv<'dialog'>
         render:self={(selfProps) => renderHTMLDOM('dialog', selfProps)}
         shadowProps={props}
+        htmlProps={{
+          role: 'dialog',
+        }}
         // @ts-expect-error lack of icss type
         icss={{ '&::backdrop': props.backdropICSS }}
         domRef={setDialogRef}

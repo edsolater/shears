@@ -49,14 +49,14 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px', marginInline: '8px', borderRadius: '8px' }, icss_clickable]}
-        onClick={() => {
-          appSettingsModalControllers()?.open()
-        }}
+        icss={[{ padding: '8px', borderRadius: '8px' }, icss_clickable]}
+        // onClick={() => {
+        //   appSettingsModalControllers()?.open()
+        // }}
       >
         ⚙️
       </Box>
-      <SettingsPanelDialog></SettingsPanelDialog>
+      <SettingsContent />
     </Fragnment>
   )
 }
@@ -78,13 +78,16 @@ function SettingsPanelDialog() {
  * setting form details
  */
 function SettingsContent() {
-  const [tempUrl, setTempUrl] = createSignal(store.rpcUrl)
+  const [tempUrl, setTempUrl] = createSignal('')
   const { isValid, origin } = useURL(tempUrl)
   createEffect(() => {
     console.log('origin: ', origin())
   })
   createEffect(() => {
     console.log('isValid: ', isValid())
+  })
+  createEffect(() => {
+    console.log('tempUrl: ', tempUrl())
   })
   return (
     <Box>
@@ -94,6 +97,7 @@ function SettingsContent() {
           <Input
             value={store.rpcUrl}
             onInput={({ text }) => {
+              console.log('text: ', text)
               setTempUrl(text)
             }}
             icss={{ borderStyle: 'solid', borderColor: isValid() ? 'green' : 'crimson' }}

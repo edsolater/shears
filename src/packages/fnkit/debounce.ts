@@ -18,20 +18,20 @@ export interface ThrottleOptions {
 /**
  * a period will only invoke fist task
  * @see https://juejin.cn/post/6971431743681200165
+ * @param fn original function
+ * @returns debounced function (new function)
  */
 export function debounce<F extends (...args: any[]) => any>(fn: F, options?: DebounceOptions): PromisifyFunction<F> {
   let hasFirstInvoke = false // (for alwaysCalculateInFirstInvoke)
-  let timerId: NodeJS.Timeout | number
-  const promiseController = promiseCache()
+  const setTimeoutController = empolyOneTimeSetTimeout()
+  const promiseController = empolyPromise()
 
   async function debounced() {
     if (!hasFirstInvoke && options?.alwaysCalculateInFirstInvoke) {
       hasFirstInvoke = true
       return fn()
     }
-    // clear last
-    globalThis.clearTimeout(timerId)
-    timerId = globalThis.setTimeout(
+    setTimeoutController.set(
       () => {
         try {
           promiseController.resolve(fn())
@@ -50,6 +50,8 @@ export function debounce<F extends (...args: any[]) => any>(fn: F, options?: Deb
 /**
  * will only invoke once (at last frame) in one period
  * @see https://juejin.cn/post/6971431743681200165
+ * @param fn original function
+ * @returns throttled function (new function)
  */
 export function throttle<F extends (...args: any[]) => any>(fn: F, options?: ThrottleOptions): F {
   const middleParams = [] as Parameters<F>[]
@@ -87,8 +89,22 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
   }
 }
 
+/** when new task loaded, old task canceled */
+function empolyOneTimeSetTimeout<T>() {
+  let timerId: NodeJS.Timeout | number
+  function clear() {
+    globalThis.clearTimeout(timerId)
+  }
+  function set(fn: AnyFn, delay: number) {
+    clear()
+    timerId = globalThis.setTimeout(fn, delay)
+    return { clear }
+  }
+  return { set, clear }
+}
+
 /** util: to record result iin promise (should not use destructured params) */
-function promiseCache<T = any>(): {
+function empolyPromise<T = any>(): {
   readonly result: Promise<T>
   resolve(value: T | PromiseLike<T>): Promise<Awaited<T>>
   reject(reason?: any): any

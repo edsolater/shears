@@ -1,4 +1,4 @@
-import { createEffect, createMemo } from 'solid-js'
+import { Accessor, createEffect, createMemo } from 'solid-js'
 import { Accessify, deAccessify } from '../../packages/pivkit'
 import { createLazyMemoFromObjectAccessor } from '../../packages/pivkit/hooks/createLazyMemoFromObjectAccessor'
 
@@ -7,15 +7,20 @@ import { createLazyMemoFromObjectAccessor } from '../../packages/pivkit/hooks/cr
  * @param checkTargetUrl to be checked url
  * @returns
  */
-export function useURL(checkTargetUrl: Accessify<string | undefined>) {
-  const url = createMemo(() => deAccessify(checkTargetUrl))
+export function useURL(checkTargetUrl: Accessor<string | undefined>) {
   const parsed = createMemo(() => {
-    const _url = url()
+    const _url = checkTargetUrl()
+    console.log('_url: ', _url)
     return _url ? parseUrl(_url) : undefined
   })
+  createEffect(() => {
+    const _url = checkTargetUrl()
+    console.log('_url2: ', _url)
+    
+  })
 
-  const isValid = createLazyMemoFromObjectAccessor(parsed, (v) => v?.isValid)
-  const origin = createLazyMemoFromObjectAccessor(parsed, (v) => v?.origin)
+  const isValid = createMemo(() => parsed()?.isValid)
+  const origin = createMemo(() => parsed()?.origin)
   const pathname = createLazyMemoFromObjectAccessor(parsed, (v) => v?.pathname)
   return { isValid, origin, pathname }
 }

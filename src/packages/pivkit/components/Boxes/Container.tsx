@@ -9,5 +9,5 @@ export interface ContainerProps {}
 export function Container(kitProps: KitProps<PivProps>) {
   const { shadowProps } = useKitProps(kitProps, { name: 'Container' })
   /* ---------------------------------- props --------------------------------- */
-  return <Piv icss={{ container: 'Container / size' }} shadowProps={shadowProps} />
+  return <Piv icss={{ container: 'anonymous / size' }} shadowProps={shadowProps} />
 }
