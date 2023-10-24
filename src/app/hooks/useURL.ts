@@ -23,10 +23,7 @@ export function useURL(checkTargetUrl: Accessify<string | undefined>) {
  * utils
  */
 function parseUrl(url: string): { isValid: boolean } & Partial<URL> {
-  try {
-    const urlObj = new URL(url)
-    return { isValid: true, ...urlObj }
-  } catch {
-    return { isValid: false }
-  }
+  if (!URL.canParse(url)) return { isValid: false }
+  const urlObj = new URL(url)
+  return { isValid: true, ...urlObj }
 }

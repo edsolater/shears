@@ -16,8 +16,8 @@ export interface ThrottleOptions {
 }
 
 /**
- *
- * @requires {@link createCurrentTimestamp `createCurrentTimestamp()`}
+ * a period will only invoke fist task
+ * @see https://juejin.cn/post/6971431743681200165
  */
 export function debounce<F extends (...args: any[]) => any>(fn: F, options?: DebounceOptions): PromisifyFunction<F> {
   let returnValueResolve: AnyFn | undefined = undefined
@@ -37,11 +37,33 @@ export function debounce<F extends (...args: any[]) => any>(fn: F, options?: Deb
     return cachedFnResult
   }
 }
+function debounce2(fn, delay) {
+  let timerId: NodeJS.Timeout | number
+  let returnValueResolve: AnyFn
+
+  let lastInvokedTimestamp: number | undefined
+
+  let debouncedResult = new Promise((resolve, reject) => {
+    returnValueResolve = resolve
+  })
+
+  function debounced() {
+    // clear last
+    globalThis.clearTimeout(timerId)
+    
+    timerId = globalThis.setTimeout(() => {
+      // create new promise if needed
+      returnValueResolve(fn())
+    }, delay)
+    return debouncedResult
+  }
+
+  return debounced
+}
 
 /**
- *
- * @requires {@link createCurrentTimestamp `createCurrentTimestamp()`}
- * @todo throttle should return result
+ * will only invoke once (at last frame) in one period
+ * @see https://juejin.cn/post/6971431743681200165
  */
 export function throttle<F extends (...args: any[]) => any>(fn: F, options?: ThrottleOptions): F {
   const middleParams = [] as Parameters<F>[]
@@ -59,20 +81,20 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
     return result
   }
   // @ts-expect-error force
-  return (...args: Parameters<F>) => {
+  return function throttled(...args: Parameters<F>) {
     middleParams.push(args)
 
     const currentTimestamp = createCurrentTimestamp()
 
     if (currentTimoutId) {
-      clearTimeout(currentTimoutId)
+      globalThis.clearTimeout(currentTimoutId)
       remainDelayTime -= prevDurationTimestamp ? currentTimestamp - prevDurationTimestamp : 0
     }
 
     if (remainDelayTime <= 0) {
       invokeFn()
     } else {
-      currentTimoutId = setTimeout(invokeFn, remainDelayTime)
+      currentTimoutId = globalThis.setTimeout(invokeFn, remainDelayTime)
     }
 
     prevDurationTimestamp = currentTimestamp
@@ -81,7 +103,7 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
 
 function promisedSetTimeout<T>(
   fn: () => T | Promise<T>,
-  delay: number
+  delay: number,
 ): { timer: Promise<ReturnType<typeof setTimeout>>; result: Promise<Awaited<T>> } {
   let timerPromiseResolve: (value: ReturnType<typeof setTimeout>) => void
   const timer = new Promise<ReturnType<typeof setTimeout>>((resolve, reject) => {
