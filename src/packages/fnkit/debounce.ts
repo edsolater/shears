@@ -1,10 +1,10 @@
-import { AnyFn, createCurrentTimestamp } from '@edsolater/fnkit'
+import { AnyFn, createCurrentTimestamp, mergeFunction } from '@edsolater/fnkit'
 
 const defaultDebouneDelay = 400
 const defaultThrottleDelay = 400
 
 export interface DebounceOptions {
-  /** @default true */
+  /** @default false */
   alwaysCalculateInFirstInvoke?: boolean
   /** @default 400 */
   delay?: number
@@ -20,42 +20,28 @@ export interface ThrottleOptions {
  * @see https://juejin.cn/post/6971431743681200165
  */
 export function debounce<F extends (...args: any[]) => any>(fn: F, options?: DebounceOptions): PromisifyFunction<F> {
-  let returnValueResolve: AnyFn | undefined = undefined
-  const { delay = defaultDebouneDelay, alwaysCalculateInFirstInvoke = true } = options ?? {}
-  let lastInvokedTimestamp = alwaysCalculateInFirstInvoke ? 0 : createCurrentTimestamp()
-  let cachedFnResult = new Promise((resolve, reject) => {
-    returnValueResolve = resolve
-  })
-  //@ts-ignore
-  return (...args) => {
-    const currentTimestamp = createCurrentTimestamp()
-    if (currentTimestamp - lastInvokedTimestamp > delay) {
-      lastInvokedTimestamp = currentTimestamp
-      const result = fn(...args)
-      returnValueResolve?.(result)
-    }
-    return cachedFnResult
-  }
-}
-function debounce2(fn, delay) {
+  let hasFirstInvoke = false // (for alwaysCalculateInFirstInvoke)
   let timerId: NodeJS.Timeout | number
-  let returnValueResolve: AnyFn
+  const promiseController = promiseCache()
 
-  let lastInvokedTimestamp: number | undefined
-
-  let debouncedResult = new Promise((resolve, reject) => {
-    returnValueResolve = resolve
-  })
-
-  function debounced() {
+  async function debounced() {
+    if (!hasFirstInvoke && options?.alwaysCalculateInFirstInvoke) {
+      hasFirstInvoke = true
+      return fn()
+    }
     // clear last
     globalThis.clearTimeout(timerId)
-    
-    timerId = globalThis.setTimeout(() => {
-      // create new promise if needed
-      returnValueResolve(fn())
-    }, delay)
-    return debouncedResult
+    timerId = globalThis.setTimeout(
+      () => {
+        try {
+          promiseController.resolve(fn())
+        } catch {
+          promiseController.reject('debounce task failed')
+        }
+      },
+      options?.delay ?? defaultDebouneDelay,
+    )
+    return promiseController.result
   }
 
   return debounced
@@ -81,7 +67,7 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
     return result
   }
   // @ts-expect-error force
-  return function throttled(...args: Parameters<F>) {
+  return async function throttled(...args: Parameters<F>) {
     middleParams.push(args)
 
     const currentTimestamp = createCurrentTimestamp()
@@ -98,6 +84,37 @@ export function throttle<F extends (...args: any[]) => any>(fn: F, options?: Thr
     }
 
     prevDurationTimestamp = currentTimestamp
+  }
+}
+
+/** util: to record result iin promise (should not use destructured params) */
+function promiseCache<T = any>(): {
+  readonly result: Promise<T>
+  resolve(value: T | PromiseLike<T>): Promise<Awaited<T>>
+  reject(reason?: any): any
+} {
+  let resultResolve: AnyFn
+  let resultReject: AnyFn
+  let resultPromise = getInnerPromise()
+  function getInnerPromise() {
+    return new Promise<T>((resolve, reject) => {
+      resultResolve = resolve
+      resultReject = reject
+    })
+  }
+
+  function createNew() {
+    resultPromise = getInnerPromise()
+  }
+
+  return {
+    get result() {
+      return resultPromise
+    },
+    // @ts-ignore no need to check
+    resolve: mergeFunction(resultResolve, createNew),
+    //@ts-ignore no need to check
+    reject: mergeFunction(resultReject, createNew),
   }
 }
 
