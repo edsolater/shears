@@ -1,14 +1,17 @@
-import { createEffect, createMemo, createSignal, on } from 'solid-js'
+import { Accessor, createEffect, createMemo, createSignal, on, onMount } from 'solid-js'
 import { KitProps, Piv, PivProps, useKitProps } from '../../piv'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
 import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
+import { createDomRef } from '../../hooks'
+import { useFocus } from './hooks/useFocus'
 
 export interface InputController {
   text: string
   /** set Input Value */
   setText(newText: string | undefined | ((oldText: string | undefined) => string | undefined)): void
+  isFocused: Accessor<boolean>
 }
 
 export type InputProps = {
@@ -44,6 +47,8 @@ export type InputKitProps = KitProps<InputProps, { controller: InputController }
  * if for layout , don't render important content in Box
  */
 export function Input(rawProps: InputKitProps) {
+  const { dom, setDom } = createDomRef<HTMLInputElement>()
+  const isFocused = useFocus(dom)
   const { props } = useKitProps(rawProps, {
     name: 'Input',
     controller: (mergedProps) =>
@@ -52,13 +57,15 @@ export function Input(rawProps: InputKitProps) {
           return innerText()
         },
         setText: updateText,
-      } as InputController),
+        isFocused,
+      }) as InputController,
   })
 
   const [additionalProps, { innerText, updateText }] = useInputInnerValue(props)
 
   return (
     <Piv<'input'>
+      domRef={setDom}
       render:self={(selfProps) => renderHTMLDOM('input', selfProps)}
       shadowProps={[props, additionalProps()]}
       class={Input.name}
@@ -137,8 +144,8 @@ function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
       () => props.value,
       (newValue) => {
         updateTextDOM(newValue)
-      }
-    )
+      },
+    ),
   )
 
   // update when lose focus
@@ -147,8 +154,8 @@ function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
       () => isFocused() === false,
       () => {
         setCachedOutsideValue(props.value)
-      }
-    )
+      },
+    ),
   )
 
   const additionalProps = createMemo(
@@ -172,7 +179,7 @@ function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
           onFocus: focusInput,
           onBlur: unfocusInput,
         },
-      } as PivProps<'input'>)
+      }) as PivProps<'input'>,
   )
   return [
     additionalProps,

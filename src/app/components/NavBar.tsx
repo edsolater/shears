@@ -1,8 +1,10 @@
-import { createEffect, createSignal } from 'solid-js'
+import { Accessor, createEffect } from 'solid-js'
 import {
+  Accessify,
   Box,
   Fragnment,
   Input,
+  InputController,
   ItemBox,
   Modal,
   ModalController,
@@ -12,9 +14,10 @@ import {
   icss_clickable,
   icss_row,
 } from '../../packages/pivkit'
-import { useURL } from '../hooks/useURL'
+import { createFormField } from '../../packages/pivkit/hooks/createFormField'
 import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
 import { store } from '../stores/data/store'
+import { parseUrl } from '../utils/parseUrl'
 import { AppLogo } from './AppLogo'
 import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
 import { RoutesButtons } from './RoutesButtons'
@@ -76,16 +79,14 @@ function SettingsPanelDialog() {
  * setting form details
  */
 function SettingsContent() {
-  const [tempUrl, setTempUrl] = createSignal(store.rpcUrl)
-  const { isValid, origin } = useURL(tempUrl)
-  createEffect(() => {
-    console.log('origin: ', origin())
+  const [inputController, setInputController] = createControllerRef<InputController>()
+  const { value, setValue, isValid, isEmpty } = createFormField({
+    name: 'rpcUrl',
+    value: store.rpcUrl,
+    validRule: (value) => parseUrl(value).isValid,
   })
   createEffect(() => {
-    console.log('isValid: ', isValid())
-  })
-  createEffect(() => {
-    console.log('tempUrl: ', tempUrl())
+    console.log('isFocused: ', inputController()?.isFocused())
   })
   return (
     <Box>
@@ -93,11 +94,12 @@ function SettingsContent() {
         <ItemBox>
           <Text>RPC:</Text>
           <Input
-            value={store.rpcUrl}
+            controllerRef={setInputController}
+            value={value}
             onInput={({ text }) => {
-              setTempUrl(text)
+              setValue(text)
             }}
-            icss={{ borderStyle: 'solid', borderColor: isValid() ? 'green' : 'crimson' }}
+            icss={{ borderStyle: 'solid', borderColor: isEmpty() ? 'gray' : isValid() ? 'green' : 'crimson' }}
           />
         </ItemBox>
       </Section>
@@ -105,4 +107,18 @@ function SettingsContent() {
   )
 }
 
+export type FormField<T> = {
+  value: Accessor<T>
+  setValue: (to: T) => void
+  isEmpty: Accessor<boolean>
+  isValid: Accessor<boolean>
+}
 
+export type UseFormFieldOpts<T> = {
+  name: string
+  value?: Accessify<T>
+  onChange?(value: T): void
+
+  // if not specified, value will always be considered as valid
+  validRule?(value: any): boolean
+}
