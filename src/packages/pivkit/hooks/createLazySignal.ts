@@ -1,11 +1,10 @@
-import { Signal, createEffect, createSignal, on } from 'solid-js'
+import { Signal, createEffect, createSignal } from 'solid-js'
 
 /**
  * signal's action will only load when first access the acessor
  * if it's promise, default is undefined
  * lazyValue is in track scope
  */
-// TODO: haven't test yet
 export function createLazySignal<V>(lazyLoadInitValue: () => V): Signal<V> {
   const [hasAccessed, setHasAccessed] = createSignal(false)
   let innerOnFirstAccessFunction = lazyLoadInitValue
@@ -42,3 +41,5 @@ export function createLazySignal<V>(lazyLoadInitValue: () => V): Signal<V> {
   // @ts-expect-error force
   return [get, set]
 }
+
+
