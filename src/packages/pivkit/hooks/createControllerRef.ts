@@ -5,9 +5,21 @@ import { createSignal } from 'solid-js'
  * @returns a object with proxy
  */
 export function createControllerRef<T extends Record<string, any> = Record<string, any>>(): [
-  ref: () => T | undefined,
-  setRef: (el: unknown) => void,
+  ref: T,
+  setController: (el: unknown) => void,
 ] {
   const [ref, setRef] = createSignal<T | undefined>(undefined)
-  return [ref, setRef]
+  const controller = new Proxy(
+    {},
+    {
+      get(_target, prop) {
+        const controller = ref()
+        if (!controller) {
+          throw new Error('controller not ready')
+        }
+        return Reflect.get(controller, prop)
+      },
+    },
+  ) as T
+  return [controller, setRef]
 }

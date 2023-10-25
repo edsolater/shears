@@ -14,7 +14,7 @@ export const keyboardShortcutObserverPlugin = (options: {
   createPlugin<{}, InputKitProps>(() => (inputProps) => {
     const [elRef, setElRef] = createRef<HTMLDivElement>()
 
-    const [controllerRef, setControllerRef] = createControllerRef<InputController>()
+    const [intputController, setControllerRef] = createControllerRef<InputController>()
     const [recordedShortcut, setRecordedShortcut] = createSignal<string | undefined>(undefined)
     createEffect(() => {
       const el = elRef()
@@ -27,13 +27,13 @@ export const keyboardShortcutObserverPlugin = (options: {
     // reflect recorded shortcut to input value
     createEffect(
       on(recordedShortcut, () => {
-        controllerRef()?.setText(recordedShortcut())
+        intputController.setText(recordedShortcut())
       }),
     )
 
     const handleKeydownKeyboardShortcut = (text: string) => {
       setRecordedShortcut(text)
-      controllerRef()?.setText(text)
+      intputController.setText(text)
       options.onRecordShortcut?.(text as KeybordShortcutKeys)
     }
 

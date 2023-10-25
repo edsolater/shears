@@ -86,7 +86,7 @@ function SettingsContent() {
     validRule: (value) => parseUrl(value).isValid,
   })
   createEffect(() => {
-    console.log('isFocused: ', inputController()?.isFocused())
+    console.log('isFocused: ', inputController.isFocused())
   })
   return (
     <Box>
