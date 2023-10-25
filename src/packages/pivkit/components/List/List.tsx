@@ -1,5 +1,16 @@
 import { MayFn, isMap, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, For, JSXElement, Show, createContext, createEffect, createMemo, createSignal, on, createDeferred } from 'solid-js'
+import {
+  Accessor,
+  For,
+  JSXElement,
+  Show,
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  on,
+  createDeferred,
+} from 'solid-js'
 import { createRef } from '../../hooks/createRef'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
@@ -7,7 +18,9 @@ import { KitProps, Piv, useKitProps } from '../../piv'
 import { ListItem } from './ListItem'
 import { Itemsable, toArray } from '../../../../app/utils/dataTransmit/getItems'
 
-export interface ListController {}
+export interface ListController {
+  resetRenderCount(): void
+}
 export type ListProps<T> = {
   children(item: T, index: () => number): JSXElement
   items?: MayFn<Itemsable<T>>
@@ -41,7 +54,7 @@ export const ListContext = createContext<InnerListContext>({} as InnerListContex
  * if for layout , don't render important content in Box
  */
 export function List<T>(kitProps: ListKitProps<T>) {
-  const { props } = useKitProps(kitProps, {
+  const { props, lazyLoadController } = useKitProps(kitProps, {
     name: 'List',
     noNeedDeAccessifyChildren: true,
     defaultProps: {
@@ -90,6 +103,13 @@ export function List<T>(kitProps: ListKitProps<T>) {
       },
     ),
   )
+
+  const resetRenderCount: ListController['resetRenderCount'] = () => {
+    setRenderItemLength(initRenderCount())
+  }
+
+  const controller = { resetRenderCount } as ListController
+  lazyLoadController(controller)
 
   const renderListItems = (item: T, idx: () => number) => {
     return (
