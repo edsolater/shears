@@ -1,5 +1,5 @@
 import { MayFn, isMap, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, For, JSXElement, Show, createContext, createEffect, createMemo, createSignal, on } from 'solid-js'
+import { Accessor, For, JSXElement, Show, createContext, createEffect, createMemo, createSignal, on, createDeferred } from 'solid-js'
 import { createRef } from '../../hooks/createRef'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
@@ -50,10 +50,11 @@ export function List<T>(kitProps: ListKitProps<T>) {
   })
 
   // [configs]
-  const allItems = createMemo(() => {
+  const _allItems = createMemo(() => {
     const items = shrinkFn(props.items ?? [])
     return toArray(items)
   })
+  const allItems = createDeferred(_allItems) // to smoother the render
   const increaseRenderCount = createMemo(
     () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),
   )
