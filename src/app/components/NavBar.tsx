@@ -22,6 +22,7 @@ import { AppLogo } from './AppLogo'
 import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
 import { RoutesButtons } from './RoutesButtons'
 import { WalletWidget } from './WalletWidget'
+import { useInputController } from '../../packages/pivkit/components/Input/hooks/useInputController'
 
 export type NavBarProps = NavWrapBoxProps
 
@@ -79,14 +80,14 @@ function SettingsPanelDialog() {
  * setting form details
  */
 function SettingsContent() {
-  const [inputController, setInputController] = createControllerRef<InputController>()
   const { value, setValue, isValid, isEmpty } = createFormField({
     name: 'rpcUrl',
     value: store.rpcUrl,
     validRule: (value) => parseUrl(value).isValid,
   })
+  const inputController = useInputController('Input__rpcUrl')
   createEffect(() => {
-    console.log('isFocused: ', inputController.isFocused())
+    console.log('isFocused: ', inputController.isFocused?.())
   })
   return (
     <Box>
@@ -94,7 +95,7 @@ function SettingsContent() {
         <ItemBox>
           <Text>RPC:</Text>
           <Input
-            controllerRef={setInputController}
+            id='Input__rpcUrl'
             value={value}
             onInput={({ text }) => {
               setValue(text)
