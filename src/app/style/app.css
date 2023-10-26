@@ -5,9 +5,26 @@ body,
   height: 100%;
 }
 body {
-  font-family: system-ui;
+  font-family:
+    'Space Grotesk',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    'Helvetica Neue',
+    Helvetica,
+    Arial,
+    sans-serif,
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  font-feature-settings:
+    'ss04',
+    'tnum' 1;
   color: var(--primary);
-  background-color: var(--bg-border);
+  background-color: var(--bg);
   margin: 0;
 }
 /* make it not scroll to like a app */
@@ -78,27 +95,30 @@ input[type='number'] {
 input:focus-visible {
   outline: none;
 }
+* {
+  outline: none !important; /* without !important, the priority is not high enough */
+}
 
 /* For the darkmode, or tailwindcss urgly and tedious `:dark` */
 :root {
-  --primary: black;
+  --primary: #e3e3e3;
   --secondary: #bebebe;
-
-  --bg-border: white;
+  --bg:rgb(242, 244, 249);
 
   --style-color-fuchsia: #da2eef;
   --style-color-blue: #2b6aff;
   --style-color-cyan: #39d0d8;
 
-  --controller-active: #aadefe;
+  --status-active: #aadefe;
   --text-home-page-primary: hsl(0deg, 0%, 100%);
   --text-home-page-secondary: hsl(222deg, 100%, 84%);
 
-  --bg-light-solid: hsla(227, 25%, 34%, 0.95);
-  --bg-light: rgba(57, 65, 106, 0.8);
-  --bg-slim: hsla(230, 65%, 15%, 0.54); /* bonsai main color */
-  --bg-dark: hsl(230deg 43% 15% / 60%);
-  --bg-dark-solid: hsla(230, 43%, 16%, 0.9);
+  --ground-color-light-solid: hsla(227, 25%, 34%, 0.95);
+  --ground-color-light: rgba(57, 65, 106, 0.8);
+  --ground-color-slim: hsla(230, 65%, 15%, 0.54); /* bonsai main color */
+  --ground-color: #161c3982;
+  --ground-color-dark: hsl(230deg 43% 15% / 60%);
+  --ground-color-dark-solid: hsla(230, 43%, 16%, 0.9);
 
   --pop-over-bg-low: hsla(187, 25%, 34%, 0.75);
   --pop-over-bg-high: #1e2848ab; /* for <Drawer> and <Dialog> */
@@ -130,7 +150,8 @@ input:focus-visible {
 :root.dark {
   --primary: hsl(210deg, 6%, 76%);
   --secondary: hsl(180deg, 90%, 78%);
-  --controller-active: hsl(252deg, 100%, 65%);
+  --bg:rgb(19, 26, 53);
+  --status-active: hsl(252deg, 100%, 65%);
 
   --ground-color: hsl(240deg, 4%, 11%);
   --app-line-color: hsl(187deg, 3%, 12%);

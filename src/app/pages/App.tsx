@@ -16,10 +16,11 @@ import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
 import { NavBar } from '../components/NavBar'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../routes'
-import './style.css'
+import '../style/app.css'
 import { switchCase } from '../../packages/fnkit'
-
+import { useAppThemeMode } from '../hooks/useAppThemeMode'
 export function App() {
+  useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
   const navigate = useNavigate()
   const location = useLocation()
