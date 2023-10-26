@@ -4,24 +4,28 @@ import { cssColors } from '../cssColors'
 export type ICSSRowOption = {
   gap?: CSSObject['gap']
   items?: CSSObject['alignItems']
+  childItems?: CSSObject['flex']
 }
 
-export const icssRow = createICSS(({ gap, items }: ICSSRowOption = {}) => ({
+export const icssRow = createICSS(({ gap, items = 'center', childItems = 'auto' }: ICSSRowOption = {}) => ({
   display: 'flex',
-  alignItems: items ?? 'center',
+  alignItems: items,
   gap: gap,
+  '> *': { flex: childItems },
 }))
 
 export type ICSSColOption = {
   gap?: CSSObject['gap']
   items?: CSSObject['alignItems']
+  childItems?: CSSObject['flex']
 }
 
-export const icssCol = createICSS(({ gap, items }: ICSSRowOption = {}) => ({
+export const icssCol = createICSS(({ gap, items, childItems = 'auto' }: ICSSColOption = {}) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: items,
   gap: gap,
+  '> *': { flex: childItems },
 }))
 
 //#region ------------------- grid -------------------
@@ -29,14 +33,16 @@ export type ICSSGridOption = {
   gap?: CSSObject['gap']
   items?: CSSObject['placeItems']
   template?: CSSObject['gridTemplate']
+  templateRow?: CSSObject['gridTemplateRows']
   templateColumn?: CSSObject['gridTemplateColumns']
 }
 
-export const icssGrid = createICSS(({ items, template, templateColumn, gap }: ICSSGridOption = {}) => ({
+export const icssGrid = createICSS(({ items, template, templateColumn, templateRow, gap }: ICSSGridOption = {}) => ({
   display: 'grid',
   placeItems: items,
   gridTemplate: template,
   gridTemplateColumns: templateColumn,
+  gridTemplateRows: templateRow,
   gap: gap,
 }))
 

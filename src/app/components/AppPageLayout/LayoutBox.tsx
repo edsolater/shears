@@ -6,8 +6,8 @@ import {
   PivChild,
   css_gradient,
   css_var,
-  icss_col,
-  icss_grid,
+  icssCol,
+  icssGrid,
   useKitProps,
 } from '../../../packages/pivkit'
 import { useMetaTitle } from '../../hooks/useDocumentMetaTitle'
@@ -57,10 +57,10 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       <Group name={'side-menu'} icss={{ gridArea: 'side', minWidth: '32px' }}>
         {props.renderSideBar}
       </Group>
-      <Group name={'content'} icss={[{ gridArea: 'ctn' }, icss_grid]}>
+      <Group name={'content'} icss={[{ gridArea: 'ctn' }, icssGrid]}>
         <Main
           icss={[
-            icss_col,
+            icssCol,
             { position: 'relative', overflowX: 'hidden', overflowY: 'scroll' },
             {
               background: css_gradient({ colors: [css_var('--content-bg__01'), css_var('--content-bg__02')] }),
@@ -71,7 +71,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
           {props.renderContentBanner}
           <Box
             icss={[
-              icss_col({ flexItem: 'none' }),
+              icssCol({ childItems: 'none' }),
               {
                 flexGrow: 1,
                 height: 0,

@@ -1,6 +1,6 @@
 import { assert } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
-import { Button, Card, Piv, Section, icss_card, icss_col } from '../../packages/pivkit'
+import { Button, Card, Piv, Section, icssCard, icssCol } from '../../packages/pivkit'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
 import { useToken } from '../stores/data/dataHooks/useToken'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
@@ -38,7 +38,7 @@ export default function SwapPage() {
   return (
     <Piv>
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
-        <Card icss={[icss_card, icss_col({ gap: '.5em' })]}>
+        <Card icss={[icssCard, icssCol({ gap: '.5em' })]}>
           <TokenAmountInputBox
             token={token1}
             amount={tokenAmount1}

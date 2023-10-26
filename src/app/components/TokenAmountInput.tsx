@@ -16,10 +16,10 @@ import {
   TextProps,
   createRef,
   createSyncSignal,
-  icss_clickable,
-  icss_inputType,
-  icss_label,
-  icss_row,
+  icssClickable,
+  icssInputType,
+  icssLabel,
+  icssRow,
   useKitProps,
 } from '../../packages/pivkit'
 import { store } from '../stores/data/store'
@@ -59,9 +59,9 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const [modalRef, setModalRef] = createRef<ModalController>()
 
   return (
-    <Box icss={icss_row({ gap: '8px' })}>
+    <Box icss={icssRow({ gap: '8px' })}>
       {/* show current token info */}
-      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label(), icss_clickable()]}>
+      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icssLabel, icssClickable]}>
         {token()?.symbol}
       </Box>
       {/* <Piv
@@ -75,7 +75,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       {/* token amount info */}
       <Input
         shadowProps={props['anatomy:amountInput']}
-        icss={icss_inputType()}
+        icss={icssInputType()}
         value={amount}
         onUserInput={({ text }) => {
           isStringNumber(text) ? setAmount(text) : undefined
@@ -126,7 +126,7 @@ function TokenSelectorModalContent_TokenItem(
   const { props } = useKitProps(rawProps)
   return (
     <Box
-      icss={[icss_row(), icss_clickable()]}
+      icss={[icssRow(), icssClickable()]}
       shadowProps={props}
       onClick={() => {
         props.onSelect?.(props.token)

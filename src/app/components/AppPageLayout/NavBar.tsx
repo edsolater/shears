@@ -11,8 +11,8 @@ import {
   Section,
   Text,
   createControllerRef,
-  icss_clickable,
-  icss_row,
+  icssClickable,
+  icssRow,
 } from '../../../packages/pivkit'
 import { createFormField } from '../../../packages/pivkit/hooks/createFormField'
 import { threeGridSlotBoxICSS } from '../../icssBlocks/threeGridSlotBoxICSS'
@@ -35,7 +35,7 @@ export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
         {/* tabs */}
         <RoutesButtons />
 
-        <ItemBox icss={icss_row}>
+        <ItemBox icss={icssRow}>
           <SettingButtonTrigger />
           <WalletWidget />
         </ItemBox>
@@ -51,7 +51,7 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px', borderRadius: '8px' }, icss_clickable]}
+        icss={[{ padding: '8px', borderRadius: '8px' }, icssClickable]}
         // onClick={() => {
         //   appSettingsModalControllers()?.open()
         // }}

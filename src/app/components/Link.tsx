@@ -7,6 +7,9 @@ export interface LinkProps {
   innerRoute?: boolean
 }
 
+/**
+ * tag: `<a>` or `<span>`
+ */
 export function Link(rawProps: KitProps<LinkProps>) {
   const { props } = useKitProps(rawProps)
   const navigate = useNavigate()

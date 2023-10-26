@@ -14,8 +14,8 @@ import {
   Text,
   createIncresingAccessor,
   createIntervalEffect,
-  icss_col,
-  icss_row,
+  icssCol,
+  icssRow,
   renderSwitchThumb,
   useCSSTransition,
   useControllerByID,
@@ -274,11 +274,11 @@ function ListExample() {
     }, 100)
   })
   return (
-    <List items={data} initRenderCount={10} icss={[icss_col({ gap: '16px' }), { height: '30dvh' }]}>
+    <List items={data} initRenderCount={10} icss={[icssCol({ gap: '16px' }), { height: '30dvh' }]}>
       {(d, idx) => {
         console.count(`render item from <Playground>, ${d.name}, ${d.count}`)
         return (
-          <Box icss={[icss_row({ gap: '8px' }), { background: '#0001', width: '100%' }]}>
+          <Box icss={[icssRow({ gap: '8px' }), { background: '#0001', width: '100%' }]}>
             <Text>{d.name}</Text>
             <Text>{d.count + increaseCount()}</Text>
           </Box>

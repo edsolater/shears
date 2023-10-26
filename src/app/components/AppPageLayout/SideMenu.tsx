@@ -1,5 +1,7 @@
-import { KitProps, useKitProps } from '../../../packages/pivkit'
-import { isLocalhost, usePageMatcher } from '../../routes'
+import { createMemo } from 'solid-js'
+import { Accessify, Box, Col, Grid, Icon, KitProps, Piv, Row, useKitProps } from '../../../packages/pivkit'
+import { usePageMatcher } from '../../routes'
+import { Link } from '../Link'
 
 export type AppPageLayout_SideMenuProps = {}
 /**
@@ -9,83 +11,65 @@ export type AppPageLayout_SideMenuProps = {}
  */
 export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenuProps>) {
   const pageMatcher = usePageMatcher()
-  const isMobile = false 
-  const sideMenuRef = useRef<HTMLDivElement>(null)
-  const latestVersion = useAppVersion((s) => s.latest)
-  const currentVersion = useAppVersion((s) => s.currentVersion)
-  const inDev = useAppSettings((s) => s.inDev) // show dev logo
-
-  useEffect(() => {
-    if (!inClient) return
-    setCssVarible(
-      globalThis.document.documentElement,
-      '--side-menu-width',
-      sideMenuRef.current ? Math.min(sideMenuRef.current.clientWidth, sideMenuRef.current.clientHeight) : 0,
-    )
-  }, [sideMenuRef])
 
   return (
     <>
       <Col
-        domRef={sideMenuRef}
-        className={twMerge(
-          `h-full overflow-y-auto w-56 mobile:w-64 mobile:rounded-tr-2xl mobile:rounded-br-2xl`,
-          className,
-        )}
-        style={{
-          background: isMobile
-            ? 'linear-gradient(242.18deg, rgba(57, 208, 216, 0.08) 68.05%, rgba(57, 208, 216, 0.02) 86.71%), #0C0926'
-            : undefined,
-          boxShadow: isMobile ? '8px 0px 48px rgba(171, 196, 255, 0.12)' : undefined,
+        icss={{
+          height: '100%',
+          width: '16rem',
+          overflowY: 'auto',
         }}
       >
-        {isMobile && (
-          <Row className='items-center justify-between p-6 mobile:p-4 mobile:pl-8'>
-            <Link href='/'>
-              <Image src='/logo/logo-with-text.svg' className={`mobile:scale-75 ${inDev ? 'hue-rotate-60' : ''}`} />
-            </Link>
-            <Icon
-              size={isMobile ? 'sm' : 'md'}
-              heroIconName='x'
-              className='text-[rgba(57,208,216,0.8)] clickable clickable-mask-offset-2'
-              onClick={onClickCloseBtn}
-            />
-          </Row>
-        )}
-        <Col className='grid grid-rows-[2fr,1fr,auto] flex-1 overflow-hidden'>
-          <div className='shrink overflow-y-auto min-h-[120px] py-4 space-y-1 mobile:py-0 px-2 mr-2 mobile:ml-2 mb-2'>
-            <LinkItem icon='/icons/entry-icon-swap.svg' href='/swap' isCurrentRoutePath={pathname === '/swap'}>
+        <Grid
+          icss={{
+            gridTemplateRows: '2fr 1fr auto',
+            overflow: 'hidden',
+          }}
+        >
+          <Col
+            icss:gap='0.25rem'
+            icss={{
+              overflowY: 'auto',
+              height: 'max(120px, 9999vh)',
+              paddingBlock: '1rem',
+              paddingInline: '0.5rem',
+              marginInlineEnd: '0.5rem',
+              marginBlockEnd: '0.5rem',
+            }}
+          >
+            <LinkItem icon='/icons/entry-icon-swap.svg' href='/swap' isCurrentRoutePath={pageMatcher.isSwapPage}>
               Swap
             </LinkItem>
-            <LinkItem
+            {/* <LinkItem
               icon='/icons/entry-icon-liquidity.svg'
               href='/liquidity/add'
-              isCurrentRoutePath={pathname === '/liquidity/add'}
+              isCurrentRoutePath={pageMatcher.isSwapPage}
             >
               Liquidity
-            </LinkItem>
-            <LinkItem
+            </LinkItem> */}
+            {/* <LinkItem
               icon='/icons/entry-icon-concentrated-pools.svg'
               href='/clmm/pools'
               isCurrentRoutePath={pathname === '/clmm/pools'}
             >
               Concentrated
-            </LinkItem>
-            <LinkItem icon='/icons/entry-icon-pools.svg' href='/pools' isCurrentRoutePath={pathname === '/pools'}>
+            </LinkItem> */}
+            <LinkItem icon='/icons/entry-icon-pools.svg' href='/pools' isCurrentRoutePath={pageMatcher.isPairsPage}>
               Pools
             </LinkItem>
-            <LinkItem icon='/icons/entry-icon-farms.svg' href='/farms' isCurrentRoutePath={pathname === '/farms'}>
+            <LinkItem icon='/icons/entry-icon-farms.svg' href='/farms' isCurrentRoutePath={pageMatcher.isFarmsPage}>
               Farms
             </LinkItem>
-            <LinkItem icon='/icons/entry-icon-staking.svg' href='/staking' isCurrentRoutePath={pathname === '/staking'}>
+            {/* <LinkItem icon='/icons/entry-icon-staking.svg' href='/staking' isCurrentRoutePath={pathname === '/staking'}>
               Staking
             </LinkItem>
             <LinkItem icon='/icons/entry-icon-acceleraytor.svg' href='/acceleraytor/list'>
               AcceleRaytor
-            </LinkItem>
-          </div>
+            </LinkItem> */}
+          </Col>
 
-          <Col className='overflow-scroll no-native-scrollbar'>
+          {/* <Col className='overflow-scroll no-native-scrollbar'>
             <div className='mx-8 border-b border-[rgba(57,208,216,0.16)] my-2 mobile:my-1'></div>
             <div className='flex-1 overflow-auto no-native-scrollbar mt-2'>
               <RpcConnectionPanelSidebarWidget />
@@ -120,9 +104,61 @@ export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenu
                 <div>Block time: {<BlockTimeClock showSeconds />}</div>
               </div>
             </Tooltip.Panel>
-          </Tooltip>
-        </Col>
+          </Tooltip> */}
+        </Grid>
       </Col>
     </>
+  )
+}
+
+type LinkItemProps = {
+  href?: string
+  icon?: string
+  isCurrentRoutePath?: boolean
+  children?: Accessify<string>
+}
+
+function LinkItem(kitProps: KitProps<LinkItemProps>) {
+  const { props } = useKitProps(kitProps)
+  const isInnerLink = createMemo(() => props.href?.startsWith('/'))
+  const isExternalLink = () => !isInnerLink
+  return (
+    <Link
+      href={props.href}
+      icss={{
+        paddingBlock: '0.5rem',
+        paddingInline: '1rem',
+        borderRadius: '0.5rem',
+        transition: '150ms',
+      }}
+    >
+      <Row>
+        <Box
+          icss={{
+            display: 'grid',
+            bg: 'linear-gradient(135deg, rgba(57,208,216,0.2) 0%, rgba(57,208,216,0) 100%)',
+            borderRadius: '0.5rem',
+            padding: '0.375rem',
+            marginRight: '0.75rem',
+          }}
+        >
+          <Icon size={'sm'} src={props.icon} />
+        </Box>
+        <Row
+          icss={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+            color: props.isCurrentRoutePath ? 'rgba(57,208,216,1)' : '#ACE3E5',
+            fontSize: '0.875rem',
+            fontWeight: '500',
+          }}
+        >
+          <Piv>{props.children}</Piv>
+          {isExternalLink() && (
+            <Icon icss={{ display: 'inline', opacity: '.8' }} size={'sm'} />
+          )}
+        </Row>
+      </Row>
+    </Link>
   )
 }
