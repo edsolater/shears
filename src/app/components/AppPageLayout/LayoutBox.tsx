@@ -64,8 +64,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
             { position: 'relative', overflowX: 'hidden', overflowY: 'scroll' },
             {
               background: css_gradient({ colors: [css_var('--content-bg__01'), css_var('--content-bg__02')] }),
-              borderRadius: '20px',
-              margin: '8px',
+              borderTopLeftRadius: '20px',
             },
           ]}
         >

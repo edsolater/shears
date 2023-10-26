@@ -1,7 +1,6 @@
-import { Box, Text } from '../../packages/pivkit';
+import { Box, Text } from '../../packages/pivkit'
 
-
-export function AppLogo(props: { title: string | undefined; }) {
+export function AppLogo(props: { title: string | undefined }) {
   return (
     <Box
       icss={{
@@ -15,9 +14,9 @@ export function AppLogo(props: { title: string | undefined; }) {
           fontWeight: '800',
         }}
       >
-        {props.title}
+        Shear
       </Text>
       {/* <Piv shadowProps={{ children: props.title }} /> */}
     </Box>
-  );
+  )
 }
