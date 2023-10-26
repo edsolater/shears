@@ -20,7 +20,7 @@ export type ICSSColOption = {
   childItems?: CSSObject['flex']
 }
 
-export const icssCol = createICSS(({ gap, items, childItems = 'auto' }: ICSSColOption = {}) => ({
+export const icssCol = createICSS(({ gap, items, childItems = 'none' }: ICSSColOption = {}) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: items,
