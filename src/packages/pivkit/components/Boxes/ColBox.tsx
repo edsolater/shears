@@ -1,16 +1,18 @@
+import { icss_col } from '../../icssBlocks'
 import { KitProps, useKitProps } from '../../piv'
-import { ICSSGridOption } from '../../styles/icssBlocks'
+import { ICSSColOption } from '../../styles/icssBlocks'
+import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box } from './Box'
 
-export type ColBoxProps = {
-  'icss:grid'?: boolean | ICSSGridOption
+export type ColProps = {
+  [K in keyof ICSSColOption as `icss:${K}`]?: ICSSColOption[K]
 }
-
 /**
  * if for layout , don't render important content in ColBox
  */
-export function ColBox(rawProps: KitProps<ColBoxProps>) {
-  const { shadowProps } = useKitProps(rawProps, { name: 'ColBox' })
+export function Col(rawProps: KitProps<ColProps>) {
+  const { props, shadowProps } = useKitProps(rawProps, { name: 'ColBox' })
+  const icssOption = getICSSFromProps(props)
   /* ---------------------------------- props --------------------------------- */
-  return <Box class='ColBox' shadowProps={shadowProps} />
+  return <Box icss={icss_col(icssOption)} shadowProps={shadowProps} />
 }

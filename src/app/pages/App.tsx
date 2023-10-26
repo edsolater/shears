@@ -1,24 +1,23 @@
 import { capitalize, map } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
+import { switchCase } from '../../packages/fnkit'
 import {
   Box,
   Input,
   List,
-  Piv,
   Text,
   createIncresingAccessor,
   cssColors,
   keyboardShortcutObserverPlugin,
-  useKeyboardGlobalShortcut,
+  useKeyboardGlobalShortcut
 } from '../../packages/pivkit'
 import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
-import { AppPageLayout_NavBar } from '../components/AppPageLayout/NavBar'
-import { globalPageShortcuts } from '../configs/globalPageShortcuts'
-import { routes } from '../routes'
-import { switchCase } from '../../packages/fnkit'
-import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { AppPageLayout } from '../components/AppPageLayout'
+import { globalPageShortcuts } from '../configs/globalPageShortcuts'
+import { useAppThemeMode } from '../hooks/useAppThemeMode'
+import { routes } from '../routes'
+
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)

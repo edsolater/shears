@@ -1,4 +1,5 @@
 import { KitProps, useKitProps } from '../../../packages/pivkit'
+import { isLocalhost, usePageMatcher } from '../../routes'
 
 export type AppPageLayout_SideMenuProps = {}
 /**
@@ -7,9 +8,8 @@ export type AppPageLayout_SideMenuProps = {}
  * TEMP: add haveData to fix scrolling bug
  */
 export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenuProps>) {
-  const { pathname } = 
-  const isMobile = useAppSettings((s) => s.isMobile)
-  const isInLocalhost = useAppSettings((s) => s.isInLocalhost)
+  const pageMatcher = usePageMatcher()
+  const isMobile = false 
   const sideMenuRef = useRef<HTMLDivElement>(null)
   const latestVersion = useAppVersion((s) => s.latest)
   const currentVersion = useAppVersion((s) => s.currentVersion)

@@ -1,5 +1,6 @@
-import { RouteDefinition } from '@solidjs/router'
+import { RouteDefinition, useLocation, useMatch } from '@solidjs/router'
 import { lazy } from 'solid-js'
+import { createLazyMemo } from '../packages/pivkit'
 
 export const pairsRoutePath = '/pools'
 export const homeRoutePath = '/'
@@ -37,3 +38,37 @@ export const routes: RouteDefinition[] = [
   { path: routePath.farms, component: lazy(() => PageComponentFarms) },
   { path: routePath.playground, component: lazy(() => PageComponentPlayground) },
 ]
+
+/** usually used in side-menu  */
+export function usePageMatcher() {
+  const location = useLocation()
+  return {
+    get isHomePage() {
+      return createLazyMemo(() => location.pathname === routePath.home)
+    },
+    get isSwapPage() {
+      return createLazyMemo(() => location.pathname === routePath.swap)
+    },
+    get isPairsPage() {
+      return createLazyMemo(() => location.pathname === routePath.pools)
+    },
+    get isFarmsPage() {
+      return createLazyMemo(() => location.pathname === routePath.farms)
+    },
+    get isPlaygroundPage() {
+      return createLazyMemo(() => location.pathname === routePath.playground)
+    },
+  }
+}
+
+// /** usually used in side-menu  */
+// export function useNetworkContext() {
+//   const location = useLocation()
+//   return {
+//     get isLocalhost() {
+//       return createLazyMemo(() => window.location.hostname === 'localhost')
+//     },
+//   }
+// }
+
+export const isLocalhost = () => window.location.hostname === 'localhost'

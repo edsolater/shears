@@ -1,11 +1,13 @@
 import { CSSObject, ICSSObject } from '../piv'
 import { cssColors } from '../styles/cssColors'
 
-export const icss_row = (options?: {
+export type ICSSRowOptions = {
   gap?: CSSObject['gap']
   items?: CSSObject['alignItems']
   flexItem?: CSSObject['flex']
-}) =>
+}
+
+export const icss_row = (options?: ICSSRowOptions) =>
   ({
     display: 'flex',
     alignItems: options?.items ?? 'center',
@@ -15,11 +17,13 @@ export const icss_row = (options?: {
     },
   }) satisfies ICSSObject
 
-export const icss_col = (options?: {
+export type ICSSColOptions = {
   gap?: CSSObject['gap']
   items?: CSSObject['alignItems']
   flexItem?: CSSObject['flex']
-}) =>
+}
+
+export const icss_col = (options?: ICSSColOptions) =>
   ({
     display: 'flex',
     flexDirection: 'column',
