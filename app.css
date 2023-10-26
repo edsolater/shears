@@ -150,9 +150,9 @@ input:focus-visible {
 :root.dark {
   --primary: hsl(210deg, 6%, 76%);
   --secondary: hsl(180deg, 90%, 78%);
-  --bg: #0b1022;
-  --content-bg__01: #030212;
-  --content-bg__02: #0c0a25;
+  --bg: #131a35;
+  --content-bg__01: rgb(12, 9, 39);
+  --content-bg__02: rgb(17, 13, 54);
   --status-active: hsl(252deg, 100%, 65%);
 
   --ground-color: hsl(240deg, 4%, 11%);
