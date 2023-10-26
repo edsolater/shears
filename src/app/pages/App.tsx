@@ -13,12 +13,12 @@ import {
   useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
 import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
-import { NavBar } from '../components/NavBar'
+import { AppPageLayout_NavBar } from '../components/AppPageLayout/NavBar'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { routes } from '../routes'
-import '../style/app.css'
 import { switchCase } from '../../packages/fnkit'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
+import { AppPageLayout } from '../components/AppPageLayout'
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -34,11 +34,13 @@ export function App() {
     switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
   )
   return (
-    <Piv>
-      <NavBar title={title()} />
+    <>
       <KeyboardShortcutPanel />
-      <Routes />
-    </Piv>
+
+      <AppPageLayout metaTitle={title()}>
+        <Routes />
+      </AppPageLayout>
+    </>
   )
 }
 

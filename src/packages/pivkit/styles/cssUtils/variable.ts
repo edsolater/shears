@@ -1,7 +1,7 @@
 /**
  * **CSS Utility Function**
  * @example
- * css_var('accent-color') // => 'var(--accent-color)'
+ * css_var('--accent-color') // => 'var(--accent-color)'
  * @returns css var()
  */
 

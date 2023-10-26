@@ -13,22 +13,22 @@ import {
   createControllerRef,
   icss_clickable,
   icss_row,
-} from '../../packages/pivkit'
-import { createFormField } from '../../packages/pivkit/hooks/createFormField'
-import { threeGridSlotBoxICSS } from '../icssBlocks/threeGridSlotBoxICSS'
-import { store } from '../stores/data/store'
-import { parseUrl } from '../utils/parseUrl'
-import { AppLogo } from './AppLogo'
-import { NavWrapBox, NavWrapBoxProps } from './NavWrapBox'
-import { RoutesButtons } from './RoutesButtons'
-import { WalletWidget } from './WalletWidget'
-import { useInputController } from '../../packages/pivkit/components/Input/hooks/useInputController'
+} from '../../../packages/pivkit'
+import { createFormField } from '../../../packages/pivkit/hooks/createFormField'
+import { threeGridSlotBoxICSS } from '../../icssBlocks/threeGridSlotBoxICSS'
+import { store } from '../../stores/data/store'
+import { parseUrl } from '../../utils/parseUrl'
+import { AppLogo } from '../AppLogo'
+import { AppPageLayout_NavWrapBox, AppPageLayout_NavWrapBoxProps } from './NavWrapBox'
+import { RoutesButtons } from '../RoutesButtons'
+import { WalletWidget } from '../WalletWidget'
+import { useInputController } from '../../../packages/pivkit/components/Input/hooks/useInputController'
 
-export type NavBarProps = NavWrapBoxProps
+export type AppPageLayout_NavBarProps = AppPageLayout_NavWrapBoxProps
 
-export function NavBar(props: NavBarProps) {
+export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
-    <NavWrapBox title={props.title}>
+    <AppPageLayout_NavWrapBox title={props.title}>
       <Box icss={threeGridSlotBoxICSS}>
         <AppLogo title={props.title}></AppLogo>
 
@@ -40,7 +40,7 @@ export function NavBar(props: NavBarProps) {
           <WalletWidget />
         </ItemBox>
       </Box>
-    </NavWrapBox>
+    </AppPageLayout_NavWrapBox>
   )
 }
 

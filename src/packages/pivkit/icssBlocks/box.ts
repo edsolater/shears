@@ -1,20 +1,40 @@
 import { CSSObject, ICSSObject } from '../piv'
 import { cssColors } from '../styles/cssColors'
 
-export const icss_row = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>
+export const icss_row = (options?: {
+  gap?: CSSObject['gap']
+  items?: CSSObject['alignItems']
+  flexItem?: CSSObject['flex']
+}) =>
   ({
     display: 'flex',
     alignItems: options?.items ?? 'center',
     gap: options?.gap,
+    '> *': {
+      flex: options?.flexItem ?? '1 1 auto',
+    },
   }) satisfies ICSSObject
 
-export const icss_col = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>
+export const icss_col = (options?: {
+  gap?: CSSObject['gap']
+  items?: CSSObject['alignItems']
+  flexItem?: CSSObject['flex']
+}) =>
   ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: options?.items ?? 'center',
     gap: options?.gap,
+    '> *': {
+      flex: options?.flexItem ?? '1 1 auto',
+    },
   }) satisfies ICSSObject
+
+export const icss_grid = (options?: {
+  gap?: CSSObject['gap']
+  items?: CSSObject['alignItems']
+  flexItem?: CSSObject['flex']
+}) => ({ display: 'grid', gap: options?.gap }) satisfies ICSSObject
 
 export const icss_card = (options?: { gap?: CSSObject['gap']; items?: CSSObject['alignItems'] }) =>
   ({

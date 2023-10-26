@@ -1,6 +1,6 @@
 import { isUndefined } from '@edsolater/fnkit'
 import { Accessify, createSyncSignal, deAccessify } from '..'
-import { UseFormFieldOpts, FormField } from '../../../app/components/NavBar'
+import { UseFormFieldOpts, FormField } from '../../../app/components/AppPageLayout/NavBar'
 
 /**
  * hold form value

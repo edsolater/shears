@@ -1,11 +1,11 @@
 import { createEffect } from 'solid-js'
-import { KitProps, Piv, renderHTMLDOM, useKitProps } from '../../packages/pivkit'
+import { KitProps, Piv, renderHTMLDOM, useKitProps } from '../../../packages/pivkit'
 
-export interface NavWrapBoxProps {
+export interface AppPageLayout_NavWrapBoxProps {
   title?: string
 }
 
-export function NavWrapBox(kitProps: KitProps<NavWrapBoxProps>) {
+export function AppPageLayout_NavWrapBox(kitProps: KitProps<AppPageLayout_NavWrapBoxProps>) {
   const { shadowProps, props } = useKitProps(kitProps)
   useMetaTitle(() => props.title)
   return (

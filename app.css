@@ -103,7 +103,7 @@ input:focus-visible {
 :root {
   --primary: #e3e3e3;
   --secondary: #bebebe;
-  --bg:rgb(242, 244, 249);
+  --bg: rgb(242, 244, 249);
 
   --style-color-fuchsia: #da2eef;
   --style-color-blue: #2b6aff;
@@ -150,7 +150,9 @@ input:focus-visible {
 :root.dark {
   --primary: hsl(210deg, 6%, 76%);
   --secondary: hsl(180deg, 90%, 78%);
-  --bg:rgb(19, 26, 53);
+  --bg: #0b1022;
+  --content-bg__01: #030212;
+  --content-bg__02: #0c0a25;
   --status-active: hsl(252deg, 100%, 65%);
 
   --ground-color: hsl(240deg, 4%, 11%);

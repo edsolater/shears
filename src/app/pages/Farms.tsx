@@ -1,7 +1,7 @@
 import { For, Show } from 'solid-js'
 import { TokenAvatar } from '../components/TokenAvatar'
 import { TokenAvatarPair } from '../components/TokenAvatarPair'
-import { NavBar } from '../components/NavBar'
+import { AppPageLayout_NavBar } from '../components/AppPageLayout/NavBar'
 import { useFarmPageStates } from '../pageStates/farmState'
 import { getToken } from '../stores/data/utils/getToken'
 import { toString } from '../utils/dataStructures/basicMath/format'
