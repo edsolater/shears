@@ -27,13 +27,13 @@ export const keyboardShortcutObserverPlugin = (options: {
     // reflect recorded shortcut to input value
     createEffect(
       on(recordedShortcut, () => {
-        intputController.setText(recordedShortcut())
+        intputController.setText?.(recordedShortcut())
       }),
     )
 
     const handleKeydownKeyboardShortcut = (text: string) => {
       setRecordedShortcut(text)
-      intputController.setText(text)
+      intputController.setText?.(text)
       options.onRecordShortcut?.(text as KeybordShortcutKeys)
     }
 

@@ -31,6 +31,7 @@ export type SmartSetStore<T extends Record<string, any>> = (
 export type SmartStore<T extends Record<string, any>> = {
   store: T
   unwrappedStore: T
+  /** new object will merge to original   */
   setStore: SmartSetStore<T>
 
   /** dangerous shortcut, just use store as much as you can  */

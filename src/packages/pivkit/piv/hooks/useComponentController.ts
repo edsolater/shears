@@ -3,6 +3,7 @@ import { createEffect, onCleanup } from 'solid-js'
 import { ValidController } from '../typeTools'
 import { createStore } from 'solid-js/store'
 import { createStoreSetter } from '../../hooks/smartStore/utils/setStoreByObject'
+import { createSmartStore } from '../../hooks'
 
 const recordedControllers = createSubscribable<WeakerMap<string, ValidController | unknown>>()
 
@@ -48,25 +49,15 @@ export function unregisterController(id?: string) {
  */
 export function useControllerByID<Controller extends ValidController | unknown>(componentID: string) {
   let recordController: Controller | undefined = undefined
-  const [controller, setController] = createStore<Partial<Controller>>(
-    new Proxy(
-      {},
-      {
-        get(_target, prop) {
-          return ()=>{}
-        },
-      },
-    ),
-  )
+  const { store: controller, setStore: setController } = createSmartStore<Partial<Controller>>({})
   recordedControllers.subscribe((records) => {
     const newController = records?.get(componentID) as Controller | undefined
     if (newController && newController !== recordController) {
       recordController = newController
       try {
-        setController(createStoreSetter(newController))
+        setController(newController)
       } catch (error) {
-        console.error(error)
-        console.log('2: ', 2)
+        console.error('use controller set controller error', error, '| controller: ', newController)
       }
     }
   })

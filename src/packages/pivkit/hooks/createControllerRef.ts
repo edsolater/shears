@@ -1,25 +1,22 @@
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal, on } from 'solid-js'
+import { createSmartStore } from './createContextStore'
 
 /**
- * TODO: controller should be a (T) not (() => T)
+ * faster for using controller 
  * @returns a object with proxy
  */
 export function createControllerRef<T extends Record<string, any> = Record<string, any>>(): [
-  ref: T,
+  controller: Partial<T>,
   setController: (el: unknown) => void,
 ] {
+  const { store: controller, setStore } = createSmartStore<Partial<T>>({})
   const [ref, setRef] = createSignal<T | undefined>(undefined)
-  const controller = new Proxy(
-    {},
-    {
-      get(_target, prop) {
-        const controller = ref()
-        if (!controller) {
-          throw new Error('controller not ready')
-        }
-        return Reflect.get(controller, prop)
-      },
-    },
-  ) as T
+  createEffect(
+    on(ref, (controllerRef) => {
+      if (controllerRef) {
+        setStore(controllerRef)
+      }
+    }),
+  )
   return [controller, setRef]
 }
