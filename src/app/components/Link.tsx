@@ -4,6 +4,7 @@ import { KitProps, Piv, renderHTMLDOM, useKitProps } from '../../packages/pivkit
 export interface LinkProps {
   href?: string
   boxWrapper?: boolean
+  // TODO: should auto-detect, not manually set
   innerRoute?: boolean
 }
 
@@ -11,7 +12,7 @@ export interface LinkProps {
  * tag: `<a>` or `<span>`
  */
 export function Link(rawProps: KitProps<LinkProps>) {
-  const { props } = useKitProps(rawProps)
+  const { props } = useKitProps(rawProps, { name: 'Link' })
   const navigate = useNavigate()
   return (
     <Piv<'a'>

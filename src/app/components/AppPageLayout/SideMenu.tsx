@@ -125,6 +125,7 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
   return (
     <Link
       href={props.href}
+      innerRoute={isInnerLink}
       icss={{
         paddingBlock: '0.5rem',
         paddingInline: '1rem',
