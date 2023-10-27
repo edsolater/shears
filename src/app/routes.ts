@@ -44,7 +44,7 @@ export function usePageMatcher() {
   const location = useLocation()
   return {
     get isHomePage() {
-      return createLazyMemo(() => location.pathname === routePath.home)
+      return createLazyMemo(() => location.pathname === routePath.home) // FIXME bug is  in createLazyMemo
     },
     get isSwapPage() {
       return createLazyMemo(() => location.pathname === routePath.swap)
