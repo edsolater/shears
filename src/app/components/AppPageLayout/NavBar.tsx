@@ -27,7 +27,7 @@ export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
     <AppPageLayout_NavWrapBox title={props.title}>
       <Row icss:justify='space-between'>
-        TODO: not correct for this
+        {/* TODO: not correct for this */}
         <AppLogo title={props.title} />
         <Row icss:align='end'>
           <SettingButtonTrigger />
