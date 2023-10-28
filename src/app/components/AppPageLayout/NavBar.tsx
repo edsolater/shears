@@ -4,42 +4,36 @@ import {
   Box,
   Fragnment,
   Input,
-  InputController,
   ItemBox,
   Modal,
   ModalController,
+  Row,
   Section,
   Text,
   createControllerRef,
   icssClickable,
-  icssRow,
 } from '../../../packages/pivkit'
+import { useInputController } from '../../../packages/pivkit/components/Input/hooks/useInputController'
 import { createFormField } from '../../../packages/pivkit/hooks/createFormField'
-import { threeGridSlotBoxICSS } from '../../icssBlocks/threeGridSlotBoxICSS'
 import { store } from '../../stores/data/store'
 import { parseUrl } from '../../utils/parseUrl'
 import { AppLogo } from '../AppLogo'
-import { AppPageLayout_NavWrapBox, AppPageLayout_NavWrapBoxProps } from './NavWrapBox'
-import { RoutesButtons } from '../RoutesButtons'
 import { WalletWidget } from '../WalletWidget'
-import { useInputController } from '../../../packages/pivkit/components/Input/hooks/useInputController'
+import { AppPageLayout_NavWrapBox, AppPageLayout_NavWrapBoxProps } from './NavWrapBox'
 
 export type AppPageLayout_NavBarProps = AppPageLayout_NavWrapBoxProps
 
 export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
     <AppPageLayout_NavWrapBox title={props.title}>
-      <Box icss={threeGridSlotBoxICSS}>
-        <AppLogo title={props.title}></AppLogo>
-
-        {/* tabs */}
-        <RoutesButtons />
-
-        <ItemBox icss={icssRow}>
+      <Row icss:justify='space-between'>
+        TODO: not correct for this
+        <AppLogo title={props.title} />
+        <Row icss:align='end'>
           <SettingButtonTrigger />
           <WalletWidget />
-        </ItemBox>
-      </Box>
+        </Row>
+      </Row>
     </AppPageLayout_NavWrapBox>
   )
 }

@@ -16,11 +16,11 @@ import { Main } from '../../../packages/pivkit/components/Boxes/Main'
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
 
-  renderContentBanner?: PivChild
-  renderTopBarBanner?: PivChild
-  renderTopBar?: PivChild
-  renderSideBar?: PivChild
-  renderContent?: PivChild
+  'render:contentBanner'?: PivChild
+  'render:topBarBanner'?: PivChild
+  'render:topBar'?: PivChild
+  'render:sideBar'?: PivChild
+  'render:content'?: PivChild
 }
 /**
  * for easier to code and read
@@ -49,13 +49,13 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       }}
     >
       <Group name={'top-banner'} icss={{ gridArea: 'ban' }}>
-        {props.renderTopBarBanner}
+        {props['render:topBarBanner']}
       </Group>
-      <Group name={'top-menu'} icss={{ gridArea: 'top', minHeight: '32px' }}>
-        {props.renderTopBar}
+      <Group name={'top-menu'} icss={{ gridArea: 'top' }}>
+        {props['render:topBar']}
       </Group>
-      <Group name={'side-menu'} icss={{ gridArea: 'side', minWidth: '32px' }}>
-        {props.renderSideBar}
+      <Group name={'side-menu'} icss={{ gridArea: 'side' }}>
+        {props['render:sideBar']}
       </Group>
       <Group name={'content'} icss={[{ gridArea: 'ctn' }, icssGrid]}>
         <Main
@@ -68,7 +68,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
             },
           ]}
         >
-          {props.renderContentBanner}
+          {props['render:contentBanner']}
           <Box
             icss={[
               icssCol({ childItems: 'none' }),

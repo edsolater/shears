@@ -11,10 +11,10 @@ export function AppPageLayout(kitProps: KitProps<AppPageLayoutProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
   return (
     <AppPageLayout_LayoutBox
-      metaTitle={props.metaTitle}
       shadowProps={shadowProps}
-      renderTopBar={<AppPageLayout_NavBar />}
-      renderSideBar={<AppPageLayout_SideMenu />}
+      metaTitle={props.metaTitle}
+      render:topBar={<AppPageLayout_NavBar />}
+      render:sideBar={<AppPageLayout_SideMenu />}
     >
       {props.children}
     </AppPageLayout_LayoutBox>

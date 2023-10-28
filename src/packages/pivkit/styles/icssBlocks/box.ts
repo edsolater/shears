@@ -3,35 +3,90 @@ import { cssColors } from '../cssColors'
 
 export type ICSSRowOption = {
   gap?: CSSObject['gap']
-  items?: CSSObject['alignItems']
+
+  /** css: alignItems */
+  align?: CSSObject['alignItems']
+
+  /** css: justifyContent */
+  justify?: CSSObject['justifyContent']
+
+  alignContent?: CSSObject['alignContent']
+  alignItems?: CSSObject['alignItems']
+  justifyContent?: CSSObject['justifyContent']
+  justifyItems?: CSSObject['justifyItems']
+
+  //TODO
+  presetEqualWidthChildren?: true
+
+  /** only for children,  */
   childItems?: CSSObject['flex']
 }
 
-export const icssRow = createICSS(({ gap, items = 'center', childItems = 'auto' }: ICSSRowOption = {}) => ({
-  display: 'flex',
-  alignItems: items,
-  gap: gap,
-  '> *': { flex: childItems },
-}))
+export const icssRow = createICSS(
+  ({
+    gap,
+    align = 'center',
+    alignContent,
+    alignItems = align,
+    justify,
+    justifyItems,
+    justifyContent = justify,
+    childItems,
+  }: ICSSRowOption = {}) => ({
+    display: 'flex',
+    alignItems,
+    alignContent,
+    justifyItems,
+    justifyContent,
+    gap,
+    '> *': childItems ? { flex: childItems } : undefined,
+  }),
+)
 
 export type ICSSColOption = {
   gap?: CSSObject['gap']
-  items?: CSSObject['alignItems']
+  /** css: alignItems */
+  align?: CSSObject['alignItems']
+  /** css: justifyContent */
+  justify?: CSSObject['justifyContent']
+
+  alignContent?: CSSObject['alignContent']
+  alignItems?: CSSObject['alignItems']
+  justifyContent?: CSSObject['justifyContent']
+  justifyItems?: CSSObject['justifyItems']
+  /** only for children,  */
   childItems?: CSSObject['flex']
 }
 
-export const icssCol = createICSS(({ gap, items, childItems = 'none' }: ICSSColOption = {}) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: items,
-  gap: gap,
-  '> *': { flex: childItems },
-}))
+export const icssCol = createICSS(
+  ({
+    gap,
+    align,
+    alignContent,
+    alignItems = align,
+    justify,
+    justifyItems,
+    justifyContent = justify,
+    childItems,
+  }: ICSSColOption = {}) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems,
+    alignContent,
+    justifyItems,
+    justifyContent,
+    gap,
+    '> *': childItems ? { flex: childItems } : undefined,
+  }),
+)
 
 //#region ------------------- grid -------------------
 export type ICSSGridOption = {
   gap?: CSSObject['gap']
+  /** css: placeItems */
   items?: CSSObject['placeItems']
+  /** css: placeContent */
+  content?: CSSObject['placeContent']
   template?: CSSObject['gridTemplate']
   templateRow?: CSSObject['gridTemplateRows']
   templateColumn?: CSSObject['gridTemplateColumns']
