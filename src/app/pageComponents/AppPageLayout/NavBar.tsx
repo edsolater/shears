@@ -17,8 +17,8 @@ import { useInputController } from '../../../packages/pivkit/components/Input/ho
 import { createFormField } from '../../../packages/pivkit/hooks/createFormField'
 import { store } from '../../stores/data/store'
 import { parseUrl } from '../../utils/parseUrl'
-import { AppLogo } from '../AppLogo'
-import { WalletWidget } from '../WalletWidget'
+import { AppLogo } from '../../components/AppLogo'
+import { WalletWidget } from '../../components/WalletWidget'
 import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from './NavBar_NavWrapBox'
 
 export type AppPageLayout_NavBarProps = NaBar_NavWrapBoxProps

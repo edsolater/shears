@@ -16,11 +16,11 @@ export const routePath = {
   swap: swapRoutePath,
 }
 
-const PageComponentHome = import('./pages/Home')
-const PageComponentSwap = import('./pages/Swap')
-const PageComponentPairs = import('./pages/Pairs')
-const PageComponentFarms = import('./pages/Farms')
-const PageComponentPlayground = import('./pages/Playground')
+const PageComponentHome = import('./pageComponents/Home')
+const PageComponentSwap = import('./pageComponents/Swap')
+const PageComponentPairs = import('./pageComponents/Pairs')
+const PageComponentFarms = import('./pageComponents/Farms')
+const PageComponentPlayground = import('./pageComponents/Playground')
 
 // preload all pages
 Promise.allSettled([

@@ -1,7 +1,7 @@
 import { createMemo } from 'solid-js'
 import { Accessify, Box, Col, Grid, Icon, KitProps, Piv, Row, useKitProps } from '../../../packages/pivkit'
 import { usePageMatcher } from '../../routes'
-import { Link } from '../Link'
+import { Link } from '../../components/Link'
 
 export type AppPageLayout_SideMenuProps = {}
 /**

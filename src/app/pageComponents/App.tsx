@@ -13,7 +13,7 @@ import {
   useKeyboardGlobalShortcut
 } from '../../packages/pivkit'
 import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
-import { AppPageLayout } from '../components/AppPageLayout'
+import { AppPageLayout } from './AppPageLayout'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { routes } from '../routes'
