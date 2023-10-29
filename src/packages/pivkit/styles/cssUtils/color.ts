@@ -12,7 +12,7 @@ type ColorItem = { /** ='currentColor' */ color?: ColorString; percent?: ColorPe
  * css_colorMix('#fff', ['#000', 0.5]) // => 'color-mix(in srgb, #ffffff 50%, #000000 50%)'
  * @returns css color-mix()
  */
-export function css_colorMix(...colors: (ColorString | ColorPercent | ColorItem)[]) {
+export function cssColorMix(...colors: (ColorString | ColorPercent | ColorItem)[]) {
   const colorItems = getColorItems(colors)
   const colorInfoList = colorItems.map(({ color, percent }) =>
     isColorPercent(percent) ? `${color} ${isNumber(percent) ? toPercentString(percent) : percent}` : color
@@ -74,18 +74,18 @@ function isColorItem(c: ColorPercent | ColorString | ColorItem | undefined): c i
  * @param transparentPercent 0~1
  * @returns color-mix() string
  */
-export function css_opacity(color: string, alpha: number) {
-  return css_colorMix(color, 'transparent', 1 - alpha)
+export function cssOpacity(color: string, alpha: number) {
+  return cssColorMix(color, 'transparent', 1 - alpha)
 }
 
-export function css_lighten(color: string, alpha: number) {
-  return css_colorMix(color, 'white', alpha)
+export function cssLighten(color: string, alpha: number) {
+  return cssColorMix(color, 'white', alpha)
 }
 
-export function css_darken(color: string, alpha: number) {
-  return css_colorMix(color, 'black', alpha)
+export function cssDarken(color: string, alpha: number) {
+  return cssColorMix(color, 'black', alpha)
 }
 
-export function css_grayscale(color: string, alpha: number) {
-  return css_colorMix(color, 'gray', alpha)
+export function cssGrayscale(color: string, alpha: number) {
+  return cssColorMix(color, 'gray', alpha)
 }

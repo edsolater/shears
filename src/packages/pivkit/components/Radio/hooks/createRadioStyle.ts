@@ -1,5 +1,5 @@
 import { DeKitProps } from '../../../piv'
-import { cssColors, css_darken, css_opacity, css_var } from '../../../styles'
+import { cssColors, cssDarken, cssOpacity, cssVar } from '../../../styles'
 import { LabelKitProps } from '../../Label'
 import { HTMLInputRadioProps } from '../HTMLInputRadio'
 import { RadioKitProps } from '../Radio'
@@ -48,7 +48,7 @@ export function createRadioStyle(params: { props: DeKitProps<RadioKitProps> }) {
 
         '--radio-border': cssColors.accentColor,
         '--radio-border-hover': 'dodgerblue',
-        '--radio-border-unchecked': css_opacity(css_darken(css_var('--radio-border'), 0.8), 0.2),
+        '--radio-border-unchecked': cssOpacity(cssDarken(cssVar('--radio-border'), 0.8), 0.2),
       },
 
       position: 'relative',
@@ -59,8 +59,8 @@ export function createRadioStyle(params: { props: DeKitProps<RadioKitProps> }) {
       borderRadius: '999em',
       borderStyle: 'solid',
 
-      background: isChecked() ? css_var('--accent-color') : cssColors.transparent,
-      borderColor: isChecked() ? css_var('--radio-border') : css_var('--radio-border-unchecked'),
+      background: isChecked() ? cssVar('--accent-color') : cssColors.transparent,
+      borderColor: isChecked() ? cssVar('--radio-border') : cssVar('--radio-border-unchecked'),
       transition: '60ms',
 
       '&::before': {

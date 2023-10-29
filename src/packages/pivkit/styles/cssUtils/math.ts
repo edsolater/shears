@@ -9,7 +9,7 @@ import { isNumber, notNullish } from '@edsolater/fnkit'
  * css_clamp('10vw', {}) // => '10vw'
  * @returns css clamp() or min() or max() or self
  */
-export function css_clamp(v: string | number, boundary?: { min?: string | number; max?: string | number }) {
+export function cssClamp(v: string | number, boundary?: { min?: string | number; max?: string | number }) {
   if (notNullish(boundary?.min) && notNullish(boundary?.max))
     return `clamp(${toPxIfNumber(boundary!.min)}, ${toPxIfNumber(v)}, ${toPxIfNumber(boundary!.max)})`
   if (notNullish(boundary?.min)) return `min(${toPxIfNumber(boundary!.min)}, ${toPxIfNumber(v)})`

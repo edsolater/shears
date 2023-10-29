@@ -1,15 +1,25 @@
 import { assert } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
-import { Button, Card, Piv, Section, icssCard, icssCol } from '../../packages/pivkit'
-import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import { useToken } from '../stores/data/dataHooks/useToken'
-import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
-import { txSwap_main } from '../stores/data/portActions/txSwap_main'
-import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../stores/data/store'
-import { useWalletOwner } from '../stores/wallet/store'
-import { Token } from '../utils/dataStructures/Token'
-import { notZero } from '../utils/dataStructures/basicMath/compare'
-import { toString } from '../utils/dataStructures/basicMath/format'
+import {
+  Button,
+  Card,
+  Piv,
+  Section,
+  cssVar,
+  icssCard,
+  icssCol,
+  icssCyberpenkBackgroundGlow,
+  icssCyberpenkCard,
+} from '../../../packages/pivkit'
+import { TokenAmountInputBox } from '../../components/TokenAmountInput'
+import { useToken } from '../../stores/data/dataHooks/useToken'
+import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../../stores/data/featureHooks/useSwapAmountCalculator'
+import { txSwap_main } from '../../stores/data/portActions/txSwap_main'
+import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../../stores/data/store'
+import { useWalletOwner } from '../../stores/wallet/store'
+import { Token } from '../../utils/dataStructures/Token'
+import { notZero } from '../../utils/dataStructures/basicMath/compare'
+import { toString } from '../../utils/dataStructures/basicMath/format'
 
 export default function SwapPage() {
   const owner = useWalletOwner()
@@ -38,7 +48,7 @@ export default function SwapPage() {
   return (
     <Piv>
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
-        <Card icss={[icssCard, icssCol({ gap: '.5em' })]}>
+        <Card icss={[icssCard, icssCyberpenkCard(), icssCyberpenkBackgroundGlow, icssCol({ gap: '.5em' })]}>
           <TokenAmountInputBox
             token={token1}
             amount={tokenAmount1}

@@ -5,6 +5,6 @@
  * @returns css var()
  */
 
-export function css_var(name: string) {
+export function cssVar(name: string) {
   return `var(${name})`
 }

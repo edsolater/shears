@@ -4,8 +4,8 @@ import {
   Group,
   KitProps,
   PivChild,
-  css_gradient,
-  css_var,
+  cssLinearGradient,
+  cssVar,
   icssCol,
   icssGrid,
   useKitProps,
@@ -63,7 +63,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
             icssCol,
             { position: 'relative', overflowX: 'hidden', overflowY: 'scroll' },
             {
-              background: css_gradient({ colors: [css_var('--content-bg__01'), css_var('--content-bg__02')] }),
+              background: cssLinearGradient({ colors: [cssVar('--content-bg__01'), cssVar('--content-bg__02')] }),
               borderTopLeftRadius: '20px',
             },
           ]}

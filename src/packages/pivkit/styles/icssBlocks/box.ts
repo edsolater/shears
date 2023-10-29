@@ -112,17 +112,18 @@ export const icssGridItem = createICSS((opts: ICSSGridItemOption = {}) => ({
 //#endregion
 
 export type ICSSCardOption = {
-  style?: 'big-card' | 'ghost'
+  styleType?: 'big-card' | 'ghost'
   gap?: CSSObject['gap']
   items?: CSSObject['alignItems']
+  bg?: CSSObject['background']
 }
-export const icssCard = createICSS((options: ICSSCardOption = {}) => ({
+export const icssCard = createICSS((options?: ICSSCardOption) => ({
   display: 'grid',
   // backgroundColor: 'color-mix(in srgb, currentColor, transparent 95%)',
-  background: options?.style === 'ghost' ? undefined : 'var(--big-card-bg, #ffffffcc)',
+  background: options?.bg,
   /* generate by https://shadows.brumm.af/ */
   boxShadow:
-    options?.style === 'ghost'
+    options?.styleType === 'ghost'
       ? undefined
       : `4.1px 4.1px 5.3px -23px rgba(0, 0, 0, 0.012),
            19.6px 19.6px 17.9px -23px rgba(0, 0, 0, 0.018),
