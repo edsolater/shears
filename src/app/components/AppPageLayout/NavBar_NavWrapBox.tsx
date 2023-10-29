@@ -1,11 +1,11 @@
-import { createEffect } from 'solid-js'
 import { KitProps, Piv, renderHTMLDOM, useKitProps } from '../../../packages/pivkit'
+import { useMetaTitle } from '../../hooks/useMetaTitle'
 
-export interface AppPageLayout_NavWrapBoxProps {
+export interface NaBar_NavWrapBoxProps {
   title?: string
 }
 
-export function AppPageLayout_NavWrapBox(kitProps: KitProps<AppPageLayout_NavWrapBoxProps>) {
+export function NaBar_NavWrapBox(kitProps: KitProps<NaBar_NavWrapBoxProps>) {
   const { shadowProps, props } = useKitProps(kitProps)
   useMetaTitle(() => props.title)
   return (
@@ -15,10 +15,4 @@ export function AppPageLayout_NavWrapBox(kitProps: KitProps<AppPageLayout_NavWra
       render:self={(selfProps) => renderHTMLDOM('nav', selfProps)}
     />
   )
-}
-
-function useMetaTitle(title?: () => string | undefined) {
-  createEffect(() => {
-    if (globalThis.document && title?.()) Reflect.set(globalThis.document, 'title', `${title()} - shears`)
-  })
 }

@@ -19,13 +19,13 @@ import { store } from '../../stores/data/store'
 import { parseUrl } from '../../utils/parseUrl'
 import { AppLogo } from '../AppLogo'
 import { WalletWidget } from '../WalletWidget'
-import { AppPageLayout_NavWrapBox, AppPageLayout_NavWrapBoxProps } from './NavWrapBox'
+import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from './NavBar_NavWrapBox'
 
-export type AppPageLayout_NavBarProps = AppPageLayout_NavWrapBoxProps
+export type AppPageLayout_NavBarProps = NaBar_NavWrapBoxProps
 
 export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
-    <AppPageLayout_NavWrapBox title={props.title}>
+    <NaBar_NavWrapBox title={props.title}>
       <Row icss:justify='space-between'>
         {/* TODO: not correct for this */}
         <AppLogo title={props.title} />
@@ -34,7 +34,7 @@ export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
           <WalletWidget />
         </Row>
       </Row>
-    </AppPageLayout_NavWrapBox>
+    </NaBar_NavWrapBox>
   )
 }
 
