@@ -1,13 +1,23 @@
 import { createMemo } from 'solid-js'
-import { Accessify, Box, Col, Grid, Icon, KitProps, Piv, Row, useKitProps } from '../../../packages/pivkit'
+import {
+  Accessify,
+  Box,
+  Col,
+  Grid,
+  Icon,
+  KitProps,
+  Piv,
+  Row,
+  cssOpacity,
+  cssVar,
+  useKitProps,
+} from '../../../packages/pivkit'
 import { usePageMatcher } from '../../routes'
 import { Link } from '../../components/Link'
 
 export type AppPageLayout_SideMenuProps = {}
 /**
  * for easier to code and read
- *
- * TEMP: add haveData to fix scrolling bug
  */
 export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenuProps>) {
   const pageMatcher = usePageMatcher()
@@ -41,35 +51,17 @@ export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenu
             <LinkItem icon='/icons/entry-icon-swap.svg' href='/swap' isCurrentRoutePath={pageMatcher.isSwapPage}>
               Swap
             </LinkItem>
-            {/* <LinkItem
-              icon='/icons/entry-icon-liquidity.svg'
-              href='/liquidity/add'
-              isCurrentRoutePath={pageMatcher.isSwapPage}
-            >
-              Liquidity
-            </LinkItem> */}
-            {/* <LinkItem
-              icon='/icons/entry-icon-concentrated-pools.svg'
-              href='/clmm/pools'
-              isCurrentRoutePath={pathname === '/clmm/pools'}
-            >
-              Concentrated
-            </LinkItem> */}
             <LinkItem icon='/icons/entry-icon-pools.svg' href='/pools' isCurrentRoutePath={pageMatcher.isPairsPage}>
               Pools
             </LinkItem>
             <LinkItem icon='/icons/entry-icon-farms.svg' href='/farms' isCurrentRoutePath={pageMatcher.isFarmsPage}>
               Farms
             </LinkItem>
-            {/* <LinkItem icon='/icons/entry-icon-staking.svg' href='/staking' isCurrentRoutePath={pathname === '/staking'}>
-              Staking
-            </LinkItem>
-            <LinkItem icon='/icons/entry-icon-acceleraytor.svg' href='/acceleraytor/list'>
-              AcceleRaytor
-            </LinkItem> */}
           </Col>
 
-          {/* <Col className='overflow-scroll no-native-scrollbar'>
+          {/* <Col icss={{
+            overflowY:'scroll', 
+          }}>
             <div className='mx-8 border-b border-[rgba(57,208,216,0.16)] my-2 mobile:my-1'></div>
             <div className='flex-1 overflow-auto no-native-scrollbar mt-2'>
               <RpcConnectionPanelSidebarWidget />
@@ -88,9 +80,9 @@ export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenu
                 Feedback
               </OptionItem>
             </div>
-          </Col>
+          </Col> */}
 
-          <Tooltip>
+          {/* <Tooltip>
             <div className='text-sm mobile:text-xs m-2 mb-0 leading-relaxed opacity-50 hover:opacity-100 transition font-medium text-[#abc4ff] whitespace-nowrap cursor-default'>
               <div>V {currentVersion.slice(1)}</div>
               <div>
@@ -131,13 +123,18 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
         paddingInline: '1rem',
         borderRadius: '0.5rem',
         transition: '150ms',
+
+        background: props.isCurrentRoutePath ? cssOpacity(cssVar('--ternary'), 0.1) : 'transparent',
+        '&:hover': {
+          background: cssOpacity(cssVar('--ternary'), 0.05),
+        },
       }}
     >
       <Row>
         <Box
           icss={{
             display: 'grid',
-            bg: 'linear-gradient(135deg, rgba(57,208,216,0.2) 0%, rgba(57,208,216,0) 100%)',
+            bg: `linear-gradient(135deg, ${cssOpacity(cssVar('--ternary'), 0.2)}, transparent)`,
             borderRadius: '0.5rem',
             padding: '0.375rem',
             marginRight: '0.75rem',
@@ -149,15 +146,14 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
           icss={{
             flexGrow: 1,
             justifyContent: 'space-between',
-            color: props.isCurrentRoutePath ? 'rgba(57,208,216,1)' : '#ACE3E5',
+            color: props.isCurrentRoutePath ? cssVar('--ternary') : cssVar('--ternary-pale'),
+            transition: '80ms',
             fontSize: '0.875rem',
             fontWeight: '500',
           }}
         >
           <Piv>{props.children}</Piv>
-          {isExternalLink() && (
-            <Icon icss={{ display: 'inline', opacity: '.8' }} size={'sm'} />
-          )}
+          {isExternalLink() && <Icon icss={{ display: 'inline', opacity: '.8' }} size={'sm'} />}
         </Row>
       </Row>
     </Link>
