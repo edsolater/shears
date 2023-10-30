@@ -20,7 +20,6 @@ export function SideMenu_Links() {
       icss: gap='0.25rem'
       icss={{
         overflowY: 'auto',
-        height: 'max(120px, 9999vh)',
         paddingBlock: '1rem',
         paddingInline: '0.5rem',
         marginInlineEnd: '0.5rem',
@@ -61,7 +60,7 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
 
         background: props.isCurrentRoutePath ? cssOpacity(cssVar('--ternary'), 0.1) : 'transparent',
         '&:hover': {
-          background: cssOpacity(cssVar('--ternary'), 0.05),
+          background: cssOpacity(cssVar('--ternary'), 0.1),
         },
       }}
     >

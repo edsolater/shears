@@ -1,4 +1,5 @@
 export * from './Boxes'
+export * from './Span'
 export * from './Button'
 export * from './Card'
 export * from './Collapse'

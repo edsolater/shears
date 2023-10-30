@@ -14,12 +14,14 @@ export interface IconProps {
  */
 export function Icon(rawProps: KitProps<IconProps>) {
   const { props } = useKitProps(rawProps, { name: 'Icon' })
-  /* ---------------------------------- props --------------------------------- */
+  const sizePx =
+    props.size === 'xs' ? 12 : props.size === 'sm' ? 16 : props.size === 'smi' ? 20 : props.size === 'md' ? 24 : 32
+
   return (
     <Piv<'img'>
       render:self={(selfProps) => renderHTMLDOM('img', selfProps)}
       htmlProps={{ alt: props.name, src: props.src }}
-      icss={{ display: 'block' }}
+      icss={{ display: 'block', width: `${sizePx}px`, height: `${sizePx}px`, objectFit: 'cover' }}
       shadowProps={props}
       class={Icon.name}
     />
