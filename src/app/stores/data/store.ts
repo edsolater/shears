@@ -44,6 +44,7 @@ export type StoreData = {
 
   // -------- app setting --------
   rpcUrl?: string
+  isRpcLoading?: boolean
 }
 
 export const {

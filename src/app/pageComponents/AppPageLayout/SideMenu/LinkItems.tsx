@@ -9,11 +9,11 @@ import {
   cssOpacity,
   cssVar,
   useKitProps
-} from '../../../packages/pivkit';
-import { usePageMatcher } from '../../routes';
-import { Link } from '../../components/Link';
+} from '../../../../packages/pivkit';
+import { usePageMatcher } from '../../../routes';
+import { Link } from '../../../components/Link';
 
-export function SideMenu_Links() {
+export function SideMenu_LinkItems() {
   const pageMatcher = usePageMatcher();
   return (
     <Col

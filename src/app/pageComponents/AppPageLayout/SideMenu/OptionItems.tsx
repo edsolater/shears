@@ -1,7 +1,7 @@
-import { Col, Icon, KitProps, Row, Span, cssOpacity, cssVar, useKitProps } from '../../../packages/pivkit'
-import { Link } from '../../components/Link'
+import { Col, Icon, KitProps, Row, Span, cssOpacity, cssVar, useKitProps } from '../../../../packages/pivkit'
+import { Link } from '../../../components/Link'
 
-export function SideMenu_OptionItem() {
+export function SideMenu_OptionItems() {
   return (
     <Col
       icss={{

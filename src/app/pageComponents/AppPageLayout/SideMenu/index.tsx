@@ -1,8 +1,8 @@
 import { children } from 'solid-js'
-import { Col, Grid, KitProps } from '../../../packages/pivkit'
-import { Mint } from '../../utils/dataStructures/type'
-import { SideMenu_Links } from './SideMenu_Links'
-import { SideMenu_OptionItem } from './SideMenu_OptionItem'
+import { Col, Grid, KitProps } from '../../../../packages/pivkit'
+import { Mint } from '../../../utils/dataStructures/type'
+import { SideMenu_LinkItems } from './LinkItems'
+import { SideMenu_OptionItems } from './OptionItems'
 
 /**
  * for easier to code and read
@@ -26,9 +26,9 @@ export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenu
             height: '100%',
           }}
         >
-          <SideMenu_Links />
+          <SideMenu_LinkItems />
 
-          <SideMenu_OptionItem />
+          <SideMenu_OptionItems />
 
           {/* <Tooltip>
             <div className='text-sm mobile:text-xs m-2 mb-0 leading-relaxed opacity-50 hover:opacity-100 transition font-medium text-[#abc4ff] whitespace-nowrap cursor-default'>
