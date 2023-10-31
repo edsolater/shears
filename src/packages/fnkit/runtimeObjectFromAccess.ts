@@ -1,10 +1,9 @@
-
 /**
  * OnRunObject - a proxy object, which will only create the object when it's property accessed
  * @param onAccess function to generate the object
  * @returns a proxy object, which will only create the object when it's property accessed
  */
-export function createOnRunObject<T>(onAccess: () => T): T {
+export function runtimeObjectFromAccess<T extends object>(onAccess: () => T): T {
   let loadedTargetObject = undefined as T | undefined
   return new Proxy(
     {},
@@ -39,6 +38,6 @@ export function createOnRunObject<T>(onAccess: () => T): T {
         }
         return Reflect.set(loadedTargetObject!, p, value)
       },
-    }
+    },
   ) as T
 }

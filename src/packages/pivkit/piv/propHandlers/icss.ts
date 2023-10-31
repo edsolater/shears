@@ -13,7 +13,7 @@ import {
   overwriteFunctionName,
   shrinkFn,
 } from '@edsolater/fnkit'
-import { SettingsFunction, createSettingsFunction } from '../../../fnkit/createSettingsFunction'
+import { SettingsFunction, settingsFunction } from '../../../fnkit/settingsFunction'
 import { CSSAttribute, css } from 'solid-styled-components'
 
 type ValidController = AnyObj
@@ -44,7 +44,7 @@ export function createICSS<T extends RuleCreatorFn>(
   rule: T,
   options?: { name?: string; defaultSettings?: Partial<AnyObj> }
 ): TaggedICSS<T> {
-  const factory = createSettingsFunction(
+  const factory = settingsFunction(
     (settings?: AnyObj) => rule(settings),
     options?.defaultSettings
   ) as unknown as TaggedICSS<T>

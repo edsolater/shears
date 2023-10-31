@@ -26,9 +26,9 @@ type Subscribable<T> = {
 /**
  * hold value, so can subscribe it's change
  */
-export function createSubscribable<T>(): Subscribable<T | undefined>
-export function createSubscribable<T>(defaultValue: T): Subscribable<T>
-export function createSubscribable<T>(defaultValue?: T): Subscribable<any> {
+export function subscribable<T>(): Subscribable<T | undefined>
+export function subscribable<T>(defaultValue: T): Subscribable<T>
+export function subscribable<T>(defaultValue?: T): Subscribable<any> {
   let innerValue = defaultValue
   const eventCenter = createEventCenter<{
     value(v: T): void

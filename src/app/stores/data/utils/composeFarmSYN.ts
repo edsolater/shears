@@ -1,6 +1,6 @@
 import { createSubscribableFromPromise, listToJSMap, map } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
-import { createAbortableAsyncTask } from '../../../../packages/fnkit'
+import { abortableAsyncTask } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
@@ -21,7 +21,7 @@ export type ComposeFarmSYNInfoQuery = {
  * use LiquidityJson to get
  */
 export function composeFarmSYN(query: ComposeFarmSYNInfoQuery) {
-  return createAbortableAsyncTask<ComposedFarmSYNInfos>(async ({ resolve, aborted }) => {
+  return abortableAsyncTask<ComposedFarmSYNInfos>(async ({ resolve, aborted }) => {
     const farmJsonPromise = fetchFarmJsonInfo()
     const liquidityJsonPromise = fetchLiquidityJson()
     const pairJsonInfoPromise = fetchPairJsonInfo()
