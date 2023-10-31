@@ -7,34 +7,35 @@ import { PivChild, PivProps, ValidProps, mergeProps } from '.'
 import { Fragnment } from './Fragnment'
 
 /** add props is implied by solidjs context */
-const InnerPropContext = createContext<{ props: unknown; when: PropContextWhen }[]>()
+const _PropContext = createContext<{ props: unknown; when?: PropContextWhen }[]>()
 
 type PropContextWhen = (info: { componentName: string }) => boolean
 
-/** TODO: should mergeTo Fragnment */
+/** 
+ * 💩 BUG core bug point is in <PropContext>
+ * `<PropContext>` is **Context** , not `<AddProps>`
+ */
 export function PropContext<Props extends ValidProps = PivProps>(props: {
   additionalProps?: Props
+  /** for faster debug, if not set, it is alw */
   when?: PropContextWhen
   children?: PivChild
 }) {
-  const parentPropContext = useContext(InnerPropContext)
+  const parentPropContext = useContext(_PropContext) ?? []
+  const selfPropContextValue = parentPropContext.concat({ props: props.additionalProps, when: props.when })
   return (
-    <InnerPropContext.Provider
-      value={
-        parentPropContext
-          ? [...parentPropContext, { props: props.additionalProps, when: props.when ?? (() => true) }]
-          : [{ props: props.additionalProps, when: props.when ?? (() => true) }]
-      }
-    >
+    <_PropContext.Provider value={selfPropContextValue}>
       <Fragnment>{props.children}</Fragnment>
-    </InnerPropContext.Provider>
+    </_PropContext.Provider>
   )
 }
 
 /** add additional prop through solidjs context */
 export function getPropsFromPropContextContext(componentInfo: { componentName: string }): ValidProps | undefined {
-  const contextParent = useContext(InnerPropContext)
-  const props = contextParent?.map(({ props, when }) => (when(componentInfo) ? (props as ValidProps) : undefined))
-  const merged = props && mergeProps(...props)
-  return merged
+  const contextParent = useContext(_PropContext)
+  if (!contextParent) return undefined
+  const allPropses = contextParent
+    .filter(({ when }) => (when ? (when(componentInfo) ? true : undefined) : true))
+    .map(({ props }) => props as ValidProps)
+  return mergeProps(...allPropses)
 }
