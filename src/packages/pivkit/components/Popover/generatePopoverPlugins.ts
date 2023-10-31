@@ -1,9 +1,11 @@
 import { createEffect, onCleanup } from 'solid-js'
-import { createRef } from '..'
-import { onEvent } from '../domkit'
-import { createTriggerController } from '../hooks/utils/createTriggerController'
-import { PivProps, createPlugin } from '../piv'
-import { PopoverLocationHookOptions, usePopoverLocation } from '../pluginComponents/popover/usePopoverLocation'
+import { createRef } from '../..'
+import { onEvent } from '../../domkit'
+import { createTriggerController } from '../../hooks/utils/createTriggerController'
+import { PivProps, createPlugin } from '../../piv'
+import { PopoverLocationHookOptions, usePopoverLocation } from '../../pluginComponents/popover/usePopoverLocation'
+
+export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'>
 
 /**
  *
@@ -13,7 +15,7 @@ import { PopoverLocationHookOptions, usePopoverLocation } from '../pluginCompone
  * - info: accessors about trigger and popover
  */
 export function generatePopoverPlugins(
-  options?: Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'>
+  options?: PopoverPluginOptions
 ) {
   const { trigger, isTriggerOn } = createTriggerController()
 

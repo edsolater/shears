@@ -11,8 +11,9 @@ const InnerPropContext = createContext<{ props: unknown; when: PropContextWhen }
 
 type PropContextWhen = (info: { componentName: string }) => boolean
 
+/** TODO: should mergeTo Fragnment */
 export function PropContext<Props extends ValidProps = PivProps>(props: {
-  additionalProps: Props
+  additionalProps?: Props
   when?: PropContextWhen
   children?: PivChild
 }) {

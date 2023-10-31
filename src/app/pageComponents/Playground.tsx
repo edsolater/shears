@@ -1,45 +1,59 @@
-import { createEffect, createSignal } from 'solid-js'
-import {
-  Box,
-  Button,
-  Drawer,
-  DrawerController,
-  Input,
-  List,
-  Modal,
-  ModalController,
-  Piv,
-  Radio,
-  Switch,
-  Text,
-  createIncresingAccessor,
-  createIntervalEffect,
-  icssCol,
-  icssRow,
-  renderSwitchThumb,
-  useCSSTransition,
-  useControllerByID,
-} from '../../packages/pivkit'
+import { MayPromise } from '@edsolater/fnkit'
+import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
+import { createStore } from 'solid-js/store'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
+import { switchCase } from '../../packages/fnkit'
+import {
+  Piv,
+  Box,
+  useControllerByID,
+  DrawerController,
+  Button,
+  Drawer,
+  ModalController,
+  createIncresingAccessor,
+  Modal,
+  useCSSTransition,
+  Input,
+  createIntervalEffect,
+  renderSwitchThumb,
+  List,
+  icssCol,
+  icssRow,
+  Radio,
+  RenderFactory,
+  generatePopoverPlugins,
+  withHover,
+  Tabs,
+  PropContext,
+  ValidProps,
+  useKitProps,
+  createPlugin,
+  PluginObj,
+  Switch,
+  Text,
+  cssOpacity,
+} from '../../packages/pivkit'
+import { Popover } from '../../packages/pivkit/components/Popover'
 
 export default function PlaygroundPage() {
   return (
     <Piv>
-      <PlaygoundList />
+      <ComponentSpecList />
     </Piv>
   )
 }
 
-function PlaygoundList() {
+function ComponentSpecList() {
   return (
     <Box
       icss={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
-        padding: '16px 32px 0',
-        gap: '16px',
+        padding: '32px',
+        gap: '4vw',
       }}
     >
       <ExamplePanel name='IntervalCircle'>
@@ -77,10 +91,50 @@ function PlaygoundList() {
       <ExamplePanel name='Radio'>
         <RadioExample />
       </ExamplePanel>
+
+      <ExamplePanel name='Popover'>
+        <PopoverExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='ComponentFactory'>
+        <ComponentFactoryExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='upload'>
+        <UploadExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='Tabs'>
+        <TabsExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='PropContext + ControllerContext'>
+        <PropContextExample />
+      </ExamplePanel>
+      {/* <Foo /> */}
     </Box>
   )
 }
 
+function Foo() {
+  const [count, setCount] = createSignal(0)
+  createEffect(() => {
+    const timeoutId = setInterval(() => {
+      setCount((c) => c + 1)
+    }, 1000)
+    onCleanup(() => clearInterval(timeoutId))
+  })
+  return (
+    <Piv
+      icss={[
+        { width: count() * 6 + 'px', background: 'dodgerblue' },
+        (console.log('why render?, should can only render once'), {}),
+      ]}
+    >
+      {count()}
+    </Piv>
+  )
+}
 /**
  *
  * @todo 1. fade out when come to the end, not play track back.
@@ -115,13 +169,9 @@ function ModalExample() {
   return (
     <>
       <Button onClick={() => modalController.toggle?.()}>Open</Button>
-      <Modal id='example-modal'>
-        Modal1
-      </Modal>
+      <Modal id='example-modal'>Modal1</Modal>
       <Button onClick={() => modalController2.toggle?.()}>Open</Button>
-      <Modal id='example-modal2'>
-        Modal2 + {couter()}
-      </Modal>
+      <Modal id='example-modal2'>Modal2 + {couter()}</Modal>
     </>
   )
 }
@@ -134,15 +184,9 @@ function CSSTransitionExample() {
     show,
     onAfterEnter() {},
     onBeforeEnter() {},
-    fromProps: { icss: { width: '100px' } },
-    toProps: { icss: { width: '200px' } },
+    fromProps: { icss: { height: '100px' } },
+    toProps: { icss: { height: '200px' } },
   })
-
-  // createEffect(() => {
-  //   // @ts-ignore
-  //   console.log('transitionProps: ', transitionProps().icss?.width)
-  //   console.log('show: ', show())
-  // })
 
   return (
     <>
@@ -150,7 +194,7 @@ function CSSTransitionExample() {
       <Piv
         domRef={refSetter}
         shadowProps={transitionProps()}
-        icss={{ backgroundColor: 'dodgerblue', height: '200px', display: 'grid', placeItems: 'center' }}
+        icss={{ backgroundColor: 'dodgerblue', height: '120px', display: 'grid', placeItems: 'center' }}
       >
         <Box>hello</Box>
       </Piv>
@@ -275,25 +319,211 @@ function ListExample() {
   })
   return (
     <List items={data} initRenderCount={10} icss={[icssCol({ gap: '16px' }), { height: '30dvh' }]}>
-      {(d, idx) => {
-        console.count(`render item from <Playground>, ${d.name}, ${d.count}`)
-        return (
-          <Box icss={[icssRow({ gap: '8px' }), { background: '#0001', width: '100%' }]}>
-            <Text>{d.name}</Text>
-            <Text>{d.count + increaseCount()}</Text>
-          </Box>
-        )
-      }}
+      {(d, idx) => (
+        <Box icss={[icssRow, { background: '#0001', width: '100%' }]}>
+          <Text>{d.name}</Text>
+          <Text>{d.count + increaseCount()}</Text>
+        </Box>
+      )}
     </List>
   )
 }
 
 function RadioExample() {
   const [checked, setChecked] = createSignal(false)
-
   createIntervalEffect(() => {
     setChecked((b) => !b)
   }, 1200)
-
   return <Radio option='gender' isChecked={checked()} />
 }
+
+function ComponentFactoryExample() {
+  const data = {
+    isOpen: false,
+    text: 'hello world',
+  }
+  const [store, setStore] = createStore(data)
+  createEffect(() => {
+    setInterval(() => {
+      setStore('isOpen', (b) => !b)
+    }, 1000)
+  })
+  return (
+    <>
+      <RenderFactory
+        data={store}
+        widgetCreateRule={(value) =>
+          switchCase<any, any>(value, [
+            [(v) => typeof v === 'boolean', (storeValue: Accessor<boolean>) => <Switch isChecked={storeValue} />],
+            [(v) => typeof v === 'string', (storeValue: Accessor<string>) => <Input value={storeValue} />],
+          ]) ?? value
+        }
+      />
+    </>
+  )
+}
+
+const { popoverButtonPlugin, popoverPanelPlugin } = generatePopoverPlugins({ placement: 'top' })
+
+function PopoverExample() {
+  const {
+    plugin,
+    state: { isHover },
+  } = withHover({ onHover: () => console.log('hover') })
+  createEffect(() => {
+    console.log('isHover: ', isHover())
+  })
+  return (
+    <>
+      <Button plugin={[popoverButtonPlugin, plugin]}>💬popover</Button>
+      <Box plugin={popoverPanelPlugin} icss={{ border: 'solid', minHeight: '5em' }}>
+        hello world
+      </Box>
+    </>
+  )
+}
+function PopoverExample2() {
+  return (
+    <Popover>
+      <Popover.Trigger>
+        <Button>💬popover</Button>
+      </Popover.Trigger>
+      <Popover.Content>
+        <Box icss={{ border: 'solid', minHeight: '5em' }}>hello world</Box>
+      </Popover.Content>
+    </Popover>
+  )
+}
+
+function TabsExample() {
+  return (
+    <Tabs>
+      <Tabs.List>
+        <Tabs.Tab>{({ selected }) => (selected() ? '🟢' : '🔴')} Tab1</Tabs.Tab>
+        <Tabs.Tab>{({ selected }) => (selected() ? '🟢' : '🔴')} Tab2</Tabs.Tab>
+        <Tabs.Tab>{({ selected }) => (selected() ? '🟢' : '🔴')} Tab3</Tabs.Tab>
+      </Tabs.List>
+    </Tabs>
+  )
+}
+
+function PropContextExample() {
+  return (
+    <PropContext additionalProps={{ icss: { paddingInline: '24px' } }}>
+      <Box icss={{ border: 'solid' }}>
+        <Piv innerController={{ say: () => 'ControllerContext should can receive the message' }}>
+          <Box
+            merge:onClick={() => {
+              console.log('click PropContext description')
+            }}
+            icss={{ cursor: 'pointer', border: 'dashed', borderColor: cssOpacity('currentcolor', 0.6), margin: '8px' }}
+          >
+            PropContext can pass to deep nested components
+          </Box>
+          <ControllerContextExample />
+        </Piv>
+      </Box>
+    </PropContext>
+  )
+}
+function ControllerContextExample(kitProps: ValidProps) {
+  const { contextController } = useKitProps(kitProps, { name: 'ControllerContextExample' })
+  const { say } = contextController as { say: () => string }
+  return <Box>{say?.()}</Box>
+}
+
+function UploadExample() {
+  const { buttonPlugin } = useHTMLUpload()
+  return (
+    <>
+      <Button plugin={[buttonPlugin]}>picker</Button>
+    </>
+  )
+}
+
+/**
+ * hook for upload file by html input
+ */
+function useHTMLUpload() {
+  const buttonPlugin = createPlugin(() => () => ({
+    onClick: ({ el }) => {
+      const images = pickImages()
+      postToSercer(images)
+    },
+  }))
+  return { buttonPlugin }
+
+  /**
+   * utils
+   */
+  function pickImages() {
+    const fileHandles = showOpenFilePicker({
+      types: [
+        {
+          description: 'Images',
+          accept: {
+            'image/*': ['.png', '.gif', '.jpeg', '.jpg'],
+          },
+        },
+      ],
+      multiple: true,
+    })
+    return fileHandles
+  }
+
+  /**
+   * utils
+   */
+  function postToSercer(fileHandles: Promise<FileSystemFileHandle[]>) {
+    postFiles(getFilesFromHandles(fileHandles))
+  }
+}
+
+function postFiles(files: MayPromise<File[]>) {
+  Promise.resolve(files).then((files) => {
+    const data = files.reduce((formData, file, idx) => {
+      formData.append(`image.${idx}`, file)
+      return formData
+    }, new FormData())
+
+    fetch('api/upload', { method: 'POST', body: data })
+  })
+}
+
+/**
+ * since dom [FileSystemFileHandler](https://developer.mozilla.org/en-US/docs/Web/API/FileSystemFileHandle) is complicated, so provide a helper function to get file from it
+ */
+async function getFilesFromHandles(fileHandles: MayPromise<FileSystemFileHandle[]>) {
+  const handles = await Promise.resolve(fileHandles)
+  return Promise.all(handles.map((handle) => handle.getFile()))
+}
+
+/**
+ * for specific tab item
+ */
+type TabPluginOption = {
+  value: string
+}
+
+/**
+ * make some element to be gouped like: tabs
+ * ui kit creator hook
+ */
+function useTabs() {
+  const [activeTab, setActiveTab] = createSignal(0)
+
+  const TabsContext = createContext()
+
+  function TabsContextProvider(props: { children?: JSXElement }) {
+    return <TabsContext.Provider value={{ activeTab }}>{props.children}</TabsContext.Provider>
+  }
+
+  const tabPlugin = createPlugin<TabPluginOption>(({ value }) => () => ({ onClick: ({ el }) => {} }))
+
+  return { TabsContextProvider }
+}
+
+/**
+ * should can strightforward get plugin's core function\state\etc.
+ */
+function usePlugin(plugin: PluginObj<object>) {}
