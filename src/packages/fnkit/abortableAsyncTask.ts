@@ -10,7 +10,7 @@ export type AbortableTask<T> = {
  * make it  possiable to abort inside the progress of task
  * inner use basic subscribable
  */
-export function createAbortableAsyncTask<T>(
+export function abortableAsyncTask<T>(
   task: (utils: { resolve: (value: T | PromiseLike<T>) => void; aborted: () => boolean }) => void,
 ): AbortableTask<T> {
   let isTaskAborted = false

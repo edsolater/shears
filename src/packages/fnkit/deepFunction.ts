@@ -27,7 +27,7 @@ const execSymbol = Symbol('exec')
  * creator
  * will auto-merge parameters according to their index
  */
-export function createDeepFunction<F extends AnyFn, P extends object | undefined>(
+export function deepFunction<F extends AnyFn, P extends object | undefined>(
   coreFn: F,
   obj?: P
 ): P extends undefined ? DeepFunction<F> : DeepFunction<F> & P {

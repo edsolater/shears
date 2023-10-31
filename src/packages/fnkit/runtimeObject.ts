@@ -24,7 +24,7 @@ const mapClearRegistry = new FinalizationRegistry(clearMap)
  *
  * obj.b.then(console.log) // 'hello', 2
  */
-function createRuntimeObj<T extends object>(objWithRule: T): GetAfterRunObj<T> {
+export function runtimeObject<T extends object>(objWithRule: T): GetAfterRunObj<T> {
   const resultObject = new Map()
   const parsedObj = new Proxy(objWithRule, {
     get(target, p, receiver) {
@@ -39,17 +39,3 @@ function createRuntimeObj<T extends object>(objWithRule: T): GetAfterRunObj<T> {
   mapClearRegistry.register(parsedObj, resultObject)
   return parsedObj
 }
-
-const obj = createRuntimeObj({
-  a: 1,
-  b: () => {
-    console.log('hello')
-    return 2
-  },
-  c: () => {
-    console.log('hi')
-    return 3
-  },
-})
-
-obj.b.then(console.log) // 'hello', 2

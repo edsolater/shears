@@ -14,7 +14,7 @@ export type SettingsFunction<F extends AnyFn = AnyFn> = F & {
  * creator
  * can add parameter without invoke
  */
-export function createSettingsFunction<F extends AnyFn>(
+export function settingsFunction<F extends AnyFn>(
   coreFn: F,
   settings?: { defaultParams?: any[]; label?: symbol }
 ): SettingsFunction<F> {

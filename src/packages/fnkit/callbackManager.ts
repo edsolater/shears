@@ -6,7 +6,7 @@ import { AnyFn } from '@edsolater/fnkit'
  * so, wrap it into a function is better
  */
 
-export function createCallbackManager<CB extends AnyFn>() {
+export function callbackManager<CB extends AnyFn>() {
   const registedCallbacks: Set<CB> = new Set()
 
   function registerCallback(cb: CB) {

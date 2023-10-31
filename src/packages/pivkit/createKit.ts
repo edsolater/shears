@@ -1,6 +1,6 @@
 import { hasProperty, MayArray, MayDeepArray, mergeObjects, pipe } from '@edsolater/fnkit'
 import { AccessifyProps, DeAccessifyProps, useAccessifiedProps } from '.'
-import { createOnRunObject, LazyLoadObj } from '../fnkit'
+import { runtimeObjectFromAccess, LazyLoadObj } from '../fnkit'
 import { createUUID, UUID } from './hooks/utils/createUUID'
 import { getControllerObjFromControllerContext } from './piv/ControllerContext'
 import { registerControllerInCreateKit } from './piv/hooks/useComponentController'
@@ -128,7 +128,7 @@ function getParsedKitProps<
   props: any,
   options?: KitPropsOptions<RawProps, Controller, DefaultProps>,
 ): ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
-  const proxyController = options?.controller ? createOnRunObject(() => options.controller!(mergedGettersProps)) : {}
+  const proxyController = options?.controller ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps)) : {}
   const defaultedProps = options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props
   // merge kit props
   const mergedGettersProps = pipe(
@@ -205,7 +205,7 @@ export function useKitProps<
 
   // handle ControllerContext
   // wrap controllerContext based on props:innerController is only in `<Piv>`
-  const mergedContextController = createOnRunObject(getControllerObjFromControllerContext)
+  const mergedContextController = runtimeObjectFromAccess(getControllerObjFromControllerContext)
 
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: options?.name ?? '' })
