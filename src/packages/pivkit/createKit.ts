@@ -128,7 +128,9 @@ function getParsedKitProps<
   props: any,
   options?: KitPropsOptions<RawProps, Controller, DefaultProps>,
 ): ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
-  const proxyController = options?.controller ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps)) : {}
+  const proxyController = options?.controller
+    ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps))
+    : {}
   const defaultedProps = options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props
   // merge kit props
   const mergedGettersProps = pipe(
@@ -209,7 +211,7 @@ export function useKitProps<
 
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: options?.name ?? '' })
-  const propContextParsedProps = contextProps ? mergeProps(contextProps, kitProps) : kitProps
+  const propContextParsedProps = contextProps ? mergeProps(kitProps, contextProps) : kitProps
 
   // if (propContextParsedProps.children === 'PropContext can pass to deep nested components') {
   //   console.log('kitProps raw: ', { ...propContextParsedProps })

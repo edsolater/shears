@@ -94,7 +94,7 @@ function getNativeHTMLPropsFromParsedPivProp(props: any, controller: ValidContro
 export function parsePivProps(rawProps: PivProps<any>): any {
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: 'Piv' })
-  const mergedContextProps = contextProps ? mergeProps(contextProps, rawProps) : rawProps
+  const mergedContextProps = contextProps ? mergeProps(rawProps, contextProps) : rawProps
 
   const { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } =
     getPropsInfoOfRawPivProps(mergedContextProps)

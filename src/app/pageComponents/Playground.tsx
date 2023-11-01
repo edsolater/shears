@@ -365,7 +365,7 @@ function ComponentFactoryExample() {
 
 const { popoverButtonPlugin, popoverPanelPlugin } = generatePopoverPlugins({ placement: 'top' })
 
-function PopoverExample() {
+function PopoverExample1() {
   const {
     plugin,
     state: { isHover },
@@ -382,7 +382,7 @@ function PopoverExample() {
     </>
   )
 }
-function PopoverExample2() {
+function PopoverExample() {
   return (
     <Popover>
       <Popover.Trigger>

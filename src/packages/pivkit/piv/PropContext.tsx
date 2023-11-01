@@ -3,7 +3,7 @@
  * this component is related to useKitProps
  */
 import { createContext, useContext } from 'solid-js'
-import { PivChild, PivProps, ValidProps, mergeProps } from '.'
+import { PivChild, PivProps, ValidProps, mergeProps, omit } from '.'
 import { Fragnment } from './Fragnment'
 
 /** add props is implied by solidjs context */
@@ -11,8 +11,7 @@ const _PropContext = createContext<{ props: unknown; when?: PropContextWhen }[]>
 
 type PropContextWhen = (info: { componentName: string }) => boolean
 
-/** 
- * 💩 BUG core bug point is in <PropContext>
+/**
  * `<PropContext>` is **Context** , not `<AddProps>`
  */
 export function PropContext<Props extends ValidProps = PivProps>(props: {
@@ -22,7 +21,10 @@ export function PropContext<Props extends ValidProps = PivProps>(props: {
   children?: PivChild
 }) {
   const parentPropContext = useContext(_PropContext) ?? []
-  const selfPropContextValue = parentPropContext.concat({ props: props.additionalProps, when: props.when })
+  const selfPropContextValue = parentPropContext.concat({
+    props: props.additionalProps,
+    when: props.when,
+  })
   return (
     <_PropContext.Provider value={selfPropContextValue}>
       <Fragnment>{props.children}</Fragnment>
