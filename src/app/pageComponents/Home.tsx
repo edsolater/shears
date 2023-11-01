@@ -3,7 +3,7 @@ import { store } from '../stores/data/store'
 import { useWalletStore } from '../stores/wallet/store'
 import { getSize } from '../utils/dataTransmit/getItems'
 
-export default function Home() {
+export default function HomePage() {
   const walletStore = useWalletStore()
   return (
     <div>

@@ -2,7 +2,7 @@ import { createMemo } from 'solid-js'
 import { Collapse, List, Piv, createRef, useElementSize } from '../../packages/pivkit'
 import { createStorePropertySignal, setStore, store } from '../stores/data/store'
 
-export default function PairsPanel() {
+export default function PairsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()

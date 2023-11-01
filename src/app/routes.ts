@@ -1,6 +1,11 @@
 import { RouteDefinition, useLocation, useMatch } from '@solidjs/router'
 import { lazy } from 'solid-js'
 import { createLazyMemo } from '../packages/pivkit'
+import PlaygroundPage from './pageComponents/Playground'
+import FarmPage from './pageComponents/Farms'
+import PairsPage from './pageComponents/Pairs'
+import SwapPage from './pageComponents/Swap'
+import HomePage from './pageComponents/Home'
 
 export const pairsRoutePath = '/pools'
 export const homeRoutePath = '/'
@@ -16,27 +21,12 @@ export const routePath = {
   swap: swapRoutePath,
 }
 
-const PageComponentHome = import('./pageComponents/Home')
-const PageComponentSwap = import('./pageComponents/Swap')
-const PageComponentPairs = import('./pageComponents/Pairs')
-const PageComponentFarms = import('./pageComponents/Farms')
-const PageComponentPlayground = import('./pageComponents/Playground')
-
-// preload all pages
-Promise.allSettled([
-  PageComponentHome,
-  PageComponentSwap,
-  PageComponentPairs,
-  PageComponentFarms,
-  PageComponentPlayground,
-])
-
 export const routes: RouteDefinition[] = [
-  { path: routePath.home, component: lazy(() => PageComponentHome) },
-  { path: routePath.swap, component: lazy(() => PageComponentSwap) },
-  { path: routePath.pools, component: lazy(() => PageComponentPairs) },
-  { path: routePath.farms, component: lazy(() => PageComponentFarms) },
-  { path: routePath.playground, component: lazy(() => PageComponentPlayground) },
+  { path: routePath.home, component: HomePage },
+  { path: routePath.swap, component: SwapPage },
+  { path: routePath.pools, component: PairsPage },
+  { path: routePath.farms, component: FarmPage },
+  { path: routePath.playground, component: PlaygroundPage },
 ]
 
 /** usually used in side-menu  */
