@@ -90,6 +90,7 @@ export type KitPropsOptions<
   DefaultProps extends Partial<KitProps> = {},
 > = {
   name?: string
+
   controller?: (
     props: ParsedKitProps<KitProps>,
   ) => any /* use any to avoid this type check (type check means type infer) */
@@ -149,7 +150,12 @@ function getParsedKitProps<
     // inject controller (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
     (props) => mergeProps(props, { innerController: proxyController } as PivProps),
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
-    (props) => handleMergifyOnCallbackProps(props),
+    (props) => {
+      if (options?.name === 'Button'){
+        console.log('[getParsedKitProps]', props.class, 'shadowProps' in props)
+      }
+      return handleMergifyOnCallbackProps(props)
+    },
     // parse plugin of **options**
     (props) =>
       handlePluginProps(
@@ -161,6 +167,9 @@ function getParsedKitProps<
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
     (props) => handlePluginProps(props), // outside-props-run-time // TODO: assume can't be promisify
   ) as any /* too difficult to type */
+  if (options?.name === 'Button') {
+   console.log('[class]',mergedGettersProps.class) 
+  }
 
   // load controller
   if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
@@ -214,6 +223,9 @@ export function useKitProps<
   const contextProps = getPropsFromPropContextContext({ componentName: options?.name ?? '' })
   const addPropsContextProps = getPropsFromAddPropContext({ componentName: options?.name ?? '' })
   const propContextParsedProps = mergeProps(kitProps, contextProps, addPropsContextProps)
+  if (propContextParsedProps && options?.name === 'Button') {
+    console.log('[useKitProps] addPropsContextProps: ', {...propContextParsedProps.shadowProps})
+  }
 
   // if (propContextParsedProps.children === 'PropContext can pass to deep nested components') {
   //   console.log('kitProps raw: ', { ...propContextParsedProps })
@@ -223,6 +235,9 @@ export function useKitProps<
     propContextParsedProps,
     mergeObjects({ controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) }, options),
   ) as any /* too difficult to type, no need to check */
+  if (composedProps && options?.name === 'Button') {
+    console.log('[useKitProps]2 addPropsContextProps: ', composedProps.class)
+  }
   const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
   return {
     props: composedProps,

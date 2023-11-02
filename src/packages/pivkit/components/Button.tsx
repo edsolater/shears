@@ -89,6 +89,7 @@ export function Button(kitProps: ButtonKitProps) {
     rawProps,
     mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
   )
+  console.log('[Button] props.class: ', kitProps.class)
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>

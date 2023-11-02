@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
-import { AddProps, PropContext } from '../../piv'
+import { AddProps, Fragnment, PropContext } from '../../piv'
 import { PopoverPluginOptions, generatePopoverPlugins } from './generatePopoverPlugins'
 
 export * from './generatePopoverPlugins'
@@ -11,11 +11,11 @@ const PopoverContext = createContext<Partial<ReturnType<typeof generatePopoverPl
 
 /** will render nothing */
 export function Popover(kitProps: KitProps<PopoverProps>) {
-  const { shadowProps, props } = useKitProps(kitProps, { name: 'Popover' })
+  const { props } = useKitProps(kitProps, { name: 'Popover' })
   const { popoverButtonPlugin, popoverPanelPlugin } = generatePopoverPlugins({ placement: props.placement ?? 'top' })
   return (
     <PopoverContext.Provider value={{ popoverButtonPlugin, popoverPanelPlugin }}>
-      <PropContext shadowProps={shadowProps}>{props.children}</PropContext>
+      <Fragnment>{props.children}</Fragnment>
     </PopoverContext.Provider>
   )
 }
