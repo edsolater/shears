@@ -1,43 +1,42 @@
 import { MayPromise } from '@edsolater/fnkit'
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import { switchCase } from '../../packages/fnkit'
+import {
+  AddProps,
+  Box,
+  Button,
+  Drawer,
+  DrawerController,
+  Input,
+  List,
+  Modal,
+  ModalController,
+  Piv,
+  PluginObj,
+  Radio,
+  RenderFactory,
+  Switch,
+  Tabs,
+  Text,
+  ValidProps,
+  createIncresingAccessor,
+  createIntervalEffect,
+  createPlugin,
+  cssOpacity,
+  generatePopoverPlugins,
+  icssCol,
+  icssRow,
+  renderSwitchThumb,
+  useCSSTransition,
+  useControllerByID,
+  useKitProps,
+  withHover
+} from '../../packages/pivkit'
+import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { switchCase } from '../../packages/fnkit'
-import {
-  Piv,
-  Box,
-  useControllerByID,
-  DrawerController,
-  Button,
-  Drawer,
-  ModalController,
-  createIncresingAccessor,
-  Modal,
-  useCSSTransition,
-  Input,
-  createIntervalEffect,
-  renderSwitchThumb,
-  List,
-  icssCol,
-  icssRow,
-  Radio,
-  RenderFactory,
-  generatePopoverPlugins,
-  withHover,
-  Tabs,
-  PropContext,
-  ValidProps,
-  useKitProps,
-  createPlugin,
-  PluginObj,
-  Switch,
-  Text,
-  cssOpacity,
-  AddProps,
-} from '../../packages/pivkit'
-import { Popover } from '../../packages/pivkit/components/Popover'
 
 export default function PlaygroundPage() {
   return (
