@@ -165,7 +165,7 @@ function getParsedKitProps<
       ), // defined-time
     (props) => (hasProperty(options, 'name') ? mergeProps(props, { class: options!.name }) : props), // defined-time
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
-    (props) => handlePluginProps(props), // outside-props-run-time // TODO: assume can't be promisify
+    (props) => handlePluginProps(props), // outside-props-run-time // TODO: assume can't be promisify  //<-- bug is HERE!!, after this, class is doubled
   ) as any /* too difficult to type */
   if (options?.name === 'Button') {
    console.log('[class]',mergedGettersProps.class) 
