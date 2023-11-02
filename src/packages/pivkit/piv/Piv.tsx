@@ -10,7 +10,7 @@ type Boollike = any
 
 
 
-export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown> {
+export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController> {
   /** if is settled and is flase , only it's children will render */
   if?: Boollike
   /** if is settled and is flase , only it's children will render */
@@ -144,7 +144,7 @@ export const pivPropsNames = [
   'render:lastChild',
 ] satisfies (keyof PivProps<any>)[]
 
-export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController | unknown = unknown>(
+export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController>(
   kitProps: PivProps<TagName, Controller>
 ) => {
   const props = pipe(

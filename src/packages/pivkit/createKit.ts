@@ -121,7 +121,7 @@ export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin
  */
 function getParsedKitProps<
   RawProps extends ValidProps,
-  Controller extends ValidController | unknown = unknown,
+  Controller extends ValidController = ValidController,
   DefaultProps extends Partial<RawProps> = {},
 >(
   // too difficult to type here
@@ -189,7 +189,7 @@ export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>
 // TODO: should has controllerContext to accept controllers
 export function useKitProps<
   P extends ValidProps,
-  Controller extends ValidController | unknown = unknown,
+  Controller extends ValidController = ValidController,
   DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {},
 >(
   kitProps: P,
@@ -253,7 +253,7 @@ function createComponentController<RawProps extends ValidProps, Controller exten
 
 export type DeKitProps<
   P extends ValidProps,
-  Controller extends ValidController | unknown = unknown,
+  Controller extends ValidController = ValidController,
   DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {},
 > = ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
   Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>

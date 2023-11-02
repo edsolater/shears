@@ -15,7 +15,7 @@ const anonymousComponentControllerContextStore = new WeakerSet<ControllerContext
  * will auto-create
  * same componentName will output same context
  */
-export function getControllerContext(name?: ComponentName) {
+function getControllerContext(name?: ComponentName) {
   if (name) {
     if (controllerContextStore.has(name)) {
       return controllerContextStore.get(name)!
@@ -50,7 +50,7 @@ export function getControllerObjFromControllerContext() {
 }
 
 /** should handle this only in <Piv>
- * 🤔 maybe it's a bad idea?
+ * 🤔 maybe it's a bad idea? for it will bring new complication
  */
 export function handlePropsInnerController(props: ValidProps, componentName?: string): ValidProps {
   const inputController = props.innerController as PivProps['innerController']
@@ -70,7 +70,7 @@ export function handlePropsInnerController(props: ValidProps, componentName?: st
 }
 
 /**
- * **Hook** get target component's controller\
+ * **Hook**: get target component's controller\
  * use it you may know the stucture, it will cause difficult
  * @param componentName component name (e.g. 'Drawer')
  */
