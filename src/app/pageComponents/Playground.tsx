@@ -409,7 +409,7 @@ function TabsExample() {
 
 function PropContextExample() {
   return (
-    <PropContext additionalProps={{ icss: { paddingInline: '24px' } }}>
+    <PropContext icss={{ paddingInline: '24px' }}>
       <Box icss={{ border: 'solid' }}>
         <Piv innerController={{ say: () => 'ControllerContext should can receive the message' }}>
           <Box

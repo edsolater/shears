@@ -34,7 +34,7 @@ export function getControllerContext(name?: ComponentName) {
 const getAllControllerContext = () => {
   const allIterators = contactIterableIterators(
     controllerContextStore.values(),
-    anonymousComponentControllerContextStore.values()
+    anonymousComponentControllerContextStore.values(),
   )
   return Array.from(allIterators)
 }
@@ -49,7 +49,9 @@ export function getControllerObjFromControllerContext() {
   return mergedController
 }
 
-/** should handle this only in <Piv> */
+/** should handle this only in <Piv>
+ * 🤔 maybe it's a bad idea?
+ */
 export function handlePropsInnerController(props: ValidProps, componentName?: string): ValidProps {
   const inputController = props.innerController as PivProps['innerController']
   // only check props not props.shadowProps

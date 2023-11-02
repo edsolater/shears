@@ -15,7 +15,7 @@ export function Popover(kitProps: KitProps<PopoverProps>) {
   const { popoverButtonPlugin, popoverPanelPlugin } = generatePopoverPlugins({ placement: props.placement ?? 'top' })
   return (
     <PopoverContext.Provider value={{ popoverButtonPlugin, popoverPanelPlugin }}>
-      <PropContext additionalProps={{ shadowProps }}>{props.children}</PropContext>
+      <PropContext shadowProps={shadowProps}>{props.children}</PropContext>
     </PopoverContext.Provider>
   )
 }
@@ -24,16 +24,18 @@ export function Popover(kitProps: KitProps<PopoverProps>) {
 function PopoverTrigger(kitProps: KitProps) {
   const { shadowProps, props } = useKitProps(kitProps, { name: 'PopoverTrigger' })
   const { popoverButtonPlugin } = useContext(PopoverContext)
-  const additionalProps = mergeProps(shadowProps, { plugin: popoverButtonPlugin })
-  return <PropContext additionalProps={additionalProps}>{props.children}</PropContext>
+  return (
+    <PropContext shadowProps={shadowProps} plugin={popoverButtonPlugin}>
+      {props.children}
+    </PropContext>
+  )
 }
 
 /** will render nothing */
 function PopoverContent(kitProps: KitProps) {
   const { shadowProps, props } = useKitProps(kitProps, { name: 'PopoverContent' })
   const { popoverPanelPlugin } = useContext(PopoverContext)
-  const additionalProps = mergeProps(shadowProps, { plugin: popoverPanelPlugin })
-  return <PropContext additionalProps={additionalProps}>{props.children}</PropContext>
+  return <PropContext shadowProps={shadowProps} plugin={popoverPanelPlugin}>{props.children}</PropContext>
 }
 
 Popover.Trigger = PopoverTrigger
