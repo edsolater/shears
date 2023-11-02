@@ -14,6 +14,7 @@ import { mergeProps, omit } from '../utils'
 import { PivProps } from '../Piv'
 import { getPropsFromPropContextContext } from '../PropContext'
 import { handleMergifyOnCallbackProps } from './mergifyProps'
+import { getPropsFromAddPropContext } from '../AddProps'
 
 export type NativeProps = ReturnType<typeof parsePivProps>['props']
 
@@ -94,7 +95,8 @@ function getNativeHTMLPropsFromParsedPivProp(props: any, controller: ValidContro
 export function parsePivProps(rawProps: PivProps<any>): any {
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: 'Piv' })
-  const mergedContextProps = contextProps ? mergeProps(rawProps, contextProps) : rawProps
+  const addPropsContextProps = getPropsFromAddPropContext({ componentName: 'Piv' })
+  const mergedContextProps = mergeProps(rawProps, contextProps, addPropsContextProps)
 
   const { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } =
     getPropsInfoOfRawPivProps(mergedContextProps)

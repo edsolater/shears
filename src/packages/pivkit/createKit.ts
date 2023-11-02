@@ -15,6 +15,7 @@ import { HTMLTag, ValidController, ValidProps } from './piv/typeTools'
 import { mergeProps } from './piv/utils'
 import { AddDefaultPivProps, addDefaultPivProps } from './piv/utils/addDefaultProps'
 import { omit } from './piv/utils/omit'
+import { getPropsFromAddPropContext } from './piv/AddProps'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -211,7 +212,8 @@ export function useKitProps<
 
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: options?.name ?? '' })
-  const propContextParsedProps = contextProps ? mergeProps(kitProps, contextProps) : kitProps
+  const addPropsContextProps = getPropsFromAddPropContext({ componentName: options?.name ?? '' })
+  const propContextParsedProps = mergeProps(kitProps, contextProps, addPropsContextProps)
 
   // if (propContextParsedProps.children === 'PropContext can pass to deep nested components') {
   //   console.log('kitProps raw: ', { ...propContextParsedProps })

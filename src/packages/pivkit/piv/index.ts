@@ -1,7 +1,9 @@
-export * from './ControllerContext'
-export * from './Fragnment'
 export * from './Piv'
+export * from './Fragnment'
+
 export * from './PropContext'
+export * from './AddProps'
+export * from './ControllerContext'
 
 export * from '../createKit'
 export * from './hooks'

@@ -35,6 +35,7 @@ import {
   Switch,
   Text,
   cssOpacity,
+  AddProps,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 
@@ -409,7 +410,7 @@ function TabsExample() {
 
 function PropContextExample() {
   return (
-    <PropContext icss={{ paddingInline: '24px' }}>
+    <AddProps icss={{ paddingInline: '24px' }}>
       <Box icss={{ border: 'solid' }}>
         <Piv innerController={{ say: () => 'ControllerContext should can receive the message' }}>
           <Box
@@ -423,7 +424,7 @@ function PropContextExample() {
           <ControllerContextExample />
         </Piv>
       </Box>
-    </PropContext>
+    </AddProps>
   )
 }
 function ControllerContextExample(kitProps: ValidProps) {

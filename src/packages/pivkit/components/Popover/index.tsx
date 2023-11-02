@@ -1,6 +1,6 @@
-import { createContext, createEffect, useContext } from 'solid-js'
+import { createContext, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
-import { PropContext, mergeProps, omit } from '../../piv'
+import { AddProps, PropContext } from '../../piv'
 import { PopoverPluginOptions, generatePopoverPlugins } from './generatePopoverPlugins'
 
 export * from './generatePopoverPlugins'
@@ -25,9 +25,9 @@ function PopoverTrigger(kitProps: KitProps) {
   const { shadowProps, props } = useKitProps(kitProps, { name: 'PopoverTrigger' })
   const { popoverButtonPlugin } = useContext(PopoverContext)
   return (
-    <PropContext shadowProps={shadowProps} plugin={popoverButtonPlugin}>
+    <AddProps shadowProps={shadowProps} plugin={popoverButtonPlugin}>
       {props.children}
-    </PropContext>
+    </AddProps>
   )
 }
 
@@ -35,7 +35,11 @@ function PopoverTrigger(kitProps: KitProps) {
 function PopoverContent(kitProps: KitProps) {
   const { shadowProps, props } = useKitProps(kitProps, { name: 'PopoverContent' })
   const { popoverPanelPlugin } = useContext(PopoverContext)
-  return <PropContext shadowProps={shadowProps} plugin={popoverPanelPlugin}>{props.children}</PropContext>
+  return (
+    <AddProps shadowProps={shadowProps} plugin={popoverPanelPlugin}>
+      {props.children}
+    </AddProps>
+  )
 }
 
 Popover.Trigger = PopoverTrigger

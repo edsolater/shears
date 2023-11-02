@@ -7,32 +7,34 @@ import { PivChild, PivProps, ValidProps, mergeProps, omit } from '.'
 import { Fragnment } from './Fragnment'
 
 /** set this to true, means addProps has already comsumed, no need subchildren to consume again */
-/** 🤔 may be just set Context value to empty is enough? */
 const addPropConsumed = Symbol('addPropConsumed')
 
 /** add props is implied by solidjs context */
-const _PropContext = createContext<{ props: unknown }[]>()
+const AddPropContext = createContext<ValidProps[]>()
 
 /**
  * `<PropContext>` is **Context** , not `<AddProps>` \
  * it will add props to all children components
  */
-export function PropContext<Props extends ValidProps = PivProps>(props: Props) {
-  const parentPropContext = useContext(_PropContext) ?? []
-  const selfPropContextValue = parentPropContext.concat({
-    props: omit(props, 'children'), // PropContext should not change inners children
-  })
+export function AddProps<Props extends ValidProps = PivProps>(props: Props) {
+  const parentAddProp = useContext(AddPropContext)
+  const selfContextValue = mergeProps(
+    parentAddProp && parentAddProp[addPropConsumed] != true ? parentAddProp : undefined,
+    omit(props, 'children'),
+  )
   return (
-    <_PropContext.Provider value={selfPropContextValue}>
+    <AddPropContext.Provider value={selfContextValue}>
       <Fragnment>{props.children}</Fragnment>
-    </_PropContext.Provider>
+    </AddPropContext.Provider>
   )
 }
 
 /** add additional prop through solidjs context */
-export function getPropsFromPropContextContext(componentInfo: { componentName: string }): ValidProps | undefined {
-  const contextParent = useContext(_PropContext)
-  if (!contextParent) return undefined
-  const allPropses = contextParent.map(({ props }) => props as ValidProps)
-  return mergeProps(...allPropses)
+export function getPropsFromAddPropContext(componentInfo: { componentName: string }): ValidProps | undefined {
+  const additionalProps = useContext(AddPropContext)
+  if (!additionalProps) return undefined
+  if (additionalProps[addPropConsumed] === true) return undefined
+  additionalProps[addPropConsumed] = true
+
+  return additionalProps
 }
