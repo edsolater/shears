@@ -63,6 +63,24 @@ export const calcPopupPanelLocation = ({
             left: '50%',
             transform: 'translateX(-50%)',
           }
+        : placement === 'bottom'
+        ? {
+            top: `${buttonHeight + popoverGap}px`,
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }
+        : placement === 'left'
+        ? {
+            right: `${buttonWidth + popoverGap}px`,
+            top: '50%',
+            transform: 'translateY(-50%)',
+          }
+        : placement === 'right'
+        ? {
+            left: `${buttonWidth + popoverGap}px`,
+            top: '50%',
+            transform: 'translateY(-50%)',
+          }
         : {},
     arrow: {},
   }

@@ -363,7 +363,7 @@ function ComponentFactoryExample() {
   )
 }
 
-const { popoverButtonPlugin, popoverPanelPlugin } = generatePopoverPlugins({ placement: 'top' })
+const { popoverButtonPlugin, popoverPanelPlugin, popoverWrapperPlugin } = generatePopoverPlugins({ placement: 'top' })
 
 function PopoverExample1() {
   const {
@@ -374,17 +374,17 @@ function PopoverExample1() {
     console.log('isHover: ', isHover())
   })
   return (
-    <>
+    <Box plugin={popoverWrapperPlugin}>
       <Button plugin={[popoverButtonPlugin, plugin]}>💬popover</Button>
       <Box plugin={popoverPanelPlugin} icss={{ border: 'solid', minHeight: '5em' }}>
         hello world
       </Box>
-    </>
+    </Box>
   )
 }
 function PopoverExample() {
   return (
-    <Popover>
+    <Popover placement={'right'}>
       <Popover.Trigger>
         <Button>💬popover</Button>
       </Popover.Trigger>
