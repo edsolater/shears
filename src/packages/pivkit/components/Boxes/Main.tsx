@@ -7,8 +7,8 @@ export type MainProps = BoxProps
 /**
  * just render nothing
  */
-export function Main(ktiProps: KitProps<MainProps>) {
-  const { shadowProps } = useKitProps(ktiProps, { name: 'Main' })
+export function Main(kitProps: KitProps<MainProps>) {
+  const { shadowProps } = useKitProps(kitProps, { name: 'Main' })
   /* ---------------------------------- props --------------------------------- */
   return <Box shadowProps={shadowProps} />
 }

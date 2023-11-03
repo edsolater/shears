@@ -9,8 +9,8 @@ export type GroupProps = BoxProps & {
 /**
  * just render nothing
  */
-export function Group(ktiProps: KitProps<GroupProps>) {
-  const { props, shadowProps } = useKitProps(ktiProps, { name: 'Group' })
+export function Group(kitProps: KitProps<GroupProps>) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'Group' })
   /* ---------------------------------- props --------------------------------- */
   return <Box class={props.name} shadowProps={shadowProps} />
 }
