@@ -102,3 +102,48 @@ export function usePopoverLocation({
 
   return { locationInfo: panelCoordinates, forceUpdateLocation: update, panelStyle }
 }
+
+export function usePopoverPanelLocation({
+  buttonDom,
+  panelDom,
+  isTriggerOn,
+  placement,
+  cornerOffset,
+  popoverGap,
+  viewportBoundaryInset,
+}: PopoverLocationHookOptions) {
+  const [panelCoordinates, setPanelCoordinates] = createSignal<PopupLocationInfo>()
+
+  const update = () => {
+    // must in some computer
+    if (!globalThis.document) return
+    const buttonElement = buttonDom()
+    const panelElement = panelDom()
+    if (!buttonElement || !panelElement) return
+
+    const coors = calcPopupPanelLocation({
+      buttonElement: buttonElement,
+      panelElement: panelElement,
+      placement,
+      cornerOffset,
+      popoverGap,
+      viewportBoundaryInset,
+    })
+    setPanelCoordinates(coors)
+  }
+
+  const panelStyle = createMemo(() => {
+    const baseStyle = {
+      position: 'absolute',
+    } as IStyle
+    const style = isTriggerOn()
+      ? ({
+          left: panelCoordinates()?.panelLeft + 'px',
+          top: panelCoordinates()?.panelTop + 'px',
+        } as IStyle)
+      : ({ visibility: 'hidden' } as IStyle)
+    return style
+  })
+
+  return { locationInfo: panelCoordinates, forceUpdateLocation: update, panelStyle }
+}

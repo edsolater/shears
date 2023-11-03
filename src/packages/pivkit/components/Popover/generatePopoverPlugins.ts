@@ -14,9 +14,7 @@ export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn
  * - popoverPlugin(Piv): plugin for popover
  * - info: accessors about trigger and popover
  */
-export function generatePopoverPlugins(
-  options?: PopoverPluginOptions
-) {
+export function generatePopoverPlugins(options?: PopoverPluginOptions) {
   const { trigger, isTriggerOn } = createTriggerController()
 
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()
@@ -41,7 +39,11 @@ export function generatePopoverPlugins(
         console.error('trigger button error: ', error)
       }
     })
-    return { domRef: setButtonDom, onClick: ({ el }) => trigger.toggle(el) } satisfies Partial<PivProps>
+    return {
+      domRef: setButtonDom,
+      onClick: ({ el }) => trigger.toggle(el),
+      icss: { position: 'relative' },
+    } satisfies Partial<PivProps>
   })
 
   /**
@@ -77,8 +79,7 @@ export function generatePopoverPlugins(
       get style() {
         return panelStyle()
       },
-
-      htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
+      // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
     } satisfies Partial<PivProps>
   })
 
