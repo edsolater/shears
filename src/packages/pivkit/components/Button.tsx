@@ -87,19 +87,19 @@ export function Button(kitProps: ButtonKitProps) {
 
   const props = addDefaultProps(
     rawProps,
-    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
+    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button')),
   )
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
     isValuedArray(props.validators) || props.validators
       ? flap(props.validators!).find(({ should }) => !shrinkFn(should))
-      : undefined
+      : undefined,
   )
   const mergedProps = mergeProps(props, failedTestValidator()?.fallbackProps)
 
   const isActive = createMemo(
-    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled),
   )
 
   const mainBgColor = props.theme?.mainBgColor ?? cssColors.component_button_bg_primary
@@ -155,7 +155,7 @@ export function Button(kitProps: ButtonKitProps) {
         },
         {
           display: 'inline-flex',
-          gap: shrinkFn(contentGap, [mergedProps]),
+          gap: shrinkFn(contentGap, [mergedProps]) + 'px',
           alignItems: 'center',
           justifyContent: 'center',
         }, // center the items
@@ -167,7 +167,7 @@ export function Button(kitProps: ButtonKitProps) {
           padding: cssPadding,
           fontSize: cssFontSize,
           borderRadius: cssBorderRadius,
-          fontWeight: '500px',
+          fontWeight: '500',
         },
         (!props.variant || props.variant === 'solid') && {
           backgroundColor: shrinkFn(mainBgColor, [mergedProps]),

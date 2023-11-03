@@ -2,6 +2,7 @@ import { createContext, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { AddProps, Fragnment } from '../../piv'
 import { PopoverPluginOptions, generatePopoverPlugins } from './generatePopoverPlugins'
+import { Box } from '../Boxes'
 
 export * from './generatePopoverPlugins'
 
@@ -12,10 +13,10 @@ const PopoverContext = createContext<Partial<ReturnType<typeof generatePopoverPl
 /** will render nothing */
 export function Popover(kitProps: KitProps<PopoverProps>) {
   const { props } = useKitProps(kitProps, { name: 'Popover' })
-  const { popoverButtonPlugin, popoverPanelPlugin } = generatePopoverPlugins({ placement: props.placement ?? 'top' })
+  const { popoverButtonPlugin, popoverPanelPlugin, popoverWrapperPlugin } = generatePopoverPlugins({ placement: props.placement ?? 'top' })
   return (
     <PopoverContext.Provider value={{ popoverButtonPlugin, popoverPanelPlugin }}>
-      <Fragnment>{props.children}</Fragnment>
+      <Box plugin={popoverWrapperPlugin}>{props.children}</Box>
     </PopoverContext.Provider>
   )
 }

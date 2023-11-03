@@ -2,7 +2,7 @@ import { createEffect, onCleanup } from 'solid-js'
 import { createRef } from '../..'
 import { onEvent } from '../../domkit'
 import { createTriggerController } from '../../hooks/utils/createTriggerController'
-import { PivProps, createPlugin } from '../../piv'
+import { ICSS, PivProps, createPlugin } from '../../piv'
 import { PopoverLocationHookOptions, usePopoverLocation } from '../../pluginComponents/popover/usePopoverLocation'
 
 export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'>
@@ -26,25 +26,20 @@ export function generatePopoverPlugins(options?: PopoverPluginOptions) {
    * @example
    * <Button plugin={buttonPlugin} />
    */
-  const popoverButtonPlugin = createPlugin(() => () => {
-    // open popover by state
-    createEffect(() => {
-      try {
-        if (isTriggerOn()) {
-          panelDom()?.showPopover?.()
-        } else {
-          panelDom()?.hidePopover?.()
-        }
-      } catch (error) {
-        console.error('trigger button error: ', error)
-      }
-    })
-    return {
-      domRef: setButtonDom,
-      onClick: ({ el }) => trigger.toggle(el),
-      icss: { position: 'relative' },
-    } satisfies Partial<PivProps>
-  })
+  const popoverButtonPlugin = createPlugin(
+    () => () =>
+      ({
+        domRef: setButtonDom,
+        onClick: ({ el }) => trigger.toggle(el),
+      }) satisfies Partial<PivProps>,
+  )
+
+  const popoverWrapperPlugin = createPlugin(
+    () => () =>
+      ({
+        icss: { position: 'relative', width: 'max-content', height: 'fit-content' },
+      }) satisfies Partial<PivProps>,
+  )
 
   /**
    * in {@link popoverButtonPlugin}\
@@ -79,6 +74,9 @@ export function generatePopoverPlugins(options?: PopoverPluginOptions) {
       get style() {
         return panelStyle()
       },
+      get icss() {
+        return { position: 'absolute' } as ICSS
+      },
       // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
     } satisfies Partial<PivProps>
   })
@@ -93,5 +91,5 @@ export function generatePopoverPlugins(options?: PopoverPluginOptions) {
     isTriggerOn,
   }
 
-  return { state: pluginState, popoverButtonPlugin, popoverPanelPlugin }
+  return { state: pluginState, popoverButtonPlugin, popoverWrapperPlugin, popoverPanelPlugin }
 }
