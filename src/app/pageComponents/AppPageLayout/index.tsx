@@ -1,4 +1,5 @@
 import { KitProps, useKitProps } from '../../../packages/pivkit'
+import { useMetaTitle } from '../../hooks/useMetaTitle'
 import { AppPageLayout_LayoutBoxProps, AppPageLayout_LayoutBox } from './LayoutBox'
 import { AppPageLayout_NavBar } from './NavBar'
 import { AppPageLayout_SideMenu } from './SideMenu'
@@ -9,6 +10,8 @@ type AppPageLayoutProps = {
 
 export function AppPageLayout(kitProps: KitProps<AppPageLayoutProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
+
+  useMetaTitle(() => props.metaTitle)
   return (
     <AppPageLayout_LayoutBox
       shadowProps={shadowProps}

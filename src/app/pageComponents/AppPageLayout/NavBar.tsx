@@ -25,10 +25,10 @@ export type AppPageLayout_NavBarProps = NaBar_NavWrapBoxProps
 
 export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
-    <NaBar_NavWrapBox title={props.title}>
+    <NaBar_NavWrapBox >
       <Row icss:justify='space-between'>
         {/* TODO: not correct for this */}
-        <AppLogo title={props.title} />
+        <AppLogo />
         <Row icss:align='end'>
           <SettingButtonTrigger />
           <WalletWidget />

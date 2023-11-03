@@ -10,13 +10,13 @@ import {
   createIncresingAccessor,
   cssColors,
   keyboardShortcutObserverPlugin,
-  useKeyboardGlobalShortcut
+  useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
 import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
 import { AppPageLayout } from './AppPageLayout'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
-import { routes } from '../routes'
+import { needAppPageLayout, routes } from '../routes'
 
 export function App() {
   useAppThemeMode({ mode: 'dark' })
@@ -32,13 +32,19 @@ export function App() {
   const title = createMemo(() =>
     switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
   )
+  const needLayout = () => needAppPageLayout[location.pathname]
   return (
     <>
-      <KeyboardShortcutPanel />
-
-      <AppPageLayout metaTitle={title()}>
+      {needLayout() ? (
+        <>
+          <KeyboardShortcutPanel />
+          <AppPageLayout metaTitle={title()}>
+            <Routes />
+          </AppPageLayout>
+        </>
+      ) : (
         <Routes />
-      </AppPageLayout>
+      )}
     </>
   )
 }

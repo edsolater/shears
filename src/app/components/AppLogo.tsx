@@ -1,6 +1,6 @@
 import { Box, Text } from '../../packages/pivkit'
 
-export function AppLogo(props: { title: string | undefined }) {
+export function AppLogo(props: { }) {
   return (
     <Box
       icss={{

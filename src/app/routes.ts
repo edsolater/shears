@@ -21,6 +21,11 @@ export const routePath = {
   swap: swapRoutePath,
 }
 
+export const needAppPageLayout = {
+  [routePath.swap]: true,
+  [routePath.pools]: true,
+  [routePath.farms]: true,
+}
 export const routes: RouteDefinition[] = [
   { path: routePath.home, component: HomePage },
   { path: routePath.swap, component: SwapPage },
