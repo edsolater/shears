@@ -8,15 +8,20 @@ export * from './generatePopoverPlugins'
 
 type PopoverProps = PopoverPluginOptions
 
-const PopoverContext = createContext<Partial<ReturnType<typeof generatePopoverPlugins>>>({})
+const PopoverContext = createContext<{
+  popoverButtonPlugin?: ReturnType<typeof generatePopoverPlugins>['plugins']['button']
+  popoverPanelPlugin?: ReturnType<typeof generatePopoverPlugins>['plugins']['panel']
+}>({})
 
 /** will render nothing */
 export function Popover(kitProps: KitProps<PopoverProps>) {
   const { props } = useKitProps(kitProps, { name: 'Popover' })
-  const { popoverButtonPlugin, popoverPanelPlugin, popoverWrapperPlugin } = generatePopoverPlugins({ placement: props.placement ?? 'top' })
+  const { plugins: popoverPlugins } = generatePopoverPlugins({ placement: props.placement ?? 'top' })
   return (
-    <PopoverContext.Provider value={{ popoverButtonPlugin, popoverPanelPlugin }}>
-      <Box plugin={popoverWrapperPlugin}>{props.children}</Box>
+    <PopoverContext.Provider
+      value={{ popoverButtonPlugin: popoverPlugins.button, popoverPanelPlugin: popoverPlugins.panel }}
+    >
+      <Box plugin={popoverPlugins.wrapper}>{props.children}</Box>
     </PopoverContext.Provider>
   )
 }

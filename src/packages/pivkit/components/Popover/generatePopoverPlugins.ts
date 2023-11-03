@@ -91,5 +91,12 @@ export function generatePopoverPlugins(options?: PopoverPluginOptions) {
     isTriggerOn,
   }
 
-  return { state: pluginState, popoverButtonPlugin, popoverWrapperPlugin, popoverPanelPlugin }
+  return {
+    state: pluginState,
+    plugins: {
+      button: popoverButtonPlugin,
+      panel: popoverPanelPlugin,
+      wrapper: popoverWrapperPlugin,
+    },
+  }
 }
