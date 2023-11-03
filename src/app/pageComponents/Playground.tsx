@@ -31,7 +31,7 @@ import {
   useCSSTransition,
   useControllerByID,
   useKitProps,
-  withHover
+  withHover,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -56,7 +56,7 @@ function ComponentSpecList() {
         gap: '4vw',
       }}
     >
-      {/* <ExamplePanel name='IntervalCircle'>
+      <ExamplePanel name='IntervalCircle'>
         <CircularProgressExample />
       </ExamplePanel>
 
@@ -90,13 +90,13 @@ function ComponentSpecList() {
 
       <ExamplePanel name='Radio'>
         <RadioExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       <ExamplePanel name='Popover'>
         <PopoverExample />
       </ExamplePanel>
 
-      {/* <ExamplePanel name='ComponentFactory'>
+      <ExamplePanel name='ComponentFactory'>
         <ComponentFactoryExample />
       </ExamplePanel>
 
@@ -106,7 +106,7 @@ function ComponentSpecList() {
 
       <ExamplePanel name='Tabs'>
         <TabsExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       <ExamplePanel name='PropContext + ControllerContext'>
         <PropContextExample />
@@ -388,9 +388,9 @@ function PopoverExample() {
       <Popover.Trigger>
         <Button>💬popover</Button>
       </Popover.Trigger>
-        {/* <Popover.Content>
-          <Box icss={{ border: 'solid', minHeight: '5em' }}>hello world</Box>
-        </Popover.Content> */}
+      <Popover.Content>
+        <Box icss={{ border: 'solid', minHeight: '5em' }}>hello world</Box>
+      </Popover.Content>
     </Popover>
   )
 }
@@ -409,14 +409,14 @@ function TabsExample() {
 
 function PropContextExample() {
   return (
-    <AddProps icss={{ paddingInline: '24px', paddingBlock:'8px' }}>
+    <AddProps icss={{ paddingInline: '24px', paddingBlock: '8px' }}>
       <Box icss={{ border: 'solid' }}>
         <Piv innerController={{ say: () => 'ControllerContext should can receive the message' }}>
           <Box
             merge:onClick={() => {
               console.log('click PropContext description')
             }}
-            icss={{ cursor: 'pointer', border: 'dashed', borderColor: cssOpacity('currentcolor', 0.6),  }}
+            icss={{ cursor: 'pointer', border: 'dashed', borderColor: cssOpacity('currentcolor', 0.6) }}
           >
             PropContext can pass to deep nested components
           </Box>

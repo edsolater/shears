@@ -33,7 +33,6 @@ export function AddProps<Props extends ValidProps = PivProps>(props: Props) {
 export function getPropsFromAddPropContext(componentInfo: { componentName: string }): ValidProps | undefined {
   const additionalProps = useContext(AddPropContext)
   if (!additionalProps) return undefined
-    console.log('additionalProps.class: ', {...additionalProps})
   if (hasConsumed.has(additionalProps)) return undefined
   hasConsumed.add(additionalProps)
   return additionalProps

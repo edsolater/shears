@@ -89,7 +89,6 @@ export function Button(kitProps: ButtonKitProps) {
     rawProps,
     mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button'))
   )
-  console.log('[Button] props.class: ', kitProps.class)
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
@@ -141,7 +140,6 @@ export function Button(kitProps: ButtonKitProps) {
     'innerController' in props ? objectMerge(props.innerController!, innerController) : innerController
   return (
     <Piv<'button'>
-      class={Button.name}
       render:self={(selfProps) => renderHTMLDOM('button', selfProps)}
       shadowProps={omit(props, 'onClick')} // omit onClick for need to invoke the function manually, see below 👇
       onClick={(...args) => isActive() && props.onClick?.(...args)}
