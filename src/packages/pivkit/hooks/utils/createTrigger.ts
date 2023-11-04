@@ -6,12 +6,10 @@ import { AnyFn, createEventCenter } from '@edsolater/fnkit'
 const triggerControllers = new Map<UUID, TriggerController>()
 
 type TriggerController = {
-  trigger: {
-    turnOn(selfElement: HTMLElement): void
-    turnOff(selfElement: HTMLElement): void
-    toggle(selfElement: HTMLElement): void
-  }
-  triggerTarget: {
+  open(selfElement: HTMLElement): void
+  close(selfElement: HTMLElement): void
+  toggle(selfElement: HTMLElement): void
+  callbackRegisterer: {
     onTriggerOn(cb: (info: { triggerElement: HTMLElement }) => void): {
       cleanup(): void
     }
@@ -31,7 +29,7 @@ type TriggerController = {
  * use for Modal / Popover / Drawer like trigger component
  * @param id force id; if not provided, will create a new one
  */
-export function createTriggerController({
+export function createTrigger({
   id = createUUID().id,
   defaultState = false,
 }: {
@@ -65,19 +63,17 @@ export function createTriggerController({
     },
   })
 
-  const trigger = {
-    turnOn(from: HTMLElement) {
-      eventCenter.emit('on', [from])
-    },
-    turnOff(from: HTMLElement) {
-      eventCenter.emit('off', [from])
-    },
-    toggle(from: HTMLElement) {
-      eventCenter.emit('toggle', [from])
-    },
+  function turnTriggerOn(from: HTMLElement) {
+    eventCenter.emit('on', [from])
+  }
+  function turnTriggerOff(from: HTMLElement) {
+    eventCenter.emit('off', [from])
+  }
+  function toggleTrigger(from: HTMLElement) {
+    eventCenter.emit('toggle', [from])
   }
 
-  const triggerTarget = {
+  const callbackRegisterer = {
     onTriggerOn(cb: AnyFn) {
       callbackOnStack.push(cb)
       return {
@@ -102,9 +98,7 @@ export function createTriggerController({
         },
       }
     },
-  } as TriggerController['triggerTarget']
+  } as TriggerController['callbackRegisterer']
 
-  const triggerController = { trigger, triggerTarget, isTriggerOn }
-  triggerControllers.set(id, triggerController)
-  return triggerController
+  return { isTriggerOn, callbackRegisterer, close:turnTriggerOff, open:turnTriggerOn, toggle:toggleTrigger }
 }

@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { AddProps, Fragnment } from '../../piv'
-import { PopoverPluginOptions, makePopover } from './generatePopoverPlugins'
+import { PopoverPluginOptions, makePopover } from './makePopover'
 import { Box } from '../Boxes'
 
-export * from './generatePopoverPlugins'
+export * from './makePopover'
 
 type PopoverProps = PopoverPluginOptions
 
