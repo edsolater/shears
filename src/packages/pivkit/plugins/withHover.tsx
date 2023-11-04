@@ -7,7 +7,7 @@ import { createPlugin } from '../piv'
  * @param options options for useGestureHover
  * @returns
  */
-export const withHover = createPlugin<Omit<GestureHoverOptions, 'el'>, GestureHoverStates>((options) => {
+export const useHoverPlugin = createPlugin<Omit<GestureHoverOptions, 'el'>, GestureHoverStates>((options) => {
   // if this hook need domRef
   const [dom, setDom] = createRef<HTMLElement>()
 

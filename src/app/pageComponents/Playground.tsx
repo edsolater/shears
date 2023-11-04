@@ -32,7 +32,9 @@ import {
   useCSSTransition,
   useControllerByID,
   useKitProps,
-  withHover,
+  useHoverPlugin,
+  cssVar,
+  createICSS,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -364,17 +366,17 @@ function ComponentFactoryExample() {
   )
 }
 
-const { plugins: popoverPlugins, controller: popoverController } = makePopover({ placement: 'right' }) // <-- run on define, not good
-
 function PopoverExample() {
-  const { plugin: hoverPlugin, state: hoverState } = withHover({ onHover: () => console.log('hover') })
+  const { plugins: popoverPlugins, state: popoverState } = makePopover({ placement: 'right' }) // <-- run on define, not good
+  const { plugin: hoverPlugin, state: hoverState } = useHoverPlugin({ onHover: () => console.log('hover') })
   createEffect(() => {
     console.log('isHover: ', hoverState.isHover())
   })
+  const cardICSS = createICSS(() => ({ background: cssVar('--card-bg') }))
   return (
     <Container plugin={popoverPlugins.containerBox}>
       <Button plugin={[popoverPlugins.trigger, hoverPlugin]}>💬popover</Button>
-      <Box plugin={popoverPlugins.panel} icss={{ border: 'solid', minHeight: '5em' }}>
+      <Box plugin={popoverPlugins.panel} icss={[{ border: 'solid', minHeight: '5em' }, cardICSS]}>
         hello world
       </Box>
     </Container>

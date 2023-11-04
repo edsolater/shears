@@ -10,7 +10,7 @@ const mapClearRegistry = new FinalizationRegistry(clearMap)
 /**
  * only run when value is accessed
  * @example
- * const obj = createRuntimeObj({
+ * const obj = runtimeObj({
  *   a: 1,
  *   b: () => {
  *     console.log('hello')

@@ -24,7 +24,7 @@ body {
     'ss04',
     'tnum' 1;
   color: var(--primary);
-  background-color: var(--bg);
+  background-color: var(--app-bg);
   margin: 0;
 }
 /* make it not scroll to like a app */
@@ -107,7 +107,7 @@ input:focus-visible {
   --primary: #e3e3e3;
   --secondary: #bebebe;
   --ternary: #39d0d8;
-  --bg: rgb(242, 244, 249);
+  --app-bg: #f2f4f9;
 
   --card-bg: #fffc;
   --cyber-card-bg: linear-gradient(140.14deg, rgba(0, 182, 191, 0.15) 0%, rgba(27, 22, 89, 0.1) 86.61%),
@@ -159,7 +159,9 @@ input:focus-visible {
   --secondary: #abc4ff;
   --ternary: #39d0d8;
   --ternary-pale: #ace3e5;
-  --bg: #131a35;
+
+  --app-bg: #131a35;
+  --card-bg: #131a35;
 
   --content-bg__01: rgb(12, 9, 39);
   --content-bg__02: rgb(17, 13, 54);

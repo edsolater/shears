@@ -97,7 +97,7 @@ export function makePopover(options?: PopoverPluginOptions) {
    * in {@link popoverTriggerPlugin}\
    *  public accessors
    */
-  const pluginController = {
+  const pluginState = {
     buttonDom,
     panelDom,
     isTriggerOn,
@@ -108,7 +108,7 @@ export function makePopover(options?: PopoverPluginOptions) {
   }
 
   return {
-    controller: pluginController,
+    state: pluginState,
     plugins: {
       /** when trigger is invoked, panel will show  */
       trigger: popoverTriggerPlugin,
