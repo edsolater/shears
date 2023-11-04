@@ -6,17 +6,17 @@ import { AnyFn, createEventCenter } from '@edsolater/fnkit'
 const triggerControllers = new Map<UUID, TriggerController>()
 
 type TriggerController = {
-  open(selfElement: HTMLElement): void
-  close(selfElement: HTMLElement): void
-  toggle(selfElement: HTMLElement): void
+  open(): void
+  close(): void
+  toggle(): void
   callbackRegisterer: {
-    onTriggerOn(cb: (info: { triggerElement: HTMLElement }) => void): {
+    onTriggerOn(cb: () => void): {
       cleanup(): void
     }
-    onTriggerOff(cb: (info: { triggerElement: HTMLElement }) => void): {
+    onTriggerOff(cb: () => void): {
       cleanup(): void
     }
-    onToggle(cb: (info: { triggerElement: HTMLElement }) => void): {
+    onToggle(cb: () => void): {
       cleanup(): void
     }
   }
@@ -44,33 +44,33 @@ export function createTrigger({
 
   //TODO: createEventCenter is weird, right?
   const eventCenter = createEventCenter<{
-    on(el: HTMLElement): void
-    off(el: HTMLElement): void
-    toggle(el: HTMLElement): void
+    on(): void
+    off(): void
+    toggle(): void
   }>()
   eventCenter.registEvents({
-    'on': (el: HTMLElement) => {
+    'on': () => {
       setIsTriggerOn(true)
-      callbackOnStack.forEach((cb) => cb({ triggerElement: el }))
+      callbackOnStack.forEach((cb) => cb())
     },
-    'off': (el: HTMLElement) => {
+    'off': () => {
       setIsTriggerOn(false)
-      callbackOffStack.forEach((cb) => cb({ triggerElement: el }))
+      callbackOffStack.forEach((cb) => cb())
     },
-    'toggle': (el: HTMLElement) => {
+    'toggle': () => {
       setIsTriggerOn((b) => !b)
-      callbackToggleStack.forEach((cb) => cb({ triggerElement: el }))
+      callbackToggleStack.forEach((cb) => cb())
     },
   })
 
-  function turnTriggerOn(from: HTMLElement) {
-    eventCenter.emit('on', [from])
+  function turnTriggerOn() {
+    eventCenter.emit('on', [])
   }
-  function turnTriggerOff(from: HTMLElement) {
-    eventCenter.emit('off', [from])
+  function turnTriggerOff() {
+    eventCenter.emit('off', [])
   }
-  function toggleTrigger(from: HTMLElement) {
-    eventCenter.emit('toggle', [from])
+  function toggleTrigger() {
+    eventCenter.emit('toggle', [])
   }
 
   const callbackRegisterer = {
@@ -100,5 +100,5 @@ export function createTrigger({
     },
   } as TriggerController['callbackRegisterer']
 
-  return { isTriggerOn, callbackRegisterer, close:turnTriggerOff, open:turnTriggerOn, toggle:toggleTrigger }
+  return { isTriggerOn, callbackRegisterer, close: turnTriggerOff, open: turnTriggerOn, toggle: toggleTrigger }
 }

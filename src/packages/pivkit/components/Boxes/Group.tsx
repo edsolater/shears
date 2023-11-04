@@ -1,5 +1,4 @@
 import { KitProps, useKitProps } from '../../piv'
-import { ICSSGridOption } from '../../styles/icssBlocks'
 import { Box, BoxProps } from './Box'
 
 export type GroupProps = BoxProps & {

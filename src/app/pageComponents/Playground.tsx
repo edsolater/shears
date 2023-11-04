@@ -364,9 +364,9 @@ function ComponentFactoryExample() {
   )
 }
 
-const { plugins: popoverPlugins } = makePopover({ placement: 'top' })// <-- run on depend, not good
+const { plugins: popoverPlugins, controller: popoverController } = makePopover({ placement: 'right' }) // <-- run on define, not good
 
-function PopoverExample1() {
+function PopoverExample() {
   const { plugin: hoverPlugin, state: hoverState } = withHover({ onHover: () => console.log('hover') })
   createEffect(() => {
     console.log('isHover: ', hoverState.isHover())
@@ -380,7 +380,7 @@ function PopoverExample1() {
     </Container>
   )
 }
-function PopoverExample() {
+function PopoverExample2() {
   return (
     <Popover placement={'right'}>
       <Popover.Trigger>

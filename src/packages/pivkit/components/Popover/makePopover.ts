@@ -4,8 +4,12 @@ import { onEvent } from '../../domkit'
 import { createTrigger } from '../../hooks/utils/createTrigger'
 import { ICSS, PivProps, createPlugin } from '../../piv'
 import { PopoverLocationHookOptions, usePopoverLocation } from '../../pluginComponents/popover/usePopoverLocation'
+import { useGestureHover } from '../../domkit/hooks/useGestureHover'
 
-export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'>
+export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'> & {
+  /** @default 'hover' */
+  triggerBy?: 'hover' | 'click'
+}
 
 /**
  * **headless Hooks**
@@ -22,19 +26,25 @@ export function makePopover(options?: PopoverPluginOptions) {
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()
   const [panelDom, setPanelDom] = createRef<HTMLElement>()
 
+  // invoke trigger 
+  useGestureHover({
+    el: buttonDom,
+    onHoverStart: open,
+    onHoverEnd: close,
+  })
+
   /**
    * in {@link popoverTriggerPlugin}\
    * plugin registerer for trigger
    * @example
    * <Button plugin={buttonPlugin} />
    */
-  const popoverTriggerPlugin = createPlugin(
-    () => () =>
-      ({
-        domRef: setButtonDom,
-        onClick: ({ el }) => toggle(el),
-      }) satisfies Partial<PivProps>,
-  )
+  const popoverTriggerPlugin = createPlugin(() => () => {
+    return {
+      domRef: setButtonDom,
+      onClick: toggle,
+    } satisfies Partial<PivProps>
+  })
 
   const popoverWrapperPlugin = createPlugin(
     () => () =>
@@ -58,9 +68,9 @@ export function makePopover(options?: PopoverPluginOptions) {
         // @ts-expect-error force
         const { newState } = ev as { newState: 'open' | 'closed' }
         if (newState === 'open') {
-          open(el)
+          open()
         } else {
-          close(el)
+          close()
         }
       })
       onCleanup(abort)
@@ -87,14 +97,18 @@ export function makePopover(options?: PopoverPluginOptions) {
    * in {@link popoverTriggerPlugin}\
    *  public accessors
    */
-  const pluginState = {
+  const pluginController = {
     buttonDom,
     panelDom,
     isTriggerOn,
+
+    /** open the popover panel */
+    open: open,
+    close: close,
   }
 
   return {
-    state: pluginState,
+    controller: pluginController,
     plugins: {
       /** when trigger is invoked, panel will show  */
       trigger: popoverTriggerPlugin,
