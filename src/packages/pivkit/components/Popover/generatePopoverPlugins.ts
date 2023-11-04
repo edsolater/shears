@@ -8,13 +8,14 @@ import { PopoverLocationHookOptions, usePopoverLocation } from '../../pluginComp
 export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'>
 
 /**
- *
+ * **Hooks**
+ * when hooks startWith 'make', it means u can use this hook to make a composition of component by plugins
  * @returns
  * - buttonPlugin(Piv): plugin for trigger
  * - popoverPlugin(Piv): plugin for popover
  * - info: accessors about trigger and popover
  */
-export function generatePopoverPlugins(options?: PopoverPluginOptions) {
+export function makePopover(options?: PopoverPluginOptions) {
   const { trigger, isTriggerOn } = createTriggerController()
 
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()

@@ -25,7 +25,7 @@ import {
   createIntervalEffect,
   createPlugin,
   cssOpacity,
-  generatePopoverPlugins,
+  makePopover,
   icssCol,
   icssRow,
   renderSwitchThumb,
@@ -364,7 +364,7 @@ function ComponentFactoryExample() {
   )
 }
 
-const { plugins: popoverPlugins } = generatePopoverPlugins({ placement: 'top' })// <-- run on depend, not good
+const { plugins: popoverPlugins } = makePopover({ placement: 'top' })// <-- run on depend, not good
 
 function PopoverExample1() {
   const {
