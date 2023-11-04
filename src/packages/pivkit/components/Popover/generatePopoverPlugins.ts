@@ -22,12 +22,12 @@ export function makePopover(options?: PopoverPluginOptions) {
   const [panelDom, setPanelDom] = createRef<HTMLElement>()
 
   /**
-   * in {@link popoverButtonPlugin}\
+   * in {@link popoverTriggerPlugin}\
    * plugin registerer for trigger
    * @example
    * <Button plugin={buttonPlugin} />
    */
-  const popoverButtonPlugin = createPlugin(
+  const popoverTriggerPlugin = createPlugin(
     () => () =>
       ({
         domRef: setButtonDom,
@@ -43,7 +43,7 @@ export function makePopover(options?: PopoverPluginOptions) {
   )
 
   /**
-   * in {@link popoverButtonPlugin}\
+   * in {@link popoverTriggerPlugin}\
    * plugin registerer for popover content
    * @example
    * <Box plugin={popoverTargetPlugin}>Popover Content</Box>
@@ -83,7 +83,7 @@ export function makePopover(options?: PopoverPluginOptions) {
   })
 
   /**
-   * in {@link popoverButtonPlugin}\
+   * in {@link popoverTriggerPlugin}\
    *  public accessors
    */
   const pluginState = {
@@ -95,9 +95,11 @@ export function makePopover(options?: PopoverPluginOptions) {
   return {
     state: pluginState,
     plugins: {
-      button: popoverButtonPlugin,
+      /** when trigger is invoked, panel will show  */
+      trigger: popoverTriggerPlugin,
       panel: popoverPanelPlugin,
-      wrapper: popoverWrapperPlugin,
+      /** mannage prop state */
+      containerBox: popoverWrapperPlugin,
     },
   }
 }

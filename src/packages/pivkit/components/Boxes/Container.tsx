@@ -5,6 +5,7 @@ export interface ContainerProps {}
 
 /**
  * set css container for containerQuery
+ * a alias of `<Box>`, often used as a Root of Component
  */
 export function Container(kitProps: KitProps<PivProps>) {
   const { shadowProps } = useKitProps(kitProps, { name: 'Container' })

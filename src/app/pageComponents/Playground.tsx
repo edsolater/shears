@@ -6,7 +6,7 @@ import {
   AddProps,
   Box,
   Button,
-  ComponentRoot,
+  Container,
   Drawer,
   DrawerController,
   Input,
@@ -367,20 +367,17 @@ function ComponentFactoryExample() {
 const { plugins: popoverPlugins } = makePopover({ placement: 'top' })// <-- run on depend, not good
 
 function PopoverExample1() {
-  const {
-    plugin: hoverPlugin,
-    state: hoverState,
-  } = withHover({ onHover: () => console.log('hover') })
+  const { plugin: hoverPlugin, state: hoverState } = withHover({ onHover: () => console.log('hover') })
   createEffect(() => {
-    console.log('isHover: ',hoverState.isHover())
+    console.log('isHover: ', hoverState.isHover())
   })
   return (
-    <ComponentRoot plugin={popoverPlugins.wrapper}>
-      <Button plugin={[popoverPlugins.button, hoverPlugin]}>💬popover</Button>
+    <Container plugin={popoverPlugins.containerBox}>
+      <Button plugin={[popoverPlugins.trigger, hoverPlugin]}>💬popover</Button>
       <Box plugin={popoverPlugins.panel} icss={{ border: 'solid', minHeight: '5em' }}>
         hello world
       </Box>
-    </ComponentRoot>
+    </Container>
   )
 }
 function PopoverExample() {

@@ -9,7 +9,7 @@ export * from './generatePopoverPlugins'
 type PopoverProps = PopoverPluginOptions
 
 const PopoverContext = createContext<{
-  popoverButtonPlugin?: ReturnType<typeof makePopover>['plugins']['button']
+  popoverButtonPlugin?: ReturnType<typeof makePopover>['plugins']['trigger']
   popoverPanelPlugin?: ReturnType<typeof makePopover>['plugins']['panel']
 }>({})
 
@@ -19,9 +19,9 @@ export function Popover(kitProps: KitProps<PopoverProps>) {
   const { plugins: popoverPlugins } = makePopover({ placement: props.placement ?? 'top' })
   return (
     <PopoverContext.Provider
-      value={{ popoverButtonPlugin: popoverPlugins.button, popoverPanelPlugin: popoverPlugins.panel }}
+      value={{ popoverButtonPlugin: popoverPlugins.trigger, popoverPanelPlugin: popoverPlugins.panel }}
     >
-      <Box plugin={popoverPlugins.wrapper}>{props.children}</Box>
+      <Box plugin={popoverPlugins.containerBox}>{props.children}</Box>
     </PopoverContext.Provider>
   )
 }
