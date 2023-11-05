@@ -1,7 +1,7 @@
-import { Col, Icon, KitProps, Row, Span, cssOpacity, cssVar, useKitProps } from '../../../packages/pivkit'
-import { Link } from '../../components/Link'
+import { Col, Icon, KitProps, Row, Span, cssOpacity, cssVar, useKitProps } from '../../../../packages/pivkit'
+import { Link } from '../../../components/Link'
 
-export function SideMenu_OptionItem() {
+export function SideMenu_OptionItems() {
   return (
     <Col
       icss={{
@@ -24,7 +24,7 @@ export function SideMenu_OptionItem() {
           Feedback
         </OptionItem>
       </Col>
-      {/* <RpcConnectionPanelSidebarWidget /> */}
+      <RpcConnectionPanelSidebarWidget />
       {/* <SettingSidebarWidget />
            <CommunityPanelSidebarWidget /> */}
     </Col>
@@ -80,4 +80,8 @@ export function OptionItem(kitProps: KitProps<OptionItemOptions>) {
       </Row>
     </Link>
   )
+}
+
+function RpcConnectionPanelSidebarWidget() {
+  return null
 }

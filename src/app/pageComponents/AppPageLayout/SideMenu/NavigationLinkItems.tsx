@@ -1,23 +1,24 @@
-import { createMemo } from 'solid-js';
+import { createMemo } from 'solid-js'
 import {
   Accessify,
   Box,
-  Col, Icon,
+  Col,
+  Icon,
   KitProps,
   Piv,
   Row,
   cssOpacity,
   cssVar,
-  useKitProps
-} from '../../../packages/pivkit';
-import { usePageMatcher } from '../../routes';
-import { Link } from '../../components/Link';
+  useKitProps,
+} from '../../../../packages/pivkit'
+import { usePageMatcher } from '../../../routes'
+import { Link } from '../../../components/Link'
 
-export function SideMenu_Links() {
-  const pageMatcher = usePageMatcher();
+export function SideMenu_LinkItems() {
+  const pageMatcher = usePageMatcher()
   return (
     <Col
-      icss: gap='0.25rem'
+      icss:gap='0.25rem'
       icss={{
         overflowY: 'auto',
         paddingBlock: '1rem',
@@ -36,18 +37,18 @@ export function SideMenu_Links() {
         Farms
       </LinkItem>
     </Col>
-  );
+  )
 }
 type LinkItemProps = {
-  href?: string;
-  icon?: string;
-  isCurrentRoutePath?: boolean;
-  children?: Accessify<string>;
-};
+  href?: string
+  icon?: string
+  isCurrentRoutePath?: boolean
+  children?: Accessify<string>
+}
 function LinkItem(kitProps: KitProps<LinkItemProps>) {
-  const { props } = useKitProps(kitProps);
-  const isInnerLink = createMemo(() => props.href?.startsWith('/'));
-  const isExternalLink = () => !isInnerLink;
+  const { props } = useKitProps(kitProps)
+  const isInnerLink = createMemo(() => props.href?.startsWith('/'))
+  const isExternalLink = () => !isInnerLink
   return (
     <Link
       href={props.href}
@@ -91,5 +92,5 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
         </Row>
       </Row>
     </Link>
-  );
+  )
 }
