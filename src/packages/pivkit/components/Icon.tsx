@@ -15,9 +15,19 @@ export interface IconProps {
 export function Icon(rawProps: KitProps<IconProps>) {
   const { props } = useKitProps(rawProps, { name: 'Icon' })
   const sizePx =
-    props.size === 'xs' ? 12 : props.size === 'sm' ? 16 : props.size === 'smi' ? 20 : props.size === 'md' ? 24 : 32
+    props.size === 'xs'
+      ? '12px'
+      : props.size === 'sm'
+      ? '16px'
+      : props.size === 'smi'
+      ? '20px'
+      : props.size === 'md'
+      ? '24px'
+      : props.size == 'lg'
+      ? '32px'
+      : '100%'
 
-    /** if not set src, no need to render wired broken image */
+  /** if not set src, no need to render wired broken image */
   const shouldRendSrc = () => Boolean(props.src)
   return (
     <Piv<'img'>
@@ -26,8 +36,8 @@ export function Icon(rawProps: KitProps<IconProps>) {
       icss={{
         display: 'block',
         visibility: shouldRendSrc() ? undefined : 'hidden',
-        width: `${sizePx}px`,
-        height: `${sizePx}px`,
+        width: sizePx,
+        height: sizePx,
         objectFit: 'cover',
       }}
       shadowProps={props}

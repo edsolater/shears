@@ -39,17 +39,18 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
         enumerable: true,
         get() {
           const v = props[key]
-          const isPreferUseOriginalValue =
+          /** will do nothing even it is a function */
+          const isPreferOriginalValue =
             isString(key) &&
             ((needAccessifyProps ? !needAccessifyProps?.includes(key) : false) ||
               key.startsWith('on') ||
-              key.startsWith('render:') ||
+              // key.startsWith('render:') || // TODO: if well-design no need to accessify render
               key.startsWith('merge:') ||
               key === 'domRef' ||
               key === 'controllerRef' ||
               key === 'plugin' ||
               key === 'shadowProps')
-          const needAccessify = isFunction(v) && !isPreferUseOriginalValue
+          const needAccessify = isFunction(v) && !isPreferOriginalValue
           return needAccessify ? v(controller) : v
         },
       }

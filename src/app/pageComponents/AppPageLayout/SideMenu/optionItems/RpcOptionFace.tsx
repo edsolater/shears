@@ -1,4 +1,4 @@
-import { Icon, Row, useKitProps } from '../../../../../packages/pivkit'
+import { Piv, useKitProps } from '../../../../../packages/pivkit'
 import { OptionItemBox } from './OptionItem'
 
 export function RpcItemFace(kitProps: {
@@ -11,9 +11,19 @@ export function RpcItemFace(kitProps: {
 }) {
   const { props, shadowProps } = useKitProps(kitProps)
 
-  return <OptionItemBox shadowProps={shadowProps}>
-    RPC
-  </OptionItemBox>
+  const dotIcss = {
+    width: '0.375rem',
+    height: '0.375rem',
+    background: '#2de680',
+    color: '#2de680',
+    borderRadius: '50%',
+    boxShadow: '0 0 6px 1px currentColor',
+  }
+  return (
+    <OptionItemBox render:arrow shadowProps={shadowProps} render:dot={<Piv icss={dotIcss}></Piv>}>
+      RPC
+    </OptionItemBox>
+  )
 }
 
 // function RpcConnectionFaceOld(kitProps: {

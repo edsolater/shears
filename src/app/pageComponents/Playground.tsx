@@ -356,10 +356,17 @@ function ComponentFactoryExample() {
       <RenderFactory
         data={store}
         widgetCreateRule={(value) =>
-          switchCase<any, any>(value, [
-            [(v) => typeof v === 'boolean', (storeValue: Accessor<boolean>) => <Switch isChecked={storeValue} />],
-            [(v) => typeof v === 'string', (storeValue: Accessor<string>) => <Input value={storeValue} />],
-          ]) ?? value
+          switchCase<any, any>(
+            value,
+            [
+              [
+                (v) => typeof v === 'boolean',
+                () => (storeValue: Accessor<boolean>) => <Switch isChecked={storeValue} />,
+              ],
+              [(v) => typeof v === 'string', () => (storeValue: Accessor<string>) => <Input value={storeValue} />],
+            ],
+            value,
+          )
         }
       />
     </>

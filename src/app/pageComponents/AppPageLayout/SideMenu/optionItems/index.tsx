@@ -14,11 +14,11 @@ export function SideMenu_OptionItems() {
       <RpcItemFace />
 
       <Col icss={{ marginBlockTop: '0.5rem' }}>
-        <OptionItemBox render:Arrow href='https://raydium.gitbook.io/raydium/' iconSrc='/icons/msic-docs.svg'>
+        <OptionItemBox render:arrow href='https://raydium.gitbook.io/raydium/' iconSrc='/icons/msic-docs.svg'>
           Docs
         </OptionItemBox>
 
-        <OptionItemBox render:Arrow href='https://forms.gle/DvUS4YknduBgu2D7A' iconSrc='/icons/misc-feedback.svg'>
+        <OptionItemBox render:arrow href='https://forms.gle/DvUS4YknduBgu2D7A' iconSrc='/icons/misc-feedback.svg'>
           Feedback
         </OptionItemBox>
       </Col>

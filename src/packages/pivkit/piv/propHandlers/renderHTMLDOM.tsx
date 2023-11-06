@@ -7,7 +7,7 @@ import { domMap } from './domMap'
 import { NativeProps, parsePivProps } from './parsePivProps'
 
 function getSolidJSXNode(type: HTMLTag, parsedProps: NativeProps, additionalProps?: AnyObj): JSX.Element | undefined {
-  return switchCase(type, domMap(parsedProps, additionalProps))?.()
+  return switchCase(type, domMap(parsedProps, additionalProps))
 }
 
 /**
