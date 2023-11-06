@@ -1,8 +1,8 @@
 import { children } from 'solid-js'
 import { Col, Grid, KitProps } from '../../../../packages/pivkit'
 import { Mint } from '../../../utils/dataStructures/type'
-import { SideMenu_LinkItems } from './NavigationLinkItems'
-import { SideMenu_OptionItems } from './AdditionalOptionItems'
+import { SideMenu_LinkItems } from './NavigationItems'
+import { SideMenu_OptionItems } from './optionItems'
 
 /**
  * for easier to code and read

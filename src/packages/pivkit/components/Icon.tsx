@@ -17,11 +17,19 @@ export function Icon(rawProps: KitProps<IconProps>) {
   const sizePx =
     props.size === 'xs' ? 12 : props.size === 'sm' ? 16 : props.size === 'smi' ? 20 : props.size === 'md' ? 24 : 32
 
+    /** if not set src, no need to render wired broken image */
+  const shouldRendSrc = () => Boolean(props.src)
   return (
     <Piv<'img'>
       render:self={(selfProps) => renderHTMLDOM('img', selfProps)}
       htmlProps={{ alt: props.name, src: props.src }}
-      icss={{ display: 'block', width: `${sizePx}px`, height: `${sizePx}px`, objectFit: 'cover' }}
+      icss={{
+        display: 'block',
+        visibility: shouldRendSrc() ? undefined : 'hidden',
+        width: `${sizePx}px`,
+        height: `${sizePx}px`,
+        objectFit: 'cover',
+      }}
       shadowProps={props}
       class={Icon.name}
     />
