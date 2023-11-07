@@ -26,12 +26,14 @@ export function makePopover(options?: PopoverPluginOptions) {
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()
   const [panelDom, setPanelDom] = createRef<HTMLElement>()
 
-  // invoke trigger 
-  useGestureHover({
-    el: buttonDom,
-    onHoverStart: open,
-    onHoverEnd: close,
-  })
+  // invoke trigger
+  if (options?.triggerBy === 'hover') {
+    useGestureHover({
+      el: buttonDom,
+      onHoverStart: open,
+      onHoverEnd: close,
+    })
+  }
 
   /**
    * in {@link popoverTriggerPlugin}\
@@ -45,13 +47,6 @@ export function makePopover(options?: PopoverPluginOptions) {
       onClick: toggle,
     } satisfies Partial<PivProps>
   })
-
-  const popoverWrapperPlugin = createPlugin(
-    () => () =>
-      ({
-        icss: { position: 'relative', width: 'max-content', height: 'fit-content' },
-      }) satisfies Partial<PivProps>,
-  )
 
   /**
    * in {@link popoverTriggerPlugin}\
@@ -87,7 +82,7 @@ export function makePopover(options?: PopoverPluginOptions) {
         return panelStyle()
       },
       get icss() {
-        return { position: 'absolute' } as ICSS
+        return { position: 'fixed' } satisfies ICSS
       },
       // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
     } satisfies Partial<PivProps>
@@ -113,8 +108,6 @@ export function makePopover(options?: PopoverPluginOptions) {
       /** when trigger is invoked, panel will show  */
       trigger: popoverTriggerPlugin,
       panel: popoverPanelPlugin,
-      /** mannage prop state */
-      containerBox: popoverWrapperPlugin,
     },
   }
 }

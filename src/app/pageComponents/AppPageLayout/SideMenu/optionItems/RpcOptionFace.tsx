@@ -10,7 +10,7 @@ export function RpcItemFace(kitProps: {
   isLoadingCustomizedRPC?: boolean
 }) {
   const { props, shadowProps } = useKitProps(kitProps)
-  const { plugins: popoverPlugins, state: popoverState } = makePopover({ placement: 'right', triggerBy: 'click', }) // <-- run on define, not good
+  const { plugins: popoverPlugins, state: popoverState } = makePopover({ placement: 'right', triggerBy: 'click' }) // <-- run on define, not good
   const dotIcss = {
     width: '0.375rem',
     height: '0.375rem',
@@ -20,7 +20,7 @@ export function RpcItemFace(kitProps: {
     boxShadow: '0 0 6px 1px currentColor',
   }
   return (
-    <Container plugin={popoverPlugins.containerBox}>
+    <>
       <OptionItemBox
         plugin={popoverPlugins.trigger}
         render:arrow
@@ -29,8 +29,10 @@ export function RpcItemFace(kitProps: {
       >
         RPC
       </OptionItemBox>
-      <Panel plugin={popoverPlugins.panel} icss={[icssCard]}>hello world</Panel>
-    </Container>
+      <Panel plugin={popoverPlugins.panel} icss={[icssCard]}>
+        hello world
+      </Panel>
+    </>
   )
 }
 

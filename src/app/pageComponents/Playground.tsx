@@ -381,24 +381,12 @@ function PopoverExample() {
   })
   const cardICSS = createICSS(() => ({ background: cssVar('--card-bg') }))
   return (
-    <Container plugin={popoverPlugins.containerBox}>
+    <>
       <Button plugin={[popoverPlugins.trigger, hoverPlugin]}>💬popover</Button>
       <Box plugin={popoverPlugins.panel} icss={[{ border: 'solid', minHeight: '5em' }, cardICSS]}>
         hello world
       </Box>
-    </Container>
-  )
-}
-function PopoverExample2() {
-  return (
-    <Popover placement={'right'}>
-      <Popover.Trigger>
-        <Button>💬popover</Button>
-      </Popover.Trigger>
-      <Popover.Content>
-        <Box icss={{ border: 'solid', minHeight: '5em' }}>hello world</Box>
-      </Popover.Content>
-    </Popover>
+    </>
   )
 }
 

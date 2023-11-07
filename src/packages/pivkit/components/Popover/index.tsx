@@ -21,7 +21,7 @@ export function Popover(kitProps: KitProps<PopoverProps>) {
     <PopoverContext.Provider
       value={{ popoverButtonPlugin: popoverPlugins.trigger, popoverPanelPlugin: popoverPlugins.panel }}
     >
-      <Box plugin={popoverPlugins.containerBox}>{props.children}</Box>
+      <Box>{props.children}</Box>
     </PopoverContext.Provider>
   )
 }

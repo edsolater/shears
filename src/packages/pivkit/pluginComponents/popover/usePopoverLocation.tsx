@@ -1,24 +1,25 @@
-import { Accessor, createEffect, createMemo, createSignal } from 'solid-js'
+import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { IStyle } from '../../piv/propHandlers'
-import { PopupStyleInfo, calcPopupPanelLocation } from './calcPopupPanelLocation'
+import { runInNextLoop } from '../../utils/runInNextLoop'
+import { PopupLocationInfo, calcPopupPanelLocation } from './calcPopupPanelLocation'
+import { getScrollParents } from './getScrollParents'
 import { PopoverPlacement } from './type'
-import { mergeObjects } from '@edsolater/fnkit'
 
 // for fade in effect (fade-in is caused by )
-// const popupOrigins = {
-//   top: 'bottom',
-//   'top-left': 'bottom-left',
-//   'top-right': 'bottom-right',
-//   right: 'left',
-//   'right-top': 'top-left',
-//   'right-bottom': 'bottom-left',
-//   left: 'right',
-//   'left-top': 'top-right',
-//   'left-bottom': 'bottom-right',
-//   bottom: 'top',
-//   'bottom-left': 'top-left',
-//   'bottom-right': 'top-right',
-// }
+const popupOrigins = {
+  top: 'bottom',
+  'top-left': 'bottom-left',
+  'top-right': 'bottom-right',
+  right: 'left',
+  'right-top': 'top-left',
+  'right-bottom': 'bottom-left',
+  left: 'right',
+  'left-top': 'top-right',
+  'left-bottom': 'bottom-right',
+  bottom: 'top',
+  'bottom-left': 'top-left',
+  'bottom-right': 'top-right',
+}
 
 export type PopoverLocationHookOptions = {
   buttonDom: Accessor<HTMLElement | undefined>
@@ -42,17 +43,16 @@ export function usePopoverLocation({
   popoverGap,
   viewportBoundaryInset,
 }: PopoverLocationHookOptions) {
-  const [popupStyles, setPopupStyles] = createSignal<PopupStyleInfo>()
+  const [panelCoordinates, setPanelCoordinates] = createSignal<PopupLocationInfo>()
 
-  // calculate panelCoordinates when domRef is attached
-  createEffect(() => {
+  const update = () => {
     // must in some computer
     if (!globalThis.document) return
     const buttonElement = buttonDom()
     const panelElement = panelDom()
     if (!buttonElement || !panelElement) return
 
-    const styles = calcPopupPanelLocation({
+    const coors = calcPopupPanelLocation({
       buttonElement: buttonElement,
       panelElement: panelElement,
       placement,
@@ -60,14 +60,90 @@ export function usePopoverLocation({
       popoverGap,
       viewportBoundaryInset,
     })
-    setPopupStyles(styles)
+    setPanelCoordinates(coors)
+  }
+
+  // if not trigger on, can't calculate location
+  createEffect(() => {
+    if (isTriggerOn()) {
+      runInNextLoop(update) // calc coor in next frame for safer lifecycle:layout
+    }
   })
 
-  const panelStyle = createMemo(() =>
-    mergeObjects(popupStyles()?.panel, {
-      display: isTriggerOn() ? '' : 'none',
-    } satisfies IStyle),
-  )
+  createEffect(() => {
+    const buttonElement = buttonDom()
+    if (!buttonElement) return
+    const panelElement = panelDom()
+    if (!panelElement) return
+    const buttonScrollParents = buttonElement ? getScrollParents(buttonElement) : []
+    const panelScrollParents = panelElement ? getScrollParents(panelElement) : []
+    const parents = [...buttonScrollParents, ...panelScrollParents]
+    parents.forEach((parent) => {
+      parent.addEventListener('scroll', update, { passive: true })
+      globalThis.addEventListener?.('resize', update, { passive: true })
+    })
+    onCleanup(() => {
+      parents.forEach((parent) => {
+        parent.removeEventListener('scroll', update)
+        globalThis.removeEventListener?.('resize', update)
+      })
+    })
+  })
 
-  return { locationInfo: popupStyles, panelStyle }
+  const panelStyle = createMemo(() => {
+    const style = isTriggerOn()
+      ? ({
+          left: panelCoordinates()?.panelLeft + 'px',
+          top: panelCoordinates()?.panelTop + 'px',
+        } as IStyle)
+      : ({ visibility: 'hidden' } as IStyle)
+    return style
+  })
+
+  return { locationInfo: panelCoordinates, forceUpdateLocation: update, panelStyle }
+}
+
+export function usePopoverPanelLocation({
+  buttonDom,
+  panelDom,
+  isTriggerOn,
+  placement,
+  cornerOffset,
+  popoverGap,
+  viewportBoundaryInset,
+}: PopoverLocationHookOptions) {
+  const [panelCoordinates, setPanelCoordinates] = createSignal<PopupLocationInfo>()
+
+  const update = () => {
+    // must in some computer
+    if (!globalThis.document) return
+    const buttonElement = buttonDom()
+    const panelElement = panelDom()
+    if (!buttonElement || !panelElement) return
+
+    const coors = calcPopupPanelLocation({
+      buttonElement: buttonElement,
+      panelElement: panelElement,
+      placement,
+      cornerOffset,
+      popoverGap,
+      viewportBoundaryInset,
+    })
+    setPanelCoordinates(coors)
+  }
+
+  const panelStyle = createMemo(() => {
+    const baseStyle = {
+      position: 'absolute',
+    } as IStyle
+    const style = isTriggerOn()
+      ? ({
+          left: panelCoordinates()?.panelLeft + 'px',
+          top: panelCoordinates()?.panelTop + 'px',
+        } as IStyle)
+      : ({ visibility: 'hidden' } as IStyle)
+    return style
+  })
+
+  return { locationInfo: panelCoordinates, forceUpdateLocation: update, panelStyle }
 }
