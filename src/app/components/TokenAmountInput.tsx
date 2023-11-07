@@ -4,7 +4,7 @@ import {
   Box,
   BoxKitProps,
   BoxProps,
-  Card,
+  Panel,
   Input,
   InputProps,
   KitProps,
@@ -106,7 +106,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props } = useKitProps(rawProps)
   const tokens = store.tokens
   return (
-    <Card>
+    <Panel>
       <Box>
         search: <Input icss={{ border: 'solid' }} />
       </Box>
@@ -116,7 +116,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
       <List items={tokens}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
       </List>
-    </Card>
+    </Panel>
   )
 }
 

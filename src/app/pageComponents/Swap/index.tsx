@@ -2,7 +2,7 @@ import { assert } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
 import {
   Button,
-  Card,
+  Panel,
   Piv,
   Section,
   cssVar,
@@ -48,7 +48,7 @@ export default function SwapPage() {
   return (
     <Piv>
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
-        <Card icss={[icssCard, icssCyberpenkCard(), icssCyberpenkBackgroundGlow, icssCol({ gap: '.5em' })]}>
+        <Panel icss={[icssCard, icssCyberpenkCard(), icssCyberpenkBackgroundGlow, icssCol({ gap: '.5em' })]}>
           <TokenAmountInputBox
             token={token1}
             amount={tokenAmount1}
@@ -88,7 +88,7 @@ export default function SwapPage() {
           >
             Swap
           </Button>
-        </Card>
+        </Panel>
       </Section>
     </Piv>
   )

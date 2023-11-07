@@ -1,10 +1,10 @@
 import { KitProps, Piv, useKitProps } from '../piv'
 
-export interface CardProps {}
+export interface PanelProps {}
 
 /** provide default icss */
-export function Card(rawProps: KitProps<CardProps>) {
-  const { props } = useKitProps(rawProps, { name: 'Card' })
+export function Panel(rawProps: KitProps<PanelProps>) {
+  const { props } = useKitProps(rawProps, { name: 'Panel' })
   /* ---------------------------------- props --------------------------------- */
   return <Piv shadowProps={props} />
 }

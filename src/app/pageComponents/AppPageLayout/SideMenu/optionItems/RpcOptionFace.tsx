@@ -1,4 +1,4 @@
-import { Piv, useKitProps } from '../../../../../packages/pivkit'
+import { Container, Panel, Piv, icssCard, makePopover, useKitProps } from '../../../../../packages/pivkit'
 import { OptionItemBox } from './OptionItem'
 
 export function RpcItemFace(kitProps: {
@@ -10,7 +10,7 @@ export function RpcItemFace(kitProps: {
   isLoadingCustomizedRPC?: boolean
 }) {
   const { props, shadowProps } = useKitProps(kitProps)
-
+  const { plugins: popoverPlugins, state: popoverState } = makePopover({ placement: 'right', triggerBy: 'click', }) // <-- run on define, not good
   const dotIcss = {
     width: '0.375rem',
     height: '0.375rem',
@@ -20,9 +20,17 @@ export function RpcItemFace(kitProps: {
     boxShadow: '0 0 6px 1px currentColor',
   }
   return (
-    <OptionItemBox render:arrow shadowProps={shadowProps} render:dot={<Piv icss={dotIcss}></Piv>}>
-      RPC
-    </OptionItemBox>
+    <Container plugin={popoverPlugins.containerBox}>
+      <OptionItemBox
+        plugin={popoverPlugins.trigger}
+        render:arrow
+        render:dot={<Piv icss={dotIcss}></Piv>}
+        shadowProps={shadowProps}
+      >
+        RPC
+      </OptionItemBox>
+      <Panel plugin={popoverPlugins.panel} icss={[icssCard]}>hello world</Panel>
+    </Container>
   )
 }
 
