@@ -20,11 +20,11 @@ export interface RPCEndpoint {
 }
 export const availableRpcs: RPCEndpoint[] = [
   {
-    name: 'inner-test-rpc',
+    name: 'inner test rpc',
     url: 'https://rpc.asdf1234.win',
   },
   {
-    name: 'dev-tool',
+    name: 'dev tool',
     url: 'https://rpc.asdf1234.win',
   },
 ]

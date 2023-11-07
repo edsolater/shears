@@ -1,22 +1,30 @@
 import {
+  Badge,
   Box,
+  BoxProps,
   Icon,
   KitProps,
+  Loop,
   Panel,
   Piv,
   PivChild,
+  PivProps,
   Row,
   Text,
+  createICSS,
+  cssColorMix,
+  cssOpacity,
   cssVar,
   icssCard,
   icssCyberpenkBackground,
+  icssDivider,
   makePopover,
   useKitProps,
 } from '../../../../../packages/pivkit'
 import { RPCEndpoint, availableRpcs } from '../../../../stores/data/store'
 import { OptionItemBox } from './OptionItem'
 
-export function RpcItemFace(kitProps: {
+export function RpcSettingOptionItemFace(kitProps: {
   currentRPC?: RPCEndpoint
   isLoading?: boolean
   isLoadingCustomizedRPC?: boolean
@@ -45,7 +53,7 @@ export function RpcItemFace(kitProps: {
       >
         RPC
       </OptionItemBox>
-      <Panel plugin={popoverPlugins.panel} icss={[icssCard, icssCyberpenkBackground]}>
+      <Panel plugin={popoverPlugins.panel} icss={[{ width: '24rem' }, icssCard, icssCyberpenkBackground]}>
         <RPCPanel
           currentRPC={props.currentRPC}
           availableRpcs={availableRpcs}
@@ -65,15 +73,18 @@ function RPCPanel(props: {
 }) {
   return (
     <RPCPanelBox>
-      {props.availableRpcs?.map((rpc) => (
-        <RPCPanelItem
-          rpc={rpc}
-          isCurrent={rpc.url === props.currentRPC?.url}
-          isLoading={props.isLoading}
-          isLoadingCustomizedRPC={props.isLoadingCustomizedRPC}
-          isRecommanded={true}
-        />
-      ))}
+      <Loop of={props.availableRpcs} icss={icssDivider}>
+        {(rpc) => (
+          <RPCPanelItem
+            icss={{ paddingBlock: '0.75rem' }}
+            rpc={rpc}
+            isCurrent={rpc.url === props.currentRPC?.url}
+            isLoading={props.isLoading}
+            isLoadingCustomizedRPC={props.isLoadingCustomizedRPC}
+            isRecommanded={true}
+          />
+        )}
+      </Loop>
     </RPCPanelBox>
   )
 }
@@ -97,16 +108,18 @@ export function RPCPanelBox(kitProps: KitProps) {
   )
 }
 
-function RPCPanelItem(kitProps: {
-  rpc: RPCEndpoint
-  isRecommanded?: boolean
-  isUserCustomized?: boolean
-  isCurrent?: boolean
-  isLoading?: boolean
-  isLoadingCustomizedRPC?: boolean
-  onClickItem?: (rpc: RPCEndpoint) => void
-  onDeleteItem?: (rpc: RPCEndpoint) => void
-}) {
+function RPCPanelItem(
+  kitProps: KitProps<{
+    rpc: RPCEndpoint
+    isRecommanded?: boolean
+    isUserCustomized?: boolean
+    isCurrent?: boolean
+    isLoading?: boolean
+    isLoadingCustomizedRPC?: boolean
+    onClickRPCItem?: (rpc: RPCEndpoint) => void
+    onDeleteRPCItem?: (rpc: RPCEndpoint) => void
+  }>,
+) {
   const { props, shadowProps } = useKitProps(kitProps)
   const { rpc, isCurrent } = props
   const { plugins: popoverPlugins } = makePopover({ placement: 'right', triggerBy: 'click' })
@@ -123,31 +136,33 @@ function RPCPanelItem(kitProps: {
       shadowProps={shadowProps}
       class='group flex-wrap gap-3 py-4 px-6 mobile:px-3 border-[rgba(171,196,255,0.05)]'
       onClick={() => {
-        props.onClickItem?.(rpc)
+        props.onClickRPCItem?.(rpc)
       }}
     >
       <Row class='items-center w-full'>
         <Row
-          class={`${
-            props.isCurrent
-              ? 'text-[rgba(255,255,255,0.85)]'
-              : 'hover:text-white active:text-white text-white cursor-pointer'
-          } items-center w-full`}
+          icss={{
+            width: '100%',
+            color: props.isCurrent ? 'rgba(255,255,255,0.85)' : 'white',
+            '&:hover': { color: 'white' },
+            transition: 'color 0.2s',
+            cursor: 'pointer',
+          }}
+          icss:gap={'.25rem'}
         >
-          {props.rpc.name ?? '--'}
-          {props.isRecommanded && <Badge class='self-center ml-2'>recommended</Badge>}
-          {props.isUserCustomized && (
-            <Badge class='self-center ml-2' cssColor='#c4d6ff'>
-              user added
-            </Badge>
-          )}
-          {props.isCurrent && <Icon>✅</Icon>}
+          <Text icss={{ whiteSpace: 'nowrap' }}>{props.rpc.name ?? '--'}</Text>
+
+          <Row icss={{ gap: '.5rem' }}>
+            {props.isRecommanded && <Badge icss={{ color: '#5ac4be' }}>recommended</Badge>}
+            {props.isUserCustomized && <Badge icss={{ color: '#c4d6ff' }}>user added</Badge>}
+            {props.isCurrent && <Icon>✅</Icon>}
+          </Row>
 
           {/* delete icon */}
           {props.isRecommanded && !props.isCurrent && (
             <Icon
               onClick={({ ev }) => {
-                props.onDeleteItem?.(rpc)
+                props.onDeleteRPCItem?.(rpc)
                 ev.stopPropagation()
               }}
             >
@@ -157,50 +172,6 @@ function RPCPanelItem(kitProps: {
         </Row>
         {props.isLoading && props.isCurrent && <Icon icss={{ marginLeft: '.75rem' }}>💫</Icon>}
       </Row>
-    </Row>
-  )
-}
-
-type BadgeType = {
-  cssColor?: string
-  cssBgColor?: string
-  noOutline?: boolean
-  /** default: outline */
-  type?: 'solid' | 'outline'
-  /** default 'md' */
-  size?: 'md' | 'sm'
-  /** usually, it appear with onClick */
-  hoverChildren?: PivChild
-}
-
-export function Badge(kitProps: KitProps<BadgeType>) {
-  const { props, shadowProps } = useKitProps(kitProps)
-  const defaultSize = props.size ?? 'md'
-  return (
-    <Row
-      // class={twMerge(
-      //   `relative group text-center items-center ${defaultSize === 'sm' ? 'px-1 text-2xs' : 'px-2 text-xs'} ${
-      //     props.type === 'solid'
-      //       ? 'bg-current text-white'
-      //       : `${props.noOutline ? '' : defaultSize === 'sm' ? 'border' : 'border-1.5'} border-current`
-      //   } rounded-full capitalize`,
-      //   props.class,
-      // )}
-      // style={{
-      //   color: props.cssColor ?? '#5ac4be',
-      //   backgroundColor: props.cssBgColor,
-      // }}
-      icss={{}}
-      shadowProps={shadowProps}
-    >
-      {props.hoverChildren && (
-        <Piv class='absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-300'>
-          {props.hoverChildren}
-        </Piv>
-      )}
-      <Piv class={props.hoverChildren ? 'group-hover:opacity-0 transition duration-300' : undefined}>
-        {props.children}
-      </Piv>
     </Row>
   )
 }

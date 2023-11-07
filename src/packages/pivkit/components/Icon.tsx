@@ -41,7 +41,6 @@ export function Icon(rawProps: KitProps<IconProps>) {
         objectFit: 'cover',
       }}
       shadowProps={props}
-      class={Icon.name}
     />
   )
 }

@@ -29,10 +29,10 @@ const icssOptionItemBox = createICSS(() => ({
   paddingBlock: '0.75rem',
   paddingInline: '2rem',
   '&:hover': {
-    backgroundColor: cssOpacity(cssVar('--ternary'), 0.1),
+    backgroundColor: cssOpacity(cssVar('--ternary'), .1),
   },
   '&:active': {
-    backgroundColor: cssOpacity(cssVar('--ternary'), 0.1),
+    backgroundColor: cssOpacity(cssVar('--ternary'), .1),
   },
   cursor: 'pointer',
   position: 'relative',

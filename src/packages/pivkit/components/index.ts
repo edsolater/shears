@@ -20,5 +20,6 @@ export * from './Switch'
 export * from './Text'
 export * from './Loop'
 export * from './Tabs'
+export * from './Badge'
 
 export * from './ComponentFatory'
