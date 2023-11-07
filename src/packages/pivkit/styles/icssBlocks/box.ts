@@ -120,7 +120,7 @@ export type ICSSCardOption = {
 export const icssCard = createICSS((options?: ICSSCardOption) => ({
   display: 'grid',
   // backgroundColor: 'color-mix(in srgb, currentColor, transparent 95%)',
-  background: options?.bg,
+  background: options?.bg ?? 'var(--app-bg)',
   /* generate by https://shadows.brumm.af/ */
   boxShadow:
     options?.styleType === 'ghost'

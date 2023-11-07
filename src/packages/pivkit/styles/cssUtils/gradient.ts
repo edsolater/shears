@@ -7,7 +7,7 @@ import { CSSObject } from '../../piv'
  */
 export function cssLinearGradient(options: {
   /** @default 'to bottom' */
-  direction?: 'to top' | 'to bottom' | 'to left' | 'to right'
+  direction?: 'to top' | 'to bottom' | 'to left' | 'to right' | (string & {})
   colors: (CSSColorString | [color: CSSColorString, position?: string])[]
 }): string {
   return `linear-gradient(${options.direction ?? 'to bottom'}, ${options.colors

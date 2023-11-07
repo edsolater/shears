@@ -8,8 +8,9 @@ import {
   cssVar,
   icssCard,
   icssCol,
+  icssCyberpenkBackground,
   icssCyberpenkBackgroundGlow,
-  icssCyberpenkCard,
+  icssCyberpenkBorder,
 } from '../../../packages/pivkit'
 import { TokenAmountInputBox } from '../../components/TokenAmountInput'
 import { useToken } from '../../stores/data/dataHooks/useToken'
@@ -48,7 +49,15 @@ export default function SwapPage() {
   return (
     <Piv>
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
-        <Panel icss={[icssCard, icssCyberpenkCard(), icssCyberpenkBackgroundGlow, icssCol({ gap: '.5em' })]}>
+        <Panel
+          icss={[
+            icssCard,
+            icssCyberpenkBackground,
+            icssCyberpenkBorder,
+            icssCyberpenkBackgroundGlow,
+            icssCol({ gap: '.5em' }),
+          ]}
+        >
           <TokenAmountInputBox
             token={token1}
             amount={tokenAmount1}

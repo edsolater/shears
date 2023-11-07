@@ -10,7 +10,11 @@ export function RpcItemFace(kitProps: {
   isLoadingCustomizedRPC?: boolean
 }) {
   const { props, shadowProps } = useKitProps(kitProps)
-  const { plugins: popoverPlugins, state: popoverState } = makePopover({ placement: 'right', triggerBy: 'click' }) // <-- run on define, not good
+  const { plugins: popoverPlugins, state: popoverState } = makePopover({
+    placement: 'right',
+    triggerBy: 'click',
+    defaultOpen: true,
+  }) // <-- run on define, not good
   const dotIcss = {
     width: '0.375rem',
     height: '0.375rem',

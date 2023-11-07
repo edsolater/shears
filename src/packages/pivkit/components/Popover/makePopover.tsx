@@ -1,15 +1,16 @@
-import { createEffect, onCleanup } from 'solid-js'
+import { Accessor, createEffect, onCleanup } from 'solid-js'
 import { createRef } from '../..'
 import { onEvent } from '../../domkit'
+import { useGestureHover } from '../../domkit/hooks/useGestureHover'
 import { createTrigger } from '../../hooks/utils/createTrigger'
 import { ICSS, PivProps, createPlugin } from '../../piv'
 import { PopoverLocationHookOptions, usePopoverLocation } from '../../pluginComponents/popover/usePopoverLocation'
-import { useGestureHover } from '../../domkit/hooks/useGestureHover'
 import { PopPortal } from '../Drawer/PopPortal'
 
 export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'> & {
   /** @default 'hover' */
   triggerBy?: 'hover' | 'click'
+  defaultOpen?: boolean | Accessor<boolean>
 }
 
 /**
@@ -22,7 +23,7 @@ export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn
  * - info: accessors about trigger and popover
  */
 export function makePopover(options?: PopoverPluginOptions) {
-  const { close, open, toggle, isTriggerOn } = createTrigger()
+  const { close, open, toggle, isTriggerOn } = createTrigger({ defaultState: options?.defaultOpen })
 
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()
   const [panelDom, setPanelDom] = createRef<HTMLElement>()
