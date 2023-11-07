@@ -1,6 +1,6 @@
 import { Col } from '../../../../../packages/pivkit'
 import { OptionItemBox } from './OptionItem'
-import { RpcItemFace } from './RpcOptionFace'
+import { RpcItemFace } from './RpcOptionSetting'
 
 export function SideMenu_OptionItems() {
   return (

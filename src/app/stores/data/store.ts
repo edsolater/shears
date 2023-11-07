@@ -1,4 +1,3 @@
-import { createEffect, createMemo } from 'solid-js'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
@@ -6,10 +5,29 @@ import { Mint, Numberish } from '../../utils/dataStructures/type'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
 import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
+import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
-import { loadTokenPrice } from './portActions/loadTokenPrice_main'
+
+export interface RPCEndpoint {
+  name?: string
+  url: string
+  weight?: number
+  isUserCustomized?: true
+  /** @default 'mainnet' */
+  net?: 'mainnet' | 'devnet'
+}
+export const availableRpcs: RPCEndpoint[] = [
+  {
+    name: 'inner-test-rpc',
+    url: 'https://rpc.asdf1234.win',
+  },
+  {
+    name: 'dev-tool',
+    url: 'https://rpc.asdf1234.win',
+  },
+]
 
 export type StoreData = {
   // -------- swap --------
@@ -42,7 +60,7 @@ export type StoreData = {
   prices?: { mint: string; price: Numberish }[]
 
   // -------- app setting --------
-  rpcUrl?: string
+  rpc?: RPCEndpoint
 }
 
 export const {
@@ -52,7 +70,7 @@ export const {
   createStorePropertySignal,
   createStorePropertySetter,
 } = createSmartStore<StoreData>(
-  { swapInputToken1: RAYMint, swapInputToken2: SOLMint },
+  { swapInputToken1: RAYMint, swapInputToken2: SOLMint, rpc: availableRpcs[0] },
   {
     onFirstAccess: {
       farmJsonInfos: loadFarmJsonInfos,

@@ -157,6 +157,7 @@ input:focus-visible {
 :root.dark {
   --primary: hsl(210deg, 6%, 76%);
   --secondary: #abc4ff;
+  --secondary-half: rgb(from var(--secondary) r g b / 0.5);
   --ternary: #39d0d8;
   --ternary-pale: #ace3e5;
 

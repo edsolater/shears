@@ -117,6 +117,7 @@ export type ICSSCardOption = {
   items?: CSSObject['alignItems']
   bg?: CSSObject['background']
 }
+
 export const icssCard = createICSS((options?: ICSSCardOption) => ({
   display: 'grid',
   // backgroundColor: 'color-mix(in srgb, currentColor, transparent 95%)',
@@ -128,7 +129,7 @@ export const icssCard = createICSS((options?: ICSSCardOption) => ({
       : `4.1px 4.1px 5.3px -23px rgba(0, 0, 0, 0.012),
            19.6px 19.6px 17.9px -23px rgba(0, 0, 0, 0.018),
            100px 100px 80px -23px rgba(0, 0, 0, 0.03)`,
-  padding: '24px',
+  padding: '12px 24px',
   borderRadius: '16px',
 }))
 
