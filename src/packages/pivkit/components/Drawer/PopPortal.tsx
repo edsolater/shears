@@ -4,6 +4,7 @@ import { createRef } from '../..'
 import isClientSide from '../../../jFetch/utils/isSSR'
 import { RawChild } from '../../piv/typeTools'
 
+/** with the same id, new top-element will be created only-once  */
 export function PopPortal(props: { id: string; children?: RawChild }) {
   const element = createPopStackHTMLElement(props.id)
   const [ref, setRef] = createRef()
