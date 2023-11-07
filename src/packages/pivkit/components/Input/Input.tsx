@@ -6,6 +6,8 @@ import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { createDomRef } from '../../hooks'
 import { useFocus } from './hooks/useFocus'
+import { runtimeObject } from '../../../fnkit/runtimeObject'
+import { mergeObjects } from '@edsolater/fnkit'
 
 export interface InputController {
   text: string
@@ -26,6 +28,8 @@ export type InputProps = {
   defaultValue?: string
   /** when change, affact to ui*/
   value?: string
+
+  placeholder?: string
   /** default is true */
   disableOutsideValueUpdateWhenUserInput?: boolean
   disableUserInput?: boolean
@@ -34,11 +38,12 @@ export type InputProps = {
   /** disabled = disableOutSideValue + disableUserInput */
   disabled?: boolean
   // only user can trigger this callback
-  onUserInput?(utils: { text: string | undefined }): void
-  // both user and program can trigger this callback
-  onInput?(utils: { text: string | undefined; byUser: boolean }): void
+  onUserInput?(text: string | undefined, controller: InputController): void
   // only program can trigger this callback
-  onProgramInput?(utils: { text: string | undefined }): void
+  onProgramInput?(text: string | undefined, controller: InputController): void
+  // onUserInput + onProgramInput
+  onInput?(text: string | undefined, controller: InputController & { byUser: boolean }): void
+  onEnter?(text: string | undefined, controller: InputController): void
 }
 
 export type InputKitProps = KitProps<InputProps, { controller: InputController }>
@@ -49,23 +54,24 @@ export type InputKitProps = KitProps<InputProps, { controller: InputController }
 export function Input(rawProps: InputKitProps) {
   const { dom, setDom } = createDomRef<HTMLInputElement>()
   const isFocused = useFocus(dom)
+  const controller = runtimeObject<InputController>({
+    text: () => innerText(),
+    setText: () => updateText,
+    isFocused: () => isFocused,
+  })
   const { props } = useKitProps(rawProps, {
     name: 'Input',
-    controller: (mergedProps) =>
-      ({
-        get text() {
-          return innerText()
-        },
-        setText: updateText,
-        isFocused,
-      }) as InputController,
+    controller: () => controller,
   })
 
-  const [additionalProps, { innerText, updateText }] = useInputInnerValue(props)
+  const [additionalProps, { innerText, updateText }] = useInputInnerValue(props, controller)
 
   return (
     <Piv<'input'>
       domRef={setDom}
+      htmlProps={{
+        placeholder: props.placeholder,
+      }}
       render:self={(selfProps) => renderHTMLDOM('input', selfProps)}
       shadowProps={[props, additionalProps()]}
       class={Input.name}
@@ -81,7 +87,7 @@ export function Input(rawProps: InputKitProps) {
 /**
  *  handle `<Input>`'s value
  */
-function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
+function useInputInnerValue(props: DeAccessifyProps<InputKitProps>, controller: InputController) {
   const [inputRef, setInputRef] = createRef<HTMLInputElement>()
   // if user is inputing or just input, no need to update upon out-side value
   const [isFocused, { on: focusInput, off: unfocusInput }] = createToggle()
@@ -96,8 +102,8 @@ function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
     if (el) {
       el.value = newText ?? ''
       setInnerText(newText)
-      props.onProgramInput?.({ text: newText })
-      props.onInput?.({ text: newText, byUser: false })
+      props.onProgramInput?.(newText, controller)
+      props.onInput?.(newText, mergeObjects(controller, { byUser: false }))
     }
   }
 
@@ -173,8 +179,8 @@ function useInputInnerValue(props: DeAccessifyProps<InputKitProps>) {
           onInput: (e: Event) => {
             const text = (e.target as HTMLInputElement).value
             setInnerText(text)
-            props.onInput?.({ text, byUser: true })
-            props.onUserInput?.({ text })
+            props.onInput?.(text, mergeObjects(controller, { byUser: true }))
+            props.onUserInput?.(text, controller)
           },
           onFocus: focusInput,
           onBlur: unfocusInput,

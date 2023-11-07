@@ -1,8 +1,4 @@
-import { isFunction } from '@edsolater/fnkit'
-
-// TODO: @edsolater/fnkit aready have this
-type Promisify<T> = T extends Promise<any> ? T : Promise<T>
-type GetAfterRunObj<T extends object> = { [K in keyof T]: T[K] extends () => infer R ? Promisify<R> : Promisify<T[K]> }
+import { shrinkFn } from '@edsolater/fnkit'
 
 const clearMap = (resultMap: Map<any, any>) => resultMap.clear()
 // register clean up function
@@ -24,18 +20,25 @@ const mapClearRegistry = new FinalizationRegistry(clearMap)
  *
  * obj.b.then(console.log) // 'hello', 2
  */
-export function runtimeObject<T extends object>(objWithRule: T): GetAfterRunObj<T> {
+export function runtimeObject<T extends object>(
+  objWithRule: {
+    [K in keyof T]?: T[K] | (() => T[K] | undefined)
+  },
+  options?: {
+    canCacheKeys?: (keyof T)[]
+  },
+): T {
   const resultObject = new Map()
   const parsedObj = new Proxy(objWithRule, {
     get(target, p, receiver) {
       if (p === Symbol.dispose) return () => clearMap(resultObject)
-      if (resultObject.has(p)) return resultObject.get(p)
+      if (options?.canCacheKeys?.includes(p as any) && resultObject.has(p)) return resultObject.get(p)
       const value = Reflect.get(target, p, receiver)
-      const determinedValue = Promise.resolve(isFunction(value) ? value() : value)
-      resultObject.set(p, determinedValue)
+      const determinedValue = shrinkFn(value)
+      if (options?.canCacheKeys?.includes(p as any)) resultObject.set(p, determinedValue)
       return determinedValue
     },
-  }) as GetAfterRunObj<T>
+  }) as T
   mapClearRegistry.register(parsedObj, resultObject)
   return parsedObj
 }

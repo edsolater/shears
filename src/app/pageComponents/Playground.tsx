@@ -214,7 +214,7 @@ function InputExample() {
     <Input
       value={controlledValue}
       icss={{ border: 'solid' }}
-      onUserInput={({ text }) => {
+      onUserInput={(text) => {
         setControlledValue(text)
       }}
     />

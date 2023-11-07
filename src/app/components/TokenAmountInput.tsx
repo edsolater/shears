@@ -77,7 +77,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
         shadowProps={props['anatomy:amountInput']}
         icss={icssInputType()}
         value={amount}
-        onUserInput={({ text }) => {
+        onUserInput={(text) => {
           isStringNumber(text) ? setAmount(text) : undefined
         }}
       />

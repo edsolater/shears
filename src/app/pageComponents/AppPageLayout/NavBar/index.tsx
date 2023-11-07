@@ -25,7 +25,7 @@ export type AppPageLayout_NavBarProps = NaBar_NavWrapBoxProps
 
 export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
-    <NaBar_NavWrapBox >
+    <NaBar_NavWrapBox>
       <Row icss:justify='space-between'>
         {/* TODO: not correct for this */}
         <AppLogo />
@@ -76,7 +76,7 @@ function SettingsPanelDialog() {
 function SettingsContent() {
   const { value, setValue, isValid, isEmpty } = createFormField({
     name: 'rpcUrl',
-    value: store.rpcUrl,
+    value: store.rpc?.url,
     validRule: (value) => parseUrl(value).isValid,
   })
   const inputController = useInputController('Input__rpcUrl')
@@ -91,7 +91,7 @@ function SettingsContent() {
           <Input
             id='Input__rpcUrl'
             value={value}
-            onInput={({ text }) => {
+            onInput={(text) => {
               setValue(text)
             }}
             icss={{ borderStyle: 'solid', borderColor: isEmpty() ? 'gray' : isValid() ? 'green' : 'crimson' }}

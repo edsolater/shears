@@ -3,6 +3,7 @@ import {
   Box,
   BoxProps,
   Icon,
+  Input,
   KitProps,
   Loop,
   Panel,
@@ -85,6 +86,10 @@ function RPCPanel(props: {
           />
         )}
       </Loop>
+
+      {/* <Row>
+        <RPCPanelInput />
+      </Row> */}
     </RPCPanelBox>
   )
 }
@@ -173,5 +178,35 @@ function RPCPanelItem(
         {props.isLoading && props.isCurrent && <Icon icss={{ marginLeft: '.75rem' }}>💫</Icon>}
       </Row>
     </Row>
+  )
+}
+
+function RPCPanelInput(kitProps: KitProps<{ customURL?: string }>) {
+  const { props, shadowProps } = useKitProps(kitProps)
+  return (
+    <Box shadowProps={shadowProps}>
+      <Input
+        value={props.customURL}
+        // class={`px-2 py-2 border-1.5 flex-grow ${
+        //   switchConnectionFailed
+        //     ? 'border-[#DA2EEF]'
+        //     : userCostomizedUrlText === currentEndPoint?.url
+        //     ? 'border-[rgba(196,214,255,0.8)]'
+        //     : 'border-[rgba(196,214,255,0.2)]'
+        // } rounded-xl min-w-[7em]`}
+        // inputClassName='font-medium text-[rgba(196,214,255,0.5)] placeholder-[rgba(196,214,255,0.5)]'
+        placeholder='https://'
+        onUserInput={(searchText) => {
+          // useConnection.setState({ userCostomizedUrlText: searchText.trim() })
+        }}
+        onEnter={() => {
+          // switchRpc({ url: userCostomizedUrlText }).then((isSuccess) => {
+          //   if (isSuccess === true) {
+          //     closePanel()
+          //   }
+          // })
+        }}
+      />
+    </Box>
   )
 }
