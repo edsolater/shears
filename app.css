@@ -46,6 +46,12 @@ body {
 }
 * {
   box-sizing: border-box;
+
+  /* for app-like web page */
+  touch-action: manipulation;
+  /* for app-like web page */
+  user-select: none;
+
   transition-property: color, background-color, filter, backdrop-filter, opacity;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
