@@ -121,7 +121,6 @@ function RPCPanelItem(
 ) {
   const { props, shadowProps } = useKitProps(kitProps)
   const { rpc, isCurrent } = props
-  const { plugins: popoverPlugins } = makePopover({ placement: 'right', triggerBy: 'click' })
   const dotIcss = {
     width: '0.375rem',
     height: '0.375rem',

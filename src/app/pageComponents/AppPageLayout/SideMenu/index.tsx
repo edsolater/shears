@@ -1,5 +1,5 @@
 import { Col, Grid, KitProps } from '../../../../packages/pivkit'
-import { SideMenu_LinkItems } from './NavigationItems'
+import { NavLinkItems } from './NavigationItems'
 import { OptionAdditionalItems } from './OptionAdditionalItems'
 
 /**
@@ -24,7 +24,7 @@ export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
             height: '100%',
           }}
         >
-          <SideMenu_LinkItems />
+          <NavLinkItems />
 
           <OptionAdditionalItems />
 

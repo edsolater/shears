@@ -14,7 +14,7 @@ import {
 import { usePageMatcher } from '../../../routes'
 import { Link } from '../../../components/Link'
 
-export function SideMenu_LinkItems() {
+export function NavLinkItems() {
   const pageMatcher = usePageMatcher()
   return (
     <Col
