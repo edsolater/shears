@@ -63,21 +63,28 @@ export function usePopoverLocation({
     setPanelCoordinates(coors)
   }
 
-  // if not trigger on, can't calculate location
-  createEffect(() => {
-    if (isTriggerOn()) {
-      runInNextLoop(update) // calc coor in next frame for safer lifecycle:layout
-    }
-  })
 
+  // listen to button's resize for dom:layout
   createEffect(() => {
     const buttonElement = buttonDom()
     if (!buttonElement) return
-    const panelElement = panelDom()
-    if (!panelElement) return
+    const observer = new ResizeObserver(() => {
+      if (isTriggerOn()) {
+        runInNextLoop(update) // calc coor in next frame for safer lifecycle:layout
+      }
+    })
+    observer.observe(buttonElement)
+    onCleanup(() => {
+      observer.disconnect()
+    })
+  })
+
+  // listen to BUTTON parent's scroll
+  createEffect(() => {
+    const buttonElement = buttonDom()
+    if (!buttonElement) return
     const buttonScrollParents = buttonElement ? getScrollParents(buttonElement) : []
-    const panelScrollParents = panelElement ? getScrollParents(panelElement) : []
-    const parents = [...buttonScrollParents, ...panelScrollParents]
+    const parents = [...buttonScrollParents]
     parents.forEach((parent) => {
       parent.addEventListener('scroll', update, { passive: true })
       globalThis.addEventListener?.('resize', update, { passive: true })
@@ -91,12 +98,14 @@ export function usePopoverLocation({
   })
 
   const panelStyle = createMemo(() => {
-    const style = isTriggerOn()
-      ? ({
-          left: panelCoordinates()?.panelLeft + 'px',
-          top: panelCoordinates()?.panelTop + 'px',
-        } as IStyle)
-      : ({ visibility: 'hidden' } as IStyle)
+    const coor = panelCoordinates()
+    const style =
+      isTriggerOn() && coor
+        ? ({
+            left: coor.panelLeft + 'px',
+            top: coor.panelTop + 'px',
+          } as IStyle)
+        : ({ display: 'none' } as IStyle)
     return style
   })
 
