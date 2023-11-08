@@ -14,7 +14,7 @@ export default function HomePage() {
         <Piv>current owner: {walletStore.owner}</Piv>
         <Piv>pair count: {store.isPairInfoLoading ? '(loading)' : getSize(store.pairInfos)}</Piv>
       </Box>
-      <Link href={'/swap'}>Swap</Link>
+      <Link href={'/swap'}innerRoute>Swap</Link>
 
       {/* <LinkItem icon='/icons/entry-icon-pools.svg' href='/pools' isCurrentRoutePath={pageMatcher.isPairsPage}>
         Pools

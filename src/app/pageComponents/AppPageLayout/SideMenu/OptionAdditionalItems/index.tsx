@@ -2,7 +2,7 @@ import { Col } from '../../../../../packages/pivkit'
 import { OptionItemBox } from './OptionItem'
 import { RpcSettingFace } from './RpcOptionSetting'
 
-export function SideMenu_OptionItems() {
+export function OptionAdditionalItems() {
   return (
     <Col
       icss={{

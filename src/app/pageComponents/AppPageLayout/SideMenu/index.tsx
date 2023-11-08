@@ -1,15 +1,13 @@
-import { children } from 'solid-js'
 import { Col, Grid, KitProps } from '../../../../packages/pivkit'
-import { Mint } from '../../../utils/dataStructures/type'
 import { SideMenu_LinkItems } from './NavigationItems'
-import { SideMenu_OptionItems } from './optionItems'
+import { OptionAdditionalItems } from './OptionAdditionalItems'
 
 /**
  * for easier to code and read
  */
-export type AppPageLayout_SideMenuProps = {}
+export type NavSideMenuProps = {}
 
-export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenuProps>) {
+export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
   return (
     <>
       <Col
@@ -28,7 +26,7 @@ export function AppPageLayout_SideMenu(kitProps: KitProps<AppPageLayout_SideMenu
         >
           <SideMenu_LinkItems />
 
-          <SideMenu_OptionItems />
+          <OptionAdditionalItems />
 
           {/* <Tooltip>
             <div className='text-sm mobile:text-xs m-2 mb-0 leading-relaxed opacity-50 hover:opacity-100 transition font-medium text-[#abc4ff] whitespace-nowrap cursor-default'>
