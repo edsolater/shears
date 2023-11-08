@@ -1,20 +1,14 @@
 import {
   Badge,
   Box,
-  BoxProps,
   Icon,
   Input,
   KitProps,
   Loop,
   Panel,
   Piv,
-  PivChild,
-  PivProps,
   Row,
   Text,
-  createICSS,
-  cssColorMix,
-  cssOpacity,
   cssVar,
   icssCard,
   icssCyberpenkBackground,
@@ -25,7 +19,7 @@ import {
 import { RPCEndpoint, availableRpcs } from '../../../../stores/data/store'
 import { OptionItemBox } from './OptionItem'
 
-export function RpcSettingOptionItemFace(kitProps: {
+export function RpcSettingFace(kitProps: {
   currentRPC?: RPCEndpoint
   isLoading?: boolean
   isLoadingCustomizedRPC?: boolean
@@ -87,9 +81,9 @@ function RPCPanel(props: {
         )}
       </Loop>
 
-      {/* <Row>
+      <Row>
         <RPCPanelInput />
-      </Row> */}
+      </Row>
     </RPCPanelBox>
   )
 }
@@ -186,6 +180,7 @@ function RPCPanelInput(kitProps: KitProps<{ customURL?: string }>) {
   return (
     <Box shadowProps={shadowProps}>
       <Input
+        // icss={{ fontSize: 'inherit' }}
         value={props.customURL}
         // class={`px-2 py-2 border-1.5 flex-grow ${
         //   switchConnectionFailed

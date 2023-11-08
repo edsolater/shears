@@ -25,17 +25,17 @@ export function runtimeObject<T extends object>(
     [K in keyof T]?: T[K] | (() => T[K] | undefined)
   },
   options?: {
-    canCacheKeys?: (keyof T)[]
+    alwaysRun?: (keyof T)[]
   },
 ): T {
   const resultObject = new Map()
   const parsedObj = new Proxy(objWithRule, {
     get(target, p, receiver) {
       if (p === Symbol.dispose) return () => clearMap(resultObject)
-      if (options?.canCacheKeys?.includes(p as any) && resultObject.has(p)) return resultObject.get(p)
+      if (!options?.alwaysRun?.includes(p as any) && resultObject.has(p)) return resultObject.get(p)
       const value = Reflect.get(target, p, receiver)
       const determinedValue = shrinkFn(value)
-      if (options?.canCacheKeys?.includes(p as any)) resultObject.set(p, determinedValue)
+      if (!options?.alwaysRun?.includes(p as any)) resultObject.set(p, determinedValue)
       return determinedValue
     },
   }) as T

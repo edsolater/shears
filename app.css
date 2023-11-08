@@ -56,7 +56,12 @@ body {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
-
+input{
+  font: inherit;
+}
+input::placeholder {
+  color: color-mix(in srgb, currentcolor, transparent 50%);
+}
 input[type='number']::-webkit-outer-spin-button,
 input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;

@@ -54,11 +54,15 @@ export type InputKitProps = KitProps<InputProps, { controller: InputController }
 export function Input(rawProps: InputKitProps) {
   const { dom, setDom } = createDomRef<HTMLInputElement>()
   const isFocused = useFocus(dom)
-  const controller = runtimeObject<InputController>({
-    text: () => innerText(),
-    setText: () => updateText,
-    isFocused: () => isFocused,
-  })
+
+  const controller = runtimeObject<InputController>(
+    {
+      text: () => innerText(),
+      setText: () => updateText,
+      isFocused: () => isFocused,
+    },
+    { alwaysRun: ['text'] },
+  )
   const { props } = useKitProps(rawProps, {
     name: 'Input',
     controller: () => controller,
@@ -74,7 +78,6 @@ export function Input(rawProps: InputKitProps) {
       }}
       render:self={(selfProps) => renderHTMLDOM('input', selfProps)}
       shadowProps={[props, additionalProps()]}
-      class={Input.name}
       icss={[
         { flex: 1, background: 'transparent', minWidth: props.isFluid ? undefined : '14em' },
         /* initialize */

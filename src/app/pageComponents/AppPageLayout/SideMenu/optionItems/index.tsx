@@ -1,6 +1,6 @@
 import { Col } from '../../../../../packages/pivkit'
 import { OptionItemBox } from './OptionItem'
-import { RpcSettingOptionItemFace } from './RpcOptionSetting'
+import { RpcSettingFace } from './RpcOptionSetting'
 
 export function SideMenu_OptionItems() {
   return (
@@ -11,7 +11,7 @@ export function SideMenu_OptionItems() {
     >
       {/* divider */}
       {/* <div className='mx-8 border-b border-[rgba(57,208,216,0.16)] my-2 mobile:my-1'></div> */}
-      <RpcSettingOptionItemFace />
+      <RpcSettingFace />
 
       <Col icss={{ marginBlockTop: '0.5rem' }}>
         <OptionItemBox render:arrow href='https://raydium.gitbook.io/raydium/' iconSrc='/icons/msic-docs.svg'>
