@@ -4,8 +4,8 @@ import { onEvent } from '../../domkit'
 import { useGestureHover } from '../../domkit/hooks/useGestureHover'
 import { createTrigger } from '../../hooks/utils/createTrigger'
 import { ICSS, PivProps, createPlugin } from '../../piv'
-import { PopoverLocationHookOptions, usePopoverLocation } from '../../pluginComponents/popover/usePopoverLocation'
-import { PopPortal } from '../Drawer/PopPortal'
+import { PopoverLocationHookOptions, usePopoverLocation } from './usePopoverLocation'
+import { PopPortal } from '../../components/Drawer/PopPortal'
 
 export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn' | 'buttonDom' | 'panelDom'> & {
   /** @default 'hover' */
