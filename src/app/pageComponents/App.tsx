@@ -24,13 +24,13 @@ const uikitConfig: UIKitThemeConfig = {
   Button: {
     icss: {
       color: 'dodgerblue',
-      borderRadius: '0px',
-      padding: '4px 8px',
-      fontSize: '14px',
-      fontWeight: 'normal',
     },
   },
 }
+
+// config uikit theme before render
+configUIKitTheme(uikitConfig)
+
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -46,11 +46,6 @@ export function App() {
     switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
   )
   const needLayout = () => needAppPageLayout[location.pathname]
-
-  // config uikit theme before render
-  onMount(() => {
-    configUIKitTheme(uikitConfig)
-  })
 
   return (
     <>

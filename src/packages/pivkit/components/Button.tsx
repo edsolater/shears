@@ -80,15 +80,11 @@ export function Button(kitProps: ButtonKitProps) {
     },
   }
   /* ---------------------------------- props --------------------------------- */
-  const { props: rawProps } = useKitProps(kitProps, {
+  const { props } = useKitProps(kitProps, {
     controller: () => innerController,
     name: 'Button',
+    defaultProps: { variant: 'solid', size: 'md' },
   })
-
-  const props = addDefaultProps(
-    rawProps,
-    mergeProps({ variant: 'solid', size: 'md' }, useGlobalKitTheme<Partial<ButtonProps>>('Button')),
-  )
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>

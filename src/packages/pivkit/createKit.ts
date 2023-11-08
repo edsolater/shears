@@ -1,5 +1,5 @@
 import { hasProperty, MayArray, MayDeepArray, mergeObjects, pipe } from '@edsolater/fnkit'
-import { AccessifyProps, DeAccessifyProps, useAccessifiedProps } from '.'
+import { AccessifyProps, DeAccessifyProps, getUIKitTheme, hasUIKitTheme, useAccessifiedProps } from '.'
 import { runtimeObjectFromAccess, LazyLoadObj } from '../fnkit'
 import { createUUID, UUID } from './hooks/utils/createUUID'
 import { getControllerObjFromControllerContext } from './piv/ControllerContext'
@@ -16,6 +16,7 @@ import { mergeProps } from './piv/utils'
 import { AddDefaultPivProps, addDefaultPivProps } from './piv/utils/addDefaultProps'
 import { omit } from './piv/utils/omit'
 import { getPropsFromAddPropContext } from './piv/AddProps'
+import { get, hasValue } from '../../app/utils/dataTransmit/getItems'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -127,16 +128,23 @@ function getParsedKitProps<
   DefaultProps extends Partial<RawProps> = {},
 >(
   // too difficult to type here
-  props: any,
+  rawProps: any,
   options?: KitPropsOptions<RawProps, Controller, DefaultProps>,
 ): ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
   const proxyController = options?.controller
     ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps))
     : {}
-  const defaultedProps = options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props
+
+  if (options?.name === 'Button') {
+    console.log("getUIKitTheme('Button'): ", getUIKitTheme('Button'))
+  }
   // merge kit props
   const mergedGettersProps = pipe(
-    defaultedProps,
+    rawProps,
+    // get defaultProps from uikitTheme
+    (props) => (options?.name && hasUIKitTheme(options.name) ? mergeProps(getUIKitTheme(options.name), props) : props),
+    // get default props
+    (props) => (options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props),
     (props) =>
       useAccessifiedProps(
         props,
@@ -166,7 +174,7 @@ function getParsedKitProps<
   // load controller
   if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
 
-  registerControllerInCreateKit(proxyController, props.id)
+  registerControllerInCreateKit(proxyController, rawProps.id)
 
   return mergedGettersProps
 }

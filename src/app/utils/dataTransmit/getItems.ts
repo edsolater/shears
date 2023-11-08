@@ -102,8 +102,9 @@ export function getByIndex(i: ItemWrapper<any>, order: number) {
 
 /**
  * like set/map's has, but can use for all Itemsable
+ * 
  */
-export function has<T>(i: ItemWrapper<T>, item: T) {
+export function hasValue<T>(i: ItemWrapper<T>, item: T) {
   if (isUndefined(i)) return false
   if (isMap(i)) return new Set(i.values()).has(item)
   if (isArray(i)) return i.includes(item)
@@ -124,9 +125,9 @@ export function has<T>(i: ItemWrapper<T>, item: T) {
 }
 
 /**
- * {@link has} is for value, this is for key
+ * {@link hasValue} is for value, this is for key
  */
-export function hasKey<T>(i: ItemWrapper<T>, key: any) {
+export function has<T>(i: ItemWrapper<T>, key: any) {
   if (isUndefined(i)) return false
   if (isMap(i)) return i.has(key)
   if (isArray(i) && isNumber(key)) return i[key] !== undefined
