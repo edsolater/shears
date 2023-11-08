@@ -1,23 +1,36 @@
 import { capitalize, map } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
-import { createMemo } from 'solid-js'
+import { createEffect, createMemo, onMount } from 'solid-js'
 import { switchCase } from '../../packages/fnkit'
 import {
   Box,
   Input,
+  KeybordShortcutKeys,
   List,
   Text,
+  UIKitThemeConfig,
+  configUIKitTheme,
   createIncresingAccessor,
   cssColors,
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
-import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
-import { AppPageLayout } from './AppPageLayout'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
+import { AppPageLayout } from './AppPageLayout'
 
+const uikitConfig: UIKitThemeConfig = {
+  Button: {
+    icss: {
+      color: 'dodgerblue',
+      borderRadius: '0px',
+      padding: '4px 8px',
+      fontSize: '14px',
+      fontWeight: 'normal',
+    },
+  },
+}
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -33,6 +46,12 @@ export function App() {
     switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
   )
   const needLayout = () => needAppPageLayout[location.pathname]
+
+  // config uikit theme before render
+  onMount(() => {
+    configUIKitTheme(uikitConfig)
+  })
+
   return (
     <>
       {needLayout() ? (

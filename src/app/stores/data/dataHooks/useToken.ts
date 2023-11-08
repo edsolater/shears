@@ -3,7 +3,7 @@ import { createMemo } from 'solid-js'
 import { Accessify, createSmartStore } from '../../../../packages/pivkit'
 import { Token, emptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
-import { getByKey, hasKey } from '../../../utils/dataTransmit/getItems'
+import { get, hasKey } from '../../../utils/dataTransmit/getItems'
 import { store } from '../store'
 
 /** 
@@ -16,7 +16,7 @@ export function useToken(v?: Accessify<Mint> | Accessify<Token> | Accessify<Mint
     const inputParam = shrinkFn(v)
     if (isString(inputParam)) {
       const mint = inputParam
-      return getByKey(store.tokens, mint)
+      return get(store.tokens, mint)
     } else {
       const token = inputParam
       return token

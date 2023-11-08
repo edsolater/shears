@@ -59,7 +59,7 @@ export function toRecord<T, K extends keyof any>(i: Itemsable<T>, key: (item: T,
   return i
 }
 
-export function getSize(i: Itemsable<any>) {
+export function count(i: Itemsable<any>) {
   if (isUndefined(i)) return 0
   if (isMap(i) || isSet(i)) return i.size
   if (isArray(i)) return i.length
@@ -76,7 +76,7 @@ export function getSize(i: Itemsable<any>) {
 /**
  * get value of Itemsable, regardless of order
  */
-export function getByKey<T>(i: Itemsable<T>, key: string | number): T | undefined {
+export function get<T>(i: Itemsable<T>, key: string | number): T | undefined {
   if (isUndefined(i)) return undefined
   if (isMap(i)) return i.get(key)
   if (isArray(i) && isNumber(key)) return i[key]
@@ -97,7 +97,7 @@ export function getByKey<T>(i: Itemsable<T>, key: string | number): T | undefine
 export function getByIndex(i: Itemsable<any>, order: number) {
   if (isUndefined(i)) return undefined
   const key = isUndefined(i) || isArray(i) || isSet(i) || isIterable(i) ? order : Object.keys(i)[order]
-  return getByKey(i, key)
+  return get(i, key)
 }
 
 /**
