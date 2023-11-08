@@ -59,7 +59,7 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
         borderRadius: '0.5rem',
         transition: '150ms',
 
-        background: props.isCurrentRoutePath ? cssOpacity(cssVar('--ternary'), .1) : 'transparent',
+        background: props.isCurrentRoutePath ? cssOpacity(cssVar('--ternary'), 0.1) : 'transparent',
         '&:hover': {
           background: cssOpacity(cssVar('--ternary'), 0.1),
         },
@@ -87,7 +87,7 @@ function LinkItem(kitProps: KitProps<LinkItemProps>) {
             fontWeight: '500',
           }}
         >
-          <Piv>{props.children}</Piv>
+          <Piv icss={{ marginBlock: 'auto' }}>{props.children}</Piv>
           {isExternalLink() && <Icon icss={{ display: 'inline', opacity: '.8' }} size={'sm'} />}
         </Row>
       </Row>

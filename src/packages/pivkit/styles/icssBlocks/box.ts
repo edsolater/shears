@@ -25,7 +25,7 @@ export type ICSSRowOption = {
 export const icssRow = createICSS(
   ({
     gap = '.25em',
-    align = 'center',
+    align,
     alignContent,
     alignItems = align,
     justify,

@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  Button,
   Icon,
   Input,
   KitProps,
@@ -9,6 +10,7 @@ import {
   Piv,
   Row,
   Text,
+  cssOpacity,
   cssVar,
   icssCard,
   icssCyberpenkBackground,
@@ -82,7 +84,8 @@ function RPCPanel(props: {
       </Loop>
 
       <Row>
-        <RPCPanelInput />
+        <RPCPanelInput icss={{ flex: 1 }} />
+        <RPCPanelInputActionButton />
       </Row>
     </RPCPanelBox>
   )
@@ -177,30 +180,34 @@ function RPCPanelItem(
 function RPCPanelInput(kitProps: KitProps<{ customURL?: string }>) {
   const { props, shadowProps } = useKitProps(kitProps)
   return (
-    <Box shadowProps={shadowProps}>
-      <Input
-        // icss={{ fontSize: 'inherit' }}
-        value={props.customURL}
-        // class={`px-2 py-2 border-1.5 flex-grow ${
-        //   switchConnectionFailed
-        //     ? 'border-[#DA2EEF]'
-        //     : userCostomizedUrlText === currentEndPoint?.url
-        //     ? 'border-[rgba(196,214,255,0.8)]'
-        //     : 'border-[rgba(196,214,255,0.2)]'
-        // } rounded-xl min-w-[7em]`}
-        // inputClassName='font-medium text-[rgba(196,214,255,0.5)] placeholder-[rgba(196,214,255,0.5)]'
-        placeholder='https://'
-        onUserInput={(searchText) => {
-          // useConnection.setState({ userCostomizedUrlText: searchText.trim() })
-        }}
-        onEnter={() => {
-          // switchRpc({ url: userCostomizedUrlText }).then((isSuccess) => {
-          //   if (isSuccess === true) {
-          //     closePanel()
-          //   }
-          // })
-        }}
-      />
-    </Box>
+    <Input
+      shadowProps={shadowProps}
+      icss={{ border: 'solid', borderColor: cssOpacity('currentColor', 0.1), borderRadius: '12px' }}
+      value={props.customURL}
+      // class={`px-2 py-2 border-1.5 flex-grow ${
+      //   switchConnectionFailed
+      //     ? 'border-[#DA2EEF]'
+      //     : userCostomizedUrlText === currentEndPoint?.url
+      //     ? 'border-[rgba(196,214,255,0.8)]'
+      //     : 'border-[rgba(196,214,255,0.2)]'
+      // } rounded-xl min-w-[7em]`}
+      // inputClassName='font-medium text-[rgba(196,214,255,0.5)] placeholder-[rgba(196,214,255,0.5)]'
+      placeholder='https://'
+      onUserInput={(searchText) => {
+        // useConnection.setState({ userCostomizedUrlText: searchText.trim() })
+      }}
+      onEnter={() => {
+        // switchRpc({ url: userCostomizedUrlText }).then((isSuccess) => {
+        //   if (isSuccess === true) {
+        //     closePanel()
+        //   }
+        // })
+      }}
+    />
   )
+}
+
+function RPCPanelInputActionButton(kitProps: KitProps) {
+  const { props, shadowProps } = useKitProps(kitProps)
+  return <Button shadowProps={shadowProps}>Switch</Button>
 }

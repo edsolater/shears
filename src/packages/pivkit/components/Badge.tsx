@@ -18,6 +18,7 @@ export function Badge(kitProps: KitProps<BadgeType>) {
   const defaultSize = props.size ?? 'md'
   return (
     <Row
+      line
       icss={{
         backgroundColor: 'transparent',
         '&:hover': {
