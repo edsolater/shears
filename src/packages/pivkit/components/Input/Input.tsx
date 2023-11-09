@@ -61,7 +61,7 @@ export function Input(rawProps: InputKitProps) {
       setText: () => updateText,
       isFocused: () => isFocused,
     },
-    { alwaysRun: ['text', 'setText', 'isFocused'] },
+    { alwaysRun: ['text'] },
   )
   const { props } = useKitProps(rawProps, {
     name: 'Input',
