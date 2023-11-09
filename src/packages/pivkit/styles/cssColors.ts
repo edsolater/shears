@@ -1,3 +1,4 @@
+import { cssVar } from './cssValues'
 import { tailwindPaletteColors } from './tailwindPaletteColors'
 import { CSSColorString } from './type'
 
@@ -39,3 +40,5 @@ export const cssColors = {
   accentColor: 'dodgerblue',
   // accentColorInactive: 'dodgerblue',
 } as const
+
+export const cssCurrentColor = cssVar('--current-color', 'currentcolor')

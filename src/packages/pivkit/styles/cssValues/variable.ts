@@ -5,6 +5,6 @@
  * @returns css var()
  */
 
-export function cssVar(name: string) {
-  return `var(${name})`
+export function cssVar(name: string, defaultValue?: string) {
+  return defaultValue ? `var(${name}, ${defaultValue})` : `var(${name})`
 }

@@ -9,6 +9,7 @@ import {
   getKeys,
   isObject,
   isString,
+  mergeObjects,
   mergeObjectsWithConfigs,
   overwriteFunctionName,
   shrinkFn,
@@ -42,11 +43,11 @@ type TaggedICSS<T extends AnyFn> = SettingsFunction<T> & {
 
 export function createICSS<T extends RuleCreatorFn>(
   rule: T,
-  options?: { name?: string; defaultSettings?: Partial<AnyObj> }
+  options?: { name?: string; defaultSettings?: Partial<AnyObj> },
 ): TaggedICSS<T> {
   const factory = settingsFunction(
     (settings?: AnyObj) => rule(settings),
-    options?.defaultSettings
+    options?.defaultSettings,
   ) as unknown as TaggedICSS<T>
   Reflect.set(factory, isTaggedICSSSybol, true)
   Reflect.set(factory, toICSSSymbol, (...args: any[]) => invokeTaggedICSS(factory, ...args))
@@ -66,7 +67,7 @@ function invokeTaggedICSS<T extends RuleCreatorFn>(v: TaggedICSS<T>, params?: An
 /** for piv to parse icss props */
 export function handleICSSProps<Controller extends ValidController | unknown = unknown>(
   cssProp: ICSS<Controller>,
-  controller: Controller = {} as Controller
+  controller: Controller = {} as Controller,
 ) {
   const cssObjList = flapDeep(cssProp)
     .map((i) => {
@@ -79,12 +80,12 @@ export function handleICSSProps<Controller extends ValidController | unknown = u
 }
 
 export function compressICSSToObj<Controller extends ValidController | unknown = unknown>(
-  icss: ICSS<Controller>
+  icss: ICSS<Controller>,
 ): ICSSObject<Controller> {
   return (controller: Controller) => {
     const cssObjList = filter(
       flap(icss).map((i) => shrinkFn(i, [controller])),
-      isObject
+      isObject,
     ) as ICSSObject<Controller>[]
     const l = cssObjList.reduce((acc, cur) => mergeICSSObject<Controller>(acc, cur), {} as ICSSObject<Controller>)
     return shrinkFn(l, [controller])
@@ -97,6 +98,6 @@ function mergeICSSObject<Controller extends ValidController | unknown = unknown>
   return (controller: Controller) =>
     mergeObjectsWithConfigs(
       icsses.map((ic) => shrinkFn(ic, [controller])),
-      ({ valueA: v1, valueB: v2 }) => v2 ?? v1
+      ({ valueA: v1, valueB: v2 }) => v2 ?? v1,
     )
 }

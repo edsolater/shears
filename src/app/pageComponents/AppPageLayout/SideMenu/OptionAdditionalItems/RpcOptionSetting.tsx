@@ -15,6 +15,8 @@ import {
   icssCard,
   icssCyberpenkBackground,
   icssDivider,
+  icssFrostedGlass,
+  icssTextColor,
   makePopover,
   useKitProps,
 } from '../../../../../packages/pivkit'
@@ -154,8 +156,8 @@ function RPCPanelItem(
           <Text icss={{ whiteSpace: 'nowrap' }}>{props.rpc.name ?? '--'}</Text>
 
           <Row icss={{ gap: '.5rem' }}>
-            {props.isRecommanded && <Badge icss={{ color: '#5ac4be' }}>recommended</Badge>}
-            {props.isUserCustomized && <Badge icss={{ color: '#c4d6ff' }}>user added</Badge>}
+            {props.isRecommanded && <Badge icss={icssTextColor({ color: '#5ac4be' })}>recommended</Badge>}
+            {props.isUserCustomized && <Badge icss={icssTextColor({ color: '#c4d6ff' })}>user added</Badge>}
             {props.isCurrent && <Icon>✅</Icon>}
           </Row>
 
@@ -209,5 +211,9 @@ function RPCPanelInput(kitProps: KitProps<{ customURL?: string }>) {
 
 function RPCPanelInputActionButton(kitProps: KitProps) {
   const { props, shadowProps } = useKitProps(kitProps)
-  return <Button shadowProps={shadowProps}>Switch</Button>
+  return (
+    <Button icss={[icssFrostedGlass, icssTextColor({color: cssVar('--ternary')})]} shadowProps={shadowProps}>
+      Switch
+    </Button>
+  )
 }

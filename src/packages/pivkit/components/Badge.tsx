@@ -1,6 +1,6 @@
 import { KitProps, useKitProps } from '../createKit'
 import { PivChild, Piv } from '../piv'
-import { cssOpacity, cssColorMix } from '../styles'
+import { cssOpacity, cssColorMix, cssCurrentColor } from '../styles'
 import { Row } from './Boxes'
 
 type BadgeType = {
@@ -23,11 +23,11 @@ export function Badge(kitProps: KitProps<BadgeType>) {
       icss={{
         backgroundColor: 'transparent',
         '&:hover': {
-          backgroundColor: cssOpacity('currentColor', 0.1),
+          backgroundColor: cssOpacity(cssCurrentColor, 0.1),
         },
         transition: '50ms',
         borderRadius: '1rem',
-        border: `solid ${cssColorMix('currentcolor', '#5ac4be', 0.5)}`,
+        border: `solid ${cssColorMix(cssCurrentColor, '#5ac4be', 0.5)}`,
         padding: '0.1rem .5rem',
         lineHeight: '1',
       }}

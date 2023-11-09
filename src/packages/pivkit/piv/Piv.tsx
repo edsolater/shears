@@ -59,13 +59,13 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
    */
-  icss?: ICSS<Controller>
+  icss?: ICSS<any>
 
   /**
    * auto merge by shadowProps
    * if it's in shadow props, it will merge with exist props
    */
-  style?: IStyle<Controller>
+  style?: IStyle<any>
 
   /**
    * auto merge by shadowProps
