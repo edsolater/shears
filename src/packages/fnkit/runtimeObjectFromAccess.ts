@@ -1,5 +1,5 @@
 /**
- * OnRunObject - a proxy object, which will only create the object when it's property accessed
+ * OnRunObject - a proxy object, which will only create the object when it's any property accessed
  * @param onAccess function to generate the object
  * @returns a proxy object, which will only create the object when it's property accessed
  */
