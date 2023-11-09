@@ -1,5 +1,5 @@
 import { KitProps, useKitProps } from '../../piv'
-import { ICSSColOption, icssCol } from '../../styles/rules'
+import { ICSSColOption, icssCol } from '../../styles/icssRules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'
 

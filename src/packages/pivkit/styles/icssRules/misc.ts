@@ -6,7 +6,7 @@
 
 import { isArray, mergeObjects } from '@edsolater/fnkit'
 import { createICSS } from '../../piv'
-import { cssOpacity } from '../values'
+import { cssOpacity } from '../cssValues'
 
 /** for childrens (items or item-group) */
 export const icssDivider = createICSS(() => ({

@@ -1,5 +1,5 @@
 export * from './cssColors'
 export * from './tailwindPaletteColors'
 export * from './type'
-export * from './values'
-export * from './rules'
+export * from './cssValues'
+export * from './icssRules'
