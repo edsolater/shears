@@ -1,6 +1,7 @@
 import { tailwindPaletteColors } from './tailwindPaletteColors'
 import { CSSColorString } from './type'
 
+// TODO: just inner the uikit, but should export to outside
 export const cssColors = {
   screenBg: '#f3f5f7',
 

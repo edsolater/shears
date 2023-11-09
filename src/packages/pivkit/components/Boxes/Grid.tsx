@@ -1,5 +1,5 @@
 import { KitProps, useKitProps } from '../../piv'
-import { ICSSGridItemOption, ICSSGridOption, icssGrid } from '../../styles/icssBlocks'
+import { ICSSGridItemOption, ICSSGridOption, icssGrid } from '../../styles/rules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'
 

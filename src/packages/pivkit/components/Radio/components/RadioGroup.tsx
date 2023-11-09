@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js'
 import { KitProps, useKitProps } from '../../../createKit'
 import { ValidController } from '../../../piv/typeTools'
-import { icssCol } from '../../../styles/icssBlocks'
+import { icssCol } from '../../../styles/rules'
 import { Box } from '../../Boxes/Box'
 
 export interface RadioGroupController {

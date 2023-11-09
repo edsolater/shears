@@ -1,5 +1,5 @@
 import { CSSObject, createICSS } from '../../piv'
-import { cssLinearGradient, cssRadialGradient, cssVar } from '../cssUtils'
+import { cssLinearGradient, cssRadialGradient, cssVar } from '../values'
 
 export type ICSSSpecialCyberpenkCardOptions = {
   borderWidth?: CSSObject['borderWidth']

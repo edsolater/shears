@@ -1,6 +1,6 @@
 import { mergeObjects } from '@edsolater/fnkit'
 import { KitProps, useKitProps } from '../../piv'
-import { ICSSRowOption, icssRow } from '../../styles/icssBlocks'
+import { ICSSRowOption, icssRow } from '../../styles/rules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'
 
