@@ -60,7 +60,7 @@ export function Input(rawProps: InputKitProps) {
     setText: () => updateText,
     isFocused: () => isFocused,
   })
-  
+
   const { props } = useKitProps(rawProps, {
     name: 'Input',
     controller: () => controller,

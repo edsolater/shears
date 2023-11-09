@@ -211,9 +211,5 @@ function RPCPanelInput(kitProps: KitProps<{ customURL?: string }>) {
 
 function RPCPanelInputActionButton(kitProps: KitProps) {
   const { props, shadowProps } = useKitProps(kitProps)
-  return (
-    <Button icss={[icssFrostedGlass, icssTextColor({color: cssVar('--ternary')})]} shadowProps={shadowProps}>
-      Switch
-    </Button>
-  )
+  return <Button shadowProps={shadowProps}>Switch</Button>
 }

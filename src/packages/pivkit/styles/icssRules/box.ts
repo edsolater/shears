@@ -60,7 +60,7 @@ export type ICSSColOption = {
 
 export const icssCol = createICSS(
   ({
-    gap='.25em',
+    gap = '.25em',
     align,
     alignContent,
     alignItems = align,
@@ -135,9 +135,16 @@ export const icssCard = createICSS((options?: ICSSCardOption) => ({
 
 export type ICSSClickableOption = {}
 
+/**
+ * build-in icss for make element looks clickable
+ */
 export const icssClickable = createICSS((options?: ICSSClickableOption) => ({
   cursor: 'pointer',
-  ':is(:hover,:active)': { backdropFilter: 'brightness(0.9)', filter: 'brightness(0.9)' },
+  transition: '1500ms',
+  backdropFilter: 'brightness(1)',
+  filter: 'brightness(1)',
+  '&:is(:hover,:active,:focus)': { backdropFilter: 'brightness(0.95)', filter: 'brightness(0.95)' },
+  '&:active': { transform: 'scale(0.95)' },
 }))
 
 export const icssLabel = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({

@@ -12,6 +12,10 @@ import {
   configUIKitTheme,
   createIncresingAccessor,
   cssColors,
+  cssVar,
+  icssClickable,
+  icssFrostedGlass,
+  icssTextColor,
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
@@ -22,9 +26,7 @@ import { AppPageLayout } from './AppPageLayout'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
-    icss: {
-      color: 'dodgerblue',
-    },
+    icss: [icssFrostedGlass, icssTextColor({ color: cssVar('--ternary') }), icssClickable],
   },
 }
 
