@@ -29,14 +29,21 @@ export function runtimeObject<T extends object>(
   },
 ): T {
   const resultObject = new Map()
+  function needCache(p: keyof any) {
+    return !options?.alwaysRun?.includes(p as any)
+  }
   const parsedObj = new Proxy(objWithRule, {
     get(target, p, receiver) {
       if (p === Symbol.dispose) return () => clearMap(resultObject)
-      if (!options?.alwaysRun?.includes(p as any) && resultObject.has(p)) return resultObject.get(p)
+      if (needCache(p) && resultObject.has(p)) return resultObject.get(p)
       const value = Reflect.get(target, p, receiver)
       const determinedValue = shrinkFn(value)
-      if (!options?.alwaysRun?.includes(p as any)) resultObject.set(p, determinedValue)
+      if (needCache(p)) resultObject.set(p, determinedValue)
       return determinedValue
+    },
+    set(target, p, newValue, receiver) {
+      if (needCache(p)) resultObject.set(p, newValue) // update cache
+      return Reflect.set(target, p, newValue, receiver)
     },
   }) as T
   mapClearRegistry.register(parsedObj, resultObject)
