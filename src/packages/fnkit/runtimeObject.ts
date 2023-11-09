@@ -25,12 +25,12 @@ export function runtimeObject<T extends object>(
     [K in keyof T]?: T[K] | (() => T[K] | undefined)
   },
   options?: {
-    alwaysRun?: (keyof T)[]
+    canCache?: (keyof T)[]
   },
 ): T {
   const resultObject = new Map()
   function needCache(p: keyof any) {
-    return !options?.alwaysRun?.includes(p as any)
+    return options?.canCache?.includes(p as any)
   }
   const parsedObj = new Proxy(objWithRule, {
     get(target, p, receiver) {

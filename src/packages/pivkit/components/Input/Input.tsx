@@ -55,14 +55,12 @@ export function Input(rawProps: InputKitProps) {
   const { dom, setDom } = createDomRef<HTMLInputElement>()
   const isFocused = useFocus(dom)
 
-  const controller = runtimeObject<InputController>(
-    {
-      text: () => innerText(),
-      setText: () => updateText,
-      isFocused: () => isFocused,
-    },
-    { alwaysRun: ['text'] },
-  )
+  const controller = runtimeObject<InputController>({
+    text: () => innerText(),
+    setText: () => updateText,
+    isFocused: () => isFocused,
+  })
+  
   const { props } = useKitProps(rawProps, {
     name: 'Input',
     controller: () => controller,
