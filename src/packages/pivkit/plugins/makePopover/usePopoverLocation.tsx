@@ -63,17 +63,18 @@ export function usePopoverLocation({
     setPanelCoordinates(coors)
   }
 
-
   // listen to button's resize for dom:layout
   createEffect(() => {
     const buttonElement = buttonDom()
-    if (!buttonElement) return
+    const panelElement = panelDom()
+    if (!buttonElement || !panelElement) return
     const observer = new ResizeObserver(() => {
       if (isTriggerOn()) {
         runInNextLoop(update) // calc coor in next frame for safer lifecycle:layout
       }
     })
     observer.observe(buttonElement)
+    observer.observe(panelElement)
     onCleanup(() => {
       observer.disconnect()
     })
@@ -142,15 +143,14 @@ export function usePopoverPanelLocation({
   }
 
   const panelStyle = createMemo(() => {
-    const baseStyle = {
-      position: 'absolute',
-    } as IStyle
-    const style = isTriggerOn()
-      ? ({
-          left: panelCoordinates()?.panelLeft + 'px',
-          top: panelCoordinates()?.panelTop + 'px',
-        } as IStyle)
-      : ({ visibility: 'hidden' } as IStyle)
+    const coor = panelCoordinates()
+    const style =
+      isTriggerOn() && coor
+        ? ({
+            left: coor.panelLeft + 'px',
+            top: coor.panelTop + 'px',
+          } as IStyle)
+        : ({ display: 'none' } as IStyle)
     return style
   })
 

@@ -39,6 +39,8 @@ export const calcPopupPanelLocation = ({
 }): PopupLocationInfo | undefined => {
   // must in some computer
   if (!globalThis.document) return undefined
+  console.log('buttonElement: ', buttonElement)
+  console.log('panelElement: ', panelElement)
   const rect = panelElement.getBoundingClientRect()
   const panelWidth = rect.width
   const panelHeight = rect.height
