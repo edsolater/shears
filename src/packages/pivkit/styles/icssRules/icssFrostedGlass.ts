@@ -10,7 +10,7 @@ export const icssFrostedGlass = createICSS((options?: { blurBg?: boolean }) => (
     '--bg-board-color-2': 'transparent',
     '--blur-size': '3px',
     '--is-scrolling': '0',
-    '--border-line-width': '1.5px',
+    '--border-width': '.08em',
   },
 
   position: 'relative',
@@ -28,7 +28,7 @@ export const icssFrostedGlass = createICSS((options?: { blurBg?: boolean }) => (
     opacity: '0.5',
     background: 'transparent',
     borderRadius: 'inherit',
-    boxShadow: `inset 0 0 0 ${cssVar('--border-line-width')} ${cssVar('--border-color')}`,
+    boxShadow: `inset 0 0 0 ${cssVar('--border-width')} ${cssVar('--border-color')}`,
     '-webkit-mask-image': `radial-gradient(at -31% -58%, hsl(0, 0%, 0%, 0.5) 34%, transparent 60%),
     linear-gradient(to left, hsl(0, 0%, 0%, 0.2) 0%, transparent 13%),
     linear-gradient(hsl(0deg 0% 0% / 5%), hsl(0deg 0% 0% / 5%))`,
