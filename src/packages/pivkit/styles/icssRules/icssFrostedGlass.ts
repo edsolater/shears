@@ -25,7 +25,7 @@ export const icssFrostedGlass = createICSS((options?: { blurBg?: boolean }) => (
     position: 'absolute',
     inset: 0,
     zIndex: '-1',
-    opacity: '0.7',
+    opacity: '0.5',
     background: 'transparent',
     borderRadius: 'inherit',
     boxShadow: `inset 0 0 0 ${cssVar('--border-line-width')} ${cssVar('--border-color')}`,
