@@ -3,41 +3,74 @@
  * observe user action towards the object|function
  * *********
  */
+import { observe } from '../../fnkit/observe'
 import { Subscribable } from './core'
-import { AnyFn, AnyObj, isFunction, isObject } from '@edsolater/fnkit'
-import { assert } from 'vitest'
 
 type EffectExcuter = () => void
 
-const subscribedExcuters = new WeakMap<HaveSubscribeExcuter, Set<EffectExcuter>>()
-const subscribedExcutersSymbol = Symbol('subscribedExcuters')
+const excutorStack: (() => void)[] = []
 
-interface HaveSubscribeExcuter {
+// global stack
+const allSubscribedExcuters = new WeakMap<Subscribable<any>, Set<EffectExcuter>>()
+
+/**
+ * add ability to pure subscribable
+ */
+const subscribedExcutersSymbol = Symbol('subscribedExcuters')
+interface ObservableSubscribable<T> extends Subscribable<T> {
   [subscribedExcutersSymbol]: Set<EffectExcuter>
 }
 
-type ObserveOption<O extends AnyObj | AnyFn> = {
-  '()'?: (result: ReturnType<O & AnyFn>, ...params: any[]) => any
-} & {
-  [K in keyof O]?: (originalValue: O[K]) => any
+function getCurrentEffectExcutor() {
+  return excutorStack[excutorStack.length - 1]
 }
 
-function createObserableSubscribable<T>(
+/**
+ * like solidjs's createEffect, will track all subscribable's getValue option in it
+ */
+export function createTask(task: () => void) {
+  const execute = () => {
+    excutorStack.push(execute)
+    try {
+      task()
+    } finally {
+      excutorStack.pop()
+    }
+  }
+  execute()
+}
+
+/** create special subscribable */
+export function observableSubscribable<T>(
   subscribable: Subscribable<T>,
   options: { onInvoke?: (currentValue: T) => void },
-) {
-  const handlers: ProxyHandler<Subscribable<T>> = {
-    apply(target, thisArg, argArray) {
-      const result = Reflect.apply(target, thisArg, argArray)
-      options.onInvoke?.(result)
-      return result
-    },
-    get(target, p, receiver) {
-      const property = Reflect.get(target, p, receiver)
-      return isFunction(property) || isObject(property)
-        ? new Proxy(property, handlers) /* recursively observer user operation */
-        : property
-    },
-  }
-  return new Proxy(subscribable, handlers)
+): ObservableSubscribable<T> {
+  const proxiedSubscribable = observe(
+    subscribable,
+    Object.assign((value) => {
+      const currentExcutor = getCurrentEffectExcutor()
+      if (currentExcutor) {
+        {
+          // attach to global excutorStack
+          const subscribedExcuters = allSubscribedExcuters.get(subscribable)
+          if (subscribedExcuters) {
+            subscribedExcuters.add(currentExcutor)
+          } else {
+            allSubscribedExcuters.set(subscribable, new Set([currentExcutor]))
+          }
+        }
+        {
+          // attach to local excutorStack
+          const subscribedExcuters = subscribable[subscribedExcutersSymbol]
+          if (subscribedExcuters) {
+            subscribedExcuters.add(currentExcutor)
+          } else {
+            subscribable[subscribedExcutersSymbol] = new Set([currentExcutor])
+          }
+        }
+      }
+      if (options.onInvoke) options.onInvoke(value)
+    }, {}),
+  )
+  return proxiedSubscribable as ObservableSubscribable<T>
 }
