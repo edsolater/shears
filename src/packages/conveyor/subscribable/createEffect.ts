@@ -5,6 +5,7 @@
  */
 import { observe } from '../../fnkit/observe'
 import { Subscribable } from './core'
+import { withDefault } from '../../fnkit/withDefault'
 
 type EffectExcuter = () => void
 
@@ -28,16 +29,20 @@ function getCurrentEffectExcutor() {
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
  */
-export function createTask(task: () => void) {
+export function createTask(task: (get: <T>(v: Subscribable<T>) => T) => void) {
   const execute = () => {
     excutorStack.push(execute)
     try {
-      task()
+      task(getWithSubscribe)
     } finally {
       excutorStack.pop()
     }
   }
   execute()
+}
+
+function getWithSubscribe<T>(subscribable: Subscribable<T>): T {
+  return subscribable()
 }
 
 /** create special subscribable */
@@ -52,12 +57,11 @@ export function observableSubscribable<T>(
       if (currentExcutor) {
         {
           // attach to global excutorStack
-          const subscribedExcuters = allSubscribedExcuters.get(subscribable)
-          if (subscribedExcuters) {
-            subscribedExcuters.add(currentExcutor)
-          } else {
-            allSubscribedExcuters.set(subscribable, new Set([currentExcutor]))
-          }
+          withDefault(allSubscribedExcuters.get(subscribable), () => {
+            const set: Set<EffectExcuter> = new Set()
+            allSubscribedExcuters.set(subscribable, set)
+            return set
+          }).add(currentExcutor)
         }
         {
           // attach to local excutorStack
@@ -74,3 +78,5 @@ export function observableSubscribable<T>(
   )
   return proxiedSubscribable as ObservableSubscribable<T>
 }
+
+
