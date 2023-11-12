@@ -1,8 +1,13 @@
 import { MayPromise, AnyFn, shrinkFn, isFunction, isPromise } from '@edsolater/fnkit'
 
+const subscribableTag = Symbol('subscribable')
+
 export type SubscribeFn<T> = (value: T, prevValue: T | undefined) => void
 
 export interface Subscribable<T> {
+  // when set this, means this object is a subscribable
+  [subscribableTag]: boolean
+
   (): T
   subscribe: (cb: SubscribeFn<NonNullable<T>>) => { unsubscribe(): void }
   /** can not export this property by type */
@@ -16,12 +21,12 @@ type SubscribableSetValueDispatcher<T> = MayPromise<T> | ((oldValue: T) => MayPr
  * it can be the data atom of App's store graph
  * @param defaultValue value or a function that returns value, which means it only be called when needed
  */
-export function subscribable<T>(defaultValue: T | (() => T), defaultCallbacks?: SubscribeFn<T>[]): Subscribable<T>
-export function subscribable<T>(
+export function createSubscribable<T>(defaultValue: T | (() => T), defaultCallbacks?: SubscribeFn<T>[]): Subscribable<T>
+export function createSubscribable<T>(
   defaultValue?: T | undefined | (() => T | undefined),
   defaultCallbacks?: SubscribeFn<T | undefined>[],
 ): Subscribable<T | undefined>
-export function subscribable<T>(
+export function createSubscribable<T>(
   defaultValue?: T | (() => T),
   defaultCallbacks?: SubscribeFn<T>[],
 ): Subscribable<T | undefined> {
@@ -57,6 +62,7 @@ export function subscribable<T>(
   }
 
   const subscribable = Object.assign(() => value, {
+    [subscribableTag]: true,
     subscribe(cb: any) {
       if (value != null) invokeSubscribedCallbacks(cb, value, undefined) // immediately invoke callback, if has value
       subscribeFns.add(cb)
@@ -70,4 +76,8 @@ export function subscribable<T>(
   })
 
   return subscribable
+}
+
+export function isSubscribable<T>(value: any): value is Subscribable<T> {
+  return value && value[subscribableTag]
 }

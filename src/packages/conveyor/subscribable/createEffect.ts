@@ -3,80 +3,85 @@
  * observe user action towards the object|function
  * *********
  */
+import { MayFn, WeakerSet } from '@edsolater/fnkit'
 import { observe } from '../../fnkit/observe'
-import { Subscribable } from './core'
-import { withDefault } from '../../fnkit/withDefault'
+import { Subscribable, createSubscribable, isSubscribable } from './core'
+import { invoke } from '../../fnkit'
 
 type EffectExcuter = () => void
 
-const excutorStack: (() => void)[] = []
-
-// global stack
-const allSubscribedExcuters = new WeakMap<Subscribable<any>, Set<EffectExcuter>>()
+const trackableSubscribableTag = Symbol('observableSubscribable')
 
 /**
  * add ability to pure subscribable
  */
-const subscribedExcutersSymbol = Symbol('subscribedExcuters')
 interface ObservableSubscribable<T> extends Subscribable<T> {
-  [subscribedExcutersSymbol]: Set<EffectExcuter>
-}
-
-function getCurrentEffectExcutor() {
-  return excutorStack[excutorStack.length - 1]
+  // when set this, means this object is a observable-subscribable
+  [trackableSubscribableTag]: boolean
+  subscribedExcuters: WeakerSet<EffectExcuter>
 }
 
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
  */
-export function createTask(task: (get: <T>(v: Subscribable<T>) => T) => void) {
+export function createTask(task: (get: <T>(v: ObservableSubscribable<T>) => T) => void) {
   const execute = () => {
-    excutorStack.push(execute)
-    try {
-      task(getWithSubscribe)
-    } finally {
-      excutorStack.pop()
-    }
+    const get = createGetterWithContext(execute)
+    task(get)
   }
   execute()
 }
 
-function getWithSubscribe<T>(subscribable: Subscribable<T>): T {
-  return subscribable()
+/**
+ * high function that create value getter from subscribable
+ */
+const createGetterWithContext =
+  (context: EffectExcuter) =>
+  <T>(subscribable: ObservableSubscribable<T>) => {
+    subscribable.subscribedExcuters.add(context)
+    return subscribable()
+  }
+
+type CreateObservableSubscribableOptions<T> = {
+  onAccessed?: (currentValue: T) => void
 }
 
 /** create special subscribable */
-export function observableSubscribable<T>(
+export function createTrackableSubscribable<T>(
+  defaultValue: MayFn<T>,
+  options?: CreateObservableSubscribableOptions<T>,
+): ObservableSubscribable<T>
+export function createTrackableSubscribable<T>(
   subscribable: Subscribable<T>,
-  options: { onInvoke?: (currentValue: T) => void },
+  options?: CreateObservableSubscribableOptions<T>,
+): ObservableSubscribable<T>
+export function createTrackableSubscribable<T>(
+  ...args:
+    | [subscribable: Subscribable<T>, options?: CreateObservableSubscribableOptions<T>]
+    | [defaultValue: any, options?: CreateObservableSubscribableOptions<T>]
 ): ObservableSubscribable<T> {
+  const defaultedArgs = (isSubscribable(args[0]) ? [args[0], args[1]] : [createSubscribable(args[0]), args[1]]) as [
+    subscribable: Subscribable<T>,
+    options?: CreateObservableSubscribableOptions<T>,
+  ]
+  const [subscribable, options] = defaultedArgs
+
   const proxiedSubscribable = observe(
-    subscribable,
+    Object.assign(subscribable, {
+      [trackableSubscribableTag]: true,
+      subscribedExcuters: new WeakerSet<EffectExcuter>(),
+    }) as ObservableSubscribable<T>,
     Object.assign((value) => {
-      const currentExcutor = getCurrentEffectExcutor()
-      if (currentExcutor) {
-        {
-          // attach to global excutorStack
-          withDefault(allSubscribedExcuters.get(subscribable), () => {
-            const set: Set<EffectExcuter> = new Set()
-            allSubscribedExcuters.set(subscribable, set)
-            return set
-          }).add(currentExcutor)
-        }
-        {
-          // attach to local excutorStack
-          const subscribedExcuters = subscribable[subscribedExcutersSymbol]
-          if (subscribedExcuters) {
-            subscribedExcuters.add(currentExcutor)
-          } else {
-            subscribable[subscribedExcutersSymbol] = new Set([currentExcutor])
-          }
-        }
-      }
-      if (options.onInvoke) options.onInvoke(value)
+      options?.onAccessed?.(value)
     }, {}),
   )
+
+  proxiedSubscribable.subscribe(() => {
+    proxiedSubscribable.subscribedExcuters.forEach(invoke)
+  })
   return proxiedSubscribable as ObservableSubscribable<T>
 }
 
-
+export function isTrackableSubscribable<T>(value: any): value is ObservableSubscribable<T> {
+  return isSubscribable(value) && value[trackableSubscribableTag] === true
+}

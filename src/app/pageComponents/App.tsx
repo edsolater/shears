@@ -23,6 +23,7 @@ import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
 import { AppPageLayout } from './AppPageLayout'
+import { createTrackableSubscribable, createTask } from '../../packages/conveyor/subscribable/createEffect'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -33,6 +34,7 @@ const uikitConfig: UIKitThemeConfig = {
 // config uikit theme before render
 configUIKitTheme(uikitConfig)
 
+experiment()
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -99,4 +101,20 @@ function KeyboardShortcutPanel() {
       </List>
     </Box>
   )
+}
+
+/** code for test */
+function experiment() {
+  const testObserverableSubscribable = createTrackableSubscribable(1)
+
+  createTask((get) => {
+    console.log('🧪 task begin: ', get(testObserverableSubscribable)) //🤔 why run 1 twice?
+  })
+
+  setInterval(() => {
+    testObserverableSubscribable.set((s) => {
+      console.log('s: ', s)
+      return s + 1
+    })
+  }, 1000)
 }
