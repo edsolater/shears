@@ -33,7 +33,7 @@ export function createSubscribable<T>(
   const subscribeFns = new Set<SubscribeFn<T>>(defaultCallbacks)
   const cleanFnMap = new Map<SubscribeFn<T>, AnyFn>()
 
-  let innerValue = shrinkFn(defaultValue) as T
+  let innerValue = shrinkFn(defaultValue) as T | undefined
 
   subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, innerValue, undefined))
 
@@ -41,20 +41,18 @@ export function createSubscribable<T>(
     const newValue = isFunction(dispatcher) ? dispatcher(innerValue) : dispatcher
     if (isPromise(newValue)) {
       newValue.then((newValue) => {
-        const oldValue = innerValue
-        if (newValue != null) {
-          innerValue = newValue
+        if (innerValue !== newValue) {
+          const oldValue = innerValue
+          innerValue = newValue // update data
+          subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
         }
-
-        subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
       })
     } else {
-      const oldValue = innerValue
-      if (newValue != null) {
-        innerValue = newValue
+      if (innerValue !== newValue) {
+        const oldValue = innerValue
+        innerValue = newValue // update data
+        subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
       }
-
-      subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
     }
   }
 
