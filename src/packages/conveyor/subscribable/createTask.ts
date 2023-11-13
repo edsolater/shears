@@ -36,7 +36,7 @@ export function createTask(task: (get: <T>(v: TrackableSubscribable<T>) => T) =>
  * high function that create value getter from subscribable
  */
 function getSubscribableWithContext<T>(context: TaskExecutor, subscribable: TrackableSubscribable<T>) {
-  subscribable.subscribedExcuters.add(context)
+  subscribable.subscribedExecutors.add(context)
   return subscribable()
 }
 

@@ -16,7 +16,7 @@ export interface TrackableSubscribable<T> extends Subscribable<T> {
   isVisiable: boolean
   // when set this, means this object is a observable-subscribable
   [trackableSubscribableTag]: boolean
-  subscribedExcuters: WeakerSet<TaskExecutor>
+  subscribedExecutors: WeakerSet<TaskExecutor>
 }
 interface CreateTrackableSubscribableOptions<T> {
   initVisiable?: boolean
@@ -51,17 +51,21 @@ export function createTrackableSubscribable<T>(
        * visiable, so effect is meaningful for user
        */
       isVisiable: Boolean(options?.initVisiable),
-      subscribedExcuters: new WeakerSet<TaskExecutor>(),
+      subscribedExecutors: new WeakerSet<TaskExecutor>(),
     }) as TrackableSubscribable<T>,
     Object.assign((value) => {
       options?.onAccessed?.(value)
     }, {}),
   )
 
-  proxiedSubscribable.subscribe(() => {
-    proxiedSubscribable.subscribedExcuters.forEach(invoke)
-  })
+  proxiedSubscribable.subscribe(() => invokeBindedExecutors(proxiedSubscribable))
   return proxiedSubscribable as TrackableSubscribable<T>
+}
+
+function invokeBindedExecutors(subscribable: TrackableSubscribable<any>) {
+  subscribable.subscribedExecutors.forEach((executor) => {
+    if (executor.visiable) invoke(executor)
+  })
 }
 
 export function isTrackableSubscribable<T>(value: any): value is TrackableSubscribable<T> {
