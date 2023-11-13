@@ -112,9 +112,6 @@ function experiment() {
   })
 
   setInterval(() => {
-    testObserverableSubscribable.set((s) => {
-      console.log('s: ', s)
-      return s + 1
-    })
+    testObserverableSubscribable.set((s) => s + 1)
   }, 1000)
 }

@@ -33,38 +33,42 @@ export function createSubscribable<T>(
   const subscribeFns = new Set<SubscribeFn<T>>(defaultCallbacks)
   const cleanFnMap = new Map<SubscribeFn<T>, AnyFn>()
 
-  let value = shrinkFn(defaultValue) as T
+  let innerValue = shrinkFn(defaultValue) as T
 
-  subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, value, undefined))
+  subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, innerValue, undefined))
 
   function changeValue(dispatcher: SubscribableSetValueDispatcher<T | undefined>) {
-    const newValue = isFunction(dispatcher) ? dispatcher(value) : dispatcher
+    const newValue = isFunction(dispatcher) ? dispatcher(innerValue) : dispatcher
     if (isPromise(newValue)) {
-      newValue.then((value) => {
-        subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, value, value))
-        if (value != null) {
-          value = value
+      newValue.then((newValue) => {
+        const oldValue = innerValue
+        if (newValue != null) {
+          innerValue = newValue
         }
+
+        subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
       })
     } else {
-      subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, value))
+      const oldValue = innerValue
       if (newValue != null) {
-        value = newValue
+        innerValue = newValue
       }
+
+      subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
     }
   }
 
   function invokeSubscribedCallbacks(cb: SubscribeFn<T>, newValue: T | undefined, prevValue: T | undefined) {
     const oldCleanFn = cleanFnMap.get(cb)
-    if (isFunction(oldCleanFn)) oldCleanFn(value)
+    if (isFunction(oldCleanFn)) oldCleanFn(innerValue)
     const cleanFn = cb(newValue as T /*  type force */, prevValue)
     if (isFunction(cleanFn)) cleanFnMap.set(cb, cleanFn)
   }
 
-  const subscribable = Object.assign(() => value, {
+  const subscribable = Object.assign(() => innerValue, {
     [subscribableTag]: true,
     subscribe(cb: any) {
-      if (value != null) invokeSubscribedCallbacks(cb, value, undefined) // immediately invoke callback, if has value
+      if (innerValue != null) invokeSubscribedCallbacks(cb, innerValue, undefined) // immediately invoke callback, if has value
       subscribeFns.add(cb)
       return {
         unsubscribe() {
