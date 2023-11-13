@@ -34,7 +34,7 @@ const uikitConfig: UIKitThemeConfig = {
 // config uikit theme before render
 configUIKitTheme(uikitConfig)
 
-experiment()
+experimentalCode()
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -104,14 +104,21 @@ function KeyboardShortcutPanel() {
 }
 
 /** code for test */
-function experiment() {
+function experimentalCode() {
   const testObserverableSubscribable = createTrackableSubscribable(1)
+  const testObserverableSubscribableB = createTrackableSubscribable(1)
 
   createTask((get) => {
-    console.log('🧪 task begin: ', get(testObserverableSubscribable)) //🤔 why run 1 twice?
+    console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
   })
 
   setInterval(() => {
     testObserverableSubscribable.set((s) => s + 1)
   }, 1000)
+
+  setTimeout(() => {
+    setInterval(() => {
+      testObserverableSubscribableB.set((s) => s + 1)
+    }, 1000)
+  }, 500)
 }
