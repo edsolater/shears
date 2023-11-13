@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest'
-import { createTask } from './createEffect'
+import { createTask } from './createTask'
 test('test fn function:mergeObjectsWithConfigs', () => {
   let count = 0
   function runCount() {
