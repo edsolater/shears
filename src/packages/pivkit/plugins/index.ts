@@ -1,2 +1,2 @@
-export * from '../components/plugins/makePopover'
+export * from '../components/plugins/buildPopover'
 export * from './withHover'

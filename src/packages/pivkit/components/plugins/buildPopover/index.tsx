@@ -22,7 +22,7 @@ export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn
  * - popoverPlugin(Piv): plugin for popover
  * - info: accessors about trigger and popover
  */
-export function makePopover(options?: PopoverPluginOptions) {
+export function buildPopover(options?: PopoverPluginOptions) {
   const { close, open, toggle, isTriggerOn } = createTrigger({ defaultState: options?.defaultOpen??false })
 
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()

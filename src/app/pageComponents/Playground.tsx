@@ -25,7 +25,7 @@ import {
   createIntervalEffect,
   createPlugin,
   cssOpacity,
-  makePopover,
+  buildPopover,
   icssCol,
   icssRow,
   renderSwitchThumb,
@@ -59,12 +59,12 @@ function ComponentSpecList() {
         gap: '4vw',
       }}
     >
-      {/* <ExamplePanel name='IntervalCircle'>
-        <CircularProgressExample />
-      </ExamplePanel>
-
       <ExamplePanel name='Drawer'>
         <DrawerExample />
+      </ExamplePanel>
+
+      {/* <ExamplePanel name='IntervalCircle'>
+        <CircularProgressExample />
       </ExamplePanel>
 
       <ExamplePanel name='CSSTransition'>
@@ -146,6 +146,26 @@ function Foo() {
 function CircularProgressExample() {
   const { percent } = useLoopPercent()
   return <CircularProgress percent={percent()} />
+}
+
+/**
+ * @deprecated
+ */
+function DrawerExample_Old() {
+  const drawerController = useControllerByID<DrawerController>('big-drawer')
+  return (
+    <>
+      <Button
+        onClick={() => {
+          console.log('drawerController: ', drawerController)
+          return drawerController.toggle?.()
+        }}
+      >
+        Open
+      </Button>
+      <Drawer id='big-drawer' />
+    </>
+  )
 }
 
 function DrawerExample() {
@@ -374,7 +394,7 @@ function ComponentFactoryExample() {
 }
 
 function PopoverExample() {
-  const { plugins: popoverPlugins, state: popoverState } = makePopover({ triggerBy: 'click', placement: 'right',  }) // <-- run on define, not good
+  const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'right' }) // <-- run on define, not good
   const { plugin: hoverPlugin, state: hoverState } = useHoverPlugin({ onHover: () => console.log('hover') })
   createEffect(() => {
     console.log('isHover: ', hoverState.isHover())

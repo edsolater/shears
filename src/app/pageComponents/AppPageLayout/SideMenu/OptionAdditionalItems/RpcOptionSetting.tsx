@@ -17,7 +17,7 @@ import {
   icssDivider,
   icssFrostedGlass,
   icssTextColor,
-  makePopover,
+  buildPopover,
   useKitProps,
 } from '../../../../../packages/pivkit'
 import { RPCEndpoint, availableRpcs } from '../../../../stores/data/store'
@@ -29,7 +29,7 @@ export function RpcSettingFace(kitProps: {
   isLoadingCustomizedRPC?: boolean
 }) {
   const { props, shadowProps } = useKitProps(kitProps)
-  const { plugins: popoverPlugins } = makePopover({
+  const { plugins: popoverPlugins } = buildPopover({
     placement: 'right',
     triggerBy: 'click',
     defaultOpen: true,

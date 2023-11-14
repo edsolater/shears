@@ -1,20 +1,20 @@
 import { createContext, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { AddProps, Fragnment } from '../../piv'
-import { PopoverPluginOptions, makePopover } from '../plugins/makePopover'
+import { PopoverPluginOptions, buildPopover } from '../plugins/buildPopover'
 import { Box } from '../Boxes'
 
 type PopoverProps = PopoverPluginOptions
 
 const PopoverContext = createContext<{
-  popoverButtonPlugin?: ReturnType<typeof makePopover>['plugins']['trigger']
-  popoverPanelPlugin?: ReturnType<typeof makePopover>['plugins']['panel']
+  popoverButtonPlugin?: ReturnType<typeof buildPopover>['plugins']['trigger']
+  popoverPanelPlugin?: ReturnType<typeof buildPopover>['plugins']['panel']
 }>({})
 
 /** will render nothing */
 export function Popover(kitProps: KitProps<PopoverProps>) {
   const { props } = useKitProps(kitProps, { name: 'Popover' })
-  const { plugins: popoverPlugins } = makePopover({ placement: props.placement ?? 'top' })
+  const { plugins: popoverPlugins } = buildPopover({ placement: props.placement ?? 'top' })
   return (
     <PopoverContext.Provider
       value={{ popoverButtonPlugin: popoverPlugins.trigger, popoverPanelPlugin: popoverPlugins.panel }}
