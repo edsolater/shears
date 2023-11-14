@@ -2,7 +2,8 @@ import { MayFn, WeakerSet } from '@edsolater/fnkit'
 import { observe } from '../../fnkit/observe'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
 import { Subscribable, createSubscribable, isSubscribable } from './core'
-import { TaskExecutor, invokeBindedExecutors } from './createTask'
+import { invoke } from '../../fnkit'
+import { TaskExecutor } from './createTask'
 
 export const trackableSubscribableTag = Symbol('observableSubscribable')
 /**
@@ -24,8 +25,8 @@ interface CreateTrackableSubscribableOptions<T> {
   initVisiable?: boolean
   onAccessed?: (currentValue: T) => void
 }
-/** create special subscribable */
 
+/** create special subscribable */
 export function createTrackableSubscribable<T>(
   defaultValue: MayFn<T>,
   options?: CreateTrackableSubscribableOptions<T>,
@@ -80,4 +81,17 @@ export function isTrackableSubscribableVisiable<T>(value: TrackableSubscribable<
 
 export function setTrackableSubscribableVisiable<T>(value: TrackableSubscribable<T>, visiable: boolean) {
   value.isVisiable.set(visiable)
+} /**
+ * high function that create value getter from subscribable
+ */
+
+export function getSubscribableWithContext<T>(context: TaskExecutor, subscribable: TrackableSubscribable<T>) {
+  subscribable.subscribedExecutors.add(context)
+  return subscribable()
+}
+
+export function invokeBindedExecutors(subscribable: TrackableSubscribable<any>) {
+  subscribable.subscribedExecutors.forEach((executor) => {
+    if (executor.visiable) invoke(executor)
+  })
 }
