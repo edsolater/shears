@@ -1,8 +1,8 @@
 import { MayFn, WeakerSet } from '@edsolater/fnkit'
-import { invoke } from '../../fnkit'
 import { observe } from '../../fnkit/observe'
+import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
 import { Subscribable, createSubscribable, isSubscribable } from './core'
-import { TaskExecutor } from './createTask'
+import { TaskExecutor, invokeBindedExecutors } from './createTask'
 
 export const trackableSubscribableTag = Symbol('observableSubscribable')
 /**
@@ -10,10 +10,12 @@ export const trackableSubscribableTag = Symbol('observableSubscribable')
  */
 export interface TrackableSubscribable<T> extends Subscribable<T> {
   /**
+   * used by TaskExecutor to track subscribable's visiability
+   *
    * only effect exector will auto run if it's any observed trackableSubscribable is visiable \
    * visiable, so effect is meaningful for user
    */
-  isVisiable: boolean
+  isVisiable: Subscribable<boolean>
   // when set this, means this object is a observable-subscribable
   [trackableSubscribableTag]: boolean
   subscribedExecutors: WeakerSet<TaskExecutor>
@@ -50,7 +52,7 @@ export function createTrackableSubscribable<T>(
        * only effect exector will auto run if it's any observed trackableSubscribable is visiable \
        * visiable, so effect is meaningful for user
        */
-      isVisiable: Boolean(options?.initVisiable),
+      isVisiable: createSubscribable(Boolean(options?.initVisiable)),
       subscribedExecutors: new WeakerSet<TaskExecutor>(),
     }) as TrackableSubscribable<T>,
     Object.assign((value) => {
@@ -58,14 +60,14 @@ export function createTrackableSubscribable<T>(
     }, {}),
   )
 
-  proxiedSubscribable.subscribe(() => invokeBindedExecutors(proxiedSubscribable))
-  return proxiedSubscribable as TrackableSubscribable<T>
-}
-
-function invokeBindedExecutors(subscribable: TrackableSubscribable<any>) {
-  subscribable.subscribedExecutors.forEach((executor) => {
-    if (executor.visiable) invoke(executor)
+  const invokeTaskExecutors = () => invokeBindedExecutors(proxiedSubscribable)
+  proxiedSubscribable.subscribe(() => {
+    if (proxiedSubscribable.isVisiable()) asyncInvoke(invokeTaskExecutors)
   })
+  proxiedSubscribable.isVisiable.subscribe((visiable) => {
+    if (visiable) asyncInvoke(invokeTaskExecutors)
+  })
+  return proxiedSubscribable as TrackableSubscribable<T>
 }
 
 export function isTrackableSubscribable<T>(value: any): value is TrackableSubscribable<T> {
@@ -73,9 +75,9 @@ export function isTrackableSubscribable<T>(value: any): value is TrackableSubscr
 }
 
 export function isTrackableSubscribableVisiable<T>(value: TrackableSubscribable<T>) {
-  return value.isVisiable
+  return value.isVisiable()
 }
 
 export function setTrackableSubscribableVisiable<T>(value: TrackableSubscribable<T>, visiable: boolean) {
-  value.isVisiable = visiable
+  value.isVisiable.set(visiable)
 }

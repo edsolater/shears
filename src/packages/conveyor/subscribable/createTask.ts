@@ -4,6 +4,7 @@
  * *********
  */
 import { WeakerSet } from '@edsolater/fnkit'
+import { invoke } from '../../fnkit'
 import { TrackableSubscribable } from './trackableSubscribable'
 
 export type TaskExecutor = {
@@ -14,8 +15,16 @@ export type TaskExecutor = {
 
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
+ *
+ * when relatedSubscribables is hinted, task function will only run when relatedSubscribables is visiable
+ * otherwise, initly task function must it to track the subscribables
  */
-export function createTask(task: (get: <T>(v: TrackableSubscribable<T>) => T) => void) {
+export function createTask(
+  ...params:
+    | [task: (get: <T>(v: TrackableSubscribable<T>) => T) => void]
+    | [relatedSubscribables: TrackableSubscribable<any>[], task: (get: <T>(v: TrackableSubscribable<T>) => T) => void]
+) {
+  const [relatedSubscribables, task] = params.length === 1 ? [undefined, params[0]] : params
   const execute = (() => {
     function get<T>(subscribable: TrackableSubscribable<T>) {
       recordSubscribableToContext(subscribable, execute)
@@ -29,7 +38,7 @@ export function createTask(task: (get: <T>(v: TrackableSubscribable<T>) => T) =>
       return isExecutorVisiable(execute)
     },
   })
-  execute()
+  execute() // init invoke to track the subscribables
 }
 
 /**
@@ -46,4 +55,9 @@ function recordSubscribableToContext<T>(subscribable: TrackableSubscribable<T>, 
 
 function isExecutorVisiable(context: TaskExecutor) {
   return [...context.relatedSubscribables].some((subscribable) => subscribable.isVisiable)
+}
+export function invokeBindedExecutors(subscribable: TrackableSubscribable<any>) {
+  subscribable.subscribedExecutors.forEach((executor) => {
+    if (executor.visiable) invoke(executor)
+  })
 }
