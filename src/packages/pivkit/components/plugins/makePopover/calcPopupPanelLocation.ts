@@ -1,4 +1,4 @@
-import { IStyle } from '../../piv'
+import { IStyle } from '../../../piv'
 import { PopoverPlacement } from './type'
 export type PopupLocationInfo = {
   // relative to viewport

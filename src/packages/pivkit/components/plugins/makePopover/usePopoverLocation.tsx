@@ -1,6 +1,6 @@
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { IStyle } from '../../piv/propHandlers'
-import { runInNextLoop } from '../../utils/runInNextLoop'
+import { IStyle } from '../../../piv/propHandlers'
+import { runInNextLoop } from '../../../utils/runInNextLoop'
 import { PopupLocationInfo, calcPopupPanelLocation } from './calcPopupPanelLocation'
 import { getScrollParents } from './getScrollParents'
 import { PopoverPlacement } from './type'

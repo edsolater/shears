@@ -1,8 +1,8 @@
 import { createSignal, Show } from 'solid-js'
 import { addDefaultProps, KitProps, Piv, useKitProps } from '../../piv'
 import { createRef } from '../../hooks/createRef'
-import { drawerKeyboardShortcut } from './plugins/drawerKeyboardShortcut'
-import { PopPortal } from './PopPortal'
+import { drawerKeyboardShortcut } from '../plugins/drawerKeyboardShortcut'
+import { PopPortal } from '../PopPortal'
 
 export interface DrawerController {
   isOpen: boolean

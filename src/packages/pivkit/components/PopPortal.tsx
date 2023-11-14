@@ -1,8 +1,8 @@
 import { createEffect } from 'solid-js'
 import { Portal } from 'solid-js/web'
-import { createRef } from '../..'
-import isClientSide from '../../../jFetch/utils/isSSR'
-import { RawChild } from '../../piv/typeTools'
+import { createRef } from '..'
+import isClientSide from '../../jFetch/utils/isSSR'
+import { RawChild } from '../piv/typeTools'
 
 /** with the same id, new top-element will be created only-once  */
 export function PopPortal(props: { id: string; children?: RawChild }) {
