@@ -23,7 +23,7 @@ export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, 'isTriggerOn
  * - info: accessors about trigger and popover
  */
 export function makePopover(options?: PopoverPluginOptions) {
-  const { close, open, toggle, isTriggerOn } = createTrigger({ defaultState: options?.defaultOpen })
+  const { close, open, toggle, isTriggerOn } = createTrigger({ defaultState: options?.defaultOpen??false })
 
   const [buttonDom, setButtonDom] = createRef<HTMLElement>()
   const [panelDom, setPanelDom] = createRef<HTMLElement>()
@@ -77,6 +77,9 @@ export function makePopover(options?: PopoverPluginOptions) {
       panelDom: panelDom,
       isTriggerOn,
       ...options,
+    })
+    createEffect(()=>{
+      console.log('panelStyle(): ', panelStyle())
     })
     return {
       'render:outWrapper': (originalNode) => <PopPortal id='popovers'>{originalNode}</PopPortal>,

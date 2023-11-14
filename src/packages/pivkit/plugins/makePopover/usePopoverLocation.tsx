@@ -46,7 +46,7 @@ export function usePopoverLocation({
   const [panelCoordinates, setPanelCoordinates] = createSignal<PopupLocationInfo>()
 
   const update = () => {
-    // must in some computer
+    // this check is must in some computer
     if (!globalThis.document) return
     const buttonElement = buttonDom()
     const panelElement = panelDom()
@@ -98,49 +98,12 @@ export function usePopoverLocation({
     })
   })
 
-  const panelStyle = createMemo(() => {
-    const coor = panelCoordinates()
-    const style =
-      isTriggerOn() && coor
-        ? ({
-            left: coor.panelLeft + 'px',
-            top: coor.panelTop + 'px',
-          } as IStyle)
-        : ({ display: 'none' } as IStyle)
-    return style
+  // listen to panel's toggle event
+  createEffect(() => {
+    if (isTriggerOn()) {
+      update()
+    }
   })
-
-  return { locationInfo: panelCoordinates, forceUpdateLocation: update, panelStyle }
-}
-
-export function usePopoverPanelLocation({
-  buttonDom,
-  panelDom,
-  isTriggerOn,
-  placement,
-  cornerOffset,
-  popoverGap,
-  viewportBoundaryInset,
-}: PopoverLocationHookOptions) {
-  const [panelCoordinates, setPanelCoordinates] = createSignal<PopupLocationInfo>()
-
-  const update = () => {
-    // must in some computer
-    if (!globalThis.document) return
-    const buttonElement = buttonDom()
-    const panelElement = panelDom()
-    if (!buttonElement || !panelElement) return
-
-    const coors = calcPopupPanelLocation({
-      buttonElement: buttonElement,
-      panelElement: panelElement,
-      placement,
-      cornerOffset,
-      popoverGap,
-      viewportBoundaryInset,
-    })
-    setPanelCoordinates(coors)
-  }
 
   const panelStyle = createMemo(() => {
     const coor = panelCoordinates()

@@ -374,7 +374,7 @@ function ComponentFactoryExample() {
 }
 
 function PopoverExample() {
-  const { plugins: popoverPlugins, state: popoverState } = makePopover({ placement: 'right' }) // <-- run on define, not good
+  const { plugins: popoverPlugins, state: popoverState } = makePopover({ triggerBy: 'click', placement: 'right',  }) // <-- run on define, not good
   const { plugin: hoverPlugin, state: hoverState } = useHoverPlugin({ onHover: () => console.log('hover') })
   createEffect(() => {
     console.log('isHover: ', hoverState.isHover())
