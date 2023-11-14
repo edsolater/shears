@@ -1,6 +1,8 @@
 import { capitalize, map } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
-import { createEffect, createMemo, onMount } from 'solid-js'
+import { createMemo } from 'solid-js'
+import { createTask } from '../../packages/conveyor/subscribable/createTask'
+import { createTrackableSubscribable } from '../../packages/conveyor/subscribable/trackableSubscribable'
 import { switchCase } from '../../packages/fnkit'
 import {
   Box,
@@ -19,6 +21,8 @@ import {
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
+import { useInterval } from '../../packages/pivkit/hooks/useInterval'
+import { useTimeout } from '../../packages/pivkit/hooks/useTimeout'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
@@ -33,6 +37,7 @@ const uikitConfig: UIKitThemeConfig = {
 // config uikit theme before render
 configUIKitTheme(uikitConfig)
 
+experimentalCode()
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -99,4 +104,26 @@ function KeyboardShortcutPanel() {
       </List>
     </Box>
   )
+}
+
+/** code for test */
+function experimentalCode() {
+  const testObserverableSubscribable = createTrackableSubscribable(1)
+  const testObserverableSubscribableB = createTrackableSubscribable(1)
+
+  createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
+    await Promise.resolve(3)
+
+    console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
+  })
+
+  useInterval(() => {
+    testObserverableSubscribable.set((s) => s + 1)
+  })
+
+  useTimeout(() => {
+    useInterval(() => {
+      testObserverableSubscribableB.set((s) => s + 1)
+    })
+  }, 0.5)
 }
