@@ -32,7 +32,7 @@ export function createTask(
     }
     task(get)
   }) as TaskExecutor
-  execute.relatedSubscribables = new WeakerSet<TrackableSubscribable<any>>()
+  execute.relatedSubscribables = new WeakerSet<TrackableSubscribable<any>>(relatedSubscribables)
   Object.defineProperty(execute, 'visiable', {
     get() {
       return isExecutorVisiable(execute)
