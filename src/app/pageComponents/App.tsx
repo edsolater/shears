@@ -1,6 +1,6 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
-import { createMemo } from 'solid-js'
+import { createMemo, createEffect, onMount } from 'solid-js'
 import { createTask } from '../../packages/conveyor/subscribable/createTask'
 import { createTaskSubscribable } from '../../packages/conveyor/subscribable/taskSubscribable'
 import {
@@ -36,7 +36,6 @@ const uikitConfig: UIKitThemeConfig = {
 // config uikit theme before render
 configUIKitTheme(uikitConfig)
 
-experimentalCode()
 export function App() {
   useAppThemeMode({ mode: 'dark' })
   const Routes = useRoutes(routes)
@@ -105,18 +104,18 @@ function KeyboardShortcutPanel() {
   )
 }
 
+const testObserverableSubscribable = createTaskSubscribable(1)
+const testObserverableSubscribableB = createTaskSubscribable(1, { visiable: true })
+
+const task = createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
+  await Promise.resolve(3)
+  console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
+})
+
 /** code for test */
 function experimentalCode() {
-  const testObserverableSubscribable = createTaskSubscribable(1)
-  const testObserverableSubscribableB = createTaskSubscribable(1, { visiable: true })
-
-  createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
-    await Promise.resolve(3)
-
-    console.log('testObserverableSubscribable: ', testObserverableSubscribable.visiable())
-    console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
-  })
-
+  onMount(task.run)
+  
   useInterval(() => {
     testObserverableSubscribable.set((s) => s + 1)
   })
@@ -127,3 +126,5 @@ function experimentalCode() {
     })
   }, 0.5)
 }
+
+experimentalCode()
