@@ -1,4 +1,4 @@
-import { AnyFn, flap, mergeObjectsWithConfigs, parallelSwitch, shakeNil } from '@edsolater/fnkit'
+import { AnyFn, flap, mergeObjectsWithConfigs, switchCase, shakeNil } from '@edsolater/fnkit'
 import { SignalizeProps, ValidProps } from '../typeTools'
 import { mergeRefs } from './mergeRefs'
 
@@ -38,7 +38,7 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
   if (trimedProps.length <= 1) return trimedProps[0] ?? {}
 
   const mergedResult = mergeObjectsWithConfigs(trimedProps, ({ key, valueA: v1, valueB: v2 }) =>
-    parallelSwitch(
+    switchCase(
       key,
       [
         // special div props
@@ -55,8 +55,8 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
         ['render:lastChild', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['controller', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
       ],
-      v1 && v2 ? () => v2() ?? v1() : v2 ?? v1
-    )
+      v1 && v2 ? () => v2() ?? v1() : v2 ?? v1,
+    ),
   )
   // @ts-ignore
   return mergedResult

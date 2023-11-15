@@ -1,7 +1,6 @@
-import { MayPromise } from '@edsolater/fnkit'
+import { MayPromise, switchCase } from '@edsolater/fnkit'
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { switchCase } from '../../packages/fnkit'
 import {
   AddProps,
   Box,

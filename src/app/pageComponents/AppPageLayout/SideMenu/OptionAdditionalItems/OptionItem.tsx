@@ -1,5 +1,4 @@
-import { AnyFn, isFunction, isObject } from '@edsolater/fnkit'
-import { switchCase } from '../../../../../packages/fnkit'
+import { AnyFn, isFunction, isObject, switchCase } from '@edsolater/fnkit'
 import {
   Box,
   Icon,
@@ -29,10 +28,10 @@ const icssOptionItemBox = createICSS(() => ({
   paddingBlock: '0.75rem',
   paddingInline: '2rem',
   '&:hover': {
-    backgroundColor: cssOpacity(cssVar('--ternary'), .1),
+    backgroundColor: cssOpacity(cssVar('--ternary'), 0.1),
   },
   '&:active': {
-    backgroundColor: cssOpacity(cssVar('--ternary'), .1),
+    backgroundColor: cssOpacity(cssVar('--ternary'), 0.1),
   },
   cursor: 'pointer',
   position: 'relative',
