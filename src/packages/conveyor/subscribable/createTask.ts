@@ -5,11 +5,15 @@
  */
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
-import { TrackableSubscribable, getSubscribableWithContext } from './trackableSubscribable'
+import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
+import {
+  TaskSubscribable,
+  getSubscribableWithContext
+} from './taskSubscribable'
 
 export type TaskExecutor = {
   (): void
-  relatedSubscribables: WeakerSet<TrackableSubscribable<any>>
+  relatedSubscribables: WeakerSet<TaskSubscribable<any>>
   readonly visiable: boolean
 }
 
@@ -21,12 +25,12 @@ export type TaskExecutor = {
  */
 export function createTask(
   ...params:
-    | [task: (get: <T>(v: TrackableSubscribable<T>) => T) => void]
-    | [relatedSubscribables: TrackableSubscribable<any>[], task: (get: <T>(v: TrackableSubscribable<T>) => T) => void]
+    | [task: (get: <T>(v: TaskSubscribable<T>) => T) => void]
+    | [relatedSubscribables: TaskSubscribable<any>[], task: (get: <T>(v: TaskSubscribable<T>) => T) => void]
 ) {
   const [relatedSubscribables, task] = params.length === 1 ? [undefined, params[0]] : params
   const execute = (() => {
-    function get<T>(subscribable: TrackableSubscribable<T>) {
+    function get<T>(subscribable: TaskSubscribable<T>) {
       recordSubscribableToContext(subscribable, execute)
       return getSubscribableWithContext(execute, subscribable)
     }
@@ -34,16 +38,23 @@ export function createTask(
   }) as TaskExecutor
   assignObject(
     execute,
-    { relatedSubscribables: new WeakerSet<TrackableSubscribable<any>>(relatedSubscribables) },
+    { relatedSubscribables: new WeakerSet<TaskSubscribable<any>>(relatedSubscribables) },
     { visiable: () => isExecutorVisiable(execute) },
   )
   execute() // init invoke to track the subscribables
 }
 
-function recordSubscribableToContext<T>(subscribable: TrackableSubscribable<T>, context: TaskExecutor) {
+function recordSubscribableToContext<T>(subscribable: TaskSubscribable<T>, context: TaskExecutor) {
   context.relatedSubscribables.add(subscribable)
 }
 
 function isExecutorVisiable(context: TaskExecutor) {
-  return [...context.relatedSubscribables].some((subscribable) => subscribable.isVisiable)
+  return [...context.relatedSubscribables].some((subscribable) => subscribable.visiable())
+}
+
+/** **only place** to invoke task executor */
+export function invokeExecutor(executor: TaskExecutor) {
+  if (executor.visiable) {
+    asyncInvoke(executor)
+  }
 }

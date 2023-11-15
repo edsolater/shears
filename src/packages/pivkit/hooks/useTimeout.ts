@@ -1,4 +1,4 @@
-import { onCleanup, createEffect } from 'solid-js'
+import { onCleanup, createEffect, onMount } from 'solid-js'
 
 /**
  * **DOM API (setTimeout)**
@@ -7,7 +7,7 @@ import { onCleanup, createEffect } from 'solid-js'
  * will auto clear when component unmount
  */
 export function useTimeout(callback: () => void, delay = 1) {
-  createEffect(() => {
+  onMount(() => {
     const timeoutId = setTimeout(callback, delay * 1000)
     onCleanup(() => clearTimeout(timeoutId))
   })

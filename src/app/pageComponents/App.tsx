@@ -1,8 +1,8 @@
-import { capitalize, map, switchCase} from '@edsolater/fnkit'
+import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
 import { createTask } from '../../packages/conveyor/subscribable/createTask'
-import { createTrackableSubscribable } from '../../packages/conveyor/subscribable/trackableSubscribable'
+import { createTaskSubscribable } from '../../packages/conveyor/subscribable/taskSubscribable'
 import {
   Box,
   Input,
@@ -107,12 +107,13 @@ function KeyboardShortcutPanel() {
 
 /** code for test */
 function experimentalCode() {
-  const testObserverableSubscribable = createTrackableSubscribable(1)
-  const testObserverableSubscribableB = createTrackableSubscribable(1)
+  const testObserverableSubscribable = createTaskSubscribable(1)
+  const testObserverableSubscribableB = createTaskSubscribable(1, { visiable: true })
 
   createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
     await Promise.resolve(3)
 
+    console.log('testObserverableSubscribable: ', testObserverableSubscribable.visiable())
     console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
   })
 

@@ -43,14 +43,14 @@ export function createSubscribable<T>(
       newValue.then((newValue) => {
         if (innerValue !== newValue) {
           const oldValue = innerValue
-          innerValue = newValue // update data
+          innerValue = newValue // update holded data
           subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
         }
       })
     } else {
       if (innerValue !== newValue) {
         const oldValue = innerValue
-        innerValue = newValue // update data
+        innerValue = newValue // update holded data
         subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
       }
     }

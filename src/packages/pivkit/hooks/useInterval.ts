@@ -1,4 +1,4 @@
-import { onCleanup, createEffect } from 'solid-js'
+import { onCleanup, createEffect, onMount } from 'solid-js'
 
 /**
  * **DOM API (setInterval)**
@@ -7,7 +7,7 @@ import { onCleanup, createEffect } from 'solid-js'
  * will auto clear when component unmount
  */
 export function useInterval(callback: () => void, s = 1, delay?: number) {
-  createEffect(() => {
+  onMount(() => {
     const intervalId = setInterval(callback, s * 1e3)
     onCleanup(() => clearInterval(intervalId))
   })
