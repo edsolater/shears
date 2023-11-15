@@ -1,9 +1,8 @@
-import { capitalize, map } from '@edsolater/fnkit'
+import { capitalize, map, switchCase} from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
 import { createTask } from '../../packages/conveyor/subscribable/createTask'
 import { createTrackableSubscribable } from '../../packages/conveyor/subscribable/trackableSubscribable'
-import { switchCase } from '../../packages/fnkit'
 import {
   Box,
   Input,

@@ -1,6 +1,5 @@
-import { AnyObj } from '@edsolater/fnkit'
+import { AnyObj, switchCase } from '@edsolater/fnkit'
 import { JSX, JSXElement, Show } from 'solid-js'
-import { switchCase } from '../../../fnkit/switchCase'
 import { PivProps } from '../Piv'
 import { HTMLTag } from '../typeTools'
 import { domMap } from './domMap'
