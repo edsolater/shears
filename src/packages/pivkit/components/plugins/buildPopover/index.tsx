@@ -78,9 +78,6 @@ export function buildPopover(options?: PopoverPluginOptions) {
       isTriggerOn,
       ...options,
     })
-    createEffect(()=>{
-      console.log('panelStyle(): ', panelStyle())
-    })
     return {
       'render:outWrapper': (originalNode) => <PopPortal id='popovers'>{originalNode}</PopPortal>,
       domRef: setPanelDom,
