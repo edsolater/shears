@@ -4,6 +4,7 @@
  * *********
  */
 import { WeakerSet } from '@edsolater/fnkit'
+import { assignObject } from '../../fnkit/assignObject'
 import { TrackableSubscribable, getSubscribableWithContext } from './trackableSubscribable'
 
 export type TaskExecutor = {
@@ -31,12 +32,11 @@ export function createTask(
     }
     task(get)
   }) as TaskExecutor
-  execute.relatedSubscribables = new WeakerSet<TrackableSubscribable<any>>(relatedSubscribables)
-  Object.defineProperty(execute, 'visiable', {
-    get() {
-      return isExecutorVisiable(execute)
-    },
-  })
+  assignObject(
+    execute,
+    { relatedSubscribables: new WeakerSet<TrackableSubscribable<any>>(relatedSubscribables) },
+    { visiable: () => isExecutorVisiable(execute) },
+  )
   execute() // init invoke to track the subscribables
 }
 
