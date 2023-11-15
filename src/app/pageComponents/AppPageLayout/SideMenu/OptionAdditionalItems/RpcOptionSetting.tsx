@@ -10,17 +10,16 @@ import {
   Piv,
   Row,
   Text,
+  buildPopover,
   cssOpacity,
   cssVar,
   icssCard,
   icssCyberpenkBackground,
   icssDivider,
-  icssFrostedGlass,
   icssTextColor,
-  buildPopover,
   useKitProps,
 } from '../../../../../packages/pivkit'
-import { RPCEndpoint, availableRpcs } from '../../../../stores/data/store'
+import { RPCEndpoint, availableRpcs, setStore, store } from '../../../../stores/data/store'
 import { OptionItemBox } from './OptionItem'
 
 export function RpcSettingFace(kitProps: {
@@ -50,7 +49,7 @@ export function RpcSettingFace(kitProps: {
         render:dot={<Piv icss={dotIcss}></Piv>}
         shadowProps={shadowProps}
       >
-        RPC
+        RPC:({store.rpc?.url ?? 'none'})
       </OptionItemBox>
       <Panel plugin={popoverPlugins.panel} icss={[{ width: '24rem' }, icssCard, icssCyberpenkBackground]}>
         <RPCPanel
@@ -195,8 +194,8 @@ function RPCPanelInput(kitProps: KitProps<{ customURL?: string }>) {
       // } rounded-xl min-w-[7em]`}
       // inputClassName='font-medium text-[rgba(196,214,255,0.5)] placeholder-[rgba(196,214,255,0.5)]'
       placeholder='https://'
-      onUserInput={(searchText) => {
-        // useConnection.setState({ userCostomizedUrlText: searchText.trim() })
+      onUserInput={(url) => {
+        if (url) setStore((s) => ({ rpc: { ...s?.rpc, url: url } }))
       }}
       onEnter={() => {
         // switchRpc({ url: userCostomizedUrlText }).then((isSuccess) => {

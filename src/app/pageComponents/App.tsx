@@ -1,8 +1,8 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
-import { createMemo, createEffect, onMount } from 'solid-js'
+import { createMemo, onMount } from 'solid-js'
+import { createTaskSubscribableFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import { createTask } from '../../packages/conveyor/subscribable/createTask'
-import { createTaskSubscribable } from '../../packages/conveyor/subscribable/taskSubscribable'
 import {
   Box,
   Input,
@@ -20,11 +20,10 @@ import {
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
-import { useInterval } from '../../packages/pivkit/hooks/useInterval'
-import { useTimeout } from '../../packages/pivkit/hooks/useTimeout'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
+import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
 
 const uikitConfig: UIKitThemeConfig = {
@@ -51,6 +50,8 @@ export function App() {
     switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
   )
   const needLayout = () => needAppPageLayout[location.pathname]
+  
+  useExperimentalCode()
 
   return (
     <>
@@ -104,27 +105,15 @@ function KeyboardShortcutPanel() {
   )
 }
 
-const testObserverableSubscribable = createTaskSubscribable(1)
-const testObserverableSubscribableB = createTaskSubscribable(1, { visiable: true })
-
-const task = createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
-  await Promise.resolve(3)
-  console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
+console.log('1: ', 1)
+const rpcUrlTaskSubscribable = createTaskSubscribableFromAccessor(() => store.rpc?.url, { visiable: true })
+const task = createTask((get) => {
+  console.log('new rpcUrl(from taskSubscribable): ', get(rpcUrlTaskSubscribable))
 })
+console.log('2: ', 2)
 
 /** code for test */
-function experimentalCode() {
+function useExperimentalCode() {
+  rpcUrlTaskSubscribable.subscribe((url) => console.log('✅new rpcUrl(from test): ', url))
   onMount(task.run)
-  
-  useInterval(() => {
-    testObserverableSubscribable.set((s) => s + 1)
-  })
-
-  useTimeout(() => {
-    useInterval(() => {
-      testObserverableSubscribableB.set((s) => s + 1)
-    })
-  }, 0.5)
 }
-
-experimentalCode()

@@ -19,7 +19,8 @@ export interface TaskSubscribable<T> extends Subscribable<T> {
   [TaskSubscribableTag]: boolean
   subscribedExecutors: WeakerSet<TaskExecutor>
 }
-interface CreateTaskSubscribableOptions<T> {
+
+export interface CreateTaskSubscribableOptions<T> {
   visiable?: boolean
   onAccessed?: (currentValue: T) => void
 }
