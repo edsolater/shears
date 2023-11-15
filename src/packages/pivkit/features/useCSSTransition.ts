@@ -1,6 +1,6 @@
 import { flap, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { onEvent } from '../domkit'
+import { addEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
 import { CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
@@ -127,7 +127,7 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
   createEffect(() => {
     const el = contentDom()
     if (!el) return
-    const subscription = onEvent(el, 'transitionend', () => setCurrentPhase(targetPhase()), {
+    const subscription = addEventListener(el, 'transitionend', () => setCurrentPhase(targetPhase()), {
       onlyTargetIsSelf: true, // not event fired by bubbled
     })
     onCleanup(() => subscription.abort())

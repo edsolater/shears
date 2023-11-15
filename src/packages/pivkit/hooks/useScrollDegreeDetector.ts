@@ -1,5 +1,5 @@
 import { Accessor, createEffect, onCleanup } from 'solid-js'
-import { onEvent } from '../domkit'
+import { addEventListener } from '../domkit'
 
 export interface UseScrollDegreeDetectorOptions {
   onReachBottom?: () => void
@@ -35,7 +35,7 @@ export function useScrollDegreeDetector(
     if (!el) return
 
     onScroll()
-    const { abort: cancel } = onEvent(el, 'scroll', onScroll, { passive: true })
+    const { abort: cancel } = addEventListener(el, 'scroll', onScroll, { passive: true })
     onCleanup(cancel)
   }, [ref])
   return { forceCalculate: onScroll /* TODO: don't invoke forceCalculate manually, just use mutationObserver */ }

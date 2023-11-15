@@ -1,6 +1,6 @@
 import { createEffect, createSignal, on, onCleanup } from 'solid-js'
 import { createSubscribable } from '@edsolater/fnkit'
-import { KeybordShortcutKeys, getShorcutStringFromKeyboardEvent, onEvent } from '../../../domkit'
+import { KeybordShortcutKeys, getShorcutStringFromKeyboardEvent, addEventListener } from '../../../domkit'
 import { createControllerRef } from '../../../hooks/createControllerRef'
 import { createRef } from '../../../hooks/createRef'
 import { createPlugin } from '../../../piv'
@@ -42,7 +42,7 @@ export const keyboardShortcutObserverPlugin = (options: {
 
 function subscribeKeyboardShortcut(el: HTMLElement) {
   const subscribable = createSubscribable<string>()
-  onEvent(el, 'keydown', ({ ev }) => {
+  addEventListener(el, 'keydown', ({ ev }) => {
     ev.stopPropagation()
     const shortcut = getShorcutStringFromKeyboardEvent(ev)
     if (isValidShortcut(ev)) subscribable.set(shortcut)

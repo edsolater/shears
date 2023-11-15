@@ -29,7 +29,7 @@ export type EventCallback<
 }
 
 // TODO: !!! move to domkit
-export function onEvent<
+export function addEventListener<
   El extends HTMLElement | Document | Window | undefined | null,
   K extends keyof HTMLElementEventMap,
 >(

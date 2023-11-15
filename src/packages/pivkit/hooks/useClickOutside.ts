@@ -1,5 +1,5 @@
 import { Accessor, createEffect, onCleanup } from 'solid-js'
-import { EventCallback, onEvent } from '../domkit'
+import { EventCallback, addEventListener } from '../domkit'
 import { ElementAccessors, getElementsFromAccessors } from '../utils/elementAccessors'
 import { shrinkFn } from '@edsolater/fnkit'
 
@@ -19,7 +19,7 @@ export function useClickOutside(els: ElementAccessors, options?: UseClickOutside
   const getOption = () => parasedOptions
   createEffect(() => {
     const targetElements = getElementsFromAccessors(els)
-    const { abort: cancel } = onEvent(
+    const { abort: cancel } = addEventListener(
       globalThis.document,
       'click',
       (payload) => {

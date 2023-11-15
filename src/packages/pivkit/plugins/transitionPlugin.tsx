@@ -1,6 +1,6 @@
 import { MayArray, MayFn, flap, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
-import { onEvent } from '../domkit'
+import { addEventListener } from '../domkit'
 import { CSSObject, PivProps, createPlugin, mergeProps } from '../piv'
 
 export type TransitionPhase = 'prepare-to-go' | 'on-going' | 'finish'
@@ -90,7 +90,7 @@ export const transitionPlugin = createPlugin(
 
       // make inTransition during state sync with CSS event
       createEffect(() => {
-        const { abort } = onEvent(dom(), 'transitionend', () => setCurrentPhase('finish'), {
+        const { abort } = addEventListener(dom(), 'transitionend', () => setCurrentPhase('finish'), {
           onlyTargetIsSelf: true /* TODO - add feature: attach max one time  */,
         }) // not event fired by bubbled
         onCleanup(abort)

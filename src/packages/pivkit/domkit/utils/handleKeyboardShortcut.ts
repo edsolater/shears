@@ -1,4 +1,4 @@
-import { onEvent, EventListenerController } from './onEvent'
+import { addEventListener, EventListenerController } from './addEventListener'
 import { mapKey, shakeFalsy, toLowerCase, unifyItem } from '@edsolater/fnkit'
 import { addTabIndex } from './addTabIndex'
 
@@ -84,7 +84,7 @@ export function handleKeyboardShortcut(
   keyboardShortcutSettings: KeyboardShortcutSettings
 ): EventListenerController {
   addTabIndex(el) // keydown must have fousable element
-  return onEvent(el, 'keydown', ({ ev }) => {
+  return addEventListener(el, 'keydown', ({ ev }) => {
     const pressedKey = getShorcutStringFromKeyboardEvent(ev)
     const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
     targetShortcutFn?.()
