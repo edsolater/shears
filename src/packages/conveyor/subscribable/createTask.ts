@@ -6,11 +6,11 @@
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { TaskSubscribable, getSubscribableWithContext } from './taskSubscribable'
+import { TaskAtom, getSubscribableWithContext } from './taskAtom'
 
 export type TaskExecutor = {
   (): void
-  relatedSubscribables: WeakerSet<TaskSubscribable<any>>
+  relatedTaskAtoms: WeakerSet<TaskAtom<any>>
   readonly visiable: boolean
 }
 export type TaskRunner = {
@@ -22,12 +22,12 @@ export type TaskRunner = {
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
  *
- * when relatedSubscribables is hinted, task function will only run when relatedSubscribables is visiable
+ * when relatedTaskAtoms is hinted, task function will only run when relatedTaskAtoms is visiable
  * otherwise, initly task function must it to track the subscribables
  * 
  * @example
- * const testObserverableSubscribable = createTaskSubscribable(1)
- * const testObserverableSubscribableB = createTaskSubscribable(1, { visiable: true })
+ * const testObserverableSubscribable = createTaskAtom(1)
+ * const testObserverableSubscribableB = createTaskAtom(1, { visiable: true })
  * 
  * const task = createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
  *   await Promise.resolve(3)
@@ -36,20 +36,20 @@ export type TaskRunner = {
  */
 export function createTask(
   ...params:
-    | [taskContentFn: (get: <T>(v: TaskSubscribable<T>) => T) => void]
-    | [relatedSubscribables: TaskSubscribable<any>[], taskContentFn: (get: <T>(v: TaskSubscribable<T>) => T) => void]
+    | [taskContentFn: (get: <T>(v: TaskAtom<T>) => T) => void]
+    | [relatedTaskAtoms: TaskAtom<any>[], taskContentFn: (get: <T>(v: TaskAtom<T>) => T) => void]
 ) {
-  const [relatedSubscribables, taskContentFn] = params.length === 1 ? [undefined, params[0]] : params
+  const [relatedTaskAtoms, taskContentFn] = params.length === 1 ? [undefined, params[0]] : params
   const executor = (() => {
-    function get<T>(subscribable: TaskSubscribable<T>) {
-      recordSubscribableToContext(subscribable, executor)
-      return getSubscribableWithContext(executor, subscribable)
+    function get<T>(atom: TaskAtom<T>) {
+      recordSubscribableToContext(atom, executor)
+      return getSubscribableWithContext(executor, atom)
     }
     taskContentFn(get)
   }) as TaskExecutor
   assignObject(
     executor,
-    { relatedSubscribables: new WeakerSet<TaskSubscribable<any>>(relatedSubscribables) },
+    { relatedTaskAtoms: new WeakerSet<TaskAtom<any>>(relatedTaskAtoms) },
     { visiable: () => isExecutorVisiable(executor) },
   )
   const taskRunner: TaskRunner = {
@@ -61,12 +61,12 @@ export function createTask(
   return taskRunner
 }
 
-function recordSubscribableToContext<T>(subscribable: TaskSubscribable<T>, context: TaskExecutor) {
-  context.relatedSubscribables.add(subscribable)
+function recordSubscribableToContext<T>(subscribable: TaskAtom<T>, context: TaskExecutor) {
+  context.relatedTaskAtoms.add(subscribable)
 }
 
 function isExecutorVisiable(context: TaskExecutor) {
-  return [...context.relatedSubscribables].some((subscribable) => subscribable.visiable())
+  return [...context.relatedTaskAtoms].some((subscribable) => subscribable.visiable())
 }
 
 /** **only place** to invoke task executor */

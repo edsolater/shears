@@ -1,7 +1,7 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo, onMount } from 'solid-js'
-import { createTaskSubscribableFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
+import { createTaskAtomFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import { createTask } from '../../packages/conveyor/subscribable/createTask'
 import {
   Box,
@@ -106,14 +106,14 @@ function KeyboardShortcutPanel() {
 }
 
 console.log('1: ', 1)
-const rpcUrlTaskSubscribable = createTaskSubscribableFromAccessor(() => store.rpc?.url, { visiable: true })
+const rpcUrlTaskAtom = createTaskAtomFromAccessor(() => store.rpc?.url, { visiable: true })
 const task = createTask((get) => {
-  console.log('new rpcUrl(from taskSubscribable): ', get(rpcUrlTaskSubscribable))
+  console.log('new rpcUrl(from taskAtom): ', get(rpcUrlTaskAtom))
 })
 console.log('2: ', 2)
 
 /** code for test */
 function useExperimentalCode() {
-  rpcUrlTaskSubscribable.subscribe((url) => console.log('✅new rpcUrl(from test): ', url))
+  rpcUrlTaskAtom.subscribe((url) => console.log('✅new rpcUrl(from test): ', url))
   onMount(task.run)
 }

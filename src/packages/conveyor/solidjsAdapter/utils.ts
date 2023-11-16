@@ -1,23 +1,23 @@
 import { Accessor, createEffect, createSignal, on, Setter } from 'solid-js'
 import {
-  createTaskSubscribable,
-  CreateTaskSubscribableOptions,
-  TaskSubscribable,
-} from '../subscribable/taskSubscribable'
+  createTaskAtom,
+  CreateTaskAtomOptions,
+  TaskAtom,
+} from '../subscribable/taskAtom'
 import { asynclyCreateEffect } from './createAsyncEffect'
 
-export function createTaskSubscribableFromAccessor<T>(accessor: () => T, options?: CreateTaskSubscribableOptions<T>) {
-  const taskSubscribable = createTaskSubscribable(accessor(), options)
+export function createTaskAtomFromAccessor<T>(accessor: () => T, options?: CreateTaskAtomOptions<T>) {
+  const taskAtom = createTaskAtom(accessor(), options)
   asynclyCreateEffect(() => {
-    taskSubscribable.set(accessor())
+    taskAtom.set(accessor())
   })
-  return taskSubscribable
+  return taskAtom
 }
 
 /**
  * subscribable to [accessor, setter]
  */
-export function useTaskSubscribable<T>(subscribable: TaskSubscribable<T>): [Accessor<T>, Setter<T>] {
+export function useTaskAtom<T>(subscribable: TaskAtom<T>): [Accessor<T>, Setter<T>] {
   const defaultValue = subscribable()
   const [accessor, setter] = createSignal(defaultValue)
 
