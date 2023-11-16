@@ -3,7 +3,7 @@ import {
   createTaskAtom,
   CreateTaskAtomOptions,
   TaskAtom,
-} from '../subscribable/taskAtom'
+} from '../taskAtom/taskAtom'
 import { asynclyCreateEffect } from './createAsyncEffect'
 
 export function createTaskAtomFromAccessor<T>(accessor: () => T, options?: CreateTaskAtomOptions<T>) {

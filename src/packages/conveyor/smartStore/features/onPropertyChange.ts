@@ -1,5 +1,5 @@
 import { MayArray } from '@edsolater/fnkit'
-import { CreateSmartStoreOptions_BasicOptions, SmartSetStore } from '../createSmartStore'
+import { CreateSmartStoreOptions_BasicOptions, SmartSetStore } from '../createSolidjsStore'
 import { createCallbacksStoreWithKeys } from '../utils/createCallbackStore'
 
 export type OnChangeCallback<T extends Record<string, any>, K extends keyof T = any> = (payload: {

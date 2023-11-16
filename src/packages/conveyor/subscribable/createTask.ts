@@ -6,7 +6,7 @@
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { TaskAtom, getSubscribableWithContext } from './taskAtom'
+import { TaskAtom, getSubscribableWithContext } from '../taskAtom/taskAtom'
 
 export type TaskExecutor = {
   (): void
