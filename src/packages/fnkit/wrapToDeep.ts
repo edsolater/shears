@@ -1,4 +1,4 @@
-import { isArray, isObjectLiteral } from '@edsolater/fnkit';
+import { isArray, isObjectLiteral } from '@edsolater/fnkit'
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -10,12 +10,16 @@ import { isArray, isObjectLiteral } from '@edsolater/fnkit';
 export function wrapToDeep<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
-  wrapFn: (leaf: any) => any
+  wrapFn: (leaf: any) => any,
+  detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node) ,
 ): Result {
-  // @ts-expect-error type here is useless
-  if (isArray(target)) return target.map(wrapItems);
+  if (detectLeaf(target)) return wrapFn(target)
+  // @ts-ignore
+  if (isArray(target)) return target.map((t) => wrapToDeep(t, wrapFn, detectLeaf))
   if (isObjectLiteral(target))
-    // @ts-expect-error type here is useless
-    return Object.fromEntries(Object.entries(target).map(([key, value]) => [key, wrapItems(value)]));
-  return wrapFn(target);
+    // @ts-ignore
+    return Object.fromEntries(
+      Object.entries(target).map(([key, value]) => [key, wrapToDeep(value, wrapFn, detectLeaf)]),
+    )
+  return target
 }

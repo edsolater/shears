@@ -1,8 +1,9 @@
-import { isFunction, shrinkFn } from '@edsolater/fnkit'
+import { isArray, isFunction, isObject, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, untrack } from 'solid-js'
 import { wrapToDeep } from '../../fnkit/wrapToDeep'
-import { createTaskAtom } from '../taskAtom/taskAtom'
+import { createTaskAtom, isTaskAtom } from '../taskAtom/taskAtom'
 import { createStoreSetter } from './utils/setStoreByObject'
+import { b } from 'vitest/dist/reporters-5f784f42'
 
 type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
 export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T>
@@ -35,24 +36,46 @@ export function createSmartStore<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
-  const store = getBranchFromPure(shrinkFn(defaultValue))
-  const accessCountStore: accessCountStore = {}
-  const setCountStore: setCountStore = {}
+  const pale = shrinkFn(defaultValue)
+  const store = getBranchFromPure(pale)
+  const accessCountStore: accessCountStore = createCountStore(pale)
+  const setCountStore: setCountStore = createCountStore(pale)
 
-  // 🍻🍻🍻🍻🍻🍻🍻🍻🍻🍻
   function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
-    const prevStore = untrack(() => rawStore)
-    const newStorePieces = isFunction(dispatch) ? dispatch(prevStore) : dispatch
+    const newStorePieces = shrinkFn(dispatch, [pale])
     if (!newStorePieces) return // no need to update store with the same value
     Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
       setCountStore[propertyName] = (setCountStore[propertyName] ?? 0) + 1
-      // @ts-ignore
-      const prevValue = prevStore[propertyName]
+      const prevValue = pale[propertyName]
+      const branch = store[propertyName]
       if (prevValue !== newValue) {
-        invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
+        // invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
+        pale[propertyName] = newValue
+        updateBranch(branch, newValue)
       }
     })
-    rawSetStore(createStoreSetter(newStorePieces))
+  }
+
+  /**
+   * make store's value structure same as pale
+   */
+  function updateBranch(branch: any, newValue: any) {
+    if (isObjectLiteral(newValue)) {
+      Object.entries(newValue).forEach(([propertyName, newValue]) => {
+        const newBranch = branch[propertyName]
+        updateBranch(newBranch, newValue)
+      })
+    } else if (isArray(newValue)) {
+      newValue.forEach((newValue, index) => {
+        const newBranch = branch[index]
+        updateBranch(newBranch, newValue)
+      })
+    } else if (isTaskAtom(branch)) {
+      const branchValue = branch()
+      if (branchValue !== newValue) {
+        branch.set(newValue)
+      }
+    }
   }
 
   return {
@@ -65,6 +88,25 @@ export function createSmartStore<T extends Record<string, any>>(
 
 export type Branch<T> = any /*  too difficult to type, not very necessay */
 
-export function getBranchFromPure<T>(pure: T): Branch<T> {
+/**
+ * {a: 1, b:()=>3} => {a: TaskAtom(1), b: TaskAtom(()=>3)}
+ */
+function getBranchFromPure<T>(pure: T): Branch<T> {
   return wrapToDeep(pure, (leaf) => createTaskAtom(leaf))
+}
+
+/**
+ * reverse version of getBranchFromPure
+ * {a: TaskAtom(1), b: TaskAtom(()=>3)} => {a: 1, b:()=>3}
+ */
+function getPureFromBranch<T>(branch: Branch<T>): T {
+  return wrapToDeep(
+    branch,
+    (leaf) => (isTaskAtom(leaf) ? leaf() : leaf),
+    (node) => isTaskAtom(node) || (!isObjectLiteral(node) && !isArray(node)),
+  )
+}
+
+function createCountStore<T>(pure: T): accessCountStore {
+  return wrapToDeep(pure, (leaf) => createTaskAtom(0))
 }
