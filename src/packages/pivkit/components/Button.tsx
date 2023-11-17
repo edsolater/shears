@@ -1,10 +1,8 @@
-import { flap, isValuedArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { flap, isMeanfulArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
 import { objectMerge } from '../../fnkit'
 import { createRef } from '../hooks/createRef'
-import { useGlobalKitTheme } from '../hooks/useGlobalKitTheme'
 import {
-  addDefaultProps,
   compressICSSToObj,
   ICSS,
   KitProps,
@@ -13,7 +11,7 @@ import {
   parsePivChildren,
   Piv,
   PivChild,
-  useKitProps,
+  useKitProps
 } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { cssColors } from '../styles/cssColors'
@@ -88,7 +86,7 @@ export function Button(kitProps: ButtonKitProps) {
 
   /* ------------------------------- validation ------------------------------- */
   const failedTestValidator = createMemo(() =>
-    isValuedArray(props.validators) || props.validators
+    isMeanfulArray(props.validators) || props.validators
       ? flap(props.validators!).find(({ should }) => !shrinkFn(should))
       : undefined,
   )

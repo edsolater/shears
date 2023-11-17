@@ -35,7 +35,7 @@ export function recordController<Controller extends ValidController | unknown>(
 
 export function unregisterController(id?: string) {
   if (!id) return
-  const records = recordedControllers.value()
+  const records = recordedControllers()
   if (!records) return
   recordedControllers.set((recoder) => {
     recoder?.delete(id)

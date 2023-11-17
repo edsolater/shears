@@ -13,6 +13,7 @@ export function wrapToDeep<Result = any>(
   wrapFn: (leaf: any) => any,
   detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node) ,
 ): Result {
+  
   if (detectLeaf(target)) return wrapFn(target)
   // @ts-ignore
   if (isArray(target)) return target.map((t) => wrapToDeep(t, wrapFn, detectLeaf))

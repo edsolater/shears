@@ -28,11 +28,11 @@ function assignNewValue(oldValue: unknown, newValue: unknown): unknown {
   }
   return newValue
 }
-function mutateTwoObj(
-  oldObj: Record<keyof any, unknown>,
-  newObj: Record<keyof any, unknown>,
+function mutateTwoObj<T extends object>(
+  oldObj: T,
+  newObj: Partial<T>,
   mutateFn?: (oldItem: unknown, newItem: unknown) => unknown,
-): Record<keyof any, unknown> {
+): T {
   const result = oldObj
   Object.entries(newObj).forEach(([key, newValue]) => {
     const oldValue = oldObj[key]

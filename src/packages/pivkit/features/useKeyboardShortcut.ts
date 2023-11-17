@@ -143,7 +143,7 @@ export function useAllRegisteredGlobalShortcuts() {
 export function useSubscribable<T>(subscribable: Subscribable<T>): Accessor<T | undefined>
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue: T): Accessor<T>
 export function useSubscribable<T>(subscribable: Subscribable<T>, defaultValue?: T) {
-  const [value, setValue] = createSignal(subscribable.current ?? defaultValue, { equals: false })
+  const [value, setValue] = createSignal(subscribable() ?? defaultValue, { equals: false })
   createEffect(() => {
     const { unsubscribe } = subscribable.subscribe(setValue)
     onCleanup(unsubscribe)
@@ -164,10 +164,10 @@ export function makeSubscriable<T extends AnyObj>(
     originalObject instanceof Array
       ? ['push', 'pop', 'shift', 'unshift', 'splice', 'sort', 'reverse']
       : originalObject instanceof Set || originalObject instanceof WeakSet || originalObject instanceof WeakerSet
-      ? ['add', 'delete']
-      : originalObject instanceof Map || originalObject instanceof WeakMap || originalObject instanceof WeakerMap
-      ? ['set', 'delete']
-      : Object.getOwnPropertyNames(originalObject)
+        ? ['add', 'delete']
+        : originalObject instanceof Map || originalObject instanceof WeakMap || originalObject instanceof WeakerMap
+          ? ['set', 'delete']
+          : Object.getOwnPropertyNames(originalObject)
   const subscribable = createSubscribable<T>() as Subscribable<T>
   const proxiedValue = new Proxy(originalObject, {
     get(target, prop) {

@@ -2,9 +2,7 @@ import { isFunction, isNullish, isObject, isPrimitive, type AnyObj } from '@edso
 import { produce } from 'solid-js/store'
 
 /** it pass returned function to  setStore  */
-export function createStoreSetter<T extends Record<string, any>>(
-  newStorePieces: Partial<T>,
-) {
+export function createStoreSetter<T extends Record<string, any>>(newStorePieces: Partial<T>) {
   return produce((draft: AnyObj) => {
     Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
       const oldValue = draft[propertyName]
@@ -28,11 +26,7 @@ function assignNewValue(oldValue: unknown, newValue: unknown): unknown {
   }
   return newValue
 }
-function mutateTwoObj(
-  oldObj: Record<keyof any, unknown>,
-  newObj: Record<keyof any, unknown>,
-  mutateFn?: (oldItem: unknown, newItem: unknown) => unknown,
-): Record<keyof any, unknown> {
+function mutateTwoObj<T>(oldObj: T, newObj: object, mutateFn?: (oldItem: unknown, newItem: unknown) => unknown): T {
   const result = oldObj
   Object.entries(newObj).forEach(([key, newValue]) => {
     const oldValue = oldObj[key]
