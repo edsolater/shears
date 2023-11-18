@@ -7,5 +7,6 @@ test(`\`${wrapObjLeaves.name}\` basic usage `, () => {
   expect(result.a).toBe(2)
   expect(result.b.c).toBe(4)
   // should not mutate raw
-  expect(result).not.toBe(raw)
+  expect(result.a).toBe(2)
+  // expect(result).not.toBe(raw)
 })

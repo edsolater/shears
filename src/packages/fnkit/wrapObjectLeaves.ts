@@ -1,4 +1,4 @@
-import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, isProxy, switchCase } from '@edsolater/fnkit'
+import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/fnkit'
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -22,6 +22,7 @@ export function wrapObjLeaves<Result = any>(
   return _wrapToDeep(target, wrapFn, detectLeaf, cache, setCache)
 }
 
+/** a data structure to store value */
 type WrappedLeaf = {
   _isWrappedLeaf: true
   value: any
@@ -31,6 +32,9 @@ function isWrappedLeaf(v: any): v is WrappedLeaf {
 }
 function makeWrappedLeaf(v: any): WrappedLeaf {
   return { _isWrappedLeaf: true, value: v }
+}
+function pickValueFromWrappedLeaf(v: any): any {
+  return isWrappedLeaf(v) ? v.value : v
 }
 
 /**
@@ -44,7 +48,7 @@ function _wrapToDeep<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
-  detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
+  targetIsLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
   cacheFragnement: any,
   cacheSetter: (wrappedValue: any) => void,
 ): Result {
@@ -52,15 +56,18 @@ function _wrapToDeep<Result = any>(
     target,
     [
       [
-        detectLeaf,
-        (target) => (isWrappedLeaf(cacheFragnement) ? cacheFragnement : pipeDo(wrapFn(target), cacheSetter, makeWrappedLeaf)),
+        targetIsLeaf,
+        (target) =>
+          isWrappedLeaf(cacheFragnement)
+            ? pickValueFromWrappedLeaf(cacheFragnement)
+            : pipeDo(wrapFn(target), makeWrappedLeaf, cacheSetter, pickValueFromWrappedLeaf),
       ],
       [
         isObjectLike,
         (target) =>
           new Proxy(target, {
             get: (target, key) =>
-              _wrapToDeep(target[key], wrapFn, detectLeaf, cacheFragnement[key], (propertyValue) => {
+              _wrapToDeep(target[key], wrapFn, targetIsLeaf, cacheFragnement[key], (propertyValue) => {
                 Reflect.set(cacheFragnement, key, propertyValue)
               }),
           }),
@@ -80,8 +87,7 @@ function _wrapToDeep<Result = any>(
  * @todo already have move to fnkit
  */
 function pipeDo<T>(v: T, ...handlers: ((v: T) => undefined | any)[]): any {
-  handlers.reduce((v, handler) => handler(v) ?? v, v)
-  return v
+  return handlers.reduce((v, handler) => handler(v) ?? v, v)
 }
 
 /**
