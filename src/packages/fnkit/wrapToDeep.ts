@@ -7,7 +7,7 @@ import { isArray, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/f
  * @returns
  * @todo move to fnkit . use proxy to fasten
  */
-export function wrapToDeep<Result = any>(
+export function wrapLeafNodes<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
@@ -23,7 +23,7 @@ export function wrapToDeep<Result = any>(
 }
 
 /**
- * only used in {@link wrapToDeep}
+ * only used in {@link wrapLeafNodes}
  * @param target any type
  * @param wrapFn
  * @returns
@@ -34,25 +34,30 @@ function _wrapToDeep<Result = any>(
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
   detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
-  cacheObject: object,
+  cache: object,
   cacheSetter: (wrappedValue: any) => void,
 ): Result {
   return switchCase(
     target,
     [
-      [detectLeaf, (t) => parallelHandles(wrapFn(t), cacheSetter)],
+      [detectLeaf, (t) => cache /* already cached */ ?? parallelActions(wrapFn(t), cacheSetter) /* not cached */],
       [
         isObjectLike,
-        (t) =>
-          new Proxy(target, {
-            get: (target, key) =>
-              _wrapToDeep(target[key], wrapFn, detectLeaf, cacheObject, (propertyValue) => {
-                Reflect.set(cacheObject, key, propertyValue)
-              }),
-          }) as any,
+        (t) => {
+          if (!cache) {
+            return new Proxy(target, {
+              get: (target, key) =>
+                _wrapToDeep(target[key], wrapFn, detectLeaf, cache[key], (propertyValue) => {
+                  Reflect.set(cache, key, propertyValue)
+                }),
+            }) as any
+          } else {
+            return cache   
+          }
+        },
       ],
     ],
-    target,
+    () => target,
   )
 }
 
@@ -66,7 +71,7 @@ function _wrapToDeep<Result = any>(
  * @returns handled v / original v (depend on handlers)
  * @todo already have move to fnkit
  */
-function parallelHandles<T>(v: T, ...handlers: ((v: T) => undefined | T)[]): T {
+function parallelActions<T>(v: T, ...handlers: ((v: T) => undefined | T)[]): T {
   handlers.reduce((v, handler) => handler(v) ?? v, v)
   return v
 }
