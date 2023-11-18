@@ -1,4 +1,4 @@
-import { isArray, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/fnkit'
+import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, isProxy, switchCase } from '@edsolater/fnkit'
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -7,13 +7,13 @@ import { isArray, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/f
  * @returns
  * @todo move to fnkit . use proxy to fasten
  */
-export function wrapLeafNodes<Result = any>(
+export function wrapObjLeaves<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
   detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
 ): Result {
-  const cache = {}
+  const cache = cloneObject(target)
   const setCache = (wrappedValue: any) => {
     Object.entries(wrappedValue).forEach(([key, value]) => {
       cache[key] = value
@@ -22,8 +22,19 @@ export function wrapLeafNodes<Result = any>(
   return _wrapToDeep(target, wrapFn, detectLeaf, cache, setCache)
 }
 
+type WrappedLeaf = {
+  _isWrappedLeaf: true
+  value: any
+}
+function isWrappedLeaf(v: any): v is WrappedLeaf {
+  return isObject(v) && v._isWrappedLeaf
+}
+function makeWrappedLeaf(v: any): WrappedLeaf {
+  return { _isWrappedLeaf: true, value: v }
+}
+
 /**
- * only used in {@link wrapLeafNodes}
+ * only used in {@link wrapObjLeaves}
  * @param target any type
  * @param wrapFn
  * @returns
@@ -34,33 +45,30 @@ function _wrapToDeep<Result = any>(
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
   detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
-  cache: object,
+  cacheFragnement: any,
   cacheSetter: (wrappedValue: any) => void,
 ): Result {
   return switchCase(
     target,
     [
-      [detectLeaf, (t) => cache /* already cached */ ?? parallelActions(wrapFn(t), cacheSetter) /* not cached */],
+      [
+        detectLeaf,
+        (target) => (isWrappedLeaf(cacheFragnement) ? cacheFragnement : pipeDo(wrapFn(target), cacheSetter, makeWrappedLeaf)),
+      ],
       [
         isObjectLike,
-        (t) => {
-          if (!cache) {
-            return new Proxy(target, {
-              get: (target, key) =>
-                _wrapToDeep(target[key], wrapFn, detectLeaf, cache[key], (propertyValue) => {
-                  Reflect.set(cache, key, propertyValue)
-                }),
-            }) as any
-          } else {
-            return cache   
-          }
-        },
+        (target) =>
+          new Proxy(target, {
+            get: (target, key) =>
+              _wrapToDeep(target[key], wrapFn, detectLeaf, cacheFragnement[key], (propertyValue) => {
+                Reflect.set(cacheFragnement, key, propertyValue)
+              }),
+          }),
       ],
     ],
     () => target,
   )
 }
-
 /**
  * FP utils : give opportunity to handle/change value in parallel
  *
@@ -71,7 +79,14 @@ function _wrapToDeep<Result = any>(
  * @returns handled v / original v (depend on handlers)
  * @todo already have move to fnkit
  */
-function parallelActions<T>(v: T, ...handlers: ((v: T) => undefined | T)[]): T {
+function pipeDo<T>(v: T, ...handlers: ((v: T) => undefined | any)[]): any {
   handlers.reduce((v, handler) => handler(v) ?? v, v)
   return v
+}
+
+/**
+ * FP utils : IIFE
+ */
+function iife(fn: () => void) {
+  fn()
 }

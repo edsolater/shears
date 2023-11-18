@@ -1,7 +1,7 @@
 import { isFunction } from '@edsolater/fnkit'
 import { SignalizeProps } from '../typeTools'
 
-// can only convert primary object literal or array type
+/** convert volue to accessor */
 export function signalize<T extends object | undefined>(props: T): SignalizeProps<NonNullable<T>> {
   return new Proxy(props ?? {}, {
     get:
