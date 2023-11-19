@@ -25,6 +25,8 @@ import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
+import { createBranch, debranchify } from '../../packages/conveyor/smartStore/createBranch'
+import { isTaskAtom } from '../../packages/conveyor/smartStore/createTaskAtom'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -116,4 +118,8 @@ console.log('2: ', 2)
 function useExperimentalCode() {
   rpcUrlTaskAtom.subscribe((url) => console.log('✅new rpcUrl(from test): ', url))
   onMount(task.run)
+  
+  const { store, setStore } = createBranch({ a: 1, b: { c: 2 } })
+  setStore({ b: { c: 3 } })
+  console.log('store.b33: ', isTaskAtom(store.b),debranchify( store.b))
 }

@@ -9,7 +9,7 @@ import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCa
  * @returns
  * @todo move to fnkit . use proxy to fasten
  */
-export function wrapObjLeaves<Result = any>(
+export function wrapLeaves<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
@@ -21,7 +21,7 @@ export function wrapObjLeaves<Result = any>(
       cache[key] = value
     })
   }
-  return _wrapToDeep(target, wrapFn, targetIsLeaf, cache, setCache)
+  return _wrapLeaves(target, wrapFn, targetIsLeaf, cache, setCache)
 }
 
 /** a data structure to store value */
@@ -40,13 +40,13 @@ function pickValueFromWrappedLeaf(v: any): any {
 }
 
 /**
- * only used in {@link wrapObjLeaves}
+ * only used in {@link wrapLeaves}
  * @param target any type
  * @param wrapFn
  * @returns
  * @todo move to fnkit . use proxy to fasten
  */
-function _wrapToDeep<Result = any>(
+function _wrapLeaves<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
@@ -69,7 +69,7 @@ function _wrapToDeep<Result = any>(
         (target) =>
           new Proxy(target, {
             get: (target, key) =>
-              _wrapToDeep(target[key], wrapFn, targetIsLeaf, cacheFragnement[key], (propertyValue) => {
+              _wrapLeaves(target[key], wrapFn, targetIsLeaf, cacheFragnement[key], (propertyValue) => {
                 Reflect.set(cacheFragnement, key, propertyValue)
               }),
           }),

@@ -1,6 +1,6 @@
 import { isArray, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { wrapObjLeaves } from '../../fnkit/wrapObjectLeaves'
+import { wrapLeaves } from '../../fnkit/wrapObjectLeaves'
 import { TaskAtom, createTaskAtom, isTaskAtom } from './createTaskAtom'
 import { Task } from 'vitest'
 
@@ -39,7 +39,7 @@ export function createBranch<T extends Record<string, any>>(
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
   const rawValue = shrinkFn(defaultValue)
-  const branchStore = getBranchFromPure(rawValue)
+  const branchStore = branchify(rawValue)
   const accessCountStore: accessCountStore = createCountStore(rawValue)
   const setCountStore: setCountStore = createCountStore(rawValue)
 
@@ -98,16 +98,16 @@ export type Branch<T> = {
 /**
  * {a: 1, b:()=>3} => {a: TaskAtom(1), b: TaskAtom(()=>3)}
  */
-function getBranchFromPure<T>(pure: T): Branch<T> {
-  return wrapObjLeaves(pure, (leaf) => createTaskAtom(leaf))
+export function branchify<T>(pure: T): Branch<T> {
+  return wrapLeaves(pure, (leaf) => createTaskAtom(leaf))
 }
 
 /**
  * reverse version of getBranchFromPure
  * {a: TaskAtom(1), b: TaskAtom(()=>3)} => {a: 1, b:()=>3}
  */
-function getPureFromBranch<T>(branch: Branch<T>): T {
-  return wrapObjLeaves(
+export function debranchify<T>(branch: Branch<T>): T {
+  return wrapLeaves(
     branch,
     (leaf) => (isTaskAtom(leaf) ? leaf() : leaf),
     (node) => isTaskAtom(node) || (!isObjectLiteral(node) && !isArray(node)),
@@ -115,5 +115,5 @@ function getPureFromBranch<T>(branch: Branch<T>): T {
 }
 
 function createCountStore<T>(pure: T): accessCountStore {
-  return wrapObjLeaves(pure, (leaf) => createTaskAtom(0))
+  return wrapLeaves(pure, (leaf) => createTaskAtom(0))
 }

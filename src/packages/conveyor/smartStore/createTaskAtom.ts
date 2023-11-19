@@ -69,7 +69,7 @@ export function createTaskAtom<T>(
 }
 
 export function isTaskAtom<T>(value: any): value is TaskAtom<T> {
-  return isSubscribable(value) && value[TaskAtomTag] === true
+  return Boolean(isSubscribable(value) && value[TaskAtomTag])
 }
 
 export function isTaskAtomVisiable<T>(value: TaskAtom<T>) {

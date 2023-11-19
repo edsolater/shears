@@ -12,7 +12,6 @@ export * from './mutateByAdditionalObjectDescriptors'
 export * from './objectMerge'
 export * from './parallelAsyncTasks'
 export * from './recordAndMap'
-export * from './wrapToLazyObject'
 export * from './runtimeObjectFromAccess'
 
 export * from './type'
