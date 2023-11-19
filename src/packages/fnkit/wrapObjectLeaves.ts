@@ -1,4 +1,15 @@
-import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/fnkit'
+import {
+  cloneObject,
+  isArray,
+  isObject,
+  isObjectLike,
+  isObjectLiteral,
+  isProxy,
+  mergeObjects,
+  switchCase,
+} from '@edsolater/fnkit'
+import { on } from 'solid-js'
+import { objectMerge } from './objectMerge'
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -11,18 +22,31 @@ import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCa
  */
 export function wrapLeaves<Result = any>(
   target: any,
-  /* leaf will not be array or objectLiteral */
-  wrapFn: (leaf: any) => any,
-  targetIsLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
+  options: {
+    /* leaf will not be array or objectLiteral */
+    wrapFn: (leaf: any) => any
+    /** @default  func `(node) => (!isArray(node) && !isObjectLiteral(node)) || isWrappedLeaf(node)` */
+    targetIsLeaf?: (node: any) => boolean
+    onWrapLeaf?: (value: any) => void
+    onWrapperDeepObjectLiteral?: (key: keyof any) => void
+  },
 ): Result {
   const cache = cloneObject(target)
+  const targetIsLeaf = options.targetIsLeaf ?? ((node) => !isArray(node) && !isObjectLiteral(node))
   const setCache = (wrappedValue: any) => {
     Object.entries(wrappedValue).forEach(([key, value]) => {
       cache[key] = value
     })
   }
-  console.log('target: ', target)
-  return _wrapLeaves(target, wrapFn, targetIsLeaf, cache, setCache)
+  return _wrapLeaves({
+    target,
+    wrapFn: options.wrapFn,
+    targetIsLeaf,
+    cacheFragnement: cache,
+    cacheSetter: setCache,
+    onWrapLeaf: options.onWrapLeaf,
+    onWrapperDeepObjectLiteral: options.onWrapperDeepObjectLiteral,
+  })
 }
 
 /** a data structure to store value */
@@ -47,38 +71,64 @@ function pickValueFromWrappedLeaf(v: any): any {
  * @returns
  * @todo move to fnkit . use proxy to fasten
  */
-function _wrapLeaves<Result = any>(
-  target: any,
-  /* leaf will not be array or objectLiteral */
-  wrapFn: (leaf: any) => any,
-  targetIsLeaf: (node: any) => boolean,
-  cacheFragnement: any,
-  cacheSetter: (wrappedValue: any) => void,
-): Result {
-  console.log('cacheFragnement: ', target, cacheFragnement) //<-- 💩 bug here, cache cacheFragnement
+function _wrapLeaves<Result = any>({
+  target,
+  wrapFn,
+  targetIsLeaf,
+  cacheFragnement,
+  cacheSetter,
+  onWrapLeaf,
+  onWrapperDeepObjectLiteral,
+}: {
+  target: any /* leaf will not be array or objectLiteral */
+  wrapFn: (leaf: any) => any
+  targetIsLeaf: (node: any) => boolean
+  cacheFragnement: any
+  cacheSetter: (wrappedValue: any) => void
+  onWrapLeaf?: (value: any) => void
+  onWrapperDeepObjectLiteral?: (key: keyof any) => void
+}): Result {
   return switchCase(
     target,
     [
       [
-        (target) => targetIsLeaf(target) || isWrappedLeaf(target),
-        (target) =>
-          isWrappedLeaf(cacheFragnement)
+        (t) => targetIsLeaf(t),
+        (target: any) => {
+          onWrapLeaf?.(target)
+          return isWrappedLeaf(cacheFragnement)
             ? pickValueFromWrappedLeaf(cacheFragnement)
-            : pipeDo(wrapFn(target), makeWrappedLeaf, cacheSetter, pickValueFromWrappedLeaf),
+            : pipeline(wrapFn(target), makeWrappedLeaf, cacheSetter, pickValueFromWrappedLeaf)
+        },
       ],
       [
-        (t) => isObjectLike(t) && !isWrappedLeaf(cacheFragnement),
-        (target) =>
-          new Proxy(target, {
-            get: (target, key) =>
-              _wrapLeaves(target[key], wrapFn, targetIsLeaf, cacheFragnement[key], (propertyValue) => {
-                Reflect.set(cacheFragnement, key, propertyValue)
-              }),
-          }),
+        (t) => isObjectLike(t),
+        (target) => {
+          onWrapperDeepObjectLiteral?.(target)
+          return new Proxy(target, {
+            get: (target, key) => {
+              // record
+              if (key === Symbol.for('raw')) return target
+              return _wrapLeaves({
+                target: target[key],
+                wrapFn,
+                targetIsLeaf,
+                cacheFragnement: cacheFragnement[key],
+                cacheSetter: (propertyValue) => {
+                  Reflect.set(cacheFragnement, key, propertyValue)
+                },
+              })
+            },
+          })
+        },
       ],
     ],
     () => target,
   )
+}
+
+/** get raw data before wrap Leaves */
+export function unwrapWrappedLeaves<Result = any>(target: any): Result {
+  return target[Symbol.for('raw')] ?? target
 }
 /**
  * FP utils : give opportunity to handle/change value in parallel
@@ -90,7 +140,7 @@ function _wrapLeaves<Result = any>(
  * @returns handled v / original v (depend on handlers)
  * @todo already have move to fnkit
  */
-function pipeDo<T>(v: T, ...handlers: ((v: T) => undefined | any)[]): any {
+function pipeline<T>(v: T, ...handlers: ((v: T) => undefined | any)[]): any {
   return handlers.reduce((v, handler) => handler(v) ?? v, v)
 }
 
@@ -99,4 +149,14 @@ function pipeDo<T>(v: T, ...handlers: ((v: T) => undefined | any)[]): any {
  */
 function iife(fn: () => void) {
   fn()
+}
+
+/** travel all properties to get real object instead of proxy wrapper */
+function deProxy<T>(proxy: T): T {
+  if (isObject(proxy)) {
+    // @ts-ignore any
+    return Object.fromEntries(Object.entries(proxy).map(([key, value]) => [key, deProxy(value)]))
+  } else {
+    return proxy
+  }
 }

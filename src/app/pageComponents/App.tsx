@@ -107,12 +107,10 @@ function KeyboardShortcutPanel() {
   )
 }
 
-console.log('1: ', 1)
 const rpcUrlTaskAtom = createTaskAtomFromAccessor(() => store.rpc?.url, { visiable: true })
 const task = createTask((get) => {
   console.log('new rpcUrl(from taskAtom): ', get(rpcUrlTaskAtom))
 })
-console.log('2: ', 2)
 
 /** code for test */
 function useExperimentalCode() {
@@ -120,12 +118,11 @@ function useExperimentalCode() {
   onMount(task.run)
 
   const { store, setStore } = createBranch({ a: 1, b: { c: 2 } })
-  setStore({ b: { c: 3 } })
+  // setStore({ b: { c: 3 } })
   // console.log('🧪 store.b33: ', isTaskAtom(store.b), debranchify(store.b))
   const t1 = branchify({ a: 1 })
-  // console.log('🧪 t1: ', t1.a, t1.a(), createTaskAtom(1))
-  const t2 = debranchify(t1)
-  console.log('🧪 t2: ', t2(), Object.keys(t2), t2.a)
+  const t2 = debranchify(t1) // deProxy can handle this bug
+  // console.log('t2: ', t2);
   // const te = debranchify({ a: createTaskAtom(1) })
-  // console.log('🧪 te ✅: ', te, Object.keys(te))
+  // console.log('🧪 te ✅: ', te, Object.keys(te), te.a())
 }
