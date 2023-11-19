@@ -118,11 +118,10 @@ function useExperimentalCode() {
   onMount(task.run)
 
   const { store, setStore } = createBranch({ a: 1, b: { c: 2 } })
-  // setStore({ b: { c: 3 } })
+  setStore({ b: { c: 3 } })
   // console.log('🧪 store.b33: ', isTaskAtom(store.b), debranchify(store.b))
-  const t1 = branchify({ a: 1 })
-  const t2 = debranchify(t1) // deProxy can handle this bug
-  // console.log('t2: ', t2);
+  const t2 = debranchify(store.b) // deProxy can handle this bug
+  console.log('t2: ', t2, t2.c)
   // const te = debranchify({ a: createTaskAtom(1) })
   // console.log('🧪 te ✅: ', te, Object.keys(te), te.a())
 }
