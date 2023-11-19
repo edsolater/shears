@@ -2,7 +2,7 @@ import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCa
 
 /**
  * array and objectLiteral will be wrapped to deeper
- * 
+ *
  * when it'not leaf, and not objectLiteral or array, it will just returned directly
  * @param target must be objectLiteral
  * @param wrapFn
@@ -21,6 +21,7 @@ export function wrapLeaves<Result = any>(
       cache[key] = value
     })
   }
+  console.log('target: ', target)
   return _wrapLeaves(target, wrapFn, targetIsLeaf, cache, setCache)
 }
 
@@ -30,7 +31,7 @@ type WrappedLeaf = {
   value: any
 }
 function isWrappedLeaf(v: any): v is WrappedLeaf {
-  return isObject(v) && v._isWrappedLeaf
+  return isObject(v) && (v as any)._isWrappedLeaf
 }
 function makeWrappedLeaf(v: any): WrappedLeaf {
   return { _isWrappedLeaf: true, value: v }
@@ -50,22 +51,23 @@ function _wrapLeaves<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
-  targetIsLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
+  targetIsLeaf: (node: any) => boolean,
   cacheFragnement: any,
   cacheSetter: (wrappedValue: any) => void,
 ): Result {
+  console.log('cacheFragnement: ', target, cacheFragnement) //<-- 💩 bug here, cache cacheFragnement
   return switchCase(
     target,
     [
       [
-        targetIsLeaf,
+        (target) => targetIsLeaf(target) || isWrappedLeaf(target),
         (target) =>
           isWrappedLeaf(cacheFragnement)
             ? pickValueFromWrappedLeaf(cacheFragnement)
             : pipeDo(wrapFn(target), makeWrappedLeaf, cacheSetter, pickValueFromWrappedLeaf),
       ],
       [
-        isObjectLike,
+        (t) => isObjectLike(t) && !isWrappedLeaf(cacheFragnement),
         (target) =>
           new Proxy(target, {
             get: (target, key) =>

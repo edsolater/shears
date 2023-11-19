@@ -1,4 +1,4 @@
-import { isArray, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
+import { isArray, isObjectLike, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
 import { wrapLeaves } from '../../fnkit/wrapObjectLeaves'
 import { TaskAtom, createTaskAtom, isTaskAtom } from './createTaskAtom'
@@ -107,10 +107,11 @@ export function branchify<T>(pure: T): Branch<T> {
  * {a: TaskAtom(1), b: TaskAtom(()=>3)} => {a: 1, b:()=>3}
  */
 export function debranchify<T>(branch: Branch<T>): T {
+  console.log('branch: ', isTaskAtom(branch), isObjectLike(branch))
   return wrapLeaves(
     branch,
     (leaf) => (isTaskAtom(leaf) ? leaf() : leaf),
-    (node) => isTaskAtom(node) || (!isObjectLiteral(node) && !isArray(node)),
+    (node) => isTaskAtom(node),
   )
 }
 

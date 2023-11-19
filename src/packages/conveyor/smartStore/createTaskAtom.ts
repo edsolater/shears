@@ -4,13 +4,14 @@ import { Subscribable, createSubscribable, isSubscribable } from '../subscribabl
 import { TaskExecutor, invokeExecutor } from './createTask'
 import { TaskAtomOption, isTaskAtomOption } from './createTaskAtomOption'
 
-export const TaskAtomTag = Symbol('observableSubscribable')
+export const taskAtomTag = Symbol('TaskAtomTag')
 export const taskOptionTag = Symbol('taskOptionTag')
 
 /**
  * add ability to pure subscribable
  */
 export interface TaskAtom<T> extends Subscribable<T> {
+  id: string
   /**
    * used by TaskExecutor to track subscribable's visiability
    *
@@ -19,7 +20,7 @@ export interface TaskAtom<T> extends Subscribable<T> {
    */
   visiable: Subscribable<boolean>
   // when set this, means this object is a observable-subscribable
-  [TaskAtomTag]: boolean
+  [taskAtomTag]: boolean
   subscribedExecutors: WeakerSet<TaskExecutor>
 }
 
@@ -28,6 +29,7 @@ export interface CreateTaskAtomOptions<T> {
   onAccessed?: (currentValue: T) => void
 }
 
+let globalTaskAtomId = 0
 /** create special subscribable */
 export function createTaskAtom<T>(defaultValue: MayFn<T>, options?: CreateTaskAtomOptions<T>): TaskAtom<T>
 export function createTaskAtom<T>(subscribable: Subscribable<T>, options?: CreateTaskAtomOptions<T>): TaskAtom<T>
@@ -38,6 +40,8 @@ export function createTaskAtom<T>(
     | [defaultValue: any, options?: CreateTaskAtomOptions<T>]
     | [option: TaskAtomOption<T>]
 ): TaskAtom<T> {
+  const taskAtomId = globalTaskAtomId++
+
   const defaultedArgs = (
     isSubscribable(args[0])
       ? [args[0], args[1]]
@@ -49,7 +53,8 @@ export function createTaskAtom<T>(
 
   const proxiedSubscribable = observe(
     Object.assign(subscribable, {
-      [TaskAtomTag]: true,
+      [taskAtomTag]: true,
+      id: `taskAtom_${taskAtomId}`,
       /**
        * only effect exector will auto run if it's any observed TaskAtom is visiable \
        * visiable, so effect is meaningful for user
@@ -69,7 +74,7 @@ export function createTaskAtom<T>(
 }
 
 export function isTaskAtom<T>(value: any): value is TaskAtom<T> {
-  return Boolean(isSubscribable(value) && value[TaskAtomTag])
+  return Boolean(isSubscribable(value) && value[taskAtomTag])
 }
 
 export function isTaskAtomVisiable<T>(value: TaskAtom<T>) {
@@ -97,5 +102,3 @@ export function visiableTaskAtom<T>(value: TaskAtom<T>) {
 export function invisiableTaskAtom<T>(value: TaskAtom<T>) {
   setTaskAtomVisiable(value, false)
 }
-
-
