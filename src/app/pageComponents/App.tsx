@@ -2,7 +2,7 @@ import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo, onMount } from 'solid-js'
 import { createTaskAtomFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
-import { createTask } from '../../packages/conveyor/subscribable/createTask'
+import { createTask } from '../../packages/conveyor/smartStore/createTask'
 import {
   Box,
   Input,

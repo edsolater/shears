@@ -1,9 +1,8 @@
-import { isArray, isFunction, isObject, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, untrack } from 'solid-js'
+import { isArray, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
+import { Accessor } from 'solid-js'
 import { wrapObjLeaves } from '../../fnkit/wrapObjectLeaves'
-import { createTaskAtom, isTaskAtom } from '../taskAtom/taskAtom'
-import { createStoreSetter } from './utils/setStoreByObject'
-import { b } from 'vitest/dist/reporters-5f784f42'
+import { TaskAtom, createTaskAtom, isTaskAtom } from './createTaskAtom'
+import { Task } from 'vitest'
 
 type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
 export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T>
@@ -13,9 +12,10 @@ export type SmartSetStore<T extends Record<string, any>> = (
 ) => void
 
 export type SmartStore<T extends Record<string, any>> = {
-  store: T
+  store: Branch<T>
   setStore: SmartSetStore<T>
 
+  // getFromValue: (value: any) => any
   accessCountStore: accessCountStore
   setCountStore: setCountStore
 }
@@ -24,6 +24,7 @@ type accessCountStore = /* Record<keyof any, Subscribable<number> | accessCountS
 type setCountStore = /* Record<keyof any, Subscribable<number> | setCountStore> */ any
 
 /**
+ * branch means taskSubscribable nodes
  * CORE, should platform-less (no solidjs or React or Vue)
  * 🚧 use solid system to hold reactive system
  *
@@ -32,25 +33,26 @@ type setCountStore = /* Record<keyof any, Subscribable<number> | setCountStore> 
  * - object has merge to original store, not cover original store
  *
  */
-export function createSmartStore<T extends Record<string, any>>(
+export function createBranch<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
+  // TODO: imply it !!!
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
-  const pale = shrinkFn(defaultValue)
-  const store = getBranchFromPure(pale)
-  const accessCountStore: accessCountStore = createCountStore(pale)
-  const setCountStore: setCountStore = createCountStore(pale)
+  const rawValue = shrinkFn(defaultValue)
+  const branchStore = getBranchFromPure(rawValue)
+  const accessCountStore: accessCountStore = createCountStore(rawValue)
+  const setCountStore: setCountStore = createCountStore(rawValue)
 
   function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
-    const newStorePieces = shrinkFn(dispatch, [pale])
+    const newStorePieces = shrinkFn(dispatch, [rawValue])
     if (!newStorePieces) return // no need to update store with the same value
     Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
       setCountStore[propertyName] = (setCountStore[propertyName] ?? 0) + 1
-      const prevValue = pale[propertyName]
-      const branch = store[propertyName]
+      const prevValue = rawValue[propertyName]
+      const branch = branchStore[propertyName]
       if (prevValue !== newValue) {
         // invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
-        pale[propertyName] = newValue
+        rawValue[propertyName] = newValue
         updateBranch(branch, newValue)
       }
     })
@@ -58,14 +60,17 @@ export function createSmartStore<T extends Record<string, any>>(
 
   /**
    * make store's value structure same as pale
+   * travel all branch
    */
   function updateBranch(branch: any, newValue: any) {
     if (isObjectLiteral(newValue)) {
+      // should go deeper
       Object.entries(newValue).forEach(([propertyName, newValue]) => {
         const newBranch = branch[propertyName]
         updateBranch(newBranch, newValue)
       })
     } else if (isArray(newValue)) {
+      // should go deeper
       newValue.forEach((newValue, index) => {
         const newBranch = branch[index]
         updateBranch(newBranch, newValue)
@@ -79,14 +84,16 @@ export function createSmartStore<T extends Record<string, any>>(
   }
 
   return {
-    store: store,
+    store: branchStore,
     setStore: setStore,
     accessCountStore,
     setCountStore,
   }
 }
 
-export type Branch<T> = any /*  too difficult to type, not very necessay */
+export type Branch<T> = {
+  [K in keyof T]: T[K] extends Record<string, any> ? Branch<T[K]> : T[K] extends TaskAtom<any> ? T[K] : TaskAtom<T[K]>
+}
 
 /**
  * {a: 1, b:()=>3} => {a: TaskAtom(1), b: TaskAtom(()=>3)}

@@ -3,7 +3,7 @@ import {
   createTaskAtom,
   CreateTaskAtomOptions,
   TaskAtom,
-} from '../taskAtom/taskAtom'
+} from '../smartStore/createTaskAtom'
 import { asynclyCreateEffect } from './createAsyncEffect'
 
 export function createTaskAtomFromAccessor<T>(accessor: () => T, options?: CreateTaskAtomOptions<T>) {

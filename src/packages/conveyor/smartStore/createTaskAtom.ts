@@ -1,10 +1,11 @@
 import { MayFn, WeakerSet } from '@edsolater/fnkit'
 import { observe } from '../../fnkit/observe'
 import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
-import { TaskExecutor, invokeExecutor } from '../subscribable/createTask'
+import { TaskExecutor, invokeExecutor } from './createTask'
+import { TaskAtomOption, isTaskAtomOption } from './createTaskAtomOption'
 
 export const TaskAtomTag = Symbol('observableSubscribable')
-const taskOptionTag = Symbol('taskOptionTag')
+export const taskOptionTag = Symbol('taskOptionTag')
 
 /**
  * add ability to pure subscribable
@@ -30,17 +31,17 @@ export interface CreateTaskAtomOptions<T> {
 /** create special subscribable */
 export function createTaskAtom<T>(defaultValue: MayFn<T>, options?: CreateTaskAtomOptions<T>): TaskAtom<T>
 export function createTaskAtom<T>(subscribable: Subscribable<T>, options?: CreateTaskAtomOptions<T>): TaskAtom<T>
-export function createTaskAtom<T>(option: TaskOption<T>): TaskAtom<T>
+export function createTaskAtom<T>(option: TaskAtomOption<T>): TaskAtom<T>
 export function createTaskAtom<T>(
   ...args:
     | [subscribable: Subscribable<T>, options?: CreateTaskAtomOptions<T>]
     | [defaultValue: any, options?: CreateTaskAtomOptions<T>]
-    | [option: TaskOption<T>]
+    | [option: TaskAtomOption<T>]
 ): TaskAtom<T> {
   const defaultedArgs = (
     isSubscribable(args[0])
       ? [args[0], args[1]]
-      : isTaskOption(args[0])
+      : isTaskAtomOption(args[0])
         ? [createSubscribable(args[0].value), args[0]]
         : [createSubscribable(args[0]), args[1]]
   ) as [subscribable: Subscribable<T>, options?: CreateTaskAtomOptions<T>]
@@ -97,19 +98,4 @@ export function invisiableTaskAtom<T>(value: TaskAtom<T>) {
   setTaskAtomVisiable(value, false)
 }
 
-type TaskOption<T = any> = {
-  value: T
-  visiable: boolean
-  [taskOptionTag]: true
-}
 
-export function createTaskOption<T>(description: { value: T; visiable: boolean }): TaskOption<T> {
-  return {
-    value: description.value,
-    visiable: description.visiable,
-    [taskOptionTag]: true,
-  }
-}
-function isTaskOption<T>(value: any): value is TaskOption<T> {
-  return value?.[taskOptionTag]
-}

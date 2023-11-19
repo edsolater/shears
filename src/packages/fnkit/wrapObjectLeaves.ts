@@ -2,6 +2,8 @@ import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCa
 
 /**
  * array and objectLiteral will be wrapped to deeper
+ * 
+ * when it'not leaf, and not objectLiteral or array, it will just returned directly
  * @param target must be objectLiteral
  * @param wrapFn
  * @returns
@@ -11,7 +13,7 @@ export function wrapObjLeaves<Result = any>(
   target: any,
   /* leaf will not be array or objectLiteral */
   wrapFn: (leaf: any) => any,
-  detectLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
+  targetIsLeaf: (node: any) => boolean = (node) => !isArray(node) && !isObjectLiteral(node),
 ): Result {
   const cache = cloneObject(target)
   const setCache = (wrappedValue: any) => {
@@ -19,7 +21,7 @@ export function wrapObjLeaves<Result = any>(
       cache[key] = value
     })
   }
-  return _wrapToDeep(target, wrapFn, detectLeaf, cache, setCache)
+  return _wrapToDeep(target, wrapFn, targetIsLeaf, cache, setCache)
 }
 
 /** a data structure to store value */
