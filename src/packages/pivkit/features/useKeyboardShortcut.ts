@@ -11,7 +11,7 @@ import {
   shakeNil,
 } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { KeyboardShortcutFn, KeybordShortcutKeys, registKeyboardShortcutEventListener } from '../domkit'
+import { KeyboardShortcutFn, KeybordShortcutKeys, bindKeyboardShortcutEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
 import { createSharedSignal } from '../hooks/createSharedSignal'
 
@@ -56,7 +56,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
 }
 
 /**
- * just a wrapper for {@link registKeyboardShortcutEventListener}
+ * just a wrapper for {@link bindKeyboardShortcutEventListener}
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}
  */
 export function useKeyboardShortcut(
@@ -73,7 +73,7 @@ export function useKeyboardShortcut(
     const el = ref()
     if (!el) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
-    const { abort } = registKeyboardShortcutEventListener(el, shortcuts)
+    const { abort } = bindKeyboardShortcutEventListener(el, shortcuts)
     const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
     onCleanup(() => {
       abort()
@@ -91,7 +91,7 @@ export function useKeyboardShortcut(
 }
 
 /**
- * just a wrapper for {@link registKeyboardShortcutEventListener}
+ * just a wrapper for {@link bindKeyboardShortcutEventListener}
  * if you want regist shortcut within a specific component, please use {@link useKeyboardShortcut}
  */
 export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetting) {
@@ -99,7 +99,7 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
   createEffect(() => {
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     const el = globalThis.document.documentElement
-    const { abort } = registKeyboardShortcutEventListener(el, shortcuts)
+    const { abort } = bindKeyboardShortcutEventListener(el, shortcuts)
     const { remove } = registerGlobalKeyboardShortcut(currentSettings())
     onCleanup(() => {
       abort()

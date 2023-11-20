@@ -12,6 +12,7 @@ import {
   Row,
   Text,
   buildPopover,
+  cssCurrentColor,
   cssOpacity,
   cssVar,
   icssCard,
@@ -191,7 +192,7 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
     <Row>
       <Input
         shadowProps={shadowProps}
-        icss={{ border: 'solid', borderColor: cssOpacity('currentColor', 0.1), borderRadius: '12px' }}
+        icss={{ border: 'solid', borderColor: cssOpacity(cssCurrentColor, 0.1), borderRadius: '12px' }}
         value={currentRPCUrl}
         onUserInput={setCurrentRPCUrl}
         onEnter={applyRPCChange}
