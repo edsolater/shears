@@ -62,6 +62,10 @@ function ComponentSpecList() {
         <DrawerExample />
       </ExamplePanel>
 
+      <ExamplePanel name='Modal'>
+        <ModalExample />
+      </ExamplePanel>
+
       {/* <ExamplePanel name='IntervalCircle'>
         <CircularProgressExample />
       </ExamplePanel>
@@ -76,10 +80,6 @@ function ComponentSpecList() {
 
       <ExamplePanel name='Text'>
         <TextExample />
-      </ExamplePanel>
-
-      <ExamplePanel name='Modal'>
-        <ModalExample />
       </ExamplePanel>
 
       <ExamplePanel name='List'>

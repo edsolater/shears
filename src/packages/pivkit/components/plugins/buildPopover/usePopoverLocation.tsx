@@ -107,15 +107,12 @@ export function usePopoverLocation({
 
   const panelStyle = createMemo(() => {
     const coor = panelCoordinates()
-    const style =
-      isTriggerOn() && coor
-        ? ({
-            left: coor.panelLeft + 'px',
-            top: coor.panelTop + 'px',
-          } as IStyle)
-        : ({ display: 'none' } as IStyle)
+    const style = {
+      left: coor?.panelLeft + 'px',
+      top: coor?.panelTop + 'px',
+    } as IStyle
     return style
   })
 
-  return { locationInfo: panelCoordinates, forceUpdateLocation: update, panelStyle }
+  return { locationInfo: panelCoordinates, forceUpdateLocation: update, coorStyle:panelStyle }
 }

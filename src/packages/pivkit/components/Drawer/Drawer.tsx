@@ -54,7 +54,14 @@ export function Drawer(kitProps: DrawerKitProps) {
         <Piv
           domRef={setDrawerRef}
           shadowProps={props}
-          icss={{ width: isOpen() ? '300px' : '400px', height: '100dvh', background: 'dodgerblue' }}
+          icss={{
+            width: isOpen() ? '300px' : '400px',
+            height: '100dvh',
+            background: 'dodgerblue',
+            '@starting-style &': { transform:'scale(0)' },
+            transform:'scale(1)',
+            transition: '500ms',
+          }}
         />
       </Show>
     </PopPortal>
