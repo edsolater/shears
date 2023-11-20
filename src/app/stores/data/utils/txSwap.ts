@@ -13,7 +13,7 @@ import { eq } from '../../../utils/dataStructures/basicMath/compare'
 export interface TxSwapOptions {
   owner: string
   checkInfo: {
-    rpcUrl: string
+    rpcURL: string
     coin1: Token
     coin2: Token
     amount1: Numberish
@@ -23,7 +23,7 @@ export interface TxSwapOptions {
 }
 
 export function txSwap_getInnerTransaction(options: TxSwapOptions) {
-  const connection = getConnection(options.checkInfo.rpcUrl)
+  const connection = getConnection(options.checkInfo.rpcURL)
   const neariestSwapBestResultCache = getBestCalcResultCache()
   assert(neariestSwapBestResultCache, 'swapInfo not found')
   assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, 'coin1 is not match')

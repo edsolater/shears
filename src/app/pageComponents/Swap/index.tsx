@@ -82,11 +82,13 @@ export default function SwapPage() {
               assert(notZero(amount1), 'amount1 is undefined or zero')
               const walletOwner = owner()
               assert(walletOwner, 'walletOwner is undefined')
+              const rpcURL = store.rpc?.url
+              assert(rpcURL, 'should set url')
 
               txSwap_main({
                 owner: walletOwner,
                 checkInfo: {
-                  rpcUrl: 'https://rpc.asdf1234.win',
+                  rpcURL,
                   coin1,
                   coin2,
                   amount1,

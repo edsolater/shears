@@ -1,5 +1,6 @@
 import {
   AnyObj,
+  MayFn,
   Subscribable,
   WeakerMap,
   WeakerSet,
@@ -9,6 +10,7 @@ import {
   merge,
   mergeObjects,
   shakeNil,
+  shrinkFn,
 } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { KeyboardShortcutFn, KeybordShortcutKeys, bindKeyboardShortcutEventListener } from '../domkit'
@@ -64,7 +66,8 @@ export function useKeyboardShortcut(
   settings?: DetailKeyboardShortcutSetting,
   // TODO: imply this
   otherOptions?: {
-    when?: () => boolean
+    when?: MayFn<boolean>
+    disabled?: MayFn<boolean>
   },
 ) {
   const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
@@ -72,6 +75,8 @@ export function useKeyboardShortcut(
   createEffect(() => {
     const el = ref()
     if (!el) return
+    const disabled = shrinkFn(otherOptions?.disabled)
+    if (disabled) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     const { abort } = bindKeyboardShortcutEventListener(el, shortcuts)
     const { remove } = registerLocalKeyboardShortcut(el, currentSettings())

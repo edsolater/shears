@@ -89,7 +89,7 @@ function RPCPanel(props: {
       <RPCPanelInputBox
         icss={{ flex: 1 }}
         onSwitchRpc={(rpcURL) => {
-          console.log('rpcUrl: ', rpcURL)
+          setStore({ rpc: { url: rpcURL } })
         }}
       />
     </RPCPanelBox>
@@ -197,7 +197,9 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
         onUserInput={setCurrentRPCUrl}
         onEnter={applyRPCChange}
       />
-      <Button shadowProps={shadowProps} onClick={applyRPCChange}>Switch</Button>
+      <Button shadowProps={shadowProps} onClick={applyRPCChange}>
+        Switch
+      </Button>
     </Row>
   )
 }

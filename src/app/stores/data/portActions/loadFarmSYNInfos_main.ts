@@ -1,9 +1,8 @@
 import { createEffect, onCleanup } from 'solid-js'
-import { appRpcUrl } from '../../../utils/common/config'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { workerCommands } from '../../../utils/webworker/type'
 import { useWalletStore } from '../../wallet/store'
-import { setStore } from '../store'
+import { setStore, store } from '../store'
 import { ComposeFarmSYNInfoQuery, ComposedFarmSYNInfos } from '../utils/composeFarmSYN'
 
 /**
@@ -14,10 +13,12 @@ export function loadFarmSYNInfos() {
   const owner = walletStore.owner
   setStore({ isFarmInfosLoading: true })
   createEffect(() => {
+    const rpcUrl = store.rpc?.url
+    if (!rpcUrl) return
     const { sender, receiver } = getMessagePort<ComposedFarmSYNInfos, ComposeFarmSYNInfoQuery>(
       workerCommands['get raydium farms syn infos'],
     )
-    sender.query({ owner: owner, rpcUrl: appRpcUrl })
+    sender.query({ owner: owner, rpcUrl })
     const { unsubscribe } = receiver.subscribe((allFarmSYNInfos) => {
       setStore({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
     })

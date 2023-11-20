@@ -61,7 +61,8 @@ export function createSmartStore<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
-  const [rawStore, rawSetStore] = createStore<T>(shrinkFn(defaultValue))
+  const de = shrinkFn(defaultValue)
+  const [rawStore, rawSetStore] = createStore<T>(de)
   /** if pass a function, it will be trate with createEffect to track reactive */
   if (isFunction(defaultValue)) {
     createEffect(() => {

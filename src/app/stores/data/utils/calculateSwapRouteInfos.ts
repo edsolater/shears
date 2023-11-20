@@ -2,26 +2,24 @@ import { Numberish, assert, hasProperty, isDateAfter, shakeNil } from '@edsolate
 import {
   AmmV3PoolInfo,
   ApiPoolInfoItem,
+  ComputeAmountOutAmmLayout,
+  ComputeAmountOutRouteLayout,
   PoolType,
   ReturnTypeFetchMultipleInfo,
   ReturnTypeGetAllRouteComputeAmountOut,
   TradeV2,
-  ComputeAmountOutAmmLayout,
-  ComputeAmountOutRouteLayout,
 } from '@raydium-io/raydium-sdk'
+import { inNextMainLoop, makeTaskAbortable } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
-import toPubString from '../../../utils/dataStructures/Publickey'
 import { toPercent } from '../../../utils/dataStructures/Percent'
+import toPubString from '../../../utils/dataStructures/Publickey'
 import { Token, toSDKToken } from '../../../utils/dataStructures/Token'
 import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
+import { Mint } from '../../../utils/dataStructures/type'
+import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
 import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
-import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
-import { makeTaskAbortable } from '../../../../packages/fnkit'
-import { inNextMainLoop } from '../../../../packages/fnkit'
-import { Mint } from '../../../utils/dataStructures/type'
-import { appRpcUrl } from '../../../utils/common/config'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
 export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>['result']>
@@ -59,13 +57,13 @@ export function getBestCalcResultCache() {
  * swap core calculation algorithm
  */
 export function calculateSwapRouteInfos({
-  rpcUrl = appRpcUrl,
+  rpcUrl,
   slippageTolerance = 0.05,
   input,
   output,
   inputAmount,
 }: {
-  rpcUrl?: string
+  rpcUrl: string
   slippageTolerance?: Numberish
   input: Token
   output: Token
@@ -153,6 +151,7 @@ export function calculateSwapRouteInfos({
     swapInfo.then(({ bestResult: sdkBestResult }) => {
       if (!canContinue()) return
       if (!sdkBestResult) return
+      if (!rpcUrl) return
       const cacheKey = `${input.mint}-${output.mint}` as CacheKey
       const bestResultItem = {
         params: {

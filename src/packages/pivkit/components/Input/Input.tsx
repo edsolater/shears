@@ -7,7 +7,7 @@ import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { createDomRef } from '../../hooks'
 import { useFocus } from './hooks/useFocus'
 import { runtimeObject } from '../../../fnkit/runtimeObject'
-import { mergeObjects } from '@edsolater/fnkit'
+import { hasProperty, mergeObjects } from '@edsolater/fnkit'
 import { useKeyboardShortcut } from '../../features'
 
 export interface InputController {
@@ -79,7 +79,7 @@ export function Input(rawProps: InputKitProps) {
         shortcut: 'Enter',
       },
     },
-    { when: isFocused },
+    { when: isFocused, disabled: !hasProperty(props, 'onEnter') },
   )
 
   return (
@@ -87,7 +87,7 @@ export function Input(rawProps: InputKitProps) {
       domRef={setDom}
       htmlProps={{
         placeholder: props.placeholder,
-      }}
+      }}  
       render:self={(selfProps) => renderHTMLDOM('input', selfProps)}
       shadowProps={[props, additionalProps()]}
       icss={[
