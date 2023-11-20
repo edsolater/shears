@@ -1,6 +1,6 @@
 import { createEffect } from 'solid-js'
 import { ModalController, ModalProps } from '../Modal'
-import { handleKeyboardShortcut } from '../../domkit'
+import { registKeyboardShortcutEventListener } from '../../domkit'
 import { createPlugin } from '../../piv'
 import { createControllerRef } from '../../hooks/createControllerRef'
 import { createRef } from '../../hooks/createRef'
@@ -12,7 +12,7 @@ export const modalKeyboardShortcut = createPlugin<ModalProps>(() => () => {
     const el = divRef()
     if (!el) return
     keyboardFocusElement(el)
-    const subscription = handleKeyboardShortcut(el, {
+    const subscription = registKeyboardShortcutEventListener(el, {
       'Escape': () => modalController.close?.(),
     })
     return subscription.abort

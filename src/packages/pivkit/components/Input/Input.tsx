@@ -8,6 +8,7 @@ import { createDomRef } from '../../hooks'
 import { useFocus } from './hooks/useFocus'
 import { runtimeObject } from '../../../fnkit/runtimeObject'
 import { mergeObjects } from '@edsolater/fnkit'
+import { useKeyboardShortcut } from '../../features'
 
 export interface InputController {
   text: string
@@ -67,6 +68,19 @@ export function Input(rawProps: InputKitProps) {
   })
 
   const [additionalProps, { innerText, updateText }] = useInputInnerValue(props, controller)
+
+  useKeyboardShortcut(
+    dom,
+    {
+      'enter': {
+        fn: () => {
+          props.onEnter?.(innerText(), controller)
+        },
+        shortcut: 'Enter',
+      },
+    },
+    { when: isFocused },
+  )
 
   return (
     <Piv<'input'>

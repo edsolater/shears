@@ -79,13 +79,14 @@ export type KeyboardShortcutFn = () => void
 export type KeyboardShortcutSettings = {
   [key in KeybordShortcutKeys]?: KeyboardShortcutFn
 }
-export function handleKeyboardShortcut(
+export function registKeyboardShortcutEventListener(
   el: HTMLElement,
   keyboardShortcutSettings: KeyboardShortcutSettings
 ): EventListenerController {
   addTabIndex(el) // keydown must have fousable element
   return addEventListener(el, 'keydown', ({ ev }) => {
     const pressedKey = getShorcutStringFromKeyboardEvent(ev)
+    console.log('pressedKey: ', pressedKey);
     const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
     targetShortcutFn?.()
   })

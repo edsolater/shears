@@ -1,7 +1,7 @@
 import { MayArray, MayFn, flap, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
-import { addEventListener } from '../domkit'
-import { CSSObject, PivProps, createPlugin, mergeProps } from '../piv'
+import { addEventListener } from '../../domkit'
+import { CSSObject, PivProps, createPlugin, mergeProps } from '../../piv'
 
 export type TransitionPhase = 'prepare-to-go' | 'on-going' | 'finish'
 

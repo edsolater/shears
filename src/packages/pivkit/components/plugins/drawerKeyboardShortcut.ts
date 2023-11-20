@@ -1,6 +1,6 @@
 import { createEffect } from 'solid-js'
 import { DrawerController } from '../Drawer'
-import { handleKeyboardShortcut } from '../../domkit'
+import { registKeyboardShortcutEventListener } from '../../domkit'
 import { createControllerRef } from '../../hooks/createControllerRef'
 import { createRef } from '../../hooks/createRef'
 import { createPlugin } from '../../piv'
@@ -12,7 +12,7 @@ export const drawerKeyboardShortcut = createPlugin(() => (props) => {
     const el = divRef()
     if (!el) return
     keyboardFocusElement(el)
-    const subscription = handleKeyboardShortcut(el, {
+    const subscription = registKeyboardShortcutEventListener(el, {
       'Escape': () => drawerController.close?.(),
     })
     return subscription.abort
