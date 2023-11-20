@@ -4,12 +4,8 @@ import {
   isObject,
   isObjectLike,
   isObjectLiteral,
-  isProxy,
-  mergeObjects,
-  switchCase,
+  switchCase
 } from '@edsolater/fnkit'
-import { on } from 'solid-js'
-import { objectMerge } from './objectMerge'
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -24,7 +20,7 @@ export function wrapLeaves<Result = any>(
   target: any,
   options: {
     /* leaf will not be array or objectLiteral */
-    wrapFn: (leaf: any) => any
+    wrap: (leaf: any) => any
     /** @default  func `(node) => (!isArray(node) && !isObjectLiteral(node)) || isWrappedLeaf(node)` */
     targetIsLeaf?: (node: any) => boolean
     onWrapLeaf?: (value: any) => void
@@ -40,7 +36,7 @@ export function wrapLeaves<Result = any>(
   }
   return _wrapLeaves({
     target,
-    wrapFn: options.wrapFn,
+    wrapFn: options.wrap,
     targetIsLeaf,
     cacheFragnement: cache,
     cacheSetter: setCache,

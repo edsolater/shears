@@ -6,11 +6,11 @@
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { TaskAtom, getSubscribableWithContext } from './createTaskAtom'
+import { Leaf, getSubscribableWithContext } from './createLeaf'
 
 export type TaskExecutor = {
   (): void
-  relatedTaskAtoms: WeakerSet<TaskAtom<any>>
+  relatedLeafs: WeakerSet<Leaf<any>>
   readonly visiable: boolean
 }
 export type TaskRunner = {
@@ -22,12 +22,12 @@ export type TaskRunner = {
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
  *
- * when relatedTaskAtoms is hinted, task function will only run when relatedTaskAtoms is visiable
+ * when relatedLeafs is hinted, task function will only run when relatedLeafs is visiable
  * otherwise, initly task function must it to track the subscribables
  * 
  * @example
- * const testObserverableSubscribable = createTaskAtom(1)
- * const testObserverableSubscribableB = createTaskAtom(1, { visiable: true })
+ * const testObserverableSubscribable = createLeaf(1)
+ * const testObserverableSubscribableB = createLeaf(1, { visiable: true })
  * 
  * const task = createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
  *   await Promise.resolve(3)
@@ -36,12 +36,12 @@ export type TaskRunner = {
  */
 export function createTask(
   ...params:
-    | [taskContentFn: (get: <T>(v: TaskAtom<T>) => T) => void]
-    | [relatedTaskAtoms: TaskAtom<any>[], taskContentFn: (get: <T>(v: TaskAtom<T>) => T) => void]
+    | [taskContentFn: (get: <T>(v: Leaf<T>) => T) => void]
+    | [relatedLeafs: Leaf<any>[], taskContentFn: (get: <T>(v: Leaf<T>) => T) => void]
 ) {
-  const [relatedTaskAtoms, taskContentFn] = params.length === 1 ? [undefined, params[0]] : params
+  const [relatedLeafs, taskContentFn] = params.length === 1 ? [undefined, params[0]] : params
   const executor = (() => {
-    function get<T>(atom: TaskAtom<T>) {
+    function get<T>(atom: Leaf<T>) {
       recordSubscribableToContext(atom, executor)
       return getSubscribableWithContext(executor, atom)
     }
@@ -49,7 +49,7 @@ export function createTask(
   }) as TaskExecutor
   assignObject(
     executor,
-    { relatedTaskAtoms: new WeakerSet<TaskAtom<any>>(relatedTaskAtoms) },
+    { relatedLeafs: new WeakerSet<Leaf<any>>(relatedLeafs) },
     { visiable: () => isExecutorVisiable(executor) },
   )
   const taskRunner: TaskRunner = {
@@ -61,12 +61,12 @@ export function createTask(
   return taskRunner
 }
 
-function recordSubscribableToContext<T>(subscribable: TaskAtom<T>, context: TaskExecutor) {
-  context.relatedTaskAtoms.add(subscribable)
+function recordSubscribableToContext<T>(subscribable: Leaf<T>, context: TaskExecutor) {
+  context.relatedLeafs.add(subscribable)
 }
 
 function isExecutorVisiable(context: TaskExecutor) {
-  return [...context.relatedTaskAtoms].some((subscribable) => subscribable.visiable())
+  return [...context.relatedLeafs].some((subscribable) => subscribable.visiable())
 }
 
 /** **only place** to invoke task executor */

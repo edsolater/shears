@@ -1,8 +1,9 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo, onMount } from 'solid-js'
-import { createTaskAtomFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
+import { createBranch, debranchify } from '../../packages/conveyor/smartStore/createBranch'
 import { createTask } from '../../packages/conveyor/smartStore/createTask'
+import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
   Box,
   Input,
@@ -25,8 +26,6 @@ import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
-import { branchify, createBranch, debranchify } from '../../packages/conveyor/smartStore/createBranch'
-import { createTaskAtom, isTaskAtom } from '../../packages/conveyor/smartStore/createTaskAtom'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -107,7 +106,7 @@ function KeyboardShortcutPanel() {
   )
 }
 
-const rpcUrlTaskAtom = createTaskAtomFromAccessor(() => store.rpc?.url, { visiable: true })
+const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: true })
 const task = createTask((get) => {
   console.log('new rpcUrl(from taskAtom): ', get(rpcUrlTaskAtom))
 })

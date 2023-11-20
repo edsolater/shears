@@ -1,23 +1,23 @@
 import { Accessor, createEffect, createSignal, on, Setter } from 'solid-js'
 import {
-  createTaskAtom,
-  CreateTaskAtomOptions,
-  TaskAtom,
-} from '../smartStore/createTaskAtom'
+  createLeaf,
+  CreateLeafOptions,
+  Leaf,
+} from '../smartStore/createLeaf'
 import { asynclyCreateEffect } from './createAsyncEffect'
 
-export function createTaskAtomFromAccessor<T>(accessor: () => T, options?: CreateTaskAtomOptions<T>) {
-  const taskAtom = createTaskAtom(accessor(), options)
+export function createLeafFromAccessor<T>(accessor: () => T, options?: CreateLeafOptions<T>) {
+  const leaf = createLeaf(accessor(), options)
   asynclyCreateEffect(() => {
-    taskAtom.set(accessor())
+    leaf.set(accessor())
   })
-  return taskAtom
+  return leaf
 }
 
 /**
  * subscribable to [accessor, setter]
  */
-export function useTaskAtom<T>(subscribable: TaskAtom<T>): [Accessor<T>, Setter<T>] {
+export function useLeaf<T>(subscribable: Leaf<T>): [Accessor<T>, Setter<T>] {
   const defaultValue = subscribable()
   const [accessor, setter] = createSignal(defaultValue)
 

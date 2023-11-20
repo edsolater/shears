@@ -1,7 +1,7 @@
 import { isArray, isObjectLike, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { unwrapWrappedLeaves, wrapLeaves } from '../../fnkit/wrapObjectLeaves'
-import { TaskAtom, createTaskAtom, isTaskAtom } from './createTaskAtom'
+import { unwrapWrappedLeaves, wrapLeaves } from '../../fnkit/wrapLeaves'
+import { Leaf, createLeaf, isLeaf } from './createLeaf'
 import { Task } from 'vitest'
 
 type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
@@ -75,7 +75,7 @@ export function createBranch<T extends Record<string, any>>(
         const newBranch = branch[index]
         updateBranch(newBranch, newValue)
       })
-    } else if (isTaskAtom(branch)) {
+    } else if (isLeaf(branch)) {
       const branchValue = branch()
       if (branchValue !== newValue) {
         branch.set(newValue)
@@ -92,19 +92,19 @@ export function createBranch<T extends Record<string, any>>(
 }
 
 export type Branch<T> = {
-  [K in keyof T]: T[K] extends Record<string, any> ? Branch<T[K]> : T[K] extends TaskAtom<any> ? T[K] : TaskAtom<T[K]>
+  [K in keyof T]: T[K] extends Record<string, any> ? Branch<T[K]> : T[K] extends Leaf<any> ? T[K] : Leaf<T[K]>
 }
 
 /**
- * {a: 1, b:()=>3} => {a: TaskAtom(1), b: TaskAtom(()=>3)}
+ * {a: 1, b:()=>3} => {a: Leaf(1), b: Leaf(()=>3)}
  */
 export function branchify<T>(pure: T): Branch<T> {
-  return wrapLeaves(pure, { wrapFn: (leaf) => createTaskAtom(leaf) })
+  return wrapLeaves(pure, { wrap: (leaf) => createLeaf(leaf) })
 }
 
 /**
  * reverse version of getBranchFromPure
- * {a: TaskAtom(1), b: TaskAtom(()=>3)} => {a: 1, b:()=>3}
+ * {a: Leaf(1), b: Leaf(()=>3)} => {a: 1, b:()=>3}
  */
 export function debranchify<T>(branch: Branch<T>): T {
   console.log('💩💩💩 branch: ')
@@ -112,5 +112,5 @@ export function debranchify<T>(branch: Branch<T>): T {
 }
 
 function createCountStore<T>(pure: T): accessCountStore {
-  return wrapLeaves(pure, { wrapFn: (leaf) => createTaskAtom(0) })
+  return wrapLeaves(pure, { wrap: (leaf) => createLeaf(0) })
 }

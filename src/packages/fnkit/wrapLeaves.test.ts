@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest'
-import { wrapLeaves } from './wrapObjectLeaves'
+import { wrapLeaves } from './wrapLeaves'
 
-test(`\`${wrapLeaves.name}\` basic usage `, () => {
+test(`wrapLeaves.name() basic usage `, () => {
   const raw = { a: 1, b: { c: 2 } }
-  const result = wrapLeaves(raw, (leaf) => 2 * leaf)
+  const result = wrapLeaves(raw, { wrap: (leaf) => 2 * leaf })
   expect(result.a).toBe(2)
   expect(result.b.c).toBe(4)
   // should not mutate raw
