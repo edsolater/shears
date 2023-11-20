@@ -109,7 +109,7 @@ export function Modal(kitProps: ModalKitProps) {
           role: 'dialog',
         }}
         // @ts-expect-error lack of icss type
-        icss={{ '&::backdrop': props.backdropICSS,'@starting-style &': { scale: 0 }, transition:'500ms'  }}
+        icss={{ '&::backdrop': props.backdropICSS }}
         domRef={setDialogRef}
       >
         <Piv domRef={setDialogContentRef} icss={{ display: 'contents' }}>

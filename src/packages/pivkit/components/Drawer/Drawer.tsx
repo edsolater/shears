@@ -58,9 +58,8 @@ export function Drawer(kitProps: DrawerKitProps) {
             width: isOpen() ? '300px' : '400px',
             height: '100dvh',
             background: 'dodgerblue',
-            '@starting-style &': { transform:'scale(0)' },
-            transform:'scale(1)',
-            transition: '500ms',
+            '@starting-style': { '&': { scale: 0 } },
+            transition: '300ms',
           }}
         />
       </Show>
