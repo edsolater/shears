@@ -1,7 +1,7 @@
 import { isFunction, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, untrack } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { Branch, createBranch } from '../../smartStore/createBranch'
+import { Branch, createBranchStore } from '../../smartStore/createBranch'
 import { createStoreSetter } from './utils/setStoreByObject'
 
 export type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
@@ -27,13 +27,13 @@ export type SmartStore<T extends Record<string, any>> = {
  * - object has merge to original store, not cover original store
  *
  */
-export function createSmartStore<T extends Record<string, any>>(
+export function createBStore<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
   const de = shrinkFn(defaultValue)
   const [store, rawSetStore] = createStore<T>(de)
-  const { store: branchStore, setStore: setBranchStore } = createBranch<T>(de)
+  const { store: branchStore, setStore: setBranchStore } = createBranchStore<T>(de)
 
   /** if pass a function, it will be treate with createEffect to track reactive */
   if (isFunction(defaultValue)) {

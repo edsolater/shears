@@ -21,7 +21,8 @@ import {
   icssTextColor,
   useKitProps,
 } from '../../../../../packages/pivkit'
-import { RPCEndpoint, availableRpcs, setStore, store } from '../../../../stores/data/store'
+import { setStore, store } from '../../../../stores/data/store'
+import { RPCEndpoint, availableRpcs } from '../../../../stores/data/RPCEndpoint'
 import { OptionItemBox } from './OptionItem'
 
 export function RpcSettingFace(kitProps: {

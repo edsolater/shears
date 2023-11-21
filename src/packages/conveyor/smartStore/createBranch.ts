@@ -11,7 +11,7 @@ export type SmartSetStore<T extends Record<string, any>> = (
   dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>,
 ) => void
 
-export type SmartStore<T extends Record<string, any>> = {
+export type BranchStore<T extends Record<string, any>> = {
   store: Branch<T>
   setStore: SmartSetStore<T>
 
@@ -33,7 +33,7 @@ type setCountStore = /* Record<keyof any, Subscribable<number> | setCountStore> 
  * - object has merge to original store, not cover original store
  *
  */
-export function createBranch<T extends Record<string, any>>(defaultValue: T | Accessor<T>): SmartStore<T> {
+export function createBranchStore<T extends Record<string, any>>(defaultValue: T | Accessor<T>): BranchStore<T> {
   const rawValue = shrinkFn(defaultValue)
   // hold data
   const branchStore = branchify(rawValue)

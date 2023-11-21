@@ -16,7 +16,14 @@ import { TokenAmountInputBox } from '../../components/TokenAmountInput'
 import { useToken } from '../../stores/data/dataHooks/useToken'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../../stores/data/portActions/txSwap_main'
-import { createStorePropertySetter, createStorePropertySignal, setStore, store } from '../../stores/data/store'
+import {
+  createStorePropertySetter,
+  createStorePropertySignal,
+  rootStore,
+  setBStore,
+  setStore,
+  store,
+} from '../../stores/data/store'
 import { useWalletOwner } from '../../stores/wallet/store'
 import { Token } from '../../utils/dataStructures/Token'
 import { notZero } from '../../utils/dataStructures/basicMath/compare'
@@ -24,13 +31,13 @@ import { toString } from '../../utils/dataStructures/basicMath/format'
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const token1 = useToken(() => store.swapInputToken1) // it still can work, but why?
-  const token2 = useToken(() => store.swapInputToken2) // it still can work, but why?
+  const token1 = useToken(() => rootStore.swapInputToken1) // it still can work, but why?
+  const token2 = useToken(() => rootStore.swapInputToken2) // it still can work, but why?
   const setToken1 = (token: Token | undefined) => {
-    token && setStore({ swapInputToken1: token })
+    token && setBStore({ swapInputToken1: token })
   }
   const setToken2 = (token: Token | undefined) => {
-    token && setStore({ swapInputToken2: token })
+    token && setBStore({ swapInputToken2: token })
   }
 
   const amount1 = createStorePropertySignal((s) => s.swapInputTokenAmount1)

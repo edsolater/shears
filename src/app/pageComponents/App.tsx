@@ -1,7 +1,7 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo, onMount } from 'solid-js'
-import { createBranch, debranchify } from '../../packages/conveyor/smartStore/createBranch'
+import { createBranchStore, debranchify } from '../../packages/conveyor/smartStore/createBranch'
 import { createTask } from '../../packages/conveyor/smartStore/createTask'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
@@ -116,7 +116,7 @@ function useExperimentalCode() {
   rpcUrlTaskAtom.subscribe((url) => console.log('✅new rpcUrl(from test): ', url))
   onMount(task.run)
 
-  const { store, setStore } = createBranch({ a: 1, b: { c: 2 } })
+  const { store, setStore } = createBranchStore({ a: 1, b: { c: 2 } })
   setStore({ b: { c: 3 } })
   // console.log('🧪 store.b33: ', isTaskAtom(store.b), debranchify(store.b))
   const t2 = debranchify(store.b) // deProxy can handle this bug

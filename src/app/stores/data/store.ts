@@ -1,7 +1,10 @@
+import { Setter } from 'solid-js'
+import { BranchStore, createBranchStore } from '../../../packages/conveyor/smartStore/createBranch'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
+import { RPCEndpoint, availableRpcs } from './RPCEndpoint'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
 import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
@@ -9,25 +12,7 @@ import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
-
-export interface RPCEndpoint {
-  name?: string
-  url: string
-  weight?: number
-  isUserCustomized?: true
-  /** @default 'mainnet' */
-  net?: 'mainnet' | 'devnet'
-}
-export const availableRpcs: RPCEndpoint[] = [
-  {
-    name: 'inner test rpc',
-    url: 'https://rpc.asdf1234.win',
-  },
-  {
-    name: 'dev tool',
-    url: 'https://rpc.asdf1234.win',
-  },
-]
+import { createBStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
 
 export type StoreData = {
   // -------- swap --------
@@ -81,3 +66,13 @@ export const {
     },
   },
 )
+
+export const {
+  store: rootStore,
+  branchStore: rootBranch,
+  setStore: setBStore,
+} = createBStore<StoreData>({
+  swapInputToken1: RAYMint,
+  swapInputToken2: SOLMint,
+  rpc: availableRpcs[0],
+})
