@@ -85,14 +85,14 @@ export function createSmartStore<T extends Record<string, any>>(
   } = createSmartStore_onAccess<T>(options)
 
   const store = new Proxy(rawStore, {
-    get: (target, p, receiver) => {
+    get: (store, p, receiver) => {
       accessCount[p] = (accessCount[p] ?? 0) + 1
       if (accessCount[p] === 1) {
         invokeOnFirstAccess(p as string, rawStore[p as string], rawStore, setStore)
       }
       invokeOnAccess(p as string, rawStore[p as string], rawStore, setStore)
       const propertyName = p as string
-      const value = Reflect.get(target, propertyName, receiver)
+      const value = Reflect.get(store, propertyName, receiver)
       return value
     },
   }) as T

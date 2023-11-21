@@ -15,9 +15,6 @@ test(`basic usage`, () => {
 test(`basic usage`, () => {
   const { store, setStore } = createBranch({ a: 1, b: { c: 2 } })
   setStore({ b: { c: 3 } })
-  console.log('store.b: ', store.b)
-  const hasDe = debranchify(store.b)
-  console.log('hasDe: ', hasDe)
-
-  expect(store.b).toEqual({ c: 3 })
+  const sub = debranchify(store.b)
+  expect(sub).toEqual({ c: 3 })
 })

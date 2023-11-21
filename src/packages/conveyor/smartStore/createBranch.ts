@@ -33,12 +33,9 @@ type setCountStore = /* Record<keyof any, Subscribable<number> | setCountStore> 
  * - object has merge to original store, not cover original store
  *
  */
-export function createBranch<T extends Record<string, any>>(
-  defaultValue: T | Accessor<T>,
-  // TODO: imply it !!!
-  options?: CreateSmartStoreOptions<T>,
-): SmartStore<T> {
+export function createBranch<T extends Record<string, any>>(defaultValue: T | Accessor<T>): SmartStore<T> {
   const rawValue = shrinkFn(defaultValue)
+  // hold data
   const branchStore = branchify(rawValue)
   const accessCountStore: accessCountStore = createCountStore(rawValue)
   const setCountStore: setCountStore = createCountStore(rawValue)
@@ -91,6 +88,11 @@ export function createBranch<T extends Record<string, any>>(
   }
 }
 
+function createCountStore<T>(pure: T): accessCountStore {
+  return wrapLeaves(pure, { wrap: (leaf) => createLeaf(0) })
+}
+
+// -------- branch utils --------
 export type Branch<T> = {
   [K in keyof T]: T[K] extends Record<string, any> ? Branch<T[K]> : T[K] extends Leaf<any> ? T[K] : Leaf<T[K]>
 }
@@ -107,10 +109,5 @@ export function branchify<T>(pure: T): Branch<T> {
  * {a: Leaf(1), b: Leaf(()=>3)} => {a: 1, b:()=>3}
  */
 export function debranchify<T>(branch: Branch<T>): T {
-  console.log('💩💩💩 branch: ')
   return unwrapWrappedLeaves(branch)
-}
-
-function createCountStore<T>(pure: T): accessCountStore {
-  return wrapLeaves(pure, { wrap: (leaf) => createLeaf(0) })
 }
