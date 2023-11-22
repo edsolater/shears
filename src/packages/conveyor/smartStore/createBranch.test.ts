@@ -12,6 +12,10 @@ test(`basic usage`, () => {
   expect(isLeaf(store.b.c)).toBe(true)
   expect(store.b.c()).toBe(3)
 })
+test(`will dynamicly create subscribable`, () => {
+  const { store, setStore } = createBranchStore<{ a: number; b?: number }>({ a: 1 })
+  expect(typeof store.b).toBe('object')
+})
 test(`basic usage`, () => {
   const { store, setStore } = createBranchStore({ a: 1, b: { c: 2 } })
   setStore({ b: { c: 3 } })

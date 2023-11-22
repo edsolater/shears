@@ -46,13 +46,12 @@ export function createBranchStore<T extends Record<string, any>>(defaultValue: T
     Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
       setCountStore[propertyName] = (setCountStore[propertyName] ?? 0) + 1
       const prevValue = rawValue[propertyName]
-      const branch = branchStore[propertyName]
       if (prevValue !== newValue) {
         // invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
         rawValue[propertyName] = newValue
-        updateBranch(branch, newValue)
       }
     })
+    updateBranch(branchStore, rawValue)
   }
 
   /**
@@ -60,10 +59,11 @@ export function createBranchStore<T extends Record<string, any>>(defaultValue: T
    * travel all branch
    */
   function updateBranch(branch: any, newValue: any) {
+    console.log('branch, newValue: ', branch, newValue)
     if (isObjectLiteral(newValue)) {
       // should go deeper
       Object.entries(newValue).forEach(([propertyName, newValue]) => {
-        const newBranch = branch[propertyName]
+        const newBranch = branch[propertyName] // FIXME: 💩 branch may not have this new Value, so should create first. so branch should have node structure
         updateBranch(newBranch, newValue)
       })
     } else if (isArray(newValue)) {
@@ -82,7 +82,7 @@ export function createBranchStore<T extends Record<string, any>>(defaultValue: T
 
   return {
     store: branchStore,
-    setStore: setStore,
+    setStore,
     accessCountStore,
     setCountStore,
   }
