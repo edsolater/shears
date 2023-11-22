@@ -16,7 +16,7 @@ export interface Leaf<T> extends Subscribable<T> {
    * used by TaskExecutor to track subscribable's visiability
    *
    * only effect exector will auto run if it's any observed Leaf is visiable \
-   * visiable, so effect is meaningful for user
+   * visiable, so effect is meaningful 0for user
    */
   visiable: Subscribable<boolean>
   // when set this, means this object is a observable-subscribable
