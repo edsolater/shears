@@ -1,19 +1,20 @@
-import { WeakerSet } from '@edsolater/fnkit'
+import { WeakerMap, WeakerSet, hasProperty } from '@edsolater/fnkit'
 import { Subscribable, createSubscribable } from '../subscribable/core'
 import { TaskExecutor } from './createTask'
 
-export const branchNodeTag = Symbol('branchNodeTag')
+export const branchNodeID = Symbol('branchNodeTag')
 export const isLeafTag = Symbol('LeafTag')
 export const leafOptionTag = Symbol('leafOptionTag')
+
+type BranchNodeID = string
 
 /**
  * add ability to pure subscribable
  */
-export interface BranchNode<T> {
+export interface BranchNode<T = any> {
   // when set this, means this object is a observable-subscribable
-  [branchNodeTag]: boolean
-  // when true means can't dive deeper, for it's leaf
-  [isLeafTag]: boolean
+  [branchNodeID]: BranchNodeID
+  parent?: BranchNode<any>
   // pure value
   rawValue: T
   value: Subscribable<T>
@@ -26,32 +27,68 @@ export interface BranchNode<T> {
   visiable: Subscribable<boolean>
   subscribedTaskExecutors: WeakerSet<TaskExecutor>
   // you can go deeper, by accessing this property
-  port: any
+  children: any
 }
 
-export interface LeafNode<T> extends BranchNode<T> {
-  [isLeafTag]: true
+export interface LeafNode<T> extends Omit<BranchNode<T>, 'childNodes'> {}
+
+let systemBranchID = 0
+/** used in {{@link createBranchNode}} */
+const branchNodesCache = new WeakerMap<BranchNodeID, BranchNode>()
+function generateBranchNodeID() {
+  return `branchNode_${systemBranchID++}`
 }
 
 /** create empty branch node, mutate is by other functions */
-export function createBranchNode<T>(options: { getRaw?: () => T; isLeaf?: boolean; isVisiable?: boolean }) {
-  return {
-    [branchNodeTag]: true,
+export function createBranchNode<T>(options?: {
+  parent?: BranchNode
+  getRaw?: () => T
+  isLeaf?: boolean
+  isVisiable?: boolean
+  childNodes?: any
+}) {
+  const nodeID = generateBranchNodeID()
+  const node = {
+    [branchNodeID]: nodeID,
+    parent: options?.parent,
     [isLeafTag]: false,
     get rawValue() {
-      return options.getRaw?.()
+      return options?.getRaw?.()
     },
-    value: createSubscribable(options.getRaw),
-    visiable: createSubscribable(options.isVisiable),
+    value: createSubscribable(options?.getRaw),
+    visiable: createSubscribable(options?.isVisiable),
     subscribedTaskExecutors: new WeakerSet(),
-    get port() {
-      return options.getRaw?.()
+    get children() {
+      return options?.childNodes?.()
     },
   } as BranchNode<T>
+  branchNodesCache.set(nodeID, node)
+  return node
+}
+
+export function getBranchNodeByCacheId(id: BranchNodeID) {
+  return branchNodesCache.get(id)
+}
+
+/** just a preset of {@link createBranchNode} */
+export function createEmptyBranchNode() {
+  return createBranchNode({})
+}
+
+export function createEmptyInfinitBranchTree(
+  parentNodesIDs?: BranchNodeID[],
+  cacheBranchNodes = new WeakerMap<BranchNodeID, BranchNode>(),
+): BranchNodeTree<undefined> {
+  const treeRootNode = new Proxy({} as any, {
+    get(target, key) {
+      if (cacheBranchNodes.has(key)) return cacheBranchNodes.get(key)
+      return createBranchNode()
+    },
+  })
 }
 
 interface BranchNodeTree<O extends object> extends BranchNode<O> {
-  port: {
+  children: {
     [K in keyof O]: O[K] extends object ? BranchNodeTree<O[K]> : BranchNode<O[K]>
   }
 }
@@ -67,7 +104,7 @@ export function createBranchNodeTree<O extends object>(raw?: O): BranchNodeTree<
  * @returns whether
  */
 export function isBranchNode<T>(value: any): value is BranchNode<T> {
-  return value?.[branchNodeTag]
+  return value?.[branchNodeID]
 }
 
 /**
@@ -76,12 +113,5 @@ export function isBranchNode<T>(value: any): value is BranchNode<T> {
  * @returns whether
  */
 export function isLeafNode<T>(value: any): value is LeafNode<T> {
-  return value?.[isLeafTag]
-}
-
-/**
- * branchNode => leafNode
- */
-export function tagBranchNodeAsLeaf<T>(branchNode: BranchNode<T>) {
-  branchNode[isLeafTag] = true
+  return Boolean(value?.['childNodes'])
 }
