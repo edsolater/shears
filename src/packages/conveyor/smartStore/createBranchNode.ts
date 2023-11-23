@@ -33,8 +33,8 @@ export interface BranchNode<T = any> {
 export interface LeafNode<T> extends Omit<BranchNode<T>, 'childNodes'> {}
 
 let systemBranchID = 0
-/** used in {{@link createBranchNode}} */
 const branchNodesCache = new WeakerMap<BranchNodeID, BranchNode>()
+
 function generateBranchNodeID() {
   return `branchNode_${systemBranchID++}`
 }
