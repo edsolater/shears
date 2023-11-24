@@ -1,11 +1,9 @@
 import { expect, test } from 'vitest'
 import { createTask } from './createTask'
-test('test fn function:mergeObjectsWithConfigs', () => {
+test('basic usage', () => {
   let count = 0
   function runCount() {
     count++
   }
-  const effect = createTask((get)=>{
-    
-  })
+  const effect = createTask((get) => {})
 })

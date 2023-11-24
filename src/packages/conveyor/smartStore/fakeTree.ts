@@ -1,51 +1,32 @@
-/**
- * FackTree
- * - for outside, it seems like a tree. but actually it is a proxy, inside, it's composed by node list and leaf rules and a proxy root node
- * - property will created only when use, by input node rules
- *
- */
-type SymbolsCenter = {
-  readonly TreeNodeValue: unique symbol
-}
-
-const value = Symbol('TreeNodeValue')
-const path = Symbol('TreeNodePath')
-type UserAttachedValue = any
-
-type FakeNode<T> = T /* So can path travel */ & {
-  /** path from root to this deep value  */
-  [path]?: (keyof any)[]
-  [value]?: any
-}
+import { MayFn, shrinkFn } from '@edsolater/fnkit'
+import { createInfiniteObj } from '../../fnkit/createInfiniteObj'
 
 type FakeTree<T> = T
 
-export function createFakeTree<O extends object>(): FakeTree<O> {
-  const rootEntry = recursivelyCreateInfiniteTree()
+export function createFakeTree<O extends object>(leafRule?: (rawValue: O) => any, fromObject?:O): FakeTree<O> {
+  const cachedLeaf = new Map<any, any>()
+  const rootEntry = createInfiniteObj()
+  function get(path: (root: O) => any) {
+    const rawValue = path(rootEntry)
+    if (cachedLeaf.has(rawValue)) cachedLeaf.get(rawValue)
+    getMapValue(cachedLeaf, rawValue, (raw) => leafRule?.(raw) ?? raw)
+  }
+  //TODO
+  function set(setter: ()) {
 
-  // 🤔 seems no need to have setter and getter?
+  }
   return rootEntry
 }
 
-const currentPathFromRoot = Symbol('currentPathFromRoot')
-
-function recursivelyCreateInfiniteTree(
-  currentKeyPath: (keyof any)[] = [],
-  attachedValueMap = new Map<(keyof any)[], UserAttachedValue>(), //TODO: should be a shallow compareable Map,
-) {
-  const pathCollector = new Proxy(
-    { [currentPathFromRoot]: currentKeyPath },
-    {
-      set(target, key, value) {
-        attachedValueMap.set(target[currentPathFromRoot].concat(key), value)
-        return true
-      },
-      get(target, key) {
-        const valueIsAlreadyInCache = attachedValueMap.has(target[currentPathFromRoot].concat(key))
-        if (valueIsAlreadyInCache) return attachedValueMap.get(target[currentPathFromRoot].concat(key))
-        return recursivelyCreateInfiniteTree(target[currentPathFromRoot].concat(key), attachedValueMap)
-      },
-    },
-  )
-  return pathCollector
+/**
+ * enhance map::get()
+ */
+function getMapValue<K, V>(map: Map<K, V>, key: K, defaultValue: MayFn<V, [key: K]>): V {
+  if (map.has(key)) {
+    return map.get(key)!
+  } else {
+    const v = shrinkFn(defaultValue, [key])
+    map.set(key, v)
+    return v
+  }
 }
