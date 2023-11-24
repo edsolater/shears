@@ -1,11 +1,4 @@
-import {
-  cloneObject,
-  isArray,
-  isObject,
-  isObjectLike,
-  isObjectLiteral,
-  switchCase
-} from '@edsolater/fnkit'
+import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/fnkit'
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -138,13 +131,6 @@ export function unwrapWrappedLeaves<Result = any>(target: any): Result {
  */
 function pipeline<T>(v: T, ...handlers: ((v: T) => undefined | any)[]): any {
   return handlers.reduce((v, handler) => handler(v) ?? v, v)
-}
-
-/**
- * FP utils : IIFE
- */
-function iife(fn: () => void) {
-  fn()
 }
 
 /** travel all properties to get real object instead of proxy wrapper */

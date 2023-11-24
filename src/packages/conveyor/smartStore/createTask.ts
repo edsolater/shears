@@ -24,11 +24,11 @@ export type TaskRunner = {
  *
  * when relatedLeafs is hinted, task function will only run when relatedLeafs is visiable
  * otherwise, initly task function must it to track the subscribables
- * 
+ *
  * @example
  * const testObserverableSubscribable = createLeaf(1)
  * const testObserverableSubscribableB = createLeaf(1, { visiable: true })
- * 
+ *
  * const task = createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
  *   await Promise.resolve(3)
  *   console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
@@ -47,11 +47,12 @@ export function createTask(
     }
     taskContentFn(get)
   }) as TaskExecutor
-  assignObject(
-    executor,
-    { relatedLeafs: new WeakerSet<Leaf<any>>(relatedLeafs) },
-    { visiable: () => isExecutorVisiable(executor) },
-  )
+  assignObject(executor, {
+    relatedLeafs: new WeakerSet<Leaf<any>>(relatedLeafs),
+    get visiable() {
+      return isExecutorVisiable(executor)
+    },
+  })
   const taskRunner: TaskRunner = {
     run() {
       executor()
