@@ -1,4 +1,4 @@
-import { MayPromise, AnyFn, shrinkFn, isFunction, isPromise } from '@edsolater/fnkit'
+import { MayPromise, AnyFn, shrinkFn, isFunction, isPromise, isObject } from '@edsolater/fnkit'
 
 const subscribableTag = Symbol('subscribable')
 
@@ -81,5 +81,5 @@ export function createSubscribable<T>(
 }
 
 export function isSubscribable<T>(value: any): value is Subscribable<T> {
-  return value && value[subscribableTag]
+  return isObject(value) && value[subscribableTag]
 }

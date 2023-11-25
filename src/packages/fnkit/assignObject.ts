@@ -45,19 +45,10 @@ const simpleObectAssign = ({
  * @param attachRule
  * @returns void
  */
-export function assignObjectWithConfigs<T extends object>(
-  originalObject: T,
-  patchObject: Partial<T>,
-  attachRule?: AttachFn,
-): T
+
 export function assignObjectWithConfigs<T extends object>(
   originalObject: T,
   patchObject: object,
-  attachRule?: AttachFn,
-): T
-export function assignObjectWithConfigs<T extends object>(
-  originalObject: T,
-  patchObject: Partial<T>,
   attachRule: AttachFn = simpleObectAssign,
 ): T {
   Reflect.ownKeys(patchObject).forEach((key) => {
@@ -71,3 +62,5 @@ export function assignObjectWithConfigs<T extends object>(
   })
   return originalObject
 }
+
+
