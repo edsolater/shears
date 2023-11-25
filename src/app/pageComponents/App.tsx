@@ -1,7 +1,7 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
-import { createBranchStore } from '../../packages/conveyor/smartStore/createBranch2'
+import { createBranchStore } from '../../packages/conveyor/smartStore/createBranch'
 import { createTask } from '../../packages/conveyor/smartStore/createTask'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {

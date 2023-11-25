@@ -1,5 +1,4 @@
-import { Setter } from 'solid-js'
-import { BranchStore, createBranchStore } from '../../../packages/conveyor/smartStore/createBranch'
+import { createBStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
@@ -12,7 +11,6 @@ import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
 import { PairJson } from './types/pairs'
-import { createBStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
 
 export type StoreData = {
   // -------- swap --------

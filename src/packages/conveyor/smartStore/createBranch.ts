@@ -1,27 +1,20 @@
-import { isArray, isObjectLike, isObjectLiteral, shrinkFn } from '@edsolater/fnkit'
+import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
 import { unwrapWrappedLeaves, wrapLeaves } from '../../fnkit/wrapLeaves'
-import { Leaf, createLeaf, isLeaf } from './createLeaf'
-import { Task } from 'vitest'
+import { Leaf, createLeaf } from './createLeaf'
+import { createFakeTree } from './fakeTree'
 
-type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}
-export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmartStoreOptions_BasicOptions<T>
+export type SmartSetStore<T extends object> = (dispatch: MayFn<Partial<T>, [prevStore?: T]>) => void
 
-export type SmartSetStore<T extends Record<string, any>> = (
-  dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>,
-) => void
-
-export type BranchStore<T extends Record<string, any>> = {
-  store: Branch<T>
-  setStore: SmartSetStore<T>
-
-  // getFromValue: (value: any) => any
-  accessCountStore: accessCountStore
-  setCountStore: setCountStore
+export type Branch<T> = {
+  [K in keyof T]: T[K] extends object ? Branch<T[K]> : T[K] extends Leaf<any> ? T[K] : Leaf<T[K]>
 }
 
-type accessCountStore = /* Record<keyof any, Subscribable<number> | accessCountStore> */ any
-type setCountStore = /* Record<keyof any, Subscribable<number> | setCountStore> */ any
+export type BranchStore<T extends object> = {
+  rawObj: T
+  store: Branch<T>
+  setStore: SmartSetStore<T>
+}
 
 /**
  * branch means taskSubscribable nodes
@@ -33,81 +26,17 @@ type setCountStore = /* Record<keyof any, Subscribable<number> | setCountStore> 
  * - object has merge to original store, not cover original store
  *
  */
-export function createBranchStore<T extends Record<string, any>>(defaultValue: T | Accessor<T>): BranchStore<T> {
-  const rawValue = shrinkFn(defaultValue)
-  // hold data
-  const branchStore = branchify(rawValue)
-  const accessCountStore: accessCountStore = createCountStore(rawValue)
-  const setCountStore: setCountStore = createCountStore(rawValue)
-
-  function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
-    const newStorePieces = shrinkFn(dispatch, [rawValue])
-    if (!newStorePieces) return // no need to update store with the same value
-    Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
-      setCountStore[propertyName] = (setCountStore[propertyName] ?? 0) + 1
-      const prevValue = rawValue[propertyName]
-      if (prevValue !== newValue) {
-        // invokeOnChanges(propertyName, newValue, prevValue, store, setStore)
-        rawValue[propertyName] = newValue
-      }
-    })
-    updateBranch(branchStore, rawValue)
-  }
-
-  /**
-   * make store's value structure same as pale
-   * travel all branch
-   */
-  function updateBranch(branch: any, newValue: any) {
-    console.log('branch, newValue: ', branch, newValue)
-    if (isObjectLiteral(newValue)) {
-      // should go deeper
-      Object.entries(newValue).forEach(([propertyName, newValue]) => {
-        const newBranch = branch[propertyName] // FIXME: 💩 branch may not have this new Value, so should create first. so branch should have node structure
-        updateBranch(newBranch, newValue)
-      })
-    } else if (isArray(newValue)) {
-      // should go deeper
-      newValue.forEach((newValue, index) => {
-        const newBranch = branch[index]
-        updateBranch(newBranch, newValue)
-      })
-    } else if (isLeaf(branch)) {
-      const branchValue = branch()
-      if (branchValue !== newValue) {
-        branch.set(newValue)
-      }
-    }
-  }
+export function createBranchStore<T extends object>(defaultValue: T | Accessor<T>): BranchStore<T> {
+  const rawDefaultValue = shrinkFn(defaultValue) as T
+  // branch hold data
+  const { rawObj, root, set } = createFakeTree(rawDefaultValue, {
+    leaf:(rawValue)=> createLeaf(rawValue),
+    injectValueToLeaf: (val, leaf) => leaf.set(val),
+  })
 
   return {
-    store: branchStore,
-    setStore,
-    accessCountStore,
-    setCountStore,
+    rawObj,
+    store: root as Branch<T>,
+    setStore: set,
   }
-}
-
-function createCountStore<T>(pure: T): accessCountStore {
-  return wrapLeaves(pure, { wrap: (leaf) => createLeaf(0) })
-}
-
-// -------- branch utils --------
-export type Branch<T> = {
-  [K in keyof T]: T[K] extends Record<string, any> ? Branch<T[K]> : T[K] extends Leaf<any> ? T[K] : Leaf<T[K]>
-}
-
-/**
- * {a: 1, b:()=>3} => {a: Leaf(1), b: Leaf(()=>3)}
- */
-export function branchify<T>(pure: T): Branch<T> {
-  return wrapLeaves(pure, { wrap: (leaf) => createLeaf(leaf) })
-}
-
-/**
- * reverse version of getBranchFromPure
- * {a: Leaf(1), b: Leaf(()=>3)} => {a: 1, b:()=>3}
- */
-export function debranchify<T>(branch: Branch<T>): T {
-  return unwrapWrappedLeaves(branch)
 }
