@@ -1,6 +1,6 @@
 import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
 import { createInfiniteObj, isInfiniteObjNodeUnloaded } from '../../fnkit/createInfiniteObj'
-import { getByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
+import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
 
 type FakeTree<T> = T
 type FakeTreeLeaf = object
@@ -23,7 +23,7 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
       console.log('value: ', keyPaths, value)
       const treeNode = getByPath(root, keyPaths)
       // set raw
-      getByPath(rawObj, parentPath)[currentKey] = value // 💩
+      setByPath(rawObj, keyPaths, value)
 
       // set tree
       if (isInfiniteObjNodeUnloaded(treeNode)) {
