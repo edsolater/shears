@@ -1,6 +1,5 @@
 import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { unwrapWrappedLeaves, wrapLeaves } from '../../fnkit/wrapLeaves'
 import { Leaf, createLeaf } from './createLeaf'
 import { createFakeTree } from './fakeTree'
 
@@ -30,8 +29,8 @@ export function createBranchStore<T extends object>(defaultValue: T | Accessor<T
   const rawDefaultValue = shrinkFn(defaultValue) as T
   // branch hold data
   const { rawObj, root, set } = createFakeTree(rawDefaultValue, {
-    leaf:(rawValue)=> createLeaf(rawValue),
-    injectValueToLeaf: (val, leaf) => leaf.set(val),
+    leaf: (rawValue) => createLeaf(rawValue),
+    injectValueToLeaf: (leaf, val) => leaf.set(val),
   })
 
   return {

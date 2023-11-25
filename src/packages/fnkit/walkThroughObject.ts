@@ -1,5 +1,8 @@
 import { isObject, isObjectLike } from '@edsolater/fnkit'
 
+/**
+ * only walk through string enumtable object key (not symbol)
+ */
 export function walkThroughObject(
   obj: object,
   each: (info: {
@@ -12,7 +15,8 @@ export function walkThroughObject(
   }) => void,
 ) {
   function walk(obj: object, keyPaths: (keyof any)[] = []) {
-    Reflect.ownKeys(obj).forEach((key) => {
+    Object.keys(obj).forEach((key) => {
+      console.log('walk', obj, key)
       const value = Reflect.get(obj, key)
       if (isObject(value)) {
         walk(value, keyPaths.concat(key))

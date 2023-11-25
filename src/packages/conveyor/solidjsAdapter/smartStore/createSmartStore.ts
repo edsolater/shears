@@ -1,6 +1,6 @@
 import { isFunction, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, untrack } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { createStore, unwrap } from 'solid-js/store'
 import { Branch, createBranchStore } from '../../smartStore/createBranch'
 import { createStoreSetter } from './utils/setStoreByObject'
 
@@ -45,7 +45,7 @@ export function createBStore<T extends Record<string, any>>(
 
   function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
     const prevStore = untrack(() => store)
-    const newStorePieces = isFunction(dispatch) ? dispatch(prevStore) : dispatch
+    const newStorePieces = unwrap(untrack(() => (isFunction(dispatch) ? dispatch(prevStore) : dispatch)))
     setBranchStore(newStorePieces)
     rawSetStore(createStoreSetter(newStorePieces))
   }

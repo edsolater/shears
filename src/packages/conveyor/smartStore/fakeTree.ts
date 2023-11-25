@@ -8,7 +8,7 @@ type FakeTreeLeaf = object
 /** just a InfiniteObj with leaf ,inside unknow what is leaf's content*/
 export function createFakeTree<O extends object, L extends FakeTreeLeaf = object>(
   rawObject: O,
-  options: { leaf: (rawValue: any) => L; injectValueToLeaf: (rawValue: any, leaf: L) => void },
+  options: { leaf: (rawValue: any) => L; injectValueToLeaf: (loadedNode: L, rawValue: any) => void },
 ) {
   const rawObj = cloneObject(rawObject)
   const root = createInfiniteObj() as FakeTree<O>
@@ -19,8 +19,11 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
   function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
     console.log('🧪 ')
     const newRawTree = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
+    console.log('newRawTree: ', { ...newRawTree })
     walkThroughObject(newRawTree, ({ keyPaths, parentPath, currentKey, value }) => {
-      console.log('value: ', keyPaths, value)
+      console.log('value: ', value)
+      console.log('currentKey: ', currentKey)
+      console.log('value22: ', keyPaths, value)
       const treeNode = getByPath(root, keyPaths)
       // set raw
       setByPath(rawObj, keyPaths, value)
@@ -30,6 +33,7 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
         console.log('treeNode: ', treeNode)
         getByPath(root, parentPath)[currentKey] = options.leaf(getByPath(rawObj, keyPaths))
       } else {
+        console.log('treeNode: ', treeNode)
         options.injectValueToLeaf(treeNode, value)
       }
     })
