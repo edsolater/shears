@@ -1,29 +1,38 @@
-import { MayFn, cloneObject, forEach, mergeObjectsWithConfigs, shrinkFn } from '@edsolater/fnkit'
+import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
 import { createInfiniteObj, isInfiniteObjNodeUnloaded } from '../../fnkit/createInfiniteObj'
-import { assignObject, assignObjectWithConfigs } from '../../fnkit/assignObject'
 import { getByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
-import { isSubscribable } from '../subscribable/core'
-import { createLeaf } from './createLeaf'
 
 type FakeTree<T> = T
+type FakeTreeLeaf = object
 
-export function createFakeTree<O extends object>(leaf: (rawValue: O) => any, rawObject?: O) {
-  const o = cloneObject(rawObject ?? ({} as O))
-  const treeRoot = createInfiniteObj() as FakeTree<O>
+/** just a InfiniteObj with leaf ,inside unknow what is leaf's content*/
+export function createFakeTree<O extends object, L extends FakeTreeLeaf = object>(
+  rawObject: O,
+  options: { leaf: (rawValue: any) => L; injectValueToLeaf: (rawValue: any, leaf: L) => void },
+) {
+  const rawObj = cloneObject(rawObject)
+  const root = createInfiniteObj() as FakeTree<O>
   /**
    * sync
    * change by this will also change the original object
    */
-  function set(dispatcher: MayFn<Partial<O>, [old: FakeTree<O>]>) {
-    const newRawTree = shrinkFn(dispatcher, [o]) as Partial<O> // TODO: type of `shringFn` is wrong
+  function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
+    const newRawTree = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
     walkThroughObject(newRawTree, ({ keyPaths, parentPath, currentKey, value }) => {
       const path = keyPaths
-      const treeNode = getByPath(treeRoot, path)
-      const originalValue = getByPath(o, path)
-      getByPath(treeRoot, parentPath)[currentKey] = isInfiniteObjNodeUnloaded(treeNode) ? leaf(originalValue) : value
+      const treeNode = getByPath(root, path)
+      // set raw
+      getByPath(rawObj, parentPath)[currentKey] = value
+
+      // set tree
+      if (isInfiniteObjNodeUnloaded(treeNode)) {
+        getByPath(root, parentPath)[currentKey] = options.leaf(getByPath(rawObj, path))
+      } else {
+        options.injectValueToLeaf(treeNode, value)
+      }
     })
   }
-  return { o, treeRoot, set }
+  return { rawObj, root, set }
 }
 
 /**
