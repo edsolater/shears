@@ -57,7 +57,7 @@ export function Drawer(kitProps: DrawerKitProps) {
     },
   })
   return (
-    <PopPortal id='pop-stack'>
+    <PopPortal name='pop-stack'>
       <Show when={isOpen()}>
         <Piv
           domRef={setDrawerRef}

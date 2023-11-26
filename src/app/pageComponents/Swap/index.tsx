@@ -5,12 +5,11 @@ import {
   Panel,
   Piv,
   Section,
-  cssVar,
   icssCard,
   icssCol,
   icssCyberpenkBackground,
   icssCyberpenkBackgroundGlow,
-  icssCyberpenkBorder,
+  icssCyberpenkBorder
 } from '../../../packages/pivkit'
 import { TokenAmountInputBox } from '../../components/TokenAmountInput'
 import { useToken } from '../../stores/data/dataHooks/useToken'
@@ -21,8 +20,7 @@ import {
   createStorePropertySignal,
   rootStore,
   setBStore,
-  setStore,
-  store,
+  store
 } from '../../stores/data/store'
 import { useWalletOwner } from '../../stores/wallet/store'
 import { Token } from '../../utils/dataStructures/Token'

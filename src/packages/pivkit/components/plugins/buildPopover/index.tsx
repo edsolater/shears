@@ -79,7 +79,7 @@ export function buildPopover(options?: PopoverPluginOptions) {
       ...options,
     })
     return {
-      'render:outWrapper': (originalNode) => <PopPortal id='popovers'>{originalNode}</PopPortal>,
+      'render:outWrapper': (originalNode) => <PopPortal name='popovers'>{originalNode}</PopPortal>,
       domRef: setPanelDom,
       get if(){
         return isTriggerOn()

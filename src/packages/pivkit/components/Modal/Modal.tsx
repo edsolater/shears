@@ -1,9 +1,10 @@
 import { Accessor, Show, createEffect, createSignal, onMount } from 'solid-js'
-import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
+import { createRef } from '../../hooks/createRef'
 import { ICSS, KitProps, Piv, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
+import { PopPortal } from '../PopPortal'
 
 export interface ModalController {
   isOpen: boolean
@@ -33,9 +34,7 @@ export interface ModalProps {
 export type ModalKitProps = KitProps<ModalProps>
 
 export function Modal(kitProps: ModalKitProps) {
-  const { props, lazyLoadController } = useKitProps(kitProps, {
-    name: 'Modal',
-  })
+  const { props, lazyLoadController, shadowProps } = useKitProps(kitProps, { name: 'Modal' })
   lazyLoadController(() => ({
     get isOpen() {
       return innerOpen()
@@ -44,8 +43,9 @@ export function Modal(kitProps: ModalKitProps) {
     close: closeDialog,
     toggle: toggleDialog,
   }))
-  const [dialogRef, setDialogRef] = createRef<HTMLDialogElement>()
-  const [dialogContentRef, setDialogContentRef] = createRef<HTMLDivElement>()
+  const [dialogDOM, setDialogDOM] = createRef<HTMLDialogElement>()
+  const [dialogContentDOM, setDialogContentDOM] = createRef<HTMLDivElement>()
+
   const [innerOpen, setInnerOpen] = createSignal(Boolean(props.open))
   const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
@@ -62,14 +62,14 @@ export function Modal(kitProps: ModalKitProps) {
     }
   })
   // register onClose callback
-  useDOMEventListener(dialogRef, 'close', () => closeDialog({ witDOMChange: false }))
-  useDOMEventListener(dialogRef, 'keydown', ({ ev }) => {
+  useDOMEventListener(dialogDOM, 'close', () => closeDialog({ witDOMChange: false }))
+  useDOMEventListener(dialogDOM, 'keydown', ({ ev }) => {
     ev.stopPropagation()
     return ev.preventDefault()
   })
 
   // register click outside
-  useClickOutside(dialogContentRef, {
+  useClickOutside(dialogContentDOM, {
     disable: () => !innerOpen(),
     onClickOutSide: () => {
       closeDialog()
@@ -79,7 +79,7 @@ export function Modal(kitProps: ModalKitProps) {
   // user action: open dialog
   const openDialog = () => {
     setInnerOpen(true)
-    dialogRef()?.showModal()
+    dialogDOM()?.showModal()
   }
 
   // user action: close dialog
@@ -91,32 +91,32 @@ export function Modal(kitProps: ModalKitProps) {
     witDOMChange?: boolean
   }) => {
     setInnerOpen(false)
-    if (options?.witDOMChange ?? true) dialogRef()?.close()
+    if (options?.witDOMChange ?? true) dialogDOM()?.close()
     props.onClose?.()
   }
 
   // user action: toggle(open & close) dialog
-  const toggleDialog = () => {
+  function toggleDialog() {
     innerOpen() ? closeDialog() : openDialog()
   }
 
   return (
-    <Show when={shouldRenderDOM()}>
-      <Piv<'dialog'>
-        render:self={(selfProps) => renderHTMLDOM('dialog', selfProps)}
-        shadowProps={props}
-        htmlProps={{
-          role: 'dialog',
-        }}
-        // @ts-expect-error lack of icss type
-        icss={{ '&::backdrop': props.backdropICSS }}
-        domRef={setDialogRef}
-      >
-        <Piv domRef={setDialogContentRef} icss={{ display: 'contents' }}>
-          {props.children}
+    <PopPortal name='dialog'>
+      <Show when={shouldRenderDOM()}>
+        <Piv<'dialog'>
+          render:self={(selfProps) => renderHTMLDOM('dialog', selfProps)}
+          domRef={setDialogDOM}
+          shadowProps={shadowProps}
+          htmlProps={{ role: 'dialog' }}
+          // @ts-expect-error lack of icss type
+          icss={{ '&::backdrop': props.backdropICSS }}
+        >
+          <Piv domRef={setDialogContentDOM} icss={{ display: 'contents' }}>
+            {props.children}
+          </Piv>
         </Piv>
-      </Piv>
-    </Show>
+      </Show>
+    </PopPortal>
   )
 }
 

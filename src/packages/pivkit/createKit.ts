@@ -222,6 +222,7 @@ export function useKitProps<
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: options?.name ?? '' })
   const addPropsContextProps = getPropsFromAddPropContext({ componentName: options?.name ?? '' })
+  
   const propContextParsedProps = mergeProps(kitProps, contextProps, addPropsContextProps)
 
   // if (propContextParsedProps.children === 'PropContext can pass to deep nested components') {

@@ -5,8 +5,8 @@ import isClientSide from '../../jFetch/utils/isSSR'
 import { RawChild } from '../piv/typeTools'
 
 /** with the same id, new top-element will be created only-once  */
-export function PopPortal(props: { id: string; children?: RawChild }) {
-  const element = createPopStackHTMLElement(props.id)
+export function PopPortal(props: { name: string; children?: RawChild }) {
+  const element = createPopStackHTMLElement(props.name)
   const [ref, setRef] = createRef()
   createEffect(() => {
     ref()?.classList.add('self-pointer-events-none')
@@ -17,11 +17,12 @@ export function PopPortal(props: { id: string; children?: RawChild }) {
     </Portal>
   )
 }
-function createPopStackHTMLElement(id: string) {
-  const el = document.querySelector(`#${id}`)
+
+function createPopStackHTMLElement(name: string) {
+  const el = document.querySelector(`#${name}`)
   if ('document' in globalThis && !el) {
     const div = document.createElement('div')
-    div.id = id
+    div.id = name
     document.body.appendChild(div)
     div.style.position = 'fixed'
     div.style.inset = '0'
@@ -33,8 +34,11 @@ function createPopStackHTMLElement(id: string) {
   }
 }
 
+let haveSetPointerStyle = false
 function insertCSSPointerEventNone() {
   if (!isClientSide()) return
+  if (haveSetPointerStyle) return
+  haveSetPointerStyle = true
   const styleEl = document.createElement('style')
 
   // Append <style> element to <head>

@@ -17,23 +17,16 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
    * change by this will also change the original object
    */
   function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
-    console.log('🧪 ')
     const newRawTree = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
-    console.log('newRawTree: ', { ...newRawTree })
     walkThroughObject(newRawTree, ({ keyPaths, parentPath, currentKey, value }) => {
-      console.log('value: ', value)
-      console.log('currentKey: ', currentKey)
-      console.log('value22: ', keyPaths, value)
       const treeNode = getByPath(root, keyPaths)
       // set raw
       setByPath(rawObj, keyPaths, value)
 
       // set tree
       if (isInfiniteObjNodeUnloaded(treeNode)) {
-        console.log('treeNode: ', treeNode)
         getByPath(root, parentPath)[currentKey] = options.leaf(getByPath(rawObj, keyPaths))
       } else {
-        console.log('treeNode: ', treeNode)
         options.injectValueToLeaf(treeNode, value)
       }
     })
