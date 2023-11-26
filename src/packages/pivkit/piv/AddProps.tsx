@@ -30,7 +30,7 @@ export function AddProps<Props extends ValidProps = PivProps>(props: Props) {
 }
 
 /** add additional prop through solidjs context */
-export function getPropsFromAddPropContext(componentInfo: { componentName: string }): ValidProps | undefined {
+export function getPropsFromAddPropContext(componentInfo: { componentName?: string }): ValidProps | undefined {
   const additionalProps = useContext(AddPropContext)
   if (!additionalProps) return undefined
   if (hasConsumed.has(additionalProps)) return undefined

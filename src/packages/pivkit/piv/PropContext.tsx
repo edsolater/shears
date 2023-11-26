@@ -26,7 +26,7 @@ export function PropContext<Props extends ValidProps = PivProps>(props: Props) {
 }
 
 /** add additional prop through solidjs context */
-export function getPropsFromPropContextContext(componentInfo: { componentName: string }): ValidProps | undefined {
+export function getPropsFromPropContextContext(componentInfo: { componentName?: string }): ValidProps | undefined {
   const allPropses = useContext(_PropContext)
   if (!allPropses) return undefined
   return mergeProps(...allPropses)
