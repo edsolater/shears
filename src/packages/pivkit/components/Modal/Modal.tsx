@@ -5,6 +5,8 @@ import { createRef } from '../../hooks/createRef'
 import { ICSS, KitProps, Piv, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { PopPortal } from '../PopPortal'
+import { shrinkFn } from '@edsolater/fnkit'
+import { option } from '@raydium-io/raydium-sdk'
 
 export interface ModalController {
   isOpen: boolean
@@ -15,9 +17,11 @@ export interface ModalController {
 
 export interface ModalProps {
   open?: boolean
-  
+  /** modal title */
+  title?: string
 
   onClose?(): void
+  onOpen?(): void
 
   /** style of backdrop */
   backdropICSS?: ICSS
@@ -33,6 +37,7 @@ export interface ModalProps {
 }
 
 export type ModalKitProps = KitProps<ModalProps>
+
 export function Modal(kitProps: ModalKitProps) {
   const { props, lazyLoadController, shadowProps } = useKitProps(kitProps, { name: 'Modal' })
   lazyLoadController(() => ({
@@ -45,8 +50,19 @@ export function Modal(kitProps: ModalKitProps) {
   }))
   const [dialogDOM, setDialogDOM] = createRef<HTMLDialogElement>()
   const [dialogContentDOM, setDialogContentDOM] = createRef<HTMLDivElement>()
-
-  const [innerOpen, setInnerOpen] = createSignal(Boolean(props.open))
+  const { innerOpen, openDialog, closeDialog, toggleDialog } = useModalTriggerState({
+    open: () => Boolean(props.open),
+    dialogDOM,
+    dialogContentDOM,
+    onClose(byDOM) {
+      props.onClose?.()
+      if (byDOM) dialogDOM()?.close()
+    },
+    onOpen() {
+      props.onOpen?.()
+      dialogDOM()?.showModal()
+    },
+  })
   const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
   // initly load modal show
@@ -56,13 +72,7 @@ export function Modal(kitProps: ModalKitProps) {
     }
   })
 
-  onMount(() => {
-    if (innerOpen()) {
-      openDialog()
-    }
-  })
-  // register onClose callback
-  useDOMEventListener(dialogDOM, 'close', () => closeDialog({ witDOMChange: false }))
+  // not propagate original keydown event
   useDOMEventListener(dialogDOM, 'keydown', ({ ev }) => {
     ev.stopPropagation()
     return ev.preventDefault()
@@ -75,30 +85,6 @@ export function Modal(kitProps: ModalKitProps) {
       closeDialog()
     },
   })
-
-  // user action: open dialog
-  const openDialog = () => {
-    setInnerOpen(true)
-    dialogDOM()?.showModal()
-  }
-
-  // user action: close dialog
-  const closeDialog = (options?: {
-    /**
-     * if it's caused by dom, it should set false
-     * @default true
-     */
-    witDOMChange?: boolean
-  }) => {
-    setInnerOpen(false)
-    if (options?.witDOMChange ?? true) dialogDOM()?.close()
-    props.onClose?.()
-  }
-
-  // user action: toggle(open & close) dialog
-  function toggleDialog() {
-    innerOpen() ? closeDialog() : openDialog()
-  }
 
   return (
     <PopPortal name='dialog'>
@@ -126,6 +112,44 @@ export function Modal(kitProps: ModalKitProps) {
       </Show>
     </PopPortal>
   )
+}
+
+function useModalTriggerState(config: {
+  open?: Accessor<boolean>
+  dialogDOM: Accessor<HTMLDialogElement | undefined>
+  dialogContentDOM: Accessor<HTMLDivElement | undefined>
+  onOpen?: () => void
+  onClose?: (
+    /**
+     * if it's caused by dom, it should set false
+     * @default true
+     */
+    byDOM?: boolean,
+  ) => void
+}) {
+  const [innerOpen, setInnerOpen] = createSignal(shrinkFn(config.open) ?? false)
+  function openDialog() {
+    setInnerOpen(true)
+    config.onOpen?.()
+  }
+  function closeDialog(options?: {
+    /**
+     * if it's caused by dom, it should set false
+     * @default true
+     */
+    byDOM?: boolean
+  }) {
+    setInnerOpen(false)
+    config.onClose?.(options?.byDOM ?? true)
+  }
+  function toggleDialog() {
+    innerOpen() ? closeDialog() : openDialog()
+  }
+
+  // sync original's close event with innwe state
+  useDOMEventListener(config.dialogDOM, 'close', () => closeDialog({ byDOM: false }))
+
+  return { innerOpen, openDialog, closeDialog, toggleDialog }
 }
 
 /**

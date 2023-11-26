@@ -91,7 +91,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       />
 
       {/* modal dialog */}
-      <Modal controllerRef={setModalRef}>
+      <Modal title='select token' controllerRef={setModalRef}>
         <TokenSelectorModalContent
           shadowProps={props['anatomy:tokenSelectorModalContent']}
           onTokenSelect={(token) => {
