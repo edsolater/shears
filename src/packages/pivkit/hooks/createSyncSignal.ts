@@ -12,12 +12,12 @@ export function createSyncSignal<T>(options: {
   defaultValue?(): T
   getValueFromOutside: (prev?: T) => T
   onInvokeSetter?: (value: T) => void
-}): Signal<T>
+}): Signal<T|undefined>
 export function createSyncSignal<T>(options: {
   defaultValue?(): T
   getValueFromOutside: (prev?: T) => T | undefined
   onInvokeSetter?: (value: T) => void
-}): Signal<T> {
+}): Signal<T|undefined> {
   const [accessor, setAccessor] = createSignal(
     'defaultValue' in options
       ? options.defaultValue?.() ?? options.getValueFromOutside()
@@ -40,6 +40,5 @@ export function createSyncSignal<T>(options: {
     ),
   )
 
-  // @ts-expect-error no need to check
   return [accessor, setAccessor]
 }

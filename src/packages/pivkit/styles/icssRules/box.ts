@@ -140,7 +140,7 @@ export type ICSSClickableOption = {}
  */
 export const icssClickable = createICSS((options?: ICSSClickableOption) => ({
   cursor: 'pointer',
-  transition: '1500ms',
+  transition: '100ms',
   backdropFilter: 'brightness(1)',
   filter: 'brightness(1)',
   '&:is(:hover,:active,:focus)': { backdropFilter: 'brightness(0.95)', filter: 'brightness(0.95)' },

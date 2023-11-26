@@ -1,22 +1,22 @@
-import { isStringNumber, mergeFunction } from '@edsolater/fnkit'
+import { isStringNumber } from '@edsolater/fnkit'
 import {
   Accessify,
   Box,
-  BoxKitProps,
   BoxProps,
-  Panel,
   Input,
-  InputProps,
+  InputKitProps,
   KitProps,
   List,
   Modal,
   ModalController,
-  Piv,
+  Panel,
   Text,
-  TextProps,
+  TextKitProps,
   createRef,
   createSyncSignal,
   icssClickable,
+  icssCyberpenkBackground,
+  icssFrostedCard,
   icssInputType,
   icssLabel,
   icssRow,
@@ -32,16 +32,23 @@ export interface TokenAmountInputBoxController {}
 
 export interface TokenAmountInputBoxProps {
   token?: Accessify<Token | undefined, TokenAmountInputBoxController>
-  tokenProps?: TextProps
+  tokenProps?: TextKitProps
   amount?: Accessify<Numberish | undefined, TokenAmountInputBoxController>
-  'anatomy:amountInput'?: InputProps
-  'anatomy:tokenSelectorModalContent'?: TokenSelectorModalContentProps
+  'anatomy:amountInput'?: InputKitProps
+  'anatomy:tokenSelectorModalContent'?: TokenSelectorModalContentKitProps
   onSelectToken?: (token: Token | undefined) => void
   onAmountChange?: (amount: Numberish | undefined) => void
 }
 
 export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
-  const { props, lazyLoadController } = useKitProps(rawProps)
+  const { props, lazyLoadController } = useKitProps(rawProps, {
+    defaultProps: {
+      'anatomy:tokenSelectorModalContent': {
+        icss: [icssCyberpenkBackground, icssFrostedCard],
+      },
+    },
+    name: 'TokenAmountInputBox',
+  })
 
   const [token, setToken] = createSyncSignal({
     getValueFromOutside: () => props.token,
@@ -86,27 +93,29 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       <Modal controllerRef={setModalRef}>
         <TokenSelectorModalContent
           shadowProps={props['anatomy:tokenSelectorModalContent']}
-          onTokenSelect={mergeFunction(setToken, () => {
+          onTokenSelect={(token) => {
+            setToken(token ?? props.token)
             modalRef()?.close()
-          })}
+          }}
         />
       </Modal>
     </Box>
   )
 }
 
-interface TokenSelectorModalContentProps extends BoxKitProps {
+interface TokenSelectorModalContentProps {
   onTokenSelect?(token: Token | undefined): void
 }
+type TokenSelectorModalContentKitProps = KitProps<TokenSelectorModalContentProps>
 
 /**
  * hold state (store's tokens)
  */
-function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
-  const { props } = useKitProps(rawProps)
+function TokenSelectorModalContent(rawProps: TokenSelectorModalContentKitProps) {
+  const { props, shadowProps } = useKitProps(rawProps)
   const tokens = store.tokens
   return (
-    <Panel>
+    <Panel shadowProps={shadowProps}>
       <Box>
         search: <Input icss={{ border: 'solid' }} />
       </Box>

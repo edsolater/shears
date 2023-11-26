@@ -32,7 +32,6 @@ export interface ModalProps {
 }
 
 export type ModalKitProps = KitProps<ModalProps>
-
 export function Modal(kitProps: ModalKitProps) {
   const { props, lazyLoadController, shadowProps } = useKitProps(kitProps, { name: 'Modal' })
   lazyLoadController(() => ({
@@ -85,7 +84,7 @@ export function Modal(kitProps: ModalKitProps) {
   // user action: close dialog
   const closeDialog = (options?: {
     /**
-     *  if it's caused by dom, it should set false
+     * if it's caused by dom, it should set false
      * @default true
      */
     witDOMChange?: boolean
@@ -109,7 +108,15 @@ export function Modal(kitProps: ModalKitProps) {
           shadowProps={shadowProps}
           htmlProps={{ role: 'dialog' }}
           // @ts-expect-error lack of icss type
-          icss={{ '&::backdrop': props.backdropICSS }}
+          icss={{
+            border: 'none',
+            padding: '0',
+            background: 'transparent',
+            overflowY: 'visible',
+            maxHeight: '100dvh',
+            maxWidth: '100dvw',
+            '&::backdrop': props.backdropICSS,
+          }}
         >
           <Piv domRef={setDialogContentDOM} icss={{ display: 'contents' }}>
             {props.children}

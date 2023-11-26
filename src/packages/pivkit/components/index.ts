@@ -1,7 +1,6 @@
 export * from './Boxes'
 export * from './Span'
 export * from './Button'
-export * from './Panel'
 export * from './Collapse'
 export * from './Drawer'
 export * from './Icon'

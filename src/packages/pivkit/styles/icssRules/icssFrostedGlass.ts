@@ -34,3 +34,9 @@ export const icssFrostedGlass = createICSS((options?: { blurBg?: boolean }) => (
     linear-gradient(hsl(0deg 0% 0% / 5%), hsl(0deg 0% 0% / 5%))`,
   },
 }))
+
+export const icssFrostedCard = createICSS((options?: { size?: 'sm' | 'md' | 'lg' }) => ({
+  padding: '24px 32px 20px',
+  borderRadius: '1em',
+  border: 'solid rgba(99,130,202,.2)',
+}))
