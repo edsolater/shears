@@ -1,5 +1,5 @@
 import { SOLToken } from '../../../utils/dataStructures/Token'
-import { toRecord } from '../../../utils/dataTransmit/getItems'
+import { toRecord } from '../../../utils/dataTransmit/itemMethods'
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'

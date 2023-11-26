@@ -15,6 +15,7 @@ export interface ModalController {
 
 export interface ModalProps {
   open?: boolean
+  
 
   onClose?(): void
 

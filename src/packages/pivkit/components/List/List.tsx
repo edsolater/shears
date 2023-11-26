@@ -16,7 +16,7 @@ import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useInters
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
 import { KitProps, Piv, useKitProps } from '../../piv'
 import { ListItem } from './ListItem'
-import { ItemWrapper, toArray } from '../../../../app/utils/dataTransmit/getItems'
+import { ItemWrapper, toArray } from '../../../../app/utils/dataTransmit/itemMethods'
 
 export interface ListController {
   resetRenderCount(): void

@@ -1,6 +1,6 @@
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
-import { toRecord } from '../../../utils/dataTransmit/getItems'
+import { toRecord } from '../../../utils/dataTransmit/itemMethods'
 import { StoreData } from '../store'
 import { FarmJSON, FarmJSONFile } from '../types/farm'
 

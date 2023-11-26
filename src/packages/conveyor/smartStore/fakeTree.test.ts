@@ -1,5 +1,4 @@
-import { expect, test } from 'vitest'
-import { createFakeTree } from './fakeTree'
+import { test } from 'vitest'
 
 test('basic usage', () => {
   

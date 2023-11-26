@@ -102,7 +102,7 @@ export function getByIndex(i: ItemWrapper<any>, order: number) {
 
 /**
  * like set/map's has, but can use for all Itemsable
- * 
+ *
  */
 export function hasValue<T>(i: ItemWrapper<T>, item: T) {
   if (isUndefined(i)) return false
@@ -143,8 +143,11 @@ export function has<T>(i: ItemWrapper<T>, key: any) {
   return i[key] !== undefined
 }
 
-export function slice<T extends ItemWrapper<any>>(i: T, range?: [start: number, end?: number]): T {
-  if (!range) return i
+export function slice<T extends ItemWrapper<any>>(i: T, count?: number): T
+export function slice<T extends ItemWrapper<any>>(i: T, range?: [start: number, end?: number]): T
+export function slice<T extends ItemWrapper<any>>(i: T, num?: [start: number, end?: number] | number): T {
+  if (num == null) return i
+  const range = isArray(num) ? num : [0, num]
   if (isUndefined(i)) return i
   if (isMap(i)) return new Map([...i.entries()].slice(...range)) as T
   if (isArray(i)) return i.slice(...range) as T
@@ -159,8 +162,7 @@ export function slice<T extends ItemWrapper<any>>(i: T, range?: [start: number, 
       index++
     }
     return result.values() as T
-  }
-  else {
+  } else {
     const newKeys = Object.keys(i).slice(...range)
     return pick(i, newKeys) as T
   }

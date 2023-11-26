@@ -1,5 +1,5 @@
 import { appApiUrls } from '../../../utils/common/config'
-import { toArray } from '../../../utils/dataTransmit/getItems'
+import { toArray } from '../../../utils/dataTransmit/itemMethods'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { workerCommands } from '../../../utils/webworker/type'
 import { setStore, storeData } from '../store'

@@ -16,7 +16,7 @@ import { mergeProps } from './piv/utils'
 import { AddDefaultPivProps, addDefaultPivProps } from './piv/utils/addDefaultProps'
 import { omit } from './piv/utils/omit'
 import { getPropsFromAddPropContext } from './piv/AddProps'
-import { get, hasValue } from '../../app/utils/dataTransmit/getItems'
+import { get, hasValue } from '../../app/utils/dataTransmit/itemMethods'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props

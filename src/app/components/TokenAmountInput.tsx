@@ -27,6 +27,7 @@ import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
 import { TokenAvatar } from './TokenAvatar'
+import { slice } from '../utils/dataTransmit/itemMethods'
 
 export interface TokenAmountInputBoxController {}
 
@@ -122,7 +123,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentKitProps) 
 
       <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>
 
-      <List items={tokens}>
+      <List items={slice(tokens, 10)}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
       </List>
     </Panel>
