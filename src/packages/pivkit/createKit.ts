@@ -140,6 +140,10 @@ function getParsedKitProps<
   // merge kit props
   const mergedGettersProps = pipe(
     rawProps,
+    //handle context props
+    (props) => mergeProps(props, getPropsFromPropContextContext({ componentName: options?.name })),
+    // handle addPropContext props
+    (props) => mergeProps(props, getPropsFromAddPropContext({ componentName: options?.name })),
     // get defaultProps from uikitTheme
     (props) => (options?.name && hasUIKitTheme(options.name) ? mergeProps(getUIKitTheme(options.name), props) : props),
     // get default props
@@ -215,24 +219,18 @@ export function useKitProps<
   type RawProps = GetDeAccessifiedProps<P>
 
   // TODO: should move to getParsedKitProps
-  // handle ControllerContext
   // wrap controllerContext based on props:innerController is only in `<Piv>`
   const mergedContextController = runtimeObjectFromAccess(getControllerObjFromControllerContext)
-
-  // handle PropContext
-  const contextProps = getPropsFromPropContextContext({ componentName: options?.name  })
-  const addPropsContextProps = getPropsFromAddPropContext({ componentName: options?.name})
-  
-  const propContextParsedProps = mergeProps(kitProps, contextProps, addPropsContextProps)
 
   // if (propContextParsedProps.children === 'PropContext can pass to deep nested components') {
   //   console.log('kitProps raw: ', { ...propContextParsedProps })
   // }
   const { loadController, getControllerCreator } = createComponentController<RawProps, Controller>()
-  const composedProps = getParsedKitProps(
-    propContextParsedProps,
-    mergeObjects({ controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) }, options),
-  ) as any /* too difficult to type, no need to check */
+  const controller = mergeObjects(
+    { controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) },
+    options,
+  )
+  const composedProps = getParsedKitProps(kitProps, controller) as any /* too difficult to type, no need to check */
   const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
   return {
     props: composedProps,
