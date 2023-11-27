@@ -1,12 +1,12 @@
-import { Accessor, Show, createEffect, createSignal, onMount } from 'solid-js'
+import { shrinkFn } from '@edsolater/fnkit'
+import { Accessor, Show, createContext, createEffect, createSignal, useContext } from 'solid-js'
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
 import { createRef } from '../../hooks/createRef'
 import { ICSS, KitProps, Piv, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { PopPortal } from '../PopPortal'
-import { shrinkFn } from '@edsolater/fnkit'
-import { option } from '@raydium-io/raydium-sdk'
+import { createController } from '../../utils/createController'
 
 export interface ModalController {
   isOpen: boolean
@@ -38,9 +38,13 @@ export interface ModalProps {
 
 export type ModalKitProps = KitProps<ModalProps>
 
+export const ModalContext = createContext<ModalController>()
+
 export function Modal(kitProps: ModalKitProps) {
-  const { props, lazyLoadController, shadowProps } = useKitProps(kitProps, { name: 'Modal' })
-  lazyLoadController(() => ({
+  const modalController = createController(() => ({
+    dialogDOM,
+    dialogContentDOM,
+    /** is dialog open */
     get isOpen() {
       return innerOpen()
     },
@@ -48,6 +52,12 @@ export function Modal(kitProps: ModalKitProps) {
     close: closeDialog,
     toggle: toggleDialog,
   }))
+
+
+  const { props, shadowProps } = useKitProps(kitProps, {
+    name: 'Modal',
+    controller: () => modalController,
+  })
   const [dialogDOM, setDialogDOM] = createRef<HTMLDialogElement>()
   const [dialogContentDOM, setDialogContentDOM] = createRef<HTMLDivElement>()
   const { innerOpen, openDialog, closeDialog, toggleDialog } = useModalTriggerState({
@@ -87,30 +97,32 @@ export function Modal(kitProps: ModalKitProps) {
   })
 
   return (
-    <PopPortal name='dialog'>
-      <Show when={shouldRenderDOM()}>
-        <Piv<'dialog'>
-          render:self={(selfProps) => renderHTMLDOM('dialog', selfProps)}
-          domRef={setDialogDOM}
-          shadowProps={shadowProps}
-          htmlProps={{ role: 'dialog' }}
-          // @ts-expect-error lack of icss type
-          icss={{
-            border: 'none',
-            padding: '0',
-            background: 'transparent',
-            overflowY: 'visible',
-            maxHeight: '100dvh',
-            maxWidth: '100dvw',
-            '&::backdrop': props.backdropICSS,
-          }}
-        >
-          <Piv domRef={setDialogContentDOM} icss={{ display: 'contents' }}>
-            {props.children}
+    <ModalContext.Provider value={modalController}>
+      <PopPortal name='dialog'>
+        <Show when={shouldRenderDOM()}>
+          <Piv<'dialog'>
+            render:self={(selfProps) => renderHTMLDOM('dialog', selfProps)}
+            domRef={setDialogDOM}
+            shadowProps={shadowProps}
+            htmlProps={{ role: 'dialog' }}
+            // @ts-expect-error lack of icss type
+            icss={{
+              border: 'none',
+              padding: '0',
+              background: 'transparent',
+              overflowY: 'visible',
+              maxHeight: '100dvh',
+              maxWidth: '100dvw',
+              '&::backdrop': props.backdropICSS,
+            }}
+          >
+            <Piv domRef={setDialogContentDOM} icss={{ display: 'contents' }}>
+              {props.children}
+            </Piv>
           </Piv>
-        </Piv>
-      </Show>
-    </PopPortal>
+        </Show>
+      </PopPortal>
+    </ModalContext.Provider>
   )
 }
 
