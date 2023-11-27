@@ -54,9 +54,9 @@ export function Modal(kitProps: ModalKitProps) {
     open: () => Boolean(props.open),
     dialogDOM,
     dialogContentDOM,
-    onClose(byDOM) {
+    onClose(affectDOM) {
       props.onClose?.()
-      if (byDOM) dialogDOM()?.close()
+      if (affectDOM) dialogDOM()?.close()
     },
     onOpen() {
       props.onOpen?.()
@@ -78,7 +78,7 @@ export function Modal(kitProps: ModalKitProps) {
     return ev.preventDefault()
   })
 
-  // register click outside
+  // click outside to close dialog
   useClickOutside(dialogContentDOM, {
     disable: () => !innerOpen(),
     onClickOutSide: () => {
@@ -146,7 +146,7 @@ function useModalTriggerState(config: {
     innerOpen() ? closeDialog() : openDialog()
   }
 
-  // sync original's close event with innwe state
+  // sync dislog's  build-in close event with inner state
   useDOMEventListener(config.dialogDOM, 'close', () => closeDialog({ byDOM: false }))
 
   return { innerOpen, openDialog, closeDialog, toggleDialog }
