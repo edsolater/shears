@@ -46,6 +46,8 @@ export type ModalKitProps = KitProps<ModalProps>
 export const ModalContext = createContext<Partial<ModalController>>({})
 
 /**
+ * for details,
+ * @see https://chakra-ui.com/docs/components/modal
  * sub-component:
  * - {@link ModalTitle \<ModalTitle\>} - register mobal title. Actually is {@link Text \<Text\>}
  */
@@ -141,7 +143,7 @@ export function Modal(kitProps: ModalKitProps) {
 /**
  * a sub-component of {@link Modal \<Modal\>}
  */
-function ModalTitle(
+export function ModalTitle(
   kitProps: Omit<KitProps, 'children'> & {
     children?: string
   },
@@ -153,7 +155,16 @@ function ModalTitle(
   // onMount(() => {
   //   modalContext.set({ title: kitProps.children })
   // })
-  return <Text {...kitProps}></Text>
+  return (
+    <Text
+      shadowProps={kitProps}
+      icss={{
+        fontSize: '1.5rem',
+        fontWeight: 'bold',
+        marginBottom: '.5em',
+      }}
+    />
+  )
 }
 
 // TODO: no 'byDOM' option

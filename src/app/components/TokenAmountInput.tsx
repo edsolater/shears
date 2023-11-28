@@ -9,6 +9,7 @@ import {
   List,
   Modal,
   ModalController,
+  ModalTitle,
   Panel,
   Text,
   TextKitProps,
@@ -117,6 +118,8 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentKitProps) 
   const tokens = store.tokens
   return (
     <Panel shadowProps={shadowProps}>
+      <ModalTitle>Select a token</ModalTitle>
+
       <Box>
         search: <Input icss={{ border: 'solid' }} />
       </Box>
