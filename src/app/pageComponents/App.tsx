@@ -113,8 +113,7 @@ const task = createTask((get) => {
 
 /** code for test */
 function useExperimentalCode() {
-  console.log('3: ', 3)
   const { store, setStore } = createBranchStore<{ a: number; b?: { c: number } }>({ a: 1 })
-  console.log('2: ', 2)
   setStore({ b: { c: 3 } })
+  console.log('store.b.c: ', store.b?.c()) // TODO: 💩 type is wrong
 }

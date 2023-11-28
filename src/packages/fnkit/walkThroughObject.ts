@@ -16,7 +16,6 @@ export function walkThroughObject(
 ) {
   function walk(obj: object, keyPaths: (keyof any)[] = []) {
     Object.keys(obj).forEach((key) => {
-      console.log('walk', obj, key)
       const value = Reflect.get(obj, key)
       if (isObject(value)) {
         walk(value, keyPaths.concat(key))
@@ -73,15 +72,19 @@ export function setByPath(obj: object, path: (keyof any)[], value: any): boolean
 /** even not reachable will be ok
  * used in {@link setByPath}
  */
-function recursiveSet(obj: object, path: (keyof any)[], value: any) {
-  if (!isObjectLike(obj)) return
-  if (path.length === 0) return
-  if (path.length === 1) return Reflect.set(obj, path[0], value)
+function recursiveSet(obj: object, path: (keyof any)[], value: any): object {
+  if (!isObjectLike(obj)) return obj
+  if (path.length === 0) return obj
+  if (path.length === 1) {
+    Reflect.set(obj, path[0], value)
+    return obj
+  }
   const [currentKey, ...restPath] = path
   if (currentKey in obj) {
-    recursiveSet(Reflect.get(obj, currentKey), restPath, value)
+    return recursiveSet(Reflect.get(obj, currentKey), restPath, value)
   } else {
     Reflect.set(obj, currentKey, recursiveSet({}, restPath, value))
+    return obj
   }
 }
 

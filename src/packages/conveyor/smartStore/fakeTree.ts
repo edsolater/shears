@@ -25,7 +25,9 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
 
       // set tree
       if (isInfiniteObjNodeUnloaded(treeNode)) {
-        getByPath(root, parentPath)[currentKey] = options.leaf(getByPath(rawObj, keyPaths))
+        const rawValue = getByPath(rawObj, keyPaths)
+        const leaf = options.leaf(rawValue)
+        getByPath(root, parentPath)[currentKey] = leaf
       } else {
         options.injectValueToLeaf(treeNode, value)
       }
