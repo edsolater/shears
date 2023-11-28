@@ -9,7 +9,11 @@ import { PopPortal } from '../PopPortal'
 import { createController } from '../../utils/createController'
 
 export interface ModalController {
+  dialogDOM?(): Accessor<HTMLDialogElement | undefined>
+  dialogContentDOM?(): Accessor<HTMLDivElement | undefined>
   isOpen: boolean
+  /** modal title */
+  title(): Accessor<string>
   open(): void
   close(): void
   toggle(): void
@@ -41,18 +45,18 @@ export type ModalKitProps = KitProps<ModalProps>
 export const ModalContext = createContext<ModalController>()
 
 export function Modal(kitProps: ModalKitProps) {
-  const modalController = createController(() => ({
+  const modalController = createController<ModalController>(() => ({
     dialogDOM,
     dialogContentDOM,
+    title: () => props.title,
     /** is dialog open */
     get isOpen() {
       return innerOpen()
     },
-    open: openDialog,
-    close: closeDialog,
-    toggle: toggleDialog,
+    open: open,
+    close: close,
+    toggle: toggle,
   }))
-
 
   const { props, shadowProps } = useKitProps(kitProps, {
     name: 'Modal',
@@ -60,10 +64,13 @@ export function Modal(kitProps: ModalKitProps) {
   })
   const [dialogDOM, setDialogDOM] = createRef<HTMLDialogElement>()
   const [dialogContentDOM, setDialogContentDOM] = createRef<HTMLDivElement>()
-  const { innerOpen, openDialog, closeDialog, toggleDialog } = useModalTriggerState({
+  const {
+    isOpen: innerOpen,
+    open,
+    close,
+    toggle,
+  } = useDisclosure({
     open: () => Boolean(props.open),
-    dialogDOM,
-    dialogContentDOM,
     onClose(affectDOM) {
       props.onClose?.()
       if (affectDOM) dialogDOM()?.close()
@@ -75,10 +82,13 @@ export function Modal(kitProps: ModalKitProps) {
   })
   const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
+  // sync dislog's  build-in close event with inner state
+  useDOMEventListener(dialogDOM, 'close', () => close({ byDOM: false }))
+
   // initly load modal show
   createEffect(() => {
     if (props.open) {
-      openDialog()
+      innerOpen()
     }
   })
 
@@ -92,7 +102,7 @@ export function Modal(kitProps: ModalKitProps) {
   useClickOutside(dialogContentDOM, {
     disable: () => !innerOpen(),
     onClickOutSide: () => {
-      closeDialog()
+      close()
     },
   })
 
@@ -126,10 +136,8 @@ export function Modal(kitProps: ModalKitProps) {
   )
 }
 
-function useModalTriggerState(config: {
+function useDisclosure(config: {
   open?: Accessor<boolean>
-  dialogDOM: Accessor<HTMLDialogElement | undefined>
-  dialogContentDOM: Accessor<HTMLDivElement | undefined>
   onOpen?: () => void
   onClose?: (
     /**
@@ -139,12 +147,12 @@ function useModalTriggerState(config: {
     byDOM?: boolean,
   ) => void
 }) {
-  const [innerOpen, setInnerOpen] = createSignal(shrinkFn(config.open) ?? false)
-  function openDialog() {
+  const [isOpen, setInnerOpen] = createSignal(shrinkFn(config.open) ?? false)
+  function open() {
     setInnerOpen(true)
     config.onOpen?.()
   }
-  function closeDialog(options?: {
+  function close(options?: {
     /**
      * if it's caused by dom, it should set false
      * @default true
@@ -154,14 +162,11 @@ function useModalTriggerState(config: {
     setInnerOpen(false)
     config.onClose?.(options?.byDOM ?? true)
   }
-  function toggleDialog() {
-    innerOpen() ? closeDialog() : openDialog()
+  function toggle() {
+    isOpen() ? close() : open()
   }
 
-  // sync dislog's  build-in close event with inner state
-  useDOMEventListener(config.dialogDOM, 'close', () => closeDialog({ byDOM: false }))
-
-  return { innerOpen, openDialog, closeDialog, toggleDialog }
+  return { isOpen, open, close, toggle }
 }
 
 /**
