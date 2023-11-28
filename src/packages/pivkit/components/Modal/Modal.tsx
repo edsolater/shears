@@ -1,5 +1,5 @@
 import { shrinkFn } from '@edsolater/fnkit'
-import { Accessor, Show, createContext, createEffect, createSignal, useContext } from 'solid-js'
+import { Accessor, Show, createContext, createEffect, createSignal, onMount, useContext } from 'solid-js'
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
 import { createRef } from '../../hooks/createRef'
@@ -7,11 +7,12 @@ import { ICSS, KitProps, Piv, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { PopPortal } from '../PopPortal'
 import { createController } from '../../utils/createController'
+import { Text } from '../Text'
 
 export interface ModalController {
-  dialogDOM?(): Accessor<HTMLDialogElement | undefined>
-  dialogContentDOM?(): Accessor<HTMLDivElement | undefined>
-  isOpen: boolean
+  dialogDOM: Accessor<HTMLDialogElement | undefined>
+  dialogContentDOM: Accessor<HTMLDivElement | undefined>
+  isOpen: Accessor<boolean>
   /** modal title */
   title(): Accessor<string>
   open(): void
@@ -42,17 +43,19 @@ export interface ModalProps {
 
 export type ModalKitProps = KitProps<ModalProps>
 
-export const ModalContext = createContext<ModalController>()
+export const ModalContext = createContext<Partial<ModalController>>({})
 
+/**
+ * sub-component:
+ * - {@link ModalTitle \<ModalTitle\>} - register mobal title. Actually is {@link Text \<Text\>}
+ */
 export function Modal(kitProps: ModalKitProps) {
   const modalController = createController<ModalController>(() => ({
     dialogDOM,
     dialogContentDOM,
     title: () => props.title,
     /** is dialog open */
-    get isOpen() {
-      return innerOpen()
-    },
+    isOpen: innerOpen,
     open: open,
     close: close,
     toggle: toggle,
@@ -115,7 +118,6 @@ export function Modal(kitProps: ModalKitProps) {
             domRef={setDialogDOM}
             shadowProps={shadowProps}
             htmlProps={{ role: 'dialog' }}
-            // @ts-expect-error lack of icss type
             icss={{
               border: 'none',
               padding: '0',
@@ -136,6 +138,25 @@ export function Modal(kitProps: ModalKitProps) {
   )
 }
 
+/**
+ * a sub-component of {@link Modal \<Modal\>}
+ */
+function ModalTitle(
+  kitProps: Omit<KitProps, 'children'> & {
+    children?: string
+  },
+) {
+  const modalContext = useContext(ModalContext)
+
+  // imply it !!
+
+  // onMount(() => {
+  //   modalContext.set({ title: kitProps.children })
+  // })
+  return <Text {...kitProps}></Text>
+}
+
+// TODO: no 'byDOM' option
 function useDisclosure(config: {
   open?: Accessor<boolean>
   onOpen?: () => void
