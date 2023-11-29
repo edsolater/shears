@@ -33,7 +33,6 @@ export type TaskRunner = {
  *
  * const task = createTask([testObserverableSubscribable, testObserverableSubscribableB], async (get) => {
  *   await Promise.resolve(3)
- *   console.log('🧪 task begin: ', get(testObserverableSubscribable), get(testObserverableSubscribableB)) //🤔 why run 1 twice?
  * })
  */
 export function createTask(
@@ -53,7 +52,6 @@ export function createTask(
   assignObject(executor, {
     relatedLeafs: new WeakerSet<Leaf<any>>(relatedLeafs),
     get visiable() {
-      console.log('1: ', 1) // FIXME: <-- bug here, not invoke
       return isExecutorVisiable(executor)
     },
   })
@@ -82,10 +80,7 @@ function recordSubscribableToExecutor<T>(subscribable: Leaf<T>, context: TaskExe
 }
 
 function isExecutorVisiable(context: TaskExecutor) {
-  
-  console.log('invoke')
   for (const leaf of context.relatedLeafs) {
-    console.log('leaf: ', leaf)
     if (leaf.visiable()) return true
   }
   return false
@@ -93,9 +88,7 @@ function isExecutorVisiable(context: TaskExecutor) {
 
 /** **only place** to invoke task executor */
 export function invokeExecutor(executor: TaskExecutor) {
-  console.log('executor su: ', executor)
   if (executor.visiable) {
-    console.log('122')
     asyncInvoke(executor)
   }
 }

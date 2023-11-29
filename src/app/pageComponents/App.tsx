@@ -111,24 +111,24 @@ const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: 
 
 /** code for test */
 function useExperimentalCode() {
-  let effectRunCount = 0
-  const { store } = createBranchStore({ testCount: 1 })
-  const effect = createTask([store.testCount], (get) => {
-    console.log('task : ', new Error().stack)
-    const n = get(store.testCount)
-    effectRunCount++
-    console.count('run')
-  })
-  effect.register()
-  store.testCount.set((n) => n + 1)
-  store.testCount.set((n) => n + 1)
-  console.log('effectRunCount: ', effectRunCount)
-  store.testCount.set((n) => n + 1)
-  console.log('🧪🧪🧪🧪 before visiable')
-  setLeafVisiable(store.testCount, true)
-  console.log('🧪🧪🧪🧪 after visiable')
-  const v = store.testCount.subscribedExecutors
-  console.log('v: ', v)
-  store.testCount.set((n) => n + 1)
-  console.log('effectRunCount after visiable: ', effectRunCount)
+  // let effectRunCount = 0
+  // const { store } = createBranchStore({ testCount: 1 })
+  // const effect = createTask([store.testCount], (get) => {
+  //   const n = get(store.testCount)
+  //   effectRunCount++
+  // })
+  // effect.register()
+  // store.testCount.set((n) => n + 1)
+  // store.testCount.set((n) => n + 1)
+  // store.testCount.set((n) => n + 1)
+  // console.log('🧪🧪🧪🧪 before visiable')
+  // setLeafVisiable(store.testCount, true)
+  // console.log('🧪🧪🧪🧪 after visiable')
+  // const v = store.testCount.subscribedExecutors
+  // console.log('v: ', v)
+  // store.testCount.set((n) => n + 1)
+  // console.log('effectRunCount after visiable 0: ', effectRunCount) // task still not be invoked
+  // setTimeout(() => {
+  //   console.log('effectRunCount after visiable 1 : ', effectRunCount) // task has been invoked
+  // })
 }

@@ -15,27 +15,28 @@ type AttachFn = (payloads: {
   key: keyof any
   /** this maybe not obj */
   obj: object
-  originalValue: any
-  patchValue: any
+  originalValueDescriptor: PropertyDescriptor | undefined
+  patchValueDescriptor: PropertyDescriptor | undefined
 }) => void
 
 const simpleObectAssign = ({
   obj,
   key,
-  patchValue,
+  originalValueDescriptor,
+  patchValueDescriptor,
 }: {
   key: keyof any
   /** this maybe not obj */
   obj: object
-  originalValue: any
-  patchValue: any
-}): object =>
-  Object.defineProperty(obj, key, {
-    configurable: true,
-    enumerable: true,
-    writable: true,
-    value: patchValue,
-  })
+  originalValueDescriptor: PropertyDescriptor | undefined
+  patchValueDescriptor: PropertyDescriptor | undefined
+}) => {
+  if (patchValueDescriptor) {
+    Object.defineProperty(obj, key, patchValueDescriptor)
+  } else {
+    Reflect.deleteProperty(obj, key)
+  }
+}
 
 /**
  * @todo move to fnkit
@@ -52,13 +53,13 @@ export function assignObjectWithConfigs<T extends object>(
   attachRule: AttachFn = simpleObectAssign,
 ): T {
   Reflect.ownKeys(patchObject).forEach((key) => {
-    const originalValue = Reflect.get(originalObject, key)
-    const patchValue = Reflect.get(patchObject, key)
-    const needGoDeep = isObjectLike(originalValue) && isObjectLike(patchValue)
+    const originalValueDescriptor = Object.getOwnPropertyDescriptor(originalObject, key)
+    const patchValueDescriptor = Object.getOwnPropertyDescriptor(patchObject, key)
+    const needGoDeep = isObjectLikeDiscriptor(originalValueDescriptor) && isObjectLikeDiscriptor(patchValueDescriptor)
     if (needGoDeep) {
-      assignObjectWithConfigs(originalValue, patchValue, attachRule)
+      assignObjectWithConfigs(originalValueDescriptor.value, patchValueDescriptor.value, attachRule)
     } else {
-      attachRule({ key, obj: originalObject, originalValue, patchValue })
+      attachRule({ key, obj: originalObject, originalValueDescriptor, patchValueDescriptor })
     }
   })
   return originalObject
