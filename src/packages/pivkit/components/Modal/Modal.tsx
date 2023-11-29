@@ -1,4 +1,4 @@
-import { shrinkFn } from '@edsolater/fnkit'
+import { isString, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, Show, createContext, createEffect, createSignal, onMount, useContext } from 'solid-js'
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
@@ -8,13 +8,14 @@ import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { PopPortal } from '../PopPortal'
 import { createController } from '../../utils/createController'
 import { Text } from '../Text'
+import { createComponentContext, useComponentContext } from '../../hooks/createComponentContext'
 
 export interface ModalController {
   dialogDOM: Accessor<HTMLDialogElement | undefined>
   dialogContentDOM: Accessor<HTMLDivElement | undefined>
   isOpen: Accessor<boolean>
   /** modal title */
-  title(): Accessor<string>
+  title: Accessor<string>
   open(): void
   close(): void
   toggle(): void
@@ -43,7 +44,7 @@ export interface ModalProps {
 
 export type ModalKitProps = KitProps<ModalProps>
 
-export const ModalContext = createContext<Partial<ModalController>>({})
+export const ModalContext = createComponentContext<Partial<ModalController>>()
 
 /**
  * for details,
@@ -148,16 +149,24 @@ export function ModalTitle(
     children?: string
   },
 ) {
-  const modalContext = useContext(ModalContext)
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'ModalTitle' })
+  const [modalContext, setModalContext] = useComponentContext(ModalContext)
 
   // imply it !!
 
-  // onMount(() => {
-  //   modalContext.set({ title: kitProps.children })
-  // })
+  createEffect(() => {
+    const title = props.children
+    if (isString(title)) {
+      setModalContext({ title: () => title })
+    }
+  })
+
+  createEffect(() => {
+    console.log('context title: ', modalContext.title?.())
+  })
   return (
     <Text
-      shadowProps={kitProps}
+      shadowProps={shadowProps}
       icss={{
         fontSize: '1.5rem',
         fontWeight: 'bold',

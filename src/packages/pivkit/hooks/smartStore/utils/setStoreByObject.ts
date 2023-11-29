@@ -1,10 +1,11 @@
 import { isFunction, isNullish, isObject, isPrimitive, type AnyObj } from '@edsolater/fnkit'
 import { produce } from 'solid-js/store'
 
-/** it pass returned function to  setStore  */
-export function createStoreSetter<T extends Record<string, any>>(
-  newStorePieces: Partial<T>,
-) {
+/** 
+ * it pass returned function to  setStore
+ * use solidjs {@link produce} to merge new store
+ */
+export function createStoreSetter<T extends Record<string, any>>(newStorePieces: Partial<T>) {
   return produce((draft: AnyObj) => {
     Object.entries(newStorePieces).forEach(([propertyName, newValue]) => {
       const oldValue = draft[propertyName]
