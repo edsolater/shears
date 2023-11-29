@@ -6,7 +6,7 @@ import { CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
 
 export type TransitionPhase =
-  | 'hidden' /* UI invisiable */
+  | 'hidden' /* UI unvisiable */
   | 'shown' /* UI visiable and stable(not in transition) */
   | 'during-process'
 

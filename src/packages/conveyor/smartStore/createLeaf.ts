@@ -86,19 +86,13 @@ export function isLeafVisiable<T>(value: Leaf<T>) {
  */
 export function recordSubscribableToAtom<T>(context: TaskExecutor, subscribable: Leaf<T>) {
   return subscribable.subscribedExecutors.add(context)
-
 }
 
 export function invokeBindedExecutors(subscribable: Leaf<any>) {
+  if (subscribable.subscribedExecutors.size === 0) return
   subscribable.subscribedExecutors.forEach(invokeExecutor)
 }
 
 export function setLeafVisiable<T>(value: Leaf<T>, visiable: boolean) {
   value.visiable.set(visiable)
-}
-export function visiableLeaf<T>(value: Leaf<T>) {
-  setLeafVisiable(value, true)
-}
-export function invisiableLeaf<T>(value: Leaf<T>) {
-  setLeafVisiable(value, false)
 }

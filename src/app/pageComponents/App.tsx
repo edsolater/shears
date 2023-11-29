@@ -26,6 +26,7 @@ import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
 import { createTask } from '../../packages/conveyor/smartStore/createTask'
+import { setLeafVisiable } from '../../packages/conveyor/smartStore/createLeaf'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -123,5 +124,11 @@ function useExperimentalCode() {
   store.testCount.set((n) => n + 1)
   console.log('effectRunCount: ', effectRunCount)
   store.testCount.set((n) => n + 1)
-  console.log('effectRunCount_1: ', effectRunCount)
+  console.log('🧪🧪🧪🧪 before visiable')
+  setLeafVisiable(store.testCount, true)
+  console.log('🧪🧪🧪🧪 after visiable')
+  const v = store.testCount.subscribedExecutors
+  console.log('v: ', v)
+  store.testCount.set((n) => n + 1)
+  console.log('effectRunCount after visiable: ', effectRunCount)
 }

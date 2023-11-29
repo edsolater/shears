@@ -7,7 +7,7 @@ import { isObjectLike } from '@edsolater/fnkit'
  * const c = assignObject(obj, patcher) //=> {b: 1, a: 2, c: 'hello'}
  */
 export function assignObject<T extends object>(obj: T, propertyPairs: object): T {
-  assignObjectWithConfigs(obj, propertyPairs, simpleObectAssign)
+  assignObjectWithConfigs(obj, propertyPairs)
   return obj
 }
 
@@ -54,7 +54,8 @@ export function assignObjectWithConfigs<T extends object>(
   Reflect.ownKeys(patchObject).forEach((key) => {
     const originalValue = Reflect.get(originalObject, key)
     const patchValue = Reflect.get(patchObject, key)
-    if (isObjectLike(originalValue) && isObjectLike(patchValue)) {
+    const needGoDeep = isObjectLike(originalValue) && isObjectLike(patchValue)
+    if (needGoDeep) {
       assignObjectWithConfigs(originalValue, patchValue, attachRule)
     } else {
       attachRule({ key, obj: originalObject, originalValue, patchValue })
@@ -63,4 +64,6 @@ export function assignObjectWithConfigs<T extends object>(
   return originalObject
 }
 
-
+function isObjectLikeDiscriptor(value: any): value is PropertyDescriptor {
+  return isObjectLike(value) && isObjectLike(value['value'])
+}
