@@ -3,6 +3,7 @@ import { createBranchStore } from './createBranch'
 import { isLeaf } from './createLeaf'
 test(`basic usage`, () => {
   const { store, setStore } = createBranchStore({ a: 1, b: { c: 2 } })
+  expect(store.a()).toBe(1)
   setStore({ a: 2 })
   setStore({ b: { c: 3 } })
   expect(store.a()).toBe(2)

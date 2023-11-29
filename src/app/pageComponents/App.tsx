@@ -107,13 +107,11 @@ function KeyboardShortcutPanel() {
 }
 
 const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: true })
-const task = createTask((get) => {
-  console.log('new rpcUrl(from taskAtom): ', get(rpcUrlTaskAtom))
-})
 
 /** code for test */
 function useExperimentalCode() {
   const { store, setStore } = createBranchStore<{ a: number; b?: { c: number } }>({ a: 1 })
   setStore({ b: { c: 3 } })
+  console.log('store.a leaf: ', store.a)
   console.log('store.b.c: ', store.b?.c())
 }

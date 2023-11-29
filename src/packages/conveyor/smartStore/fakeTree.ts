@@ -33,6 +33,10 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
       }
     })
   }
+
+  if (rawObj){
+    set(() => rawObj)
+  }
   return { rawObj, root, set }
 }
 
