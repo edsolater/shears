@@ -2,7 +2,6 @@ import { capitalize, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
 import { createBranchStore } from '../../packages/conveyor/smartStore/createBranch'
-import { createTask } from '../../packages/conveyor/smartStore/createTask'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
   Box,
@@ -26,6 +25,7 @@ import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
+import { createTask } from '../../packages/conveyor/smartStore/createTask'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -110,8 +110,14 @@ const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: 
 
 /** code for test */
 function useExperimentalCode() {
-  const { store, setStore } = createBranchStore<{ a: number; b?: { c: number } }>({ a: 1 })
-  setStore({ b: { c: 3 } })
-  console.log('store.a leaf: ', store.a)
-  console.log('store.b.c: ', store.b?.c())
+  let effectRunCount = 0
+  const { store } = createBranchStore({ testCount: 1 })
+  const effect = createTask([store.testCount], (get) => {
+    const n = get(store.testCount)
+    effectRunCount++
+    console.log('run')
+  })
+  effect.run()
+  store.testCount.set((n) => n + 1)
+  store.testCount.set((n) => n + 1)
 }

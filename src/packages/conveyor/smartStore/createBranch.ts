@@ -1,4 +1,4 @@
-import { AnyObj, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { AnyObj, MayFn, Primitive, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
 import { Leaf, createLeaf } from './createLeaf'
 import { createFakeTree } from './fakeTree'
@@ -6,7 +6,7 @@ import { createFakeTree } from './fakeTree'
 export type SmartSetStore<T extends object> = (dispatch: MayFn<Partial<T>, [prevStore?: T]>) => void
 
 export type Branch<T> = {
-  [K in keyof T]: Leaf<T[K]> & Branch<T[K]>
+  [K in keyof T]: T[K] extends Primitive ? Leaf<T[K]> : Branch<T[K]>
 }
 
 export type BranchStore<T extends object> = {
