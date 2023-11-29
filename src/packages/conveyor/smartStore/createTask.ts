@@ -6,7 +6,7 @@
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { Leaf, getSubscribableWithContext } from './createLeaf'
+import { Leaf, recordSubscribableToAtom } from './createLeaf'
 
 export type TaskExecutor = {
   (): void
@@ -14,8 +14,10 @@ export type TaskExecutor = {
   readonly visiable: boolean
 }
 export type TaskRunner = {
-  // main method of task
+  // main method of task, force to run the effect
   run(): void
+  // main method of task, only register the effect (if haven't detect relatedLeafs or any of leaves is visiable, it will run immediately)
+  register(): void
   executor: TaskExecutor
 }
 
@@ -39,13 +41,14 @@ export function createTask(
     | [taskContentFn: (get: <T>(v: Leaf<T>) => T) => void]
     | [relatedLeafs: Leaf<any>[], taskContentFn: (get: <T>(v: Leaf<T>) => T) => void]
 ) {
-  const [relatedLeafs, taskContentFn] = params.length === 1 ? [undefined, params[0]] : params
+  const [relatedLeafs, task] = params.length === 1 ? [undefined, params[0]] : params
   const executor = (() => {
-    function get<T>(atom: Leaf<T>) {
-      recordSubscribableToContext(atom, executor)
-      return getSubscribableWithContext(executor, atom)
+    function pickSubscribableValue<T>(atom: Leaf<T>) {
+      recordSubscribableToExecutor(atom, executor)
+      recordSubscribableToAtom(executor, atom)
+      return atom()
     }
-    taskContentFn(get)
+    task(pickSubscribableValue)
   }) as TaskExecutor
   assignObject(executor, {
     relatedLeafs: new WeakerSet<Leaf<any>>(relatedLeafs),
@@ -58,11 +61,22 @@ export function createTask(
       executor()
     },
     executor,
+    register() {
+      if (relatedLeafs) {
+        relatedLeafs.forEach((leaf) => {
+          recordSubscribableToExecutor(leaf, executor)
+          recordSubscribableToAtom(executor, leaf)
+        })
+        if (isExecutorVisiable(executor)) executor()
+      } else {
+        executor()
+      }
+    },
   }
   return taskRunner
 }
 
-function recordSubscribableToContext<T>(subscribable: Leaf<T>, context: TaskExecutor) {
+function recordSubscribableToExecutor<T>(subscribable: Leaf<T>, context: TaskExecutor) {
   context.relatedLeafs.add(subscribable)
 }
 

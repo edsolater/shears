@@ -113,11 +113,15 @@ function useExperimentalCode() {
   let effectRunCount = 0
   const { store } = createBranchStore({ testCount: 1 })
   const effect = createTask([store.testCount], (get) => {
+    console.log('task : ', new Error().stack)
     const n = get(store.testCount)
     effectRunCount++
-    console.log('run')
+    console.count('run')
   })
-  effect.run()
+  effect.register()
   store.testCount.set((n) => n + 1)
   store.testCount.set((n) => n + 1)
+  console.log('effectRunCount: ', effectRunCount)
+  store.testCount.set((n) => n + 1)
+  console.log('effectRunCount_1: ', effectRunCount)
 }

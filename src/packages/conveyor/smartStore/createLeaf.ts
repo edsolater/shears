@@ -84,9 +84,9 @@ export function isLeafVisiable<T>(value: Leaf<T>) {
 /**
  * high function that create value getter from subscribable
  */
-export function getSubscribableWithContext<T>(context: TaskExecutor, subscribable: Leaf<T>) {
-  subscribable.subscribedExecutors.add(context)
-  return subscribable()
+export function recordSubscribableToAtom<T>(context: TaskExecutor, subscribable: Leaf<T>) {
+  return subscribable.subscribedExecutors.add(context)
+
 }
 
 export function invokeBindedExecutors(subscribable: Leaf<any>) {
