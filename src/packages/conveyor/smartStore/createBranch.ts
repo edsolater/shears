@@ -29,7 +29,7 @@ export function createBranchStore<T extends object>(defaultValue: T | Accessor<T
   const rawDefaultValue = shrinkFn(defaultValue) as T
   // branch hold data
   const { rawObj, treeRoot, set } = createFakeTree(rawDefaultValue, {
-    leaf: (rawValue) => createLeaf(rawValue),
+    createLeaf: (rawValue) => createLeaf(rawValue),
     injectValueToLeaf: (leaf, val) => leaf.set(val),
   })
 

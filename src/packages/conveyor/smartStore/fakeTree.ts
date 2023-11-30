@@ -6,9 +6,9 @@ type FakeTree<T> = T
 type FakeTreeLeaf = object
 
 /** just a InfiniteObj with leaf ,inside unknow what is leaf's content*/
-export function createFakeTree<O extends object, L extends FakeTreeLeaf = object>(
+export function createFakeTree<O extends object, Leaf extends FakeTreeLeaf = object>(
   rawObject: O,
-  options: { leaf: (rawValue: any) => L; injectValueToLeaf: (loadedNode: L, rawValue: any) => void },
+  options: { createLeaf: (rawValue: any) => Leaf; injectValueToLeaf: (loadedNode: Leaf, rawValue: any) => void },
 ) {
   const rawObj = cloneObject(rawObject)
   const treeRoot = createInfiniteObj() as FakeTree<O>
@@ -31,8 +31,7 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
       /** bug is already prent node already have node on it , so fail to set deep value on it. So 层序遍历 userInputSubTree, 及时切断不合时宜的 set deep value。 吗？🤔   */
       if (isFakeTreeEmptyLeaf(treeNode)) {
         const rawValue = getByPath(rawObj, keyPaths)
-        const leaf = options.leaf(rawValue)
-        getByPath(treeRoot, parentPath)[currentKey] = leaf
+        setByPath(treeRoot, keyPaths, options.createLeaf(rawValue))
       } else {
         options.injectValueToLeaf(treeNode, value)
       }
