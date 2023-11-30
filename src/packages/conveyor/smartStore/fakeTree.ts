@@ -1,5 +1,5 @@
 import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
-import { createInfiniteObj, isFakeTreeEmptyLeaf } from '../../fnkit/createInfiniteObj'
+import { createInfiniteObj, isInfiniteNodeEmpty } from '../../fnkit/createInfiniteObj'
 import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
 
 type FakeTree<T> = T
@@ -29,7 +29,7 @@ export function createFakeTree<O extends object, Leaf extends FakeTreeLeaf = obj
       console.log('root: ', treeRoot, keyPaths);
       console.log('treeNode: ', treeNode)
       /** bug is already prent node already have node on it , so fail to set deep value on it. So 层序遍历 userInputSubTree, 及时切断不合时宜的 set deep value。 吗？🤔   */
-      if (isFakeTreeEmptyLeaf(treeNode)) {
+      if (isInfiniteNodeEmpty(treeNode)) {
         const rawValue = getByPath(rawObj, keyPaths)
         setByPath(treeRoot, keyPaths, options.createLeaf(rawValue))
       } else {

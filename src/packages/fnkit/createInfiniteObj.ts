@@ -4,8 +4,10 @@ import { parseShallowKeyFromKeyArray } from './parseShallowKeyFromKeyArray'
 type UserAttachedValue = any
 type InfiniteObjNode = {
   [currentPathFromRoot]: (keyof any)[]
+  [attachedValue]?: UserAttachedValue
 }
 const currentPathFromRoot = Symbol('currentPathFromRoot')
+const attachedValue = Symbol('attachedValue')
 
 const loadSelf = Symbol('load')
 /**
@@ -37,8 +39,17 @@ export function createInfiniteObj(
   return pathCollector
 }
 
-export function isFakeTreeEmptyLeaf(value: any): value is InfiniteObjNode {
+export function isInfiniteNodeEmpty(value: any): value is InfiniteObjNode {
+  return isInfiniteNode(value) && value[attachedValue] === undefined
+}
+
+
+export function isInfiniteNode(value: any): value is InfiniteObjNode {
   return isObject(value) && currentPathFromRoot in value
+}
+
+export function isInfiniteNodeLoaded(value: any): value is InfiniteObjNode {
+  return isInfiniteNode(value) && value[attachedValue] !== undefined
 }
 
 export function loadInfiniteObjNode(node: InfiniteObjNode, value) {
