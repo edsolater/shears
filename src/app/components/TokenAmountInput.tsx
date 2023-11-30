@@ -9,7 +9,6 @@ import {
   List,
   Modal,
   ModalController,
-  ModalTitle,
   Panel,
   Text,
   TextKitProps,
@@ -22,14 +21,15 @@ import {
   icssInputType,
   icssLabel,
   icssRow,
-  useKitProps,
+  plugin_modalTitle,
+  useKitProps
 } from '../../packages/pivkit'
 import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { Numberish } from '../utils/dataStructures/type'
-import { TokenAvatar } from './TokenAvatar'
 import { slice } from '../utils/dataTransmit/itemMethods'
+import { TokenAvatar } from './TokenAvatar'
 
 export interface TokenAmountInputBoxController {}
 
@@ -120,7 +120,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentKitProps) 
   const increasing = createIncresingAccessor()
   return (
     <Panel shadowProps={shadowProps}>
-      <ModalTitle>{`Select a token ${increasing()}`}</ModalTitle>
+      <Text plugin={plugin_modalTitle}>{`Select a token ${increasing()}`}</Text>
 
       <Box>
         search: <Input icss={{ border: 'solid' }} />

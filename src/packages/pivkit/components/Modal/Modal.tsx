@@ -3,7 +3,7 @@ import { Accessor, Show, createContext, createEffect, createSignal, onMount, use
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
 import { createRef } from '../../hooks/createRef'
-import { ICSS, KitProps, Piv, useKitProps } from '../../piv'
+import { ICSS, KitProps, Piv, PivProps, createPlugin, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { PopPortal } from '../PopPortal'
 import { createController } from '../../utils/createController'
@@ -142,37 +142,26 @@ export function Modal(kitProps: ModalKitProps) {
 }
 
 /**
- * a sub-component of {@link Modal \<Modal\>}
+ * component plugin
+ * regist modal title to {@link ModalContext}
  */
-export function ModalTitle(
-  kitProps: Omit<KitProps, 'children'> & {
-    children?: string
-  },
-) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'ModalTitle' })
-  const [modalContext, setModalContext] = useComponentContext(ModalContext)
-
-  // imply it !!
-
-  createEffect(() => {
-    const title = props.children
-    setModalContext({ title: () => String(title) })
-  })
-
-  createEffect(() => {
-    console.log('context title: ', modalContext.title?.())
-  })
-  return (
-    <Text
-      shadowProps={shadowProps}
-      icss={{
+export const plugin_modalTitle = createPlugin(
+  (pluginOptions?: { title?: string }) => (props) => {
+    const [, setModalContext] = useComponentContext(ModalContext)
+    createEffect(() => {
+      const title = String(pluginOptions?.title ?? props.children)
+      setModalContext({ title: () => String(title) })
+    })
+    return {
+      icss: {
         fontSize: '1.5rem',
         fontWeight: 'bold',
         marginBottom: '.5em',
-      }}
-    />
-  )
-}
+      },
+    } satisfies PivProps
+  },
+  
+)
 
 // TODO: no 'byDOM' option
 function useDisclosure(config: {
