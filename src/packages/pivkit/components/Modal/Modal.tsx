@@ -160,7 +160,7 @@ export const plugin_modalTitle = createPlugin(
       },
     } satisfies PivProps
   },
-  
+  { name: 'modalTitle' },
 )
 
 // TODO: no 'byDOM' option

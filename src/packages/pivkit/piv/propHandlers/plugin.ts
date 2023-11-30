@@ -82,7 +82,7 @@ export function createPlugin<
     options?.defaultOptions
   )
 
-  Object.assign(pluginCoreFn, options, { [isPluginObjSymbol]: true })
+  Object.assign(pluginCoreFn, { [isPluginObjSymbol]: true })
 
   // @ts-expect-error no need to check
   return pluginCoreFn
