@@ -13,6 +13,7 @@ import {
   Panel,
   Text,
   TextKitProps,
+  createIncresingAccessor,
   createRef,
   createSyncSignal,
   icssClickable,
@@ -116,9 +117,10 @@ type TokenSelectorModalContentKitProps = KitProps<TokenSelectorModalContentProps
 function TokenSelectorModalContent(rawProps: TokenSelectorModalContentKitProps) {
   const { props, shadowProps } = useKitProps(rawProps)
   const tokens = store.tokens
+  const increasing = createIncresingAccessor()
   return (
     <Panel shadowProps={shadowProps}>
-      <ModalTitle>Select a token</ModalTitle>
+      <ModalTitle>{`Select a token ${increasing()}`}</ModalTitle>
 
       <Box>
         search: <Input icss={{ border: 'solid' }} />

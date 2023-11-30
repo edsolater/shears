@@ -156,9 +156,7 @@ export function ModalTitle(
 
   createEffect(() => {
     const title = props.children
-    if (isString(title)) {
-      setModalContext({ title: () => title })
-    }
+    setModalContext({ title: () => String(title) })
   })
 
   createEffect(() => {
