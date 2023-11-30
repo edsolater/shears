@@ -5,11 +5,11 @@ import {
   Panel,
   Piv,
   Section,
-  icssCard,
-  icssCol,
-  icssCyberpenkBackground,
-  icssCyberpenkBackgroundGlow,
-  icssCyberpenkBorder
+  icss_card,
+  icss_col,
+  icss_cyberpenkBackground,
+  icss_cyberpenkBackgroundGlow,
+  icss_cyberpenkBorder
 } from '../../../packages/pivkit'
 import { TokenAmountInputBox } from '../../components/TokenAmountInput'
 import { useToken } from '../../stores/data/dataHooks/useToken'
@@ -56,11 +56,11 @@ export default function SwapPage() {
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Panel
           icss={[
-            icssCard,
-            icssCyberpenkBackground,
-            icssCyberpenkBorder,
-            icssCyberpenkBackgroundGlow,
-            icssCol({ gap: '.5em' }),
+            icss_card,
+            icss_cyberpenkBackground,
+            icss_cyberpenkBorder,
+            icss_cyberpenkBackgroundGlow,
+            icss_col({ gap: '.5em' }),
           ]}
         >
           <TokenAmountInputBox

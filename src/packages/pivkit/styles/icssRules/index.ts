@@ -1,4 +1,4 @@
 export * from './box'
-export * from './icssCyberpenkCard'
-export * from './icssFrostedGlass'
+export * from './cyberpenkCard'
+export * from './frostedGlass'
 export * from './misc'

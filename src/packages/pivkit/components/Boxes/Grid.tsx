@@ -1,5 +1,5 @@
 import { KitProps, useKitProps } from '../../piv'
-import { ICSSGridItemOption, ICSSGridOption, icssGrid } from '../../styles/icssRules'
+import { ICSSGridItemOption, ICSSGridOption, icss_grid } from '../../styles/icssRules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'
 
@@ -13,8 +13,8 @@ export type GridBoxProps = {
  */
 export function Grid(rawProps: KitProps<GridBoxProps>) {
   const { shadowProps, props } = useKitProps(rawProps, { name: 'Grid' })
-  const icssOption = getICSSFromProps(props)
-  return <Box shadowProps={shadowProps} icss={icssGrid(icssOption)} />
+  const icss_option = getICSSFromProps(props)
+  return <Box shadowProps={shadowProps} icss={icss_grid(icss_option)} />
 }
 
 export type GridItemBoxProps = {

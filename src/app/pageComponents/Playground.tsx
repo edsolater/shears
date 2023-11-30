@@ -25,8 +25,8 @@ import {
   createPlugin,
   cssOpacity,
   buildPopover,
-  icssCol,
-  icssRow,
+  icss_col,
+  icss_row,
   renderSwitchThumb,
   useCSSTransition,
   useControllerByID,
@@ -340,9 +340,9 @@ function ListExample() {
     }, 100)
   })
   return (
-    <List items={data} initRenderCount={10} icss={[icssCol({ gap: '16px' }), { height: '30dvh' }]}>
+    <List items={data} initRenderCount={10} icss={[icss_col({ gap: '16px' }), { height: '30dvh' }]}>
       {(d, idx) => (
-        <Box icss={[icssRow, { background: '#0001', width: '100%' }]}>
+        <Box icss={[icss_row, { background: '#0001', width: '100%' }]}>
           <Text>{d.name}</Text>
           <Text>{d.count + increaseCount()}</Text>
         </Box>

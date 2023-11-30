@@ -22,7 +22,7 @@ export type ICSSRowOption = {
   childItems?: CSSObject['flex']
 }
 
-export const icssRow = createICSS(
+export const icss_row = createICSS(
   ({
     gap = '.25em',
     align,
@@ -58,7 +58,7 @@ export type ICSSColOption = {
   childItems?: CSSObject['flex']
 }
 
-export const icssCol = createICSS(
+export const icss_col = createICSS(
   ({
     gap = '.25em',
     align,
@@ -92,7 +92,7 @@ export type ICSSGridOption = {
   templateColumn?: CSSObject['gridTemplateColumns']
 }
 
-export const icssGrid = createICSS(({ items, template, templateColumn, templateRow, gap }: ICSSGridOption = {}) => ({
+export const icss_grid = createICSS(({ items, template, templateColumn, templateRow, gap }: ICSSGridOption = {}) => ({
   display: 'grid',
   placeItems: items,
   gridTemplate: template,
@@ -105,7 +105,7 @@ export type ICSSGridItemOption = {
   area?: CSSObject['gridArea']
 }
 
-export const icssGridItem = createICSS((opts: ICSSGridItemOption = {}) => ({
+export const icss_gridItem = createICSS((opts: ICSSGridItemOption = {}) => ({
   gridArea: opts?.area,
 }))
 
@@ -118,7 +118,7 @@ export type ICSSCardOption = {
   bg?: CSSObject['background']
 }
 
-export const icssCard = createICSS((options?: ICSSCardOption) => ({
+export const icss_card = createICSS((options?: ICSSCardOption) => ({
   display: 'grid',
   // backgroundColor: 'color-mix(in srgb, currentColor, transparent 95%)',
   background: options?.bg ?? 'var(--app-bg)',
@@ -138,7 +138,7 @@ export type ICSSClickableOption = {}
 /**
  * build-in icss for make element looks clickable
  */
-export const icssClickable = createICSS((options?: ICSSClickableOption) => ({
+export const icss_clickable = createICSS((options?: ICSSClickableOption) => ({
   cursor: 'pointer',
   transition: '100ms',
   backdropFilter: 'brightness(1)',
@@ -147,7 +147,7 @@ export const icssClickable = createICSS((options?: ICSSClickableOption) => ({
   '&:active': { transform: 'scale(0.95)' },
 }))
 
-export const icssLabel = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
+export const icss_label = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
   minWidth: options?.w ?? '5em',
   minHeight: options?.h ?? 'calc(2em)',
   textAlign: 'center',
@@ -157,7 +157,7 @@ export const icssLabel = createICSS((options?: { w?: CSSObject['minWidth']; h?: 
   background: cssColors.component_label_bg_default,
 }))
 
-export const icssInputType = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
+export const icss_inputType = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
   minWidth: '12em',
   paddingBlock: '.25em',
   paddingInline: '.5em',

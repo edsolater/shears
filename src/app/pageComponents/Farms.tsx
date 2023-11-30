@@ -9,7 +9,7 @@ import { add } from '../utils/dataStructures/basicMath/operations'
 import { Piv, List, Collapse, CollapseFace, Box } from '../../packages/pivkit'
 import { store } from '../stores/data/store'
 
-const icssSmoothBoxShadow =
+const icss_smoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export default function FarmPage() {

@@ -11,7 +11,7 @@ import {
   Section,
   Text,
   createControllerRef,
-  icssClickable,
+  icss_clickable,
 } from '../../../../packages/pivkit'
 import { useInputController } from '../../../../packages/pivkit/components/Input/hooks/useInputController'
 import { createFormField } from '../../../../packages/pivkit/hooks/createFormField'
@@ -45,7 +45,7 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px', borderRadius: '8px' }, icssClickable]}
+        icss={[{ padding: '8px', borderRadius: '8px' }, icss_clickable]}
         // onClick={() => {
         //   appSettingsModalControllers()?.open()
         // }}

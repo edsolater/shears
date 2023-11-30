@@ -1,7 +1,7 @@
 import { createSignal } from 'solid-js'
 import { KitProps, useKitProps } from '../../../createKit'
 import { ValidController } from '../../../piv/typeTools'
-import { icssCol } from '../../../styles/icssRules'
+import { icss_col } from '../../../styles/icssRules'
 import { Box } from '../../Boxes/Box'
 
 export interface RadioGroupController {
@@ -50,5 +50,5 @@ export function RadioGroup(kitProps: RadioGroupKitProps) {
 
   lazyLoadController(radioGroupController)
 
-  return <Box class='RadioGroup' shadowProps={shadowProps} icss={icssCol()} />
+  return <Box class='RadioGroup' shadowProps={shadowProps} icss={icss_col()} />
 }

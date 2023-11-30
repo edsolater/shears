@@ -9,14 +9,14 @@ import { createICSS } from '../../piv'
 import { cssOpacity, cssVar } from '../cssValues'
 
 /** for childrens (items or item-group) */
-export const icssDivider = createICSS(() => ({
+export const icss_divider = createICSS(() => ({
   '& > :not(:last-child)': {
     borderBottom: `thin solid ${cssOpacity('currentColor', 0.1)}`,
   },
 }))
 
 // somethings can't use  currentColor,  so use this instead
-export const icssTextColor = createICSS((options?: { color?: string | string[] }) =>
+export const icss_textColor = createICSS((options?: { color?: string | string[] }) =>
   mergeObjects(
     {
       '--current-color': (isArray(options?.color) ? options?.color[0] : options?.color) ?? cssVar('--secondary'),

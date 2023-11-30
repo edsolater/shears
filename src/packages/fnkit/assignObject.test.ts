@@ -8,7 +8,9 @@ test('basic usage', () => {
   expect(obj.a).toBe('hello')
 
   const obj2 = { a: createSubscribable(0) }
-  assignObjectWithConfigs(obj2, { a: 2 }, ({ originalValue, patchValue }) => {
+  assignObjectWithConfigs(obj2, { a: 2 }, ({ originalValueDescriptor, patchValueDescriptor }) => {
+    const originalValue = originalValueDescriptor?.value
+    const patchValue = patchValueDescriptor?.value
     if (isSubscribable(originalValue)) {
       originalValue.set(patchValue)
     }

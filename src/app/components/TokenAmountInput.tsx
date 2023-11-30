@@ -15,12 +15,12 @@ import {
   createIncresingAccessor,
   createRef,
   createSyncSignal,
-  icssClickable,
-  icssCyberpenkBackground,
-  icssFrostedCard,
-  icssInputType,
-  icssLabel,
-  icssRow,
+  icss_clickable,
+  icss_cyberpenkBackground,
+  icss_frostedCard,
+  icss_inputType,
+  icss_label,
+  icss_row,
   plugin_modalTitle,
   useKitProps
 } from '../../packages/pivkit'
@@ -47,7 +47,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const { props, lazyLoadController } = useKitProps(rawProps, {
     defaultProps: {
       'anatomy:tokenSelectorModalContent': {
-        icss: [icssCyberpenkBackground, icssFrostedCard],
+        icss: [icss_cyberpenkBackground, icss_frostedCard],
       },
     },
     name: 'TokenAmountInputBox',
@@ -69,9 +69,9 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const [modalRef, setModalRef] = createRef<ModalController>()
 
   return (
-    <Box icss={icssRow({ gap: '8px' })}>
+    <Box icss={icss_row({ gap: '8px' })}>
       {/* show current token info */}
-      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icssLabel, icssClickable]}>
+      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label, icss_clickable]}>
         {token()?.symbol}
       </Box>
       {/* <Piv
@@ -85,7 +85,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       {/* token amount info */}
       <Input
         shadowProps={props['anatomy:amountInput']}
-        icss={icssInputType()}
+        icss={icss_inputType()}
         value={amount}
         onUserInput={(text) => {
           isStringNumber(text) ? setAmount(text) : undefined
@@ -141,7 +141,7 @@ function TokenSelectorModalContent_TokenItem(
   const { props } = useKitProps(rawProps)
   return (
     <Box
-      icss={[icssRow(), icssClickable()]}
+      icss={[icss_row(), icss_clickable()]}
       shadowProps={props}
       onClick={() => {
         props.onSelect?.(props.token)

@@ -15,7 +15,7 @@ export default function PairsPage() {
       <Piv
         domRef={setRef}
         icss={{
-          // boxShadow: icssSmoothBoxShadow,
+          // boxShadow: icss_smoothBoxShadow,
           borderRadius: '4px',
           display: 'flex',
           flexDirection: 'column',

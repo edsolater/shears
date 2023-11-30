@@ -23,7 +23,7 @@ export type OptionItemBoxProps = {
   href?: string
 }
 
-const icssOptionItemBox = createICSS(() => ({
+const icss_optionItemBox = createICSS(() => ({
   display: 'block',
   paddingBlock: '0.75rem',
   paddingInline: '2rem',
@@ -76,7 +76,7 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
   }
 
   return (
-    <Link shadowProps={shadowProps} href={props.href} icss={icssOptionItemBox}>
+    <Link shadowProps={shadowProps} href={props.href} icss={icss_optionItemBox}>
       <Row>
         {subComponentsRender.dot()}
         <Span

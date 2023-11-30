@@ -7,7 +7,7 @@ export type ICSSSpecialCyberpenkCardOptions = {
   bg?: CSSObject['background']
 }
 
-export const icssCyberpenkBorder = createICSS(
+export const icss_cyberpenkBorder = createICSS(
   ({ borderWidth = '2px', borderRadius = '16px' }: ICSSSpecialCyberpenkCardOptions = {}) => ({
     position: 'relative',
     borderWidth: borderWidth,
@@ -30,7 +30,7 @@ export const icssCyberpenkBorder = createICSS(
   }),
 )
 
-export const icssCyberpenkBackground = createICSS(() => ({
+export const icss_cyberpenkBackground = createICSS(() => ({
   background: [
     cssLinearGradient({
       direction: '140.14deg',
@@ -40,7 +40,7 @@ export const icssCyberpenkBackground = createICSS(() => ({
   ].join(','),
 }))
 
-export const icssCyberpenkBackgroundGlow = createICSS(() => ({
+export const icss_cyberpenkBackgroundGlow = createICSS(() => ({
   position: 'relative',
   '&::before': {
     content: '""',

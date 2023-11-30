@@ -14,9 +14,9 @@ import {
   createIncresingAccessor,
   cssColors,
   cssVar,
-  icssClickable,
-  icssFrostedGlass,
-  icssTextColor,
+  icss_clickable,
+  icss_frostedGlass,
+  icss_textColor,
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
 } from '../../packages/pivkit'
@@ -30,7 +30,7 @@ import { setLeafVisiable } from '../../packages/conveyor/smartStore/createLeaf'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
-    icss: [icssFrostedGlass, icssTextColor({ color: cssVar('--ternary') }), icssClickable],
+    icss: [icss_frostedGlass, icss_textColor({ color: cssVar('--ternary') }), icss_clickable],
   },
 }
 
