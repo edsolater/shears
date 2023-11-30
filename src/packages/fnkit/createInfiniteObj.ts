@@ -8,6 +8,9 @@ type InfiniteObjNode = {
 const currentPathFromRoot = Symbol('currentPathFromRoot')
 
 const loadSelf = Symbol('load')
+/**
+ * core part of createFakeTree, it's a common utils, no need to use it directly
+ */
 export function createInfiniteObj(
   currentKeyPath: (keyof any)[] = [],
   attachedValueMap = new Map<keyof any, UserAttachedValue>(),
@@ -34,7 +37,7 @@ export function createInfiniteObj(
   return pathCollector
 }
 
-export function isInfiniteObjNodeUnloaded(value: any): value is InfiniteObjNode {
+export function isFakeTreeEmptyLeaf(value: any): value is InfiniteObjNode {
   return isObject(value) && currentPathFromRoot in value
 }
 

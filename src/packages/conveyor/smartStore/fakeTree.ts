@@ -1,5 +1,5 @@
 import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
-import { createInfiniteObj, isInfiniteObjNodeUnloaded } from '../../fnkit/createInfiniteObj'
+import { createInfiniteObj, isFakeTreeEmptyLeaf } from '../../fnkit/createInfiniteObj'
 import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
 
 type FakeTree<T> = T
@@ -11,23 +11,28 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
   options: { leaf: (rawValue: any) => L; injectValueToLeaf: (loadedNode: L, rawValue: any) => void },
 ) {
   const rawObj = cloneObject(rawObject)
-  const root = createInfiniteObj() as FakeTree<O>
+  const treeRoot = createInfiniteObj() as FakeTree<O>
   /**
    * sync
    * change by this will also change the original object
    */
   function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
-    const newRawTree = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
-    walkThroughObject(newRawTree, ({ keyPaths, parentPath, currentKey, value }) => {
-      const treeNode = getByPath(root, keyPaths)
+    const userInputSubTree = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
+    walkThroughObject(userInputSubTree, ({ keyPaths, parentPath, currentKey, value }) => {
+      
+      console.log('keyPaths: ', keyPaths)
       // set raw
       setByPath(rawObj, keyPaths, value)
-
+      
       // set tree
-      if (isInfiniteObjNodeUnloaded(treeNode)) {
+      const treeNode = getByPath(treeRoot, keyPaths)
+      console.log('root: ', treeRoot, keyPaths);
+      console.log('treeNode: ', treeNode)
+      /** bug is already prent node already have node on it , so fail to set deep value on it. So 层序遍历 userInputSubTree, 及时切断不合时宜的 set deep value。 吗？🤔   */
+      if (isFakeTreeEmptyLeaf(treeNode)) {
         const rawValue = getByPath(rawObj, keyPaths)
         const leaf = options.leaf(rawValue)
-        getByPath(root, parentPath)[currentKey] = leaf
+        getByPath(treeRoot, parentPath)[currentKey] = leaf
       } else {
         options.injectValueToLeaf(treeNode, value)
       }
@@ -35,9 +40,9 @@ export function createFakeTree<O extends object, L extends FakeTreeLeaf = object
   }
 
   if (rawObj){
-    set(() => rawObj)
+    set(rawObj)
   }
-  return { rawObj, root, set }
+  return { rawObj, treeRoot, set }
 }
 
 /**

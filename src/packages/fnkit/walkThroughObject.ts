@@ -37,6 +37,8 @@ export function walkThroughObject(
 export function getByPath(obj: object, path: (keyof any)[]): any {
   let current = obj
   for (const pathItem of path) {
+    console.log('current: ', current)
+    console.log('pathItem: ', pathItem)
     current = Reflect.get(current, pathItem)
     if (!isObjectLike(current)) break
   }

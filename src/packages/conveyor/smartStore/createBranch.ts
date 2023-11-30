@@ -28,14 +28,14 @@ export type BranchStore<T extends object> = {
 export function createBranchStore<T extends object>(defaultValue: T | Accessor<T>): BranchStore<T> {
   const rawDefaultValue = shrinkFn(defaultValue) as T
   // branch hold data
-  const { rawObj, root, set } = createFakeTree(rawDefaultValue, {
+  const { rawObj, treeRoot, set } = createFakeTree(rawDefaultValue, {
     leaf: (rawValue) => createLeaf(rawValue),
     injectValueToLeaf: (leaf, val) => leaf.set(val),
   })
 
   return {
     rawObj,
-    store: root as Branch<T>,
+    store: treeRoot as Branch<T>,
     setStore: set,
   }
 }
