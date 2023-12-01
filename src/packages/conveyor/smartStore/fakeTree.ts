@@ -1,5 +1,5 @@
 import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
-import { createInfiniteObj, isInfiniteNodeEmpty } from '../../fnkit/createInfiniteObj'
+import { createTreeableInfinityNode } from '../../fnkit/createInfiniteObj'
 import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
 
 type FakeTree<T> = T
@@ -11,7 +11,7 @@ export function createFakeTree<O extends object, Leaf extends FakeTreeLeaf = obj
   options: { createLeaf: (rawValue: any) => Leaf; injectValueToLeaf: (loadedNode: Leaf, rawValue: any) => void },
 ) {
   const rawObj = cloneObject(rawObject)
-  const treeRoot = createInfiniteObj() as FakeTree<O>
+  const treeRoot = createTreeableInfinityNode() as FakeTree<O>
   /**
    * sync
    * change by this will also change the original object
@@ -19,14 +19,13 @@ export function createFakeTree<O extends object, Leaf extends FakeTreeLeaf = obj
   function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
     const userInputSubTree = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
     walkThroughObject(userInputSubTree, ({ keyPaths, parentPath, currentKey, value }) => {
-      
       console.log('keyPaths: ', keyPaths)
       // set raw
       setByPath(rawObj, keyPaths, value)
-      
+
       // set tree
       const treeNode = getByPath(treeRoot, keyPaths)
-      console.log('root: ', treeRoot, keyPaths);
+      console.log('root: ', treeRoot, keyPaths)
       console.log('treeNode: ', treeNode)
       /** bug is already prent node already have node on it , so fail to set deep value on it. So 层序遍历 userInputSubTree, 及时切断不合时宜的 set deep value。 吗？🤔   */
       if (isInfiniteNodeEmpty(treeNode)) {
@@ -38,7 +37,7 @@ export function createFakeTree<O extends object, Leaf extends FakeTreeLeaf = obj
     })
   }
 
-  if (rawObj){
+  if (rawObj) {
     set(rawObj)
   }
   return { rawObj, treeRoot, set }

@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest'
-import { createInfiniteObj } from './createInfiniteObj'
+import { createTreeableInfinityNode } from './createInfiniteObj'
 
 test('basic usage', () => {
-  const obj = createInfiniteObj()
+  const obj = createTreeableInfinityNode()
   obj.a.b = 3
   expect(obj.a.b).toBe(3)
 
