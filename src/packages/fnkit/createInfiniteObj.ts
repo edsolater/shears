@@ -1,11 +1,11 @@
-import { isObject } from '@edsolater/fnkit'
+import { MayFn, Primitive, isObject, shrinkFn } from '@edsolater/fnkit'
 import { parseShallowKeyFromKeyArray } from './parseShallowKeyFromKeyArray'
 
 type UserAttachedValue = any
-type InfiniteObjNode<V extends UserAttachedValue = any> = {
+export type InfiniteObjNode<V extends UserAttachedValue = any> = {
   (): V
   [currentPathFromRoot]: (keyof any)[]
-  [loadSelf]: (value: V) => void
+  [loadSelf]: (value: MayFn<V, [oldValue: V]>) => void
 }
 const currentPathFromRoot = Symbol('currentPathFromRoot')
 
@@ -37,14 +37,15 @@ export function createTreeableInfinityNode(
 }
 
 /**
- * can't get more through this node 
+ * can't get more through this node
  */
-function createInfinityNode(paths: (keyof any)[] = [], value?: any) {
+function createInfinityNode<T>(paths: (keyof any)[] = [], value?: T) {
   let nodeValue = value
   return Object.assign(() => nodeValue, {
     [currentPathFromRoot]: paths,
-    [loadSelf]: (value: any) => {
-      nodeValue = value
+    [loadSelf]: (value: MayFn<T, [oldValue: T | undefined]>) => {
+      const newValue = shrinkFn(value, [nodeValue])
+      nodeValue = newValue
     },
   })
 }
@@ -53,23 +54,6 @@ export function isInfiniteNode(value: any): value is InfiniteObjNode {
   return isObject(value) && currentPathFromRoot in value
 }
 
-export function loadInfiniteObjNode(node: InfiniteObjNode, value) {
-  const { [currentPathFromRoot]: keyPath } = node
-  const attachedValueMap = new Map<keyof any, UserAttachedValue>()
-  const pathCollector = new Proxy(
-    { [currentPathFromRoot]: keyPath },
-    {
-      set(target, key, value) {
-        const shallowKey = parseShallowKeyFromKeyArray(target[currentPathFromRoot].concat(key))
-        attachedValueMap.set(shallowKey, value)
-        return true
-      },
-      get(target, key) {
-        const shallowKey = parseShallowKeyFromKeyArray(target[currentPathFromRoot].concat(key))
-        if (attachedValueMap.has(shallowKey)) return attachedValueMap.get(shallowKey)
-        return createTreeableInfinityNode(target[currentPathFromRoot].concat(key), attachedValueMap)
-      },
-    },
-  )
-  return pathCollector
+export function loadInfiniteObjNode<T>(node: InfiniteObjNode<T>, value: MayFn<T, [oldValue: T | undefined]>) {
+  node[loadSelf](value)
 }

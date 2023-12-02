@@ -18,8 +18,7 @@ import { txSwap_main } from '../../stores/data/portActions/txSwap_main'
 import {
   createStorePropertySetter,
   createStorePropertySignal,
-  rootStore,
-  setBStore,
+  setStore,
   store
 } from '../../stores/data/store'
 import { useWalletOwner } from '../../stores/wallet/store'
@@ -29,13 +28,13 @@ import { toString } from '../../utils/dataStructures/basicMath/format'
 
 export default function SwapPage() {
   const owner = useWalletOwner()
-  const token1 = useToken(() => rootStore.swapInputToken1) // it still can work, but why?
-  const token2 = useToken(() => rootStore.swapInputToken2) // it still can work, but why?
+  const token1 = useToken(() => store.swapInputToken1) // it still can work, but why?
+  const token2 = useToken(() => store.swapInputToken2) // it still can work, but why?
   const setToken1 = (token: Token | undefined) => {
-    token && setBStore({ swapInputToken1: token })
+    token && setStore({ swapInputToken1: token })
   }
   const setToken2 = (token: Token | undefined) => {
-    token && setBStore({ swapInputToken2: token })
+    token && setStore({ swapInputToken2: token })
   }
 
   const amount1 = createStorePropertySignal((s) => s.swapInputTokenAmount1)

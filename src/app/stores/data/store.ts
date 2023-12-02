@@ -65,12 +65,12 @@ export const {
   },
 )
 
-export const {
-  store: rootStore,
-  branchStore: rootBranch,
-  setStore: setBStore,
-} = createBStore<StoreData>({
-  swapInputToken1: RAYMint,
-  swapInputToken2: SOLMint,
-  rpc: availableRpcs[0],
-})
+// export const {
+//   store: rootStore,
+//   branchStore: rootBranch,
+//   setStore: setBStore,
+// } = createBStore<StoreData>({
+//   swapInputToken1: RAYMint,
+//   swapInputToken2: SOLMint,
+//   rpc: availableRpcs[0],
+// })

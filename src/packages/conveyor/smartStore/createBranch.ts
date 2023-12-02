@@ -24,13 +24,18 @@ export type BranchStore<T extends object> = {
  * - change onChange
  * - object has merge to original store, not cover original store
  *
+ * 
+ * 💡 what if use cacheable {@link createTreeableInfinityNode}just
+ * 
+ * const leaf = get(s => s.a.b.c)
+ * return 
  */
 export function createBranchStore<T extends object>(defaultValue: T | Accessor<T>): BranchStore<T> {
   const rawDefaultValue = shrinkFn(defaultValue) as T
   // branch hold data
   const { rawObj, treeRoot, set } = createFakeTree(rawDefaultValue, {
-    createLeaf: (rawValue) => createLeaf(rawValue),
-    injectValueToLeaf: (leaf, val) => leaf.set(val),
+    createNewLeaf: (rawValue) => createLeaf(rawValue),
+    injectValueToExistLeaf: (leaf, val) => leaf.set(val),
   })
 
   return {
