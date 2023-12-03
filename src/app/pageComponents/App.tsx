@@ -115,16 +115,20 @@ function useExperimentalCode() {
     b?: {
       c: string
     }
-    d?: boolean | { say?: string; hello?: string }
+    d?: { say?: string; hello?: string }
   }
-  type FakeTreeify<T> = T extends object ? Leaf<T> & { [K in keyof T]-?: FakeTreeify<T[K]> } : Leaf<T>
 
-  const { rawObj, treeRoot, set, infinityTreeRoot } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
-    { a: 1, d:true },
+  // too difficult to type
+  // type FakeTreeify<T> = T extends object ? { [K in keyof T]: FakeTreeify<T[K]> } : () => Leaf<T>
+
+  const { rawObj, tree, set } = createFakeTree<OriginalObj>(
+    { a: 1 },
     {
-      createNewLeaf: (rawValue) => createLeaf(rawValue),
-      injectValueToExistLeaf: (leaf, val) =>
-        (leaf as Leaf<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val)),
+      createNewNode: (rawValue) => createLeaf(rawValue),
+      injectValueToExistNode: (leaf, val) =>
+        {
+          return (leaf as Leaf<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val))
+        },
     },
   )
   // console.log('rawObj.b.c: ', rawObj.b.c)
@@ -133,11 +137,10 @@ function useExperimentalCode() {
   //   'treeRoot.a: ',
   //   get((s) => s.a),
   // )
+  console.log('treeRoot.a: ', tree.a()())
+  console.log('treeRoot.d 0:  ', tree.d()())
   set({ d: { hello: 'world' } })
-  console.log('treeRoot.d: ', treeRoot.d)
-  const dValue2 = infinityTreeRoot.d()
-  console.log('dValue2: ', dValue2);
-  console.log('treeRoot.d: ', treeRoot.d)
+  console.log('treeRoot.d: ', tree.d()())
   set({ d: { say: 'hello' } })
-  console.log('treeRoot.d:  ', treeRoot.d())
+  console.log('treeRoot.d:  ', tree.d()())
 }

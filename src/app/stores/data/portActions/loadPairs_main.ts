@@ -13,7 +13,7 @@ export function loadPairs() {
     const timeoutId = setInterval(() => {
       const newPairs = clonedAllPairJsonInfos?.slice(0, 150).map((i) => ({ ...i, name: i.name + count }))
       if (newPairs) {
-        console.log('get pools count', newPairs.length)
+        console.log('get pools count', clonedAllPairJsonInfos.length)
         setStore({ isPairInfoLoading: false, pairInfos: newPairs })
       }
       count++

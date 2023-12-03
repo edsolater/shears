@@ -1,24 +1,27 @@
-import { MayFn, cloneObject, isFunction, isObjectLike, shrinkFn } from '@edsolater/fnkit'
-import { InfiniteObjNode, createTreeableInfinityNode, loadInfiniteObjNode } from '../../fnkit/createInfiniteObj'
+import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
+import { createTreeableInfinityNode, loadInfiniteObjNode } from '../../fnkit/createInfiniteObj'
 import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
-import { mergeObjects } from './mergeObjects'
-
-type FakeTree<T> = T extends object ? { [K in keyof T]-?: FakeTree<T[K]> } : () => T
 
 /**
- * get value should via `aaa.xxx()`
+ * dynamicly generate infinity nodes when attempt to access it
  *
- * just a InfiniteObj with leaf, inside unknow what is leaf's content
+ * any properties can be accessed, without check if it's exist
+ * 
+ * get value should via `root.xxx()`
+ *
+ * InfiniteObj(Leaf) to store value, inside don't know leaf's content
  */
-export function createFakeTree<O extends object, Tree extends object = O>(
-  rawObject: O,
+export function createFakeTree<O extends object, FakeNodeTree extends object = any>(
+  defaultRawObject: O,
   options?: {
-    createNewLeaf?: (rawValue: any) => any
-    injectValueToExistLeaf?: (loadedNode: any, rawValue: any) => void
+    createNewNode?: (rawValue: any) => any
+    injectValueToExistNode?: (loadedNode: any, rawValue: any) => void
   },
 ) {
-  const rawObj = cloneObject(rawObject)
-  const infinityTreeRoot = createTreeableInfinityNode(undefined, undefined, rawObj)
+  const rawObj = cloneObject(defaultRawObject)
+  const tree = createTreeableInfinityNode({
+    getDefaultNodeValue: () => options?.createNewNode?.(undefined),
+  }) as FakeNodeTree
   /**
    * sync
    * change by this will also change the original object
@@ -31,14 +34,14 @@ export function createFakeTree<O extends object, Tree extends object = O>(
 
       // set tree
       const rawValue = getByPath(rawObj, keyPaths)
-      const infinityNode = getByPath(infinityTreeRoot, keyPaths)
+      const infinityNode = getByPath(tree, keyPaths)
       loadInfiniteObjNode(infinityNode, (nodeValue) =>
         nodeValue
-          ? options?.injectValueToExistLeaf
-            ? (options?.injectValueToExistLeaf?.(nodeValue, value), nodeValue)
+          ? options?.injectValueToExistNode
+            ? (options?.injectValueToExistNode?.(nodeValue, value), nodeValue)
             : value
-          : options?.createNewLeaf
-            ? options?.createNewLeaf?.(rawValue)
+          : options?.createNewNode
+            ? options?.createNewNode?.(rawValue)
             : rawValue,
       )
     })
@@ -48,26 +51,18 @@ export function createFakeTree<O extends object, Tree extends object = O>(
     set(rawObj)
   }
 
-  /** {@link infinityTreeRoot} use `xxx.yyy()` to get value, but {@link treeRoot} can acess value just by `yyy.xxx`  */
-  function getTreeRoot(infinityTree) {
-    return new Proxy(infinityTree, {
-      get(target, p, receiver) {
-        const infinityNode = Reflect.get(target, p, receiver)
-        console.log('p: ', p)
-        console.log('target: ', target)
-        const value = infinityNode()
-        console.log('value: ', value)
-        const deepNode = getTreeRoot(infinityNode)
+  // /** {@link infinityTreeRoot} use `xxx.yyy()` to get value, but {@link treeRoot} can acess value just by `yyy.xxx`  */
+  // function getTreeRoot(infinityTree) {
+  //   return new Proxy(infinityTree, {
+  //     get(target, p, receiver) {
+  //       const infinityNode = Reflect.get(target, p, receiver)
+  //       const value = infinityNode()
+  //       const deepNode = getTreeRoot(infinityNode)
+  //       return isObjectLike(value) ? mergeObjects(deepNode, value) : value
+  //     },
+  //   })
+  // }
 
-        const mergedValue = mergeObjects(deepNode, value)
-        console.log('mergedValue: ', mergedValue)
-        console.log('deepNode: ', typeof mergedValue, typeof deepNode, typeof value)
-        return isObjectLike(value) ? mergeObjects(deepNode, value) : value
-      },
-    })
-  }
-  console.log('infinityTreeRoot: ', infinityTreeRoot())
-
-  const treeRoot = getTreeRoot(infinityTreeRoot) as Tree
-  return { rawObj, set, treeRoot, infinityTreeRoot }
+  // const treeRoot = getTreeRoot(infinityTreeRoot) as FakeNodeTree
+  return { rawObj, set, tree }
 }
