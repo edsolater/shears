@@ -1,4 +1,4 @@
-import { capitalize, map, switchCase } from '@edsolater/fnkit'
+import { capitalize, isObject, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
@@ -112,28 +112,29 @@ const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: 
 function useExperimentalCode() {
   type OriginalObj = {
     a: number
-    b: {
+    b?: {
       c: string
     }
-    d?: boolean | { say: string }
+    d?: boolean | { say: string; hello?: string }
   }
   type FakeTreeify<T> = T extends object ? { [K in keyof T]: FakeTreeify<T[K]> } : Leaf<T>
 
-  const { rawObj, get, set } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
-    { a: 1, b: { c: '2' } },
+  const { rawObj, treeRoot, set } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
+    { a: 1 },
     {
       createNewLeaf: (rawValue) => createLeaf(rawValue),
-      injectValueToExistLeaf: (leaf, val) => (leaf as Leaf<any>).set(val),
+      injectValueToExistLeaf: (leaf, val) =>
+        (leaf as Leaf<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val)),
     },
   )
-  console.log('rawObj.b.c: ', rawObj.b.c)
-  console.log('treeRoot.b.c: ', get((s) => s.b.c)())
-  console.log(
-    'treeRoot.a: ',
-    get((s) => s.a),
-  )
-  set({ d: true })
-  console.log('treeRoot.d: ', get((s) => s.d)())
+  // console.log('rawObj.b.c: ', rawObj.b.c)
+  // console.log('treeRoot.b.c: ',treeRoot.b.c())
+  // console.log(
+  //   'treeRoot.a: ',
+  //   get((s) => s.a),
+  // )
+  set({ d: { hello: 'world' } })
+  console.log('treeRoot.d: ', treeRoot.d())
   set({ d: { say: 'hello' } })
-  console.log('treeRoot.d.say: ', get((s) => s.d)())
+  console.log('treeRoot.d:  ', treeRoot.d.say()(), treeRoot.d.hello()(), treeRoot.d()())
 }
