@@ -4,9 +4,11 @@ import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThrough
 
 type FakeTree<T> = T extends object ? { [K in keyof T]-?: FakeTree<T[K]> } : InfiniteObjNode<T>
 
-/** just a InfiniteObj with leaf, inside unknow what is leaf's content 
- * get value should `aaa.xxx()`
-*/
+/**
+ * get value should via `aaa.xxx()`
+ *
+ * just a InfiniteObj with leaf, inside unknow what is leaf's content
+ */
 export function createFakeTree<O extends object, Tree = any>(
   rawObject: O,
   options?: {
@@ -15,7 +17,7 @@ export function createFakeTree<O extends object, Tree = any>(
   },
 ) {
   const rawObj = cloneObject(rawObject)
-  const treeRoot = createTreeableInfinityNode() as FakeTree<Tree>
+  const treeRoot = createTreeableInfinityNode() as FakeTree<O>
   /**
    * sync
    * change by this will also change the original object

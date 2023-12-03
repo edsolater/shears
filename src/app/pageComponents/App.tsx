@@ -117,9 +117,9 @@ function useExperimentalCode() {
     }
     d?: boolean | { say: string; hello?: string }
   }
-  type FakeTreeify<T> = T extends object ? { [K in keyof T]: FakeTreeify<T[K]> } : Leaf<T>
+  type FakeTreeify<T> = T extends object ? { [K in keyof T]: (() => T[K]) & FakeTreeify<T[K]> } : () => Leaf<T>
 
-  const { rawObj, treeRoot, set } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
+  const { rawObj, treeRoot, set } = createFakeTree<OriginalObj, OriginalObj>(
     { a: 1 },
     {
       createNewLeaf: (rawValue) => createLeaf(rawValue),
