@@ -2,66 +2,66 @@ import { MayFn, WeakerSet } from '@edsolater/fnkit'
 import { observe } from '../../fnkit/observe'
 import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
 import { TaskExecutor, invokeExecutor } from './createTask'
-import { LeafOption, isLeafOption } from './createLeafOption'
+import { ShuckOption, isShuckOption } from './createShuckOption'
 
-export const leafTag = Symbol('LeafTag')
-export const leafOptionTag = Symbol('leafOptionTag')
+export const shuckTag = Symbol('shuckTag')
+export const shuckOptionTag = Symbol('shuckOptionTag')
 
 /**
  * add ability to pure subscribable
  */
-export interface Leaf<T> extends Subscribable<T> {
+export interface Shuck<T> extends Subscribable<T> {
   id: string
   /**
    * used by TaskExecutor to track subscribable's visiability
    *
-   * only effect exector will auto run if it's any observed Leaf is visiable \
+   * only effect exector will auto run if it's any observed Shuck is visiable \
    * visiable, so effect is meaningful 0for user
    */
   visiable: Subscribable<boolean>
   // when set this, means this object is a observable-subscribable
-  [leafTag]: boolean
+  [shuckTag]: boolean
   subscribedExecutors: WeakerSet<TaskExecutor>
 }
 
-export interface CreateLeafOptions<T> {
+export interface CreateShuckOptions<T> {
   visiable?: boolean | 'auto' // TODO: inply it means auto
   onAccessed?: (currentValue: T) => void
 }
 
-let globalLeafId = 0
+let globalShuckId = 0
 /** create special subscribable */
-export function createLeaf<T>(defaultValue: MayFn<T>, options?: CreateLeafOptions<T>): Leaf<T>
-export function createLeaf<T>(subscribable: Subscribable<T>, options?: CreateLeafOptions<T>): Leaf<T>
-export function createLeaf<T>(option: LeafOption<T>): Leaf<T>
-export function createLeaf<T>(
+export function createShuck<T>(defaultValue: MayFn<T>, options?: CreateShuckOptions<T>): Shuck<T>
+export function createShuck<T>(subscribable: Subscribable<T>, options?: CreateShuckOptions<T>): Shuck<T>
+export function createShuck<T>(option: ShuckOption<T>): Shuck<T>
+export function createShuck<T>(
   ...args:
-    | [subscribable: Subscribable<T>, options?: CreateLeafOptions<T>]
-    | [defaultValue: any, options?: CreateLeafOptions<T>]
-    | [option: LeafOption<T>]
-): Leaf<T> {
-  const leafId = globalLeafId++
+    | [subscribable: Subscribable<T>, options?: CreateShuckOptions<T>]
+    | [defaultValue: any, options?: CreateShuckOptions<T>]
+    | [option: ShuckOption<T>]
+): Shuck<T> {
+  const id = globalShuckId++
 
   const defaultedArgs = (
     isSubscribable(args[0])
       ? [args[0], args[1]]
-      : isLeafOption(args[0])
+      : isShuckOption(args[0])
         ? [createSubscribable(args[0].value), args[0]]
         : [createSubscribable(args[0]), args[1]]
-  ) as [subscribable: Subscribable<T>, options?: CreateLeafOptions<T>]
+  ) as [subscribable: Subscribable<T>, options?: CreateShuckOptions<T>]
   const [subscribable, options] = defaultedArgs
 
   const proxiedSubscribable = observe(
     Object.assign(subscribable, {
-      [leafTag]: true,
-      id: `leaf_${leafId}`,
+      [shuckTag]: true,
+      id: `shuck_${id}`,
       /**
-       * only effect exector will auto run if it's any observed Leaf is visiable \
+       * only effect exector will auto run if it's any observed Shuck is visiable \
        * visiable, so effect is meaningful for user
        */
       visiable: createSubscribable(Boolean(options?.visiable)),
       subscribedExecutors: new WeakerSet<TaskExecutor>(),
-    }) as Leaf<T>,
+    }) as Shuck<T>,
     Object.assign((value) => {
       options?.onAccessed?.(value)
     }, {}),
@@ -70,29 +70,29 @@ export function createLeaf<T>(
   const invokeTaskExecutors = () => invokeBindedExecutors(proxiedSubscribable)
   proxiedSubscribable.subscribe(invokeTaskExecutors)
   proxiedSubscribable.visiable.subscribe(invokeTaskExecutors)
-  return proxiedSubscribable as Leaf<T>
+  return proxiedSubscribable as Shuck<T>
 }
 
-export function isLeaf<T>(value: any): value is Leaf<T> {
-  return Boolean(isSubscribable(value) && value[leafTag])
+export function isShuck<T>(value: any): value is Shuck<T> {
+  return Boolean(isSubscribable(value) && value[shuckTag])
 }
 
-export function isLeafVisiable<T>(value: Leaf<T>) {
+export function isShuckVisiable<T>(value: Shuck<T>) {
   return value.visiable()
 }
 
 /**
  * high function that create value getter from subscribable
  */
-export function recordSubscribableToAtom<T>(context: TaskExecutor, subscribable: Leaf<T>) {
+export function recordSubscribableToAtom<T>(context: TaskExecutor, subscribable: Shuck<T>) {
   return subscribable.subscribedExecutors.add(context)
 }
 
-export function invokeBindedExecutors(subscribable: Leaf<any>) {
+export function invokeBindedExecutors(subscribable: Shuck<any>) {
   if (subscribable.subscribedExecutors.size === 0) return
   subscribable.subscribedExecutors.forEach(invokeExecutor)
 }
 
-export function setLeafVisiable<T>(value: Leaf<T>, visiable: boolean) {
+export function setShuckVisiable<T>(value: Shuck<T>, visiable: boolean) {
   value.visiable.set(visiable)
 }

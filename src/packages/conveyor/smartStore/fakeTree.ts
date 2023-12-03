@@ -14,13 +14,13 @@ import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThrough
 export function createFakeTree<O extends object, FakeNodeTree extends object = any>(
   defaultRawObject: O,
   options?: {
-    createNewNode?: (rawValue: any) => any
-    injectValueToExistNode?: (loadedNode: any, rawValue: any) => void
+    createLeaf?: (rawValue: any) => any
+    injectValueToExistLeaf?: (loadedNode: any, rawValue: any) => void
   },
 ) {
   const rawObj = cloneObject(defaultRawObject)
   const tree = createTreeableInfinityNode({
-    getDefaultNodeValue: () => options?.createNewNode?.(undefined),
+    getDefaultNodeValue: () => options?.createLeaf?.(undefined),
   }) as FakeNodeTree
   /**
    * sync
@@ -37,11 +37,11 @@ export function createFakeTree<O extends object, FakeNodeTree extends object = a
       const infinityNode = getByPath(tree, keyPaths)
       loadInfiniteObjNode(infinityNode, (nodeValue) =>
         nodeValue
-          ? options?.injectValueToExistNode
-            ? (options?.injectValueToExistNode?.(nodeValue, value), nodeValue)
+          ? options?.injectValueToExistLeaf
+            ? (options?.injectValueToExistLeaf?.(nodeValue, value), nodeValue)
             : value
-          : options?.createNewNode
-            ? options?.createNewNode?.(rawValue)
+          : options?.createLeaf
+            ? options?.createLeaf?.(rawValue)
             : rawValue,
       )
     })

@@ -1,11 +1,11 @@
 import { Accessor, createSignal } from 'solid-js'
 import { Branch } from '../smartStore/createBranch'
-import { Leaf } from '../smartStore/createLeaf'
+import { Shuck } from '../smartStore/createShuck'
 import { shrinkFn } from '@edsolater/fnkit'
 
 export function createSignalFromBranch<T extends object, U>(
   branch: Branch<T>,
-  get: (store: Branch<T>) => Leaf<U>,
+  get: (store: Branch<T>) => Shuck<U>,
 ): [Accessor<U>, SetFn<U>] {
   const leaf = get(branch)
   const [accessor, set] = createSignal(leaf())

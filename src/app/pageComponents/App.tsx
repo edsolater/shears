@@ -25,7 +25,7 @@ import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
 import { createFakeTree } from '../../packages/conveyor/smartStore/fakeTree'
-import { Leaf, createLeaf } from '../../packages/conveyor/smartStore/createLeaf'
+import { Shuck, createShuck } from '../../packages/conveyor/smartStore/createShuck'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -124,11 +124,9 @@ function useExperimentalCode() {
   const { rawObj, tree, set } = createFakeTree<OriginalObj>(
     { a: 1 },
     {
-      createNewNode: (rawValue) => createLeaf(rawValue),
-      injectValueToExistNode: (leaf, val) =>
-        {
-          return (leaf as Leaf<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val))
-        },
+      createLeaf: (rawValue) => createShuck(rawValue),
+      injectValueToExistLeaf: (leaf, val) =>
+        (leaf as Shuck<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val)),
     },
   )
   // console.log('rawObj.b.c: ', rawObj.b.c)

@@ -1,12 +1,12 @@
 import { AnyObj, MayFn, Primitive, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { Leaf, createLeaf } from './createLeaf'
+import { Shuck, createShuck } from './createShuck'
 import { createFakeTree } from './fakeTree'
 
 export type SmartSetStore<T extends object> = (dispatch: MayFn<Partial<T>, [prevStore?: T]>) => void
 
 export type Branch<T> = {
-  [K in keyof T]: T[K] extends Primitive ? Leaf<T[K]> : Branch<T[K]>
+  [K in keyof T]: T[K] extends Primitive ? Shuck<T[K]> : Branch<T[K]>
 }
 
 export type BranchStore<T extends object> = {
@@ -34,8 +34,8 @@ export function createBranchStore<T extends object>(defaultValue: T | Accessor<T
   const rawDefaultValue = shrinkFn(defaultValue) as T
   // branch hold data
   const { rawObj, tree, set } = createFakeTree(rawDefaultValue, {
-    createNewNode: (rawValue) => createLeaf(rawValue),
-    injectValueToExistNode: (leaf, val) => leaf.set(val),
+    createLeaf: (rawValue) => createShuck(rawValue),
+    injectValueToExistLeaf: (shuck, val) => shuck.set(val),
   })
 
   return {

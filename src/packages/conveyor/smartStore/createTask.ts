@@ -6,11 +6,11 @@
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { Leaf, recordSubscribableToAtom } from './createLeaf'
+import { Shuck, recordSubscribableToAtom } from './createShuck'
 
 export type TaskExecutor = {
   (): void
-  relatedLeafs: WeakerSet<Leaf<any>>
+  relatedLeafs: WeakerSet<Shuck<any>>
   readonly visiable: boolean
 }
 export type TaskRunner = {
@@ -37,12 +37,12 @@ export type TaskRunner = {
  */
 export function createTask(
   ...params:
-    | [taskContentFn: (get: <T>(v: Leaf<T>) => T) => void]
-    | [relatedLeafs: Leaf<any>[], taskContentFn: (get: <T>(v: Leaf<T>) => T) => void]
+    | [taskContentFn: (get: <T>(v: Shuck<T>) => T) => void]
+    | [relatedLeafs: Shuck<any>[], taskContentFn: (get: <T>(v: Shuck<T>) => T) => void]
 ) {
   const [relatedLeafs, task] = params.length === 1 ? [undefined, params[0]] : params
   const executor = (() => {
-    function pickSubscribableValue<T>(atom: Leaf<T>) {
+    function pickSubscribableValue<T>(atom: Shuck<T>) {
       recordSubscribableToExecutor(atom, executor)
       recordSubscribableToAtom(executor, atom)
       return atom()
@@ -50,7 +50,7 @@ export function createTask(
     task(pickSubscribableValue)
   }) as TaskExecutor
   assignObject(executor, {
-    relatedLeafs: new WeakerSet<Leaf<any>>(relatedLeafs),
+    relatedLeafs: new WeakerSet<Shuck<any>>(relatedLeafs),
     get visiable() {
       return isExecutorVisiable(executor)
     },
@@ -75,7 +75,7 @@ export function createTask(
   return taskRunner
 }
 
-function recordSubscribableToExecutor<T>(subscribable: Leaf<T>, context: TaskExecutor) {
+function recordSubscribableToExecutor<T>(subscribable: Shuck<T>, context: TaskExecutor) {
   context.relatedLeafs.add(subscribable)
 }
 

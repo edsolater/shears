@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 import { createBranchStore } from './createBranch'
-import { isLeaf } from './createLeaf'
+import { isShuck } from './createShuck'
 test(`basic usage`, () => {
   const { store, setStore } = createBranchStore({ a: 1, b: { c: 2 } })
   expect(store.a()).toBe(1)
@@ -10,8 +10,8 @@ test(`basic usage`, () => {
   expect(store.a()).toBe(2)
   expect(store.a()).toBe(2)
   expect(store.b.c()).toBe(3)
-  expect(isLeaf(store.a)).toBe(true)
-  expect(isLeaf(store.b.c)).toBe(true)
+  expect(isShuck(store.a)).toBe(true)
+  expect(isShuck(store.b.c)).toBe(true)
 })
 
 // FIXME: here is bug
