@@ -1,19 +1,24 @@
-import { expect, test } from 'vitest'
-import { createShuck, isShuck } from './createShuck'
-import { createFakeTree } from './fakeTree'
-import { isInfinityNode } from '../../fnkit/createInfinityObj'
 import { isObject } from '@edsolater/fnkit'
+import { expect, test } from 'vitest'
+import { InfinityObjNode, isInfinityNode } from '../../fnkit/createInfinityObj'
+import { Shuck, createShuck, isShuck } from './createShuck'
+import { createFakeTree } from './fakeTree'
 
 type OriginalObj = {
   a: number
   b: {
     c: number
   }
-  dynamicSet?: { say?: string; hello?: string }
+  dynamic?: { say?: string; hello?: string }
 }
 
+// copy from FakeTreeify
+type FakeTreeify<T> = T extends object
+  ? InfinityObjNode<Shuck<T>> & { [K in keyof T]-?: FakeTreeify<T[K] extends object ? NonNullable<T[K]> : T[K]> }
+  : InfinityObjNode<Shuck<T>> & Record<keyof any, InfinityObjNode<Shuck<undefined>>>
+
 test('basic usage', () => {
-  const { rawObj, tree, set } = createFakeTree<OriginalObj>(
+  const { rawObj, tree, set } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
     { a: 1, b: { c: 2 } },
     {
       createLeaf: (rawValue) => createShuck(rawValue),
@@ -27,10 +32,11 @@ test('basic usage', () => {
   expect(isShuck(tree.a())).toBe(true)
   expect(tree.a()()).toBe(1)
 
+  expect(tree.dynamic()())
   // dynamicly create node
-  set({ dynamicSet: { hello: 'world' } })
-  expect(tree.dynamicSet()()).toEqual({ hello: 'world' })
-  set({ dynamicSet: { say: 'hello' } })
-  expect(tree.dynamicSet()()).toEqual({ hello: 'world', say: 'hello' })
-  expect(tree.dynamicSet.hello()()).toBe('world')
+  set({ dynamic: { hello: 'world' } })
+  expect(tree.dynamic()()).toEqual({ hello: 'world' })
+  set({ dynamic: { say: 'hello' } })
+  expect(tree.dynamic()()).toEqual({ hello: 'world', say: 'hello' })
+  expect(tree.dynamic.hello()()).toBe('world')
 })

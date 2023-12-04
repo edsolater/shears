@@ -1,6 +1,12 @@
 import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
-import { createTreeableInfinityNode, loadInfinityObjNode } from '../../fnkit/createInfinityObj'
+import { InfinityObjNode, createTreeableInfinityNode, loadInfinityObjNode } from '../../fnkit/createInfinityObj'
 import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
+
+/** user can define their own FakeTree type to get more accurate type */
+export type FakeTreeify<T> = T extends object
+  ? InfinityObjNode & { [K in keyof T]-?: FakeTreeify<NonNullable<T[K]>> }
+  : InfinityObjNode &
+      Record<keyof any, InfinityObjNode<undefined>> /* for always can go deeper without undefined check */
 
 /**
  * dynamicly generate infinity nodes when attempt to access it
@@ -11,7 +17,7 @@ import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThrough
  *
  * InfiniteObj(Leaf) to store value, inside don't know leaf's content
  */
-export function createFakeTree<O extends object, FakeNodeTree extends object = any>(
+export function createFakeTree<O extends object, FakeNodeTree extends object = FakeTreeify<O>>(
   defaultRawObject: O,
   options?: {
     createLeaf?: (rawValue: any) => any

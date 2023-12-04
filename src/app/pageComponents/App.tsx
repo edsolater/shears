@@ -119,9 +119,9 @@ function useExperimentalCode() {
   }
 
   // too difficult to type
-  // type FakeTreeify<T> = T extends object ? { [K in keyof T]: FakeTreeify<T[K]> } : () => Leaf<T>
+  type FakeTreeify<T> = T extends object ? (() => Shuck<T>) & { [K in keyof T]-?: FakeTreeify<T[K]> } : () => Shuck<T>
 
-  const { rawObj, tree, set } = createFakeTree<OriginalObj>(
+  const { rawObj, tree, set } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
     { a: 1 },
     {
       createLeaf: (rawValue) => createShuck(rawValue),
