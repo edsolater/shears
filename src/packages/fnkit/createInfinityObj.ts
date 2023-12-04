@@ -2,13 +2,14 @@ import { MayFn, Primitive, isObject, shrinkFn } from '@edsolater/fnkit'
 import { parseShallowKeyFromKeyArray } from './parseShallowKeyFromKeyArray'
 
 type UserAttachedValue = any
-export type InfiniteObjNode<V extends UserAttachedValue = any> = {
+export type InfinityObjNode<V extends UserAttachedValue = any> = {
   (): V
   [currentPathFromRoot]: (keyof any)[]
   [loadSelf]: (value: MayFn<V, [oldValue: V]>) => void
+  [infinityNode]: true
 }
 const currentPathFromRoot = Symbol('currentPathFromRoot')
-
+const infinityNode = Symbol('isInfinityNode')
 const loadSelf = Symbol('load')
 
 /**
@@ -54,6 +55,7 @@ function createInfinityNode<T>(paths: (keyof any)[] = [], value?: T) {
   let nodeValue = value
   return Object.assign(() => nodeValue, {
     [currentPathFromRoot]: paths,
+    [infinityNode]: true,
     [loadSelf]: (value: MayFn<T, [oldValue: T | undefined]>) => {
       const newValue = shrinkFn(value, [nodeValue])
       nodeValue = newValue
@@ -61,10 +63,10 @@ function createInfinityNode<T>(paths: (keyof any)[] = [], value?: T) {
   })
 }
 
-export function isInfiniteNode(value: any): value is InfiniteObjNode {
+export function isInfinityNode(value: any): value is InfinityObjNode {
   return isObject(value) && currentPathFromRoot in value
 }
 
-export function loadInfiniteObjNode<T>(node: InfiniteObjNode<T>, value: MayFn<T, [oldValue: T | undefined]>) {
+export function loadInfinityObjNode<T>(node: InfinityObjNode<T>, value: MayFn<T, [oldValue: T | undefined]>) {
   node[loadSelf](value)
 }

@@ -1,12 +1,12 @@
 import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
-import { createTreeableInfinityNode, loadInfiniteObjNode } from '../../fnkit/createInfiniteObj'
+import { createTreeableInfinityNode, loadInfinityObjNode } from '../../fnkit/createInfinityObj'
 import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
 
 /**
  * dynamicly generate infinity nodes when attempt to access it
  *
  * any properties can be accessed, without check if it's exist
- * 
+ *
  * get value should via `root.xxx()`
  *
  * InfiniteObj(Leaf) to store value, inside don't know leaf's content
@@ -35,7 +35,7 @@ export function createFakeTree<O extends object, FakeNodeTree extends object = a
       // set tree
       const rawValue = getByPath(rawObj, keyPaths)
       const infinityNode = getByPath(tree, keyPaths)
-      loadInfiniteObjNode(infinityNode, (nodeValue) =>
+      loadInfinityObjNode(infinityNode, (nodeValue) =>
         nodeValue
           ? options?.injectValueToExistLeaf
             ? (options?.injectValueToExistLeaf?.(nodeValue, value), nodeValue)
@@ -47,9 +47,8 @@ export function createFakeTree<O extends object, FakeNodeTree extends object = a
     })
   }
 
-  if (rawObj) {
-    set(rawObj)
-  }
+  // pick default value
+  set(defaultRawObject)
 
   // /** {@link infinityTreeRoot} use `xxx.yyy()` to get value, but {@link treeRoot} can acess value just by `yyy.xxx`  */
   // function getTreeRoot(infinityTree) {

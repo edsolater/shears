@@ -8,6 +8,7 @@ import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCa
  * @param wrapFn
  * @returns
  * @todo move to fnkit . use proxy to fasten
+ * @deprecated why not just use {@link createFakeTree}
  */
 export function wrapLeaves<Result = any>(
   target: any,

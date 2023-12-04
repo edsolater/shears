@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
-import { createFakeTree } from './fakeTree'
 import { createShuck } from './createShuck'
+import { createFakeTree } from './fakeTree'
 
 test('basic usage', () => {
   const { rawObj, tree } = createFakeTree(
@@ -10,6 +10,6 @@ test('basic usage', () => {
       injectValueToExistLeaf: (leaf, val) => leaf.set(val),
     },
   )
-  expect(rawObj).toEqual({ a: 1, b: { c: 2 } })
-  expect(tree.a()()).toEqual(1)
+  expect(rawObj, 'rawObj will not change').toEqual({ a: 1, b: { c: 2 } })
+  expect(tree.a()()).toBe(1)
 })
