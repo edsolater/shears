@@ -1,6 +1,8 @@
 import { capitalize, isObject, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
+import { Shuck, createShuck } from '../../packages/conveyor/smartStore/createShuck'
+import { createFakeTree } from '../../packages/conveyor/smartStore/fakeTree'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
   Box,
@@ -24,8 +26,6 @@ import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
-import { createFakeTree } from '../../packages/conveyor/smartStore/fakeTree'
-import { Shuck, createShuck } from '../../packages/conveyor/smartStore/createShuck'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -129,12 +129,7 @@ function useExperimentalCode() {
         (leaf as Shuck<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val)),
     },
   )
-  // console.log('rawObj.b.c: ', rawObj.b.c)
-  // console.log('treeRoot.b.c: ',treeRoot.b.c())
-  // console.log(
-  //   'treeRoot.a: ',
-  //   get((s) => s.a),
-  // )
+  console.log('tree.a: ', tree.a)
   console.log('treeRoot.a: ', tree.a()())
   console.log('treeRoot.d 0:  ', tree.d()())
   set({ d: { hello: 'world' } })

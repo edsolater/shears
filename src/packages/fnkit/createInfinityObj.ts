@@ -1,4 +1,4 @@
-import { MayFn, Primitive, isObject, shrinkFn } from '@edsolater/fnkit'
+import { MayFn, isObject, isObjectLike, shrinkFn } from '@edsolater/fnkit'
 import { parseShallowKeyFromKeyArray } from './parseShallowKeyFromKeyArray'
 
 type UserAttachedValue = any
@@ -51,7 +51,7 @@ export function createTreeableInfinityNode({
 /**
  * can't get more through this node
  */
-function createInfinityNode<T>(paths: (keyof any)[] = [], value?: T) {
+function createInfinityNode<T>(paths: (keyof any)[] = [], value?: T): InfinityObjNode {
   let nodeValue = value
   return Object.assign(() => nodeValue, {
     [currentPathFromRoot]: paths,
@@ -60,11 +60,11 @@ function createInfinityNode<T>(paths: (keyof any)[] = [], value?: T) {
       const newValue = shrinkFn(value, [nodeValue])
       nodeValue = newValue
     },
-  })
+  }) as InfinityObjNode
 }
 
 export function isInfinityNode(value: any): value is InfinityObjNode {
-  return isObject(value) && currentPathFromRoot in value
+  return isObjectLike(value) && currentPathFromRoot in value
 }
 
 export function loadInfinityObjNode<T>(node: InfinityObjNode<T>, value: MayFn<T, [oldValue: T | undefined]>) {
