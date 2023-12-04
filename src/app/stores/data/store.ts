@@ -1,4 +1,4 @@
-import { createBStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
+import { createStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
 import { createSmartStore } from '../../../packages/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'

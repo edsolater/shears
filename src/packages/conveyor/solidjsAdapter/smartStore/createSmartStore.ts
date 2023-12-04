@@ -1,6 +1,6 @@
 import { isFunction, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, untrack } from 'solid-js'
-import { createStore, unwrap } from 'solid-js/store'
+import { createStore as _createStore, unwrap } from 'solid-js/store'
 import { Branch, createBranchStore } from '../../smartStore/createBranch'
 import { createStoreSetter } from './utils/setStoreByObject'
 
@@ -27,13 +27,13 @@ export type SmartStore<T extends Record<string, any>> = {
  * - object has merge to original store, not cover original store
  *
  */
-export function createBStore<T extends Record<string, any>>(
+export function createStore<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
   options?: CreateSmartStoreOptions<T>,
 ): SmartStore<T> {
-  const de = shrinkFn(defaultValue)
-  const [store, rawSetStore] = createStore<T>(de)
-  const { store: branchStore, setStore: setBranchStore } = createBranchStore<T>(de)
+  const parsedDefaultValue = shrinkFn(defaultValue)
+  const [store, rawSetStore] = _createStore<T>(parsedDefaultValue)
+  const { branchStore, setBranchStore } = createBranchStore<T>(parsedDefaultValue)
 
   /** if pass a function, it will be treate with createEffect to track reactive */
   if (isFunction(defaultValue)) {
@@ -43,11 +43,9 @@ export function createBStore<T extends Record<string, any>>(
     })
   }
 
-  function setStore(dispatch: ((prevValue?: T) => Partial<T>) | Partial<T>): void {
-    const prevStore = untrack(() => store)
-    const newStorePieces = unwrap(untrack(() => (isFunction(dispatch) ? dispatch(prevStore) : dispatch)))
-    setBranchStore(newStorePieces)
-    rawSetStore(createStoreSetter(newStorePieces))
+  function setStore(dispatch: ((prevValue: T) => Partial<T>) | Partial<T>): void {
+    rawSetStore(dispatch as any)
+    setBranchStore(unwrap(dispatch))
   }
 
   return { store, setStore, branchStore }

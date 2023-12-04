@@ -1,6 +1,5 @@
 import { expect, test } from 'vitest'
 import { getByPath, walkThroughObject } from './walkThroughObject'
-import { isObjectLike } from '@edsolater/fnkit'
 
 test('basic usage', () => {
   const obj = { a: 'a', b: 'b', c: { d: 'd' } }
@@ -17,8 +16,8 @@ test('basic usage', () => {
       expect(keyPaths).toEqual(['c', 'd'])
     }
 
-    const targetObj = getByPath(obj, parentPath)
-    if (isObjectLike(targetObj)) {
+    if (keyPaths.length === 2) {
+      const targetObj = getByPath(obj, parentPath)
       targetObj[currentKey] = 'hello world'
     }
   })
