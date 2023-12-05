@@ -36,6 +36,8 @@ export function createBranchStore<T extends object>(defaultValue: T | Accessor<T
     createLeaf: (rawValue) => createShuck(rawValue),
     injectValueToExistLeaf: (leaf, val) => leaf.set((p) => (isObject(val) && isObject(p) ? mergeObjects(p, val) : val)),
   })
+
+  // A&Y: why must invoke xxx.yyy() to get value? to avoid leaf value(yyy) also have property named: yyy .e.g. { yyy: { subscribe: 1 } }, if root.yyy.subscribe , what's the result? 1 or subscribe function?
   return {
     branchStore: tree as any,
     setBranchStore: set,
