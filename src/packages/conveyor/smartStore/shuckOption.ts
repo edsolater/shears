@@ -1,3 +1,4 @@
+import { isExist } from '@edsolater/fnkit'
 import { shuckOptionTag } from './shuck'
 
 export type ShuckOption<T = any> = {
@@ -14,5 +15,5 @@ export function createShuckOption<T>(description: { value: T; visiable: boolean 
   }
 }
 export function isShuckOption<T>(value: any): value is ShuckOption<T> {
-  return value?.[shuckOptionTag]
+  return isExist(value) && value?.[shuckOptionTag]
 }

@@ -11,6 +11,9 @@ type ObserveRule<T> =
  * by Proxy \
  * observe user action towards the object|function \
  * it's a shortcut to create deepp proxyed object|function
+ * 
+ * when property is accessed, input rule will be invoked
+ * TODO: this method should be tested 
  *
  * @param target the be observed
  * - if it's target is object, it will not replaced by rule, but recursively observe user operation

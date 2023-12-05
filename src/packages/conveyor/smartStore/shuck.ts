@@ -32,7 +32,7 @@ export interface Shuck<T> extends Subscribable<T> {
 
 export interface CreateShuckOptions<T> {
   visiable?: boolean | 'auto' // TODO: inply it means auto
-  onAccessed?: (currentValue: T) => void
+  onChangeToVisiable?: () => void
 }
 
 let globalShuckId = 0
@@ -40,7 +40,7 @@ let globalShuckId = 0
 /** create special subscribable */
 export function createShuck<T>(defaultValue: MayFn<T>, options?: CreateShuckOptions<T>): Shuck<T>
 export function createShuck<T>(subscribable: Subscribable<T>, options?: CreateShuckOptions<T>): Shuck<T>
-export function createShuck<T>(option: ShuckOption<T>): Shuck<T>
+export function createShuck<T>(shuckOption: ShuckOption<T>): Shuck<T>
 export function createShuck<T>(
   ...args:
     | [subscribable: Subscribable<T>, options?: CreateShuckOptions<T>]
@@ -49,31 +49,28 @@ export function createShuck<T>(
 ): Shuck<T> {
   const id = globalShuckId++
 
-  const defaultedArgs = (
-    isSubscribable(args[0])
+  const [subscribable, options] = (
+    isSubscribable(args[0]) // already input subscribable
       ? [args[0], args[1]]
       : isShuckOption(args[0])
-        ? [createSubscribable(args[0].value), args[0]]
-        : [createSubscribable(args[0]), args[1]]
+        ? // @ts-ignore
+          [createSubscribable(args[0].value, args[0]), args[0]]
+        : // @ts-ignore
+          [createSubscribable(args[0], args[1]), args[1]]
   ) as [subscribable: Subscribable<T>, options?: CreateShuckOptions<T>]
-  const [subscribable, options] = defaultedArgs
 
-  const proxiedSubscribable = observe(
-    Object.assign(subscribable, {
-      [shuckTag]: true,
-      id: `shuck_${id}`,
-      /**
-       * only effect exector will auto run if it's any observed Shuck is visiable \
-       * visiable, so effect is meaningful for user
-       */
-      visiable: createSubscribable(Boolean(options?.visiable)),
-      subscribedExecutors: new WeakerSet<TaskExecutor>(),
-    }) as Shuck<T>,
-    Object.assign((value) => {
-      options?.onAccessed?.(value)
-    }, {}),
-  )
-
+  const proxiedSubscribable = Object.assign(subscribable, {
+    [shuckTag]: true,
+    id: `shuck_${id}`,
+    /**
+     * only effect exector will auto run if it's any observed Shuck is visiable \
+     * visiable, so effect is meaningful for user
+     */
+    visiable: createSubscribable(Boolean(options?.visiable), {
+      subscribeFns: options?.onChangeToVisiable,
+    }),
+    subscribedExecutors: new WeakerSet<TaskExecutor>(),
+  }) as Shuck<T>
   const invokeTaskExecutors = () => invokeBindedExecutors(proxiedSubscribable)
   proxiedSubscribable.subscribe(invokeTaskExecutors)
   proxiedSubscribable.visiable.subscribe(invokeTaskExecutors)

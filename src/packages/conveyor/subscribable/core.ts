@@ -1,4 +1,15 @@
-import { MayPromise, AnyFn, shrinkFn, isFunction, isPromise, isObject, isObjectLike } from '@edsolater/fnkit'
+import {
+  MayPromise,
+  AnyFn,
+  shrinkFn,
+  isFunction,
+  isPromise,
+  isObject,
+  isObjectLike,
+  MayArray,
+  flap,
+  asyncInvoke,
+} from '@edsolater/fnkit'
 
 const subscribableTag = Symbol('subscribable')
 
@@ -21,16 +32,19 @@ type SubscribableSetValueDispatcher<T> = MayPromise<T> | ((oldValue: T) => MayPr
  * it can be the data atom of App's store graph
  * @param defaultValue value or a function that returns value, which means it only be called when needed
  */
-export function createSubscribable<T>(defaultValue: T | (() => T), defaultCallbacks?: SubscribeFn<T>[]): Subscribable<T>
+export function createSubscribable<T>(
+  defaultValue: T | (() => T),
+  options?: { subscribeFns?: MayArray<SubscribeFn<T>> },
+): Subscribable<T>
 export function createSubscribable<T>(
   defaultValue?: T | undefined | (() => T | undefined),
-  defaultCallbacks?: SubscribeFn<T | undefined>[],
+  options?: { subscribeFns?: MayArray<SubscribeFn<T | undefined>> },
 ): Subscribable<T | undefined>
 export function createSubscribable<T>(
   defaultValue?: T | (() => T),
-  defaultCallbacks?: SubscribeFn<T>[],
+  options?: { subscribeFns?: MayArray<SubscribeFn<T>> },
 ): Subscribable<T | undefined> {
-  const subscribeFns = new Set<SubscribeFn<T>>(defaultCallbacks)
+  const subscribeFns = new Set<SubscribeFn<T>>(options?.subscribeFns ? flap(options.subscribeFns) : undefined)
   const cleanFnMap = new Map<SubscribeFn<T>, AnyFn>()
 
   let innerValue = shrinkFn(defaultValue) as T | undefined
@@ -57,10 +71,15 @@ export function createSubscribable<T>(
   }
 
   function invokeSubscribedCallbacks(cb: SubscribeFn<T>, newValue: T | undefined, prevValue: T | undefined) {
-    const oldCleanFn = cleanFnMap.get(cb)
-    if (isFunction(oldCleanFn)) oldCleanFn(innerValue)
-    const cleanFn = cb(newValue as T /*  type force */, prevValue)
-    if (isFunction(cleanFn)) cleanFnMap.set(cb, cleanFn)
+    asyncInvoke(
+      () => {
+        const oldCleanFn = cleanFnMap.get(cb)
+        if (isFunction(oldCleanFn)) oldCleanFn(innerValue)
+        const cleanFn = cb(newValue as T /*  type force */, prevValue)
+        if (isFunction(cleanFn)) cleanFnMap.set(cb, cleanFn)
+      },
+      { key: cb },
+    )
   }
 
   const subscribable = Object.assign(() => innerValue, {
