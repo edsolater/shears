@@ -30,6 +30,7 @@ export interface CreateShuckOptions<T> {
 }
 
 let globalShuckId = 0
+
 /** create special subscribable */
 export function createShuck<T>(defaultValue: MayFn<T>, options?: CreateShuckOptions<T>): Shuck<T>
 export function createShuck<T>(subscribable: Subscribable<T>, options?: CreateShuckOptions<T>): Shuck<T>
@@ -81,6 +82,10 @@ export function isShuckVisiable<T>(value: Shuck<T>) {
   return value.visiable()
 }
 
+export function isShuckHidden<T>(value: Shuck<T>) {
+  return !value.visiable()
+}
+
 /**
  * high function that create value getter from subscribable
  */
@@ -95,4 +100,13 @@ export function invokeBindedExecutors(subscribable: Shuck<any>) {
 
 export function setShuckVisiable<T>(value: Shuck<T>, visiable: boolean) {
   value.visiable.set(visiable)
+}
+
+
+export function visualizeShuck<T>(value: Shuck<T>) {
+  setShuckVisiable(value, true)
+}
+
+export function hideShuck<T>(value: Shuck<T>) {
+  setShuckVisiable(value, false)
 }
