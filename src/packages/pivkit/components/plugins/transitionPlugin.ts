@@ -13,12 +13,11 @@ export type TransitionController = {
  * detect by JS, drive by JS
  */
 export interface TransitionOptions {
-  cssTransitionDurationMs?: number
+  cssTransitionDuration?: CSSObject['transitionDuration']
   cssTransitionTimingFunction?: CSSObject['transitionTimingFunction']
 
   /** will trigger props:onBeforeEnter() if init props:show  */
   appear?: boolean
-  currentIs?: 'from' | 'to'
 
   /** shortcut for both enterFrom and leaveTo */
   fromProps?: PivProps
@@ -35,11 +34,10 @@ export interface TransitionOptions {
 
 export const transitionPlugin = createPlugin(
   ({
-    cssTransitionDurationMs = 300,
+    cssTransitionDuration = '300ms',
     cssTransitionTimingFunction,
 
     appear,
-    currentIs,
 
     fromProps,
     toProps,
@@ -54,7 +52,7 @@ export const transitionPlugin = createPlugin(
     (props, { dom }) => {
       const transitionPhaseProps = createMemo(() => {
         const baseTransitionICSS = {
-          transition: `${cssTransitionDurationMs}ms`,
+          transition: `${cssTransitionDuration}ms`,
           transitionTimingFunction: cssTransitionTimingFunction,
         }
         return {
@@ -62,13 +60,13 @@ export const transitionPlugin = createPlugin(
             flap(presets).map((i) => shrinkFn(i)?.fromProps), // not readable
             progressProps,
             fromProps,
-            { style: baseTransitionICSS } as PivProps
+            { style: baseTransitionICSS } as PivProps,
           ),
           to: mergeProps(
             flap(presets).map((i) => shrinkFn(i)?.toProps), // not readable
             progressProps,
             toProps,
-            { style: baseTransitionICSS } as PivProps
+            { style: baseTransitionICSS } as PivProps,
           ),
         } as Record<'from' | 'to', PivProps>
       })
@@ -109,9 +107,9 @@ export const transitionPlugin = createPlugin(
             dom()?.clientHeight // force GPU render frame
             onBeforeTransition?.(payload)
           }
-        })
+        }),
       )
 
       return createMemo(() => transitionPhaseProps()[currentPhase() === 'prepare-to-go' ? 'from' : 'to'])
-    }
+    },
 )
