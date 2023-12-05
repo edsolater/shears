@@ -1,7 +1,7 @@
 import { capitalize, isObject, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
-import { Shuck, createShuck } from '../../packages/conveyor/smartStore/shuck'
+import { Shuck, createShuck, setShuckVisiableChecker } from '../../packages/conveyor/smartStore/shuck'
 import { createFakeTree } from '../../packages/conveyor/smartStore/fakeTree'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
@@ -26,6 +26,8 @@ import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout, routes } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
+import { createBranchStore } from '../../packages/conveyor/smartStore/branch'
+import { createTask } from '../../packages/conveyor/smartStore/task'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -110,30 +112,18 @@ const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: 
 
 /** code for test */
 function useExperimentalCode() {
-  type OriginalObj = {
-    a: number
-    b?: {
-      c: string
-    }
-    d?: { say?: string; hello?: string }
-  }
-
-  // too difficult to type
-  type FakeTreeify<T> = T extends object ? (() => Shuck<T>) & { [K in keyof T]-?: FakeTreeify<T[K]> } : () => Shuck<T>
-
-  const { rawObj, tree, set } = createFakeTree<OriginalObj, FakeTreeify<OriginalObj>>(
-    { a: 1 },
-    {
-      createLeaf: (rawValue) => createShuck(rawValue),
-      injectValueToExistLeaf: (leaf, val) =>
-        (leaf as Shuck<any>).set((p) => (isObject(val) && isObject(p) ? { ...p, ...val } : val)),
-    },
-  )
-  console.log('tree.a: ', tree.a)
-  console.log('treeRoot.a: ', tree.a()())
-  console.log('treeRoot.d 0:  ', tree.d()())
-  set({ d: { hello: 'world' } })
-  console.log('treeRoot.d: ', tree.d()())
-  set({ d: { say: 'hello' } })
-  console.log('treeRoot.d:  ', tree.d()())
+  let effectRunCount = 0
+  const { branchStore } = createBranchStore({ testCount: 1 })
+  const testCount = branchStore.testCount()
+  const effect = createTask([testCount], (get) => {
+    const n = get(testCount)
+    effectRunCount++
+  })
+  effect.register()
+  testCount.set((n) => n + 1)
+  setShuckVisiableChecker(testCount, true, undefined)
+  testCount.set((n) => n + 1)
+  setTimeout(() => {
+    console.log('effectRunCount: ', effectRunCount)
+  })
 }

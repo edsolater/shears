@@ -69,6 +69,7 @@ export function createShuck<T>(
     visiable: createSubscribable(Boolean(options?.visiable), {
       subscribeFns: options?.onChangeToVisiable,
     }),
+    visiableCheckers: new Map(),
     subscribedExecutors: new WeakerSet<TaskExecutor>(),
   }) as Shuck<T>
   const invokeTaskExecutors = () => invokeBindedExecutors(proxiedSubscribable)

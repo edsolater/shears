@@ -71,15 +71,10 @@ export function createSubscribable<T>(
   }
 
   function invokeSubscribedCallbacks(cb: SubscribeFn<T>, newValue: T | undefined, prevValue: T | undefined) {
-    asyncInvoke(
-      () => {
-        const oldCleanFn = cleanFnMap.get(cb)
-        if (isFunction(oldCleanFn)) oldCleanFn(innerValue)
-        const cleanFn = cb(newValue as T /*  type force */, prevValue)
-        if (isFunction(cleanFn)) cleanFnMap.set(cb, cleanFn)
-      },
-      { key: cb },
-    )
+    const oldCleanFn = cleanFnMap.get(cb)
+    if (isFunction(oldCleanFn)) oldCleanFn(innerValue)
+    const cleanFn = cb(newValue as T /*  type force */, prevValue)
+    if (isFunction(cleanFn)) cleanFnMap.set(cb, cleanFn)
   }
 
   const subscribable = Object.assign(() => innerValue, {
