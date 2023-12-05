@@ -3,7 +3,7 @@ import {
   createShuck,
   CreateShuckOptions,
   Shuck,
-} from '../smartStore/createShuck'
+} from '../smartStore/shuck'
 import { asynclyCreateEffect } from './createAsyncEffect'
 
 export function createLeafFromAccessor<T>(accessor: () => T, options?: CreateShuckOptions<T>) {

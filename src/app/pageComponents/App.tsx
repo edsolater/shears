@@ -1,7 +1,7 @@
 import { capitalize, isObject, map, switchCase } from '@edsolater/fnkit'
 import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
 import { createMemo } from 'solid-js'
-import { Shuck, createShuck } from '../../packages/conveyor/smartStore/createShuck'
+import { Shuck, createShuck } from '../../packages/conveyor/smartStore/shuck'
 import { createFakeTree } from '../../packages/conveyor/smartStore/fakeTree'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {

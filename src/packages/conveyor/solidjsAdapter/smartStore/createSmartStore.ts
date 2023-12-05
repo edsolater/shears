@@ -1,7 +1,7 @@
 import { isFunction, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, untrack } from 'solid-js'
 import { createStore as _createStore, unwrap } from 'solid-js/store'
-import { Branch, createBranchStore } from '../../smartStore/createBranch'
+import { Branch, createBranchStore } from '../../smartStore/branch'
 import { createStoreSetter } from './utils/setStoreByObject'
 
 export type CreateSmartStoreOptions_BasicOptions<T extends Record<string, any>> = {}

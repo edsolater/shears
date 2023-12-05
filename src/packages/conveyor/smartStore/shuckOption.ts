@@ -1,4 +1,4 @@
-import { shuckOptionTag } from './createShuck'
+import { shuckOptionTag } from './shuck'
 
 export type ShuckOption<T = any> = {
   value: T

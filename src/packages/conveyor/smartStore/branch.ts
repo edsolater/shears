@@ -1,6 +1,6 @@
 import { AnyObj, MayFn, Primitive, isObject, mergeObjects, shrinkFn } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { Shuck, createShuck } from './createShuck'
+import { Shuck, createShuck } from './shuck'
 import { createFakeTree } from './fakeTree'
 import { InfinityObjNode } from '../../fnkit/createInfinityObj'
 

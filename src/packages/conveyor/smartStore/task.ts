@@ -6,12 +6,12 @@
 import { WeakerSet } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { Shuck, recordSubscribableToAtom } from './createShuck'
+import { Shuck, isShuckVisiable, recordSubscribableToAtom } from './shuck'
 
 export type TaskExecutor = {
   (): void
-  relatedLeafs: WeakerSet<Shuck<any>>
-  readonly visiable: boolean
+  relatedShucks: WeakerSet<Shuck<any>>
+  readonly visiable: boolean // TODO: need to be a subscribable
 }
 export type TaskRunner = {
   // main method of task, force to run the effect
@@ -76,12 +76,12 @@ export function createTask(
 }
 
 function recordSubscribableToExecutor<T>(subscribable: Shuck<T>, context: TaskExecutor) {
-  context.relatedLeafs.add(subscribable)
+  context.relatedShucks.add(subscribable)
 }
 
 function isExecutorVisiable(context: TaskExecutor) {
-  for (const leaf of context.relatedLeafs) {
-    if (leaf.visiable()) return true
+  for (const shuck of context.relatedShucks) {
+    if (isShuckVisiable(shuck)) return true
   }
   return false
 }

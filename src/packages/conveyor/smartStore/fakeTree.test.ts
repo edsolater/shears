@@ -1,7 +1,7 @@
 import { isObject } from '@edsolater/fnkit'
 import { expect, test } from 'vitest'
 import { InfinityObjNode, isInfinityNode } from '../../fnkit/createInfinityObj'
-import { Shuck, createShuck, isShuck } from './createShuck'
+import { Shuck, createShuck, isShuck } from './shuck'
 import { createFakeTree } from './fakeTree'
 import { mergeObjects } from './mergeObjects'
 

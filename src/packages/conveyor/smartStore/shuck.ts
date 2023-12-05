@@ -1,8 +1,8 @@
 import { MayFn, WeakerSet } from '@edsolater/fnkit'
 import { observe } from '../../fnkit/observe'
 import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
-import { TaskExecutor, invokeExecutor } from './createTask'
-import { ShuckOption, isShuckOption } from './createShuckOption'
+import { TaskExecutor, invokeExecutor } from './task'
+import { ShuckOption, isShuckOption } from './shuckOption'
 
 export const shuckTag = Symbol('shuckTag')
 export const shuckOptionTag = Symbol('shuckOptionTag')
@@ -11,16 +11,22 @@ export const shuckOptionTag = Symbol('shuckOptionTag')
  * add ability to pure subscribable
  */
 export interface Shuck<T> extends Subscribable<T> {
+  /** when detected, it is a Shuck  */
+  [shuckTag]: boolean
   id: string
   /**
    * used by TaskExecutor to track subscribable's visiability
+   *
+   * when no visiableCheckers, means this subscribable is hidden
+   * when any of visiableCheckers is true, means this subscribable is visiable;
+   * when all of visiableCheckers is false, means this subscribable is hidden
    *
    * only effect exector will auto run if it's any observed Shuck is visiable \
    * visiable, so effect is meaningful 0for user
    */
   visiable: Subscribable<boolean>
+  visiableCheckers: Map<any, boolean>
   // when set this, means this object is a observable-subscribable
-  [shuckTag]: boolean
   subscribedExecutors: WeakerSet<TaskExecutor>
 }
 
@@ -98,15 +104,31 @@ export function invokeBindedExecutors(subscribable: Shuck<any>) {
   subscribable.subscribedExecutors.forEach(invokeExecutor)
 }
 
-export function setShuckVisiable<T>(value: Shuck<T>, visiable: boolean) {
-  value.visiable.set(visiable)
+export function updateShuckVisiable<T>(shuck: Shuck<T>) {
+  for (const isVisiable of shuck.visiableCheckers.values()) {
+    if (isVisiable) {
+      shuck.visiable.set(true)
+      return
+    }
+  }
+  shuck.visiable.set(false)
+  return
 }
 
-
-export function visualizeShuck<T>(value: Shuck<T>) {
-  setShuckVisiable(value, true)
+export function setShuckVisiableChecker<T>(shuck: Shuck<T>, visiable: boolean, key: any) {
+  shuck.visiableCheckers.set(key, visiable)
+  updateShuckVisiable(shuck)
 }
 
-export function hideShuck<T>(value: Shuck<T>) {
-  setShuckVisiable(value, false)
+export function deleteShuckVisibaleChecker<T>(shuck: Shuck<T>, key: any) {
+  shuck.visiableCheckers.delete(key)
+  updateShuckVisiable(shuck)
+}
+
+export function visualizeShuck<T>(shuck: Shuck<T>, key: any) {
+  setShuckVisiableChecker(shuck, true, key)
+}
+
+export function hideShuck<T>(shuck: Shuck<T>, key: any) {
+  setShuckVisiableChecker(shuck, false, key)
 }
