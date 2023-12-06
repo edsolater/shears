@@ -3,11 +3,13 @@ import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 
 import { addEventListener } from '../domkit'
 import { CSSObject, PivProps, createPlugin, mergeProps } from '../piv'
 
-export type TransitionPhase = 'prepare-to-go' | 'on-going' | 'finish'
+export type TransitionActionPhase = 'before-going' | 'on-going' | 'finish'
+type TransitionTowards = 'enter' | 'leave'
 
 export type TransitionController = {
   targetDom: Accessor<HTMLElement | undefined>
-  currentPhase: Accessor<TransitionPhase>
+  phase: Accessor<TransitionActionPhase>
+  towards: Accessor<TransitionTowards>
 }
 /**
  * detect by JS, drive by JS
@@ -26,8 +28,12 @@ export interface TransitionOptions {
   /** normaly don't use this, just from and to is enough */
   progressProps?: PivProps
 
-  onBeforeTransition?: (payload: { from: TransitionPhase; to: TransitionPhase } & TransitionController) => void
-  onAfterTransition?: (payload: { from: TransitionPhase; to: TransitionPhase } & TransitionController) => void
+  onBeforeTransition?: (
+    payload: { from: TransitionActionPhase; to: TransitionActionPhase } & TransitionController,
+  ) => void
+  onAfterTransition?: (
+    payload: { from: TransitionActionPhase; to: TransitionActionPhase } & TransitionController,
+  ) => void
 
   presets?: MayArray<MayFn<Omit<TransitionOptions, 'presets'>>>
 }
@@ -51,8 +57,8 @@ export const transitionPlugin = createPlugin(
   }: TransitionOptions = {}) =>
     (props, { dom }) => {
       const transitionPhaseProps = createMemo(() => {
-        const baseTransitionICSS = {
-          transition: `${cssTransitionDuration}ms`,
+        const basic = {
+          transition: cssTransitionDuration,
           transitionTimingFunction: cssTransitionTimingFunction,
         }
         return {
@@ -60,22 +66,24 @@ export const transitionPlugin = createPlugin(
             flap(presets).map((i) => shrinkFn(i)?.fromProps), // not readable
             progressProps,
             fromProps,
-            { style: baseTransitionICSS } as PivProps,
+            { style: basic } as PivProps,
           ),
           to: mergeProps(
             flap(presets).map((i) => shrinkFn(i)?.toProps), // not readable
             progressProps,
             toProps,
-            { style: baseTransitionICSS } as PivProps,
+            { style: basic } as PivProps,
           ),
         } as Record<'from' | 'to', PivProps>
       })
 
-      const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(appear ? 'prepare-to-go' : 'finish')
+      const [currentPhase, setCurrentPhase] = createSignal<TransitionActionPhase>(appear ? 'before-going' : 'finish')
+      const [currentTowards, setCurrentTowards] = createSignal<TransitionTowards>('enter')
 
       const controller: TransitionController = {
         targetDom: dom,
-        currentPhase,
+        phase: currentPhase,
+        towards: currentTowards,
       }
 
       // set data-** to element DOM for semantic
@@ -109,13 +117,13 @@ export const transitionPlugin = createPlugin(
             onAfterTransition?.(payload)
           }
 
-          if (prevPhase === 'finish' && currentPhase === 'prepare-to-go') {
+          if (prevPhase === 'finish' && currentPhase === 'before-going') {
             dom()?.clientHeight // force GPU render frame
             onBeforeTransition?.(payload)
           }
         }),
       )
 
-      return createMemo(() => transitionPhaseProps()[currentPhase() === 'prepare-to-go' ? 'from' : 'to'])
+      return createMemo(() => transitionPhaseProps()[currentPhase() === 'before-going' ? 'from' : 'to'])
     },
 )

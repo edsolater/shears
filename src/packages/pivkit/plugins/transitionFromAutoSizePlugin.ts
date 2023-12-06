@@ -3,7 +3,7 @@ import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 
 import { addEventListener } from '../domkit'
 import { CSSObject, PivProps, createPlugin, mergeProps } from '../piv'
 
-export type TransitionPhase = 'prepare-to-go' | 'on-going' | 'finish'
+export type TransitionPhase = 'before-going' | 'on-going' | 'finish'
 
 export type TransitionController = {
   targetDom: Accessor<HTMLElement | undefined>
@@ -71,7 +71,7 @@ export const transitionFromAutoSizePlugin = createPlugin(
         } as Record<'from' | 'to', PivProps>
       })
 
-      const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(appear ? 'prepare-to-go' : 'finish')
+      const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(appear ? 'before-going' : 'finish')
 
       const controller: TransitionController = {
         targetDom: dom,
@@ -103,13 +103,13 @@ export const transitionFromAutoSizePlugin = createPlugin(
             onAfterTransition?.(payload)
           }
 
-          if (prevPhase === 'finish' && currentPhase === 'prepare-to-go') {
+          if (prevPhase === 'finish' && currentPhase === 'before-going') {
             dom()?.clientHeight // force GPU render frame
             onBeforeTransition?.(payload)
           }
         }),
       )
 
-      return createMemo(() => transitionPhaseProps()[currentPhase() === 'prepare-to-go' ? 'from' : 'to'])
+      return createMemo(() => transitionPhaseProps()[currentPhase() === 'before-going' ? 'from' : 'to'])
     },
 )
