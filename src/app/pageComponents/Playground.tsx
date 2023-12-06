@@ -34,6 +34,7 @@ import {
   useHoverPlugin,
   cssVar,
   createICSS,
+  transitionPlugin,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -66,7 +67,7 @@ function ComponentSpecList() {
         <ModalExample />
       </ExamplePanel>
 
-      {/* <ExamplePanel name='IntervalCircle'>
+      <ExamplePanel name='IntervalCircle'>
         <CircularProgressExample />
       </ExamplePanel>
 
@@ -74,7 +75,7 @@ function ComponentSpecList() {
         <CSSTransitionExample />
       </ExamplePanel>
 
-      <ExamplePanel name='Input'>
+      {/* <ExamplePanel name='Input'>
         <InputExample />
       </ExamplePanel>
 
@@ -214,9 +215,15 @@ function CSSTransitionExample() {
     <>
       <Button onClick={() => setShow((b) => !b)}>Toggle</Button>
       <Piv
-        domRef={refSetter}
-        shadowProps={transitionProps()}
-        icss={{ backgroundColor: 'dodgerblue', height: '120px', display: 'grid', placeItems: 'center' }}
+        plugin={transitionPlugin.config({
+          onAfterTransition: () => {
+            console.log('onAfterTransition')
+          },
+          onBeforeTransition: () => {
+            console.log('onBeforeTransition')
+          },
+        })}
+        icss={{ backgroundColor: 'crimson', height: show() ? '200px' : '100px', display: 'grid', placeItems: 'center' }}
       >
         <Box>hello</Box>
       </Piv>

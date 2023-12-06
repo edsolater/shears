@@ -1,7 +1,7 @@
 import { MayArray, flap, pipe } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
 import { handlePropsInnerController } from './ControllerContext'
-import { ClassName, HTMLProps, ICSS, IStyle, Plugin, handlePluginProps, handleShadowProps, parsePivProps } from './propHandlers'
+import { ClassName, HTMLProps, ICSS, IStyle, Plugin, PluginCoreFn, handlePluginProps, handleShadowProps, parsePivProps } from './propHandlers'
 import { renderHTMLDOM } from './propHandlers/renderHTMLDOM'
 import { HTMLTag, PivChild, ValidController } from './typeTools'
 import { omit } from './utils'
@@ -90,7 +90,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * auto merge by shadowProps
    * special: every kit baseon <Piv> should support this prop
    */
-  plugin?: MayArray<Plugin<any>>
+  plugin?: MayArray<Plugin<any>| PluginCoreFn>
 
   // -------- special prop --------
 

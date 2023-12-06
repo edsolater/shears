@@ -1,7 +1,7 @@
 import { MayArray, MayFn, flap, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
-import { addEventListener } from '../../domkit'
-import { CSSObject, PivProps, createPlugin, mergeProps } from '../../piv'
+import { addEventListener } from '../domkit'
+import { CSSObject, PivProps, createPlugin, mergeProps } from '../piv'
 
 export type TransitionPhase = 'prepare-to-go' | 'on-going' | 'finish'
 
@@ -32,7 +32,7 @@ export interface TransitionOptions {
   presets?: MayArray<MayFn<Omit<TransitionOptions, 'presets'>>>
 }
 
-export const transitionFromAutoSizePlugin = createPlugin(
+export const transitionPlugin = createPlugin(
   ({
     cssTransitionDuration = '300ms',
     cssTransitionTimingFunction,
@@ -88,10 +88,16 @@ export const transitionFromAutoSizePlugin = createPlugin(
 
       // make inTransition during state sync with CSS event
       createEffect(() => {
-        const { abort } = addEventListener(dom(), 'transitionend', () => setCurrentPhase('finish'), {
+        const el = dom()
+        if (!el) return
+        const { abort } = addEventListener(el, 'transitionend', () => setCurrentPhase('finish'), {
           onlyTargetIsSelf: true /* TODO - add feature: attach max one time  */,
         }) // not event fired by bubbled
         onCleanup(abort)
+        const { abort: abort2 } = addEventListener(el, 'transitionstart', () => setCurrentPhase('on-going'), {
+          onlyTargetIsSelf: true /* TODO - add feature: attach max one time  */,
+        })
+        onCleanup(abort2)
       })
 
       // invoke callbacks

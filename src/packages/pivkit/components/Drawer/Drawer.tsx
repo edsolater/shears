@@ -2,7 +2,7 @@ import { createEffect, createSignal, Show } from 'solid-js'
 import { createRef } from '../../hooks/createRef'
 import { useClickOutside } from '../../hooks/useClickOutside'
 import { KitProps, Piv, useKitProps } from '../../piv'
-import { drawerKeyboardShortcut } from '../plugins/drawerKeyboardShortcut'
+import { drawerKeyboardShortcut } from '../../plugins/drawerKeyboardShortcut'
 import { PopPortal } from '../PopPortal'
 
 export interface DrawerController {

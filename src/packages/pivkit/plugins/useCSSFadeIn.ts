@@ -11,6 +11,7 @@ type UseFadeInOptions = AccessifyProps<{
   appear?: boolean
 }>
 
+// TODO: should be plugin
 export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
   const options = useAccessifiedProps(additionalOpts)
 

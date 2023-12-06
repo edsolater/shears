@@ -14,7 +14,7 @@ import {
   overwriteFunctionName,
   shrinkFn,
 } from '@edsolater/fnkit'
-import { SettingsFunction, settingsFunction } from '../../../fnkit/settingsFunction'
+import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/settingsFunction'
 import { CSSAttribute, css } from 'solid-styled-components'
 
 type ValidController = AnyObj
@@ -35,7 +35,7 @@ const isTaggedICSSSybol = Symbol('isTaggedICSS')
 const toICSSSymbol = Symbol('toICSS') // 🤔 is it necessary?
 
 type RuleCreatorFn = (settings?: AnyObj) => ICSS
-type TaggedICSS<T extends AnyFn> = SettingsFunction<T> & {
+type TaggedICSS<T extends AnyFn> = ConfigableFunction<T> & {
   [isTaggedICSSSybol]: true | string
   [toICSSSymbol](): ICSS
   [toICSSSymbol](...additionalSettings: Parameters<T>): ICSS
@@ -45,7 +45,7 @@ export function createICSS<T extends RuleCreatorFn>(
   rule: T,
   options?: { name?: string; defaultSettings?: Partial<AnyObj> },
 ): TaggedICSS<T> {
-  const factory = settingsFunction(
+  const factory = createConfigableFunction(
     (settings?: AnyObj) => rule(settings),
     options?.defaultSettings,
   ) as unknown as TaggedICSS<T>
@@ -61,7 +61,7 @@ export function isTaggedICSS(v: any): v is TaggedICSS<any> {
 }
 
 function invokeTaggedICSS<T extends RuleCreatorFn>(v: TaggedICSS<T>, params?: AnyObj): ICSS {
-  return v.addParam(params)()
+  return v.config(params as any)()
 }
 
 /** for piv to parse icss props */

@@ -1,14 +1,14 @@
-import { Accessor, createEffect, createMemo, createSignal, on, onMount } from 'solid-js'
-import { KitProps, Piv, PivProps, useKitProps } from '../../piv'
+import { hasProperty, mergeObjects } from '@edsolater/fnkit'
+import { Accessor, createEffect, createMemo, createSignal, on } from 'solid-js'
+import { runtimeObject } from '../../../fnkit/runtimeObject'
+import { createDomRef } from '../../hooks'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
-import { Accessify, DeAccessifyProps } from '../../utils/accessifyProps'
+import { KitProps, Piv, PivProps, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
-import { createDomRef } from '../../hooks'
+import { DeAccessifyProps } from '../../utils/accessifyProps'
+import { useKeyboardShortcut } from '../../plugins/useKeyboardShortcut'
 import { useFocus } from './hooks/useFocus'
-import { runtimeObject } from '../../../fnkit/runtimeObject'
-import { hasProperty, mergeObjects } from '@edsolater/fnkit'
-import { useKeyboardShortcut } from '../../features'
 
 export interface InputController {
   text: string

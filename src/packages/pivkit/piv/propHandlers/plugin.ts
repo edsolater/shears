@@ -1,6 +1,6 @@
 import { AnyObj, isFunction, overwriteFunctionName } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { SettingsFunction, settingsFunction } from '../../../fnkit/settingsFunction'
+import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/settingsFunction'
 import { KitProps } from '../../createKit'
 import { Accessify } from '../../utils'
 import { ValidController, ValidProps } from '../typeTools'
@@ -32,7 +32,7 @@ export type PluginObj<
   PluginState extends Record<string, any> = any,
   T extends ValidProps = any,
   C extends ValidController = ValidController,
-> = SettingsFunction<{
+> = ConfigableFunction<{
   (options?: PluginOptions): { plugin: PluginCoreFn<T, C>; state: PluginState }
   [isPluginObjSymbol]: true
   priority?: number
@@ -71,7 +71,7 @@ export function createPlugin<
     name?: string
   }
 ): PluginObj<PluginOptions, PluginState, Props, Controller> {
-  const pluginCoreFn = settingsFunction(
+  const pluginCoreFn = createConfigableFunction(
     (params: PluginOptions) => {
       const mayPluginCore = createrFn(params)
       const renamedMayPluginCore =

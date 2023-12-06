@@ -1,6 +1,6 @@
 export * from './componentTheme'
 export * from './components'
-export * from './features'
+
 export * from './hooks'
 export * from './piv'
 export * from './createKit'

@@ -57,6 +57,8 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
   }
 }
 
+
+// TODO: should be plugin
 /**
  * just a wrapper for {@link bindKeyboardShortcutEventListener}
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}

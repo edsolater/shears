@@ -5,7 +5,7 @@ import { createRef } from '../hooks/createRef'
 import { CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
 
-export type TransitionPhase =
+type TransitionPhase =
   | 'hidden' /* UI unvisiable */
   | 'shown' /* UI visiable and stable(not in transition) */
   | 'during-process'
@@ -50,6 +50,7 @@ interface TransitionController {
   to: TransitionPhase
 }
 
+// TODO: should be plugin
 export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => {
   const controller: TransitionController = {
     get from() {
