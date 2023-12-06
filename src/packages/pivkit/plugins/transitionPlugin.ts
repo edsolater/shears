@@ -3,12 +3,12 @@ import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 
 import { addEventListener } from '../domkit'
 import { CSSObject, PivProps, createPlugin, mergeProps } from '../piv'
 
-export type TransitionActionPhase = 'before-going' | 'on-going' | 'finish'
+export type TransitionDetectorActionPhase = 'before-going' | 'on-going' | 'finish'
 type TransitionTowards = 'enter' | 'leave'
 
-export type TransitionController = {
+export type TransitionDetectorController = {
   targetDom: Accessor<HTMLElement | undefined>
-  phase: Accessor<TransitionActionPhase>
+  phase: Accessor<TransitionDetectorActionPhase>
   towards: Accessor<TransitionTowards>
 }
 /**
@@ -29,16 +29,16 @@ export interface TransitionOptions {
   progressProps?: PivProps
 
   onBeforeTransition?: (
-    payload: { from: TransitionActionPhase; to: TransitionActionPhase } & TransitionController,
+    payload: { from: TransitionDetectorActionPhase; to: TransitionDetectorActionPhase } & TransitionDetectorController,
   ) => void
   onAfterTransition?: (
-    payload: { from: TransitionActionPhase; to: TransitionActionPhase } & TransitionController,
+    payload: { from: TransitionDetectorActionPhase; to: TransitionDetectorActionPhase } & TransitionDetectorController,
   ) => void
 
   presets?: MayArray<MayFn<Omit<TransitionOptions, 'presets'>>>
 }
 
-export const transitionPlugin = createPlugin(
+export const transitionDetectorPlugin = createPlugin(
   ({
     cssTransitionDuration = '300ms',
     cssTransitionTimingFunction,
@@ -77,10 +77,10 @@ export const transitionPlugin = createPlugin(
         } as Record<'from' | 'to', PivProps>
       })
 
-      const [currentPhase, setCurrentPhase] = createSignal<TransitionActionPhase>(appear ? 'before-going' : 'finish')
+      const [currentPhase, setCurrentPhase] = createSignal<TransitionDetectorActionPhase>(appear ? 'before-going' : 'finish')
       const [currentTowards, setCurrentTowards] = createSignal<TransitionTowards>('enter')
 
-      const controller: TransitionController = {
+      const controller: TransitionDetectorController = {
         targetDom: dom,
         phase: currentPhase,
         towards: currentTowards,

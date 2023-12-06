@@ -34,7 +34,7 @@ import {
   useHoverPlugin,
   cssVar,
   createICSS,
-  transitionPlugin,
+  transitionDetectorPlugin,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -215,7 +215,7 @@ function CSSTransitionExample() {
     <>
       <Button onClick={() => setShow((b) => !b)}>Toggle</Button>
       <Piv
-        plugin={transitionPlugin.config({
+        plugin={transitionDetectorPlugin.config({
           onAfterTransition: () => {
             console.log('onAfterTransition')
           },
