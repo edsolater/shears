@@ -99,6 +99,12 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
   const isInnerVisiable = createMemo(
     () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown',
   )
+  createEffect(() => {
+    console.log('currentPhase: ', currentPhase())
+  })
+  createEffect(() => {
+    console.log('targetPhase: ', targetPhase())
+  })
   const currentPhasePropsName = createMemo<TransitionCurrentPhasePropsName>(() =>
     targetPhase() === 'shown'
       ? currentPhase() === 'hidden'
@@ -167,7 +173,10 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
     }
   }, currentPhase())
 
-  const transitionProps = () => transitionPhaseProps()[currentPhasePropsName()]
+  const transitionProps = () => {
+    const mergeProps = transitionPhaseProps()[currentPhasePropsName()]
+    return mergeProps
+  }
 
   return { refSetter: setContentDom, transitionProps, isInnerVisiable }
 }
@@ -187,7 +196,9 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   console.log('transitionProps(): ', transitionProps())
 
   return {
-    plugin: createPlugin(() => transitionProps),
+    plugin: () => ({
+      shadowProps: transitionProps(),
+    }),
     transitionProps,
     domRef: refSetter,
     toggle,

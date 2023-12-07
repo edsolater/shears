@@ -22,8 +22,9 @@ export type NativeProps = ReturnType<typeof parsePivProps>['props']
 function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
   const parsedPivProps = pipe(
     raw as Partial<PivProps>,
+    handleShadowProps, // FIXME: why shadow props can, but plugin can't ？
+    handlePluginProps, // FIXME: why shadow props can, but plugin can't ？
     handleShadowProps,
-    handlePluginProps,
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
     handleMergifyOnCallbackProps,

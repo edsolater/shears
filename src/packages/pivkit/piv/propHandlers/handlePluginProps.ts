@@ -60,6 +60,7 @@ function getMergePluginReturnedProps<T extends AnyObj>(
 
 /** core */
 function invokePlugin(plugin: Plugin<any>, props: KitProps<any>) {
+  console.log('🧪plugin: ', plugin)
   const [controller, setController] = createSignal<ValidController>({})
   const [dom, setDom] = createSignal<HTMLElement>()
 

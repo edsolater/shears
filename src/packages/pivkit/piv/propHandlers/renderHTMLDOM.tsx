@@ -1,5 +1,5 @@
 import { AnyObj, switchCase } from '@edsolater/fnkit'
-import { JSX, JSXElement, Show } from 'solid-js'
+import { JSX, JSXElement, Show, children, createMemo } from 'solid-js'
 import { PivProps } from '../Piv'
 import { HTMLTag } from '../typeTools'
 import { domMap } from './domMap'

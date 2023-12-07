@@ -1,14 +1,21 @@
 import { MayArray, flap, pipe } from '@edsolater/fnkit'
-import { JSX, JSXElement } from 'solid-js'
+import { JSX, JSXElement, createMemo } from 'solid-js'
 import { handlePropsInnerController } from './ControllerContext'
-import { ClassName, HTMLProps, ICSS, IStyle, Plugin, PluginCoreFn, handlePluginProps, handleShadowProps, parsePivProps } from './propHandlers'
+import {
+  ClassName,
+  HTMLProps,
+  ICSS,
+  IStyle,
+  Plugin,
+  PluginCoreFn,
+  handlePluginProps,
+  handleShadowProps,
+} from './propHandlers'
 import { renderHTMLDOM } from './propHandlers/renderHTMLDOM'
 import { HTMLTag, PivChild, ValidController } from './typeTools'
 import { omit } from './utils'
 
 type Boollike = any
-
-
 
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController> {
   /** if is settled and is flase , only it's children will render */
@@ -42,7 +49,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
         target: Element
       }
       el: HTMLElement
-    } & Controller
+    } & Controller,
   ) => void // for accessifyProps, onClick can't be array
 
   'merge:onClick'?: (
@@ -52,7 +59,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
         target: Element
       }
       el: HTMLElement
-    } & Controller
+    } & Controller,
   ) => void // for accessifyProps, "merge:onClick" can't be array
 
   /**
@@ -90,7 +97,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * auto merge by shadowProps
    * special: every kit baseon <Piv> should support this prop
    */
-  plugin?: MayArray<Plugin<any>| PluginCoreFn>
+  plugin?: MayArray<Plugin<any> | PluginCoreFn>
 
   // -------- special prop --------
 
@@ -145,16 +152,9 @@ export const pivPropsNames = [
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController>(
-  kitProps: PivProps<TagName, Controller>
+  kitProps: PivProps<TagName, Controller>,
 ) => {
-  const props = pipe(
-    kitProps as PivProps<any>,
-    handleShadowProps,
-    handlePluginProps,
-    handleShadowProps,
-    handlePropsInnerController
-  )
-  return 'render:outWrapper' in props ? handlePropRenderOutWrapper(props) : handleNormalPivProps(props)
+  return 'render:outWrapper' in kitProps ? handlePropRenderOutWrapper(kitProps) : handleNormalPivProps(kitProps)
 }
 
 function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
@@ -166,6 +166,6 @@ function handlePropRenderOutWrapper(props: PivProps<any, any>): JSXElement {
   return flap(props['render:outWrapper']).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
     // @ts-expect-error force
-    (() => handleNormalPivProps(omit(props, 'render:outWrapper'))) as JSXElement // 📝 wrap function to let not solidjs read at once when array.prototype.reduce not finish yet
+    (() => handleNormalPivProps(omit(props, 'render:outWrapper'))) as JSXElement, // 📝 wrap function to let not solidjs read at once when array.prototype.reduce not finish yet
   )
 }
