@@ -51,6 +51,7 @@ export type InputKitProps = KitProps<InputProps, { controller: InputController }
 
 /**
  * if for layout , don't render important content in Box
+ * TODO: enter should send related button, but shift+enter should "just enter"
  */
 export function Input(rawProps: InputKitProps) {
   const { dom, setDom } = createDomRef<HTMLInputElement>()

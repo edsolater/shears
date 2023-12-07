@@ -2,8 +2,9 @@ import { flap, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import { addEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
-import { CSSObject, mergeProps, PivProps } from '../piv'
+import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
+import { createController } from '../utils/createController'
 
 type TransitionPhase =
   | 'hidden' /* UI unvisiable */
@@ -16,8 +17,9 @@ export interface CSSTransactionOptions {
   cssTransitionDurationMs?: Accessify<number | undefined, TransitionController>
   cssTransitionTimingFunction?: CSSObject['transitionTimingFunction']
 
-  // detect transition should be turn on
+  /* detect transition should be turn on */
   show?: Accessify<boolean | undefined, TransitionController>
+
   /** will trigger props:onBeforeEnter() if init props:show  */
   appear?: Accessify<boolean | undefined, TransitionController>
 
@@ -45,28 +47,21 @@ export interface CSSTransactionOptions {
 }
 
 interface TransitionController {
-  targetDom: Accessor<HTMLElement | undefined>
-  from: TransitionPhase
-  to: TransitionPhase
+  contentDom: Accessor<HTMLElement | undefined>
+  from: Accessor<TransitionPhase>
+  to: Accessor<TransitionPhase>
 }
 
-// TODO: should be plugin
 export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => {
-  const controller: TransitionController = {
-    get from() {
-      return currentPhase()
-    },
-    get to() {
-      return targetPhase()
-    },
-    get targetDom() {
-      return contentDom
-    },
-  }
+  const controller: TransitionController = createController(() => ({
+    from: currentPhase,
+    to: targetPhase,
+    contentDom,
+  }))
   const opts = useAccessifiedProps(additionalOpts, controller)
   const [contentDom, setContentDom] = createRef<HTMLElement>()
   const transitionPhaseProps = createMemo(() => {
-    const baseTransitionICSS = {
+    const basic = {
       transition: `${opts.cssTransitionDurationMs ?? 250}ms`,
       transitionTimingFunction: opts.cssTransitionTimingFunction,
     }
@@ -76,33 +71,33 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
         presets.map((i) => shrinkFn(i)?.enterFromProps),
         opts.enterProps,
         opts.enterFromProps || opts.fromProps,
-        { style: baseTransitionICSS } as PivProps
-      ),
+        { style: basic },
+      ) as PivProps,
       enterTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.enterToProps),
         opts.enterProps,
         opts.enterToProps || opts.toProps,
-        { style: baseTransitionICSS } as PivProps
-      ),
+        { style: basic },
+      ) as PivProps,
       leaveFrom: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveFromProps),
         opts.leaveProps,
         opts.leaveFromProps || opts.toProps,
-        { style: baseTransitionICSS } as PivProps
-      ),
+        { style: basic },
+      ) as PivProps,
       leaveTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveToProps),
         opts.leaveProps,
         opts.leaveToProps || opts.fromProps,
-        { style: baseTransitionICSS } as PivProps
-      ),
+        { style: basic },
+      ) as PivProps,
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
 
   const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? 'shown' : 'hidden')
   const targetPhase = createMemo(() => (opts.show ? 'shown' : 'hidden'))
   const isInnerVisiable = createMemo(
-    () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown'
+    () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown',
   )
   const currentPhasePropsName = createMemo<TransitionCurrentPhasePropsName>(() =>
     targetPhase() === 'shown'
@@ -110,8 +105,8 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
         ? 'enterFrom'
         : 'enterTo'
       : currentPhase() === 'shown'
-      ? 'leaveFrom'
-      : 'leaveTo'
+        ? 'leaveFrom'
+        : 'leaveTo',
   )
 
   // set data-** to element for semantic
@@ -175,6 +170,22 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
   const transitionProps = createMemo(() => transitionPhaseProps()[currentPhasePropsName()])
 
   return { refSetter: setContentDom, transitionProps, isInnerVisiable }
+}
+
+// TODO: why not work?
+export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'show'>) {
+  const [show, setShow] = createSignal(false)
+
+  function toggle() {
+    setShow((b) => !b)
+  }
+
+  const { refSetter, transitionProps } = useCSSTransition({
+    show,
+    ...options,
+  })
+
+  return { plugin: createPlugin(() => () => ({ ...transitionProps(), domRef: refSetter })), transitionProps, domRef:refSetter, toggle }
 }
 
 // const cssTransitionPlugin = createPlugin<CSSTransactionOptions, any, any>((options: CSSTransactionOptions = {}) => () => {

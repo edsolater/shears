@@ -35,6 +35,7 @@ import {
   cssVar,
   createICSS,
   transitionDetectorPlugin,
+  createTransitionPlugin,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -203,8 +204,7 @@ function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
   // TODO: invoke in  plugin
-  const { transitionProps, refSetter } = useCSSTransition({
-    show,
+  const { transitionProps, domRef, toggle, plugin } = createTransitionPlugin({
     onAfterEnter() {},
     onBeforeEnter() {},
     fromProps: { icss: { height: '100px' } },
@@ -213,17 +213,11 @@ function CSSTransitionExample() {
 
   return (
     <>
-      <Button onClick={() => setShow((b) => !b)}>Toggle</Button>
+      <Button onClick={toggle}>Toggle</Button>
       <Piv
-        plugin={transitionDetectorPlugin.config({
-          onAfterTransition: () => {
-            console.log('onAfterTransition')
-          },
-          onBeforeTransition: () => {
-            console.log('onBeforeTransition')
-          },
-        })}
-        icss={{ backgroundColor: 'crimson', height: show() ? '200px' : '100px', display: 'grid', placeItems: 'center' }}
+        domRef={domRef}
+        shadowProps={transitionProps()}
+        icss={{ backgroundColor: 'dodgerblue', height: '120px', display: 'grid', placeItems: 'center' }}
       >
         <Box>hello</Box>
       </Piv>
