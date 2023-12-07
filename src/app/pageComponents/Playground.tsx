@@ -60,7 +60,7 @@ function ComponentSpecList() {
         gap: '4vw',
       }}
     >
-      <ExamplePanel name='Drawer'>
+      {/* <ExamplePanel name='Drawer'>
         <DrawerExample />
       </ExamplePanel>
 
@@ -70,7 +70,7 @@ function ComponentSpecList() {
 
       <ExamplePanel name='IntervalCircle'>
         <CircularProgressExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       <ExamplePanel name='CSSTransition'>
         <CSSTransitionExample />
@@ -96,9 +96,9 @@ function ComponentSpecList() {
         <RadioExample />
       </ExamplePanel> */}
 
-      <ExamplePanel name='Popover'>
+      {/* <ExamplePanel name='Popover'>
         <PopoverExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       {/* <ExamplePanel name='ComponentFactory'>
         <ComponentFactoryExample />
@@ -112,9 +112,9 @@ function ComponentSpecList() {
         <TabsExample />
       </ExamplePanel> */}
 
-      <ExamplePanel name='PropContext + ControllerContext'>
+      {/* <ExamplePanel name='PropContext + ControllerContext'>
         <PropContextExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
       {/* <Foo /> */}
     </Box>
   )
@@ -203,7 +203,7 @@ function ModalExample() {
 function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
-  // TODO: invoke in  plugin
+  // TODO: plugin is not work here💩
   const { transitionProps, domRef, toggle, plugin } = createTransitionPlugin({
     onAfterEnter() {},
     onBeforeEnter() {},
@@ -216,7 +216,8 @@ function CSSTransitionExample() {
       <Button onClick={toggle}>Toggle</Button>
       <Piv
         domRef={domRef}
-        shadowProps={transitionProps()}
+        // shadowProps={transitionProps()}
+        plugin={plugin}
         icss={{ backgroundColor: 'dodgerblue', height: '120px', display: 'grid', placeItems: 'center' }}
       >
         <Box>hello</Box>

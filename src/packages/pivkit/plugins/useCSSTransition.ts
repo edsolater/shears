@@ -167,7 +167,7 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
     }
   }, currentPhase())
 
-  const transitionProps = createMemo(() => transitionPhaseProps()[currentPhasePropsName()])
+  const transitionProps = () => transitionPhaseProps()[currentPhasePropsName()]
 
   return { refSetter: setContentDom, transitionProps, isInnerVisiable }
 }
@@ -184,8 +184,14 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
     show,
     ...options,
   })
+  console.log('transitionProps(): ', transitionProps())
 
-  return { plugin: createPlugin(() => () => ({ ...transitionProps(), domRef: refSetter })), transitionProps, domRef:refSetter, toggle }
+  return {
+    plugin: createPlugin(() => transitionProps),
+    transitionProps,
+    domRef: refSetter,
+    toggle,
+  }
 }
 
 // const cssTransitionPlugin = createPlugin<CSSTransactionOptions, any, any>((options: CSSTransactionOptions = {}) => () => {
