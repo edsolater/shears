@@ -1,4 +1,4 @@
-import { shrinkFn } from '@edsolater/fnkit'
+import { isFunction, isString, shrinkFn } from '@edsolater/fnkit'
 
 const clearMap = (resultMap: Map<any, any>) => resultMap.clear()
 // register clean up function
@@ -31,12 +31,13 @@ export function runtimeObject<T extends object>(
     /**
      * if you want to cache some value, you should use this option to avoid running the rule again\
      * cached value will not calc twice
+     * @deprecated not strightforward
      */
     cachableKeys?: (keyof T)[]
     /**
      * if you want to use a function as value, you should use this option to avoid the function be shrinked
      */
-    originMethods?: (keyof T)[]
+    originMethods?: (keyof T | ((skey: keyof any) => boolean))[]
   },
 ): T {
   let cache: undefined | Map<any, any> = undefined
@@ -52,7 +53,9 @@ export function runtimeObject<T extends object>(
     cache.set(p, value)
   }
   const clearCache = () => cache?.clear()
-  const justUseOriginValue = (p: keyof any) => options?.originMethods?.includes(p as any)
+  
+  const justUseOriginValue = (p: keyof any) =>
+    options?.originMethods?.some((rule) => (isFunction(rule) ? rule(p) : Object.is(rule, p)))
 
   const parsedObj = new Proxy(objWithRule, {
     get(target, p, receiver) {

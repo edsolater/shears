@@ -5,6 +5,7 @@ import { createRef } from '../hooks/createRef'
 import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
 import { createController } from '../utils/createController'
+import { runtimeObject } from '../../fnkit/runtimeObject'
 
 type TransitionPhase =
   | 'hidden' /* UI unvisiable */
@@ -188,6 +189,9 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   function toggle() {
     setShow((b) => !b)
   }
+  const pluginController = {
+    toggle,
+  }
 
   const { refSetter, transitionProps } = useCSSTransition({
     show,
@@ -196,12 +200,17 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   console.log('transitionProps(): ', transitionProps())
 
   return {
-    plugin: () => ({
-      shadowProps: transitionProps(),
-    }),
+    plugin: createPlugin(
+      () => () =>
+        runtimeObject<PivProps>({
+          // if not use runtimeObject, the props will be consumed too early
+          shadowProps: () => transitionProps(),
+          domRef: () => refSetter,
+        }),
+    ),
     transitionProps,
     domRef: refSetter,
-    toggle,
+    pluginController,
   }
 }
 

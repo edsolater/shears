@@ -204,18 +204,22 @@ function CSSTransitionExample() {
   const [show, setShow] = createSignal(false)
 
   // TODO: plugin is not work here💩
-  const { transitionProps, domRef, toggle, plugin } = createTransitionPlugin({
-    onAfterEnter() {},
-    onBeforeEnter() {},
+  const { transitionProps, domRef, pluginController, plugin } = createTransitionPlugin({
+    onBeforeEnter() {
+      console.log('👨‍💻 before')
+    },
+    onAfterEnter() {
+      console.log('👨‍💻 after')
+    },
     fromProps: { icss: { height: '100px' } },
     toProps: { icss: { height: '200px' } },
   })
 
   return (
     <>
-      <Button onClick={toggle}>Toggle</Button>
+      <Button onClick={pluginController.toggle}>Toggle</Button>
       <Piv
-        domRef={domRef}
+        // domRef={domRef}
         // shadowProps={transitionProps()}
         plugin={plugin}
         icss={{ backgroundColor: 'dodgerblue', height: '120px', display: 'grid', placeItems: 'center' }}

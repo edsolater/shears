@@ -5,10 +5,11 @@ export type GettersProps<T extends object> = {
 }
 
 /**
+ * @deprecated use {@link runtimeObject} instead
  * original props is getters, it is not easy to consider with solid's signal
  * so make it signal to let user **manually** invoke the function will be better
  */
-export function gettersProps<T extends object>(props: T): GettersProps<T> {
+export function createByGetters<T extends object>(props: T): GettersProps<T> {
   return Object.defineProperties(
     {},
     Reflect.ownKeys(props).reduce((acc, key) => {
