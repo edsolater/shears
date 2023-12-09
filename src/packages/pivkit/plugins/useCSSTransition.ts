@@ -1,5 +1,5 @@
 import { flap, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
-import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
+import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
 import { addEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
 import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
@@ -99,12 +99,6 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
   const targetPhase = createMemo(() => (opts.show ? 'shown' : 'hidden'))
   // this accessor is to hold collapse state
   const opened = createMemo(() => targetPhase() === 'shown')
-  createEffect(() => {
-    console.log('currentPhase: ', currentPhase())
-  })
-  createEffect(() => {
-    console.log('targetPhase: ', targetPhase())
-  })
   const currentPhasePropsName = createMemo<TransitionCurrentPhasePropsName>(() =>
     targetPhase() === 'shown'
       ? currentPhase() === 'hidden'
@@ -143,35 +137,44 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
   })
 
   // invoke callbacks
-  createEffect((prevCurrentPhase: TransitionPhase | void) => {
-    const el = contentDom()
+  createEffect(
+    on(
+      currentPhase,
+      (prevCurrentPhase: TransitionPhase | void) => {
+        console.log(1)
+        const el = contentDom()
 
-    if (currentPhase() === 'shown' && targetPhase() === 'shown') {
-      contentDom()?.clientHeight // force GPU render frame
-      opts.onAfterEnter?.({ el, from: 'shown', to: 'shown' })
-    }
+        if (currentPhase() === 'shown' && targetPhase() === 'shown') {
+          contentDom()?.clientHeight // force GPU render frame
+          opts.onAfterEnter?.({ el, from: 'shown', to: 'shown' })
+        }
 
-    if (currentPhase() === 'hidden' && targetPhase() === 'hidden') {
-      contentDom()?.clientHeight // force GPU render frame
-      opts.onAfterLeave?.({ el, from: 'hidden', to: 'hidden' })
-    }
+        if (currentPhase() === 'hidden' && targetPhase() === 'hidden') {
+          contentDom()?.clientHeight // force GPU render frame
+          opts.onAfterLeave?.({ el, from: 'hidden', to: 'hidden' })
+        }
 
-    if (
-      (currentPhase() === 'hidden' || (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
-      targetPhase() === 'shown'
-    ) {
-      contentDom()?.clientHeight // force GPU render frame
-      opts.onBeforeEnter?.({ el, to: 'shown', from: currentPhase() })
-    }
+        if (
+          (currentPhase() === 'hidden' ||
+            (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
+          targetPhase() === 'shown'
+        ) {
+          contentDom()?.clientHeight // force GPU render frame
+          opts.onBeforeEnter?.({ el, to: 'shown', from: currentPhase() })
+        }
 
-    if (
-      (currentPhase() === 'shown' || (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
-      targetPhase() === 'hidden'
-    ) {
-      contentDom()?.clientHeight // force GPU render frame
-      opts.onBeforeLeave?.({ el, to: 'hidden', from: currentPhase() })
-    }
-  }, currentPhase())
+        if (
+          (currentPhase() === 'shown' ||
+            (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
+          targetPhase() === 'hidden'
+        ) {
+          contentDom()?.clientHeight // force GPU render frame
+          opts.onBeforeLeave?.({ el, to: 'hidden', from: currentPhase() })
+        }
+      },
+      { defer: true },
+    ),
+  )
 
   const transitionProps = () => {
     const mergeProps = transitionPhaseProps()[currentPhasePropsName()]
@@ -242,13 +245,17 @@ export function createCSSCollapsePlugin(options?: {
       },
     },
     onBeforeEnter({ el }) {
+      //why not invoked? 🤔
+      console.log('before : ', el)
       if (options?.ignoreEnterTransition) {
+        console.log('options: ', options)
         el?.style.removeProperty('position')
         el?.style.removeProperty('visibility')
         return
       }
 
       window.requestAnimationFrame(() => {
+        console.log('el: ', el)
         el?.style.removeProperty('position')
         el?.style.removeProperty('visibility')
 
@@ -290,7 +297,7 @@ export function createCSSCollapsePlugin(options?: {
       el?.style.removeProperty('height')
       el?.style.setProperty('position', 'absolute')
       el?.style.setProperty('visibility', 'hidden')
-      destoryDOMCache() 
+      destoryDOMCache()
       inTransitionDuration = false
     },
   })
