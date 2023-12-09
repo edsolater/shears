@@ -36,6 +36,7 @@ import {
   createICSS,
   transitionDetectorPlugin,
   createTransitionPlugin,
+  createCSSCollapsePlugin,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -74,6 +75,10 @@ function ComponentSpecList() {
 
       <ExamplePanel name='CSSTransition'>
         <CSSTransitionExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='Collapse'>
+        <CSSCollapseExample />
       </ExamplePanel>
 
       {/* <ExamplePanel name='Input'>
@@ -232,6 +237,30 @@ function CSSTransitionExample() {
         }}
       >
         <Box>hello</Box>
+      </Piv>
+    </>
+  )
+}
+
+function CSSCollapseExample() {
+  const {
+    controller: { toggle, opened },
+    plugin,
+  } = createCSSCollapsePlugin()
+
+  return (
+    <>
+      <Button onClick={toggle}>Collapse</Button>
+      <Piv
+        plugin={plugin}
+        icss={{
+          backgroundColor: 'dodgerblue',
+          height: opened() ? '200px' : '100px',
+          display: 'grid',
+          placeItems: 'center',
+        }}
+      >
+        <Box>click trigger to fade in it</Box>
       </Piv>
     </>
   )

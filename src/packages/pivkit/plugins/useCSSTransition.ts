@@ -34,9 +34,9 @@ export interface CSSTransactionOptions {
   leaveToProps?: PivProps<any, TransitionController>
 
   /** enterFrom + leaveTo */
-  fromProps?: PivProps<any, TransitionController> // shortcut for both enterFrom and leaveTo
+  hideProps?: PivProps<any, TransitionController> // shortcut for both enterFrom and leaveTo
   /** enterTo + leaveFrom */
-  toProps?: PivProps<any, TransitionController> // shortcut for both enterTo and leaveFrom
+  showProps?: PivProps<any, TransitionController> // shortcut for both enterTo and leaveFrom
 
   onBeforeEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
   onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
@@ -71,25 +71,25 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
       enterFrom: mergeProps(
         presets.map((i) => shrinkFn(i)?.enterFromProps),
         opts.enterProps,
-        opts.enterFromProps || opts.fromProps,
+        opts.enterFromProps ?? opts.hideProps,
         { style: basic },
       ) as PivProps,
       enterTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.enterToProps),
         opts.enterProps,
-        opts.enterToProps || opts.toProps,
+        opts.enterToProps ?? opts.showProps,
         { style: basic },
       ) as PivProps,
       leaveFrom: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveFromProps),
         opts.leaveProps,
-        opts.leaveFromProps || opts.toProps,
+        opts.leaveFromProps ?? opts.showProps,
         { style: basic },
       ) as PivProps,
       leaveTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveToProps),
         opts.leaveProps,
-        opts.leaveToProps || opts.fromProps,
+        opts.leaveToProps ?? opts.hideProps,
         { style: basic },
       ) as PivProps,
     } as Record<TransitionCurrentPhasePropsName, PivProps>
@@ -208,6 +208,99 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
           domRef: () => refSetter,
         }),
     ),
+    controller,
+  }
+}
+
+export function createCSSCollapsePlugin(options?: {
+  ignoreEnterTransition?: boolean
+  ignoreLeaveTransition?: boolean
+}) {
+  let inTransitionDuration = false // flag for transition is start from transition cancel
+  let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
+  const { plugin, controller } = createTransitionPlugin({
+    enterProps: {
+      icss: {
+        userSelect: 'none',
+        transition: '200ms',
+      },
+    },
+    leaveProps: {
+      icss: {
+        userSelect: 'none',
+        transition: '200ms',
+      },
+    },
+    hideProps: {
+      icss: {
+        opacity: 0,
+      },
+    },
+    showProps: {
+      icss: {
+        opacity: 1,
+      },
+    },
+    onBeforeEnter({ el }) {
+      if (options?.ignoreEnterTransition) {
+        el?.style.removeProperty('position')
+        el?.style.removeProperty('visibility')
+        return
+      }
+
+      window.requestAnimationFrame(() => {
+        el?.style.removeProperty('position')
+        el?.style.removeProperty('visibility')
+
+        if (inTransitionDuration) {
+          el?.style.setProperty('height', `${cachedElementHeight}px`)
+        } else {
+          const height = el?.clientHeight
+          cachedElementHeight = height
+
+          // frequent ui action may cause element havn't attach to DOM yet, when occors, just ignore it.
+          el?.style.setProperty('height', '0')
+          /// Force bowser to paint the frame  🤯🤯🤯🤯
+          el?.clientHeight
+          el?.style.setProperty('height', `${height}px`)
+        }
+        inTransitionDuration = true
+      })
+    },
+    onAfterEnter({ el }) {
+      el?.style.removeProperty('height')
+      inTransitionDuration = false
+    },
+    onBeforeLeave({ el }) {
+      if (options?.ignoreLeaveTransition) return
+      if (inTransitionDuration) {
+        el?.style.setProperty('height', `0`)
+      } else {
+        const height = el?.clientHeight
+        cachedElementHeight = height
+
+        el?.style.setProperty('height', `${height}px`)
+        // Force bowser to paint the frame  🤯🤯🤯🤯
+        el?.clientHeight
+        el?.style.setProperty('height', '0')
+      }
+      inTransitionDuration = true
+    },
+    onAfterLeave({ el }) {
+      el?.style.removeProperty('height')
+      el?.style.setProperty('position', 'absolute')
+      el?.style.setProperty('visibility', 'hidden')
+      destoryDOMCache() 
+      inTransitionDuration = false
+    },
+  })
+
+  function destoryDOMCache() {
+    // innerChildren.current = null // clean from internal storage to avoid still render dom
+  }
+
+  return {
+    plugin: plugin,
     controller,
   }
 }

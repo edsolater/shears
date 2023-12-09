@@ -28,7 +28,7 @@ export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
 
   const { refSetter, transitionProps } = useCSSTransition({
     show,
-    fromProps: { icss: { position: 'absolute', opacity: 0, overflow: 'hidden' } },
+    hideProps: { icss: { position: 'absolute', opacity: 0, overflow: 'hidden' } },
     onBeforeEnter({ el }) {
       if (!el) return
 
