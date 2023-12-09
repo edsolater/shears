@@ -182,14 +182,13 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
   return { refSetter: setContentDom, transitionProps, isInnerVisiable }
 }
 
-// TODO: why not work?
 export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'show'>) {
   const [show, setShow] = createSignal(false)
 
   function toggle() {
     setShow((b) => !b)
   }
-  const pluginController = {
+  const controller = {
     toggle,
   }
 
@@ -197,11 +196,11 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
     show,
     ...options,
   })
-  console.log('transitionProps(): ', transitionProps())
 
   return {
     plugin: createPlugin(
-      () => () => // does must use a high function ?
+      () => () =>
+        // does must use a high function ?
         runtimeObject<PivProps>({
           // if not use runtimeObject, the props will be consumed too early
           shadowProps: () => transitionProps(),
@@ -210,7 +209,7 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
     ),
     transitionProps,
     domRef: refSetter,
-    pluginController,
+    controller,
   }
 }
 

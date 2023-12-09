@@ -201,15 +201,18 @@ function ModalExample() {
 }
 
 function CSSTransitionExample() {
-  const [show, setShow] = createSignal(false)
-
-  // TODO: plugin is not work here💩
-  const { transitionProps, domRef, pluginController, plugin } = createTransitionPlugin({
+  const { controller, plugin } = createTransitionPlugin({
     onBeforeEnter() {
-      console.log('👨‍💻 before')
+      console.log('👨‍💻 before enter👉')
     },
     onAfterEnter() {
-      console.log('👨‍💻 after')
+      console.log('👨‍💻 after enter👉')
+    },
+    onBeforeLeave() {
+      console.log('👨‍💻 before leave👈')
+    },
+    onAfterLeave() {
+      console.log('👨‍💻 after leave👈')
     },
     fromProps: { icss: { height: '100px' } },
     toProps: { icss: { height: '200px' } },
@@ -217,7 +220,7 @@ function CSSTransitionExample() {
 
   return (
     <>
-      <Button onClick={pluginController.toggle}>Toggle</Button>
+      <Button onClick={controller.toggle}>Toggle</Button>
       <Piv
         // domRef={domRef}
         // shadowProps={transitionProps()}

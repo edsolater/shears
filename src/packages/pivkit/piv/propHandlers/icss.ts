@@ -14,7 +14,7 @@ import {
   overwriteFunctionName,
   shrinkFn,
 } from '@edsolater/fnkit'
-import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/settingsFunction'
+import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/configableFunction'
 import { CSSAttribute, css } from 'solid-styled-components'
 
 type ValidController = AnyObj

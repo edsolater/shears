@@ -1,6 +1,6 @@
 import { AnyObj, isFunction, overwriteFunctionName } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/settingsFunction'
+import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/configableFunction'
 import { KitProps } from '../../createKit'
 import { Accessify } from '../../utils'
 import { ValidController, ValidProps } from '../typeTools'
