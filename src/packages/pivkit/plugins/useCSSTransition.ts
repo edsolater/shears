@@ -97,9 +97,8 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
 
   const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? 'shown' : 'hidden')
   const targetPhase = createMemo(() => (opts.show ? 'shown' : 'hidden'))
-  const isInnerVisiable = createMemo(
-    () => currentPhase() === 'during-process' || currentPhase() === 'shown' || targetPhase() === 'shown',
-  )
+  // this accessor is to hold collapse state
+  const opened = createMemo(() => targetPhase() === 'shown')
   createEffect(() => {
     console.log('currentPhase: ', currentPhase())
   })
@@ -179,7 +178,7 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
     return mergeProps
   }
 
-  return { refSetter: setContentDom, transitionProps, isInnerVisiable }
+  return { refSetter: setContentDom, transitionProps, opened }
 }
 
 export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'show'>) {
@@ -188,14 +187,16 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   function toggle() {
     setShow((b) => !b)
   }
-  const controller = {
-    toggle,
-  }
 
-  const { refSetter, transitionProps } = useCSSTransition({
+  const { refSetter, transitionProps, opened } = useCSSTransition({
     show,
     ...options,
   })
+
+  const controller = {
+    opened,
+    toggle,
+  }
 
   return {
     plugin: createPlugin(
@@ -207,8 +208,6 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
           domRef: () => refSetter,
         }),
     ),
-    transitionProps,
-    domRef: refSetter,
     controller,
   }
 }

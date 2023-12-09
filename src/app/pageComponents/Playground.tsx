@@ -201,7 +201,10 @@ function ModalExample() {
 }
 
 function CSSTransitionExample() {
-  const { controller, plugin } = createTransitionPlugin({
+  const {
+    controller: { toggle, opened },
+    plugin,
+  } = createTransitionPlugin({
     onBeforeEnter() {
       console.log('👨‍💻 before enter👉')
     },
@@ -214,18 +217,19 @@ function CSSTransitionExample() {
     onAfterLeave() {
       console.log('👨‍💻 after leave👈')
     },
-    fromProps: { icss: { height: '100px' } },
-    toProps: { icss: { height: '200px' } },
   })
 
   return (
     <>
-      <Button onClick={controller.toggle}>Toggle</Button>
+      <Button onClick={toggle}>Toggle</Button>
       <Piv
-        // domRef={domRef}
-        // shadowProps={transitionProps()}
         plugin={plugin}
-        icss={{ backgroundColor: 'dodgerblue', height: '120px', display: 'grid', placeItems: 'center' }}
+        icss={{
+          backgroundColor: 'dodgerblue',
+          height: opened() ? '200px' : '100px',
+          display: 'grid',
+          placeItems: 'center',
+        }}
       >
         <Box>hello</Box>
       </Piv>
