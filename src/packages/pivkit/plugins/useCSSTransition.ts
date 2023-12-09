@@ -201,7 +201,7 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
 
   return {
     plugin: createPlugin(
-      () => () =>
+      () => () => // does must use a high function ?
         runtimeObject<PivProps>({
           // if not use runtimeObject, the props will be consumed too early
           shadowProps: () => transitionProps(),
