@@ -6,6 +6,7 @@ import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
 import { createController } from '../utils/createController'
 import { runtimeObject } from '../../fnkit/runtimeObject'
+import { get } from '../../../app/utils/dataTransmit/itemMethods'
 
 type TransitionPhase =
   | 'hidden' /* UI unvisiable */
@@ -229,9 +230,8 @@ export function createCSSCollapsePlugin(options?: {
 }) {
   let inTransitionDuration = false // flag for transition is start from transition cancel
   let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
-  let cachedElementHeightPx: string | undefined = undefined // for transition start may start from transition cancel, which height is not correct
   const { plugin, controller } = createTransitionPlugin({
-    cssTransitionDurationMs: 8000,
+    cssTransitionDurationMs: 1000,
     enterProps: {
       icss: {
         userSelect: 'none',
@@ -266,22 +266,33 @@ export function createCSSCollapsePlugin(options?: {
         el.style.removeProperty('visibility')
 
         if (inTransitionDuration) {
-          if (cachedElementHeightPx) el.style.setProperty('height', cachedElementHeightPx)
+          if (cachedElementHeight) el.style.setProperty('height', cachedElementHeight + 'px')
         } else {
-          //🐛: already origin has 100px height, so can't transition from 0 to 100
-          const height = getComputedStyle(el).height
+          const { height } = el.getBoundingClientRect()
 
-          cachedElementHeightPx = height
-          console.log('cachedElementHeightPx: ', cachedElementHeightPx)
+          cachedElementHeight = height
+          console.log('cachedElementHeightPx: ', cachedElementHeight)
+          const originalTransitionProps = getComputedStyle(el).transition
+          el.style.setProperty('transition', 'none')
+
+          el.clientHeight
 
           // frequent ui action may cause element havn't attach to DOM yet, when occors, just ignore it.
-          el.style['height'] = '0'
-          /// Force bowser to paint the frame  🤯🤯🤯🤯
+          el.style.setProperty('height', '0')
           el.clientHeight
-          const h = getComputedStyle(el).height
-          console.log('el.clientHeight: ', el.clientHeight)
+          el.style.setProperty('transition', originalTransitionProps)
+          /// Force bowser to paint the frame  🤯🤯🤯🤯
+          const h = el.clientHeight
+          window.requestAnimationFrame(() => {
+            console.log('el.style.height: ', el.style.height)
+            console.log('el.clientHeight: ', el.clientHeight)
+          })
           console.log('h: ', h)
-          // el.style.setProperty('height', height)
+          window.requestAnimationFrame(() => {
+            console.log('height: ', height)
+            console.log('2: ', getComputedStyle(el).transition)
+          })
+          el.style.setProperty('height', height + 'px')
         }
         inTransitionDuration = true
       })
@@ -296,10 +307,10 @@ export function createCSSCollapsePlugin(options?: {
       if (inTransitionDuration) {
         el.style.setProperty('height', `0`)
       } else {
-        const height = getComputedStyle(el).height
-        cachedElementHeightPx = height
+        const { height } = el.getBoundingClientRect()
+        cachedElementHeight = height
 
-        el.style.setProperty('height', height)
+        el.style.setProperty('height', height + 'px')
         // Force bowser to paint the frame  🤯🤯🤯🤯
         el.clientHeight
         el.style.setProperty('height', '0')
