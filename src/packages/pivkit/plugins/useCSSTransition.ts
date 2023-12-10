@@ -43,6 +43,8 @@ export interface CSSTransactionOptions {
   onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
   onBeforeLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
   onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onAbortDuringEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onAbortDuringLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
 
   presets?: MayArray<MayFn<Omit<CSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
   // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
@@ -144,32 +146,40 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
       (prevCurrentPhase: TransitionPhase | void) => {
         const el = contentDom()
 
-        if (currentPhase() === 'shown' && targetPhase() === 'shown') {
+        if (prevCurrentPhase === 'shown' && targetPhase() === 'shown') {
           contentDom()?.clientHeight // force GPU render frame
-          opts.onAfterEnter?.({ el, from: 'shown', to: 'shown' })
+          console.log('onAfterEnter')
+          opts.onAfterEnter?.({ el, from: prevCurrentPhase, to: targetPhase() })
         }
 
-        if (currentPhase() === 'hidden' && targetPhase() === 'hidden') {
+        if (prevCurrentPhase === 'hidden' && targetPhase() === 'hidden') {
           contentDom()?.clientHeight // force GPU render frame
-          opts.onAfterLeave?.({ el, from: 'hidden', to: 'hidden' })
+          console.log('onAfterLeave')
+          opts.onAfterLeave?.({ el, from: prevCurrentPhase, to: targetPhase() })
         }
 
-        if (
-          (currentPhase() === 'hidden' ||
-            (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
-          targetPhase() === 'shown'
-        ) {
+        if (prevCurrentPhase === 'hidden' && targetPhase() === 'shown') {
           contentDom()?.clientHeight // force GPU render frame
-          opts.onBeforeEnter?.({ el, to: 'shown', from: currentPhase() })
+          console.log('onBeforeEnter')
+          opts.onBeforeEnter?.({ el, from: prevCurrentPhase, to: targetPhase() })
         }
 
-        if (
-          (currentPhase() === 'shown' ||
-            (currentPhase() === 'during-process' && prevCurrentPhase === 'during-process')) &&
-          targetPhase() === 'hidden'
-        ) {
+        if (prevCurrentPhase === 'during-process' && targetPhase() === 'shown') {
+          console.log('currentPhase: ', currentPhase())
+          console.log('onAbortDuringLeave')
+          opts.onAbortDuringLeave?.({ el, from: prevCurrentPhase, to: targetPhase() })
+        }
+
+        if (prevCurrentPhase === 'shown' && targetPhase() === 'hidden') {
           contentDom()?.clientHeight // force GPU render frame
-          opts.onBeforeLeave?.({ el, to: 'hidden', from: currentPhase() })
+          console.log('onBeforeLeave', prevCurrentPhase, targetPhase())
+          opts.onBeforeLeave?.({ el, from: prevCurrentPhase, to: targetPhase() })
+        }
+
+        if (prevCurrentPhase === 'during-process' && targetPhase() === 'hidden') {
+          contentDom()?.clientHeight // force GPU render frame
+          console.log('onAbortDuringEnter')
+          opts.onAbortDuringEnter?.({ el, from: prevCurrentPhase, to: targetPhase() })
         }
       },
       { defer: true },
@@ -252,8 +262,7 @@ export function createCSSCollapsePlugin(options?: {
         opacity: 1,
       },
     },
-    onBeforeEnter({ el }) {
-      //why not invoked? 🤔
+    onBeforeEnter({ el, from }) {
       if (options?.ignoreEnterTransition) {
         el?.style.removeProperty('position')
         el?.style.removeProperty('visibility')
@@ -286,11 +295,11 @@ export function createCSSCollapsePlugin(options?: {
         inTransitionDuration = true
       })
     },
-    onAfterEnter({ el }) {
+    onAfterEnter({ el, from }) {
       el?.style.removeProperty('height')
       inTransitionDuration = false
     },
-    onBeforeLeave({ el }) {
+    onBeforeLeave({ el, from }) {
       if (!el) return
       if (options?.ignoreLeaveTransition) return
       if (inTransitionDuration) {
@@ -306,7 +315,7 @@ export function createCSSCollapsePlugin(options?: {
       }
       inTransitionDuration = true
     },
-    onAfterLeave({ el }) {
+    onAfterLeave({ el, from }) {
       el?.style.removeProperty('height')
       el?.style.setProperty('position', 'absolute')
       el?.style.setProperty('visibility', 'hidden')
