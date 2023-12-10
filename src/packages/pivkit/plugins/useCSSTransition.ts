@@ -53,7 +53,7 @@ interface TransitionController {
   to: Accessor<TransitionPhase>
 }
 
-export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => {
+export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
   const controller: TransitionController = createController(() => ({
     from: currentPhase,
     to: targetPhase,
@@ -141,7 +141,6 @@ export const useCSSTransition = (additionalOpts: CSSTransactionOptions = {}) => 
     on(
       currentPhase,
       (prevCurrentPhase: TransitionPhase | void) => {
-        console.log(1)
         const el = contentDom()
 
         if (currentPhase() === 'shown' && targetPhase() === 'shown') {
@@ -190,6 +189,12 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   function toggle() {
     setShow((b) => !b)
   }
+  function close() {
+    setShow(false)
+  }
+  function open() {
+    setShow(true)
+  }
 
   const { refSetter, transitionProps, opened } = useCSSTransition({
     show,
@@ -199,6 +204,8 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   const controller = {
     opened,
     toggle,
+    open,
+    close,
   }
 
   return {
@@ -214,24 +221,24 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
     controller,
   }
 }
-
+/** will dynamic collapse element height from 'auto' */
 export function createCSSCollapsePlugin(options?: {
   ignoreEnterTransition?: boolean
   ignoreLeaveTransition?: boolean
 }) {
   let inTransitionDuration = false // flag for transition is start from transition cancel
   let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
+  let cachedElementHeightPx: string | undefined = undefined // for transition start may start from transition cancel, which height is not correct
   const { plugin, controller } = createTransitionPlugin({
+    cssTransitionDurationMs: 8000,
     enterProps: {
       icss: {
         userSelect: 'none',
-        transition: '200ms',
       },
     },
     leaveProps: {
       icss: {
         userSelect: 'none',
-        transition: '200ms',
       },
     },
     hideProps: {
@@ -246,30 +253,32 @@ export function createCSSCollapsePlugin(options?: {
     },
     onBeforeEnter({ el }) {
       //why not invoked? 🤔
-      console.log('before : ', el)
       if (options?.ignoreEnterTransition) {
-        console.log('options: ', options)
         el?.style.removeProperty('position')
         el?.style.removeProperty('visibility')
         return
       }
 
       window.requestAnimationFrame(() => {
-        console.log('el: ', el)
-        el?.style.removeProperty('position')
-        el?.style.removeProperty('visibility')
+        if (!el) return
+        el.style.removeProperty('position')
+        el.style.removeProperty('visibility')
 
         if (inTransitionDuration) {
-          el?.style.setProperty('height', `${cachedElementHeight}px`)
+          if (cachedElementHeightPx) el.style.setProperty('height', cachedElementHeightPx)
         } else {
-          const height = el?.clientHeight
-          cachedElementHeight = height
+          const height = getComputedStyle(el).height
+          cachedElementHeightPx = height
+          console.log('cachedElementHeightPx: ', cachedElementHeightPx);
 
           // frequent ui action may cause element havn't attach to DOM yet, when occors, just ignore it.
-          el?.style.setProperty('height', '0')
+          el.style.setProperty('height', '0')
           /// Force bowser to paint the frame  🤯🤯🤯🤯
-          el?.clientHeight
-          el?.style.setProperty('height', `${height}px`)
+          el.clientHeight
+          const h = getComputedStyle(el).height
+          console.log('el.style: ', el.style);
+          console.log('h: ', h)
+          el.style.setProperty('height', height)
         }
         inTransitionDuration = true
       })
@@ -279,17 +288,18 @@ export function createCSSCollapsePlugin(options?: {
       inTransitionDuration = false
     },
     onBeforeLeave({ el }) {
+      if (!el) return
       if (options?.ignoreLeaveTransition) return
       if (inTransitionDuration) {
-        el?.style.setProperty('height', `0`)
+        el.style.setProperty('height', `0`)
       } else {
-        const height = el?.clientHeight
-        cachedElementHeight = height
+        const height = getComputedStyle(el).height
+        cachedElementHeightPx = height
 
-        el?.style.setProperty('height', `${height}px`)
+        el.style.setProperty('height', height)
         // Force bowser to paint the frame  🤯🤯🤯🤯
-        el?.clientHeight
-        el?.style.setProperty('height', '0')
+        el.clientHeight
+        el.style.setProperty('height', '0')
       }
       inTransitionDuration = true
     },
