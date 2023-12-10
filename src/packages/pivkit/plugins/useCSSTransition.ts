@@ -222,6 +222,7 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
   }
 }
 /** will dynamic collapse element height from 'auto' */
+// could it from auto to auto? 🤔
 export function createCSSCollapsePlugin(options?: {
   ignoreEnterTransition?: boolean
   ignoreLeaveTransition?: boolean
