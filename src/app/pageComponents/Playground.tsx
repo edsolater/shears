@@ -255,10 +255,11 @@ function CSSCollapseExample() {
         plugin={plugin}
         icss={{
           backgroundColor: 'dodgerblue',
-          height: opened() ? '200px' : '100px', //🐛 why can't start from zero?
+          // height: opened() ? '200px' : '100px', //🐛 why can't start from zero?
           display: 'grid',
           placeItems: 'center',
         }}
+        style={{ height:  '100px' }}
       >
         <Box>click trigger to fade in it</Box>
       </Piv>

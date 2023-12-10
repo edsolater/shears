@@ -259,7 +259,7 @@ export function createCSSCollapsePlugin(options?: {
         return
       }
 
-      window.requestAnimationFrame(() => {
+      setTimeout(() => {
         if (!el) return
         el.style.removeProperty('position')
         el.style.removeProperty('visibility')
@@ -267,18 +267,20 @@ export function createCSSCollapsePlugin(options?: {
         if (inTransitionDuration) {
           if (cachedElementHeightPx) el.style.setProperty('height', cachedElementHeightPx)
         } else {
+          //🐛: already origin has 100px height, so can't transition from 0 to 100
           const height = getComputedStyle(el).height
+
           cachedElementHeightPx = height
-          console.log('cachedElementHeightPx: ', cachedElementHeightPx);
+          console.log('cachedElementHeightPx: ', cachedElementHeightPx)
 
           // frequent ui action may cause element havn't attach to DOM yet, when occors, just ignore it.
-          el.style.setProperty('height', '0')
+          el.style['height'] = '0'
           /// Force bowser to paint the frame  🤯🤯🤯🤯
           el.clientHeight
           const h = getComputedStyle(el).height
-          console.log('el.style: ', el.style);
+          console.log('el.clientHeight: ', el.clientHeight)
           console.log('h: ', h)
-          el.style.setProperty('height', height)
+          // el.style.setProperty('height', height)
         }
         inTransitionDuration = true
       })
