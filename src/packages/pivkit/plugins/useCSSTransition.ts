@@ -271,7 +271,6 @@ export function createCSSCollapsePlugin(options?: {
           const { height } = el.getBoundingClientRect()
 
           cachedElementHeight = height
-          console.log('cachedElementHeightPx: ', cachedElementHeight)
           const originalTransitionProps = getComputedStyle(el).transition
           el.style.setProperty('transition', 'none')
 
@@ -282,16 +281,6 @@ export function createCSSCollapsePlugin(options?: {
           el.clientHeight
           el.style.setProperty('transition', originalTransitionProps)
           /// Force bowser to paint the frame  🤯🤯🤯🤯
-          const h = el.clientHeight
-          window.requestAnimationFrame(() => {
-            console.log('el.style.height: ', el.style.height)
-            console.log('el.clientHeight: ', el.clientHeight)
-          })
-          console.log('h: ', h)
-          window.requestAnimationFrame(() => {
-            console.log('height: ', height)
-            console.log('2: ', getComputedStyle(el).transition)
-          })
           el.style.setProperty('height', height + 'px')
         }
         inTransitionDuration = true
