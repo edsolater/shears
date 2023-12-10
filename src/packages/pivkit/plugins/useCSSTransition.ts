@@ -325,6 +325,110 @@ export function createCSSCollapsePlugin(options?: {
   }
 }
 
+/**
+ * can create transition from one height:auto to another height:auto
+ */
+export function createAutoSizeTransitionPlugin(options?: {
+  ignoreEnterTransition?: boolean
+  ignoreLeaveTransition?: boolean
+}) {
+  let inTransitionDuration = false // flag for transition is start from transition cancel
+  let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
+  const { plugin, controller } = createTransitionPlugin({
+    cssTransitionDurationMs: 1000,
+    enterProps: {
+      icss: {
+        userSelect: 'none',
+      },
+    },
+    leaveProps: {
+      icss: {
+        userSelect: 'none',
+      },
+    },
+    hideProps: {
+      icss: {
+        opacity: 0,
+      },
+    },
+    showProps: {
+      icss: {
+        opacity: 1,
+      },
+    },
+    onBeforeEnter({ el }) {
+      //why not invoked? 🤔
+      if (options?.ignoreEnterTransition) {
+        el?.style.removeProperty('position')
+        el?.style.removeProperty('visibility')
+        return
+      }
+
+      setTimeout(() => {
+        if (!el) return
+        el.style.removeProperty('position')
+        el.style.removeProperty('visibility')
+
+        if (inTransitionDuration) {
+          if (cachedElementHeight) el.style.setProperty('height', cachedElementHeight + 'px')
+        } else {
+          const { height } = el.getBoundingClientRect()
+
+          cachedElementHeight = height
+          const originalTransitionProps = getComputedStyle(el).transition
+          el.style.setProperty('transition', 'none')
+
+          el.clientHeight
+
+          // frequent ui action may cause element havn't attach to DOM yet, when occors, just ignore it.
+          el.style.setProperty('height', '0')
+          el.clientHeight
+          el.style.setProperty('transition', originalTransitionProps)
+          /// Force bowser to paint the frame  🤯🤯🤯🤯
+          el.style.setProperty('height', height + 'px')
+        }
+        inTransitionDuration = true
+      })
+    },
+    onAfterEnter({ el }) {
+      el?.style.removeProperty('height')
+      inTransitionDuration = false
+    },
+    onBeforeLeave({ el }) {
+      if (!el) return
+      if (options?.ignoreLeaveTransition) return
+      if (inTransitionDuration) {
+        el.style.setProperty('height', `0`)
+      } else {
+        const { height } = el.getBoundingClientRect()
+        cachedElementHeight = height
+
+        el.style.setProperty('height', height + 'px')
+        // Force bowser to paint the frame  🤯🤯🤯🤯
+        el.clientHeight
+        el.style.setProperty('height', '0')
+      }
+      inTransitionDuration = true
+    },
+    onAfterLeave({ el }) {
+      el?.style.removeProperty('height')
+      el?.style.setProperty('position', 'absolute')
+      el?.style.setProperty('visibility', 'hidden')
+      destoryDOMCache()
+      inTransitionDuration = false
+    },
+  })
+
+  function destoryDOMCache() {
+    // innerChildren.current = null // clean from internal storage to avoid still render dom
+  }
+
+  return {
+    plugin: plugin,
+    controller,
+  }
+}
+
 // const cssTransitionPlugin = createPlugin<CSSTransactionOptions, any, any>((options: CSSTransactionOptions = {}) => () => {
 //   const { refSetter, transitionProps, isInnerVisiable } = useCSSTransition(options)
 //   return {

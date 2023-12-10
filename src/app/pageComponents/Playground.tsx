@@ -37,6 +37,7 @@ import {
   transitionDetectorPlugin,
   createTransitionPlugin,
   createCSSCollapsePlugin,
+  createAutoSizeTransitionPlugin,
 } from '../../packages/pivkit'
 import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
@@ -231,12 +232,11 @@ function CSSTransitionExample() {
         plugin={plugin}
         icss={{
           backgroundColor: 'dodgerblue',
-          height: opened() ? '200px' : '100px',
           display: 'grid',
           placeItems: 'center',
         }}
       >
-        <Box>hello</Box>
+        <Box icss={{ height: opened() ? '200px' : '100px' }}>hello</Box>
       </Piv>
     </>
   )
@@ -247,10 +247,6 @@ function CSSCollapseExample() {
     controller: { toggle, opened },
     plugin,
   } = createCSSCollapsePlugin()
-
-  createEffect(()=>{
-    console.log('opened: ', opened())
-  })
   return (
     <>
       <Button onClick={toggle}>Collapse</Button>
@@ -258,13 +254,38 @@ function CSSCollapseExample() {
         plugin={plugin}
         icss={{
           backgroundColor: 'dodgerblue',
-          height: '100px', //🐛 why can't start from zero?
+          height: '100px',
           display: 'grid',
           placeItems: 'center',
         }}
         // style={{ height:  '100px' }}
       >
         <Box>click trigger to fade in it</Box>
+      </Piv>
+    </>
+  )
+}
+
+// 🤔 maybe can use MutationObserver to detect height change, if change record
+function CSSAutoSizeTransitionExample() {
+  const {
+    controller: { toggle, opened },
+    plugin,
+  } = createAutoSizeTransitionPlugin()
+  return (
+    <>
+      <Button onClick={toggle}>show</Button>
+      <Piv
+        plugin={plugin}
+        icss={{
+          backgroundColor: 'dodgerblue',
+          height: '100px',
+          display: 'grid',
+          placeItems: 'center',
+        }}
+        // style={{ height:  '100px' }}
+      >
+        <Box icss={{ height: opened() ? '200px' : '100px' }}>sometimes bigger sometime smaller</Box>
       </Piv>
     </>
   )
