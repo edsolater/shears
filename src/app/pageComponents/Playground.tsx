@@ -257,6 +257,7 @@ function CSSCollapseExample() {
           height: '100px',
           display: 'grid',
           placeItems: 'center',
+          overflow: 'hidden',
         }}
         // style={{ height:  '100px' }}
       >

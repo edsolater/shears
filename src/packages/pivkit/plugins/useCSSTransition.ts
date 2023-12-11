@@ -1,4 +1,4 @@
-import { flap, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
+import { flap, MayArray, MayFn, shrinkFn, switchCase } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
 import { addEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
@@ -166,53 +166,66 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
   let isInitInvoke = true
   // invoke callbacks
   createEffect(
-    on([currentPhase, targetPhase], ([currentPhase, targetPhase], prev) => {
-      if (isInitInvoke) {
-        isInitInvoke = false
-        return
-      }
-      const el = contentDom()
-      const [prevCurrentPhase, prevTargetPhase]: [phase?: TransitionPhase, to?: 'hidden' | 'shown'] = prev ?? []
-      const status = {
-        el,
-        from: currentPhase,
-        to: targetPhase,
-        isFromAbortted: currentPhase === 'during-process', // not right
-      } as const
-      console.log('status: ', status)
+    on(
+      [currentPhase, targetPhase],
+      ([currentPhase, targetPhase], prev) => {
+        const el = contentDom()
+        const [prevCurrentPhase, prevTargetPhase]: [phase?: TransitionPhase, to?: 'hidden' | 'shown'] = prev ?? []
 
-      const isAfterEnter = currentPhase === 'shown' && targetPhase === 'shown'
-      if (isAfterEnter) {
-        contentDom()?.clientHeight // force GPU render frame
-        console.log('onAfterEnter')
-        opts.onAfterEnter?.(status)
-        return
-      }
+        const status = {
+          el,
+          from: currentPhase,
+          to: targetPhase,
+          prevPhase: prevCurrentPhase,
+          isFromAbortted: currentPhase === 'during-process' && prevCurrentPhase === 'during-process', // not right
+        } as const
 
-      const isAfterLeave = currentPhase === 'hidden' && targetPhase === 'hidden'
-      if (isAfterLeave) {
-        contentDom()?.clientHeight // force GPU render frame
-        console.log('onAfterLeave')
-        opts.onAfterLeave?.(status)
-        return
-      }
+        const isFirstRender = prevCurrentPhase === undefined
+        const isCurrentPhaseShown = currentPhase === 'shown'
+        const isCurrentPhaseHidden = currentPhase === 'hidden'
+        const isCurrentPhaseDuringProcess = currentPhase === 'during-process'
+        const isPreviousPhaseDuringProcess = prevCurrentPhase === 'during-process'
+        const isTargetShown = targetPhase === 'shown'
+        const isTargetHidden = targetPhase === 'hidden'
 
-      const isBeforeEnter = (currentPhase === 'hidden' || currentPhase === 'during-process') && targetPhase === 'shown'
-      if (isBeforeEnter) {
-        contentDom()?.clientHeight // force GPU render frame
-        console.log('onBeforeEnter')
-        opts.onBeforeEnter?.(status)
-        return
-      }
+        const isAfterEnter = isCurrentPhaseShown && isTargetShown
+        if (isAfterEnter) {
+          contentDom()?.clientHeight // force GPU render frame
+          console.log('onAfterEnter')
+          opts.onAfterEnter?.(status)
+          return
+        }
 
-      const isBeforeLeave = (currentPhase === 'shown' || currentPhase === 'during-process') && targetPhase === 'hidden'
-      if (isBeforeLeave) {
-        contentDom()?.clientHeight // force GPU render frame
-        console.log('onBeforeLeave')
-        opts.onBeforeLeave?.(status)
-        return
-      }
-    }),
+        const isAfterLeave = isCurrentPhaseHidden && isTargetHidden
+        if (isAfterLeave) {
+          contentDom()?.clientHeight // force GPU render frame
+          console.log('onAfterLeave')
+          opts.onAfterLeave?.(status)
+          return
+        }
+
+        const isBeforeEnter =
+          (isCurrentPhaseHidden || (isCurrentPhaseDuringProcess && isPreviousPhaseDuringProcess) || isFirstRender) &&
+          isTargetShown
+        if (isBeforeEnter) {
+          contentDom()?.clientHeight // force GPU render frame
+          console.log('onBeforeEnter')
+          opts.onBeforeEnter?.(status)
+          return
+        }
+
+        const isBeforeLeave =
+          (isCurrentPhaseShown || (isCurrentPhaseDuringProcess && isPreviousPhaseDuringProcess) || isFirstRender) &&
+          isTargetHidden
+        if (isBeforeLeave) {
+          contentDom()?.clientHeight // force GPU render frame
+          console.log('onBeforeLeave')
+          opts.onBeforeLeave?.(status)
+          return
+        }
+      },
+      { defer: true },
+    ),
   )
 
   const transitionProps = () => {
@@ -270,7 +283,7 @@ export function createCSSCollapsePlugin(options?: {
   let inTransitionDuration = false // flag for transition is start from transition cancel
   let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
   const { plugin, controller } = createTransitionPlugin({
-    cssTransitionDurationMs: 1000,
+    cssTransitionDurationMs: 300,
     enterProps: {
       icss: {
         userSelect: 'none',
