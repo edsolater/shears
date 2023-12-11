@@ -39,12 +39,20 @@ export interface CSSTransactionOptions {
   /** enterTo + leaveFrom */
   showProps?: PivProps<any, TransitionController> // shortcut for both enterTo and leaveFrom
 
-  onBeforeEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-  onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-  onBeforeLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-  onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-  onAbortDuringEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
-  onAbortDuringLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: TransitionPhase }) => void
+  onBeforeEnter?: (payloads: {
+    el: HTMLElement | undefined
+    from: TransitionPhase
+    to: 'shown' | 'hidden'
+    isFromAbortted: boolean
+  }) => void
+  onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: 'shown' | 'hidden' }) => void
+  onBeforeLeave?: (payloads: {
+    el: HTMLElement | undefined
+    from: TransitionPhase
+    to: 'shown' | 'hidden'
+    isFromAbortted: boolean
+  }) => void
+  onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: 'shown' | 'hidden' }) => void
 
   presets?: MayArray<MayFn<Omit<CSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
   // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
@@ -126,10 +134,26 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
   createEffect(() => {
     const el = contentDom()
     if (!el) return
-    const subscription = addEventListener(el, 'transitionend', () => setCurrentPhase(targetPhase()), {
-      onlyTargetIsSelf: true, // not event fired by bubbled
+    const subscription = addEventListener(
+      el,
+      'transitionend',
+      () => {
+        setCurrentPhase(targetPhase())
+      },
+      { onlyTargetIsSelf: true /* not event fired by bubbled */ },
+    )
+    // const subscription2 = addEventListener(
+    //   el,
+    //   'transitioncancel',
+    //   () => {
+    //     setCurrentPhase(targetPhase())
+    //   },
+    //   { onlyTargetIsSelf: true /* not event fired by bubbled */ },
+    // )
+    onCleanup(() => {
+      subscription.abort()
+      // subscription2.abort()
     })
-    onCleanup(() => subscription.abort())
   })
 
   // change current phase by target phase
@@ -139,51 +163,56 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
     }
   })
 
+  let isInitInvoke = true
   // invoke callbacks
   createEffect(
-    on(
-      currentPhase,
-      (prevCurrentPhase: TransitionPhase | void) => {
-        const el = contentDom()
+    on([currentPhase, targetPhase], ([currentPhase, targetPhase], prev) => {
+      if (isInitInvoke) {
+        isInitInvoke = false
+        return
+      }
+      const el = contentDom()
+      const [prevCurrentPhase, prevTargetPhase]: [phase?: TransitionPhase, to?: 'hidden' | 'shown'] = prev ?? []
+      const status = {
+        el,
+        from: currentPhase,
+        to: targetPhase,
+        isFromAbortted: currentPhase === 'during-process', // not right
+      } as const
+      console.log('status: ', status)
 
-        if (prevCurrentPhase === 'shown' && targetPhase() === 'shown') {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onAfterEnter')
-          opts.onAfterEnter?.({ el, from: prevCurrentPhase, to: targetPhase() })
-        }
+      const isAfterEnter = currentPhase === 'shown' && targetPhase === 'shown'
+      if (isAfterEnter) {
+        contentDom()?.clientHeight // force GPU render frame
+        console.log('onAfterEnter')
+        opts.onAfterEnter?.(status)
+        return
+      }
 
-        if (prevCurrentPhase === 'hidden' && targetPhase() === 'hidden') {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onAfterLeave')
-          opts.onAfterLeave?.({ el, from: prevCurrentPhase, to: targetPhase() })
-        }
+      const isAfterLeave = currentPhase === 'hidden' && targetPhase === 'hidden'
+      if (isAfterLeave) {
+        contentDom()?.clientHeight // force GPU render frame
+        console.log('onAfterLeave')
+        opts.onAfterLeave?.(status)
+        return
+      }
 
-        if (prevCurrentPhase === 'hidden' && targetPhase() === 'shown') {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onBeforeEnter')
-          opts.onBeforeEnter?.({ el, from: prevCurrentPhase, to: targetPhase() })
-        }
+      const isBeforeEnter = (currentPhase === 'hidden' || currentPhase === 'during-process') && targetPhase === 'shown'
+      if (isBeforeEnter) {
+        contentDom()?.clientHeight // force GPU render frame
+        console.log('onBeforeEnter')
+        opts.onBeforeEnter?.(status)
+        return
+      }
 
-        if (prevCurrentPhase === 'during-process' && targetPhase() === 'shown') {
-          console.log('currentPhase: ', currentPhase())
-          console.log('onAbortDuringLeave')
-          opts.onAbortDuringLeave?.({ el, from: prevCurrentPhase, to: targetPhase() })
-        }
-
-        if (prevCurrentPhase === 'shown' && targetPhase() === 'hidden') {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onBeforeLeave', prevCurrentPhase, targetPhase())
-          opts.onBeforeLeave?.({ el, from: prevCurrentPhase, to: targetPhase() })
-        }
-
-        if (prevCurrentPhase === 'during-process' && targetPhase() === 'hidden') {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onAbortDuringEnter')
-          opts.onAbortDuringEnter?.({ el, from: prevCurrentPhase, to: targetPhase() })
-        }
-      },
-      { defer: true },
-    ),
+      const isBeforeLeave = (currentPhase === 'shown' || currentPhase === 'during-process') && targetPhase === 'hidden'
+      if (isBeforeLeave) {
+        contentDom()?.clientHeight // force GPU render frame
+        console.log('onBeforeLeave')
+        opts.onBeforeLeave?.(status)
+        return
+      }
+    }),
   )
 
   const transitionProps = () => {
@@ -262,7 +291,8 @@ export function createCSSCollapsePlugin(options?: {
         opacity: 1,
       },
     },
-    onBeforeEnter({ el, from }) {
+    onBeforeEnter({ el }) {
+      //why not invoked? 🤔
       if (options?.ignoreEnterTransition) {
         el?.style.removeProperty('position')
         el?.style.removeProperty('visibility')
@@ -295,11 +325,11 @@ export function createCSSCollapsePlugin(options?: {
         inTransitionDuration = true
       })
     },
-    onAfterEnter({ el, from }) {
+    onAfterEnter({ el }) {
       el?.style.removeProperty('height')
       inTransitionDuration = false
     },
-    onBeforeLeave({ el, from }) {
+    onBeforeLeave({ el }) {
       if (!el) return
       if (options?.ignoreLeaveTransition) return
       if (inTransitionDuration) {
@@ -315,7 +345,7 @@ export function createCSSCollapsePlugin(options?: {
       }
       inTransitionDuration = true
     },
-    onAfterLeave({ el, from }) {
+    onAfterLeave({ el }) {
       el?.style.removeProperty('height')
       el?.style.setProperty('position', 'absolute')
       el?.style.setProperty('visibility', 'hidden')
