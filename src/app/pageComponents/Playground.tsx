@@ -5,7 +5,6 @@ import {
   AddProps,
   Box,
   Button,
-  Container,
   Drawer,
   DrawerController,
   Input,
@@ -20,26 +19,23 @@ import {
   Tabs,
   Text,
   ValidProps,
+  buildPopover,
+  createAutoSizeTransitionPlugin,
+  createCSSCollapsePlugin,
+  createICSS,
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
+  createTransitionPlugin,
   cssOpacity,
-  buildPopover,
+  cssVar,
   icss_col,
   icss_row,
   renderSwitchThumb,
-  useCSSTransition,
   useControllerByID,
-  useKitProps,
   useHoverPlugin,
-  cssVar,
-  createICSS,
-  transitionDetectorPlugin,
-  createTransitionPlugin,
-  createCSSCollapsePlugin,
-  createAutoSizeTransitionPlugin,
+  useKitProps
 } from '../../packages/pivkit'
-import { Popover } from '../../packages/pivkit/components/Popover'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'

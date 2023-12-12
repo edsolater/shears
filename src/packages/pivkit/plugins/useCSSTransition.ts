@@ -7,6 +7,7 @@ import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
 import { createController } from '../utils/createController'
 import { runtimeObject } from '../../fnkit/runtimeObject'
 import { get } from '../../../app/utils/dataTransmit/itemMethods'
+import { parallelAsyncTasks } from '../../fnkit'
 
 type TransitionPhase =
   | 'hidden' /* UI unvisiable */
@@ -163,7 +164,6 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
     }
   })
 
-  let isInitInvoke = true
   // invoke callbacks
   createEffect(
     on(
@@ -179,7 +179,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
           prevPhase: prevCurrentPhase,
           isFromAbortted: currentPhase === 'during-process' && prevCurrentPhase === 'during-process', // not right
         } as const
-
+        // -------- process judgers --------
         const isFirstRender = prevCurrentPhase === undefined
         const isCurrentPhaseShown = currentPhase === 'shown'
         const isCurrentPhaseHidden = currentPhase === 'hidden'
@@ -188,41 +188,22 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
         const isTargetShown = targetPhase === 'shown'
         const isTargetHidden = targetPhase === 'hidden'
 
+        // -------- lifecycle judgers --------
         const isAfterEnter = isCurrentPhaseShown && isTargetShown
-        if (isAfterEnter) {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onAfterEnter')
-          opts.onAfterEnter?.(status)
-          return
-        }
-
         const isAfterLeave = isCurrentPhaseHidden && isTargetHidden
-        if (isAfterLeave) {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onAfterLeave')
-          opts.onAfterLeave?.(status)
-          return
-        }
-
         const isBeforeEnter =
           (isCurrentPhaseHidden || (isCurrentPhaseDuringProcess && isPreviousPhaseDuringProcess) || isFirstRender) &&
           isTargetShown
-        if (isBeforeEnter) {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onBeforeEnter')
-          opts.onBeforeEnter?.(status)
-          return
-        }
-
         const isBeforeLeave =
           (isCurrentPhaseShown || (isCurrentPhaseDuringProcess && isPreviousPhaseDuringProcess) || isFirstRender) &&
           isTargetHidden
-        if (isBeforeLeave) {
-          contentDom()?.clientHeight // force GPU render frame
-          console.log('onBeforeLeave')
-          opts.onBeforeLeave?.(status)
-          return
-        }
+
+        switchCase(true, [
+          [isAfterEnter, () => opts.onAfterEnter?.(status)],
+          [isAfterLeave, () => opts.onAfterLeave?.(status)],
+          [isBeforeEnter, () => opts.onBeforeEnter?.(status)],
+          [isBeforeLeave, () => opts.onBeforeLeave?.(status)],
+        ])
       },
       { defer: true },
     ),
@@ -279,11 +260,13 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
 export function createCSSCollapsePlugin(options?: {
   ignoreEnterTransition?: boolean
   ignoreLeaveTransition?: boolean
+  durationMs?: number
 }) {
   let inTransitionDuration = false // flag for transition is start from transition cancel
   let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
   const { plugin, controller } = createTransitionPlugin({
-    cssTransitionDurationMs: 300,
+    cssTransitionDurationMs: options?.durationMs ?? 250,
+    cssTransitionTimingFunction: 'ease-out',
     enterProps: {
       icss: {
         userSelect: 'none',
@@ -307,6 +290,7 @@ export function createCSSCollapsePlugin(options?: {
     onBeforeEnter({ el }) {
       //why not invoked? 🤔
       if (options?.ignoreEnterTransition) {
+        resumeDOMCache(el)
         el?.style.removeProperty('position')
         el?.style.removeProperty('visibility')
         return
@@ -362,13 +346,18 @@ export function createCSSCollapsePlugin(options?: {
       el?.style.removeProperty('height')
       el?.style.setProperty('position', 'absolute')
       el?.style.setProperty('visibility', 'hidden')
-      destoryDOMCache()
+      destoryDOMCache(el)
       inTransitionDuration = false
     },
   })
 
-  function destoryDOMCache() {
-    // innerChildren.current = null // clean from internal storage to avoid still render dom
+  function resumeDOMCache(element: HTMLElement | undefined) {
+    element?.style.removeProperty('pointer-events')
+  }
+
+  // innerChildren.current = null // clean from internal storage to avoid still render dom
+  function destoryDOMCache(element: HTMLElement | undefined) {
+    element?.style.setProperty('pointer-events', 'none')
   }
 
   return {
