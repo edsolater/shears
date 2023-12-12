@@ -5,28 +5,36 @@ import { Accessor, createEffect } from 'solid-js'
  *
  * this hooks build on assumption: resize of a child will resize his parent. so just observe it's parent node.
  *
+ * ResizeObserver is invoked AFTER the DOM is painted.
  * @param ref
  * @param callback
  */
-export default function useResizeObserver<El extends HTMLElement>(
-  ref: Accessor<El | undefined>,
-  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown,
-): { destory: () => void } {
+export default function useResizeObserver<El extends HTMLElement>({
+  ref,
+  callback,
+}: {
+  ref: Accessor<El | undefined>
+  callback?: (utilities: { entry: ResizeObserverEntry; el: El }, observer: ResizeObserver) => unknown
+}) {
   const resizeObserver =
     'ResizeObserver' in globalThis
-      ? new globalThis.ResizeObserver((entries) => {
-          entries.forEach((entry) => callback?.({ entry, el: entry.target as any }))
+      ? new globalThis.ResizeObserver((entries, observer) => {
+          entries.forEach((entry) => callback?.({ entry, el: entry.target as any }, observer))
         })
       : undefined
 
-  createEffect(() => {
+  function observe(ref: Accessor<El | undefined>) {
     const el = ref()
     if (!el) return
     resizeObserver?.observe(el)
+  }
+
+  createEffect(() => {
+    observe(ref)
   }, [ref])
 
   const destory = () => {
     resizeObserver?.disconnect()
   }
-  return { destory }
+  return { destory, observe }
 }

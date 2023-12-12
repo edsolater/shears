@@ -1,4 +1,4 @@
-import { isString, shrinkFn } from '@edsolater/fnkit'
+import { isString, merge, mergeFunction } from '@edsolater/fnkit'
 import { Accessor, Show, createContext, createEffect, createSignal, onMount, useContext } from 'solid-js'
 import { useClickOutside } from '../../domkit/hooks/useClickOutside'
 import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
@@ -9,6 +9,7 @@ import { PopPortal } from '../PopPortal'
 import { createController } from '../../utils/createController'
 import { Text } from '../Text'
 import { createComponentContext, useComponentContext } from '../../hooks/createComponentContext'
+import { createDisclosure } from '../../hooks/createDisclosure'
 
 export interface ModalController {
   dialogDOM: Accessor<HTMLDialogElement | undefined>
@@ -59,8 +60,8 @@ export function Modal(kitProps: ModalKitProps) {
     title: () => props.title,
     /** is dialog open */
     isOpen: innerOpen,
-    open: open,
-    close: close,
+    open: mergeFunction(open, openModal),
+    close: mergeFunction(close, closeModal),
     toggle: toggle,
   }))
 
@@ -70,26 +71,26 @@ export function Modal(kitProps: ModalKitProps) {
   })
   const [dialogDOM, setDialogDOM] = createRef<HTMLDialogElement>()
   const [dialogContentDOM, setDialogContentDOM] = createRef<HTMLDivElement>()
+  const openModal = () => dialogDOM()?.showModal()
+  const closeModal = () => dialogDOM()?.close()
   const {
     isOpen: innerOpen,
     open,
     close,
     toggle,
-  } = useDisclosure({
+  } = createDisclosure({
     open: () => Boolean(props.open),
-    onClose(affectDOM) {
+    onClose() {
       props.onClose?.()
-      if (affectDOM) dialogDOM()?.close()
     },
     onOpen() {
       props.onOpen?.()
-      dialogDOM()?.showModal()
     },
   })
   const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
   // sync dislog's  build-in close event with inner state
-  useDOMEventListener(dialogDOM, 'close', () => close({ byDOM: false }))
+  useDOMEventListener(dialogDOM, 'close', close)
 
   // initly load modal show
   createEffect(() => {
@@ -107,9 +108,7 @@ export function Modal(kitProps: ModalKitProps) {
   // click outside to close dialog
   useClickOutside(dialogContentDOM, {
     disable: () => !innerOpen(),
-    onClickOutSide: () => {
-      close()
-    },
+    onClickOutSide: mergeFunction(close, closeModal),
   })
 
   return (
@@ -162,40 +161,6 @@ export const plugin_modalTitle = createPlugin(
   },
   { name: 'modalTitle' },
 )
-
-// TODO: no 'byDOM' option
-function useDisclosure(config: {
-  open?: Accessor<boolean>
-  onOpen?: () => void
-  onClose?: (
-    /**
-     * if it's caused by dom, it should set false
-     * @default true
-     */
-    byDOM?: boolean,
-  ) => void
-}) {
-  const [isOpen, setInnerOpen] = createSignal(shrinkFn(config.open) ?? false)
-  function open() {
-    setInnerOpen(true)
-    config.onOpen?.()
-  }
-  function close(options?: {
-    /**
-     * if it's caused by dom, it should set false
-     * @default true
-     */
-    byDOM?: boolean
-  }) {
-    setInnerOpen(false)
-    config.onClose?.(options?.byDOM ?? true)
-  }
-  function toggle() {
-    isOpen() ? close() : open()
-  }
-
-  return { isOpen, open, close, toggle }
-}
 
 /**
  * detect whether should render `<Modal>`'s content in DOM

@@ -34,11 +34,12 @@ import {
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
-  useKitProps
+  useKitProps,
 } from '../../packages/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
+import { createDisclosure } from '../../packages/pivkit/hooks/createDisclosure'
 
 export default function PlaygroundPage() {
   return (
@@ -76,6 +77,10 @@ function ComponentSpecList() {
 
       <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='transite auto-size'>
+        <CSSAutoSizeTransitionExample />
       </ExamplePanel>
 
       {/* <ExamplePanel name='Input'>
@@ -265,24 +270,22 @@ function CSSCollapseExample() {
 
 // 🤔 maybe can use MutationObserver to detect height change, if change record
 function CSSAutoSizeTransitionExample() {
-  const {
-    controller: { toggle, opened },
-    plugin,
-  } = createAutoSizeTransitionPlugin()
+  const { plugin } = createAutoSizeTransitionPlugin()
+  const { isOpen, toggle } = createDisclosure()
   return (
     <>
-      <Button onClick={toggle}>show</Button>
+      <Button onClick={toggle}>size change</Button>
       <Piv
         plugin={plugin}
         icss={{
           backgroundColor: 'dodgerblue',
-          height: '100px',
           display: 'grid',
           placeItems: 'center',
         }}
-        // style={{ height:  '100px' }}
       >
-        <Box icss={{ height: opened() ? '200px' : '100px' }}>sometimes bigger sometime smaller</Box>
+        <Box icss={{ height: isOpen() ? '200px' : '100px', background: isOpen() ? 'crimson' : 'dodgerblue' }}>
+          click will change inner size
+        </Box>
       </Piv>
     </>
   )
