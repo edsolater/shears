@@ -1,4 +1,4 @@
-import { createContext, useContext } from 'solid-js'
+import { createContext, createEffect, useContext } from 'solid-js'
 import { createToggle } from '../hooks/createToggle'
 import { KitProps, Piv, PivChild, PivProps, useKitProps } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
@@ -61,6 +61,9 @@ export function CollapseBox(rawProps: KitProps<CollapseBoxProps, { controller: C
     controller: { open: openCollapse, close: closeCollapse, toggle: toggleCollapse, opened: isCollapseOpened },
     plugin,
   } = createCSSCollapsePlugin()
+
+  //sync with innerOpen
+  createEffect(() => (innerOpen() ? openCollapse() : closeCollapse()))
   return (
     <Box shadowProps={shadowProps}>
       {/* Face */}

@@ -5,6 +5,7 @@ import {
   AddProps,
   Box,
   Button,
+  CollapseBox,
   Drawer,
   DrawerController,
   Input,
@@ -77,6 +78,10 @@ function ComponentSpecList() {
 
       <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
+      </ExamplePanel>
+
+      <ExamplePanel name='CollapseComponent'>
+        <CSSCollapseComponentExample />
       </ExamplePanel>
 
       <ExamplePanel name='transite auto-size'>
@@ -264,6 +269,46 @@ function CSSCollapseExample() {
       >
         <Box>click trigger to fade in it</Box>
       </Piv>
+    </>
+  )
+}
+function CSSCollapseComponentExample() {
+  const { isOpen, open, close, toggle } = createDisclosure()
+
+  return (
+    <>
+      <Button onClick={toggle}>Collapse</Button>
+      <CollapseBox
+        open={isOpen}
+        render:Face={
+          <Piv
+            icss={{
+              backgroundColor: 'crimson',
+              height: '100px',
+              display: 'grid',
+              placeItems: 'center',
+              overflow: 'hidden',
+            }}
+            style={{ height: '40px' }}
+          >
+            <Box>collapse face</Box>
+          </Piv>
+        }
+        render:Content={
+          <Piv
+            icss={{
+              backgroundColor: 'crimson',
+              height: '100px',
+              display: 'grid',
+              placeItems: 'center',
+              overflow: 'hidden',
+            }}
+            style={{ height: '100px' }}
+          >
+            <Box>collapse content</Box>
+          </Piv>
+        }
+      />
     </>
   )
 }
