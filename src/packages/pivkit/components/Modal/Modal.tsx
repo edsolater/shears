@@ -6,7 +6,7 @@ import { createRef } from '../../hooks/createRef'
 import { ICSS, KitProps, Piv, PivProps, createPlugin, useKitProps } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { PopPortal } from '../PopPortal'
-import { createController } from '../../utils/createController'
+import { createController2 } from '../../utils/createController'
 import { Text } from '../Text'
 import { createComponentContext, useComponentContext } from '../../hooks/createComponentContext'
 import { createDisclosure } from '../../hooks/createDisclosure'
@@ -54,7 +54,7 @@ export const ModalContext = createComponentContext<Partial<ModalController>>()
  * - {@link ModalTitle \<ModalTitle\>} - register mobal title. Actually is {@link Text \<Text\>}
  */
 export function Modal(kitProps: ModalKitProps) {
-  const modalController = createController<ModalController>(() => ({
+  const modalController = createController2<ModalController>(() => ({
     dialogDOM,
     dialogContentDOM,
     title: () => props.title,

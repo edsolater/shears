@@ -6,7 +6,7 @@ import { useFarmPageStates } from '../pageStates/farmState'
 import { getToken } from '../stores/data/utils/getToken'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { add } from '../utils/dataStructures/basicMath/operations'
-import { Piv, List, Collapse, CollapseFace, Box } from '../../packages/pivkit'
+import { Piv, List, CollapseBox, CollapseFace, Box } from '../../packages/pivkit'
 import { store } from '../stores/data/store'
 
 const icss_smoothBoxShadow =
@@ -27,7 +27,7 @@ function FarmList() {
   return (
     <List items={farmInfos}>
       {(info, idx) => (
-        <Collapse icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
+        <CollapseBox icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
           <CollapseFace>
             {(controller) => (
               <Box
@@ -73,7 +73,7 @@ function FarmList() {
               </Box>
             )}
           </CollapseFace>
-          <Collapse.Content>
+          <CollapseBox.Content>
             <Piv>
               <Piv>state: {info.hasLoad.join(' ')}</Piv>
               <Show when={info.userStakedLpAmount}>
@@ -81,8 +81,8 @@ function FarmList() {
                 <Piv>to havest: {toString(info.userStakedLpAmount?.amount)}</Piv>
               </Show>
             </Piv>
-          </Collapse.Content>
-        </Collapse>
+          </CollapseBox.Content>
+        </CollapseBox>
       )}
     </List>
   )

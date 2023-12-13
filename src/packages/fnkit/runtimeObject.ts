@@ -3,6 +3,20 @@ import { isFunction, isString, shrinkFn } from '@edsolater/fnkit'
 const clearMap = (resultMap: Map<any, any>) => resultMap.clear()
 // register clean up function
 const mapClearRegistry = new FinalizationRegistry(clearMap)
+
+export type RuntimeObjectOption<T extends object> = {
+  /**
+   * if you want to cache some value, you should use this option to avoid running the rule again\
+   * cached value will not calc twice
+   * @deprecated not strightforward
+   */
+  cachableKeys?: (keyof T)[]
+  /**
+   * if you want to use a function as value, you should use this option to avoid the function be shrinked
+   */
+  originMethods?: (keyof T | ((skey: keyof any) => boolean))[]
+}
+
 /**
  * only run when value is accessed
  *
@@ -27,18 +41,7 @@ export function runtimeObject<T extends object>(
   objWithRule: {
     [K in keyof T]?: T[K] | (() => T[K] | undefined)
   },
-  options?: {
-    /**
-     * if you want to cache some value, you should use this option to avoid running the rule again\
-     * cached value will not calc twice
-     * @deprecated not strightforward
-     */
-    cachableKeys?: (keyof T)[]
-    /**
-     * if you want to use a function as value, you should use this option to avoid the function be shrinked
-     */
-    originMethods?: (keyof T | ((skey: keyof any) => boolean))[]
-  },
+  options?: RuntimeObjectOption<T>,
 ): T {
   let cache: undefined | Map<any, any> = undefined
   const needCache = (p: keyof any) => options?.cachableKeys?.includes(p as any)
@@ -53,7 +56,7 @@ export function runtimeObject<T extends object>(
     cache.set(p, value)
   }
   const clearCache = () => cache?.clear()
-  
+
   const justUseOriginValue = (p: keyof any) =>
     options?.originMethods?.some((rule) => (isFunction(rule) ? rule(p) : Object.is(rule, p)))
 

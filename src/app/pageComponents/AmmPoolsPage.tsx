@@ -1,5 +1,5 @@
 import { createMemo } from 'solid-js'
-import { Collapse, List, Piv, createRef, useElementSize } from '../../packages/pivkit'
+import { CollapseBox, List, Piv, createRef, useElementSize } from '../../packages/pivkit'
 import { createStorePropertySignal } from '../stores/data/store'
 
 export default function AmmPoolsPage() {
@@ -24,12 +24,12 @@ export default function AmmPoolsPage() {
       >
         <List items={pairInfos}>
           {(info) => (
-            <Collapse
+            <CollapseBox
               icss={{
                 '&:nth-child(even)': { background: '#8080802e' },
               }}
             >
-              <Collapse.Face>
+              <CollapseBox.Face>
                 <Piv
                   icss={{
                     display: 'grid',
@@ -40,11 +40,11 @@ export default function AmmPoolsPage() {
                 >
                   <Piv>{info.name}</Piv>
                 </Piv>
-              </Collapse.Face>
-              <Collapse.Content>
+              </CollapseBox.Face>
+              <CollapseBox.Content>
                 <Piv icss={{ border: 'solid gray' }}>{info.ammId}</Piv>
-              </Collapse.Content>
-            </Collapse>
+              </CollapseBox.Content>
+            </CollapseBox>
           )}
         </List>
       </Piv>

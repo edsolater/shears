@@ -4,7 +4,7 @@ import { addEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
 import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
 import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
-import { createController } from '../utils/createController'
+import { createController2 } from '../utils/createController'
 import { runtimeObject } from '../../fnkit/runtimeObject'
 import { get } from '../../../app/utils/dataTransmit/itemMethods'
 import { parallelAsyncTasks } from '../../fnkit'
@@ -68,7 +68,7 @@ interface TransitionController {
 }
 
 export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
-  const controller: TransitionController = createController(() => ({
+  const controller: TransitionController = createController2(() => ({
     from: currentPhase,
     to: targetPhase,
     contentDom,
