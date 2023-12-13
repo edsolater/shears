@@ -71,9 +71,9 @@ export function CollapseBox(rawProps: KitProps<CollapseBoxProps, { controller: C
 
       {/* Content */}
       {props['render:Content'] && (
-        <Box class='Content' plugin={plugin}>
+        <Piv class='Content' plugin={plugin} icss={{overflow:'hidden'}}>
           {props['render:Content']}
-        </Box>
+        </Piv>
       )}
     </Box>
   )

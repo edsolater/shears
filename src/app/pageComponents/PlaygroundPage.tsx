@@ -284,28 +284,26 @@ function CSSCollapseComponentExample() {
           <Piv
             icss={{
               backgroundColor: 'crimson',
-              height: '100px',
+              height: '40px',
               display: 'grid',
               placeItems: 'center',
               overflow: 'hidden',
             }}
-            style={{ height: '40px' }}
           >
-            <Box>collapse face</Box>
+            <Box>Face</Box>
           </Piv>
         }
         render:Content={
           <Piv
             icss={{
-              backgroundColor: 'crimson',
+              backgroundColor: 'dodgerblue',
               height: '100px',
               display: 'grid',
               placeItems: 'center',
               overflow: 'hidden',
             }}
-            style={{ height: '100px' }}
           >
-            <Box>collapse content</Box>
+            <Box>Content</Box>
           </Piv>
         }
       />
