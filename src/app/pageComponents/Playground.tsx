@@ -54,7 +54,7 @@ function ComponentSpecList() {
     <Box
       icss={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))',
+        gridTemplateColumns: 'repeat(1, minmax(400px, 1fr))',
         padding: '32px',
         gap: '4vw',
       }}

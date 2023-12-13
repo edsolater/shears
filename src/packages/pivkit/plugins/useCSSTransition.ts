@@ -216,7 +216,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
     return mergeProps
   }
 
-  return { refSetter: setContentDom, transitionProps, opened }
+  return { dom: contentDom, setDom: setContentDom, transitionProps, opened }
 }
 
 export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'show'>) {
@@ -232,7 +232,7 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
     setShow(true)
   }
 
-  const { refSetter, transitionProps, opened } = useCSSTransition({
+  const { setDom, transitionProps, opened, dom } = useCSSTransition({
     show,
     ...options,
   })
@@ -251,9 +251,10 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
         runtimeObject<PivProps>({
           // if not use runtimeObject, the props will be consumed too early
           shadowProps: () => transitionProps(),
-          domRef: () => refSetter,
+          domRef: () => setDom,
         }),
     ),
+    el: dom,
     controller,
   }
 }
@@ -266,7 +267,7 @@ export function createCSSCollapsePlugin(options?: {
 }) {
   let inTransitionDuration = false // flag for transition is start from transition cancel
   let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
-  const { plugin, controller } = createTransitionPlugin({
+  const { plugin, controller, el } = createTransitionPlugin({
     cssTransitionDurationMs: options?.durationMs ?? 250,
     cssTransitionTimingFunction: 'ease-out',
     enterProps: {
@@ -354,6 +355,12 @@ export function createCSSCollapsePlugin(options?: {
       inTransitionDuration = false
     },
   })
+  
+  // init collapse
+  createEffect(() => {
+    el()?.style.setProperty('pointer-events', 'none')
+    el()?.style.setProperty('position', 'absolute')
+  })
 
   function resumeDOMCache(element: HTMLElement | undefined) {
     element?.style.removeProperty('pointer-events')
@@ -366,6 +373,7 @@ export function createCSSCollapsePlugin(options?: {
 
   return {
     plugin: plugin,
+    el,
     controller,
   }
 }

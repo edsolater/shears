@@ -9,7 +9,7 @@ export function ExamplePanel(rawProps: KitProps<ExamplePanelProps>) {
   return (
     <Piv shadowProps={props}>
       <Text icss={{ fontWeight: 'bold', fontSize: '2.5rem' }}>{props.name}</Text>
-      <Box icss={{ display: 'grid', gap: '4px' }}>{props.children}</Box>
+      <Box>{props.children}</Box>
     </Piv>
   )
 }
