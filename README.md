@@ -4,3 +4,6 @@ component name meanings:
 
 - `xxxFace`: `xxxItem` + `xxxTrigger`
 - buildComponent - generate plugins
+
+
+svg background: https://loading.io/background/
