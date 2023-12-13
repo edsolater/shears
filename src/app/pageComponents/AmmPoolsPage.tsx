@@ -1,8 +1,8 @@
 import { createMemo } from 'solid-js'
 import { Collapse, List, Piv, createRef, useElementSize } from '../../packages/pivkit'
-import { createStorePropertySignal, setStore, store } from '../stores/data/store'
+import { createStorePropertySignal } from '../stores/data/store'
 
-export default function PairsPage() {
+export default function AmmPoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()

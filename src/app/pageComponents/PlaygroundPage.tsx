@@ -36,10 +36,10 @@ import {
   useHoverPlugin,
   useKitProps,
 } from '../../packages/pivkit'
+import { createDisclosure } from '../../packages/pivkit/hooks/createDisclosure'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { createDisclosure } from '../../packages/pivkit/hooks/createDisclosure'
 
 export default function PlaygroundPage() {
   return (
