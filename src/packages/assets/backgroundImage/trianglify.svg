@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin:auto;background:#f1f2f3;display:block;z-index:1;position:relative" width="2037" height="1321" preserveAspectRatio="xMidYMid" viewBox="0 0 2037 1321">
-<g transform="translate(1018.5,660.5) scale(1,1) translate(-1018.5,-660.5)"><g id="bk-0.3395408707844416"><path d="M 987 616  L 890 631  L 966 706 Z" stroke="#373e62" fill="#373e62">
+<g transform="translate(1018.5,660.5) scale(1,1) translate(-1018.5,-660.5)"><g id="bk-0.33"><path d="M 987 616  L 890 631  L 966 706 Z" stroke="#373e62" fill="#373e62">
   <animate attributeName="d" repeatDur="indefinite" dur="10s" keyTimes="0;0.5;1" values="M 987 616  L 890 631  L 966 706 Z;M 981 613  L 903 646  L 969 715 Z;M 987 616  L 890 631  L 966 706 Z"></animate>
 </path><path d="M 890 631  L 887 734  L 966 706 Z" stroke="#383f64" fill="#383f64">
   <animate attributeName="d" repeatDur="indefinite" dur="10s" keyTimes="0;0.5;1" values="M 890 631  L 887 734  L 966 706 Z;M 903 646  L 885 712  L 969 715 Z;M 890 631  L 887 734  L 966 706 Z"></animate>
@@ -2355,5 +2355,5 @@
   <animate attributeName="d" repeatDur="indefinite" dur="10s" keyTimes="0;0.5;1" values="M 2498 -64  L 2482 -266  L 2474 -190 Z;M 2476 -60  L 2489 -271  L 2473 -201 Z;M 2498 -64  L 2482 -266  L 2474 -190 Z"></animate>
 </path><path d="M 2474 -190  L 2482 -266  L 2362 -297 Z" stroke="#1c203d" fill="#1c203d">
   <animate attributeName="d" repeatDur="indefinite" dur="10s" keyTimes="0;0.5;1" values="M 2474 -190  L 2482 -266  L 2362 -297 Z;M 2473 -201  L 2489 -271  L 2366 -291 Z;M 2474 -190  L 2482 -266  L 2362 -297 Z"></animate>
-</path></g><style type="text/css"> #bk-0.3395408707844416 path { stroke-width: 1 } </style></g>
+</path></g><style type="text/css"> #bk-0.33 path { stroke-width: 1 } </style></g>
 </svg>
