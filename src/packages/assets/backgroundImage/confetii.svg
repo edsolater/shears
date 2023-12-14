@@ -1,4 +1,5 @@
-<svg style="background:var(--bg)" width="1612" height="945" preserveAspectRatio="xMidYMid" viewBox="0 0 1612 945">
+<svg xmlns="http://www.w3.org/2000/svg" style="background:var(--bg)" width="1612" height="945"
+  preserveAspectRatio="xMidYMid" viewBox="0 0 1612 945">
   <defs>
 
     <style>
