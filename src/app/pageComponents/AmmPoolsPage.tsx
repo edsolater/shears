@@ -1,43 +1,53 @@
-import { createMemo } from 'solid-js'
+import { createEffect, createMemo } from 'solid-js'
 import {
   Box,
   Col,
   CollapseBox,
   List,
   Piv,
-  Text,
+  PivProps,
   createRef,
   icss_cyberpenkBackground,
   icss_cyberpenkBorder,
-  icss_title,
-  useElementSize
+  useElementSize,
 } from '../../packages/pivkit'
 import { createStorePropertySignal } from '../stores/data/store'
-
-export default function AmmPoolsPage() {
-  const pairInfos = createStorePropertySignal((s) => s.pairInfos)
+import { PageTitle } from '../components/PageTitle'
+function CyberPanel(props: PivProps) {
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
   const { width, height } = useElementSize(ref)
   const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
   const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
   return (
+    <Piv
+      domRef={setRef}
+      icss={[
+        {
+          borderRadius: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          flex: 1,
+        },
+        icss_cyberpenkBackground,
+        icss_cyberpenkBorder({ borderRadius: '24px' }),
+      ]}
+      shadowProps={props}
+    />
+  )
+}
+// TODO: 
+function CyberTable(props) {}
+
+export default function AmmPoolsPage() {
+  const pairInfos = createStorePropertySignal((s) => s.pairInfos)
+  createEffect(() => {
+    console.log('pairInfos(): ', pairInfos())
+  })
+  return (
     <Col>
-      <Text icss={[icss_title, { marginBottom: '16px' }]}>Pools</Text>
-      <Piv
-        domRef={setRef}
-        icss={[
-          {
-            // boxShadow: icss_smoothBoxShadow,
-            borderRadius: '24px',
-            display: 'flex',
-            flexDirection: 'column',
-            flex: 1,
-          },
-          icss_cyberpenkBackground,
-          icss_cyberpenkBorder({ borderRadius: '24px' }),
-        ]}
-      >
+      <PageTitle icss={{ marginBottom: '16px' }}>Pools</PageTitle>
+      <CyberPanel>
         <CollapseBox
           icss={{
             borderRadius: '12px',
@@ -70,7 +80,7 @@ export default function AmmPoolsPage() {
             </Piv>
           }
         />
-        <List items={pairInfos}>
+        {/* <List items={pairInfos}>
           {(info) => (
             <CollapseBox
               icss={{
@@ -82,7 +92,7 @@ export default function AmmPoolsPage() {
                   icss={{
                     display: 'grid',
                     cursor: 'pointer',
-                    gridTemplateColumns: isWidthSmall() ? '120px' : '150px 500px',
+                    gridTemplateColumns: '150px 500px',
                     paddingBlock: '4px',
                   }}
                 >
@@ -94,8 +104,8 @@ export default function AmmPoolsPage() {
               </CollapseBox.Content>
             </CollapseBox>
           )}
-        </List>
-      </Piv>
+        </List> */}
+      </CyberPanel>
     </Col>
   )
 }
