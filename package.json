@@ -23,6 +23,9 @@
     "decimal.js": "^10.4.3",
     "bn.js": "^5.2.1"
   },
+  "comment": {
+    "react": "is only for storybook, this package use solidjs"
+  },
   "devDependencies": {
     "@solidjs/testing-library": "^0.8.4",
     "@storybook/addon-essentials": "7.6.4",
