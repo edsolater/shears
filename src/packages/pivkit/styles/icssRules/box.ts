@@ -147,6 +147,11 @@ export const icss_clickable = createICSS((options?: ICSSClickableOption) => ({
   '&:active': { transform: 'scale(0.95)' },
 }))
 
+export const icss_title = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
+  fontSize: '1.5em',
+  fontWeight: 'bold',
+}))
+
 export const icss_label = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
   minWidth: options?.w ?? '5em',
   minHeight: options?.h ?? 'calc(2em)',

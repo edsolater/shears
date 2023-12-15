@@ -1,5 +1,6 @@
 import { createSignal } from 'solid-js'
 import {
+  AddProps,
   Box,
   Group,
   KitProps,
@@ -20,7 +21,7 @@ export type AppPageLayout_LayoutBoxProps = {
   'render:topBarBanner'?: PivChild
   'render:topBar'?: PivChild
   'render:sideBar'?: PivChild
-  'render:content'?: PivChild
+  'renderContent'?: PivChild
 }
 /**
  * for easier to code and read
@@ -76,7 +77,9 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
                 flexGrow: 1,
                 height: 0,
                 isolation: 'isolate',
-                padding: '48px',
+                padding: '24px',
+                display: 'grid',
+                gridAutoFlow:'column',
               },
             ]}
           >

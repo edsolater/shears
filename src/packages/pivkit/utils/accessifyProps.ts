@@ -1,7 +1,7 @@
 import { AnyFn, AnyObj, isFunction, isObject, isString } from '@edsolater/fnkit'
 import { ValidController } from '../piv/typeTools'
 
-export type Accessify<V, Controller extends ValidController | unknown = unknown> = V | ((controller: Controller) => V)
+export type Accessify<V, Controller extends ValidController | unknown = unknown> = Exclude<V, AnyFn> | ((controller: Controller) => V)
 export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 
 /**

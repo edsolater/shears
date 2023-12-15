@@ -15,14 +15,15 @@ export interface CollapseBoxProps {
   onClose?(): void
   onToggle?(): void
 
-  'render:Face'?: PivChild
-  'render:Content'?: PivChild
+  'renderFace'?: PivChild
+  'renderContent'?: PivChild
   //TODO
   // 'renderMapLayout'?:
 }
 
 export interface CollapseBoxController {
   readonly isOpen: boolean
+  isOpenAccessor: () => boolean
   open(): void
   close(): void
   toggle(): void
@@ -40,8 +41,8 @@ const CollapseContext = createContext<CollapseBoxController>({} as CollapseBoxCo
  *				<Content />
  *			</WrapperBox>)} />
  */
-export function CollapseBox(rawProps: KitProps<CollapseBoxProps, { controller: CollapseBoxController }>) {
-  const { props, shadowProps } = useKitProps(rawProps, { name: 'Collapse', controller: () => controller })
+export function CollapseBox(kitProps: KitProps<CollapseBoxProps, { controller: CollapseBoxController }>) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'Collapse', controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(() => props.open ?? props.defaultOpen ?? false, {
     onOff: props.onClose,
@@ -51,6 +52,7 @@ export function CollapseBox(rawProps: KitProps<CollapseBoxProps, { controller: C
 
   const controller = createController<CollapseBoxController>({
     isOpen: () => innerOpen(),
+    isOpenAccessor: () => innerOpen,
     open: () => on,
     close: () => off,
     toggle: () => toggle,
@@ -67,12 +69,16 @@ export function CollapseBox(rawProps: KitProps<CollapseBoxProps, { controller: C
   return (
     <Box shadowProps={shadowProps}>
       {/* Face */}
-      {props['render:Face'] && <Box class='Face'>{props['render:Face']}</Box>}
+      {props['renderFace'] && (
+        <Box class='Face' onClick={toggle}>
+          {props['renderFace']}
+        </Box>
+      )}
 
       {/* Content */}
-      {props['render:Content'] && (
-        <Piv class='Content' plugin={plugin} icss={{overflow:'hidden'}}>
-          {props['render:Content']}
+      {props['renderContent'] && (
+        <Piv class='Content' plugin={plugin} icss={{ overflow: 'hidden' }}>
+          {props['renderContent']}
         </Piv>
       )}
     </Box>

@@ -280,7 +280,7 @@ function CSSCollapseComponentExample() {
       <Button onClick={toggle}>Collapse</Button>
       <CollapseBox
         open={isOpen}
-        render:Face={
+        renderFace={
           <Piv
             icss={{
               backgroundColor: 'crimson',
@@ -293,7 +293,7 @@ function CSSCollapseComponentExample() {
             <Box>Face</Box>
           </Piv>
         }
-        render:Content={
+        renderContent={
           <Piv
             icss={{
               backgroundColor: 'dodgerblue',
