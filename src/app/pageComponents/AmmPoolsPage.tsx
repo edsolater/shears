@@ -3,6 +3,7 @@ import {
   Box,
   Col,
   CollapseBox,
+  KitProps,
   List,
   Piv,
   PivProps,
@@ -10,9 +11,10 @@ import {
   icss_cyberpenkBackground,
   icss_cyberpenkBorder,
   useElementSize,
+  useKitProps,
 } from '../../packages/pivkit'
 import { createStorePropertySignal } from '../stores/data/store'
-import { PageTitle } from '../components/PageTitle'
+import { BoardTitle } from '../components/BoardTitle'
 function CyberPanel(props: PivProps) {
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
@@ -36,17 +38,16 @@ function CyberPanel(props: PivProps) {
     />
   )
 }
-// TODO: 
-function CyberTable(props) {}
+// TODO:
+function DatabaseTable(kitProps: KitProps) {
+  const { props } = useKitProps(kitProps, { name: 'DatabaseTable' })
+}
 
 export default function AmmPoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
-  createEffect(() => {
-    console.log('pairInfos(): ', pairInfos())
-  })
   return (
     <Col>
-      <PageTitle icss={{ marginBottom: '16px' }}>Pools</PageTitle>
+      <BoardTitle>Pools</BoardTitle>
       <CyberPanel>
         <CollapseBox
           icss={{

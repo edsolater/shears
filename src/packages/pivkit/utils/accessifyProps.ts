@@ -1,7 +1,9 @@
 import { AnyFn, AnyObj, isFunction, isObject, isString } from '@edsolater/fnkit'
 import { ValidController } from '../piv/typeTools'
 
-export type Accessify<V, Controller extends ValidController | unknown = unknown> = Exclude<V, AnyFn> | ((controller: Controller) => V)
+export type Accessify<V, Controller extends ValidController | unknown = unknown> =
+  | V
+  | ((controller: Controller) => V)
 export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 
 /**
@@ -11,16 +13,16 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
   [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'
     ? P[K]
     : P[K] extends (controller: Controller) => any
-    ? P[K]
-    : Accessify<P[K], Controller>
+      ? P[K]
+      : Accessify<P[K], Controller>
 }
 
 export type DeAccessifyProps<P> = {
   [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'
     ? P[K]
     : P[K] extends Accessify<infer T, any>
-    ? T
-    : P[K]
+      ? T
+      : P[K]
 }
 
 /**
@@ -44,7 +46,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
             isString(key) &&
             ((needAccessifyProps ? !needAccessifyProps?.includes(key) : false) ||
               key.startsWith('on') ||
-              // key.startsWith('render:') || // TODO: if well-design no need to accessify render
+              key.startsWith('render:') ||
               key.startsWith('merge:') ||
               key === 'domRef' ||
               key === 'controllerRef' ||
