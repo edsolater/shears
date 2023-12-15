@@ -46,6 +46,7 @@ type KitPropsInstance<
     keyof RawProps
   >
 
+/** build KitProps for outside use */
 export type KitProps<
   RawProps extends ValidProps = {},
   O extends {
@@ -55,15 +56,28 @@ export type KitProps<
     htmlPropsTagName?: HTMLTag
     // default is auto detect, only set when auto is not ok
     needAccessifyProps?: (keyof RawProps)[]
+    /** should also set in {@link useKitProps}'s options' `prop:noNeedDeAccessifyProps`  */
+    noNeedDeAccessifyProps?: (keyof RawProps)[]
   } = {},
 > = KitPropsInstance<
   MergifyProps<RawProps>,
   NonNullable<O['controller']>,
   NonNullable<O['plugin']>,
   NonNullable<O['htmlPropsTagName']>,
-  NonNullable<O['needAccessifyProps'] extends string[] ? O['needAccessifyProps'][number] : keyof RawProps>
+  NonNullable<
+    OmitItems<
+      O['needAccessifyProps'] extends string[] ? O['needAccessifyProps'][number] : keyof RawProps,
+      O['noNeedDeAccessifyProps'] extends string[] ? O['noNeedDeAccessifyProps'][number] : undefined
+    >
+  >
 >
 
+/** type C = OmitItems<'a' | 'b' | 'c', 'a' | 'b' | 'd'> // 'c' */
+// TODO: move to fnkit
+export type OmitItems<
+  OriginString extends keyof any,
+  OmitString extends keyof any | undefined = undefined,
+> = OriginString extends infer T ? (T extends OmitString ? never : T) : never
 /**
  * @deprecated use `KitProps` instead
  */
@@ -84,6 +98,7 @@ export type UIKit<
   keyof NonNullable<O['componentProps']>
 >
 
+/** used for {@link useKitProps}'s option */
 export type KitPropsOptions<
   KitProps extends ValidProps,
   Controller extends ValidController | unknown = unknown,
@@ -100,8 +115,16 @@ export type KitPropsOptions<
    * @deprecated use `needAccessify` instead
    */
   noNeedDeAccessifyChildren?: boolean
-  /** by default, all will check to Accessify */
+  /**
+   * by default, all will check to Accessify
+   * like webpack include
+   */
   needAccessify?: string[]
+  /**
+   * by default, all will check to Accessify
+   * like webpack exclude
+   */
+  noNeedDeAccessifyProps?: string[]
   /**
    * detect which props is shadowProps\
    * not selfProps means it's shadowProps\
@@ -148,15 +171,17 @@ function getParsedKitProps<
     (props) => (options?.name && hasUIKitTheme(options.name) ? mergeProps(getUIKitTheme(options.name), props) : props),
     // get default props
     (props) => (options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props),
-    (props) =>
-      useAccessifiedProps(
-        props,
-        proxyController,
+    (props) => {
+      const verboseAccessifyProps =
         options?.needAccessify ??
-          (options?.noNeedDeAccessifyChildren
-            ? omitItems(Object.getOwnPropertyNames(props), ['children'])
-            : Object.getOwnPropertyNames(props)),
-      ),
+        (options?.noNeedDeAccessifyChildren
+          ? omitItems(Object.getOwnPropertyNames(props), ['children'])
+          : Object.getOwnPropertyNames(props))
+      const needAccessifyProps = options?.noNeedDeAccessifyProps
+        ? omitItems(verboseAccessifyProps, options.noNeedDeAccessifyProps)
+        : verboseAccessifyProps
+      return useAccessifiedProps(props, proxyController, needAccessifyProps)
+    },
 
     // inject controller (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
     (props) => mergeProps(props, { innerController: proxyController } as PivProps),
@@ -193,7 +218,6 @@ export function omitItems<T>(arr: T[], items: T | T[]): T[] {
   return arr.filter((item) => !omitSet.has(item))
 }
 
-export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>
 /**
  * **core function**
  *
@@ -203,20 +227,20 @@ export type GetDeAccessifiedProps<K extends ValidProps> = DeAccessifyProps<K>
 export function useKitProps<
   P extends ValidProps,
   Controller extends ValidController = ValidController,
-  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {},
+  DefaultProps extends Partial<DeAccessifyProps<P>> = {},
 >(
   kitProps: P,
-  options?: KitPropsOptions<GetDeAccessifiedProps<P>, Controller, DefaultProps>,
+  options?: KitPropsOptions<DeAccessifyProps<P>, Controller, DefaultProps>,
 ): {
   /** not declared self props means it's shadowProps */
   shadowProps: any
   props: DeKitProps<P, Controller, DefaultProps>
-  lazyLoadController(controller: Controller | ((props: ParsedKitProps<GetDeAccessifiedProps<P>>) => Controller)): void
+  lazyLoadController(controller: Controller | ((props: ParsedKitProps<DeAccessifyProps<P>>) => Controller)): void
   contextController: any // no need to infer this type for you always force it !!!
   // TODO: imply it !!! For complicated DOM API always need this, this is a fast shortcut
   // componentRef
 } {
-  type RawProps = GetDeAccessifiedProps<P>
+  type RawProps = DeAccessifyProps<P>
 
   // TODO: should move to getParsedKitProps
   // wrap controllerContext based on props:innerController is only in `<Piv>`
@@ -226,11 +250,11 @@ export function useKitProps<
   //   console.log('kitProps raw: ', { ...propContextParsedProps })
   // }
   const { loadController, getControllerCreator } = createComponentController<RawProps, Controller>()
-  const controller = mergeObjects(
+  const newOptions = mergeObjects(
     { controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) },
     options,
   )
-  const composedProps = getParsedKitProps(kitProps, controller) as any /* too difficult to type, no need to check */
+  const composedProps = getParsedKitProps(kitProps, newOptions) as any /* too difficult to type, no need to check */
   const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
   return {
     props: composedProps,
@@ -264,9 +288,9 @@ function createComponentController<RawProps extends ValidProps, Controller exten
 export type DeKitProps<
   P extends ValidProps,
   Controller extends ValidController = ValidController,
-  DefaultProps extends Partial<GetDeAccessifiedProps<P>> = {},
-> = ParsedKitProps<AddDefaultPivProps<GetDeAccessifiedProps<P>, DefaultProps>> &
-  Omit<PivProps<HTMLTag, Controller>, keyof GetDeAccessifiedProps<P>>
+  DefaultProps extends Partial<DeAccessifyProps<P>> = {},
+> = ParsedKitProps<AddDefaultPivProps<DeAccessifyProps<P>, DefaultProps>> &
+  Omit<PivProps<HTMLTag, Controller>, keyof DeAccessifyProps<P>>
 
 /**
  * generate id so component which can pass to triggerController()

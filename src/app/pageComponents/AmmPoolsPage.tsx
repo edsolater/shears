@@ -6,6 +6,7 @@ import {
   KitProps,
   List,
   Piv,
+  PivChild,
   PivProps,
   createRef,
   icss_cyberpenkBackground,
@@ -38,16 +39,51 @@ function CyberPanel(props: PivProps) {
     />
   )
 }
-// TODO:
-function DatabaseTable(kitProps: KitProps) {
-  const { props } = useKitProps(kitProps, { name: 'DatabaseTable' })
+
+type InfoFaceRowItemProps<T> = {
+  item: T
+  renderItem: (item: T) => PivChild
 }
 
-export default function AmmPoolsPage() {
-  const pairInfos = createStorePropertySignal((s) => s.pairInfos)
+// TODO: should continue
+function InfoFaceRowItem<T>(kitProps: KitProps<InfoFaceRowItemProps<T>, { noNeedDeAccessifyProps: ['renderItem'] }>) {
+  const { props } = useKitProps(kitProps, { name: 'InfoFaceRowItem', noNeedDeAccessifyProps: ['renderItem'] })
+  const renderItem = props.renderItem as InfoFaceRowItemProps<T>['renderItem']
+  return (
+    <Piv
+      icss={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        paddingInline: '8px',
+        paddingBlock: '4px',
+      }}
+    >
+      <Box>{props.renderItem}</Box>
+    </Piv>
+  )
+}
+
+function DatabaseTable<T>(
+  kitProps: KitProps<
+    {
+      items: Iterable<T>
+      title: string
+      subtitle?: string
+      subtitleDescription?: string
+      renderTopMiddle?: PivChild
+      renderTopRight?: PivChild
+      renderTableBodyTopLeft?: PivChild
+      renderTableBodyTopMiddle?: PivChild
+      renderTableBodyTopRight?: PivChild
+      renderItem?: (item: T) => PivChild
+    },
+    { noNeedDeAccessifyProps: ['renderItem'] }
+  >,
+) {
+  const { props } = useKitProps(kitProps, { name: 'DatabaseTable' })
   return (
     <Col>
-      <BoardTitle>Pools</BoardTitle>
+      <BoardTitle>{props.title}</BoardTitle>
       <CyberPanel>
         <CollapseBox
           icss={{
@@ -109,4 +145,9 @@ export default function AmmPoolsPage() {
       </CyberPanel>
     </Col>
   )
+}
+
+export default function AmmPoolsPage() {
+  const pairInfos = createStorePropertySignal((s) => s.pairInfos)
+  return <DatabaseTable title='Pools' items={[]} />
 }

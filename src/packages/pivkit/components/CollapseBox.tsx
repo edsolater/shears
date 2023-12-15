@@ -5,12 +5,14 @@ import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { createController } from '../utils/createController'
 import { Box } from './Boxes'
 import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
+import { createDomRef, useClickOutside } from '../hooks'
 
 export interface CollapseBoxProps {
   /** TODO: open still can't auto lock the trigger not controled component now */
   open?: boolean
   defaultOpen?: boolean
   collapseDirection?: 'down' | 'up'
+  canCloseByOutsideClick?: boolean
   onOpen?(): void
   onClose?(): void
   onToggle?(): void
@@ -42,6 +44,7 @@ const CollapseContext = createContext<CollapseBoxController>({} as CollapseBoxCo
  *			</WrapperBox>)} />
  */
 export function CollapseBox(kitProps: KitProps<CollapseBoxProps, { controller: CollapseBoxController }>) {
+  const { dom: boxDom, setDom: setBoxDom } = createDomRef()
   const { props, shadowProps } = useKitProps(kitProps, { name: 'Collapse', controller: () => controller })
 
   const [innerOpen, { toggle, on, off, set }] = createToggle(() => props.open ?? props.defaultOpen ?? false, {
@@ -66,8 +69,12 @@ export function CollapseBox(kitProps: KitProps<CollapseBoxProps, { controller: C
 
   //sync with innerOpen
   createEffect(() => (innerOpen() ? openCollapse() : closeCollapse()))
+
+  /** {@link CollapseBox} can click outside to close */
+  useClickOutside(boxDom, { disabled: !props.canCloseByOutsideClick })
+
   return (
-    <Box shadowProps={shadowProps}>
+    <Box shadowProps={shadowProps} domRef={setBoxDom}>
       {/* Face */}
       {props['renderFace'] && (
         <Box class='Face' onClick={toggle}>

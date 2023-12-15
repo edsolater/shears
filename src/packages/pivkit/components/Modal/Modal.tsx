@@ -107,7 +107,7 @@ export function Modal(kitProps: ModalKitProps) {
 
   // click outside to close dialog
   useClickOutside(dialogContentDOM, {
-    disable: () => !innerOpen(),
+    disabled: () => !innerOpen(),
     onClickOutSide: mergeFunction(close, closeModal),
   })
 
