@@ -25,7 +25,8 @@ import { BoardTitle } from '../components/BoardTitle'
 import { TokenAvatar } from '../components/TokenAvatar'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
-import { PairJson } from '../stores/data/types/pairs'
+import { PairInfo } from '../stores/data/types/pairs'
+import { ItemList } from '../utils/dataTransmit/itemMethods'
 function CyberPanel(props: PivProps) {
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
@@ -50,21 +51,14 @@ function CyberPanel(props: PivProps) {
   )
 }
 
-type InfoFaceRowItemProps<T> = {
-  item: T
-  renderItem: (item: T) => PivChild
-}
+type PoolItemFaceProps = KitProps<{ item: PairInfo }>
 
-type PoolItemFaceProps<T> = KitProps<
-  { item: T; renderItem?: (item: T) => PivChild },
-  { noNeedDeAccessifyProps: ['renderItem'] }
->
-
-function PoolItemFace<T>(kitProps: PoolItemFaceProps<T>) {
-  const { props } = useKitProps(kitProps, { name: 'PoolItemFace' })
+function PoolItemFace(kitProps: PoolItemFaceProps) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemFace' })
   const isFavourite = () => false
   return (
     <Row
+      shadowProps={shadowProps}
       icss={{
         paddingBlock: '20px',
         background: '#141041',
@@ -94,9 +88,9 @@ function PoolItemFace<T>(kitProps: PoolItemFaceProps<T>) {
         />
       </Box>
 
-      <DatabaseListItemFaceTokenAvatarLabel info={kitProps.item} />
+      <PoolItemFaceTokenAvatarLabel info={kitProps.item} />
 
-      <DatabaseListItemFaceDetailInfoBoard name='Liquidity' value={1231} />
+      <PoolItemFaceDetailInfoBoard name='Liquidity' value={1231} />
       {/*<TextInfoItem
         name={`Volume(${timeBasis})`}
         value={
@@ -134,12 +128,12 @@ function PoolItemFace<T>(kitProps: PoolItemFaceProps<T>) {
   )
 }
 
-function DatabaseListItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
+function PoolItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceDetailInfoBoard' })
   return <Text shadowProps={shadowProps}>{props.value || '--'}</Text>
 }
 
-function DatabaseListItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairJson }>) {
+function PoolItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInfo }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceTokenAvatarLabel' })
   return (
     <Box>
@@ -148,26 +142,48 @@ function DatabaseListItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairJs
   )
 }
 
-function DatabaseTable<T>(props: {
-  items: Accessify<IterableIterator<T>>
-  title: Accessify<string>
-  subtitle?: Accessify<string>
-  subtitleDescription?: Accessify<string>
-  renderTopMiddle?: Accessify<PivChild>
-  renderTopRight?: Accessify<PivChild>
-  renderTableBodyTopLeft?: Accessify<PivChild>
-  renderTableBodyTopMiddle?: Accessify<PivChild>
-  renderTableBodyTopRight?: Accessify<PivChild>
-  renderItem?: (item: T) => PivChild
-}) {
-  createEffect(() => {
-    console.log('props.items: ', deAccessify(props.items))
-  })
+type PoolItemContentProps<T> = KitProps<{ item: T }>
+
+function PoolItemContent<T>(kitProps: PoolItemContentProps<T>) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemContent' })
+  const isFavourite = () => false
   return (
-    <Col>
+    <Piv
+      icss={{
+        backgroundColor: 'dodgerblue',
+        height: '100px',
+        display: 'grid',
+        placeItems: 'center',
+        overflow: 'hidden',
+      }}
+    >
+      <Box>Content</Box>
+    </Piv>
+  )
+}
+
+function DatabaseTable<T>(
+  kitProps: KitProps<{
+    items: ItemList<T>
+    title: string
+    subtitle?: string
+    subtitleDescription?: string
+    renderTopMiddle?: PivChild
+    renderTopRight?: PivChild
+    renderTableBodyTopLeft?: PivChild
+    renderTableBodyTopMiddle?: PivChild
+    renderTableBodyTopRight?: PivChild
+    renderCollapseItemFace?: (item: T) => PivChild
+    renderCollapseItemContent?: (item: T) => PivChild
+    renderItem?: (item: T) => PivChild
+  }>,
+) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTable' })
+  return (
+    <Col shadowProps={shadowProps}>
       <BoardTitle>{props.title}</BoardTitle>
       <CyberPanel>
-        <List items={[1, 2, 3]}>
+        <List items={props.items}>
           {(item) => (
             <CollapseBox
               icss={{
@@ -176,20 +192,8 @@ function DatabaseTable<T>(props: {
                 paddingBlock: '4px', // TODO: should be a props of `<List>`
                 marginInline: '24px',
               }}
-              renderFace={<PoolItemFace item={item} />}
-              renderContent={
-                <Piv
-                  icss={{
-                    backgroundColor: 'dodgerblue',
-                    height: '100px',
-                    display: 'grid',
-                    placeItems: 'center',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <Box>Content</Box>
-                </Piv>
-              }
+              renderFace={<PoolItemFace item={item} />} // FIXME
+              renderContent={<PoolItemContent item={item} />}
             />
           )}
         </List>
@@ -200,5 +204,5 @@ function DatabaseTable<T>(props: {
 
 export default function AmmPoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
-  return <DatabaseTable title='Pools' items={[]} />
+  return <DatabaseTable title='Pools' items={pairInfos} />
 }

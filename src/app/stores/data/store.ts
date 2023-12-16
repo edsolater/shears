@@ -10,7 +10,7 @@ import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmSYNInfo } from './types/farm'
-import { PairJson } from './types/pairs'
+import { PairInfo } from './types/pairs'
 
 export type StoreData = {
   // -------- swap --------
@@ -29,7 +29,7 @@ export type StoreData = {
 
   // -------- pairs --------
   pairLoadCount?: number // not good, should change automaticly. change this will start loading pair related info
-  pairInfos?: Record<PairJson['ammId'], PairJson>
+  pairInfos?: Record<PairInfo['ammId'], PairInfo>
   isPairInfoLoading?: boolean
 
   // -------- token --------

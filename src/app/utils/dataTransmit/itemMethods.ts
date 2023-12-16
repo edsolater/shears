@@ -1,6 +1,13 @@
 import { isArray, isIterable, isMap, isNumber, isObject, isSet, isUndefined, omit, pick } from '@edsolater/fnkit'
 
-export type ItemList<T> = Map<any, T> | Set<T> | T[] | Record<keyof any, T> | IterableIterator<T> | undefined
+export type ItemList<T> =
+  | Map<any, T>
+  | Set<T>
+  | T[]
+  | Record<keyof any, T>
+  | IterableIterator<T>
+  | Iterable<T>
+  | undefined
 /** accept all may iterable data type */
 export function toArray<T>(i: ItemList<T>) {
   if (isUndefined(i)) return []
