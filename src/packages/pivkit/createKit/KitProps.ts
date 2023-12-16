@@ -4,7 +4,7 @@ import { CRef, PivProps } from '../piv/Piv'
 import { MergifyProps } from '../piv/propHandlers/mergifyProps'
 import { GetPluginParams, Plugin } from '../piv/propHandlers/plugin'
 import { HTMLTag, ValidController, ValidProps } from '../piv/typeTools'
-import { OmitItem } from './useKitProps'
+import { OmitItem } from './utils'
 
 /**
  * - auto add `plugin` `shadowProps` `_promisePropsConfig` `controller` props
@@ -12,7 +12,7 @@ import { OmitItem } from './useKitProps'
  * - auto pick plugin prop if specified plugin
  * @todo also promisify?
  */
-export type KitPropsInstance<
+type KitPropsInstance<
   RawProps extends ValidProps,
   Controller extends ValidController,
   Plugins extends MayDeepArray<Plugin<any>>,

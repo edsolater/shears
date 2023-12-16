@@ -6,6 +6,7 @@ import {
   CollapseBox,
   Icon,
   ItemBox,
+  KitProps,
   List,
   Piv,
   PivChild,
@@ -54,9 +55,13 @@ type InfoFaceRowItemProps<T> = {
   renderItem: (item: T) => PivChild
 }
 
-// TODO: should continue
-function DatabaseListItemFace<T>(props: { item: Accessify<T>; renderItem?: (item: T) => PivChild }) {
-  const renderItem = props.renderItem as InfoFaceRowItemProps<T>['renderItem']
+type PoolItemFaceProps<T> = KitProps<
+  { item: T; renderItem?: (item: T) => PivChild },
+  { noNeedDeAccessifyProps: ['renderItem'] }
+>
+
+function PoolItemFace<T>(kitProps: PoolItemFaceProps<T>) {
+  const { props } = useKitProps(kitProps, { name: 'PoolItemFace' })
   const isFavourite = () => false
   return (
     <Row
@@ -78,30 +83,18 @@ function DatabaseListItemFace<T>(props: { item: Accessify<T>; renderItem?: (item
           marginRight: '8px',
         }}
       >
-        <Show when={isFavourite()}>
-          <Icon
-            src='/icons/misc-star-filled.svg'
-            onClick={({ ev }) => {
-              ev.stopPropagation()
-              // onUnFavorite?.(deAccessify(props.item).ammId)
-            }}
-            icss={[icss_clickable, { margin: 'auto', alignSelf: 'center' }]}
-          />
-        </Show>
-
-        <Show when={!isFavourite()}>
-          <Icon
-            src='/icons/misc-star-empty.svg'
-            onClick={({ ev }) => {
-              ev.stopPropagation()
-              // onStartFavorite?.(deAccessify(props.item).ammId)
-            }}
-            icss={[icss_clickable, { margin: 'auto', alignSelf: 'center' }]}
-          />
-        </Show>
+        <Icon
+          src={isFavourite() ? '/icons/misc-star-filled.svg' : '/icons/misc-star-empty.svg'}
+          onClick={({ ev }) => {
+            ev.stopPropagation()
+            // onUnFavorite?.(deAccessify(props.item).ammId)
+            // onStartFavorite?.(deAccessify(props.item).ammId)
+          }}
+          icss={[icss_clickable, { margin: 'auto', alignSelf: 'center' }]}
+        />
       </Box>
 
-      <DatabaseListItemFaceTokenAvatarLabel info={props.item} />
+      <DatabaseListItemFaceTokenAvatarLabel info={kitProps.item} />
 
       <DatabaseListItemFaceDetailInfoBoard name='Liquidity' value={1231} />
       {/*<TextInfoItem
@@ -141,12 +134,13 @@ function DatabaseListItemFace<T>(props: { item: Accessify<T>; renderItem?: (item
   )
 }
 
-function DatabaseListItemFaceDetailInfoBoard(kitProps: { name: string; value?: any }) {
-  const { props } = useKitProps(kitProps, { name: 'DatabaseListItemFaceDetailInfoBoard' })
-  return <Text>{props.value || '--'}</Text>
+function DatabaseListItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceDetailInfoBoard' })
+  return <Text shadowProps={shadowProps}>{props.value || '--'}</Text>
 }
 
-function DatabaseListItemFaceTokenAvatarLabel(props: { info: Accessify<PairJson | undefined> }) {
+function DatabaseListItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairJson }>) {
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceTokenAvatarLabel' })
   return (
     <Box>
       <Token />
@@ -182,7 +176,7 @@ function DatabaseTable<T>(props: {
                 paddingBlock: '4px', // TODO: should be a props of `<List>`
                 marginInline: '24px',
               }}
-              renderFace={<DatabaseListItemFace item={item} />}
+              renderFace={<PoolItemFace item={item} />}
               renderContent={
                 <Piv
                   icss={{
