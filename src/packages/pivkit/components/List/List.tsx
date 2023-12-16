@@ -16,14 +16,14 @@ import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useInters
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
 import { KitProps, Piv, useKitProps } from '../../piv'
 import { ListItem } from './ListItem'
-import { ItemWrapper, toArray } from '../../../../app/utils/dataTransmit/itemMethods'
+import { ItemList, toArray } from '../../../../app/utils/dataTransmit/itemMethods'
 
 export interface ListController {
   resetRenderCount(): void
 }
 export type ListProps<T> = {
   children(item: T, index: () => number): JSXElement
-  items?: MayFn<ItemWrapper<T>>
+  items?: MayFn<ItemList<T>>
   /**
    * only meaningfull when turnOnScrollObserver is true
    * @default 30

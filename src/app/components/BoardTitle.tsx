@@ -1,16 +1,19 @@
-import { KitProps, Text, TextProps, icss_title, renderHTMLDOM, useKitProps } from '../../packages/pivkit'
+import { createMemo } from 'solid-js'
+import { Accessify, KitProps, Text, TextProps, icss_title, renderHTMLDOM, useKitProps } from '../../packages/pivkit'
+import { shrinkFn } from '@edsolater/fnkit'
 
-export function BoardTitle(kitProps: KitProps<Omit<TextProps, 'children'> & { children?: string }>) {
+export function BoardTitle(kitProps: KitProps<Omit<TextProps, 'children'> & { children?: Accessify<string> }>) {
   const { props } = useKitProps(kitProps, { name: 'BoardTitle' })
+  const id = createMemo(() => shrinkFn(props.children) ?? '')
   return (
     <Text
-      id={props.children}
-      htmlProps={{ id: props.children }}
+      id={id()}
+      htmlProps={{ id: id() }}
       render:self={(selfProps) => renderHTMLDOM('h2', selfProps)}
       shadowProps={props}
       icss={[icss_title, { marginBottom: '16px' }]}
     >
-      {props.children}
+      {id()}
     </Text>
   )
 }

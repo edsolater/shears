@@ -1,21 +1,28 @@
-import { createEffect, createMemo } from 'solid-js'
+import { Show, createEffect, createMemo } from 'solid-js'
 import {
+  Accessify,
   Box,
   Col,
   CollapseBox,
-  KitProps,
+  Icon,
+  ItemBox,
   List,
   Piv,
   PivChild,
   PivProps,
+  Row,
   createRef,
+  deAccessify,
+  icss_clickable,
   icss_cyberpenkBackground,
   icss_cyberpenkBorder,
   useElementSize,
-  useKitProps,
 } from '../../packages/pivkit'
-import { createStorePropertySignal } from '../stores/data/store'
 import { BoardTitle } from '../components/BoardTitle'
+import { TokenAvatar } from '../components/TokenAvatar'
+import { Token } from '../components/TokenProps'
+import { createStorePropertySignal } from '../stores/data/store'
+import { PairJson } from '../stores/data/types/pairs'
 function CyberPanel(props: PivProps) {
   // -------- determine size  --------
   const [ref, setRef] = createRef<HTMLElement>()
@@ -46,102 +53,156 @@ type InfoFaceRowItemProps<T> = {
 }
 
 // TODO: should continue
-function InfoFaceRowItem<T>(kitProps: KitProps<InfoFaceRowItemProps<T>, { noNeedDeAccessifyProps: ['renderItem'] }>) {
-  const { props } = useKitProps(kitProps, { name: 'InfoFaceRowItem', noNeedDeAccessifyProps: ['renderItem'] })
+function DatabaseListItemFace<T>(props: { item: Accessify<T>; renderItem?: (item: T) => PivChild }) {
   const renderItem = props.renderItem as InfoFaceRowItemProps<T>['renderItem']
+  const isFavourite = () => false
   return (
-    <Piv
+    <Row
       icss={{
+        paddingBlock: '20px',
+        background: '#141041',
+        gap: '8px',
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        paddingInline: '8px',
-        paddingBlock: '4px',
+        gridTemplateColumns: 'auto 1.6fr 1fr 1fr 1fr .8fr auto',
+        borderRadius: '20px 20px 0 0',
+        transition: 'all 150ms',
       }}
     >
-      <Box>{props.renderItem}</Box>
-    </Piv>
+      <Box
+        icss={{
+          width: '24px',
+          alignSelf: 'center',
+          marginLeft: '24px',
+          marginRight: '8px',
+        }}
+      >
+        <Show when={isFavourite()}>
+          <Icon
+            src='/icons/misc-star-filled.svg'
+            onClick={({ ev }) => {
+              ev.stopPropagation()
+              // onUnFavorite?.(deAccessify(props.item).ammId)
+            }}
+            icss={[icss_clickable, { margin: 'auto', alignSelf: 'center' }]}
+          />
+        </Show>
+
+        <Show when={!isFavourite()}>
+          <Icon
+            src='/icons/misc-star-empty.svg'
+            onClick={({ ev }) => {
+              ev.stopPropagation()
+              // onStartFavorite?.(deAccessify(props.item).ammId)
+            }}
+            icss={[icss_clickable, { margin: 'auto', alignSelf: 'center' }]}
+          />
+        </Show>
+      </Box>
+
+      <ItemBox>
+        <DatabaseListItemFaceTokenAvatarLabel info={props.item} />
+      </ItemBox>
+
+      {/* <TextInfoItem name='Liquidity' value={liquidityInfo()} />
+      <TextInfoItem
+        name={`Volume(${timeBasis})`}
+        value={
+          timeBasis === '24H'
+            ? toUsdVolume((correspondingJsonInfo ?? info).volume24h, { autoSuffix: isTablet, decimalPlace: 0 })
+            : timeBasis === '7D'
+              ? toUsdVolume((correspondingJsonInfo ?? info).volume7d, { autoSuffix: isTablet, decimalPlace: 0 })
+              : toUsdVolume((correspondingJsonInfo ?? info).volume30d, { autoSuffix: isTablet, decimalPlace: 0 })
+        }
+      />
+      <TextInfoItem
+        name={`Fees(${timeBasis})`}
+        value={
+          timeBasis === '24H'
+            ? toUsdVolume((correspondingJsonInfo ?? info).fee24h, { autoSuffix: isTablet, decimalPlace: 0 })
+            : timeBasis === '7D'
+              ? toUsdVolume((correspondingJsonInfo ?? info).fee7d, { autoSuffix: isTablet, decimalPlace: 0 })
+              : toUsdVolume((correspondingJsonInfo ?? info).fee30d, { autoSuffix: isTablet, decimalPlace: 0 })
+        }
+      />
+      <TextInfoItem
+        name={`APR(${timeBasis})`}
+        value={
+          timeBasis === '24H'
+            ? formatApr((correspondingJsonInfo ?? info).apr24h, { alreadyPercented: true })
+            : timeBasis === '7D'
+              ? formatApr((correspondingJsonInfo ?? info).apr7d, { alreadyPercented: true })
+              : formatApr((correspondingJsonInfo ?? info).apr30d, { alreadyPercented: true })
+        }
+      />
+      <Grid className='w-9 h-9 mr-8 place-items-center'>
+        <Icon size='sm' heroIconName={`${open ? 'chevron-up' : 'chevron-down'}`} />
+      </Grid> */}
+    </Row>
   )
 }
 
-function DatabaseTable<T>(
-  kitProps: KitProps<
-    {
-      items: Iterable<T>
-      title: string
-      subtitle?: string
-      subtitleDescription?: string
-      renderTopMiddle?: PivChild
-      renderTopRight?: PivChild
-      renderTableBodyTopLeft?: PivChild
-      renderTableBodyTopMiddle?: PivChild
-      renderTableBodyTopRight?: PivChild
-      renderItem?: (item: T) => PivChild
-    },
-    { noNeedDeAccessifyProps: ['renderItem'] }
-  >,
-) {
-  const { props } = useKitProps(kitProps, { name: 'DatabaseTable' })
+function DatabaseListItemFaceTokenAvatarLabel(props: { info: Accessify<PairJson | undefined> }) {
+  // const isMobile = useAppSettings((s) => s.isMobile)
+  // const [isDetailReady, setIsDetailReady] = useState(false)
+
+  // useEffect(() => {
+  //   if (isHydratedPoolItemInfo(info) && info?.base && info.quote) {
+  //     setIsDetailReady(true)
+  //   }
+  // }, [isHydratedPoolItemInfo(info) && info?.base, isHydratedPoolItemInfo(info) && info?.quote])
+
+  return (
+    <Row>
+      <Token />
+    </Row>
+  )
+}
+
+function DatabaseTable<T>(props: {
+  items: Accessify<IterableIterator<T>>
+  title: Accessify<string>
+  subtitle?: Accessify<string>
+  subtitleDescription?: Accessify<string>
+  renderTopMiddle?: Accessify<PivChild>
+  renderTopRight?: Accessify<PivChild>
+  renderTableBodyTopLeft?: Accessify<PivChild>
+  renderTableBodyTopMiddle?: Accessify<PivChild>
+  renderTableBodyTopRight?: Accessify<PivChild>
+  renderItem?: (item: T) => PivChild
+}) {
+  createEffect(() => {
+    console.log('props.items: ', deAccessify(props.items))
+  })
   return (
     <Col>
       <BoardTitle>{props.title}</BoardTitle>
       <CyberPanel>
-        <CollapseBox
-          icss={{
-            borderRadius: '12px',
-            overflow: 'hidden',
-          }}
-          renderFace={
-            <Piv
-              icss={{
-                backgroundColor: '#141041',
-                height: '40px',
-                display: 'grid',
-                placeItems: 'center',
-                overflow: 'hidden',
-              }}
-            >
-              <Box>Face</Box>
-            </Piv>
-          }
-          renderContent={
-            <Piv
-              icss={{
-                backgroundColor: 'dodgerblue',
-                height: '100px',
-                display: 'grid',
-                placeItems: 'center',
-                overflow: 'hidden',
-              }}
-            >
-              <Box>Content</Box>
-            </Piv>
-          }
-        />
-        {/* <List items={pairInfos}>
-          {(info) => (
+        <List items={[1, 2, 3]}>
+          {(item) => (
             <CollapseBox
               icss={{
-                '&:nth-child(even)': { background: '#8080802e' },
+                borderRadius: '12px',
+                overflow: 'hidden',
+                paddingBlock: '4px', // TODO: should be a props of `<List>`
+                marginInline: '24px',
               }}
-            >
-              <CollapseBox.Face>
+              renderFace={<DatabaseListItemFace item={item} />}
+              renderContent={
                 <Piv
                   icss={{
+                    backgroundColor: 'dodgerblue',
+                    height: '100px',
                     display: 'grid',
-                    cursor: 'pointer',
-                    gridTemplateColumns: '150px 500px',
-                    paddingBlock: '4px',
+                    placeItems: 'center',
+                    overflow: 'hidden',
                   }}
                 >
-                  <Piv>{info.name}</Piv>
+                  <Box>Content</Box>
                 </Piv>
-              </CollapseBox.Face>
-              <CollapseBox.Content>
-                <Piv icss={{ border: 'solid gray' }}>{info.ammId}</Piv>
-              </CollapseBox.Content>
-            </CollapseBox>
+              }
+            />
           )}
-        </List> */}
+        </List>
       </CyberPanel>
     </Col>
   )
