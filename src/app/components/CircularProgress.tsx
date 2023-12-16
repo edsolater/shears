@@ -1,7 +1,7 @@
 import { createMemo } from 'solid-js'
 import { KitProps, useKitProps, addDefaultProps, createRef } from '../../packages/pivkit'
 
-interface CircularProgressProps {
+interface CircularProgressRawProps {
   /** like animation run */
   run?: boolean
   /**
@@ -15,8 +15,10 @@ interface CircularProgressProps {
   svgWidth?: number
 }
 
+type CircleProgressProps = KitProps<CircularProgressRawProps>
+
 // TODO: should move to pivkit in future
-export function CircularProgress(kitProps: KitProps<CircularProgressProps>) {
+export function CircularProgress(kitProps: CircleProgressProps) {
   const { props: rawProps } = useKitProps(kitProps)
   const props = addDefaultProps(rawProps, { svgWidth: 36, strokeWidth: 3, percent: 0.3 })
   const [ref, setRef] = createRef<SVGSVGElement>()

@@ -1,17 +1,19 @@
 import { useNavigate } from '@solidjs/router'
 import { KitProps, Piv, renderHTMLDOM, useKitProps } from '../../packages/pivkit'
 
-export interface LinkProps {
+export interface LinkRawProps {
   href?: string
   boxWrapper?: boolean
   // TODO: should auto-detect, not manually set
   innerRoute?: boolean
 }
 
+export type LinkProps = KitProps<LinkRawProps>
+
 /**
  * tag: `<a>` or `<span>`
  */
-export function Link(rawProps: KitProps<LinkProps>) {
+export function Link(rawProps: LinkProps) {
   const { props } = useKitProps(rawProps, { name: 'Link' })
   const navigate = useNavigate()
   return (

@@ -3,34 +3,32 @@ import { createEffect } from 'solid-js'
 import { ItemBoxProps, IconProps, PivProps, KitProps, useKitProps, createToggle } from '../../packages/pivkit'
 import { copyToClipboard } from '../../packages/pivkit/domkit'
 
-export interface AddressItemProps extends ItemBoxProps {
-  publicKey: string
-  showDigitCount?: number | 'all'
-  addressType?: 'token' | 'account'
+export type AddressItemProps = ItemBoxProps &
+  KitProps<{
+    publicKey: string
+    showDigitCount?: number | 'all'
+    addressType?: 'token' | 'account'
 
-  canCopy?: boolean
-  showCopyIcon?: boolean
-  canExternalLink?: boolean
-  /** default sm */
-  iconSize?: 'xs' | 'sm' | 'smi' | 'md' | 'lg'
-  iconSrc?: IconProps['src']
-  iconProps?: IconProps
-  iconRowProps?: PivProps
-  onCopied?(text: string): void // TODO: imply it
-}
-
-const defaultProps = {
-  iconSize: 'sm',
-} satisfies Partial<AddressItemProps>
-
-export type DefaultAddressItemProps = typeof defaultProps
-
+    canCopy?: boolean
+    showCopyIcon?: boolean
+    canExternalLink?: boolean
+    /** default sm */
+    iconSize?: 'xs' | 'sm' | 'smi' | 'md' | 'lg'
+    iconSrc?: IconProps['src']
+    iconProps?: IconProps
+    iconRowProps?: PivProps
+    onCopied?(text: string): void // TODO: imply it
+  }>
 /**
  * base on {@link RowItem}
  * @todo it should be a props:plugin
  */
-export function AddressChip(kitProps: KitProps<AddressItemProps>) {
-  const { props } = useKitProps(kitProps, { defaultProps })
+export function AddressChip(kitProps: AddressItemProps) {
+  const { props } = useKitProps(kitProps, {
+    defaultProps: {
+      iconSize: 'sm',
+    },
+  })
 
   const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })
 

@@ -11,7 +11,7 @@ import {
   ModalController,
   Panel,
   Text,
-  TextKitProps,
+  TextProps,
   createIncresingAccessor,
   createRef,
   createSyncSignal,
@@ -22,7 +22,7 @@ import {
   icss_label,
   icss_row,
   plugin_modalTitle,
-  useKitProps
+  useKitProps,
 } from '../../packages/pivkit'
 import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
@@ -33,15 +33,18 @@ import { TokenAvatar } from './TokenAvatar'
 
 export interface TokenAmountInputBoxController {}
 
-export interface TokenAmountInputBoxProps {
-  token?: Accessify<Token | undefined, TokenAmountInputBoxController>
-  tokenProps?: TextKitProps
-  amount?: Accessify<Numberish | undefined, TokenAmountInputBoxController>
-  'anatomy:amountInput'?: InputKitProps
-  'anatomy:tokenSelectorModalContent'?: TokenSelectorModalContentKitProps
-  onSelectToken?: (token: Token | undefined) => void
-  onAmountChange?: (amount: Numberish | undefined) => void
-}
+export type TokenAmountInputBoxProps = KitProps<
+  {
+    token?: Token
+    tokenProps?: TextProps
+    amount?: Numberish
+    'anatomy:amountInput'?: InputKitProps
+    'anatomy:tokenSelectorModalContent'?: TokenSelectorModalContentProps
+    onSelectToken?: (token: Token | undefined) => void
+    onAmountChange?: (amount: Numberish | undefined) => void
+  },
+  { controller: TokenAmountInputBoxController }
+>
 
 export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const { props, lazyLoadController } = useKitProps(rawProps, {
@@ -106,15 +109,15 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   )
 }
 
-interface TokenSelectorModalContentProps {
+interface TokenSelectorModalContentRawProps {
   onTokenSelect?(token: Token | undefined): void
 }
-type TokenSelectorModalContentKitProps = KitProps<TokenSelectorModalContentProps>
+type TokenSelectorModalContentProps = KitProps<TokenSelectorModalContentRawProps>
 
 /**
  * hold state (store's tokens)
  */
-function TokenSelectorModalContent(rawProps: TokenSelectorModalContentKitProps) {
+function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props, shadowProps } = useKitProps(rawProps)
   const tokens = store.tokens
   const increasing = createIncresingAccessor()

@@ -1,14 +1,14 @@
 import { Box, KitProps, useKitProps } from '../../packages/pivkit'
 import { Token } from '../utils/dataStructures/Token'
-import { TokenAvatar, TokenAvatarProps } from './TokenAvatar'
+import { TokenAvatar, TokenAvatarRawProps } from './TokenAvatar'
 
 export interface TokenAvatarPairProps {
   token1?: Token
   token2?: Token
-  size?: TokenAvatarProps['size']
+  size?: TokenAvatarRawProps['size']
 
-  token1Props?: TokenAvatarProps
-  token2Props?: TokenAvatarProps
+  token1Props?: TokenAvatarRawProps
+  token2Props?: TokenAvatarRawProps
 }
 
 export function TokenAvatarPair(rawProps: KitProps<TokenAvatarPairProps>) {

@@ -1,10 +1,12 @@
 import { KitProps, useKitProps, Piv, Box, Text } from '../../packages/pivkit'
 
-export interface ExamplePanelProps {
+export interface ExamplePanelRawProps {
   name?: string
 }
 
-export function ExamplePanel(rawProps: KitProps<ExamplePanelProps>) {
+export type ExamplePanelProps = KitProps<ExamplePanelRawProps>
+
+export function ExamplePanel(rawProps: ExamplePanelProps) {
   const { props } = useKitProps(rawProps)
   return (
     <Piv shadowProps={props}>

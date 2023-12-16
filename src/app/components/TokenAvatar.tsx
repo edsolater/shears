@@ -11,13 +11,15 @@ import {
 } from '../../packages/pivkit'
 import type { Token } from '../utils/dataStructures/Token'
 
-export interface TokenAvatarProps {
+export interface TokenAvatarRawProps {
   token?: Token
   /** xs: 12px | sm: 20px | smi: 24px | md: 32px | lg: 48px | 2xl: 80px | (default: md) */
   size?: 'xs' | 'sm' | 'smi' | 'md' | 'lg' | '2xl'
 }
 
-export function TokenAvatar(kitProps: KitProps<TokenAvatarProps>) {
+type TokenAvatarProps = KitProps<TokenAvatarRawProps>
+
+export function TokenAvatar(kitProps: TokenAvatarProps) {
   const { props, shadowProps } = useKitProps(kitProps, { defaultProps: { size: 'md' } })
 
   const size =

@@ -2,7 +2,7 @@ import { createMemo } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
 import { Piv } from '../piv'
 
-export interface TextProps {
+export interface TextRawProps {
   inline?: boolean
   /** if true, it is 'text' */
   editable?: boolean | 'text' | 'all'
@@ -13,13 +13,13 @@ export interface TextProps {
   value?: string | number
 }
 
-export type TextKitProps = KitProps<TextProps>
+export type TextProps = KitProps<TextRawProps>
 
 /**
  * @componentType widget
  * if for layout , inner content should only be text
  */
-export function Text(kitProps: TextKitProps) {
+export function Text(kitProps: TextProps) {
   const { props } = useKitProps(kitProps, { name: 'Text' })
 
   const contentEditableValue = createMemo(() =>
