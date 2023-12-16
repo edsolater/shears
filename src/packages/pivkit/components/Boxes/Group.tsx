@@ -1,4 +1,4 @@
-import { KitProps, useKitProps } from '../../piv'
+import { KitProps, useKitProps } from '../../createKit'
 import { Box, BoxProps } from './Box'
 
 export type GroupProps = BoxProps & {

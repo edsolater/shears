@@ -1,36 +1,29 @@
 import { Accessor } from 'solid-js'
-import { Piv, PivProps, UIKit, useKitProps } from '../../piv'
-import { createSyncSignal } from '../../hooks/createSyncSignal'
+import { KitProps, useKitProps } from '../../createKit'
 import { makeElementMoveSmooth } from '../../domkit/utils/makeElementMoveSmooth'
-import { Accessify } from '../../utils/accessifyProps'
-import { Label, LabelKitProps } from '../Label'
+import { createSyncSignal } from '../../hooks/createSyncSignal'
+import { Piv } from '../../piv'
+import { LabelKitProps } from '../Label'
+import { LabelBox } from '../LabelBox'
 import { HTMLCheckbox, HTMLCheckboxProps } from './HTMLCheckbox'
 import { useSwitchStyle } from './hooks/useSwitchStyle'
-import { LabelBox } from '../LabelBox'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
 }
 
-/**
- * every uikit should have this
- */
-interface BaseComponentProps {
-  shadowProps?: Partial<SwitchProps>
-}
-
-export interface SwitchProps extends Omit<UIKit<{ controller: SwitchController }>, 'shadowProps'>, BaseComponentProps {
-  isChecked?: Accessify<boolean, SwitchController>
+export type SwitchProps = KitProps<{
+  isChecked?: boolean
   name?: string
-  isDefaultChecked?: Accessify<boolean, SwitchController>
+  isDefaultChecked?: boolean
   onChange?(utils: { isChecked: boolean }): void
   /** for Chakra has, so i has */
   'anatomy:ContainerBox'?: LabelKitProps
   /** hidden HTML input(type=checkbox) for aria readbility */
   'anatomy:HTMLCheckbox'?: HTMLCheckboxProps
   /** SwitchThumb */
-  'anatomy:Thumb'?: PivProps<any, SwitchController>
-}
+  'anatomy:Thumb'?: any
+}>
 
 const selfProps = [
   'isChecked',

@@ -1,4 +1,5 @@
-import { KitProps, Piv, renderHTMLDOM, useKitProps } from '../piv';
+import { KitProps, useKitProps } from '../createKit';
+import { Piv, renderHTMLDOM } from '../piv';
 
 
 export type SpanType = {};

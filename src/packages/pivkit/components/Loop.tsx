@@ -1,6 +1,7 @@
 import { MayFn, flap, shrinkFn } from '@edsolater/fnkit'
 import { For, JSXElement, createMemo } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../piv'
+import { KitProps, useKitProps } from '../createKit'
+import { Piv } from '../piv'
 import { createRef } from '../hooks/createRef'
 
 export interface LoopController {}

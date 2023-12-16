@@ -1,5 +1,4 @@
-import { KitProps, useKitProps } from '../../piv'
-import { ICSSGridOption } from '../../styles/icssRules'
+import { KitProps, useKitProps } from '../../createKit'
 import { Box, BoxProps } from './Box'
 
 export type MainProps = BoxProps

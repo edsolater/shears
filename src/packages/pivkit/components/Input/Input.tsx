@@ -1,13 +1,14 @@
 import { hasProperty, mergeObjects } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, on } from 'solid-js'
 import { runtimeObject } from '../../../fnkit/runtimeObject'
+import { KitProps, useKitProps } from '../../createKit'
 import { createDomRef } from '../../hooks'
 import { createRef } from '../../hooks/createRef'
 import { createToggle } from '../../hooks/createToggle'
-import { KitProps, Piv, PivProps, useKitProps } from '../../piv'
+import { Piv, PivProps, } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
-import { DeAccessifyProps } from '../../utils/accessifyProps'
 import { useKeyboardShortcut } from '../../plugins/useKeyboardShortcut'
+import { DeAccessifyProps } from '../../utils/accessifyProps'
 import { useFocus } from './hooks/useFocus'
 
 export interface InputController {

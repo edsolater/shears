@@ -5,7 +5,6 @@ export * from './PropContext'
 export * from './AddProps'
 export * from './ControllerContext'
 
-export * from '../createKit'
 export * from './hooks'
 export * from './propHandlers'
 export * from './typeTools'

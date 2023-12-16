@@ -1,11 +1,12 @@
 import { createContext, createEffect, useContext } from 'solid-js'
+import { KitProps, useKitProps } from '../createKit'
+import { createDomRef, useClickOutside } from '../hooks'
 import { createToggle } from '../hooks/createToggle'
-import { KitProps, Piv, PivChild, PivProps, useKitProps } from '../piv'
+import { Piv, PivChild, PivProps, } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
+import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
 import { createController } from '../utils/createController'
 import { Box } from './Boxes'
-import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
-import { createDomRef, useClickOutside } from '../hooks'
 
 export interface CollapseBoxProps {
   /** TODO: open still can't auto lock the trigger not controled component now */

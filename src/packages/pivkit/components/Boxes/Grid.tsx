@@ -1,4 +1,4 @@
-import { KitProps, useKitProps } from '../../piv'
+import { KitProps, useKitProps } from '../../createKit'
 import { ICSSGridItemOption, ICSSGridOption, icss_grid } from '../../styles/icssRules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'

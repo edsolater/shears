@@ -11,12 +11,14 @@ import {
   PivChild,
   PivProps,
   Row,
+  Text,
   createRef,
   deAccessify,
   icss_clickable,
   icss_cyberpenkBackground,
   icss_cyberpenkBorder,
   useElementSize,
+  useKitProps,
 } from '../../packages/pivkit'
 import { BoardTitle } from '../components/BoardTitle'
 import { TokenAvatar } from '../components/TokenAvatar'
@@ -99,12 +101,10 @@ function DatabaseListItemFace<T>(props: { item: Accessify<T>; renderItem?: (item
         </Show>
       </Box>
 
-      <ItemBox>
-        <DatabaseListItemFaceTokenAvatarLabel info={props.item} />
-      </ItemBox>
+      <DatabaseListItemFaceTokenAvatarLabel info={props.item} />
 
-      {/* <TextInfoItem name='Liquidity' value={liquidityInfo()} />
-      <TextInfoItem
+      <DatabaseListItemFaceDetailInfoBoard name='Liquidity' value={1231} />
+      {/*<TextInfoItem
         name={`Volume(${timeBasis})`}
         value={
           timeBasis === '24H'
@@ -141,20 +141,16 @@ function DatabaseListItemFace<T>(props: { item: Accessify<T>; renderItem?: (item
   )
 }
 
+function DatabaseListItemFaceDetailInfoBoard(kitProps: { name: string; value?: any }) {
+  const { props } = useKitProps(kitProps, { name: 'DatabaseListItemFaceDetailInfoBoard' })
+  return <Text>{props.value || '--'}</Text>
+}
+
 function DatabaseListItemFaceTokenAvatarLabel(props: { info: Accessify<PairJson | undefined> }) {
-  // const isMobile = useAppSettings((s) => s.isMobile)
-  // const [isDetailReady, setIsDetailReady] = useState(false)
-
-  // useEffect(() => {
-  //   if (isHydratedPoolItemInfo(info) && info?.base && info.quote) {
-  //     setIsDetailReady(true)
-  //   }
-  // }, [isHydratedPoolItemInfo(info) && info?.base, isHydratedPoolItemInfo(info) && info?.quote])
-
   return (
-    <Row>
+    <Box>
       <Token />
-    </Row>
+    </Box>
   )
 }
 

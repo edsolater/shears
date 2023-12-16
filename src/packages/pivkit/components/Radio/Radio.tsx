@@ -1,12 +1,12 @@
 import { Accessor } from 'solid-js'
+import { KitProps, useKitProps } from '../../createKit'
 import { createSyncSignal } from '../../hooks/createSyncSignal'
+import { Piv, PivProps } from '../../piv/Piv'
+import { ValidController } from '../../piv/typeTools'
 import { Label, LabelKitProps } from '../Label'
 import { LabelBox, LabelBoxKitProps } from '../LabelBox'
 import { HTMLInputRadio, HTMLInputRadioProps } from './HTMLInputRadio'
 import { createRadioStyle } from './hooks/createRadioStyle'
-import { ValidController } from '../../piv/typeTools'
-import { Piv, PivProps } from '../../piv/Piv'
-import { KitProps, useKitProps } from '../../createKit'
 
 export interface RadioController {
   option: string

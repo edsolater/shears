@@ -1,6 +1,7 @@
 import { isNumber } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, useContext } from 'solid-js'
-import { KitProps, useKitProps } from '../../createKit'
+import { useKitProps } from '../../createKit/useKitProps'
+import { KitProps } from '../../createKit/KitProps'
 import { createDomRef } from '../../hooks'
 import { Piv } from '../../piv/Piv'
 import { ValidController } from '../../piv/typeTools'

@@ -1,4 +1,5 @@
-import { KitProps, Piv, useKitProps } from '../piv'
+import { KitProps, useKitProps } from '../createKit'
+import { Piv } from '../piv'
 
 export type SectionProps = {
   name?: string

@@ -1,8 +1,8 @@
-import { Accessor, JSX, createEffect, createMemo, createSignal, onCleanup, splitProps, useContext } from 'solid-js'
-import { Piv, PivProps, useKitProps } from '../../piv'
-import { omit } from '../../piv'
-import { createRef } from '../../hooks/createRef'
+import { Accessor, JSX, createEffect, createMemo, createSignal, splitProps, useContext } from 'solid-js'
+import { useKitProps } from '../../createKit'
 import useResizeObserver from '../../domkit/hooks/useResizeObserver'
+import { createRef } from '../../hooks/createRef'
+import { Piv, PivProps, omit } from '../../piv'
 import { ListContext } from './List'
 
 export interface ListItemProps extends Omit<PivProps, 'children'> {

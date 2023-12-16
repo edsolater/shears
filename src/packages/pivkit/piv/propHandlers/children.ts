@@ -1,5 +1,5 @@
 import { AnyFn, hasProperty, isArray, isFunction, shrinkFn } from '@edsolater/fnkit'
-import { KitProps } from '../../createKit'
+import { KitProps } from '../../createKit/KitProps'
 import { ValidController } from '../typeTools'
 import { JSXElement } from 'solid-js'
 

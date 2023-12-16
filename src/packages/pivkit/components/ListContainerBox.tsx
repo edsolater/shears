@@ -1,5 +1,5 @@
 import { Box } from '..'
-import { KitProps, useKitProps } from '../piv'
+import { KitProps, useKitProps } from '../createKit'
 
 export interface ListContainerBoxProps {
   dir?: 'x' | 'y'

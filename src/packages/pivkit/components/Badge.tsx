@@ -1,4 +1,5 @@
-import { KitProps, useKitProps } from '../createKit'
+import { useKitProps } from '../createKit/useKitProps'
+import { KitProps } from '../createKit/KitProps'
 import { PivChild, Piv } from '../piv'
 import { cssOpacity, cssColorMix, cssCurrentColor } from '../styles'
 import { Row } from './Boxes'

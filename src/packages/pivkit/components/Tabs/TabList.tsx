@@ -1,4 +1,5 @@
-import { KitProps, useKitProps } from '../../createKit'
+import { useKitProps } from '../../createKit/useKitProps'
+import { KitProps } from '../../createKit/KitProps'
 import { Piv } from '../../piv/Piv'
 import { ValidController } from '../../piv/typeTools'
 

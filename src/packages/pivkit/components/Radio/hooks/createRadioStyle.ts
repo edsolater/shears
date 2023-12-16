@@ -1,7 +1,7 @@
-import { DeKitProps } from '../../../piv'
+import { DeKitProps } from '../../../createKit'
 import { cssColors, cssDarken, cssOpacity, cssVar } from '../../../styles'
 import { LabelKitProps } from '../../Label'
-import { HTMLInputRadioProps } from '../HTMLInputRadio'
+import { HTMLInputRadioKitProps } from '../HTMLInputRadio'
 import { RadioKitProps } from '../Radio'
 
 /** {@link RadioKitProps} should extends this  */
@@ -37,7 +37,7 @@ export function createRadioStyle(params: { props: DeKitProps<RadioKitProps> }) {
       margin: '-1px',
       overflow: 'hidden',
     },
-  } satisfies Partial<HTMLInputRadioProps>
+  } satisfies Partial<HTMLInputRadioKitProps>
 
   // FIXME: why not a createMemo is ok ?
   const radioCheckboxStyleProps = {

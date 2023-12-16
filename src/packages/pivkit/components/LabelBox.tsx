@@ -1,4 +1,5 @@
-import { KitProps, Piv, useKitProps } from '../piv'
+import { KitProps, useKitProps } from '../createKit'
+import { Piv } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 
 export type LabelBoxProps = {}

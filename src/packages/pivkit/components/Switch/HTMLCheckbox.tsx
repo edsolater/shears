@@ -1,12 +1,14 @@
+import { KitProps, useKitProps } from '../../createKit'
+import { Piv } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
-import { Piv, UIKit, useKitProps } from '../../piv'
 
-export interface HTMLCheckboxProps extends UIKit {
+export interface HTMLCheckboxProps  {
   label?: string
   defaultChecked?: boolean
 }
-export function HTMLCheckbox(rawProps: HTMLCheckboxProps) {
-  const { props } = useKitProps(rawProps, { name: 'HTMLCheckbox' })
+export type HTMLCheckboxKitProps = KitProps<HTMLCheckboxProps>
+export function HTMLCheckbox(kitProps: HTMLCheckboxKitProps) {
+  const { props } = useKitProps(kitProps, { name: 'HTMLCheckbox' })
   return (
     <Piv
       class='HTMLCheckbox'

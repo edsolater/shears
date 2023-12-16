@@ -1,5 +1,6 @@
 import { createMemo } from 'solid-js'
-import { KitProps, Piv, useKitProps } from '../piv'
+import { KitProps, useKitProps } from '../createKit'
+import { Piv } from '../piv'
 
 export interface TextProps {
   inline?: boolean

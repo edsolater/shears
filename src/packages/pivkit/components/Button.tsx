@@ -2,20 +2,11 @@ import { flap, isMeanfulArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnki
 import { createMemo } from 'solid-js'
 import { objectMerge } from '../../fnkit'
 import { createRef } from '../hooks/createRef'
-import {
-  compressICSSToObj,
-  ICSS,
-  KitProps,
-  mergeProps,
-  omit,
-  parsePivChildren,
-  Piv,
-  PivChild,
-  useKitProps
-} from '../piv'
+import { compressICSSToObj, ICSS, mergeProps, omit, parsePivChildren, Piv, PivChild } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { cssColors } from '../styles/cssColors'
 import { CSSColorString, CSSStyle } from '../styles/type'
+import { KitProps, useKitProps } from '../createKit'
 type BooleanLike = unknown
 
 export interface ButtonController {

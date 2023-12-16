@@ -1,6 +1,6 @@
-import { DeKitProps } from '../../../piv'
+import { DeKitProps } from '../../../createKit'
 import { cssColors } from '../../../styles'
-import { HTMLCheckboxProps } from '../HTMLCheckbox'
+import { HTMLCheckboxKitProps } from '../HTMLCheckbox'
 import { SwitchProps } from '../Switch'
 
 /**
@@ -38,7 +38,7 @@ export function useSwitchStyle(params: { props: DeKitProps<SwitchProps> }) {
       margin: '-1px',
       overflow: 'hidden',
     },
-  } satisfies Partial<HTMLCheckboxProps>
+  } satisfies Partial<HTMLCheckboxKitProps>
 
   const switchThumbStyleProps = {
     icss: ({ isChecked }) => ({
