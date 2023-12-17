@@ -1,11 +1,10 @@
-import { RouteDefinition, useLocation, useMatch } from '@solidjs/router'
-import { lazy } from 'solid-js'
+import { RouteDefinition, useLocation } from '@solidjs/router'
 import { createLazyMemo } from '../packages/pivkit'
-import PlaygroundPage from './pageComponents/PlaygroundPage'
+import PoolsPage from './pageComponents/PoolPage'
 import FarmPage from './pageComponents/FarmPage'
-import AmmPoolsPage from './pageComponents/AmmPoolsPage'
-import SwapPage from './pageComponents/SwapPage'
 import HomePage from './pageComponents/HomePage'
+import PlaygroundPage from './pageComponents/PlaygroundPage'
+import SwapPage from './pageComponents/SwapPage'
 
 export const pairsRoutePath = '/pools'
 export const homeRoutePath = '/'
@@ -29,7 +28,7 @@ export const needAppPageLayout = {
 export const routes: RouteDefinition[] = [
   { path: routePath.home, component: HomePage },
   { path: routePath.swap, component: SwapPage },
-  { path: routePath.pools, component: AmmPoolsPage },
+  { path: routePath.pools, component: PoolsPage },
   { path: routePath.farms, component: FarmPage },
   { path: routePath.playground, component: PlaygroundPage },
 ]

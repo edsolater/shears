@@ -8,7 +8,13 @@ export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
  * propertyName start with 'on' or end with 'Fn' will treate as origin
  */
 export type AccessifyProps<P extends AnyObj, Controller extends ValidController | unknown = unknown> = {
-  [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'
+  [K in keyof P]: K extends
+  | `on${string}` // callback onXXX should no auto-accessified
+  | `render${string}` // renderXXX should no auto-accessified
+    | `${string}:${string}`// any namespaced props should no auto-accessified
+    | `domRef`
+    | `controllerRef`
+    | 'children'
     ? P[K]
     : P[K] extends (controller: Controller) => any
       ? P[K]
@@ -16,7 +22,13 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
 }
 
 export type DeAccessifyProps<P> = {
-  [K in keyof P]: K extends `on${string}` | `${string}:${string}` | `domRef` | `controllerRef` | 'children'
+  [K in keyof P]: K extends
+    | `on${string}` // callback onXXX should no auto-accessified
+    | `render${string}` // renderXXX should no auto-accessified
+    | `${string}:${string}`// any namespaced props should no auto-accessified
+    | `domRef`
+    | `controllerRef`
+    | 'children'
     ? P[K]
     : P[K] extends Accessify<infer T, any>
       ? T

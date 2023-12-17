@@ -1,55 +1,8 @@
-import { Show, createEffect, createMemo } from 'solid-js'
-import {
-  Accessify,
-  Box,
-  Col,
-  CollapseBox,
-  Icon,
-  ItemBox,
-  KitProps,
-  List,
-  Piv,
-  PivChild,
-  PivProps,
-  Row,
-  Text,
-  createRef,
-  deAccessify,
-  icss_clickable,
-  icss_cyberpenkBackground,
-  icss_cyberpenkBorder,
-  useElementSize,
-  useKitProps,
-} from '../../packages/pivkit'
-import { BoardTitle } from '../components/BoardTitle'
-import { TokenAvatar } from '../components/TokenAvatar'
+import { Box, Icon, KitProps, Piv, Row, Text, icss_clickable, useKitProps } from '../../packages/pivkit'
+import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
-import { ItemList } from '../utils/dataTransmit/itemMethods'
-function CyberPanel(props: PivProps) {
-  // -------- determine size  --------
-  const [ref, setRef] = createRef<HTMLElement>()
-  const { width, height } = useElementSize(ref)
-  const isHeightSmall = createMemo(() => (height() ?? Infinity) < 500)
-  const isWidthSmall = createMemo(() => (width() ?? Infinity) < 800)
-  return (
-    <Piv
-      domRef={setRef}
-      icss={[
-        {
-          borderRadius: '24px',
-          display: 'flex',
-          flexDirection: 'column',
-          flex: 1,
-        },
-        icss_cyberpenkBackground,
-        icss_cyberpenkBorder({ borderRadius: '24px' }),
-      ]}
-      shadowProps={props}
-    />
-  )
-}
 
 type PoolItemFaceProps = KitProps<{ item: PairInfo }>
 
@@ -162,47 +115,14 @@ function PoolItemContent<T>(kitProps: PoolItemContentProps<T>) {
   )
 }
 
-function DatabaseTable<T>(
-  kitProps: KitProps<{
-    items: ItemList<T>
-    title: string
-    subtitle?: string
-    subtitleDescription?: string
-    renderTopMiddle?: PivChild
-    renderTopRight?: PivChild
-    renderTableBodyTopLeft?: PivChild
-    renderTableBodyTopMiddle?: PivChild
-    renderTableBodyTopRight?: PivChild
-    renderCollapseItemFace?: (item: T) => PivChild
-    renderCollapseItemContent?: (item: T) => PivChild
-    renderItem?: (item: T) => PivChild
-  }>,
-) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTable' })
-  return (
-    <Col shadowProps={shadowProps}>
-      <BoardTitle>{props.title}</BoardTitle>
-      <CyberPanel>
-        <List items={props.items}>
-          {(item) => (
-            <CollapseBox
-              icss={{
-                borderRadius: '12px',
-                overflow: 'hidden',
-                paddingBlock: '4px', // TODO: should be a props of `<List>`
-                marginInline: '24px',
-              }}
-              renderFace={<PoolItemFace item={item} />} // FIXME
-              renderContent={<PoolItemContent item={item} />}
-            />
-          )}
-        </List>
-      </CyberPanel>
-    </Col>
-  )
-}
-
-export default function AmmPoolsPage() {
+export default function PoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
-  return <DatabaseTable title='Pools' items={pairInfos} />
+  return (
+    <DatabaseTable
+      sectionTitle='Pools'
+      items={pairInfos}
+      renderCollapseItemFace={(item) => <PoolItemFace item={item} />}
+      renderCollapseItemContent={(item) => <PoolItemContent item={item} />}
+    />
+  )
 }
