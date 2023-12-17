@@ -1,6 +1,8 @@
 import {
+  Box,
   Col,
   CollapseBox,
+  CollapseBoxProps,
   KitProps,
   List,
   Piv,
@@ -33,6 +35,7 @@ export function DatabaseTable<T>(
     TableBodyTopLeft?: PivChild
     TableBodyTopMiddle?: PivChild
     TableBodyTopRight?: PivChild
+    CollapseBoxProps?: CollapseBoxProps
     renderCollapseItemFace?: (item: T) => PivChild
     renderCollapseItemContent?: (item: T) => PivChild
     renderItem?: (item: T) => PivChild
@@ -45,16 +48,18 @@ export function DatabaseTable<T>(
       <CyberPanel>
         <List items={props.items}>
           {(item) => (
-            <CollapseBox
-              icss={{
-                borderRadius: '12px',
-                overflow: 'hidden',
-                paddingBlock: '4px', // TODO: should be a props of `<List>`
-                marginInline: '24px',
-              }}
-              renderFace={props.renderCollapseItemFace?.(item)}
-              renderContent={props.renderCollapseItemContent?.(item)}
-            />
+            <Box icss={{ paddingBlock: '4px' }}>
+              <CollapseBox
+                shadowProps={props.CollapseBoxProps}
+                icss={{
+                  borderRadius: '20px',
+                  overflow: 'hidden',
+                  marginInline: '24px',
+                }}
+                renderFace={props.renderCollapseItemFace?.(item)}
+                renderContent={props.renderCollapseItemContent?.(item)}
+              />
+            </Box>
           )}
         </List>
       </CyberPanel>

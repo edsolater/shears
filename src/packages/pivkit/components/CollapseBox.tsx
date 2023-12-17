@@ -2,13 +2,13 @@ import { createContext, createEffect, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
 import { createDomRef, useClickOutside } from '../hooks'
 import { createToggle } from '../hooks/createToggle'
-import { Piv, PivChild, PivProps, } from '../piv'
+import { Piv, PivChild, PivProps } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
 import { createController } from '../utils/createController'
 import { Box } from './Boxes'
 
-export interface CollapseBoxProps {
+export interface CollapseBoxRowProps {
   /** TODO: open still can't auto lock the trigger not controled component now */
   open?: boolean
   defaultOpen?: boolean
@@ -23,6 +23,7 @@ export interface CollapseBoxProps {
   //TODO
   // 'renderMapLayout'?:
 }
+export type CollapseBoxProps = KitProps<CollapseBoxRowProps, { controller: CollapseBoxController }>
 
 export interface CollapseBoxController {
   readonly isOpen: boolean
@@ -44,7 +45,7 @@ const CollapseContext = createContext<CollapseBoxController>({} as CollapseBoxCo
  *				<Content />
  *			</WrapperBox>)} />
  */
-export function CollapseBox(kitProps: KitProps<CollapseBoxProps, { controller: CollapseBoxController }>) {
+export function CollapseBox(kitProps: CollapseBoxProps) {
   const { dom: boxDom, setDom: setBoxDom } = createDomRef()
   const { props, shadowProps } = useKitProps(kitProps, { name: 'Collapse', controller: () => controller })
 

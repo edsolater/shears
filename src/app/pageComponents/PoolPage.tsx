@@ -1,4 +1,4 @@
-import { Box, Icon, KitProps, Piv, Row, Text, icss_clickable, useKitProps } from '../../packages/pivkit'
+import { Box, Button, Group, Icon, KitProps, Piv, Row, Text, icss_clickable, useKitProps } from '../../packages/pivkit'
 import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
@@ -18,7 +18,6 @@ function PoolItemFace(kitProps: PoolItemFaceProps) {
         gap: '8px',
         display: 'grid',
         gridTemplateColumns: 'auto 1.6fr 1fr 1fr 1fr .8fr auto',
-        borderRadius: '20px 20px 0 0',
         transition: 'all 150ms',
       }}
     >
@@ -101,17 +100,113 @@ function PoolItemContent<T>(kitProps: PoolItemContentProps<T>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemContent' })
   const isFavourite = () => false
   return (
-    <Piv
+    <Row
       icss={{
-        backgroundColor: 'dodgerblue',
-        height: '100px',
-        display: 'grid',
-        placeItems: 'center',
-        overflow: 'hidden',
+        background: 'linear-gradient(126.6deg, rgba(171, 196, 255, 0.12), rgb(171 196 255 / 4%) 100%)',
+        justifyContent: 'space-between',
       }}
     >
-      <Box>Content</Box>
-    </Piv>
+      <Group
+        name='collapse detail infos'
+        icss={{
+          paddingBlock: '20px',
+          paddingInline: '24px',
+          gap: '4vw',
+          flexGrow: 1,
+          justifyContent: 'space-between',
+        }}
+      >
+        <Row>
+          <Box icss={{ flexGrow: 1 }}>
+            <Text icss={{ color: '#abc4ff88', fontWeight: '500', fontSize: '14px', marginBottom: '4px' }}>
+              Your Liquidity
+            </Text>
+            {/* <div className="text-white font-medium text-base mobile:text-xs">
+              {toUsdVolume(toTotalPrice(balances[info.lpMint], prices[info.lpMint]))}
+            </div>
+            <div className="text-[rgba(171,196,255,0.5)] font-medium text-sm mobile:text-2xs">
+              {isHydratedPoolItemInfo(info) ? toString(balances[info.lpMint] ?? 0) + ' LP' : '--'}
+            </div> */}
+          </Box>
+        </Row>
+      </Group>
+
+      <Row
+        icss={{
+          paddingBlock: '8px',
+          paddingInline: '24px',
+          gap: '12px',
+          justifyContent: 'center',
+        }}
+      >
+        <Button
+          onClick={() => {
+            // routeTo('/liquidity/add', {
+            //   queryProps: {
+            //     ammId: info.ammId,
+            //   },
+            // })
+          }}
+        >
+          Add Liquidity
+        </Button>
+        {/* <Tooltip>
+          <Icon
+            size='smi'
+            iconSrc='/icons/pools-farm-entry.svg'
+            className={`grid place-items-center w-10 h-10 mobile:w-8 mobile:h-8 ring-inset ring-1 mobile:ring-1 ring-[rgba(171,196,255,.5)] rounded-xl mobile:rounded-lg text-[rgba(171,196,255,.5)] clickable-filter-effect ${
+              correspondingFarm ? 'clickable' : 'not-clickable'
+            }`}
+            onClick={() => {
+              routeTo('/farms', {
+                //@ts-expect-error no need to care about enum of this error
+                queryProps: objectShakeFalsy({
+                  currentTab: correspondingFarm?.category ? capitalize(correspondingFarm?.category) : undefined,
+                  newExpandedItemId: toPubString(correspondingFarm?.id),
+                  searchText: info.lpMint,
+                }),
+              })
+            }}
+          />
+          <Tooltip.Panel>Farm</Tooltip.Panel>
+        </Tooltip>
+        <Tooltip>
+          <Icon
+            size='smi'
+            iconSrc='/icons/pools-remove-liquidity-entry.svg'
+            className={`grid place-items-center w-10 h-10 mobile:w-8 mobile:h-8 ring-inset ring-1 mobile:ring-1 ring-[rgba(171,196,255,.5)] rounded-xl mobile:rounded-lg text-[rgba(171,196,255,.5)] ${
+              hasLp ? 'opacity-100 clickable clickable-filter-effect' : 'opacity-50 not-clickable'
+            }`}
+            onClick={() => {
+              hasLp &&
+                routeTo('/liquidity/add', {
+                  queryProps: {
+                    ammId: info.ammId,
+                    mode: 'removeLiquidity',
+                  },
+                })
+            }}
+          />
+          <Tooltip.Panel>Remove Liquidity</Tooltip.Panel>
+        </Tooltip> */}
+        {/* <Tooltip>
+          <Icon
+            iconSrc='/icons/msic-swap-h.svg'
+            size='smi'
+            className='grid place-items-center w-10 h-10 mobile:w-8 mobile:h-8 ring-inset ring-1 mobile:ring-1 ring-[rgba(171,196,255,.5)] rounded-xl mobile:rounded-lg text-[rgba(171,196,255,.5)] clickable clickable-filter-effect'
+            onClick={() => {
+              routeTo('/swap', {
+                queryProps: {
+                  coin1: info.base,
+                  coin2: info.quote,
+                },
+              })
+            }}
+          />
+          <Tooltip.Panel>Swap</Tooltip.Panel>
+        </Tooltip> */}
+      </Row>
+    </Row>
   )
 }
 
