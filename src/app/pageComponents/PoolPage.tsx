@@ -1,4 +1,17 @@
-import { Box, Button, Group, Icon, KitProps, Piv, Row, Text, icss_clickable, useKitProps } from '../../packages/pivkit'
+import {
+  Box,
+  Button,
+  Group,
+  Icon,
+  KitProps,
+  Piv,
+  Row,
+  Text,
+  icssLabelTitle,
+  icss_clickable,
+  icss_label,
+  useKitProps,
+} from '../../packages/pivkit'
 import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
@@ -118,9 +131,7 @@ function PoolItemContent<T>(kitProps: PoolItemContentProps<T>) {
       >
         <Row>
           <Box icss={{ flexGrow: 1 }}>
-            <Text icss={{ color: '#abc4ff88', fontWeight: '500', fontSize: '14px', marginBottom: '4px' }}>
-              Your Liquidity
-            </Text>
+            <Text icss={[{ marginBottom: '4px' }, icssLabelTitle]}>Your Liquidity</Text>
             {/* <div className="text-white font-medium text-base mobile:text-xs">
               {toUsdVolume(toTotalPrice(balances[info.lpMint], prices[info.lpMint]))}
             </div>

@@ -1,3 +1,4 @@
+import { addDefault, switchCase } from '@edsolater/fnkit'
 import { createICSS, CSSObject } from '../../piv'
 import { cssColors } from '../cssColors'
 
@@ -161,6 +162,20 @@ export const icss_label = createICSS((options?: { w?: CSSObject['minWidth']; h?:
   borderRadius: '4px',
   background: cssColors.component_label_bg_default,
 }))
+
+export const icssLabelTitle = createICSS((options?: { fontSize?: ICSSFontSize }) => [
+  icssFontSize({ fontSize: options?.fontSize ?? 'sm' }),
+  { fontWeight: '500', color: '#abc4ff88' },
+])
+
+type ICSSFontSize = 'xs' | 'sm' | 'md' | 'lg' | (string & {})
+
+export const icssFontSize = createICSS((options?: { fontSize?: ICSSFontSize }) => {
+  const fontSize = options?.fontSize ?? 'md'
+  return {
+    fontSize: switchCase(fontSize, { sm: '0.75em', xs: '0.5em', md: '1em', lg: '1.25em' }, fontSize),
+  } as unknown as CSSObject
+})
 
 export const icss_inputType = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
   minWidth: '12em',

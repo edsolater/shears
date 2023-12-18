@@ -2,6 +2,7 @@ import {
   AnyFn,
   AnyObj,
   MayArray,
+  MayDeepArray,
   MayFn,
   filter,
   flap,
@@ -27,7 +28,7 @@ export type ICSSObject<Controller extends ValidController | unknown = unknown> =
 // }
 export type CSSObject = CSSAttribute
 
-export type ICSS<Controller extends ValidController | unknown = unknown> = MayArray<
+export type ICSS<Controller extends ValidController | unknown = unknown> = MayDeepArray<
   LoadController<boolean | string | number | null | undefined, Controller> | ICSSObject<Controller>
 >
 
@@ -44,7 +45,7 @@ type TaggedICSS<T extends AnyFn> = ConfigableFunction<T> & {
 export function createICSS<T extends RuleCreatorFn>(
   rule: T,
   options?: { name?: string; defaultSettings?: Partial<AnyObj> },
-): TaggedICSS<T> {
+): TaggedICSS<any> {
   const factory = createConfigableFunction(
     (settings?: AnyObj) => rule(settings),
     options?.defaultSettings,
