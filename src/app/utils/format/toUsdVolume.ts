@@ -12,8 +12,8 @@ export default function toUsdVolume(
   if (!amount) return '$0'
   return `$${
     options?.shortcut
-      ? toShortcutNumber(amount, { fractionLength: 2, ...options })
-      : toFormatedNumber(amount, { fractionLength: 2, ...options })
+      ? toShortcutNumber(amount, { decimals: 2, ...options })
+      : toFormatedNumber(amount, { decimals: 2, ...options })
   }`
 }
 
@@ -31,7 +31,7 @@ export function toShortcutNumber(
 ): string {
   const formatFn = (n: Numberish) =>
     toFormatedNumber(n, {
-      fractionLength: 'auto',
+      decimals: 'auto',
       ...options,
     })
   try {
