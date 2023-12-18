@@ -8,14 +8,17 @@ import {
   Row,
   Text,
   icssLabelTitle,
+  icssSubContent,
   icss_clickable,
   icss_label,
   useKitProps,
 } from '../../packages/pivkit'
+import { icssFont } from '../../packages/pivkit/styles/icssRules/fondation'
 import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
+import toUsdVolume from '../utils/format/toUsdVolume'
 
 type PoolItemFaceProps = KitProps<{ item: PairInfo }>
 
@@ -132,10 +135,11 @@ function PoolItemContent<T>(kitProps: PoolItemContentProps<T>) {
         <Row>
           <Box icss={{ flexGrow: 1 }}>
             <Text icss={[{ marginBottom: '4px' }, icssLabelTitle]}>Your Liquidity</Text>
-            {/* <div className="text-white font-medium text-base mobile:text-xs">
-              {toUsdVolume(toTotalPrice(balances[info.lpMint], prices[info.lpMint]))}
-            </div>
-            <div className="text-[rgba(171,196,255,0.5)] font-medium text-sm mobile:text-2xs">
+            <Text icss={icssSubContent}>
+              {toUsdVolume(11000)}
+              {/* {toUsdVolume(toTotalPrice(balances[info.lpMint], prices[info.lpMint]))} */}
+            </Text>
+            {/* <div className="text-[rgba(171,196,255,0.5)] font-medium text-sm mobile:text-2xs">
               {isHydratedPoolItemInfo(info) ? toString(balances[info.lpMint] ?? 0) + ' LP' : '--'}
             </div> */}
           </Box>

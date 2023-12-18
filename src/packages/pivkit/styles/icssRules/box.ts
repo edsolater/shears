@@ -1,6 +1,7 @@
-import { addDefault, switchCase } from '@edsolater/fnkit'
+import { addDefault } from '@edsolater/fnkit'
 import { createICSS, CSSObject } from '../../piv'
 import { cssColors } from '../cssColors'
+import { ICSSFontSize, icssFontSize } from './fondation'
 
 export type ICSSRowOption = {
   gap?: CSSObject['gap']
@@ -168,14 +169,10 @@ export const icssLabelTitle = createICSS((options?: { fontSize?: ICSSFontSize })
   { fontWeight: '500', color: '#abc4ff88' },
 ])
 
-type ICSSFontSize = 'xs' | 'sm' | 'md' | 'lg' | (string & {})
-
-export const icssFontSize = createICSS((options?: { fontSize?: ICSSFontSize }) => {
-  const fontSize = options?.fontSize ?? 'md'
-  return {
-    fontSize: switchCase(fontSize, { sm: '0.75em', xs: '0.5em', md: '1em', lg: '1.25em' }, fontSize),
-  } as unknown as CSSObject
-})
+export const icssSubContent = createICSS((options?: { fontSize?: ICSSFontSize }) => [
+  icssFontSize({ fontSize: options?.fontSize ?? 'sm' }),
+  { color: '#abc4ff88' },
+])
 
 export const icss_inputType = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
   minWidth: '12em',

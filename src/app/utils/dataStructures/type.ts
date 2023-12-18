@@ -20,4 +20,5 @@ export interface Fraction {
   numerator: bigint
   denominator: bigint
 }
+
 export type Numberish = number | string | bigint | Fraction
