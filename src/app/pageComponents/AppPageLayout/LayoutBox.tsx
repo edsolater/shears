@@ -9,6 +9,7 @@ import {
   cssVar,
   icss_col,
   icss_grid,
+  renderAsHTMLAside,
   useKitProps,
 } from '../../../packages/pivkit'
 import { useMetaTitle } from '../../hooks/useDocumentMetaTitle'
@@ -42,9 +43,9 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
           'env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px)',
         display: 'grid',
         gridTemplate: `
-          "ban  ban" auto
-          "top  top" auto
-          "side ctn" 1fr / auto 1fr`,
+          "ban  ban    " auto
+          "top  top    " auto
+          "side content" 1fr / auto 1fr`,
         overflow: 'hidden',
         willChange: 'opacity',
       }}
@@ -55,14 +56,14 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       <Group name={'top-menu'} icss={{ gridArea: 'top' }}>
         {props['render:topBar']}
       </Group>
-      <Group name={'side-menu'} icss={{ gridArea: 'side' }}>
+      <Group name={'side-menu'} icss={{ gridArea: 'side' }} render:self={renderAsHTMLAside}>
         {props['render:sideBar']}
       </Group>
-      <Group name={'content'} icss={[{ gridArea: 'ctn' }, icss_grid]}>
+      <Group name={'content'} icss={[{ gridArea: 'content' }, icss_grid]}>
         <Main
           icss={[
             icss_col,
-            { position: 'relative', overflowX: 'hidden', overflowY: 'scroll' },
+            { position: 'relative', overflow: 'hidden' },
             {
               background: cssLinearGradient({ colors: [cssVar('--content-bg__01'), cssVar('--content-bg__02')] }),
               borderTopLeftRadius: '20px',
@@ -79,7 +80,9 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
                 isolation: 'isolate',
                 padding: '24px',
                 display: 'grid',
-                gridAutoFlow:'column',
+                gridAutoFlow: 'column',
+                overflowY: 'scroll',
+                overflowX: 'hidden',
               },
             ]}
           >

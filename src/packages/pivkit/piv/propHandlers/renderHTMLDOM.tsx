@@ -42,3 +42,31 @@ export const renderHTMLDOM = (
     )
   }
 }
+
+
+export const renderAsHTMLMain = (selfProps: any) => renderHTMLDOM('main', selfProps)
+export const renderAsHTMLDiv = (selfProps: any) => renderHTMLDOM('div', selfProps)
+export const renderAsHTMLSpan = (selfProps: any) => renderHTMLDOM('span', selfProps)
+export const renderAsHTMLP = (selfProps: any) => renderHTMLDOM('p', selfProps)
+export const renderAsHTMLButton = (selfProps: any) => renderHTMLDOM('button', selfProps)
+export const renderAsHTMLInput = (selfProps: any) => renderHTMLDOM('input', selfProps)
+export const renderAsHTMLForm = (selfProps: any) => renderHTMLDOM('form', selfProps)
+export const renderAsHTMLLabel = (selfProps: any) => renderHTMLDOM('label', selfProps)
+export const renderAsHTMLNav = (selfProps: any) => renderHTMLDOM('nav', selfProps)
+export const renderAsHTMLSection = (selfProps: any) => renderHTMLDOM('section', selfProps)
+export const renderAsHTMLHeader = (selfProps: any) => renderHTMLDOM('header', selfProps)
+export const renderAsHTMLFooter = (selfProps: any) => renderHTMLDOM('footer', selfProps)
+export const renderAsHTMLAside = (selfProps: any) => renderHTMLDOM('aside', selfProps)
+export const renderAsHTMLH1 = (selfProps: any) => renderHTMLDOM('h1', selfProps)
+export const renderAsHTMLH2 = (selfProps: any) => renderHTMLDOM('h2', selfProps)
+export const renderAsHTMLH3 = (selfProps: any) => renderHTMLDOM('h3', selfProps)
+export const renderAsHTMLH4 = (selfProps: any) => renderHTMLDOM('h4', selfProps)
+export const renderAsHTMLH5 = (selfProps: any) => renderHTMLDOM('h5', selfProps)
+export const renderAsHTMLH6 = (selfProps: any) => renderHTMLDOM('h6', selfProps)
+export const renderAsHTMLUl = (selfProps: any) => renderHTMLDOM('ul', selfProps)
+export const renderAsHTMLOl = (selfProps: any) => renderHTMLDOM('ol', selfProps)
+export const renderAsHTMLLi = (selfProps: any) => renderHTMLDOM('li', selfProps)
+export const renderAsHTMLTable = (selfProps: any) => renderHTMLDOM('table', selfProps)
+export const renderAsHTMLTr = (selfProps: any) => renderHTMLDOM('tr', selfProps)
+export const renderAsHTMLTd = (selfProps: any) => renderHTMLDOM('td', selfProps)
+

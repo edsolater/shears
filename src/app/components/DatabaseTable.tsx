@@ -43,10 +43,10 @@ export function DatabaseTable<T>(
 ) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTable' })
   return (
-    <Col shadowProps={shadowProps}>
+    <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
       <BoardTitle>{props.sectionTitle}</BoardTitle>
-      <CyberPanel>
-        <List items={props.items}>
+      <CyberPanel icss={{ overflow: 'hidden' }}>
+        <List items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
           {(item) => (
             <Box icss={{ paddingBlock: '4px' }}>
               <CollapseBox
