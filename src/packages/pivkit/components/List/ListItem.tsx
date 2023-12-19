@@ -55,7 +55,7 @@ export function ListItem(originalProps: ListItemProps) {
         height: isIntersecting() ? undefined : `${innerHeight()}px`,
         width: isIntersecting() ? undefined : `${innerWidth()}px`,
       }}
-      icss={{ visibility: isIntersecting() ? 'visible' : 'hidden', width: '100%' }}
+      icss={{ contentVisibility: isIntersecting() ? 'visible' : 'hidden', width: '100%' }}
     >
       {childContent}
     </Piv>
