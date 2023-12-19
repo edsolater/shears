@@ -231,6 +231,7 @@ export default function PoolsPage() {
     <DatabaseTable
       sectionTitle='Pools'
       items={pairInfos}
+      // need to render multiple times to get the correct height, why not let it be a web component?
       renderCollapseItemFace={(item) => <PoolItemFace item={item} />}
       renderCollapseItemContent={(item) => <PoolItemContent item={item} />}
     />
