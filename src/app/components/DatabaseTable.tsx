@@ -41,25 +41,33 @@ type TabelCellConfigs<T> = {
  * show a list of items in CyberPanel
  */
 export function DatabaseTable<T>(
-  kitProps: KitProps<{
-    items: ItemList<T>
+  kitProps: KitProps<
+    {
+      items: ItemList<T>
+      // essiential for collection/favorite system
+      getItemKey: (item: T) => string
 
-    tabelCellConfigs: TabelCellConfigs<T>
+      tabelCellConfigs: TabelCellConfigs<T>
 
-    sectionTitle: string
-    tableName?: string
-    subtitleDescription?: string
+      sectionTitle: string
+      tableName?: string
+      subtitleDescription?: string
 
-    TopMiddle?: PivChild
-    TopRight?: PivChild
-    TableBodyTopLeft?: PivChild
-    TableBodyTopMiddle?: PivChild
-    TableBodyTopRight?: PivChild
-    CollapseBoxProps?: CollapseBoxProps
-    renderItem?: (item: T) => PivChild
-  }>,
+      TopMiddle?: PivChild
+      TopRight?: PivChild
+      TableBodyTopLeft?: PivChild
+      TableBodyTopMiddle?: PivChild
+      TableBodyTopRight?: PivChild
+      CollapseBoxProps?: CollapseBoxProps
+      renderItem?: (item: T) => PivChild
+    },
+    { noNeedDeAccessifyProps: ['getItemKey'] }
+  >,
 ) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTable' })
+  const { props, shadowProps } = useKitProps(kitProps, {
+    name: 'DatabaseTable',
+    noNeedDeAccessifyProps: ['getItemKey'],
+  })
   return (
     <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
       <BoardTitle>{props.sectionTitle}</BoardTitle>

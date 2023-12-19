@@ -21,14 +21,20 @@ export function PoolItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInf
 export default function PoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
   const mockItems = [
-    { name: 'se', address: '1', detail: 'detail' },
-    { name: 'lisdf', address: '33', detail: 'detail3333' },
+    { id: '2', name: 'se', address: '1', detail: 'detail' },
+    { id: '3', name: 'lisdf', address: '33', detail: 'detail3333' },
   ] satisfies {
+    id: string
     name: string
     address: string
     detail?: string
   }[]
   return (
-    <DatabaseTable sectionTitle='Pools' items={mockItems} tabelCellConfigs={[{ name: 'Pool', get: (i) => i.name }]} />
+    <DatabaseTable
+      sectionTitle='Pools'
+      items={mockItems}
+      getItemKey={(i) => i.id}
+      tabelCellConfigs={[{ name: 'Pool', get: (i) => i.name }]}
+    />
   )
 }
