@@ -25,7 +25,7 @@ export const needAppPageLayout = {
   [routePath.pools]: true,
   [routePath.farms]: true,
 }
-export const routes: RouteDefinition[] = [
+export const routes = [
   { path: routePath.home, component: HomePage },
   { path: routePath.swap, component: SwapPage },
   { path: routePath.pools, component: PoolsPage },

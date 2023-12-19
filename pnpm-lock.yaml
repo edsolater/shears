@@ -31,8 +31,8 @@ dependencies:
     specifier: ^1.78.7
     version: 1.87.6
   '@solidjs/router':
-    specifier: ^0.9.1
-    version: 0.9.1(solid-js@1.8.7)
+    specifier: ^0.10.5
+    version: 0.10.5(solid-js@1.8.7)
   bn.js:
     specifier: ^5.2.1
     version: 5.2.1
@@ -58,7 +58,7 @@ dependencies:
 devDependencies:
   '@solidjs/testing-library':
     specifier: ^0.8.4
-    version: 0.8.4(@solidjs/router@0.9.1)(solid-js@1.8.7)
+    version: 0.8.4(@solidjs/router@0.10.5)(solid-js@1.8.7)
   '@storybook/addon-essentials':
     specifier: 7.6.5
     version: 7.6.5(react-dom@18.2.0)(react@18.2.0)
@@ -3755,21 +3755,21 @@ packages:
       uuid: 9.0.1
     dev: false
 
-  /@solidjs/router@0.9.1(solid-js@1.8.7):
-    resolution: {integrity: sha512-kRY75piOQsyoH75E/RP6lr7uVGFCjeeCCCJx7Z2D1Vc6+I1yFQjLCvE+6agXGwqDoWi6vbETP1g7gmp/L1mNLg==}
+  /@solidjs/router@0.10.5(solid-js@1.8.7):
+    resolution: {integrity: sha512-gxDeiyc97j8/UqzuuasZsQYA7jpmlwjkfpcay11Q2xfzoKR50eBM1AaxAPtf0MlBAdPsdPV3h/k8t5/XQCuebA==}
     peerDependencies:
-      solid-js: ^1.8.4
+      solid-js: ^1.8.6
     dependencies:
       solid-js: 1.8.7
 
-  /@solidjs/testing-library@0.8.4(@solidjs/router@0.9.1)(solid-js@1.8.7):
+  /@solidjs/testing-library@0.8.4(@solidjs/router@0.10.5)(solid-js@1.8.7):
     resolution: {integrity: sha512-HHCAlBd4P4TY03tXmoBwTO6FFM7w33LeT8Skab941eLO9l5RN7OxKEBw2fiMYvSFL2h2U7L4+W5N03iC8GbB6Q==}
     engines: {node: '>= 14'}
     peerDependencies:
       '@solidjs/router': '>=0.6.0'
       solid-js: '>=1.0.0'
     dependencies:
-      '@solidjs/router': 0.9.1(solid-js@1.8.7)
+      '@solidjs/router': 0.10.5(solid-js@1.8.7)
       '@testing-library/dom': 9.3.3
       solid-js: 1.8.7
     dev: true

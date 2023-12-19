@@ -1,6 +1,7 @@
-import { Router } from '@solidjs/router'
+import { Route, Router } from '@solidjs/router'
 import { render } from 'solid-js/web'
 import { App } from './app/pageComponents/App'
+import { routes } from './app/routes'
 
 const root = document.getElementById('root')
 
@@ -12,8 +13,10 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 
 render(
   () => (
-    <Router>
-      <App />
+    <Router root={App}>
+      {routes.map(({ path, component }) => (
+        <Route path={path} component={component} />
+      ))}
     </Router>
   ),
   root!,

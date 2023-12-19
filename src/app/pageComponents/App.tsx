@@ -1,8 +1,9 @@
-import { capitalize, isObject, map, switchCase } from '@edsolater/fnkit'
-import { useLocation, useNavigate, useRoutes } from '@solidjs/router'
+import { capitalize, map, switchCase } from '@edsolater/fnkit'
+import { RouteSectionProps, useNavigate } from '@solidjs/router'
 import { createMemo } from 'solid-js'
-import { Shuck, createShuck, setShuckVisiableChecker } from '../../packages/conveyor/smartStore/shuck'
-import { createFakeTree } from '../../packages/conveyor/smartStore/fakeTree'
+import { createBranchStore } from '../../packages/conveyor/smartStore/branch'
+import { setShuckVisiableChecker } from '../../packages/conveyor/smartStore/shuck'
+import { createTask } from '../../packages/conveyor/smartStore/task'
 import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
   Box,
@@ -23,11 +24,9 @@ import {
 } from '../../packages/pivkit'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
-import { needAppPageLayout, routes } from '../routes'
+import { needAppPageLayout } from '../routes'
 import { store } from '../stores/data/store'
 import { AppPageLayout } from './AppPageLayout'
-import { createBranchStore } from '../../packages/conveyor/smartStore/branch'
-import { createTask } from '../../packages/conveyor/smartStore/task'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -38,11 +37,10 @@ const uikitConfig: UIKitThemeConfig = {
 // config uikit theme before render
 configUIKitTheme(uikitConfig)
 
-export function App() {
+export function App(props: RouteSectionProps) {
   useAppThemeMode({ mode: 'dark' })
-  const Routes = useRoutes(routes)
   const navigate = useNavigate()
-  const location = useLocation()
+  const location = props.location
 
   const settings = map(globalPageShortcuts, ({ to, shortcut }) => ({
     fn: () => navigate(to),
@@ -61,12 +59,10 @@ export function App() {
       {needLayout() ? (
         <>
           <KeyboardShortcutPanel />
-          <AppPageLayout metaTitle={title()}>
-            <Routes />
-          </AppPageLayout>
+          <AppPageLayout metaTitle={title()}>{props.children}</AppPageLayout>
         </>
       ) : (
-        <Routes />
+        props.children
       )}
     </>
   )
