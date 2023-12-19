@@ -46,7 +46,7 @@ export function DatabaseTable<T>(
     <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
       <BoardTitle>{props.sectionTitle}</BoardTitle>
       <CyberPanel icss={{ overflow: 'hidden' }}>
-        <List items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
+        <List lazy items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
           {(item) => (
             <Box icss={{ paddingBlock: '4px' }}>
               <CollapseBox

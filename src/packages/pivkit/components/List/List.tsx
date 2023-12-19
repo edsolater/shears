@@ -19,6 +19,8 @@ import { createRef } from '../../hooks/createRef'
 import { Piv } from '../../piv'
 import { useKitProps } from '../../createKit'
 import { ListItem } from './ListItem'
+import { createAsync } from '@solidjs/router'
+import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 
 export interface ListController {
   resetRenderCount(): void
@@ -26,6 +28,9 @@ export interface ListController {
 export type ListProps<T> = {
   children(item: T, index: () => number): JSXElement
   items?: MayFn<ItemList<T>>
+
+  /** lazy render for get init frame faster */
+  lazy?: boolean
   /**
    * only meaningfull when turnOnScrollObserver is true
    * @default 30
@@ -65,10 +70,16 @@ export function List<T>(kitProps: ListKitProps<T>) {
   })
 
   // [configs]
-  const _allItems = createMemo(() => {
-    const items = shrinkFn(props.items ?? [])
-    return toArray(items)
-  })
+
+  const _allItems = props.lazy
+    ? createAsyncMemo( () => {
+        const items = shrinkFn(props.items ?? [])
+        return toArray(items)
+      }, [])
+    : createMemo(() => {
+        const items = shrinkFn(props.items ?? [])
+        return toArray(items)
+      })
   const allItems = createDeferred(_allItems) // to smoother the render
   const increaseRenderCount = createMemo(
     () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),
