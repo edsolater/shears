@@ -37,6 +37,7 @@ export default function PoolsPage() {
       tabelCellConfigs={[
         {
           category: 'Pool',
+          place:'collapse-face',  
           get: (i) => (
             <Row>
               <PoolItemFaceTokenAvatarLabel info={i} />
@@ -45,6 +46,7 @@ export default function PoolsPage() {
         },
         {
           category: 'liquidity',
+          place:'collapse-face',  
           get: (i) => <PoolItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
         },
       ]}

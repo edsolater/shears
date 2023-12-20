@@ -1,4 +1,4 @@
-import { createMemo } from 'solid-js'
+import { Accessor, createMemo } from 'solid-js'
 import {
   Box,
   Button,
@@ -31,7 +31,8 @@ import { BoardTitle } from './BoardTitle'
 
 type TabelCellConfigs<T> = {
   category: string
-  get: (item: T) => PivChild
+  place: 'collapse-face' | 'collapse-content'
+  get: (item: T, idx: Accessor<number>) => PivChild
 }[]
 
 /**
@@ -133,9 +134,9 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
       {/* <PoolItemFaceTokenAvatarLabel info={kitProps.item} /> */}
 
       <Loop of={props.tabelCellConfigs}>
-        {(config) => {
+        {(config, idx) => {
           const i = props.item as T // TODO: fix this without `as`
-          const value = config.get(i)
+          const value = config.get(i, idx)
           return (
             <Box icss={{ display: 'flex', alignItems: 'center' }}>
               <PoolItemFaceDetailInfoBoard name={config.category} value={value} />
