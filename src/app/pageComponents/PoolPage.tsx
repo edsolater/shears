@@ -1,4 +1,4 @@
-import { Box, KitProps, Text, useKitProps } from '../../packages/pivkit'
+import { Box, KitProps, Row, Text, useKitProps } from '../../packages/pivkit'
 import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
@@ -32,9 +32,22 @@ export default function PoolsPage() {
   return (
     <DatabaseTable
       sectionTitle='Pools'
-      items={mockItems}
-      getItemKey={(i) => i.id}
-      tabelCellConfigs={[{ name: 'Pool', get: (i) => i.name }]}
+      items={pairInfos}
+      getItemKey={(i) => i.ammId}
+      tabelCellConfigs={[
+        {
+          category: 'Pool',
+          get: (i) => (
+            <Row>
+              <PoolItemFaceTokenAvatarLabel info={i} />
+            </Row>
+          ),
+        },
+        {
+          category: 'liquidity',
+          get: (i) => <PoolItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
+        },
+      ]}
     />
   )
 }

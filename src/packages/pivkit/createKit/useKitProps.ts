@@ -117,9 +117,6 @@ function getParsedKitProps<
     ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps))
     : {}
 
-  if (options?.name === 'Button') {
-    console.log("getUIKitTheme('Button'): ", getUIKitTheme('Button'))
-  }
   // merge kit props
   const mergedGettersProps = pipe(
     rawProps,

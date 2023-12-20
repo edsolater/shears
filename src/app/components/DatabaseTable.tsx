@@ -30,7 +30,7 @@ import toUsdVolume from '../utils/format/toUsdVolume'
 import { BoardTitle } from './BoardTitle'
 
 type TabelCellConfigs<T> = {
-  name: string
+  category: string
   get: (item: T) => PivChild
 }[]
 
@@ -138,7 +138,7 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
           const value = config.get(i)
           return (
             <Box icss={{ display: 'flex', alignItems: 'center' }}>
-              <PoolItemFaceDetailInfoBoard name={config.name} value={value} />
+              <PoolItemFaceDetailInfoBoard name={config.category} value={value} />
             </Box>
           )
         }}
