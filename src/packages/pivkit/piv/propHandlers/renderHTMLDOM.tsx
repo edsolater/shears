@@ -43,7 +43,6 @@ export const renderHTMLDOM = (
   }
 }
 
-
 export const renderAsHTMLMain = (selfProps: any) => renderHTMLDOM('main', selfProps)
 export const renderAsHTMLDiv = (selfProps: any) => renderHTMLDOM('div', selfProps)
 export const renderAsHTMLSpan = (selfProps: any) => renderHTMLDOM('span', selfProps)
@@ -69,4 +68,10 @@ export const renderAsHTMLLi = (selfProps: any) => renderHTMLDOM('li', selfProps)
 export const renderAsHTMLTable = (selfProps: any) => renderHTMLDOM('table', selfProps)
 export const renderAsHTMLTr = (selfProps: any) => renderHTMLDOM('tr', selfProps)
 export const renderAsHTMLTd = (selfProps: any) => renderHTMLDOM('td', selfProps)
-
+export const renderAsHTMLTh = (selfProps: any) => renderHTMLDOM('th', selfProps)
+export const renderAsHTMLTbody = (selfProps: any) => renderHTMLDOM('tbody', selfProps)
+export const renderAsHTMLThead = (selfProps: any) => renderHTMLDOM('thead', selfProps)
+export const renderAsHTMLTfoot = (selfProps: any) => renderHTMLDOM('tfoot', selfProps)
+export const renderAsHTMLA = (selfProps: any) => renderHTMLDOM('a', selfProps)
+export const renderAsHTMLImg = (selfProps: any) => renderHTMLDOM('img', selfProps)
+export const renderAsHTMLSelect = (selfProps: any) => renderHTMLDOM('select', selfProps)
