@@ -1,12 +1,23 @@
+import { MayFn } from '@edsolater/fnkit'
 import { KitProps, useKitProps } from '../createKit'
-import { Piv, renderAsHTMLHeader, renderAsHTMLSelect } from '../piv'
+import { Piv, PivChild, renderAsHTMLHeader, renderAsHTMLSelect } from '../piv'
 
 export type SelectProps<T> = {
   name?: string
-  options?: T | { value: T; label?: string }[]
+  variant?: 'filled' | 'filledFlowDark' | 'filledDark' | 'roundedFilledFlowDark' | 'roundedFilledDark'
+  renderFacePrefix?: (payloads: { open: boolean; item?: T }) => PivChild
+  items?: T[]
   value?: T
   defaultValue?: T
-  onSelect?: (value: T) => void
+  disabled?: boolean
+  onChange?(item: T): void
+  renderItem?(item?: T, idx?: number): PivChild
+  /** if not spcified use renderItem */
+  renderTriggerItem?(item?: T): PivChild
+  placeholder?: PivChild
+  hasDivider?: boolean
+  hasDownIcon?: boolean
+  placement?: PlacementWithLogical
 }
 
 export type SelectKitProps<T> = KitProps<SelectProps<T>>
@@ -16,5 +27,10 @@ export type SelectKitProps<T> = KitProps<SelectProps<T>>
  */
 export function Select<T>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props } = useKitProps(rawProps, { name: 'Select' })
+  const {} = useItems()
   return <Piv render:self={renderAsHTMLSelect} class={props.name} shadowProps={shadowProps}></Piv>
+}
+
+function useItems() {
+  throw new Error('Function not implemented.')
 }

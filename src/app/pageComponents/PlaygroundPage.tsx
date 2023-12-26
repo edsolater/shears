@@ -41,6 +41,7 @@ import { createDisclosure } from '../../packages/pivkit/hooks/createDisclosure'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
+import { Select } from '../../packages/pivkit/components/Select'
 
 export default function PlaygroundPage() {
   return (
@@ -72,20 +73,12 @@ function ComponentSpecList() {
         <CircularProgressExample />
       </ExamplePanel> */}
 
-      <ExamplePanel name='CSSTransition'>
-        <CSSTransitionExample />
-      </ExamplePanel>
-
       <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
       </ExamplePanel>
 
       <ExamplePanel name='CollapseComponent'>
         <CSSCollapseComponentExample />
-      </ExamplePanel>
-
-      <ExamplePanel name='transite auto-size'>
-        <CSSAutoSizeTransitionExample />
       </ExamplePanel>
 
       {/* <ExamplePanel name='Input'>
@@ -127,6 +120,11 @@ function ComponentSpecList() {
       {/* <ExamplePanel name='PropContext + ControllerContext'>
         <PropContextExample />
       </ExamplePanel> */}
+
+      <ExamplePanel name='Select'>
+        <SelectExample />
+      </ExamplePanel>
+
       {/* <Foo /> */}
     </Box>
   )
@@ -332,6 +330,10 @@ function CSSAutoSizeTransitionExample() {
       </Piv>
     </>
   )
+}
+
+function SelectExample() {
+  return <Select />
 }
 
 function InputExample() {

@@ -10,7 +10,7 @@ export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
 export type AccessifyProps<P extends AnyObj, Controller extends ValidController | unknown = unknown> = {
   [K in keyof P]: K extends
   | `on${string}` // callback onXXX should no auto-accessified
-  | `render${string}` // renderXXX should no auto-accessified
+  | `render${string}` // renderXXX should no auto-accessified, if need pass subcomponent and have controller, just pass Captilazed prop name like Dot={}
     | `${string}:${string}`// any namespaced props should no auto-accessified
     | `domRef`
     | `controllerRef`
