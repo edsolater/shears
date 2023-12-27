@@ -71,7 +71,10 @@ export function useKitProps<
 ): {
   /** not declared self props means it's shadowProps */
   shadowProps: any
+  //TODO: should be getters
   props: DeKitProps<P, Controller, DefaultProps>
+  // TODO: will not be controlled, thus `on-` `render-` can throough this 
+  methods:AddDefaultPivProps<P, DefaultProps>
   lazyLoadController(controller: Controller | ((props: ParsedKitProps<DeAccessifyProps<P>>) => Controller)): void
   contextController: any // no need to infer this type for you always force it !!!
   // TODO: imply it !!! For complicated DOM API always need this, this is a fast shortcut

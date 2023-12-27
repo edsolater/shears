@@ -4,7 +4,7 @@ import { Piv, PivChild, renderAsHTMLHeader, renderAsHTMLSelect } from '../piv'
 
 export type SelectProps<T> = {
   name?: string
-  variant?: 'filled' | 'filledFlowDark' | 'filledDark' | 'roundedFilledFlowDark' | 'roundedFilledDark'
+  // variant?: 'filled' | 'filledFlowDark' | 'filledDark' | 'roundedFilledFlowDark' | 'roundedFilledDark'
   renderFacePrefix?: (payloads: { open: boolean; item?: T }) => PivChild
   items?: T[]
   value?: T
@@ -17,7 +17,6 @@ export type SelectProps<T> = {
   placeholder?: PivChild
   hasDivider?: boolean
   hasDownIcon?: boolean
-  placement?: PlacementWithLogical
 }
 
 export type SelectKitProps<T> = KitProps<SelectProps<T>>
@@ -26,7 +25,7 @@ export type SelectKitProps<T> = KitProps<SelectProps<T>>
  * if for layout , don't render important content in Box
  */
 export function Select<T>(rawProps: SelectKitProps<T>) {
-  const { shadowProps, props } = useKitProps(rawProps, { name: 'Select' })
+  const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
   const {} = useItems()
   return <Piv render:self={renderAsHTMLSelect} class={props.name} shadowProps={shadowProps}></Piv>
 }
