@@ -73,8 +73,8 @@ export function useKitProps<
   shadowProps: any
   //TODO: should be getters
   props: DeKitProps<P, Controller, DefaultProps>
-  // TODO: will not be controlled, thus `on-` `render-` can throough this 
-  methods:AddDefaultPivProps<P, DefaultProps>
+  // TODO: will not be controlled, thus `on-` `render-` can throough this
+  methods: AddDefaultPivProps<P, DefaultProps>
   lazyLoadController(controller: Controller | ((props: ParsedKitProps<DeAccessifyProps<P>>) => Controller)): void
   contextController: any // no need to infer this type for you always force it !!!
   // TODO: imply it !!! For complicated DOM API always need this, this is a fast shortcut
@@ -104,6 +104,7 @@ export function useKitProps<
   }
 }
 
+let addedTime = 0
 /**
  * parse some special props of component. such as shadowProps, plugin, controller, etc.
  */
@@ -120,6 +121,7 @@ function getParsedKitProps<
     ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps))
     : {}
 
+  const startTime = performance.now()
   // merge kit props
   const mergedGettersProps = pipe(
     rawProps,
@@ -143,7 +145,7 @@ function getParsedKitProps<
       return useAccessifiedProps(props, proxyController, needAccessifyProps)
     },
 
-    // inject controller (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
+    // inject controller to props:innerController (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
     (props) => mergeProps(props, { innerController: proxyController } as PivProps),
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
     (props) => handleMergifyOnCallbackProps(props),
@@ -158,6 +160,9 @@ function getParsedKitProps<
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
     (props) => handlePluginProps(props), // outside-props-run-time // TODO: assume can't be promisify  //<-- bug is HERE!!, after this, class is doubled
   ) as any /* too difficult to type */
+  const endTime = performance.now()
+  addedTime += endTime - startTime
+  console.log('sortTime', addedTime)
 
   // load controller
   if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
