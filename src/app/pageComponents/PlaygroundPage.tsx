@@ -101,9 +101,9 @@ function ComponentSpecList() {
         <RadioExample />
       </ExamplePanel> */}
 
-      {/* <ExamplePanel name='Popover'>
+      <ExamplePanel name='Popover'>
         <PopoverExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       {/* <ExamplePanel name='ComponentFactory'>
         <ComponentFactoryExample />
@@ -511,6 +511,9 @@ function PopoverExample() {
     console.log('isHover: ', hoverState.isHover())
   })
   const cardICSS = createICSS(() => ({ background: cssVar('--card-bg') }))
+  createEffect(()=>{
+    console.log('popoverState.isTri: ', popoverState.isTriggerOn())
+  })
   return (
     <>
       <Button plugin={[popoverPlugins.trigger, hoverPlugin]}>💬popover</Button>

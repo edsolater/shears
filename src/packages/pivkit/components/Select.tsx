@@ -31,5 +31,5 @@ export function Select<T>(rawProps: SelectKitProps<T>) {
 }
 
 function useItems() {
-  throw new Error('Function not implemented.')
+  return {}
 }
