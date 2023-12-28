@@ -94,10 +94,14 @@ export function useKitProps<
     { controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) },
     options,
   )
-  const composedProps = getParsedKitProps(kitProps, newOptions) as any /* too difficult to type, no need to check */
+  const { props: composedProps, methods } = getParsedKitProps(
+    kitProps,
+    newOptions,
+  ) as any /* too difficult to type, no need to check */
   const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
   return {
     props: composedProps,
+    methods,
     shadowProps,
     lazyLoadController: loadController,
     contextController: mergedContextController,
@@ -116,14 +120,16 @@ function getParsedKitProps<
   // too difficult to type here
   rawProps: any,
   options?: KitPropsOptions<RawProps, Controller, DefaultProps>,
-): ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> & Omit<PivProps<HTMLTag, Controller>, keyof RawProps> {
-  const proxyController = options?.controller
-    ? runtimeObjectFromAccess(() => options.controller!(mergedGettersProps))
-    : {}
+): {
+  props: ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> &
+    Omit<PivProps<HTMLTag, Controller>, keyof RawProps>
+  methods: AddDefaultPivProps<RawProps, DefaultProps>
+} {
+  const proxyController = options?.controller ? runtimeObjectFromAccess(() => options.controller!(controlledProps)) : {}
 
   const startTime = performance.now()
   // merge kit props
-  const mergedGettersProps = pipe(
+  const methods = pipe(
     rawProps,
     //handle context props
     (props) => mergeProps(props, getPropsFromPropContextContext({ componentName: options?.name })),
@@ -133,6 +139,22 @@ function getParsedKitProps<
     (props) => (options?.name && hasUIKitTheme(options.name) ? mergeProps(getUIKitTheme(options.name), props) : props),
     // get default props
     (props) => (options?.defaultProps ? addDefaultPivProps(props, options.defaultProps) : props),
+    (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
+    (props) => handleMergifyOnCallbackProps(props),
+    // parse plugin of **options**
+    (props) =>
+      handlePluginProps(
+        props,
+        () => options?.plugin,
+        () => hasProperty(options, 'plugin'),
+      ), // defined-time (parsing option)
+    (props) => (hasProperty(options, 'name') ? mergeProps(props, { class: options!.name }) : props), // defined-time (parsing option)
+    (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time(parsing props) // TODO: assume can't be promisify
+    (props) => handlePluginProps(props), // outside-props-run-time(parsing props) // TODO: assume can't be promisify  //<-- bug is HERE!!, after this, class is doubled
+  ) as any /* too difficult to type */
+
+  const controlledProps = pipe(
+    methods,
     (props) => {
       const verboseAccessifyProps =
         options?.needAccessify ??
@@ -144,32 +166,19 @@ function getParsedKitProps<
         : verboseAccessifyProps
       return useAccessifiedProps(props, proxyController, needAccessifyProps)
     },
-
     // inject controller to props:innerController (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
     (props) => mergeProps(props, { innerController: proxyController } as PivProps),
-    (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
-    (props) => handleMergifyOnCallbackProps(props),
-    // parse plugin of **options**
-    (props) =>
-      handlePluginProps(
-        props,
-        () => options?.plugin,
-        () => hasProperty(options, 'plugin'),
-      ), // defined-time
-    (props) => (hasProperty(options, 'name') ? mergeProps(props, { class: options!.name }) : props), // defined-time
-    (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time // TODO: assume can't be promisify
-    (props) => handlePluginProps(props), // outside-props-run-time // TODO: assume can't be promisify  //<-- bug is HERE!!, after this, class is doubled
   ) as any /* too difficult to type */
+
   const endTime = performance.now()
   addedTime += endTime - startTime
   console.log('sortTime', addedTime)
-
   // load controller
-  if (options?.controller) loadPropsControllerRef(mergedGettersProps, proxyController)
+  if (options?.controller) loadPropsControllerRef(controlledProps, proxyController)
 
   registerControllerInCreateKit(proxyController, rawProps.id)
 
-  return mergedGettersProps
+  return { props: controlledProps, methods }
 }
 
 /**
