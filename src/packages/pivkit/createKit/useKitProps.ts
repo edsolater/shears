@@ -71,10 +71,10 @@ export function useKitProps<
 ): {
   /** not declared self props means it's shadowProps */
   shadowProps: any
-  //TODO: should be getters
+  /** TODO: access the props of this will omit the props of output:shadowProps */
   props: DeKitProps<P, Controller, DefaultProps>
-  // TODO: will not be controlled, thus `on-` `render-` can throough this
-  methods: AddDefaultPivProps<P, DefaultProps>
+  /** TODO: access the props of this will omit the props of output:shadowProps */
+  pureProps: AddDefaultPivProps<P, DefaultProps>
   lazyLoadController(controller: Controller | ((props: ParsedKitProps<DeAccessifyProps<P>>) => Controller)): void
   contextController: any // no need to infer this type for you always force it !!!
   // TODO: imply it !!! For complicated DOM API always need this, this is a fast shortcut
@@ -94,14 +94,12 @@ export function useKitProps<
     { controller: (props: ParsedKitProps<RawProps>) => getControllerCreator(props) },
     options,
   )
-  const { props: composedProps, methods } = getParsedKitProps(
-    kitProps,
-    newOptions,
-  ) as any /* too difficult to type, no need to check */
-  const shadowProps = options?.selfProps ? omit(composedProps, options.selfProps) : composedProps
+  const { props, pureProps } = getParsedKitProps(kitProps, newOptions) as any
+  const shadowProps = options?.selfProps ? omit(props, options.selfProps) : props
+  
   return {
-    props: composedProps,
-    methods,
+    props,
+    pureProps,
     shadowProps,
     lazyLoadController: loadController,
     contextController: mergedContextController,
@@ -123,13 +121,13 @@ function getParsedKitProps<
 ): {
   props: ParsedKitProps<AddDefaultPivProps<RawProps, DefaultProps>> &
     Omit<PivProps<HTMLTag, Controller>, keyof RawProps>
-  methods: AddDefaultPivProps<RawProps, DefaultProps>
+  pureProps: AddDefaultPivProps<RawProps, DefaultProps>
 } {
   const proxyController = options?.controller ? runtimeObjectFromAccess(() => options.controller!(controlledProps)) : {}
 
   const startTime = performance.now()
   // merge kit props
-  const methods = pipe(
+  const pureProps = pipe(
     rawProps,
     //handle context props
     (props) => mergeProps(props, getPropsFromPropContextContext({ componentName: options?.name })),
@@ -154,7 +152,7 @@ function getParsedKitProps<
   ) as any /* too difficult to type */
 
   const controlledProps = pipe(
-    methods,
+    pureProps,
     (props) => {
       const verboseAccessifyProps =
         options?.needAccessify ??
@@ -178,7 +176,7 @@ function getParsedKitProps<
 
   registerControllerInCreateKit(proxyController, rawProps.id)
 
-  return { props: controlledProps, methods }
+  return { props: controlledProps, pureProps }
 }
 
 /**

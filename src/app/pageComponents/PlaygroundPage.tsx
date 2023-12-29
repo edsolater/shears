@@ -333,7 +333,7 @@ function CSSAutoSizeTransitionExample() {
 }
 
 function SelectExample() {
-  return <Select />
+  return <Select getKey={(i) => i} items={['3', 'void'] as const} />
 }
 
 function InputExample() {
@@ -511,7 +511,7 @@ function PopoverExample() {
     console.log('isHover: ', hoverState.isHover())
   })
   const cardICSS = createICSS(() => ({ background: cssVar('--card-bg') }))
-  createEffect(()=>{
+  createEffect(() => {
     console.log('popoverState.isTri: ', popoverState.isTriggerOn())
   })
   return (

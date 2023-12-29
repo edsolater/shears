@@ -16,7 +16,7 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
     | `controllerRef`
     | 'children'
     ? P[K]
-    : P[K] extends (controller: Controller) => any
+    : P[K] extends AnyFn | undefined
       ? P[K]
       : Accessify<P[K], Controller>
 }
