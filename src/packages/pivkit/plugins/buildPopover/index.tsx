@@ -91,6 +91,7 @@ export function buildPopover(options?: PopoverPluginOptions) {
         return {
           display: isTriggerOn() ? undefined : 'none',
           position: 'fixed',
+          zIndex: 1000,
           '@starting-style &': { scale: 0 },
           transition: '500ms',
         } satisfies ICSS
