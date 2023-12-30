@@ -1,16 +1,6 @@
-import { MayArray, flap, pipe } from '@edsolater/fnkit'
-import { JSX, JSXElement, createMemo } from 'solid-js'
-import { handlePropsInnerController } from './ControllerContext'
-import {
-  ClassName,
-  HTMLProps,
-  ICSS,
-  IStyle,
-  Plugin,
-  PluginCoreFn,
-  handlePluginProps,
-  handleShadowProps,
-} from './propHandlers'
+import { MayArray, MayFn, flap } from '@edsolater/fnkit'
+import { JSX, JSXElement } from 'solid-js'
+import { ClassName, HTMLProps, ICSS, IStyle, Plugin, PluginCoreFn } from './propHandlers'
 import { renderHTMLDOM } from './propHandlers/renderHTMLDOM'
 import { HTMLTag, PivChild, ValidController } from './typeTools'
 import { omit } from './utils'
@@ -19,9 +9,9 @@ type Boollike = any
 
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController> {
   /** if is settled and is flase , only it's children will render */
-  if?: Boollike
+  if?: MayFn<Boollike>
   /** if is settled and is flase , only it's children will render */
-  ifSelfShown?: Boollike
+  ifSelfShown?: MayFn<Boollike>
 
   debugLog?: (keyof PivProps)[]
 

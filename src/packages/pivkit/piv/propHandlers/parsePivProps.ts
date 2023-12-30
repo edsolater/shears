@@ -1,4 +1,4 @@
-import { flap, pipe, shakeFalsy } from '@edsolater/fnkit'
+import { flap, pipe, shakeFalsy, shrinkFn } from '@edsolater/fnkit'
 import { mutateByAdditionalObjectDescriptors } from '../../../fnkit'
 import { ValidController } from '../typeTools'
 import { mergeRefs } from '../utils/mergeRefs'
@@ -22,17 +22,17 @@ export type NativeProps = ReturnType<typeof parsePivProps>['props']
 function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
   const parsedPivProps = pipe(
     raw as Partial<PivProps>,
-    handleShadowProps, // FIXME: why shadow props can, but plugin can't ？
-    handlePluginProps, // FIXME: why shadow props can, but plugin can't ？
+    handleShadowProps, // FIXME: why shadow props can be reactive, but plugin can't ？
+    handlePluginProps, // FIXME: why shadow props can be reactive, but plugin can't ？
     handleShadowProps,
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
     handleMergifyOnCallbackProps,
   )
   const controller = (parsedPivProps.innerController ?? {}) as ValidController
-  const ifOnlyNeedRenderChildren = 'if' in parsedPivProps ? Boolean(parsedPivProps.if) : undefined
+  const ifOnlyNeedRenderChildren = 'if' in parsedPivProps ? () => Boolean(shrinkFn(parsedPivProps.if)) : undefined
   const ifOnlyNeedRenderSelf =
-    ('ifSelfShown' as keyof PivProps) in parsedPivProps ? Boolean(parsedPivProps.ifSelfShown) : undefined
+    ('ifSelfShown' as keyof PivProps) in parsedPivProps ? () => Boolean(shrinkFn(parsedPivProps.ifSelfShown)) : undefined
   const selfCoverNode =
     'render:self' in parsedPivProps ? parsedPivProps['render:self']?.(omit(parsedPivProps, ['render:self'])) : undefined
   return { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
@@ -93,7 +93,7 @@ function getNativeHTMLPropsFromParsedPivProp(props: any, controller: ValidContro
  * @returns An object with the parsed properties.
  */
 // TODO: props should be lazy load, props.htmlProps should also be lazy load
-export function parsePivProps(rawProps: PivProps<any>): any {
+export function parsePivProps(rawProps: PivProps<any>) {
   // handle PropContext
   const contextProps = getPropsFromPropContextContext({ componentName: 'Piv' })
   const addPropsContextProps = getPropsFromAddPropContext({ componentName: 'Piv' })

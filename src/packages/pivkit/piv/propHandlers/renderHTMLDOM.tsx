@@ -30,14 +30,14 @@ export const renderHTMLDOM = (
     return (
       <>
         <Show when={ifOnlyNeedRenderSelf}>{getSolidJSXNode(type, props, additionalProps)}</Show>
-        <Show when={!ifOnlyNeedRenderSelf}>{props.children}</Show>
+        <Show when={() => !ifOnlyNeedRenderSelf()}>{props.children}</Show>
       </>
     )
   } else {
     return (
       <Show when={ifOnlyNeedRenderChildren}>
         <Show when={ifOnlyNeedRenderSelf}>{getSolidJSXNode(type, props, additionalProps)}</Show>
-        <Show when={!ifOnlyNeedRenderSelf}>{props.children}</Show>
+        <Show when={() => !ifOnlyNeedRenderSelf()}>{props.children}</Show>
       </Show>
     )
   }

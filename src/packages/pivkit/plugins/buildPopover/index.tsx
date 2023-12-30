@@ -82,14 +82,18 @@ export function buildPopover(options?: PopoverPluginOptions) {
       'render:outWrapper': (originalNode) => <PopPortal name='popovers'>{originalNode}</PopPortal>,
       domRef: setPanelDom,
       get if() {
-        //bug here <-- 'if' is not reactive
-        return isTriggerOn()
+        return isTriggerOn
       },
       get style() {
         return coorStyle()
       },
       get icss() {
-        return { position: 'fixed', '@starting-style &': { scale: 0 }, transition: '500ms' } satisfies ICSS
+        return {
+          display: isTriggerOn() ? undefined : 'none',
+          position: 'fixed',
+          '@starting-style &': { scale: 0 },
+          transition: '500ms',
+        } satisfies ICSS
       },
       // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
     } satisfies Partial<PivProps>
