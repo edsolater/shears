@@ -153,6 +153,7 @@ function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, 'plugin' | 'sh
 }
 
 function handlePropRenderOutWrapper(props: PivProps<any, any>): JSXElement {
+  console.log('detect render:outWrapper')// FIXME: <-- why not detected?
   return flap(props['render:outWrapper']).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
     // @ts-expect-error force

@@ -73,13 +73,13 @@ function ComponentSpecList() {
         <CircularProgressExample />
       </ExamplePanel> */}
 
-      <ExamplePanel name='Collapse'>
+      {/* <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
       </ExamplePanel>
 
       <ExamplePanel name='CollapseComponent'>
         <CSSCollapseComponentExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       {/* <ExamplePanel name='Input'>
         <InputExample />
@@ -121,9 +121,9 @@ function ComponentSpecList() {
         <PropContextExample />
       </ExamplePanel> */}
 
-      <ExamplePanel name='Select'>
+      {/* <ExamplePanel name='Select'>
         <SelectExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       {/* <Foo /> */}
     </Box>

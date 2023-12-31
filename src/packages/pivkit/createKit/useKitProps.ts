@@ -129,7 +129,7 @@ function getParsedKitProps<
 } {
   const proxyController = options?.controller ? runtimeObjectFromAccess(() => options.controller!(controlledProps)) : {}
 
-  const startTime = performance.now()
+  // const startTime = performance.now()
   // merge kit props
   const methods = pipe(
     rawProps,
@@ -172,9 +172,9 @@ function getParsedKitProps<
     (props) => mergeProps(props, { innerController: proxyController } as PivProps),
   ) as any /* too difficult to type */
 
-  const endTime = performance.now()
-  addedTime += endTime - startTime
-  console.log('sortTime', addedTime)
+  // const endTime = performance.now()
+  // addedTime += endTime - startTime
+  // console.log('sortTime', addedTime)
   // load controller
   if (options?.controller) loadPropsControllerRef(controlledProps, proxyController)
 

@@ -18,6 +18,7 @@ export function handlePluginProps<P extends AnyObj>(
   if (!props) return props
   if (!checkHasPluginProps(props)) return props
   const plugin = getPlugin(props)
+  console.log('plugin: ', plugin)
   if (!plugin) return omit(props, 'plugin')
   return getMergePluginReturnedProps(sortPluginByPriority(flap(plugin)), props)
 }

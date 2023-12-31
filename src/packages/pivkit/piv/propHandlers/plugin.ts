@@ -68,6 +68,7 @@ export function createPlugin<
   options?: {
     defaultOptions?: Partial<PluginOptions>
     priority?: number // NOTE -1:  it should be render after final prop has determine
+    /** Fixme: why not work? */
     name?: string
   }
 ): PluginObj<PluginOptions, PluginState, Props, Controller> {

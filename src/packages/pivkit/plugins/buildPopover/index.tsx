@@ -56,49 +56,58 @@ export function buildPopover(options?: PopoverPluginOptions) {
    * @example
    * <Box plugin={popoverTargetPlugin}>Popover Content</Box>
    */
-  const popoverPanelPlugin = createPlugin(() => () => {
-    // listen to popover toggle event and reflect to trigger state
-    createEffect(() => {
-      const el = panelDom()
-      if (!el) return
-      const { abort } = addEventListener(el, 'toggle', ({ ev }) => {
-        // @ts-expect-error force
-        const { newState } = ev as { newState: 'open' | 'closed' }
-        if (newState === 'open') {
-          open()
-        } else {
-          close()
-        }
+  const popoverPanelPlugin = createPlugin(
+    () => () => {
+      // listen to popover toggle event and reflect to trigger state
+      createEffect(() => {
+        const el = panelDom()
+        if (!el) return
+        const { abort } = addEventListener(el, 'toggle', ({ ev }) => {
+          // @ts-expect-error force
+          const { newState } = ev as { newState: 'open' | 'closed' }
+          if (newState === 'open') {
+            open()
+          } else {
+            close()
+          }
+        })
+        onCleanup(abort)
       })
-      onCleanup(abort)
-    })
-    const { coorStyle } = usePopoverLocation({
-      buttonDom: buttonDom,
-      panelDom: panelDom,
-      isTriggerOn,
-      ...options,
-    })
-    return {
-      'render:outWrapper': (originalNode) => <PopPortal name='popovers'>{originalNode}</PopPortal>,
-      domRef: setPanelDom,
-      get if() {
-        return isTriggerOn
-      },
-      get style() {
-        return coorStyle()
-      },
-      get icss() {
-        return {
-          display: isTriggerOn() ? undefined : 'none',
-          position: 'fixed',
-          zIndex: 1000,
-          '@starting-style &': { scale: 0 },
-          transition: '500ms',
-        } satisfies ICSS
-      },
-      // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
-    } satisfies Partial<PivProps>
-  })
+      const { coorStyle } = usePopoverLocation({
+        buttonDom: buttonDom,
+        panelDom: panelDom,
+        isTriggerOn,
+        ...options,
+      })
+      return {
+        get ['render:outWrapper']() {
+          console.log('✅ pick popover plugin')
+          return (originalNode) => {
+            console.log('✅ load popover plugin')
+            return <PopPortal name='popovers'>{originalNode}</PopPortal>
+          }
+        },
+        domRef: setPanelDom,
+        get if() {
+          return isTriggerOn
+        },
+        get style() {
+          return coorStyle()
+        },
+        get icss() {
+          return {
+            display: isTriggerOn() ? undefined : 'none',
+            position: 'fixed',
+            zIndex: 1000,
+            '@starting-style &': { scale: 0 },
+            transition: '500ms',
+          } satisfies ICSS
+        },
+        // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
+      } satisfies Partial<PivProps>
+    },
+    { name: 'popoverPanel' },
+  )
 
   /**
    * in {@link popoverTriggerPlugin}\
