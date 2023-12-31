@@ -98,6 +98,7 @@ export function buildPopover(options?: PopoverPluginOptions) {
           return {
             display: isTriggerOn() ? undefined : 'none',
             position: 'fixed',
+            /** https://semi.design/zh-CN/basic/tokens#z-index */
             zIndex: 1000,
             '@starting-style &': { scale: 0 },
             transition: '500ms',

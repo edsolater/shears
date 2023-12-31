@@ -1,6 +1,15 @@
-import { MayArray, MayFn, flap } from '@edsolater/fnkit'
+import { MayArray, MayFn, flap, pipe } from '@edsolater/fnkit'
 import { JSX, JSXElement } from 'solid-js'
-import { ClassName, HTMLProps, ICSS, IStyle, Plugin, PluginCoreFn } from './propHandlers'
+import {
+  ClassName,
+  HTMLProps,
+  ICSS,
+  IStyle,
+  Plugin,
+  PluginCoreFn,
+  handlePluginProps,
+  handleShadowProps,
+} from './propHandlers'
 import { renderHTMLDOM } from './propHandlers/renderHTMLDOM'
 import { HTMLTag, PivChild, ValidController } from './typeTools'
 import { omit } from './utils'
@@ -144,7 +153,9 @@ export const pivPropsNames = [
 export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController>(
   kitProps: PivProps<TagName, Controller>,
 ) => {
-  return 'render:outWrapper' in kitProps ? handlePropRenderOutWrapper(kitProps) : handleNormalPivProps(kitProps)
+  // 📝 render:outWrapper may in showProps or plugin. so need to handle it first
+  const props = pipe(kitProps, handleShadowProps, handlePluginProps, handleShadowProps)
+  return 'render:outWrapper' in props ? handlePropRenderOutWrapper(props) : handleNormalPivProps(props)
 }
 
 function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
@@ -153,7 +164,7 @@ function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, 'plugin' | 'sh
 }
 
 function handlePropRenderOutWrapper(props: PivProps<any, any>): JSXElement {
-  console.log('detect render:outWrapper')// FIXME: <-- why not detected?
+  console.log('detect render:outWrapper') // FIXME: <-- why not detected?
   return flap(props['render:outWrapper']).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
     // @ts-expect-error force

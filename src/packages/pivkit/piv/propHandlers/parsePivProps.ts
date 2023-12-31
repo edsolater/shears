@@ -22,8 +22,8 @@ export type NativeProps = ReturnType<typeof parsePivProps>['props']
 function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
   const parsedPivProps = pipe(
     raw as Partial<PivProps>,
-    handleShadowProps, // FIXME: why shadow props can be reactive, but plugin can't ？
-    handlePluginProps, // FIXME: why shadow props can be reactive, but plugin can't ？
+    handleShadowProps,
+    handlePluginProps,
     handleShadowProps,
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
@@ -32,7 +32,9 @@ function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
   const controller = (parsedPivProps.innerController ?? {}) as ValidController
   const ifOnlyNeedRenderChildren = 'if' in parsedPivProps ? () => Boolean(shrinkFn(parsedPivProps.if)) : undefined
   const ifOnlyNeedRenderSelf =
-    ('ifSelfShown' as keyof PivProps) in parsedPivProps ? () => Boolean(shrinkFn(parsedPivProps.ifSelfShown)) : undefined
+    ('ifSelfShown' as keyof PivProps) in parsedPivProps
+      ? () => Boolean(shrinkFn(parsedPivProps.ifSelfShown))
+      : undefined
   const selfCoverNode =
     'render:self' in parsedPivProps ? parsedPivProps['render:self']?.(omit(parsedPivProps, ['render:self'])) : undefined
   return { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf }
