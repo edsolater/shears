@@ -121,9 +121,9 @@ function ComponentSpecList() {
         <PropContextExample />
       </ExamplePanel> */}
 
-      {/* <ExamplePanel name='Select'>
+      <ExamplePanel name='Select'>
         <SelectExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       {/* <Foo /> */}
     </Box>
