@@ -1,4 +1,4 @@
-import { MayArray, MayDeepArray } from '@edsolater/fnkit'
+import { AnyFn, MayArray, MayDeepArray } from '@edsolater/fnkit'
 import { AccessifyProps } from '..'
 import { CRef, PivProps } from '../piv/Piv'
 import { MergifyProps } from '../piv/propHandlers/mergifyProps'

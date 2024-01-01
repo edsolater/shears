@@ -98,6 +98,7 @@ export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) 
       ref={props.ref}
       class={props.class}
       style={props.style}
+      // @ts-ignore
       onSubmit={props.onSubmit}
       {...props.htmlProps}
       {...additionalProps}
@@ -326,6 +327,7 @@ export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) 
     <svg
       // solidjs prefer solid props for variable reactive
       onClick={props.onClick}
+      // @ts-ignore
       ref={props.ref}
       class={props.class}
       {...props.htmlProps}
@@ -346,16 +348,6 @@ export const domMap = (props: NativeProps, additionalProps: AnyObj | undefined) 
   ),
   iframe: () => (
     <iframe
-      // solidjs prefer solid props for variable reactive
-      onClick={props.onClick}
-      ref={props.ref}
-      class={props.class}
-      {...props.htmlProps}
-      {...additionalProps}
-    />
-  ),
-  Dynamic: () => (
-    <Dynamic
       // solidjs prefer solid props for variable reactive
       onClick={props.onClick}
       ref={props.ref}
