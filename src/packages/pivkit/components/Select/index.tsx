@@ -38,7 +38,11 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
+  const c = rawProps.value
+  // <-- bug here: DeAccessify can't de Accessify correctly
   const d = props.value
+  console.log('d: ', d)
+  console.log('c: ', c)
   const { item, allItems } = useItems<T>({
     items: props.items,
     // FIXME: why ? 
