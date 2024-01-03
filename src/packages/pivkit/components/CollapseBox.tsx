@@ -1,12 +1,13 @@
 import { createContext, createEffect, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
 import { createDomRef, useClickOutside } from '../hooks'
-import { createTogglableValue } from '../hooks/createToggle'
+import { createDisclosure } from '../hooks/createToggle'
 import { Piv, PivChild, PivProps } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
 import { createController } from '../utils/createController'
 import { Box } from './Boxes'
+import { invoke } from '../../fnkit'
 
 export interface CollapseBoxRowProps {
   /** TODO: open still can't auto lock the trigger not controled component now */
@@ -49,7 +50,7 @@ export function CollapseBox(kitProps: CollapseBoxProps) {
   const { dom: boxDom, setDom: setBoxDom } = createDomRef()
   const { props, shadowProps } = useKitProps(kitProps, { name: 'Collapse', controller: () => controller })
 
-  const [innerOpen, { toggle, on, off, set }] = createTogglableValue(() => props.open ?? props.defaultOpen ?? false, {
+  const [innerOpen, { toggle, on, off, set }] = createDisclosure(() => props.open ?? props.defaultOpen ?? false, {
     onOff: props.onClose,
     onOn: props.onOpen,
     onToggle: props.onToggle,
@@ -79,7 +80,7 @@ export function CollapseBox(kitProps: CollapseBoxProps) {
     <Box shadowProps={shadowProps} domRef={setBoxDom}>
       {/* Face */}
       {props['renderFace'] && (
-        <Box class='Face' onClick={toggle}>
+        <Box class='Face' onClick={invoke(toggle)}>
           {props['renderFace']}
         </Box>
       )}

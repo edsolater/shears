@@ -2,7 +2,7 @@
 import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
 import { Subscribable, createSubscribable } from '@edsolater/fnkit'
-import { invoke, invokeOnce } from '../../../packages/fnkit'
+import { exec, invokeOnce } from '../../../packages/fnkit'
 import { encode } from '../dataTransmit/handlers'
 import { createMessagePortTransforers } from './createMessagePortTransforers'
 import { isSenderMessage } from './genMessageSender'
@@ -30,7 +30,7 @@ function initMessageReceiver() {
     const subscribable = createSubscribable()
     returnValueMap.set(onMessage, subscribable)
 
-    invoke(onMessage, { payload, resolve: subscribable.set })
+    exec(onMessage, { payload, resolve: subscribable.set })
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = encode(outputData)

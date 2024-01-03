@@ -2,22 +2,18 @@ import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, createSignal } from 'solid-js'
 import { addDefaultProps } from '../piv'
 
-interface ToggleController {
-  delayOn(options?: { forceDelayTime?: number }): void
-  delayOff(options?: { forceDelayTime?: number }): void
-  delayToggle(options?: { forceDelayTime?: number }): void
-  delaySet(options?: { forceDelayTime?: number }): void
+interface DisclosureController {
+  on(options?: { delay?: number }): void
+  off(options?: { delay?: number }): void
+  toggle(options?: { delay?: number }): void
+  set(b: boolean, options?: { delay?: number }): void
   cancelDelayAction(): void
-  on(): void
-  off(): void
-  toggle(): void
-  set(b: boolean): void
 }
 
-export type CreateToggleReturn = [Accessor<boolean>, ToggleController]
+export type CreateDisclosureReturn = [Accessor<boolean>, DisclosureController]
 
 /** more piecer than createDisclosure */
-export function createTogglableValue(
+export function createDisclosure(
   initValue: MayFn<boolean> = false,
   options: {
     locked?: boolean
@@ -30,8 +26,9 @@ export function createTogglableValue(
     /* usually it is for debug */
     onToggle?(isOn: boolean): void
   } = {},
-): CreateToggleReturn {
-  const opts = addDefaultProps(options, { delay: 800 })
+): CreateDisclosureReturn {
+  const defaultOptions = { delay: 800 }
+  const opts = addDefaultProps(options, defaultOptions)
   const [isOn, _setIsOn] = createSignal(shrinkFn(initValue))
 
   createEffect(() => {
@@ -72,37 +69,32 @@ export function createTogglableValue(
     opts.onToggle?.(isOn())
   }
 
-  const delayOn: ToggleController['delayOn'] = (options) => {
+  const delayOn: DisclosureController['on'] = (options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(on, options?.forceDelayTime ?? opts.delay)
+    const actionId = globalThis.setTimeout(on, options?.delay ?? opts.delay)
     setDelayActionId(actionId)
   }
-  const delayOff: ToggleController['delayOff'] = (options) => {
+  const delayOff: DisclosureController['off'] = (options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(off, options?.forceDelayTime ?? opts.delay)
+    const actionId = globalThis.setTimeout(off, options?.delay ?? opts.delay)
     setDelayActionId(actionId)
   }
-  const delayToggle: ToggleController['delayToggle'] = (options) => {
+  const delayToggle: DisclosureController['toggle'] = (options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(toggle, options?.forceDelayTime ?? opts.delay)
+    const actionId = globalThis.setTimeout(toggle, options?.delay ?? opts.delay)
     setDelayActionId(actionId)
   }
-  const delaySet: ToggleController['delaySet'] = (options) => {
+  const delaySet: DisclosureController['set'] = (v, options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(setIsOn, options?.forceDelayTime ?? opts.delay)
+    const actionId = globalThis.setTimeout(() => setIsOn(v), options?.delay ?? opts.delay)
     setDelayActionId(actionId)
   }
   const controller = {
     cancelDelayAction,
-    delayOn,
-    delayOff,
-    delayToggle,
-    delaySet,
-
-    on,
-    off,
-    toggle,
-    set: setIsOn,
+    on: delayOn,
+    off: delayOff,
+    toggle: delayToggle,
+    set: delaySet,
   }
   return [isOn, controller]
 }

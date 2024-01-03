@@ -1,5 +1,5 @@
 import { createEffect } from 'solid-js'
-import { Button, createTogglableValue } from '../../packages/pivkit'
+import { Button, createDisclosure } from '../../packages/pivkit'
 import { useWalletStore } from '../stores/wallet/store'
 import { getWalletAdapter } from '../stores/wallet/utils/getWalletAdapter'
 
@@ -7,10 +7,10 @@ import { getWalletAdapter } from '../stores/wallet/utils/getWalletAdapter'
 export function WalletWidget() {
   const walletStore = useWalletStore()
 
-  const [isCopied, { delayOff, on }] = createTogglableValue()
+  const [isCopied, { off, on }] = createDisclosure()
 
   createEffect(() => {
-    if (isCopied()) delayOff()
+    if (isCopied()) off()
   })
 
   return (

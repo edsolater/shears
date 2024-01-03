@@ -1,5 +1,5 @@
 import { Subscribable, createSubscribable } from '@edsolater/fnkit'
-import { invoke } from './invoke'
+import { exec } from './invoke'
 
 export type AbortableTask<T> = {
   abort(): void
@@ -21,7 +21,7 @@ export function abortableAsyncTask<T>(
   }
   const taskResultSubscribable = createSubscribable<T>()
   const utils = { resolve: innerResolve, aborted: () => isTaskAborted }
-  invoke(task, utils)
+  exec(task, utils)
   return {
     abort: () => {
       isTaskAborted = true
