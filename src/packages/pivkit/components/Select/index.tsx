@@ -6,6 +6,13 @@ import { AnyFn, Primitive } from '@edsolater/fnkit'
 
 type SelectableItem = string
 
+type ItemEventUtils<T extends SelectableItem> = {
+  item: T
+  index: Accessor<number>
+  /** use this, for it's value won't change if item's struct change */
+  value: Accessor<string | number>
+}
+
 export type SelectProps<T extends SelectableItem> = {
   name?: string
 
@@ -15,15 +22,15 @@ export type SelectProps<T extends SelectableItem> = {
   defaultValue?: T
   /** value is used in onChange, value is also used as key */
   getItemValue?: (item: T) => string | number
-  onChange?(utils: { item: T; index: Accessor<number>; value: string | number }): void
+  onChange?(utils: ItemEventUtils<T>): void
 
   disabled?: boolean
   placeholder?: PivChild
   hasDivider?: boolean
   hasDownIcon?: boolean
-  renderItem?(utils: { item: T; index: Accessor<number>; value: string | number }): PivChild
+  renderItem?(utils: ItemEventUtils<T>): PivChild
   /** if not spcified use renderItem */
-  renderTriggerItem?(utils: { item: T; index: Accessor<number>; value: string | number }): PivChild
+  renderTriggerItem?(utils: ItemEventUtils<T>): PivChild
   renderFacePrefix?: (payloads: {
     open: Accessor<boolean>
     item: T
@@ -38,17 +45,20 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
-  const c = rawProps.value
-  // <-- bug here: DeAccessify can't de Accessify correctly
-  const d = props.value
-  console.log('d: ', d)
-  console.log('c: ', c)
   const { item, allItems } = useItems<T>({
     items: props.items,
-    // FIXME: why ? 
+    // FIXME: why ?
     defaultValue: props.defaultValue,
-    // getItemValue: props.getItemValue,
-    // onChange: props.onChange,
+    getItemValue: props.getItemValue,
+    onChange: props.onChange,
   })
-  return <Piv render:self={renderAsHTMLSelect} class={props.name} shadowProps={shadowProps}></Piv>
+  return (
+    <Piv
+      // render:self={renderAsHTMLSelect}
+      class={props.name}
+      shadowProps={shadowProps}
+    >
+      
+    </Piv>
+  )
 }
