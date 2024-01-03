@@ -16,11 +16,9 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
     | `controllerRef`
     | 'children'
     ? P[K]
-    : P[K] extends AnyFn |undefined
-      ? P[K]
-      : Accessify<P[K], Controller>
+    : Accessify<P[K], Controller>
 }
- 
+
 export type DeAccessifyProps<P> = {
   [K in keyof P]: K extends
     | `on${string}` // callback onXXX should no auto-accessified
@@ -30,9 +28,7 @@ export type DeAccessifyProps<P> = {
     | `controllerRef`
     | 'children'
     ? P[K]
-    : P[K] extends Accessify<infer T, any>
-      ? T
-      : P[K]
+    : Exclude<P[K], AnyFn>
 }
 
 /**
