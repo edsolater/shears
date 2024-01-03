@@ -81,7 +81,7 @@ export function useKitProps<
    * TODO: access the props of this will omit the props of output:shadowProps
    * will not inject controller(input function will still be function, not auto-invoke, often used in `on-like` or )
    */
-  methods: any /* TODO: type this!!! */
+  methods: DeKitProps<P, Controller, DefaultProps> /* TODO: type this!!! */
   lazyLoadController(controller: Controller | ((props: ParsedKitProps<DeAccessifyProps<P>>) => Controller)): void
   contextController: any // no need to infer this type for you always force it !!!
   // TODO: imply it !!! For complicated DOM API always need this, this is a fast shortcut

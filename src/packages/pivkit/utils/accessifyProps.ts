@@ -16,7 +16,9 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
     | `controllerRef`
     | 'children'
     ? P[K]
-    : Accessify<P[K], Controller>
+    : P[K] extends AnyFn | undefined
+      ? P[K]
+      : Accessify<P[K], Controller>
 }
 
 export type DeAccessifyProps<P> = {
@@ -28,7 +30,7 @@ export type DeAccessifyProps<P> = {
     | `controllerRef`
     | 'children'
     ? P[K]
-    : Exclude<P[K], AnyFn>
+    : Exclude<P[K], AnyFn> 
 }
 
 /**

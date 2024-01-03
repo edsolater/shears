@@ -24,7 +24,7 @@ export function Loop<T>(kitProps: LoopKitProps<T>) {
   })
 
   // [configs]
-  const allItems = createMemo(() => Array.from(shrinkFn(props.of ?? [])))
+  const allItems = createMemo(() => Array.from(shrinkFn(props.of ?? []) as T[]))
 
   // [loop ref]
   const [loopRef, setRef] = createRef<HTMLElement>()

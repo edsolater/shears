@@ -35,9 +35,10 @@ export function useItems<T>(options?: {
   getItemValue?: (item: T) => string | number
   /** only invoked when options:value is not currentValue */
   onChange?(utils: { item: T; index: Accessor<number>; value: Accessor<string | number> }): void
+  onClear?(): void
 }) {
   const [items, setItems] = createSignal(options?.items ?? [])
-  const [currentItem, setCurrentItem] = createSignal(options?.defaultValue ?? options?.value ?? items().at(0))
+  const [currentItem, setCurrentItem] = createSignal(options?.defaultValue ?? options?.value)
   const itemValue = createMemo(() => {
     const item = currentItem()
     return item ? options?.getItemValue?.(item) ?? defaultGetItemValue(item) : defaultGetItemValue(item)
@@ -56,14 +57,31 @@ export function useItems<T>(options?: {
   function removeToItemList(...newItems: T[]) {
     updateNewItemList(items().filter((item) => !newItems.includes(item)))
   }
-  function setItem(newItem: T | ((prev: T | undefined) => T)) {
-    const newI = shrinkFn(newItem, [currentItem()])
-    const newItemIsInItems = items()?.includes(newI)
-    if (newI !== currentItem() && newItemIsInItems) {
-      const getIndex = () => items()?.indexOf(newI)!
-      setCurrentItem(newI)
-      options?.onChange?.({ item: newI, index: getIndex, value: itemValue })
+  function setItem(newItem: T | undefined | ((prev: T | undefined) => T | undefined)) {
+    const newI = shrinkFn(newItem, [currentItem()]) as T | undefined
+    if (newI == null) {
+      clearItem()
+    } else {
+      const newItemIsInItems = items()?.includes(newI)
+      if (newI !== currentItem() && newItemIsInItems) {
+        const getIndex = () => items()?.indexOf(newI)!
+        // @ts-expect-error why?🏷️🤔
+        setCurrentItem(newI)
+        options?.onChange?.({ item: newI, index: getIndex, value: itemValue })
+      }
     }
   }
-  return { item: currentItem, allItems: items, setItem, updateNewItemList, addItemToItemList, removeToItemList }
+  function clearItem() {
+    setCurrentItem(undefined)
+    options?.onClear?.()
+  }
+  return {
+    item: currentItem,
+    items: items,
+    setItem,
+    clearItem,
+    updateNewItemList,
+    addItemToItemList,
+    removeToItemList,
+  }
 }

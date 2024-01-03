@@ -3,8 +3,9 @@ import { KitProps, useKitProps } from '../../createKit'
 import { Piv, PivChild, renderAsHTMLSelect } from '../../piv'
 import { useItems } from './useItems'
 import { AnyFn, Primitive } from '@edsolater/fnkit'
+import { Loop } from '../Loop'
 
-type SelectableItem = string
+type SelectableItem = unknown
 
 type ItemEventUtils<T extends SelectableItem> = {
   item: T
@@ -45,12 +46,12 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
-  const { item, allItems } = useItems<T>({
+  const { item, items } = useItems<T>({
     items: props.items,
     // FIXME: why ?
     defaultValue: props.defaultValue,
-    getItemValue: props.getItemValue,
-    onChange: props.onChange,
+    getItemValue: methods.getItemValue, // FIXME: why type ?
+    onChange: methods.onChange,
   })
   return (
     <Piv
@@ -58,7 +59,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
       class={props.name}
       shadowProps={shadowProps}
     >
-      
+      <Loop of={items}>{(i) => /* DEV */ 3}</Loop>
     </Piv>
   )
 }
