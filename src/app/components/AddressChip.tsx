@@ -1,6 +1,6 @@
 import { AnyFn } from '@edsolater/fnkit'
 import { createEffect } from 'solid-js'
-import { ItemBoxProps, IconProps, PivProps, KitProps, useKitProps, createToggle } from '../../packages/pivkit'
+import { ItemBoxProps, IconProps, PivProps, KitProps, useKitProps, createTogglableValue } from '../../packages/pivkit'
 import { copyToClipboard } from '../../packages/pivkit/domkit'
 
 export type AddressItemProps = ItemBoxProps &
@@ -30,7 +30,7 @@ export function AddressChip(kitProps: AddressItemProps) {
     },
   })
 
-  const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createToggle(false, { delay: 400 })
+  const [isCopied, { delayOff: delayOffCopyState, on: turnOnCopyState }] = createTogglableValue(false, { delay: 400 })
 
   createEffect(() => {
     if (isCopied()) delayOffCopyState()

@@ -16,7 +16,8 @@ interface ToggleController {
 
 export type CreateToggleReturn = [Accessor<boolean>, ToggleController]
 
-export function createToggle(
+/** more piecer than createDisclosure */
+export function createTogglableValue(
   initValue: MayFn<boolean> = false,
   options: {
     locked?: boolean
@@ -41,7 +42,7 @@ export function createToggle(
       off()
     }
   })
-  
+
   const [delayActionId, setDelayActionId] = createSignal<number | NodeJS.Timeout>(0)
   const setIsOn = (...params: any[]) => {
     if (options.locked) return

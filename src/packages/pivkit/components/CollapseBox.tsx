@@ -1,7 +1,7 @@
 import { createContext, createEffect, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
 import { createDomRef, useClickOutside } from '../hooks'
-import { createToggle } from '../hooks/createToggle'
+import { createTogglableValue } from '../hooks/createToggle'
 import { Piv, PivChild, PivProps } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
@@ -49,7 +49,7 @@ export function CollapseBox(kitProps: CollapseBoxProps) {
   const { dom: boxDom, setDom: setBoxDom } = createDomRef()
   const { props, shadowProps } = useKitProps(kitProps, { name: 'Collapse', controller: () => controller })
 
-  const [innerOpen, { toggle, on, off, set }] = createToggle(() => props.open ?? props.defaultOpen ?? false, {
+  const [innerOpen, { toggle, on, off, set }] = createTogglableValue(() => props.open ?? props.defaultOpen ?? false, {
     onOff: props.onClose,
     onOn: props.onOpen,
     onToggle: props.onToggle,

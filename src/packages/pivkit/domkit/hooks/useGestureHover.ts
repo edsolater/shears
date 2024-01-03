@@ -1,7 +1,7 @@
 //#region ------------------- hook: useHover() -------------------
 
 import { Accessor, createEffect, onCleanup } from 'solid-js'
-import { createToggle } from '../../hooks/createToggle'
+import { createTogglableValue } from '../../hooks/createToggle'
 
 export interface GestureHoverOptions {
   el: Accessor<HTMLElement | undefined | null>
@@ -16,7 +16,7 @@ export interface GestureHoverStates {
 }
 
 export function useGestureHover(options: GestureHoverOptions): GestureHoverStates {
-  const [isHover, { on: turnonHover, off: turnoffHover }] = createToggle()
+  const [isHover, { on: turnonHover, off: turnoffHover }] = createTogglableValue()
 
   createEffect(() => {
     if (options.disable) return
