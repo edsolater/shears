@@ -39,9 +39,20 @@ export function useItems<T>(options?: {
 }) {
   const [items, setItems] = createSignal(options?.items ?? [])
   const [currentItem, setCurrentItem] = createSignal(options?.defaultValue ?? options?.value)
+  const currentItemIndex = createMemo(() => {
+    const item = currentItem()
+    if (!item) return undefined
+    const idx = items()?.indexOf(item)
+    return idx > 0 ? idx : undefined
+  })
+
+  function getItemValue(item: T | undefined): string | number {
+    return item ? options?.getItemValue?.(item) ?? defaultGetItemValue(item) : defaultGetItemValue(item)
+  }
+
   const itemValue = createMemo(() => {
     const item = currentItem()
-    return item ? options?.getItemValue?.(item) ?? defaultGetItemValue(item) : defaultGetItemValue(item)
+    return getItemValue(item)
   })
   createEffect(() => {
     const item = options?.value
@@ -64,10 +75,9 @@ export function useItems<T>(options?: {
     } else {
       const newItemIsInItems = items()?.includes(newI)
       if (newI !== currentItem() && newItemIsInItems) {
-        const getIndex = () => items()?.indexOf(newI)!
         // @ts-expect-error why?🏷️🤔
         setCurrentItem(newI)
-        options?.onChange?.({ item: newI, index: getIndex, value: itemValue })
+        options?.onChange?.({ item: newI, index: () => currentItemIndex()!, value: itemValue })
       }
     }
   }
@@ -77,11 +87,16 @@ export function useItems<T>(options?: {
   }
   return {
     item: currentItem,
+    index: currentItemIndex,
     items: items,
     setItem,
     clearItem,
     updateNewItemList,
     addItemToItemList,
     removeToItemList,
+
+    utils: {
+      getItemValue,
+    },
   }
 }

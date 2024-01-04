@@ -1,9 +1,8 @@
 import { Accessor } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
-import { Piv, PivChild, renderAsHTMLSelect } from '../../piv'
-import { useItems } from './useItems'
-import { AnyFn, Primitive } from '@edsolater/fnkit'
+import { Piv, PivChild } from '../../piv'
 import { Loop } from '../Loop'
+import { useItems } from './useItems'
 
 type SelectableItem = unknown
 
@@ -46,8 +45,7 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
-  const c = methods.getItemValue
-  const { item, items } = useItems<T>({
+  const { item, items, index, utils } = useItems<T>({
     items: props.items,
     // FIXME: why ?
     defaultValue: props.defaultValue,
@@ -60,7 +58,9 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
       class={props.name}
       shadowProps={shadowProps}
     >
-      <Loop of={items}>{(i) => /* DEV */ 3}</Loop>
+      <Loop of={items}>
+        {(i, idx) => methods.renderItem?.({ item: i, index: idx, value: () => utils.getItemValue(i) })}
+      </Loop>
     </Piv>
   )
 }
