@@ -46,6 +46,7 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
+  const c = methods.getItemValue
   const { item, items } = useItems<T>({
     items: props.items,
     // FIXME: why ?

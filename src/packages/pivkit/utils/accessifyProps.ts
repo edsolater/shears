@@ -30,7 +30,9 @@ export type DeAccessifyProps<P> = {
     | `controllerRef`
     | 'children'
     ? P[K]
-    : Exclude<P[K], AnyFn> 
+    :  (P[K] extends Accessify<infer T, ValidController> | undefined
+      ? T
+      : P[K]) // <-- bug here, type error
 }
 
 /**
