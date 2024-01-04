@@ -34,7 +34,7 @@ export function useItems<T>(options?: {
   /** value is used in onChange, value is also used as key */
   getItemValue?: (item: T) => string | number
   /** only invoked when options:value is not currentValue */
-  onChange?(utils: { item: T; index: Accessor<number>; value: Accessor<string | number> }): void
+  onChange?(utils: { item: Accessor<T>; index: Accessor<number>; value: Accessor<string | number> }): void
   onClear?(): void
 }) {
   const [items, setItems] = createSignal(options?.items ?? [])
@@ -77,7 +77,7 @@ export function useItems<T>(options?: {
       if (newI !== currentItem() && newItemIsInItems) {
         // @ts-expect-error why?🏷️🤔
         setCurrentItem(newI)
-        options?.onChange?.({ item: newI, index: () => currentItemIndex()!, value: itemValue })
+        options?.onChange?.({ item: () => newI, index: () => currentItemIndex()!, value: itemValue })
       }
     }
   }

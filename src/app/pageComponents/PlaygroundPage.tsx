@@ -333,7 +333,7 @@ function CSSAutoSizeTransitionExample() {
 }
 
 function SelectExample() {
-  return <Select name={() => 'hello'} items={['3', 'void'] as const} />
+  return <Select name={'example'} items={['3', 'void'] as const} />
 }
 
 function InputExample() {
