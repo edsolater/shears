@@ -4,7 +4,7 @@ import { runtimeObject } from '../../../fnkit/runtimeObject'
 import { KitProps, useKitProps } from '../../createKit'
 import { createDomRef } from '../../hooks'
 import { createRef } from '../../hooks/createRef'
-import { createDisclosure } from '../../hooks/createToggle'
+import { createDisclosure } from '../../hooks/createDisclosure'
 import { Piv, PivProps, } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { useKeyboardShortcut } from '../../plugins/useKeyboardShortcut'
@@ -107,7 +107,7 @@ export function Input(rawProps: InputKitProps) {
 function useInputInnerValue(props: DeAccessifyProps<InputKitProps>, controller: InputController) {
   const [inputRef, setInputRef] = createRef<HTMLInputElement>()
   // if user is inputing or just input, no need to update upon out-side value
-  const [isFocused, { on: focusInput, off: unfocusInput }] = createDisclosure()
+  const [isFocused, { open: focusInput, close: unfocusInput }] = createDisclosure()
   // store inner value for
   const [cachedOutsideValue, setCachedOutsideValue] = createSignal(props.defaultValue ?? props.value)
 

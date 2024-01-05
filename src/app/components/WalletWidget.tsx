@@ -7,10 +7,10 @@ import { getWalletAdapter } from '../stores/wallet/utils/getWalletAdapter'
 export function WalletWidget() {
   const walletStore = useWalletStore()
 
-  const [isCopied, { off, on }] = createDisclosure()
+  const [isCopied, { close, open }] = createDisclosure()
 
   createEffect(() => {
-    if (isCopied()) off()
+    if (isCopied()) close()
   })
 
   return (

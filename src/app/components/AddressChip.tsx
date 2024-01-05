@@ -2,7 +2,7 @@ import { AnyFn } from '@edsolater/fnkit'
 import { createEffect } from 'solid-js'
 import { ItemBoxProps, IconProps, PivProps, KitProps, useKitProps, createDisclosure } from '../../packages/pivkit'
 import { copyToClipboard } from '../../packages/pivkit/domkit'
-import { invoke } from '../../packages/fnkit'
+import { motivate } from '../../packages/fnkit'
 
 export type AddressItemProps = ItemBoxProps &
   KitProps<{
@@ -31,7 +31,7 @@ export function AddressChip(kitProps: AddressItemProps) {
     },
   })
 
-  const [isCopied, { off: delayOffCopyState, on: turnOnCopyState }] = createDisclosure(false, { delay: 400 })
+  const [isCopied, { close: delayOffCopyState, open: turnOnCopyState }] = createDisclosure(false, { delay: 400 })
 
   createEffect(() => {
     if (isCopied()) delayOffCopyState()
@@ -41,7 +41,7 @@ export function AddressChip(kitProps: AddressItemProps) {
     ev.stopPropagation()
     if (!isCopied)
       copyToClipboard(props.publicKey)
-        .then(invoke(turnOnCopyState))
+        .then(motivate(turnOnCopyState))
         .then(() => props.onCopied?.(props.publicKey))
   }
 

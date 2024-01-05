@@ -42,6 +42,7 @@ import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 import { Select } from '../../packages/pivkit/components/Select'
+import { motivate } from '../../packages/fnkit'
 
 export default function PlaygroundPage() {
   return (
@@ -271,11 +272,11 @@ function CSSCollapseExample() {
   )
 }
 function CSSCollapseComponentExample() {
-  const { isOpen, open, close, toggle } = createDisclosure()
+  const [isOpen, { open, close, toggle }] = createDisclosure()
 
   return (
     <>
-      <Button onClick={toggle}>Collapse</Button>
+      <Button onClick={motivate(toggle)}>Collapse</Button>
       <CollapseBox
         open={isOpen}
         renderFace={
@@ -312,10 +313,10 @@ function CSSCollapseComponentExample() {
 // 🤔 maybe can use MutationObserver to detect height change, if change record
 function CSSAutoSizeTransitionExample() {
   const { plugin } = createAutoSizeTransitionPlugin()
-  const { isOpen, toggle } = createDisclosure()
+  const [isOpen, { toggle }] = createDisclosure()
   return (
     <>
-      <Button onClick={toggle}>size change</Button>
+      <Button onClick={motivate(toggle)}>size change</Button>
       <Piv
         plugin={plugin}
         icss={{

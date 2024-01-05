@@ -6,11 +6,12 @@ import { useDOMEventListener } from '../../domkit/hooks/useDOMEventListener'
 import { createComponentContext, useComponentContext } from '../../hooks/createComponentContext'
 import { createDisclosure } from '../../hooks/createDisclosure'
 import { createRef } from '../../hooks/createRef'
-import { ICSS, Piv, PivProps, createPlugin, } from '../../piv'
+import { ICSS, Piv, PivProps, createPlugin } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 import { createController2 } from '../../utils/createController'
 import { PopPortal } from '../PopPortal'
 import { Text } from '../Text'
+import { motivate } from '../../../fnkit'
 
 export interface ModalController {
   dialogDOM: Accessor<HTMLDialogElement | undefined>
@@ -74,13 +75,7 @@ export function Modal(kitProps: ModalKitProps) {
   const [dialogContentDOM, setDialogContentDOM] = createRef<HTMLDivElement>()
   const openModal = () => dialogDOM()?.showModal()
   const closeModal = () => dialogDOM()?.close()
-  const {
-    isOpen: innerOpen,
-    open,
-    close,
-    toggle,
-  } = createDisclosure({
-    open: () => Boolean(props.open),
+  const [innerOpen, { open, close, toggle }] = createDisclosure(() => Boolean(props.open), {
     onClose() {
       props.onClose?.()
     },
@@ -91,7 +86,7 @@ export function Modal(kitProps: ModalKitProps) {
   const { shouldRenderDOM } = useShouldRenderDOMDetector({ props, innerOpen })
 
   // sync dislog's  build-in close event with inner state
-  useDOMEventListener(dialogDOM, 'close', close)
+  useDOMEventListener(dialogDOM, 'close', motivate(close))
 
   // initly load modal show
   createEffect(() => {
@@ -109,7 +104,10 @@ export function Modal(kitProps: ModalKitProps) {
   // click outside to close dialog
   useClickOutside(dialogContentDOM, {
     disabled: () => !innerOpen(),
-    onClickOutSide: mergeFunction(close, closeModal),
+    onClickOutSide: () => {
+      close()
+      closeModal()
+    },
   })
 
   return (

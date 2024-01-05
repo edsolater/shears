@@ -2,7 +2,6 @@ import { Accessor } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { Piv, PivChild, renderAsHTMLSelect } from '../../piv'
 import { useItems } from './useItems'
-import { AnyFn, Primitive } from '@edsolater/fnkit'
 
 type SelectableItem = string
 

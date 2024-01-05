@@ -1,7 +1,7 @@
 //#region ------------------- hook: useHover() -------------------
 
 import { Accessor, createEffect, onCleanup } from 'solid-js'
-import { createDisclosure } from '../../hooks/createToggle'
+import { createDisclosure } from '../../hooks/createDisclosure'
 
 export interface GestureHoverOptions {
   el: Accessor<HTMLElement | undefined | null>
@@ -16,7 +16,7 @@ export interface GestureHoverStates {
 }
 
 export function useGestureHover(options: GestureHoverOptions): GestureHoverStates {
-  const [isHover, { on: turnonHover, off: turnoffHover }] = createDisclosure()
+  const [isHover, { open: turnonHover, close: turnoffHover }] = createDisclosure()
 
   createEffect(() => {
     if (options.disable) return
