@@ -1,5 +1,5 @@
 import { hasProperty, MayArray, mergeObjects, pipe } from '@edsolater/fnkit'
-import { DeAccessifyProps, getUIKitTheme, hasUIKitTheme, useAccessifiedProps } from '..'
+import { DeAccessifyProps, getUIKitTheme, hasUIKitTheme, KitProps, useAccessifiedProps } from '..'
 import { LazyLoadObj, runtimeObjectFromAccess } from '../../fnkit'
 import { getPropsFromAddPropContext } from '../piv/AddProps'
 import { getControllerObjFromControllerContext } from '../piv/ControllerContext'
@@ -55,7 +55,6 @@ export type KitPropsOptions<
 /** return type of useKitProps */
 export type ParsedKitProps<RawProps extends ValidProps> = Omit<RawProps, 'plugin' | 'shadowProps'>
 
-
 /**
  * **core function**
  * exported props -- all props will be accessied (but props is a proxy, so it's not actually accessied)
@@ -74,9 +73,12 @@ export function useKitProps<
 ): {
   /** not declared self props means it's shadowProps */
   shadowProps: any
-  /** TODO: access the props of this will omit the props of output:shadowProps */
+  /** 
+   * TODO: access the props of this will omit the props of output:shadowProps
+   */
   props: DeKitProps<P, Controller, DefaultProps>
-  /** TODO: access the props of this will omit the props of output:shadowProps
+  /** 
+   * TODO: access the props of this will omit the props of output:shadowProps
    * will not inject controller(input function will still be function, not auto-invoke, often used in `on-like` or )
    */
   methods: AddDefaultPivProps<P, DefaultProps>
@@ -153,7 +155,7 @@ function getParsedKitProps<
     (props) => (hasProperty(options, 'name') ? mergeProps(props, { class: options!.name }) : props), // defined-time (parsing option)
     (props) => handleShadowProps(props, options?.selfProps), // outside-props-run-time(parsing props) // TODO: assume can't be promisify
     (props) => handlePluginProps(props), // outside-props-run-time(parsing props) // TODO: assume can't be promisify  //<-- bug is HERE!!, after this, class is doubled
-    /** 
+    /**
      * handle `merge:` props
      * not elegent to have this, what about export a function `flagMerge` to make property can merge each other? 🤔
      */

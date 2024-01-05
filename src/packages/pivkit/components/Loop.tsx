@@ -1,14 +1,14 @@
 import { MayFn, flap, shrinkFn } from '@edsolater/fnkit'
 import { For, JSXElement, createMemo } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
-import { Piv } from '../piv'
+import { Piv, PivChild, parsePivChildren } from '../piv'
 import { createRef } from '../hooks/createRef'
 
 export interface LoopController {}
 
 export type LoopProps<T> = {
   of?: MayFn<Iterable<T>>
-  children(item: T, index: () => number): JSXElement
+  children(item: T, index: () => number): PivChild
 }
 
 export type LoopKitProps<T> = KitProps<LoopProps<T>, { controller: LoopController }>
@@ -24,14 +24,14 @@ export function Loop<T>(kitProps: LoopKitProps<T>) {
   })
 
   // [configs]
-  const allItems = createMemo(() => Array.from(shrinkFn(props.of ?? [])))
+  const allItems = createMemo(() => Array.from(shrinkFn(props.of ?? []) as T[]))
 
   // [loop ref]
   const [loopRef, setRef] = createRef<HTMLElement>()
 
   return (
     <Piv class='Loop' domRef={setRef} shadowProps={props}>
-      <For each={allItems()}>{(item, idx) => props.children(item, idx)}</For>
+      <For each={allItems()}>{(item, idx) => parsePivChildren(props.children(item, idx))}</For>
     </Piv>
   )
 }
