@@ -30,6 +30,8 @@ import {
   createTransitionPlugin,
   cssOpacity,
   cssVar,
+  icss_card,
+  icss_cardPanel,
   icss_col,
   icss_row,
   renderSwitchThumb,
@@ -508,17 +510,10 @@ function ComponentFactoryExample() {
 function PopoverExample() {
   const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'right' }) // <-- run on define, not good
   const { plugin: hoverPlugin, state: hoverState } = useHoverPlugin({ onHover: () => console.log('hover') })
-  createEffect(() => {
-    console.log('isHover: ', hoverState.isHover())
-  })
-  const cardICSS = createICSS(() => ({ background: cssVar('--card-bg') }))
-  createEffect(() => {
-    console.log('popoverState.isTri: ', popoverState.isTriggerOn())
-  })
   return (
     <>
       <Button plugin={[popoverPlugins.trigger, hoverPlugin]}>💬popover</Button>
-      <Box plugin={popoverPlugins.panel} icss={[{ border: 'solid', minHeight: '5em' }, cardICSS]}>
+      <Box plugin={popoverPlugins.panel} icss={[{ border: 'solid', minHeight: '5em' }, icss_cardPanel]}>
         hello world
       </Box>
     </>

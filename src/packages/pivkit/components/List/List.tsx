@@ -12,15 +12,13 @@ import {
   on,
 } from 'solid-js'
 import { ItemList, toArray } from '../../../../app/utils/dataTransmit/itemMethods'
-import { KitProps } from '../../createKit'
+import { KitProps, useKitProps } from '../../createKit'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
+import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 import { createRef } from '../../hooks/createRef'
 import { Piv } from '../../piv'
-import { useKitProps } from '../../createKit'
 import { ListItem } from './ListItem'
-import { createAsync } from '@solidjs/router'
-import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 
 export interface ListController {
   resetRenderCount(): void
@@ -72,14 +70,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [configs]
 
   const _allItems = props.lazy
-    ? createAsyncMemo( () => {
-        const items = shrinkFn(props.items ?? [])
-        return toArray(items)
-      }, [])
-    : createMemo(() => {
-        const items = shrinkFn(props.items ?? [])
-        return toArray(items)
-      })
+    ? createAsyncMemo(() => toArray(shrinkFn(props.items ?? [])), [] as T[])
+    : createMemo(() => toArray(shrinkFn(props.items ?? [])))
   const allItems = createDeferred(_allItems) // to smoother the render
   const increaseRenderCount = createMemo(
     () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),

@@ -5,7 +5,7 @@
  */
 
 import { isArray, mergeObjects } from '@edsolater/fnkit'
-import { createICSS } from '../../piv'
+import { ICSS, createICSS } from '../../piv'
 import { cssOpacity, cssVar } from '../cssValues'
 
 /** for childrens (items or item-group) */
@@ -28,3 +28,10 @@ export const icss_textColor = createICSS((options?: { color?: string | string[] 
   ),
 )
 
+export const icss_cardPanel = createICSS((options?: {icss?:ICSS}) => ({
+  backgroundColor: cssVar('--card-bg'),
+  borderRadius: '0.5rem',
+  boxShadow: '0 0 0.5rem 0 rgba(0, 0, 0, 0.1)',
+
+  padding: '.5em 1em',
+}))

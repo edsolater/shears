@@ -13,7 +13,7 @@ export function createSignalFromBranch<T extends object, U>(
   const linkedSet: SetFn<U> = (dispatcher) => {
     const currentValue = leaf()
     const newValue = shrinkFn(dispatcher, [currentValue])
-    set(newValue)
+    set(() => newValue)
   }
   return [accessor, linkedSet]
 }

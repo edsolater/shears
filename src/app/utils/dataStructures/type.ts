@@ -1,4 +1,4 @@
-
+import { Numberish as _Numberish } from '@edsolater/fnkit'
 export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */
 
@@ -21,4 +21,4 @@ export interface Fraction {
   denominator: bigint
 }
 
-export type Numberish = number | string | bigint | Fraction
+export type Numberish = _Numberish

@@ -27,7 +27,7 @@ import {
 import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { Numberish } from '../utils/dataStructures/type'
+import { Numberish } from '@edsolater/fnkit'
 import { slice } from '../utils/dataTransmit/itemMethods'
 import { TokenAvatar } from './TokenAvatar'
 

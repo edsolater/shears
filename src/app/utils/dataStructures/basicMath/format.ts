@@ -1,6 +1,6 @@
 import { Numberish } from '../type'
 import { toFraction } from './toFraction'
-import { shakeUnnecessaryZero, shiftDecimal } from './utils'
+import { shiftDecimal } from './utils'
 
 export interface NumberishOption {
   /**

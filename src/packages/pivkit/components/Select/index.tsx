@@ -81,7 +81,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         class={props.name}
         shadowProps={shadowProps}
         plugin={popoverPlugins.trigger}
-        icss={{ background: 'dodgerblue', minWidth: '3em', minHeight: '1em', borderRadius: '8px' }}
+        icss={{ background: 'dodgerblue', minWidth: '3em', maxWidth: '12em', minHeight: '1em', borderRadius: '8px' }}
       >
         {renderTriggerItem({ item, index, value: () => utils.getItemValue(item()) })}
       </Piv>
