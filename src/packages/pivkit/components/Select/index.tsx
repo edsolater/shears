@@ -1,11 +1,13 @@
 import { iife, isExist } from '@edsolater/fnkit'
-import { Accessor } from 'solid-js'
-import { KitProps, useKitProps } from '../../createKit'
-import { Piv, PivChild } from '../../piv'
+import { Accessor, createEffect } from 'solid-js'
+import { DeKitProps, KitProps, useKitProps } from '../../createKit'
+import { AddDefaultPivProps, Piv, PivChild } from '../../piv'
 import { buildPopover } from '../../plugins'
 import { Box } from '../Boxes'
 import { Loop } from '../Loop'
 import { useItems } from './useItems'
+import { ItemBox } from '../ItemBox'
+import { icss_cardPanel } from '../../styles'
 
 type SelectableItem = unknown
 
@@ -56,24 +58,14 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
   const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
-  const { item, items, index, utils } = useItems<T>({
+  const { item, items, index, utils, setItem } = useItems<T>({
     items: props.items,
     // FIXME: why ?
     defaultValue: props.defaultValue,
     getItemValue: methods.getItemValue, // FIXME: why type ?
     onChange: methods.onChange,
   })
-  const renderItem = methods.renderItem ?? (({ value }) => <>{value()}</>)
-  const renderTriggerItem = ((utils: FaceItemEventUtils<T>) =>
-    methods.renderTriggerItem?.(utils) ??
-    iife(() => {
-      const i = utils.item()
-      const idx = utils.index()
-      const v = utils.value()
-      return isExist(i) && isExist(idx) && isExist(v)
-        ? renderItem({ item: () => i, index: () => idx, value: () => v, isSelected: () => false })
-        : props.placeholder
-    })) as NonNullable<SelectProps<T>['renderTriggerItem']>
+  const { renderTriggerItem, renderItem } = getRenderFunction<T>(methods, props)
   return (
     <>
       <Piv
@@ -81,22 +73,42 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         class={props.name}
         shadowProps={shadowProps}
         plugin={popoverPlugins.trigger}
-        icss={{ background: 'dodgerblue', minWidth: '3em', maxWidth: '12em', minHeight: '1em', borderRadius: '8px' }}
+        icss={{ background: 'dodgerblue', minWidth: '3em', maxWidth: '12em', minHeight: '1lh', borderRadius: '8px' }}
       >
         {renderTriggerItem({ item, index, value: () => utils.getItemValue(item()) })}
       </Piv>
-      <Box plugin={popoverPlugins.panel}>
+      <Box plugin={popoverPlugins.panel} icss={[icss_cardPanel]}>
         <Loop of={items}>
-          {(i, idx) =>
-            renderItem({
-              item: () => i,
-              index: idx,
-              value: () => utils.getItemValue(i),
-              isSelected: () => i === item(),
-            })
-          }
+          {(i, idx) => (
+            <ItemBox onClick={() => setItem(i)} icss={{ cursor: 'pointer' }}>
+              {renderItem({
+                item: () => i,
+                index: idx,
+                value: () => utils.getItemValue(i),
+                isSelected: () => i === item(),
+              })}
+            </ItemBox>
+          )}
         </Loop>
       </Box>
     </>
   )
+}
+
+function getRenderFunction<T extends SelectableItem>(
+  methods: AddDefaultPivProps<SelectKitProps<T>, {}>,
+  props: DeKitProps<SelectKitProps<T>>,
+) {
+  const renderItem = methods.renderItem ?? (({ value }) => <>{value()}</>)
+  const renderTriggerItem =
+    methods.renderTriggerItem ??
+    (((utils: FaceItemEventUtils<T>) => {
+      const i = utils.item()
+      const idx = utils.index()
+      const v = utils.value()
+      return isExist(i) && isExist(idx) && isExist(v)
+        ? renderItem({ item: () => i, index: () => idx, value: () => v, isSelected: () => true })
+        : props.placeholder
+    }) as NonNullable<SelectProps<T>['renderTriggerItem']>)
+  return { renderTriggerItem, renderItem }
 }

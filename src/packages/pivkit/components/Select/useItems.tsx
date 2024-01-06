@@ -43,7 +43,7 @@ export function useItems<T>(options?: {
     const item = currentItem()
     if (!item) return undefined
     const idx = items()?.indexOf(item)
-    return idx > 0 ? idx : undefined
+    return idx >= 0 ? idx : undefined
   })
 
   function getItemValue(item: T | undefined): string | number {
@@ -70,10 +70,12 @@ export function useItems<T>(options?: {
   }
   function setItem(newItem: T | undefined | ((prev: T | undefined) => T | undefined)) {
     const newI = shrinkFn(newItem, [currentItem()]) as T | undefined
+    console.log(typeof newI)
     if (newI == null) {
       clearItem()
     } else {
       const newItemIsInItems = items()?.includes(newI)
+
       if (newI !== currentItem() && newItemIsInItems) {
         // @ts-expect-error why?🏷️🤔
         setCurrentItem(newI)

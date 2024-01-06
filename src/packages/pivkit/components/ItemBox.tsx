@@ -1,6 +1,7 @@
 import { JSXElement } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
-import { Piv, } from '../piv'
+import { Piv } from '../piv'
+import { Box } from './Boxes'
 
 export interface ItemBoxProps {
   suffix?: JSXElement
@@ -16,11 +17,11 @@ export function ItemBox(rawProps: ItemBoxKitProps) {
   const { props } = useKitProps(rawProps, { name: 'ItemBox' })
   /* ---------------------------------- props --------------------------------- */
   return (
-    <Piv shadowProps={props} icss={{ display: 'flex', alignItems: 'center' }}>
+    <Box shadowProps={props} icss={{ display: 'flex' }}>
       {props.prefix}
       {/* TODO: porps.children should be normal  */}
       <>{props.children}</>
       {props.suffix}
-    </Piv>
+    </Box>
   )
 }
