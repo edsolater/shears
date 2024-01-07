@@ -60,12 +60,11 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
   const { item, items, index, utils, setItem } = useItems<T>({
     items: props.items,
-    // FIXME: why ?
     defaultValue: props.defaultValue,
-    getItemValue: methods.getItemValue, // FIXME: why type ?
+    getItemValue: methods.getItemValue,
     onChange: methods.onChange,
   })
-  const { renderTriggerItem, renderItem } = getRenderFunction<T>(methods, props)
+  const { renderTriggerItem, renderItem } = buildRenderFunction<T>(methods, props)
   return (
     <>
       <Piv
@@ -95,7 +94,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   )
 }
 
-function getRenderFunction<T extends SelectableItem>(
+function buildRenderFunction<T extends SelectableItem>(
   methods: AddDefaultPivProps<SelectKitProps<T>, {}>,
   props: DeKitProps<SelectKitProps<T>>,
 ) {
