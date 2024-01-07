@@ -28,9 +28,18 @@ export const icss_textColor = createICSS((options?: { color?: string | string[] 
   ),
 )
 
-export const icss_cardPanel = createICSS((options?: { transparentCard?: boolean }) => ({
-  backgroundColor: options?.transparentCard ? undefined : cssVar('--card-bg'),
-  borderRadius: '0.5rem',
-  boxShadow: `0 0 0.5rem 0 ${cssOpacity(cssVar('--card-bg'), 0.5)}`,
-  padding: '.5em 1em',
-}))
+export const icss_cardPanel = createICSS(
+  (options?: { transparentCard?: boolean }) => ({
+    backgroundColor: options?.transparentCard ? undefined : cssVar('--card-bg'),
+    borderRadius: '0.5rem',
+    boxShadow: `0 0 0.5rem 0 ${cssOpacity(cssVar('--card-bg'), 0.5)}`,
+    padding: `.5em ${cssVar('--px', '1em')}`,
+  }),
+  {
+    globalSyle: {
+      ':root': {
+        '--px': '1em',
+      },
+    },
+  },
+)

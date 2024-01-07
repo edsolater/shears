@@ -16,6 +16,7 @@ import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'sol
 import { KeyboardShortcutFn, KeybordShortcutKeys, bindKeyboardShortcutEventListener } from '../domkit'
 import { createRef } from '../hooks/createRef'
 import { createSharedSignal } from '../hooks/createSharedSignal'
+import { Accessify } from '../utils'
 
 type Description = string
 
@@ -57,7 +58,6 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
   }
 }
 
-
 // TODO: should be plugin
 /**
  * just a wrapper for {@link bindKeyboardShortcutEventListener}
@@ -70,6 +70,7 @@ export function useKeyboardShortcut(
   otherOptions?: {
     when?: MayFn<boolean>
     disabled?: MayFn<boolean>
+    enabled?: Accessify<boolean>
   },
 ) {
   const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
@@ -77,8 +78,10 @@ export function useKeyboardShortcut(
   createEffect(() => {
     const el = ref()
     if (!el) return
+    const enabled = shrinkFn(otherOptions?.enabled)
     const disabled = shrinkFn(otherOptions?.disabled)
-    if (disabled) return
+    const isEnabled = enabled != null ? enabled : !disabled
+    if (!isEnabled) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     const { abort } = bindKeyboardShortcutEventListener(el, shortcuts)
     const { remove } = registerLocalKeyboardShortcut(el, currentSettings())

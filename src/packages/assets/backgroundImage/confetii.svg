@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" style="background:var(--bg)" width="1612" height="945"
-  preserveAspectRatio="xMidYMid" viewBox="0 0 1612 945">
+  preserveAspectRatio="xMidYMid" class="image" viewBox="0 0 1612 945">
   <defs>
 
     <style>
-      :root {
+      svg.image {
         --bg: #ffe47b;
         --c1: #a3e048;
         --c2: #eb7532;

@@ -97,6 +97,9 @@ export function useItems<T>(options?: {
     addItemToItemList,
     removeToItemList,
 
+    /** the item that can select by shortcut: */
+    focusItem:currentItem, // temp fake by currentItem
+
     utils: {
       getItemValue,
     },

@@ -42,9 +42,11 @@ type TaggedICSS<T extends AnyFn> = ConfigableFunction<T> & {
   [toICSSSymbol](...additionalSettings: Parameters<T>): ICSS
 }
 
+// TODO: imply it !!!
+export function injectRuleToGlobal(rule: ICSS) {}
 export function createICSS<T extends RuleCreatorFn>(
   rule: T,
-  options?: { name?: string; defaultSettings?: Partial<AnyObj> },
+  options?: { name?: string; defaultSettings?: Partial<AnyObj>; globalSyle?: ICSS },
 ): TaggedICSS<any> {
   const factory = createConfigableFunction(
     (settings?: AnyObj) => rule(settings),
@@ -52,6 +54,7 @@ export function createICSS<T extends RuleCreatorFn>(
   ) as unknown as TaggedICSS<T>
   Reflect.set(factory, isTaggedICSSSybol, true)
   Reflect.set(factory, toICSSSymbol, (...args: any[]) => invokeTaggedICSS(factory, ...args))
+  // add global
   // rename
   const fn = options?.name ? overwriteFunctionName(factory, options.name) : factory
   return fn

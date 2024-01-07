@@ -1,13 +1,14 @@
-import { iife, isExist } from '@edsolater/fnkit'
-import { Accessor, createEffect } from 'solid-js'
+import { isExist } from '@edsolater/fnkit'
+import { Accessor } from 'solid-js'
 import { DeKitProps, KitProps, useKitProps } from '../../createKit'
-import { AddDefaultPivProps, Piv, PivChild } from '../../piv'
-import { buildPopover } from '../../plugins'
+import { AddDefaultPivProps, ClickController, Piv, PivChild } from '../../piv'
+import { buildPopover, useKeyboardShortcut } from '../../plugins'
+import { icss_cardPanel, icss_clickable, icss_row } from '../../styles'
 import { Box } from '../Boxes'
+import { ItemBox } from '../ItemBox'
 import { Loop } from '../Loop'
 import { useItems } from './useItems'
-import { ItemBox } from '../ItemBox'
-import { icss_cardPanel } from '../../styles'
+import { createDomRef, useClickOutside } from '../../hooks'
 
 type SelectableItem = unknown
 
@@ -16,6 +17,7 @@ type FaceItemEventUtils<T extends SelectableItem> = {
   index: Accessor<number | undefined>
   /** use this, for it's value won't change if item's struct change */
   value: Accessor<string | number | undefined>
+  triggerIsOpen: Accessor<boolean>
 }
 type ItemEventUtils<T extends SelectableItem> = {
   item: Accessor<T>
@@ -43,12 +45,16 @@ export type SelectProps<T extends SelectableItem> = {
   renderItem?(utils: ItemEventUtils<T>): PivChild
   /** if not spcified use renderItem */
   renderTriggerItem?(utils: FaceItemEventUtils<T>): PivChild
+  renderTriggerItemArrow?: (payloads: { open: Accessor<boolean> }) => PivChild
   renderFacePrefix?: (payloads: {
     open: Accessor<boolean>
     item: T
     index: Accessor<number>
     value: string | number
   }) => PivChild
+  selectWrapperBoxProps?: PivChild
+  selectListBoxProps?: PivChild
+  selectListItemBoxProps?: PivChild
 }
 
 export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
@@ -57,29 +63,84 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
-  const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
-  const { item, items, index, utils, setItem } = useItems<T>({
+
+  const { dom: selectFaceDom, setDom: setSelectFaceDom } = createDomRef()
+  const { dom: selectListDom, setDom: setSelectListDom } = createDomRef()
+
+  const { item, items, index, utils, setItem, focusItem } = useItems<T>({
     items: props.items,
     defaultValue: props.defaultValue,
     getItemValue: methods.getItemValue,
     onChange: methods.onChange,
   })
-  const { renderTriggerItem, renderItem } = buildRenderFunction<T>(methods, props)
+
+  const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
+
+  const { renderTriggerItem, renderItem, renderTriggerItemArrow } = buildRenderFunction<T>(methods, props)
+
+  useKeyboardShortcut(
+    selectListDom,
+    {
+      'close': {
+        fn: () => popoverState.close(),
+        shortcut: 'Escape',
+      },
+      'select confirm':{
+        fn: () => {
+          //TODO: do with focusItem
+        },
+        shortcut: 'Enter',
+      }
+    },
+    { disabled: popoverState.isTriggerOn },
+  )
+
+  // auto-focus this first item
+
+
+  const onItemClick = (clickController: ClickController, i: T) => {
+    setItem(i)
+    popoverState.close()
+  }
+
+  useClickOutside(selectFaceDom, {
+    enabled: popoverState.isTriggerOn,
+    onClickOutSide: () => popoverState.close(),
+  })
+
   return (
     <>
       <Piv
         // render:self={renderAsHTMLSelect}
+        domRef={setSelectFaceDom}
         class={props.name}
-        shadowProps={shadowProps}
+        shadowProps={[shadowProps, props.selectWrapperBoxProps]}
         plugin={popoverPlugins.trigger}
-        icss={{ background: 'dodgerblue', minWidth: '3em', maxWidth: '12em', minHeight: '1lh', borderRadius: '8px' }}
+        icss={[
+          { background: '#000', minWidth: '3em', maxWidth: '12em', minHeight: '1lh', borderRadius: '8px' },
+          icss_row({}), //FIXME: 💩 why type is ANY?
+        ]}
       >
-        {renderTriggerItem({ item, index, value: () => utils.getItemValue(item()) })}
+        {renderTriggerItem({
+          item,
+          index,
+          value: () => utils.getItemValue(item()),
+          triggerIsOpen: popoverState.isTriggerOn,
+        })}
       </Piv>
-      <Box plugin={popoverPlugins.panel} icss={[icss_cardPanel]}>
+      <Box
+        domRef={setSelectListDom}
+        shadowProps={props.selectListBoxProps}
+        plugin={popoverPlugins.panel}
+        icss={[icss_cardPanel, { padding: 'revert', paddingBlock: '8px' }]}
+      >
         <Loop of={items}>
           {(i, idx) => (
-            <ItemBox onClick={() => setItem(i)} icss={{ cursor: 'pointer' }}>
+            <ItemBox
+              shadowProps={props.selectListItemBoxProps}
+              onClick={(c) => onItemClick(c, i)}
+              icss={[icss_clickable, { paddingInline: '16px' }]}
+            >
               {renderItem({
                 item: () => i,
                 index: idx,
@@ -109,5 +170,6 @@ function buildRenderFunction<T extends SelectableItem>(
         ? renderItem({ item: () => i, index: () => idx, value: () => v, isSelected: () => true })
         : props.placeholder
     }) as NonNullable<SelectProps<T>['renderTriggerItem']>)
-  return { renderTriggerItem, renderItem }
+  const renderTriggerItemArrow = methods.renderTriggerItemArrow ?? (() => <>{'>'}</>)
+  return { renderTriggerItem, renderItem, renderTriggerItemArrow }
 }

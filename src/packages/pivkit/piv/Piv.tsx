@@ -16,6 +16,14 @@ import { omit } from './utils'
 
 type Boollike = any
 
+export type ClickController<Controller extends ValidController = ValidController> = {
+  ev: MouseEvent & {
+    currentTarget: HTMLElement
+    target: Element
+  }
+  el: HTMLElement
+} & Controller
+
 export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController> {
   /** if is settled and is flase , only it's children will render */
   if?: MayFn<Boollike>
@@ -41,15 +49,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    */
   id?: string
 
-  onClick?: (
-    utils: {
-      ev: MouseEvent & {
-        currentTarget: HTMLElement
-        target: Element
-      }
-      el: HTMLElement
-    } & Controller,
-  ) => void // for accessifyProps, onClick can't be array
+  onClick?: (utils: ClickController<Controller>) => void // for accessifyProps, onClick can't be array
 
   'merge:onClick'?: (
     utils: {
