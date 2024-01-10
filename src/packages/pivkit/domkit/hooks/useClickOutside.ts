@@ -1,7 +1,7 @@
 import { shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, onCleanup } from 'solid-js'
 import { EventCallback, addEventListener } from '..'
-import { ElementAccessors, getElementsFromAccessors } from '../../utils/elementAccessors'
+import { ElementAccessors, getElementsFromAccessors } from '../../utils/getElementsFromAccessors'
 
 type OnClickOutSideCallback = (
   payload: EventCallback<keyof HTMLElementEventMap, HTMLElement | Document | Window | undefined | null>,

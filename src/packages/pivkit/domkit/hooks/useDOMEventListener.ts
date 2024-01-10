@@ -1,7 +1,7 @@
 import { createEffect, onCleanup } from 'solid-js'
 import { addEventListener } from '..'
 import { EventListenerController } from '..'
-import { ElementAccessors, GetElementsFromElementAccessors, getElementsFromAccessors } from '../../utils/elementAccessors'
+import { ElementAccessors, GetElementsFromElementAccessors, getElementsFromAccessors } from '../../utils/getElementsFromAccessors'
 
 /**
  * register DOM Event Listener
