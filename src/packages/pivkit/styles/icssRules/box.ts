@@ -148,6 +148,11 @@ export const icss_clickable = createICSS((options?: ICSSClickableOption) => ({
   '&:is(:hover,:active,:focus)': { backdropFilter: 'brightness(0.95)', filter: 'brightness(0.95)' },
   '&:active': { transform: 'scale(0.95)' },
 }))
+export const icss_focusDetector = createICSS(() => ({
+  outline: 'solid 0px',
+  '&:focus': { outlineStyle: 'solid', outlineWidth: '2px' },
+  transition: '100ms',
+}))
 
 export const icss_title = createICSS((options?: { w?: CSSObject['minWidth']; h?: CSSObject['minHeight'] }) => ({
   fontSize: '1.5em',

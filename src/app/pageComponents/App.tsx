@@ -77,7 +77,7 @@ function KeyboardShortcutPanel() {
 
   // utils for update shortcut
   const updateSetting = (description: string, shortcut: KeybordShortcutKeys) => {
-    setNewSettings((s) => ({ ...s, [description]: { ...s[description], shortcut } }))
+    setNewSettings((s) => ({ ...s, [description]: { ...s[description], keyboardShortcut } }))
   }
 
   const increasing = createIncresingAccessor({ eachTime: 2000 })
@@ -88,7 +88,7 @@ function KeyboardShortcutPanel() {
           <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
             <Text icss={cssColors.labelColor}>{description}</Text>
             <Input
-              value={rule.shortcut}
+              value={rule.keyboardShortcut}
               icss={{ border: 'solid' }}
               disableUserInput
               plugin={keyboardShortcutObserverPlugin({

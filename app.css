@@ -111,7 +111,6 @@ input:focus-visible {
   outline: none;
 }
 * {
-  outline: none !important; /* without !important, the priority is not high enough */
 }
 
 /* For the darkmode, or tailwindcss urgly and tedious `:dark` */

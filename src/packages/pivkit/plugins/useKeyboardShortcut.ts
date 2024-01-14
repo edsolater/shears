@@ -5,16 +5,20 @@ import {
   WeakerMap,
   WeakerSet,
   createSubscribable,
+  isArray,
   isFunction,
   isString,
-  merge,
   mergeObjects,
-  shakeNil,
-  shrinkFn,
+  shakeFalsy,
+  shrinkFn
 } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
-import { KeyboardShortcutFn, KeybordShortcutKeys, bindKeyboardShortcutEventListener } from '../domkit'
-import { createRef } from '../hooks/createRef'
+import {
+  KeyboardShortcutFn,
+  KeyboardShortcutSettings,
+  KeybordShortcutKeys,
+  bindKeyboardShortcutEventListener,
+} from '../domkit'
 import { createSharedSignal } from '../hooks/createSharedSignal'
 import { Accessify } from '../utils'
 
@@ -24,7 +28,7 @@ export type DetailKeyboardShortcutSetting = Record<
   Description,
   {
     fn: KeyboardShortcutFn
-    shortcut: KeybordShortcutKeys
+    keyboardShortcut: KeybordShortcutKeys | KeybordShortcutKeys[]
   }
 >
 
@@ -131,7 +135,15 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
 }
 
 function parseShortcutConfigFromSettings(settings: DetailKeyboardShortcutSetting) {
-  return shakeNil(mapObjectEntry(settings, (detail) => [detail.shortcut, detail.fn]))
+  const configLists = shakeFalsy(
+    Object.entries(settings).flatMap(([name, { fn, keyboardShortcut }]) => {
+      if (!keyboardShortcut) return []
+      return isArray(keyboardShortcut)
+        ? keyboardShortcut.map((key) => (key ? [key, fn] : undefined))
+        : [[keyboardShortcut, fn]]
+    }),
+  )
+  return Object.fromEntries(configLists) as KeyboardShortcutSettings
 }
 
 // TODO: should move to /fnkit

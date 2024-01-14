@@ -78,7 +78,7 @@ export function Input(rawProps: InputKitProps) {
         fn: () => {
           props.onEnter?.(innerText(), controller)
         },
-        shortcut: 'Enter',
+        keyboardShortcut: 'Enter',
       },
     },
     { when: isFocused, disabled: !hasProperty(props, 'onEnter') },

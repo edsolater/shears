@@ -1,9 +1,9 @@
 import { isExist } from '@edsolater/fnkit'
-import { Accessor } from 'solid-js'
+import { Accessor, createEffect } from 'solid-js'
 import { DeKitProps, KitProps, useKitProps } from '../../createKit'
 import { AddDefaultPivProps, ClickController, Piv, PivChild } from '../../piv'
 import { buildPopover, useKeyboardShortcut } from '../../plugins'
-import { icss_cardPanel, icss_clickable, icss_row } from '../../styles'
+import { icss_cardPanel, icss_clickable, icss_focusDetector, icss_row } from '../../styles'
 import { Box } from '../Boxes'
 import { ItemBox } from '../ItemBox'
 import { Loop } from '../Loop'
@@ -67,7 +67,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { dom: selectFaceDom, setDom: setSelectFaceDom } = createDomRef()
   const { dom: selectListDom, setDom: setSelectListDom } = createDomRef()
 
-  const { item, items, index, utils, setItem, focusItem } = useItems<T>({
+  const { item, items, index, utils, setItem, focusItem, selectPrevItem, selectNextItem } = useItems<T>({
     items: props.items,
     defaultValue: props.defaultValue,
     getItemValue: methods.getItemValue,
@@ -83,20 +83,43 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
     {
       'close': {
         fn: () => popoverState.close(),
-        shortcut: 'Escape',
+        keyboardShortcut: 'Escape',
       },
-      'select confirm':{
+      'select confirm': {
         fn: () => {
           //TODO: do with focusItem
         },
-        shortcut: 'Enter',
-      }
+        keyboardShortcut: 'Enter',
+      },
+      'select prev item': {
+        fn: () => selectPrevItem(),
+        keyboardShortcut: 'ArrowUp',
+      },
+      'select next item': {
+        fn: () => {
+          console.log('select next item')
+          return selectNextItem()
+        },
+        keyboardShortcut: 'ArrowDown',
+      },
+      'TEST': {
+        fn: () => {
+          console.log('TEST')
+        },
+        keyboardShortcut: 't',
+      },
     },
     { disabled: popoverState.isTriggerOn },
   )
 
-  // auto-focus this first item
+  // auto focus when open
+  createEffect(() => {
+    if (popoverState.isTriggerOn()) {
+      selectListDom()?.focus()
+    }
+  })
 
+  // auto-focus this first item
 
   const onItemClick = (clickController: ClickController, i: T) => {
     setItem(i)
@@ -132,7 +155,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         domRef={setSelectListDom}
         shadowProps={props.selectListBoxProps}
         plugin={popoverPlugins.panel}
-        icss={[icss_cardPanel, { padding: 'revert', paddingBlock: '8px' }]}
+        icss={[icss_cardPanel, icss_focusDetector, { padding: 'revert', paddingBlock: '8px' }]}
       >
         <Loop of={items}>
           {(i, idx) => (
