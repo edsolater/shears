@@ -44,7 +44,7 @@ export function App(props: RouteSectionProps) {
 
   const settings = map(globalPageShortcuts, ({ to, shortcut }) => ({
     fn: () => navigate(to),
-    shortcut,
+    keyboardShortcut: shortcut,
   }))
   useKeyboardGlobalShortcut(settings)
   const title = createMemo(() =>
@@ -77,7 +77,7 @@ function KeyboardShortcutPanel() {
 
   // utils for update shortcut
   const updateSetting = (description: string, shortcut: KeybordShortcutKeys) => {
-    setNewSettings((s) => ({ ...s, [description]: { ...s[description], keyboardShortcut } }))
+    setNewSettings((s) => ({ ...s, [description]: { ...s[description], keyboardShortcut:shortcut } }))
   }
 
   const increasing = createIncresingAccessor({ eachTime: 2000 })
@@ -88,7 +88,7 @@ function KeyboardShortcutPanel() {
           <Box icss={{ display: 'grid', gridTemplateColumns: '180px 200px', gap: '8px' }}>
             <Text icss={cssColors.labelColor}>{description}</Text>
             <Input
-              value={rule.keyboardShortcut}
+              value={String(rule.keyboardShortcut)}
               icss={{ border: 'solid' }}
               disableUserInput
               plugin={keyboardShortcutObserverPlugin({

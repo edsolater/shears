@@ -10,7 +10,7 @@ import {
   isString,
   mergeObjects,
   shakeFalsy,
-  shrinkFn
+  shrinkFn,
 } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, onCleanup } from 'solid-js'
 import {
@@ -20,7 +20,8 @@ import {
   bindKeyboardShortcutEventListener,
 } from '../domkit'
 import { createSharedSignal } from '../hooks/createSharedSignal'
-import { Accessify } from '../utils'
+import { Accessify, ElementAccessors, getElementsFromAccessors } from '../utils'
+import useResizeObserver from '../hooks/useResizeObserver'
 
 type Description = string
 
@@ -68,7 +69,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}
  */
 export function useKeyboardShortcut(
-  ref: Accessor<any>,
+  ref: ElementAccessors,
   settings?: DetailKeyboardShortcutSetting,
   // TODO: imply this
   otherOptions?: {
@@ -80,18 +81,20 @@ export function useKeyboardShortcut(
   const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
   // register keyboard shortcut
   createEffect(() => {
-    const el = ref()
-    if (!el) return
+    const els = getElementsFromAccessors(ref)
+    if (!els.length) return
     const enabled = shrinkFn(otherOptions?.enabled)
     const disabled = shrinkFn(otherOptions?.disabled)
     const isEnabled = enabled != null ? enabled : !disabled
     if (!isEnabled) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
-    const { abort } = bindKeyboardShortcutEventListener(el, shortcuts)
-    const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
-    onCleanup(() => {
-      abort()
-      remove()
+    els.forEach((el) => {
+      const { abort } = bindKeyboardShortcutEventListener(el, shortcuts) // BUG: display:none element can't bind listeners
+      const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
+      onCleanup(() => {
+        abort()
+        remove()
+      })
     })
   })
   return {

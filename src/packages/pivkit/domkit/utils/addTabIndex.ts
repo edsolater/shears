@@ -6,21 +6,21 @@ export function addTabIndex(el: HTMLElement | undefined | null, options?: { tabI
   if (el.tagName !== 'BUTTON' || options?.tabIndex !== 0) {
     Reflect.set(el, 'tabIndex', options?.tabIndex || 0)
   }
-  addEventListener(
-    el,
-    'keydown',
-    ({ ev }) => {
-      switch (ev.key) {
-        case ' ': {
-          el.click()
-          break
-        }
-        case 'Enter': {
-          el.click()
-          break
-        }
-      }
-    },
-    { capture: true }
-  )
+  // addEventListener(
+  //   el,
+  //   'keydown',
+  //   ({ ev }) => {
+  //     switch (ev.key) {
+  //       case ' ': {
+  //         el.click()
+  //         break
+  //       }
+  //       case 'Enter': {
+  //         el.click()
+  //         break
+  //       }
+  //     }
+  //   },
+  //   { capture: true }
+  // )
 }

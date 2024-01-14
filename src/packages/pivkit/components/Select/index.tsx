@@ -115,7 +115,11 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   // auto focus when open
   createEffect(() => {
     if (popoverState.isTriggerOn()) {
-      selectListDom()?.focus()
+      
+      const dom = selectListDom()
+      console.log('dom: ', dom);
+      dom?.focus()
+
     }
   })
 

@@ -83,8 +83,9 @@ export function bindKeyboardShortcutEventListener(
   el: HTMLElement,
   keyboardShortcutSettings: KeyboardShortcutSettings,
 ): EventListenerController {
+  console.log('bindKeyboardShortcutEventListener: ', el)
   addTabIndex(el) // keydown must have fousable element
-  const subscription = addEventListener(el, 'keydown', ({ ev }) => {
+  const subscription = addEventListener(el, 'keydown', ({ ev, el }) => {
     const pressedKey = getShorcutStringFromKeyboardEvent(ev)
     const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
     targetShortcutFn?.()

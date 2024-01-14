@@ -149,7 +149,7 @@ export const icss_clickable = createICSS((options?: ICSSClickableOption) => ({
   '&:active': { transform: 'scale(0.95)' },
 }))
 export const icss_focusDetector = createICSS(() => ({
-  outline: 'solid 0px',
+  outline: 'solid 1px',
   '&:focus': { outlineStyle: 'solid', outlineWidth: '2px' },
   transition: '100ms',
 }))
