@@ -1,7 +1,7 @@
 import { shrinkFn } from '@edsolater/fnkit'
 import { Accessor, createEffect, onCleanup } from 'solid-js'
 import { EventCallback, addEventListener } from '..'
-import { ElementAccessors, getElementsFromAccessors } from '../../utils/getElementsFromAccessors'
+import { ElementRefs, getElementsFromRefs } from '../../utils/getElementsFromRefs'
 
 type OnClickOutSideCallback = (
   payload: EventCallback<keyof HTMLElementEventMap, HTMLElement | Document | Window | undefined | null>,
@@ -20,11 +20,11 @@ export type UseClickOutsideOptions =
  * @param els can be a single element or an array of elements or even a function that returns an element or an array of elements
  * @param options
  */
-export function useClickOutside(els: ElementAccessors, options?: UseClickOutsideOptions) {
+export function useClickOutside(els: ElementRefs, options?: UseClickOutsideOptions) {
   const parasedOptions = typeof options === 'function' ? { onClickOutSide: options } : options
   const getOption = () => parasedOptions
   createEffect(() => {
-    const targetElements = getElementsFromAccessors(els)
+    const targetElements = getElementsFromRefs(els)
     const { abort: cancel } = addEventListener(
       globalThis.document,
       'click',

@@ -1,2 +1,2 @@
 export * from './accessifyProps'
-export * from './getElementsFromAccessors'
+export * from './getElementsFromRefs'
