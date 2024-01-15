@@ -207,8 +207,7 @@ function useItemManageUtils<T>(options: {
   function selectPrevItem() {
     const items = options.items()
     if (!items) return
-    const idx = activeItemIndex()
-    if (idx == null) return
+    const idx = activeItemIndex() ?? 0
     const prevItem = items.at(idx - 1)
     if (!prevItem) return
     setItem(prevItem)
@@ -216,8 +215,7 @@ function useItemManageUtils<T>(options: {
   function selectNextItem() {
     const items = options.items()
     if (!items) return
-    const idx = activeItemIndex()
-    if (idx == null) return
+    const idx = activeItemIndex() ?? 0
     const nextItem = items.at((idx + 1) % items.length)
     if (!nextItem) return
     setItem(nextItem)

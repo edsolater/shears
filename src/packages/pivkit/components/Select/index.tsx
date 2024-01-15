@@ -3,7 +3,7 @@ import { Accessor, createEffect } from 'solid-js'
 import { DeKitProps, KitProps, useKitProps } from '../../createKit'
 import { AddDefaultPivProps, ClickController, Piv, PivChild } from '../../piv'
 import { buildPopover, useKeyboardShortcut } from '../../plugins'
-import { icss_cardPanel, icss_clickable, icss_focusDetector, icss_row } from '../../styles'
+import { cssVar, icss_cardPanel, icss_clickable, icss_focusDetector, icss_row } from '../../styles'
 import { Box } from '../Boxes'
 import { ItemBox } from '../ItemBox'
 import { Loop } from '../Loop'
@@ -67,6 +67,10 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { dom: selectFaceDom, setDom: setSelectFaceDom } = createDomRef()
   const { dom: selectListDom, setDom: setSelectListDom } = createDomRef()
 
+  // `<Select>`'s popover
+  const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
+
+  // items manager
   const { item, items, index, utils, setItem, focusItem, selectPrevItem, selectNextItem } = useItems<T>({
     items: props.items,
     defaultValue: props.defaultValue,
@@ -74,10 +78,10 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
     onChange: methods.onChange,
   })
 
-  const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
-
+  // compute render functions
   const { renderTriggerItem, renderItem, renderTriggerItemArrow } = buildRenderFunction<T>(methods, props)
 
+  // keyboard shortcut
   useKeyboardShortcut(
     selectListDom,
     {
@@ -92,17 +96,11 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         keyboardShortcut: 'Enter',
       },
       'select prev item': {
-        fn: () => {
-          console.log('select prev item')
-          return selectPrevItem()
-        },
+        fn: selectPrevItem,
         keyboardShortcut: 'ArrowUp',
       },
       'select next item': {
-        fn: () => {
-          console.log('select next item')
-          return selectNextItem()
-        },
+        fn: selectNextItem,
         keyboardShortcut: 'ArrowDown',
       },
     },
@@ -112,19 +110,16 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   // auto focus when open
   createEffect(() => {
     if (popoverState.isTriggerOn()) {
-      const dom = selectListDom()
-      console.log('dom: ', dom)
-      dom?.focus()
+      selectListDom()?.focus()
     }
   })
-
-  // auto-focus this first item
 
   const onItemClick = (clickController: ClickController, i: T) => {
     setItem(i)
     popoverState.close()
   }
 
+  // click outside to close popover
   useClickOutside(selectFaceDom, {
     enabled: popoverState.isTriggerOn,
     onClickOutSide: () => popoverState.close(),
@@ -154,23 +149,37 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         domRef={setSelectListDom}
         shadowProps={props.selectListBoxProps}
         plugin={popoverPlugins.panel}
-        icss={[icss_cardPanel, icss_focusDetector, { padding: 'revert', paddingBlock: '8px' }]}
+        icss={[icss_cardPanel, { padding: 'revert', paddingBlock: '8px' }]}
       >
         <Loop of={items}>
-          {(i, idx) => (
-            <ItemBox
-              shadowProps={props.selectListItemBoxProps}
-              onClick={(c) => onItemClick(c, i)}
-              icss={[icss_clickable, { paddingInline: '16px' }]}
-            >
-              {renderItem({
-                item: () => i,
-                index: idx,
-                value: () => utils.getItemValue(i),
-                isSelected: () => i === item(),
-              })}
-            </ItemBox>
-          )}
+          {(i, idx) => {
+            const isSelected = () => i === item()
+            const itemValue = () => utils.getItemValue(i)
+            return (
+              <ItemBox
+                shadowProps={props.selectListItemBoxProps}
+                onClick={(c) => onItemClick(c, i)}
+                icss={[
+                  icss_clickable,
+                  {
+                    padding: '4px 8px',
+                    margin: '4px 4px',
+                    borderRadius: '4px',
+                    background: isSelected() ? cssVar('--item-selected-bg', '#fff4') : undefined,
+                    boxShadow: isSelected() ? cssVar('--item-selected-shadow', '0 0 0 4px #fff4') : undefined,
+                    color: isSelected() ? cssVar('--select-active-item-text-color', '#c8d7e0') : undefined,
+                  },
+                ]}
+              >
+                {renderItem({
+                  item: () => i,
+                  index: idx,
+                  value: itemValue,
+                  isSelected,
+                })}
+              </ItemBox>
+            )
+          }}
         </Loop>
       </Box>
     </>
