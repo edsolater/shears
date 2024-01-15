@@ -22,6 +22,7 @@ import {
 import { createSharedSignal } from '../hooks/createSharedSignal'
 import { Accessify, ElementAccessors, getElementsFromAccessors } from '../utils'
 import useResizeObserver from '../hooks/useResizeObserver'
+import { option } from '@raydium-io/raydium-sdk'
 
 type Description = string
 
@@ -79,17 +80,20 @@ export function useKeyboardShortcut(
   },
 ) {
   const [currentSettings, setCurrentSettings] = createSignal(settings ?? {})
+  const isFeatureEnabled = () => {
+    const enabled = shrinkFn(otherOptions?.enabled)
+    const disabled = shrinkFn(otherOptions?.disabled)
+    const isEnabled = enabled != null ? enabled : !disabled
+    return isEnabled
+  }
   // register keyboard shortcut
   createEffect(() => {
     const els = getElementsFromAccessors(ref)
     if (!els.length) return
-    const enabled = shrinkFn(otherOptions?.enabled)
-    const disabled = shrinkFn(otherOptions?.disabled)
-    const isEnabled = enabled != null ? enabled : !disabled
-    if (!isEnabled) return
+    if (!isFeatureEnabled()) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     els.forEach((el) => {
-      const { abort } = bindKeyboardShortcutEventListener(el, shortcuts) // BUG: display:none element can't bind listeners
+      const { abort } = bindKeyboardShortcutEventListener(el, shortcuts, { stopPropagation: true })
       const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
       onCleanup(() => {
         abort()
@@ -98,6 +102,7 @@ export function useKeyboardShortcut(
     })
   })
   return {
+    isFeatureEnabled,
     addSettings(newSettings: DetailKeyboardShortcutSetting) {
       setCurrentSettings((prev) => mergeObjects(prev, newSettings))
     },

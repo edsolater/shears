@@ -82,14 +82,19 @@ export type KeyboardShortcutSettings = {
 export function bindKeyboardShortcutEventListener(
   el: HTMLElement,
   keyboardShortcutSettings: KeyboardShortcutSettings,
+  options?: { stopPropagation?: boolean },
 ): EventListenerController {
-  console.log('bindKeyboardShortcutEventListener: ', el)
   addTabIndex(el) // keydown must have fousable element
-  const subscription = addEventListener(el, 'keydown', ({ ev, el }) => {
-    const pressedKey = getShorcutStringFromKeyboardEvent(ev)
-    const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
-    targetShortcutFn?.()
-  })
+  const subscription = addEventListener(
+    el,
+    'keydown',
+    ({ ev }) => {
+      const pressedKey = getShorcutStringFromKeyboardEvent(ev)
+      const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
+      targetShortcutFn?.()
+    },
+    { stopPropergation: options?.stopPropagation },
+  )
   return subscription
 }
 /** this still not prevent **all** brower shortcut (like build-in ctrl T ) */

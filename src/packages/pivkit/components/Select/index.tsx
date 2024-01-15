@@ -92,7 +92,10 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         keyboardShortcut: 'Enter',
       },
       'select prev item': {
-        fn: () => selectPrevItem(),
+        fn: () => {
+          console.log('select prev item')
+          return selectPrevItem()
+        },
         keyboardShortcut: 'ArrowUp',
       },
       'select next item': {
@@ -102,24 +105,16 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         },
         keyboardShortcut: 'ArrowDown',
       },
-      'TEST': {
-        fn: () => {
-          console.log('TEST')
-        },
-        keyboardShortcut: 't',
-      },
     },
-    { disabled: popoverState.isTriggerOn },
+    { enabled: popoverState.isTriggerOn },
   )
 
   // auto focus when open
   createEffect(() => {
     if (popoverState.isTriggerOn()) {
-      
       const dom = selectListDom()
-      console.log('dom: ', dom);
+      console.log('dom: ', dom)
       dom?.focus()
-
     }
   })
 
