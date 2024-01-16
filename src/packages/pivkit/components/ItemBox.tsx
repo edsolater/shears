@@ -1,6 +1,6 @@
 import { JSXElement } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
-import { Piv } from '../piv'
+import { Piv, ValidController } from '../piv'
 import { Box } from './Boxes'
 
 export interface ItemBoxProps {
@@ -8,7 +8,10 @@ export interface ItemBoxProps {
   prefix?: JSXElement
 }
 
-export type ItemBoxKitProps = KitProps<ItemBoxProps>
+export type ItemBoxKitProps<Controller extends ValidController = ValidController> = KitProps<
+  ItemBoxProps,
+  { controller: Controller }
+>
 
 /**
  * if for layout , don't render important content in Box

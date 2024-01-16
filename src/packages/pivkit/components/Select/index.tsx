@@ -1,16 +1,20 @@
 import { isExist } from '@edsolater/fnkit'
 import { Accessor, createEffect } from 'solid-js'
 import { DeKitProps, KitProps, useKitProps } from '../../createKit'
+import { createDomRef, useClickOutside } from '../../hooks'
 import { AddDefaultPivProps, ClickController, Piv, PivChild } from '../../piv'
 import { buildPopover, useKeyboardShortcut } from '../../plugins'
-import { cssVar, icss_cardPanel, icss_clickable, icss_focusDetector, icss_row } from '../../styles'
+import { cssVar, icss_cardPanel, icss_clickable, icss_row } from '../../styles'
 import { Box } from '../Boxes'
-import { ItemBox } from '../ItemBox'
+import { ItemBox, ItemBoxKitProps } from '../ItemBox'
 import { Loop } from '../Loop'
 import { useItems } from './useItems'
-import { createDomRef, useClickOutside } from '../../hooks'
 
 type SelectableItem = unknown
+
+type SelectableController = {
+  name: Accessor<string>
+}
 
 type FaceItemEventUtils<T extends SelectableItem> = {
   item: Accessor<T | undefined>
@@ -28,6 +32,7 @@ type ItemEventUtils<T extends SelectableItem> = {
 }
 
 export type SelectProps<T extends SelectableItem> = {
+  /** also in controller */
   name?: string
 
   // variant?: 'filled' | 'filledFlowDark' | 'filledDark' | 'roundedFilledFlowDark' | 'roundedFilledDark'
@@ -52,9 +57,9 @@ export type SelectProps<T extends SelectableItem> = {
     index: Accessor<number>
     value: string | number
   }) => PivChild
-  selectWrapperBoxProps?: PivChild
-  selectListBoxProps?: PivChild
-  selectListItemBoxProps?: PivChild
+  selectWrapperBoxProps?: PivChild<SelectableController> // does this really work🤔?
+  selectListBoxProps?: PivChild<SelectableController> // does this really work🤔?
+  selectListItemBoxProps?: ItemBoxKitProps<SelectableController> // does this really work🤔?
 }
 
 export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
@@ -62,10 +67,16 @@ export type SelectKitProps<T extends SelectableItem> = KitProps<SelectProps<T>>
  * if for layout , don't render important content in Box
  */
 export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
-  const { shadowProps, props, methods } = useKitProps(rawProps, { name: 'Select' })
+  const { shadowProps, props, methods, lazyLoadController } = useKitProps(rawProps, { name: 'Select' })
 
   const { dom: selectFaceDom, setDom: setSelectFaceDom } = createDomRef()
   const { dom: selectListDom, setDom: setSelectListDom } = createDomRef()
+
+  // controller
+  const controller = {
+    name: () => props.name ?? '',
+  } satisfies SelectableController
+  lazyLoadController(controller)
 
   // `<Select>`'s popover
   const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
@@ -114,6 +125,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
     }
   })
 
+  // handle item click
   const onItemClick = (clickController: ClickController, i: T) => {
     setItem(i)
     popoverState.close()
