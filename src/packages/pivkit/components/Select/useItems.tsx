@@ -126,9 +126,8 @@ export function useItems<T>(options?: {
     focusPrevItem,
     focusNextItem,
 
-    utils: {
-      getItemValue,
-    },
+    /** utils */
+    getItemValue,
   }
 }
 

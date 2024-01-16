@@ -82,7 +82,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
   const { plugins: popoverPlugins, state: popoverState } = buildPopover({ triggerBy: 'click', placement: 'bottom' }) // <-- run on define, not good
 
   // items manager
-  const { item, items, index, utils, setItem, focusItem, selectPrevItem, selectNextItem } = useItems<T>({
+  const { item, items, index, getItemValue, setItem, focusItem, selectPrevItem, selectNextItem } = useItems<T>({
     items: props.items,
     defaultValue: props.defaultValue,
     getItemValue: methods.getItemValue,
@@ -153,7 +153,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         {renderTriggerItem({
           item,
           index,
-          value: () => utils.getItemValue(item()),
+          value: () => getItemValue(item()),
           triggerIsOpen: popoverState.isTriggerOn,
         })}
       </Piv>
@@ -166,7 +166,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         <Loop of={items}>
           {(i, idx) => {
             const isSelected = () => i === item()
-            const itemValue = () => utils.getItemValue(i)
+            const itemValue = () => getItemValue(i)
             return (
               <ItemBox
                 shadowProps={props.selectListItemBoxProps}
