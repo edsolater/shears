@@ -20,7 +20,7 @@ import {
   bindKeyboardShortcutEventListener,
 } from '../domkit'
 import { createSharedSignal } from '../hooks/createSharedSignal'
-import { Accessify, ElementAccessors, getElementsFromAccessors } from '../utils'
+import { Accessify, ElementRefs, getElementsFromRefs } from '../utils'
 import useResizeObserver from '../hooks/useResizeObserver'
 import { option } from '@raydium-io/raydium-sdk'
 
@@ -70,7 +70,7 @@ function registerGlobalKeyboardShortcut(settings: DetailKeyboardShortcutSetting)
  * if you want regist global shortcut, please use {@link useKeyboardGlobalShortcut}
  */
 export function useKeyboardShortcut(
-  ref: ElementAccessors,
+  ref: ElementRefs,
   settings?: DetailKeyboardShortcutSetting,
   // TODO: imply this
   otherOptions?: {
@@ -88,7 +88,7 @@ export function useKeyboardShortcut(
   }
   // register keyboard shortcut
   createEffect(() => {
-    const els = getElementsFromAccessors(ref)
+    const els = getElementsFromRefs(ref)
     if (!els.length) return
     if (!isFeatureEnabled()) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
