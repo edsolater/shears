@@ -10,7 +10,7 @@ import {
   cssOpacity,
   cssVar,
   useKitProps,
-} from '../../../../packages/pivkit'
+} from '@edsolater/pivkit'
 import { usePageMatcher } from '../../../routes'
 import { Link } from '../../../components/Link'
 

@@ -1,5 +1,5 @@
 import { RouteDefinition, useLocation } from '@solidjs/router'
-import { createLazyMemo } from '../packages/pivkit'
+import { createLazyMemo } from '@edsolater/pivkit'
 import PoolsPage from './pageComponents/PoolPage'
 import FarmPage from './pageComponents/FarmPage'
 import HomePage from './pageComponents/HomePage'

@@ -5,12 +5,12 @@ import {
   Panel,
   Piv,
   Section,
-  icss_card,
-  icss_col,
-  icss_cyberpenkBackground,
-  icss_cyberpenkBackgroundGlow,
-  icss_cyberpenkBorder
-} from '../../../packages/pivkit'
+  icssCard,
+  icssCol,
+  icssCyberpenkBackground,
+  icssCyberpenkBackgroundGlow,
+  icssCyberpenkBorder
+} from '@edsolater/pivkit'
 import { TokenAmountInputBox } from '../../components/TokenAmountInput'
 import { useToken } from '../../stores/data/dataHooks/useToken'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../../stores/data/featureHooks/useSwapAmountCalculator'
@@ -55,11 +55,11 @@ export default function SwapPage() {
       <Section icss={{ display: 'grid', justifyContent: 'center' }}>
         <Panel
           icss={[
-            icss_card,
-            icss_cyberpenkBackground,
-            icss_cyberpenkBorder,
-            icss_cyberpenkBackgroundGlow,
-            icss_col({ gap: '.5em' }),
+            icssCard,
+            icssCyberpenkBackground,
+            icssCyberpenkBorder,
+            icssCyberpenkBackgroundGlow,
+            icssCol({ gap: '.5em' }),
           ]}
         >
           <TokenAmountInputBox

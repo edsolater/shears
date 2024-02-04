@@ -8,7 +8,7 @@ import {
   Box,
   Accessify,
   deAccessify,
-} from '../../packages/pivkit'
+} from '@edsolater/pivkit'
 import type { Token } from '../utils/dataStructures/Token'
 
 export interface TokenAvatarRawProps {

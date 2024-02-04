@@ -45,7 +45,7 @@ export interface ModalProps {
     | 'always' // always stay DOM
 }
 
-export type ModalKitProps = KitProps<ModalProps>
+export type ModalKitProps = KitProps<ModalProps, { controller: ModalController }>
 
 export const ModalContext = createComponentContext<Partial<ModalController>>()
 

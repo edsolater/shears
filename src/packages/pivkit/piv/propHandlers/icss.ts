@@ -97,11 +97,11 @@ export function compressICSSToObj<Controller extends ValidController | unknown =
 }
 
 function mergeICSSObject<Controller extends ValidController | unknown = unknown>(
-  ...icss_es: ICSSObject<Controller>[]
+  ...icssEs: ICSSObject<Controller>[]
 ): ICSSObject<Controller> {
   return (controller: Controller) =>
     mergeObjectsWithConfigs(
-      icss_es.map((ic) => shrinkFn(ic, [controller])),
+      icssEs.map((ic) => shrinkFn(ic, [controller])),
       ({ valueA: v1, valueB: v2 }) => v2 ?? v1,
     )
 }

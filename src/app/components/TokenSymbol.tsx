@@ -1,4 +1,4 @@
-import { KitProps, useKitProps, Text } from '../../packages/pivkit'
+import { KitProps, useKitProps, Text } from '@edsolater/pivkit'
 import type { Token } from '../utils/dataStructures/Token'
 
 export type TokenSymbolProps = {

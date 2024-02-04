@@ -18,12 +18,12 @@ import {
   createRef,
   icssLabelTitle,
   icssSubContent,
-  icss_clickable,
-  icss_cyberpenkBackground,
-  icss_cyberpenkBorder,
+  icssClickable,
+  icssCyberpenkBackground,
+  icssCyberpenkBorder,
   useElementSize,
   useKitProps,
-} from '../../packages/pivkit'
+} from '@edsolater/pivkit'
 import { PoolItemFaceDetailInfoBoard } from '../pageComponents/PoolPage'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
@@ -127,7 +127,7 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
             // onUnFavorite?.(deAccessify(props.item).ammId)
             // onStartFavorite?.(deAccessify(props.item).ammId)
           }}
-          icss={[icss_clickable, { margin: 'auto', alignSelf: 'center' }]}
+          icss={[icssClickable, { margin: 'auto', alignSelf: 'center' }]}
         />
       </Box>
 
@@ -310,8 +310,8 @@ function CyberPanel(props: PivProps) {
           flexDirection: 'column',
           flex: 1,
         },
-        icss_cyberpenkBackground,
-        icss_cyberpenkBorder({ borderRadius: '24px' }),
+        icssCyberpenkBackground,
+        icssCyberpenkBorder({ borderRadius: '24px' }),
       ]}
       shadowProps={props}
     />

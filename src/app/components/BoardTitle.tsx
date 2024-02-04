@@ -1,5 +1,5 @@
 import { createMemo } from 'solid-js'
-import { Accessify, KitProps, Text, TextRawProps, icss_title, renderHTMLDOM, useKitProps } from '../../packages/pivkit'
+import { Accessify, KitProps, Text, TextRawProps, icssTitle, renderHTMLDOM, useKitProps } from '@edsolater/pivkit'
 import { shrinkFn } from '@edsolater/fnkit'
 
 export function BoardTitle(kitProps: KitProps<Omit<TextRawProps, 'children'> & { children?: Accessify<string> }>) {
@@ -11,7 +11,7 @@ export function BoardTitle(kitProps: KitProps<Omit<TextRawProps, 'children'> & {
       htmlProps={{ id: id() }}
       render:self={(selfProps) => renderHTMLDOM('h2', selfProps)}
       shadowProps={props}
-      icss={[icss_title, { marginBottom: '16px' }]}
+      icss={[icssTitle, { marginBottom: '16px' }]}
     >
       {id()}
     </Text>

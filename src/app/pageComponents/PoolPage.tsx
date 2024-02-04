@@ -1,4 +1,4 @@
-import { Box, KitProps, Row, Text, useKitProps } from '../../packages/pivkit'
+import { Box, KitProps, Row, Text, useKitProps } from '@edsolater/pivkit'
 import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'

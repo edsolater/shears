@@ -15,12 +15,12 @@ import {
   cssCurrentColor,
   cssOpacity,
   cssVar,
-  icss_card,
-  icss_cyberpenkBackground,
-  icss_divider,
-  icss_textColor,
+  icssCard,
+  icssCyberpenkBackground,
+  icssDivider,
+  icssTextColor,
   useKitProps,
-} from '../../../../../packages/pivkit'
+} from '@edsolater/pivkit'
 import { setStore, store } from '../../../../stores/data/store'
 import { RPCEndpoint, availableRpcs } from '../../../../stores/data/RPCEndpoint'
 import { OptionItemBox } from './OptionItem'
@@ -54,7 +54,7 @@ export function RpcSettingFace(kitProps: {
       >
         RPC:({store.rpc?.url ?? 'none'})
       </OptionItemBox>
-      <Panel plugin={popoverPlugins.panel} icss={[{ width: '24rem' }, icss_card, icss_cyberpenkBackground]}>
+      <Panel plugin={popoverPlugins.panel} icss={[{ width: '24rem' }, icssCard, icssCyberpenkBackground]}>
         <RPCPanel
           currentRPC={props.currentRPC}
           availableRpcs={availableRpcs}
@@ -74,7 +74,7 @@ function RPCPanel(props: {
 }) {
   return (
     <RPCPanelBox>
-      <Loop of={props.availableRpcs} icss={icss_divider}>
+      <Loop of={props.availableRpcs} icss={icssDivider}>
         {(rpc) => (
           <RPCPanelItem
             icss={{ paddingBlock: '0.75rem' }}
@@ -160,8 +160,8 @@ function RPCPanelItem(
           <Text icss={{ whiteSpace: 'nowrap' }}>{props.rpc.name ?? '--'}</Text>
 
           <Row icss={{ gap: '.5rem' }}>
-            {props.isRecommanded && <Badge icss={icss_textColor({ color: '#5ac4be' })}>recommended</Badge>}
-            {props.isUserCustomized && <Badge icss={icss_textColor({ color: '#c4d6ff' })}>user added</Badge>}
+            {props.isRecommanded && <Badge icss={icssTextColor({ color: '#5ac4be' })}>recommended</Badge>}
+            {props.isUserCustomized && <Badge icss={icssTextColor({ color: '#c4d6ff' })}>user added</Badge>}
             {props.isCurrent && <Icon>✅</Icon>}
           </Row>
 

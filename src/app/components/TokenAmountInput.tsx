@@ -7,23 +7,23 @@ import {
   InputKitProps,
   KitProps,
   List,
-  Modal,
-  ModalController,
   Panel,
   Text,
   TextProps,
   createIncresingAccessor,
   createRef,
   createSyncSignal,
-  icss_clickable,
-  icss_cyberpenkBackground,
-  icss_frostedCard,
-  icss_inputType,
-  icss_label,
-  icss_row,
+  icssClickable,
+  icssCyberpenkBackground,
+  icssFrostedCard,
+  icssInputType,
+  icssLabel,
+  icssRow,
   plugin_modalTitle,
   useKitProps,
-} from '../../packages/pivkit'
+  Modal,
+  ModalController,
+} from '@edsolater/pivkit'
 import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
@@ -50,7 +50,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const { props, lazyLoadController } = useKitProps(rawProps, {
     defaultProps: {
       'anatomy:tokenSelectorModalContent': {
-        icss: [icss_cyberpenkBackground, icss_frostedCard],
+        icss: [icssCyberpenkBackground, icssFrostedCard],
       },
     },
     name: 'TokenAmountInputBox',
@@ -72,9 +72,9 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const [modalRef, setModalRef] = createRef<ModalController>()
 
   return (
-    <Box icss={icss_row({ gap: '8px' })}>
+    <Box icss={icssRow({ gap: '8px' })}>
       {/* show current token info */}
-      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icss_label, icss_clickable]}>
+      <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icssLabel, icssClickable]}>
         {token()?.symbol}
       </Box>
       {/* <Piv
@@ -88,7 +88,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       {/* token amount info */}
       <Input
         shadowProps={props['anatomy:amountInput']}
-        icss={icss_inputType()}
+        icss={icssInputType()}
         value={amount}
         onUserInput={(text) => {
           isStringNumber(text) ? setAmount(text) : undefined
@@ -96,7 +96,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       />
 
       {/* modal dialog */}
-      <Modal title='select token' controllerRef={setModalRef}>
+      <Modal title='select token' controllerRef={setModalRef as any}>
         <TokenSelectorModalContent
           shadowProps={props['anatomy:tokenSelectorModalContent']}
           onTokenSelect={(token) => {
@@ -144,7 +144,7 @@ function TokenSelectorModalContent_TokenItem(
   const { props } = useKitProps(rawProps)
   return (
     <Box
-      icss={[icss_row(), icss_clickable()]}
+      icss={[icssRow(), icssClickable()]}
       shadowProps={props}
       onClick={() => {
         props.onSelect?.(props.token)

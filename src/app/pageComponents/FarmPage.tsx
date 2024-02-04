@@ -6,10 +6,10 @@ import { useFarmPageStates } from '../pageStates/farmState'
 import { getToken } from '../stores/data/utils/getToken'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { add } from '../utils/dataStructures/basicMath/operations'
-import { Piv, List, CollapseBox, CollapseFace, Box } from '../../packages/pivkit'
+import { Piv, List, CollapseBox, CollapseFace, Box } from '@edsolater/pivkit'
 import { store } from '../stores/data/store'
 
-const icss_smoothBoxShadow =
+const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
 
 export default function FarmPage() {

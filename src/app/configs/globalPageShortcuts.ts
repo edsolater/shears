@@ -1,4 +1,4 @@
-import { KeybordShortcutKeys } from '../../packages/pivkit/domkit'
+import { KeybordShortcutKeys } from '@edsolater/pivkit'
 import { farmsRoutePath, homeRoutePath, pairsRoutePath, swapRoutePath } from '../routes'
 
 export const globalPageShortcuts = {

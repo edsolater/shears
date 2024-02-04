@@ -1,4 +1,4 @@
-import { KitProps, useKitProps } from '../../../packages/pivkit'
+import { KitProps, useKitProps } from '@edsolater/pivkit'
 import { useMetaTitle } from '../../hooks/useMetaTitle'
 import { AppPageLayout_LayoutBoxProps, AppPageLayout_LayoutBox } from './LayoutBox'
 import { AppPageLayout_NavBar } from './NavBar'

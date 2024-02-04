@@ -1,6 +1,4 @@
 import { MayPromise, switchCase } from '@edsolater/fnkit'
-import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
-import { createStore } from 'solid-js/store'
 import {
   AddProps,
   Box,
@@ -23,28 +21,27 @@ import {
   buildPopover,
   createAutoSizeTransitionPlugin,
   createCSSCollapsePlugin,
-  createICSS,
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
   createTransitionPlugin,
   cssOpacity,
-  cssVar,
-  icss_card,
-  icss_cardPanel,
-  icss_col,
-  icss_row,
+  icssCardPanel,
+  icssCol,
+  icssRow,
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
   useKitProps,
-} from '../../packages/pivkit'
-import { createDisclosure } from '../../packages/pivkit/hooks/createDisclosure'
+  createDisclosure,
+} from '@edsolater/pivkit'
+import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
+import { createStore } from 'solid-js/store'
+import { motivate } from '../../packages/fnkit'
+import { Select } from '@edsolater/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'
-import { Select } from '../../packages/pivkit/components/Select'
-import { motivate } from '../../packages/fnkit'
 
 export default function PlaygroundPage() {
   return (
@@ -455,9 +452,9 @@ function ListExample() {
     }, 100)
   })
   return (
-    <List items={data} initRenderCount={10} icss={[icss_col({ gap: '16px' }), { height: '30dvh' }]}>
+    <List items={data} initRenderCount={10} icss={[icssCol({ gap: '16px' }), { height: '30dvh' }]}>
       {(d, idx) => (
-        <Box icss={[icss_row, { background: '#0001', width: '100%' }]}>
+        <Box icss={[icssRow, { background: '#0001', width: '100%' }]}>
           <Text>{d.name}</Text>
           <Text>{d.count + increaseCount()}</Text>
         </Box>
@@ -513,7 +510,7 @@ function PopoverExample() {
   return (
     <>
       <Button plugin={[popoverPlugins.trigger, hoverPlugin]}>💬popover</Button>
-      <Box plugin={popoverPlugins.panel} icss={[{ border: 'solid', minHeight: '5em' }, icss_cardPanel]}>
+      <Box plugin={popoverPlugins.panel} icss={[{ border: 'solid', minHeight: '5em' }, icssCardPanel]}>
         hello world
       </Box>
     </>

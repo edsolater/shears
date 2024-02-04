@@ -1,4 +1,4 @@
-import { KitProps, useKitProps } from '../../packages/pivkit'
+import { KitProps, useKitProps } from '@edsolater/pivkit'
 
 export interface TokenAmountInputBoxController {}
 

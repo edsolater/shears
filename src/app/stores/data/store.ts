@@ -1,5 +1,5 @@
 import { createStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
-import { createSmartStore } from '../../../packages/pivkit'
+import { createSmartStore } from '@edsolater/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'

@@ -1,4 +1,4 @@
-import { Col, Grid, KitProps } from '../../../../packages/pivkit'
+import { Col, Grid, KitProps } from '@edsolater/pivkit'
 import { NavLinkItems } from './NavigationItems'
 import { OptionAdditionalItems } from './OptionAdditionalItems'
 

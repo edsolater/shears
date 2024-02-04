@@ -1,6 +1,6 @@
 import { mergeObjects } from '@edsolater/fnkit'
 import { KitProps, useKitProps } from '../../createKit'
-import { ICSSRowOption, icss_row } from '../../styles/icssRules'
+import { ICSSRowOption, icssRow } from '../../styles/icssRules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'
 
@@ -16,11 +16,11 @@ export type RowProps = {
  */
 export function Row(kitProps: KitProps<RowProps>) {
   const { shadowProps, props } = useKitProps(kitProps, { name: 'Row' })
-  const icss_option = getICSSFromProps(props)
+  const icssOption = getICSSFromProps(props)
   /* ---------------------------------- props --------------------------------- */
   return (
     <Box
-      icss={props.line ? icss_row(mergeObjects(icss_option, { align: 'center' })) : icss_row(icss_option)}
+      icss={props.line ? icssRow(mergeObjects(icssOption, { align: 'center' })) : icssRow(icssOption)}
       shadowProps={shadowProps}
     />
   )

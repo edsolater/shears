@@ -11,10 +11,10 @@ import {
   Section,
   Text,
   createControllerRef,
-  icss_clickable,
-} from '../../../../packages/pivkit'
-import { useInputController } from '../../../../packages/pivkit/components/Input/hooks/useInputController'
-import { createFormField } from '../../../../packages/pivkit/hooks/createFormField'
+  icssClickable,
+  createFormField,
+} from '@edsolater/pivkit'
+import { useInputController } from '@edsolater/pivkit'
 import { store } from '../../../stores/data/store'
 import { parseUrl } from '../../../utils/parseUrl'
 import { AppLogo } from '../../../components/AppLogo'
@@ -45,7 +45,7 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px', borderRadius: '8px' }, icss_clickable]}
+        icss={[{ padding: '8px', borderRadius: '8px' }, icssClickable]}
         // onClick={() => {
         //   appSettingsModalControllers()?.open()
         // }}

@@ -1,5 +1,5 @@
 import { createMemo } from 'solid-js'
-import { KitProps, useKitProps, addDefaultProps, createRef } from '../../packages/pivkit'
+import { KitProps, useKitProps, addDefaultProps, createRef } from '@edsolater/pivkit'
 
 interface CircularProgressRawProps {
   /** like animation run */

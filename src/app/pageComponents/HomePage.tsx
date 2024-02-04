@@ -1,4 +1,4 @@
-import { Box, Piv } from '../../packages/pivkit'
+import { Box, Piv } from '@edsolater/pivkit'
 import { Link } from '../components/Link'
 import { store } from '../stores/data/store'
 import { useWalletStore } from '../stores/wallet/store'

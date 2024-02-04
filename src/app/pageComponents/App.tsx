@@ -16,12 +16,12 @@ import {
   createIncresingAccessor,
   cssColors,
   cssVar,
-  icss_clickable,
-  icss_frostedGlass,
-  icss_textColor,
+  icssClickable,
+  icssFrostedGlass,
+  icssTextColor,
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
-} from '../../packages/pivkit'
+} from '@edsolater/pivkit'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout } from '../routes'
@@ -30,7 +30,7 @@ import { AppPageLayout } from './AppPageLayout'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
-    icss: [icss_frostedGlass, icss_textColor({ color: cssVar('--ternary') }), icss_clickable],
+    icss: [icssFrostedGlass, icssTextColor({ color: cssVar('--ternary') }), icssClickable],
   },
 }
 

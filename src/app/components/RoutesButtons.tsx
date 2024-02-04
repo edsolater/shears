@@ -1,4 +1,4 @@
-import { Box } from '../../packages/pivkit';
+import { Box } from '@edsolater/pivkit';
 import { Link } from './Link';
 
 /**
