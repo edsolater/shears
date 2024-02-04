@@ -27,7 +27,7 @@ export const icssCyberpenkBorder = createICSS(
       '-webkit-mask-composite': 'destination-out',
       maskComposite: 'exclude',
     },
-  }),
+  })
 )
 
 export const icssCyberpenkBackground = createICSS(() => ({
@@ -63,5 +63,3 @@ export const icssCyberpenkBackgroundGlow = createICSS(() => ({
     ].join(','),
   },
 }))
-
-

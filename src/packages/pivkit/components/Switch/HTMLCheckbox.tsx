@@ -2,7 +2,7 @@ import { KitProps, useKitProps } from '../../createKit'
 import { Piv } from '../../piv'
 import { renderHTMLDOM } from '../../piv/propHandlers/renderHTMLDOM'
 
-export interface HTMLCheckboxProps  {
+export interface HTMLCheckboxProps {
   label?: string
   defaultChecked?: boolean
 }

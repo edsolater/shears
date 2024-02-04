@@ -1,15 +1,12 @@
 import { flap, MayArray, MayFn, shrinkFn, switchCase } from '@edsolater/fnkit'
 import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
+import { runtimeObject } from '../fnkit/runtimeObject'
 import { addEventListener } from '../domkit'
+import { createDomRef } from '../hooks'
 import { createRef } from '../hooks/createRef'
 import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
-import { Accessify, useAccessifiedProps } from '../utils/accessifyProps'
+import { Accessify, accessifyProps } from '../utils/accessifyProps'
 import { createController2 } from '../utils/createController'
-import { runtimeObject } from '../../fnkit/runtimeObject'
-import { get } from '../../../app/utils/dataTransmit/itemMethods'
-import { parallelAsyncTasks } from '../../fnkit'
-import useResizeObserver from '../hooks/useResizeObserver'
-import { createDomRef } from '../hooks'
 
 type TransitionPhase =
   | 'hidden' /* UI unvisiable */
@@ -28,7 +25,9 @@ export interface CSSTransactionOptions {
   /** will trigger props:onBeforeEnter() if init props:show  */
   appear?: Accessify<boolean | undefined, TransitionController>
 
+  /** enterFrom + enterTo */
   enterProps?: PivProps<any, TransitionController>
+  /** leaveFrom + leaveTo */
   leaveProps?: PivProps<any, TransitionController>
 
   enterFromProps?: PivProps<any, TransitionController>
@@ -73,7 +72,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
     to: targetPhase,
     contentDom,
   }))
-  const opts = useAccessifiedProps(additionalOpts, controller)
+  const opts = accessifyProps(additionalOpts, controller)
   const [contentDom, setContentDom] = createRef<HTMLElement>()
   const transitionPhaseProps = createMemo(() => {
     const basic = {
@@ -86,25 +85,25 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
         presets.map((i) => shrinkFn(i)?.enterFromProps),
         opts.enterProps,
         opts.enterFromProps ?? opts.hideProps,
-        { style: basic },
+        { style: basic }
       ) as PivProps,
       enterTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.enterToProps),
         opts.enterProps,
         opts.enterToProps ?? opts.showProps,
-        { style: basic },
+        { style: basic }
       ) as PivProps,
       leaveFrom: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveFromProps),
         opts.leaveProps,
         opts.leaveFromProps ?? opts.showProps,
-        { style: basic },
+        { style: basic }
       ) as PivProps,
       leaveTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveToProps),
         opts.leaveProps,
         opts.leaveToProps ?? opts.hideProps,
-        { style: basic },
+        { style: basic }
       ) as PivProps,
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
@@ -120,7 +119,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
         : 'enterTo'
       : currentPhase() === 'shown'
         ? 'leaveFrom'
-        : 'leaveTo',
+        : 'leaveTo'
   )
 
   // set data-** to element for semantic
@@ -143,7 +142,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
       () => {
         setCurrentPhase(targetPhase())
       },
-      { onlyTargetIsSelf: true /* not event fired by bubbled */ },
+      { onlyTargetIsSelf: true /* not event fired by bubbled */ }
     )
     // const subscription2 = addEventListener(
     //   el,
@@ -207,8 +206,8 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
           [isBeforeLeave, () => opts.onBeforeLeave?.(status)],
         ])
       },
-      { defer: true },
-    ),
+      { defer: true }
+    )
   )
 
   const transitionProps = () => {
@@ -252,7 +251,7 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
           // if not use runtimeObject, the props will be consumed too early
           shadowProps: () => transitionProps(),
           domRef: () => setDom,
-        }),
+        })
     ),
     el: dom,
     controller,

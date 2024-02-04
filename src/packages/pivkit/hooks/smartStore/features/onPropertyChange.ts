@@ -19,7 +19,7 @@ export type StoreCallbackRegisterer_OnPropertyChange<T extends Record<string, an
 }
 
 export function createSmartStore_onPropertyChange<T extends Record<string, any>>(
-  options?: CreateSmartStoreOptions_BasicOptions<T> & CreateSmartStoreOptions_OnPropertyChange<T>,
+  options?: CreateSmartStoreOptions_BasicOptions<T> & CreateSmartStoreOptions_OnPropertyChange<T>
 ) {
   const keyedCallbackStore = createCallbacksStoreWithKeys<keyof T, OnChangeCallback<T>>({
     initCallbacks: options?.onPropertyChange,

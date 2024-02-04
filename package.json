@@ -62,6 +62,7 @@
     "bs58": "^5.0.0",
     "buffer": "^6.0.3",
     "decimal.js": "^10.4.3",
+    "goober": "^2.1.14",
     "immer": "^10.0.3",
     "solid-js": "^1.8.8",
     "solid-styled-components": "^0.28.5"

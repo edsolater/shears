@@ -25,7 +25,7 @@ export type CreateSmartStoreOptions<T extends Record<string, any>> = CreateSmart
   CreateSmartStoreOptions_OnStoreInit<T>
 
 export type SmartSetStore<T extends Record<string, any>> = (
-  dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>,
+  dispatch: ((prevStore?: T) => Partial<T>) | Partial<T>
 ) => void
 
 export type SmartStore<T extends Record<string, any>> = {
@@ -59,7 +59,7 @@ export type SmartStore<T extends Record<string, any>> = {
  */
 export function createSmartStore<T extends Record<string, any>>(
   defaultValue: T | Accessor<T>,
-  options?: CreateSmartStoreOptions<T>,
+  options?: CreateSmartStoreOptions<T>
 ): SmartStore<T> {
   const de = shrinkFn(defaultValue)
   const [rawStore, rawSetStore] = createStore<T>(de)
@@ -141,7 +141,7 @@ export function createSmartStore<T extends Record<string, any>>(
             propertyName = p as string
             return Reflect.get(target, p, receiver)
           },
-        }),
+        })
       )
       const newValue = isFunction(dispatcher) ? dispatcher(prevValue) : dispatcher
       if (propertyName) {

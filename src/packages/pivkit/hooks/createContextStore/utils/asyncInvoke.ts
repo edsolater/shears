@@ -19,7 +19,7 @@ export async function asyncInvoke<T>(
      * by default, it is the function itself
      */
     key?: unknown
-  },
+  }
 ): Promise<T> {
   const key = options?.key ?? fn
   queueTask.set(key, fn)

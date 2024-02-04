@@ -7,6 +7,7 @@ import { LabelKitProps } from '../Label'
 import { LabelBox } from '../LabelBox'
 import { HTMLCheckbox, HTMLCheckboxProps } from './HTMLCheckbox'
 import { useSwitchStyle } from './hooks/useSwitchStyle'
+import { Box } from '../Boxes'
 
 export interface SwitchController {
   isChecked: Accessor<boolean>
@@ -72,7 +73,8 @@ export function Switch(rawProps: SwitchProps) {
   lazyLoadController(switchController)
 
   return (
-    <LabelBox
+    <Box
+      debugLog={['icss']}
       innerController={switchController}
       shadowProps={[wrapperLabelStyleProps, shadowProps, props['anatomy:ContainerBox']]}
     >
@@ -108,6 +110,6 @@ export function Switch(rawProps: SwitchProps) {
         //   )
         // }}
       />
-    </LabelBox>
+    </Box>
   )
 }

@@ -115,7 +115,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         keyboardShortcut: 'ArrowDown',
       },
     },
-    { enabled: popoverState.isTriggerOn },
+    { enabled: popoverState.isTriggerOn }
   )
 
   // auto focus when open
@@ -200,7 +200,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
 
 function buildRenderFunction<T extends SelectableItem>(
   methods: AddDefaultPivProps<SelectKitProps<T>, {}>,
-  props: DeKitProps<SelectKitProps<T>>,
+  props: DeKitProps<SelectKitProps<T>>
 ) {
   const renderItem = methods.renderItem ?? (({ value }) => <>{value()}</>)
   const renderTriggerItem =

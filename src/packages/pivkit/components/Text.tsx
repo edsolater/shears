@@ -29,7 +29,7 @@ export function Text(kitProps: TextProps) {
           ? 'plaintext-only'
           : 'true'
         : 'false'
-      : undefined,
+      : undefined
   )
 
   return (
@@ -47,4 +47,3 @@ export function Text(kitProps: TextProps) {
     </Piv>
   )
 }
-

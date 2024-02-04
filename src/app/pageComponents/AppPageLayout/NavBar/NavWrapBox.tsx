@@ -1,5 +1,4 @@
 import { KitProps, Piv, renderHTMLDOM, useKitProps } from '@edsolater/pivkit'
-import { useMetaTitle } from '../../../hooks/useMetaTitle'
 
 export interface NaBar_NavWrapBoxProps {}
 

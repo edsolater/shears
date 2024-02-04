@@ -60,13 +60,13 @@ export const transitionFromAutoSizePlugin = createPlugin(
             flap(presets).map((i) => shrinkFn(i)?.fromProps), // not readable
             progressProps,
             fromProps,
-            { style: baseTransitionICSS } as PivProps,
+            { style: baseTransitionICSS } as PivProps
           ),
           to: mergeProps(
             flap(presets).map((i) => shrinkFn(i)?.toProps), // not readable
             progressProps,
             toProps,
-            { style: baseTransitionICSS } as PivProps,
+            { style: baseTransitionICSS } as PivProps
           ),
         } as Record<'from' | 'to', PivProps>
       })
@@ -107,9 +107,9 @@ export const transitionFromAutoSizePlugin = createPlugin(
             dom()?.clientHeight // force GPU render frame
             onBeforeTransition?.(payload)
           }
-        }),
+        })
       )
 
       return createMemo(() => transitionPhaseProps()[currentPhase() === 'before-going' ? 'from' : 'to'])
-    },
+    }
 )

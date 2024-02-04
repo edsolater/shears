@@ -13,12 +13,11 @@ export const pluginCoreSymbol = Symbol('pluginCore')
 export function handlePluginProps<P extends AnyObj>(
   props: P,
   getPlugin: (props: PivProps) => PivProps['plugin'] = (props) => props.plugin,
-  checkHasPluginProps: (props: PivProps) => boolean = (props) => hasProperty(props, 'plugin'),
+  checkHasPluginProps: (props: PivProps) => boolean = (props) => hasProperty(props, 'plugin')
 ) {
   if (!props) return props
   if (!checkHasPluginProps(props)) return props
   const plugin = getPlugin(props)
-  console.log('plugin: ', plugin)
   if (!plugin) return omit(props, 'plugin')
   return getMergePluginReturnedProps(sortPluginByPriority(flap(plugin)), props)
 }
@@ -32,7 +31,7 @@ function sortPluginByPriority(plugins: Plugin<any>[]) {
 
   // judge whether need sort
   let needSort = false
-  let firstPriority = getPluginPriority(plugins[0])
+  let firstPriority = getPluginPriority(plugins[0]!)
   for (const plugin of plugins) {
     if (getPluginPriority(plugin) !== firstPriority) {
       needSort = true
@@ -51,11 +50,11 @@ function sortPluginByPriority(plugins: Plugin<any>[]) {
 
 function getMergePluginReturnedProps<T extends AnyObj>(
   plugins: MayArray<Plugin<T> | undefined>,
-  props: T & PivProps,
+  props: T & PivProps
 ): Omit<T & PivProps, 'plugin'> {
   return omit(
     plugins ? shakeNil(flap(plugins)).reduce((acc, plugin) => invokePlugin(plugin, acc), props) : props,
-    'plugin',
+    'plugin'
   )
 }
 

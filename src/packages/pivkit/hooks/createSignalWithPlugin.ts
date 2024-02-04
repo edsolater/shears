@@ -25,7 +25,7 @@ export function createSignalWithPlugin<V>(defaultValue: V | (() => V), options?:
   }
   const wrappedDefaultSignalValue = defaultSignalValueWrappers.reduce(
     (acc, wrapper) => wrapper(acc),
-    () => defaultValue,
+    () => defaultValue
   )
   const [get, set] = createSignal<V>(shrinkFn(wrappedDefaultSignalValue()))
   const wrappedGet = getWrappers.reduce((acc, wrapper) => wrapper(acc), get)

@@ -1,12 +1,13 @@
-import { isStringNumber } from '@edsolater/fnkit'
+import { Numberish, isStringNumber } from '@edsolater/fnkit'
 import {
-  Accessify,
   Box,
   BoxProps,
   Input,
   InputKitProps,
   KitProps,
   List,
+  Modal,
+  ModalController,
   Panel,
   Text,
   TextProps,
@@ -20,14 +21,11 @@ import {
   icssLabel,
   icssRow,
   plugin_modalTitle,
-  useKitProps,
-  Modal,
-  ModalController,
+  useKitProps
 } from '@edsolater/pivkit'
 import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { Numberish } from '@edsolater/fnkit'
 import { slice } from '../utils/dataTransmit/itemMethods'
 import { TokenAvatar } from './TokenAvatar'
 

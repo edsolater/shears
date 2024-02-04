@@ -87,15 +87,15 @@ export const calcPopupPanelLocation = ({
     theoreticallyPanelBottom > customizedViewportBottom
       ? customizedViewportBottom - theoreticallyPanelBottom
       : offsetRectPanelTop < customizedViewportTop
-      ? customizedViewportTop - offsetRectPanelTop
-      : 0
+        ? customizedViewportTop - offsetRectPanelTop
+        : 0
 
   const idealPanelOffsetX =
     theoreticallyPanelRight > customizedViewportRight
       ? customizedViewportRight - theoreticallyPanelRight
       : offsetRectPanelLeft < customizedViewportLeft
-      ? customizedViewportLeft - offsetRectPanelLeft
-      : 0
+        ? customizedViewportLeft - offsetRectPanelLeft
+        : 0
 
   const panelLeft = offsetRectPanelLeft + idealPanelOffsetX
   const panelTop = offsetRectPanelTop + idealPanelOffsetY

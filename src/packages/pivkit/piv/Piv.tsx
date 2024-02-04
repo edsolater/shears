@@ -58,7 +58,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
         target: Element
       }
       el: HTMLElement
-    } & Controller,
+    } & Controller
   ) => void // for accessifyProps, "merge:onClick" can't be array
 
   /**
@@ -151,7 +151,7 @@ export const pivPropsNames = [
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController>(
-  kitProps: PivProps<TagName, Controller>,
+  kitProps: PivProps<TagName, Controller>
 ) => {
   // 📝 render:outWrapper may in showProps or plugin. so need to handle it first
   const props = pipe(kitProps, handleShadowProps, handlePluginProps, handleShadowProps)
@@ -168,6 +168,6 @@ function handlePropRenderOutWrapper(props: PivProps<any, any>): JSXElement {
   return flap(props['render:outWrapper']).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
     // @ts-expect-error force
-    (() => handleNormalPivProps(omit(props, 'render:outWrapper'))) as JSXElement, // 📝 wrap function to let not solidjs read at once when array.prototype.reduce not finish yet
+    (() => handleNormalPivProps(omit(props, 'render:outWrapper'))) as JSXElement // 📝 wrap function to let not solidjs read at once when array.prototype.reduce not finish yet
   )
 }

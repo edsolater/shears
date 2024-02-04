@@ -14,13 +14,13 @@ export function loadPropsControllerRef<Controller extends ValidController | unkn
 
 export function parsePivChildren<
   P extends unknown | ((controller: Controller) => unknown),
-  Controller extends ValidController | unknown
+  Controller extends ValidController | unknown,
 >(originalChildren: P, controller: Controller = {} as Controller): JSXElement {
   return isArray(originalChildren)
     ? originalChildren.map((i) => parsePivChildren(i, controller))
     : isNormalControllerChildren(originalChildren)
-    ? originalChildren(controller)
-    : originalChildren
+      ? originalChildren(controller)
+      : originalChildren
 }
 
 /**

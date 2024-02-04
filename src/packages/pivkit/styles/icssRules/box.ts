@@ -42,7 +42,7 @@ export const icssRow = createICSS(
     justifyContent,
     gap,
     '> *': childItems ? { flex: childItems } : undefined,
-  }),
+  })
 )
 
 export type ICSSColOption = {
@@ -79,7 +79,7 @@ export const icssCol = createICSS(
     justifyContent,
     gap,
     '> *': childItems ? { flex: childItems } : undefined,
-  }),
+  })
 )
 
 //#region ------------------- grid -------------------

@@ -30,7 +30,7 @@ export function Loop<T>(kitProps: LoopKitProps<T>) {
   const [loopRef, setRef] = createRef<HTMLElement>()
 
   return (
-    <Piv class='Loop' domRef={setRef} shadowProps={props}>
+    <Piv  domRef={setRef} shadowProps={props}>
       <For each={allItems()}>{(item, idx) => parsePivChildren(props.children(item, idx))}</For>
     </Piv>
   )

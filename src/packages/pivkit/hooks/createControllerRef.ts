@@ -2,7 +2,7 @@ import { createEffect, createSignal, on } from 'solid-js'
 import { createSmartStore } from './createContextStore'
 
 /**
- * faster for using controller 
+ * faster for using controller
  * @returns a object with proxy
  */
 export function createControllerRef<T extends Record<string, any> = Record<string, any>>(): [
@@ -16,7 +16,7 @@ export function createControllerRef<T extends Record<string, any> = Record<strin
       if (controllerRef) {
         setStore(controllerRef)
       }
-    }),
+    })
   )
   return [controller, setRef]
 }

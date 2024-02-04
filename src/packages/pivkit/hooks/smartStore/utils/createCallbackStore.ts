@@ -65,7 +65,7 @@ export function createCallbacksStoreWithKeys<Key extends keyof any, Callback ext
           Object.entries(options.initCallbacks).map(([k, mcb]) => [
             k as Key,
             createCallbacksStore({ initCallbacks: mcb as MayArray<Callback | undefined> }),
-          ]),
+          ])
         )
       : new Map()
   ) as Map<Key, CallbackStore<Callback>>

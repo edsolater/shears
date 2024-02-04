@@ -16,7 +16,7 @@ export type StoreCallbackRegisterer_OnStoreInit<T extends Record<string, any>> =
 }
 
 export function createSmartStore_onStoreInit<T extends Record<string, any>>(
-  options?: CreateSmartStoreOptions_BasicOptions<T> & CreateSmartStoreOptions_OnStoreInit<T>,
+  options?: CreateSmartStoreOptions_BasicOptions<T> & CreateSmartStoreOptions_OnStoreInit<T>
 ) {
   const callbackStore = createCallbacksStore<OnStoreInitCallback<T>>({
     initCallbacks: options?.onStoreInit,

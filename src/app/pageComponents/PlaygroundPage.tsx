@@ -14,6 +14,7 @@ import {
   PluginObj,
   Radio,
   RenderFactory,
+  Select,
   Switch,
   Tabs,
   Text,
@@ -21,6 +22,7 @@ import {
   buildPopover,
   createAutoSizeTransitionPlugin,
   createCSSCollapsePlugin,
+  createDisclosure,
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
@@ -33,12 +35,10 @@ import {
   useControllerByID,
   useHoverPlugin,
   useKitProps,
-  createDisclosure,
 } from '@edsolater/pivkit'
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { motivate } from '../../packages/fnkit'
-import { Select } from '@edsolater/pivkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
 import { useLoopPercent } from '../hooks/useLoopPercent'

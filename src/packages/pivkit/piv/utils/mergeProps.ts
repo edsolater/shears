@@ -58,7 +58,7 @@ export function mergeProps<P extends ValidProps | undefined>(...propsObjs: P[]):
           return getPivPropsValue(props, key)
         },
       }),
-    },
+    }
   ) as any
 }
 

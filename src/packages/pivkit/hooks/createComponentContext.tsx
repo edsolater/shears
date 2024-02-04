@@ -23,7 +23,9 @@ export function createComponentContext<O extends AnyObj>(): ComponentContext<O> 
   const BuildInContext = createContext<{ store: O; set: SetStoreFunction<O> }>({ store: {} as O, set: () => {} })
   const BuildInContextProvider = BuildInContext.Provider
   const ContextProvider = (props: { value: O; children?: JSXElement }) => {
-    const [contextValue, setContextValue] = createStore(untrack(() => ({ ...props.value }))/* it value without symbol(solid-proxy) */)
+    const [contextValue, setContextValue] = createStore(
+      untrack(() => ({ ...props.value })) /* it value without symbol(solid-proxy) */
+    )
     return (
       <BuildInContextProvider value={{ store: contextValue, set: setContextValue }}>
         {props.children}
@@ -39,7 +41,7 @@ export function createComponentContext<O extends AnyObj>(): ComponentContext<O> 
  * {@link useContext} with set() method
  */
 export function useComponentContext<O extends AnyObj>(
-  context: ComponentContext<O>,
+  context: ComponentContext<O>
 ): [contextValue: O, setContext: ComponentContextSetter<O>] {
   const { store: contextValue, set: setContext } = useContext(context)
   return [contextValue, setContext]

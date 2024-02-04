@@ -1,6 +1,6 @@
 import { MayArray, flapDeep, shakeNil, shrinkFn } from '@edsolater/fnkit'
 import { JSX } from 'solid-js'
-import { objectMerge } from '../../../fnkit'
+import { objectMerge } from '../../fnkit'
 import { LoadController, ValidController } from '../typeTools'
 
 export type IStyle<Controller extends ValidController = ValidController> = MayArray<
@@ -9,7 +9,7 @@ export type IStyle<Controller extends ValidController = ValidController> = MayAr
 
 export function parseIStyles<Controller extends ValidController = ValidController>(
   styles: IStyle,
-  controller: Controller = {} as Controller,
+  controller: Controller = {} as Controller
 ): JSX.HTMLAttributes<any>['style'] | undefined {
   if (!styles) return undefined
   // @ts-expect-error no need to check

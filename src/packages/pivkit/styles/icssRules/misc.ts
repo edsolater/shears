@@ -24,8 +24,8 @@ export const icssTextColor = createICSS((options?: { color?: string | string[] }
     },
     options && isArray(options?.color)
       ? mergeObjects(...options!.color.map((c, idx) => ({ [`--color-${idx}`]: c })))
-      : undefined,
-  ),
+      : undefined
+  )
 )
 
 export const icssCardPanel = createICSS(
@@ -41,5 +41,5 @@ export const icssCardPanel = createICSS(
         '--px': '1em',
       },
     },
-  },
+  }
 )

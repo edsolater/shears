@@ -33,7 +33,7 @@ export function createGlobalHook<Fn extends (...args: any[]) => any>(
     }
   }
 
-  return <Fn>((...args) => {
+  return ((...args) => {
     subscribers += 1
     if (!state) {
       createRoot((_disposer) => {
@@ -43,7 +43,7 @@ export function createGlobalHook<Fn extends (...args: any[]) => any>(
     }
     tryOnCleanup(dispose)
     return state
-  })
+  }) as Fn
 }
 
 export function createCachedGlobalHook<Fn extends (...args: any[]) => any>(composable: Fn): Fn {
