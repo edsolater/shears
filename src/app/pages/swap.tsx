@@ -11,20 +11,20 @@ import {
   icssCyberpenkBackgroundGlow,
   icssCyberpenkBorder
 } from '@edsolater/pivkit'
-import { TokenAmountInputBox } from '../../components/TokenAmountInput'
-import { useToken } from '../../stores/data/dataHooks/useToken'
-import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../../stores/data/featureHooks/useSwapAmountCalculator'
-import { txSwap_main } from '../../stores/data/portActions/txSwap_main'
+import { TokenAmountInputBox } from '../components/TokenAmountInput'
+import { useToken } from '../stores/data/dataHooks/useToken'
+import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
+import { txSwap_main } from '../stores/data/portActions/txSwap_main'
 import {
   createStorePropertySetter,
   createStorePropertySignal,
   setStore,
   store
-} from '../../stores/data/store'
-import { useWalletOwner } from '../../stores/wallet/store'
-import { Token } from '../../utils/dataStructures/Token'
-import { notZero } from '../../utils/dataStructures/basicMath/compare'
-import { toString } from '../../utils/dataStructures/basicMath/format'
+} from '../stores/data/store'
+import { useWalletOwner } from '../stores/wallet/store'
+import { Token } from '../utils/dataStructures/Token'
+import { notZero } from '../utils/dataStructures/basicMath/compare'
+import { toString } from '../utils/dataStructures/basicMath/format'
 
 export default function SwapPage() {
   const owner = useWalletOwner()
