@@ -6,12 +6,12 @@ import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
 import { slice, toArray, toRecord } from '../../../utils/dataTransmit/itemMethods'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
-import { FarmSYNInfo } from '../types/farm'
+import { FarmInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
 import { fetchLiquidityJson } from './fetchLiquidityJson'
 import { fetchPairJsonInfo } from './fetchPairJson'
 
-export type ComposedFarmSYNInfos = Record<string, FarmSYNInfo> | undefined
+export type ComposedFarmSYNInfos = Record<string, FarmInfo> | undefined
 export type ComposeFarmSYNInfoQuery = {
   owner?: string
   rpcUrl: string
@@ -77,7 +77,7 @@ function hydrateFarmSYN({
         '24h': pairJson.apr24h,
         '30d': pairJson.apr30d,
         '7d': pairJson.apr7d,
-      } as FarmSYNInfo['rewards'][number]['apr'])
+      } as FarmInfo['rewards'][number]['apr'])
     return {
       hasLoad: [farmSDK ? 'sdk' : undefined, farmSDK?.ledger ? 'ledger' : undefined, 'api'],
 
@@ -110,9 +110,9 @@ function hydrateFarmSYN({
           perSecond: rewardJson.rewardPerSecond,
           openTime: rewardJson.rewardOpenTime && new Date(rewardJson.rewardOpenTime * 1000),
           endTime: rewardJson.rewardEndTime && new Date(rewardJson.rewardEndTime * 1000),
-        } as FarmSYNInfo['rewards'][number]
+        } as FarmInfo['rewards'][number]
       }),
-    } as FarmSYNInfo
+    } as FarmInfo
   })
 
   const indexAccessList = slice(

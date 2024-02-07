@@ -58,8 +58,8 @@ export interface FarmJSONFile {
   ecosystem: Omit<FarmJSON, 'category'>[]
 }
 
-export interface FarmSYNInfo {
-  hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load state
+export interface FarmInfo {
+  hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load progress
   base: Mint
   quote: Mint
   lp: Mint
@@ -148,6 +148,6 @@ export interface FarmSYNInfo {
 export interface FarmStore {
   readonly farmJsonInfos?: FarmJSON[]
   readonly isFarmJsonLoading?: boolean
-  readonly farmInfos?: FarmSYNInfo[]
+  readonly farmInfos?: FarmInfo[]
   readonly isFarmInfosLoading?: boolean
 }

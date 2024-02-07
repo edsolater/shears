@@ -9,7 +9,7 @@ import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
-import { FarmJSON, FarmSYNInfo } from './types/farm'
+import { FarmJSON, FarmInfo } from './types/farm'
 import { PairInfo } from './types/pairs'
 
 export type StoreData = {
@@ -24,7 +24,7 @@ export type StoreData = {
   farmLoadCount?: number // not good, should change automaticly. change this will start loading farm related info
   farmJsonInfos?: Record<FarmJSON['id'], FarmJSON>
   isFarmJsonLoading?: boolean
-  farmInfos?: Record<FarmSYNInfo['id'], FarmSYNInfo>
+  farmInfos?: Record<FarmInfo['id'], FarmInfo>
   isFarmInfosLoading?: boolean
 
   // -------- pairs --------
@@ -44,6 +44,9 @@ export type StoreData = {
 
   // -------- app setting --------
   rpc?: RPCEndpoint
+
+  // -------- clmm --------
+  clmmInfos?: Record<string, any>
 }
 
 export const {
