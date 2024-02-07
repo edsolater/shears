@@ -1,13 +1,38 @@
-import { For, Show } from 'solid-js'
+import { find } from '@edsolater/fnkit'
+import { Box, CollapseBox, CollapseFace, List, Piv, createCachedGlobalHook } from '@edsolater/pivkit'
+import { For, Setter, Show, createMemo, createSignal } from 'solid-js'
 import { TokenAvatar } from '../components/TokenAvatar'
 import { TokenAvatarPair } from '../components/TokenAvatarPair'
-import { AppPageLayout_NavBar } from '../pageComponents/AppPageLayout/NavBar'
-import { useFarmPageStates } from '../pageStates/farmState'
+import { store } from '../stores/data/store'
+import { FarmJSON } from '../stores/data/types/farm'
 import { getToken } from '../stores/data/utils/getToken'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { add } from '../utils/dataStructures/basicMath/operations'
-import { Piv, List, CollapseBox, CollapseFace, Box } from '@edsolater/pivkit'
-import { store } from '../stores/data/store'
+
+export interface FarmPageStates {
+  // setters
+  setDetailViewFarmId: Setter<string | undefined>
+
+  readonly detailViewFarmId: string | undefined
+  readonly detailViewFarmJsonInfo: FarmJSON | undefined
+}
+
+export const useFarmPageStates = createCachedGlobalHook(() => {
+  const farmJsonInfos = store.farmJsonInfos
+  const [detailViewFarmId, setDetailViewFarmId] = createSignal<string>()
+  const detailViewFarmJsonInfo = createMemo(() => find(farmJsonInfos, (info) => info.id === detailViewFarmId()))
+  const states: FarmPageStates = {
+    // setters
+    setDetailViewFarmId,
+    get detailViewFarmId() {
+      return detailViewFarmId()
+    },
+    get detailViewFarmJsonInfo() {
+      return detailViewFarmJsonInfo()
+    },
+  }
+  return states
+})
 
 const icssSmoothBoxShadow =
   '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
