@@ -24,7 +24,7 @@ import {
   useElementSize,
   useKitProps,
 } from '@edsolater/pivkit'
-import { PoolItemFaceDetailInfoBoard } from '../pageComponents/PoolPage'
+import { PoolItemFaceDetailInfoBoard } from '../pages/PoolPage'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { BoardTitle } from './BoardTitle'

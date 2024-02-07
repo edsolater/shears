@@ -77,7 +77,6 @@ function useElementSizeDetector() {
     if (!isClientSide()) return
 
     if (!('clientWidth' in el)) return
-    console.log('el: ', el)
     // setInnerWidth(el.clientWidth) //FIXME: why set is will cause error?🤔
 
     if (!('clientHeight' in el)) return

@@ -26,7 +26,7 @@ import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
 import { needAppPageLayout } from '../routes'
 import { store } from '../stores/data/store'
-import { AppPageLayout } from './AppPageLayout'
+import { AppPageLayout } from '../pageComponents/AppPageLayout'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {

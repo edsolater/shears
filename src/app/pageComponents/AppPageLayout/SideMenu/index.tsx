@@ -1,5 +1,5 @@
 import { Col, Grid, KitProps } from '@edsolater/pivkit'
-import { NavLinkItems } from './NavigationItems'
+import { NavRouteItems } from './NavigationItems'
 import { OptionAdditionalItems } from './OptionAdditionalItems'
 
 /**
@@ -24,7 +24,7 @@ export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
             height: '100%',
           }}
         >
-          <NavLinkItems />
+          <NavRouteItems />
 
           <OptionAdditionalItems />
 

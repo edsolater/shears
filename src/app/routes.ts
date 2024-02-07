@@ -1,16 +1,20 @@
 import { RouteDefinition, useLocation } from '@solidjs/router'
 import { createLazyMemo } from '@edsolater/pivkit'
-import PoolsPage from './pageComponents/PoolPage'
-import FarmPage from './pageComponents/FarmPage'
-import HomePage from './pageComponents/HomePage'
-import PlaygroundPage from './pageComponents/PlaygroundPage'
+import PoolsPage from './pages/PoolPage'
+import FarmPage from './pages/FarmPage'
+import HomePage from './pages/HomePage'
+import PlaygroundPage from './pages/PlaygroundPage'
 import SwapPage from './pageComponents/SwapPage'
+import ClmmsPage from './pages/Clmm'
+import { JSX } from 'solid-js'
+import { Optional } from '@edsolater/fnkit'
 
 export const pairsRoutePath = '/pools'
 export const homeRoutePath = '/'
 export const farmsRoutePath = '/farms'
 export const playgroundRoutePath = '/playground'
 export const swapRoutePath = '/swap'
+export const clmmPath = '/clmm'
 
 export const routePath = {
   pools: pairsRoutePath,
@@ -18,20 +22,52 @@ export const routePath = {
   farms: farmsRoutePath,
   playground: playgroundRoutePath,
   swap: swapRoutePath,
+  clmm: clmmPath,
 }
 
 export const needAppPageLayout = {
   [routePath.swap]: true,
   [routePath.pools]: true,
   [routePath.farms]: true,
+  [routePath.clmm]: true,
 }
 export const routes = [
-  { path: routePath.home, component: HomePage },
-  { path: routePath.swap, component: SwapPage },
-  { path: routePath.pools, component: PoolsPage },
-  { path: routePath.farms, component: FarmPage },
-  { path: routePath.playground, component: PlaygroundPage },
+  createRouteItem({
+    visiable: false,
+    name: 'home',
+    path: routePath.home,
+    component: HomePage,
+    icon: '/icons/entry-icon-swap.svg',
+  }),
+  createRouteItem({ name: 'swap', path: routePath.swap, component: SwapPage, icon: '/icons/entry-icon-swap.svg' }),
+  createRouteItem({ name: 'pools', path: routePath.pools, component: PoolsPage, icon: '/icons/entry-icon-pools.svg' }),
+  createRouteItem({ name: 'farms', path: routePath.farms, component: FarmPage, icon: '/icons/entry-icon-farms.svg' }),
+  createRouteItem({
+    name: 'playground',
+    path: routePath.playground,
+    component: PlaygroundPage,
+    icon: '/icons/entry-icon-swap.svg',
+  }),
+  createRouteItem({ name: 'clmm', path: routePath.clmm, component: ClmmsPage, icon: '/icons/entry-icon-swap.svg' }),
 ]
+
+type RouteItem = {
+  name: string
+  path: string
+  component: () => JSX.Element
+  icon: string
+  visiable: boolean
+}
+
+function createRouteItem(options: Optional<RouteItem, 'icon' | 'visiable'>): RouteItem {
+  return {
+    name: options.name,
+    path: options.path,
+    component: options.component,
+    icon: options.icon ?? '',
+    visiable: Boolean(options.visiable ?? true),
+  }
+}
 
 /** usually used in side-menu  */
 export function usePageMatcher() {
@@ -42,6 +78,9 @@ export function usePageMatcher() {
     },
     get isSwapPage() {
       return createLazyMemo(() => location.pathname === routePath.swap)
+    },
+    get isClmmPage() {
+      return createLazyMemo(() => location.pathname === routePath.clmm)
     },
     get isPairsPage() {
       return createLazyMemo(() => location.pathname === routePath.pools)
