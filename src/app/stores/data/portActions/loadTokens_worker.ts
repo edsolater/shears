@@ -4,7 +4,7 @@ import { MessagePortTransformers } from '../../../utils/webworker/createMessageP
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
 
-export function loadTokens_worker(transformers: MessagePortTransformers) {
+export function loadTokensInWorker(transformers: MessagePortTransformers) {
   const { receiver, sender } = transformers.getMessagePort('fetch raydium supported tokens')
   console.log('[👾worker  🚪port] registered load token')
   receiver.subscribe((options) => {

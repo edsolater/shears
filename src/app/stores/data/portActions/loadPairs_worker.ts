@@ -1,7 +1,7 @@
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
 import { fetchPairJsonInfo } from '../utils/fetchPairJson'
 
-export function loadPairs_worker({ getMessagePort }: MessagePortTransformers) {
+export function loadPairsInWorker({ getMessagePort }: MessagePortTransformers) {
   const { receiver, sender } = getMessagePort('fetch raydium pairs info')
   console.info('loadPairs_worker')
   receiver.subscribe(() => {

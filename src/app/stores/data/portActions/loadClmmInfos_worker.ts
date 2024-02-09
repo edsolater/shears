@@ -1,11 +1,12 @@
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
-import { fetchPairJsonInfo } from '../utils/fetchPairJson'
+import { workerCommands } from '../../../utils/webworker/type'
+import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
 
-export function loadClmmInfos_worker({ getMessagePort }: MessagePortTransformers) {
-  const { receiver, sender } = getMessagePort('fetch raydium Clmm info')
-  console.info('loadClmmInfos_worker')
+export function loadClmmInfosInWorker({ getMessagePort }: MessagePortTransformers) {
+  const { receiver, sender } = getMessagePort(workerCommands['fetch raydium Clmm info'])
+  console.info('[worker] load CLMM API Infos')
   receiver.subscribe(() => {
     console.log('[worker] start fetch pairs info')
-    fetchPairJsonInfo().then(sender.query)
+    fetchClmmJsonInfo().then(sender.query)
   })
 }

@@ -5,7 +5,7 @@ import { workerCommands } from '../../../utils/webworker/type'
 
 let storedCleanUpFunction: AnyFn | undefined = undefined
 
-export function loadFarmSYNInfos_worker({ getMessagePort }: MessagePortTransformers) {
+export function loadFarmSYNInfosInWorker({ getMessagePort }: MessagePortTransformers) {
   const { receiver, sender } = getMessagePort<ComposeFarmSYNInfoQuery, ComposedFarmSYNInfos>(
     workerCommands['get raydium farms syn infos'],
   )

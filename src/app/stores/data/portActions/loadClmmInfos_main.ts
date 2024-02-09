@@ -1,23 +1,22 @@
-import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
+import { useMessagePort } from '../../../utils/webworker/messagePort'
+import { workerCommands } from '../../../utils/webworker/type'
 import { setStore } from '../store'
+import type { ClmmJSON } from '../types/clmm'
+
+type QueryParams = { force?: boolean }
+type ReceiveData = ClmmJSON[]
 
 export function loadClmmInfos() {
-  console.log('[main] start loading Clmm infos')
-  setStore({ isPairInfoLoading: true })
-  const { sender, receiver } = getMessagePort('fetch raydium Clmm infos')
-  sender.query({ force: false })
-  receiver.subscribe((allPairJsonInfos) => {
-    setStore({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 150) })
-    let count = 0
-    const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
-    const timeoutId = setInterval(() => {
-      const newPairs = clonedAllPairJsonInfos?.slice(0, 150).map((i) => ({ ...i, name: i.name + count }))
-      if (newPairs) {
-        console.log('get pools count', clonedAllPairJsonInfos.length)
-        setStore({ isPairInfoLoading: false, pairInfos: newPairs })
-      }
-      count++
-    }, 4000)
-    return () => clearInterval(timeoutId)
+  console.log('start')
+  useMessagePort<QueryParams, ReceiveData>({
+    command: workerCommands['fetch raydium Clmm info'],
+    queryPayload: { force: false },
+    onBeforeSend() {
+      console.log('[main] start loading Clmm infos')
+      setStore({ isClmmJsonInfoLoading: true })
+    },
+    onReceive(jsonInfos) {
+      setStore({ isClmmJsonInfoLoading: false, clmmJsonInfos: jsonInfos })
+    },
   })
 }

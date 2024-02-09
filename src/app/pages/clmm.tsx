@@ -3,14 +3,15 @@ import { DatabaseTable } from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
+import { createEffect } from 'solid-js'
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceDetailInfoBoard' })
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
   return <Text shadowProps={shadowProps}>{props.value || '--'}</Text>
 }
 
 export function ClmmItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInfo }>) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceTokenAvatarLabel' })
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceTokenAvatarLabel' })
   return (
     <Box>
       <Token />
@@ -19,7 +20,10 @@ export function ClmmItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInf
 }
 
 export default function ClmmsPage() {
-  const pairInfos = createStorePropertySignal((s) => s.pairInfos)
+  const clmmJsonInfos = createStorePropertySignal((s) => s.clmmJsonInfos)
+  createEffect(() => {
+    console.log('🧪🧪 clmmJsons: ', clmmJsonInfos())
+  })
   const mockItems = [
     { id: '2', name: 'se', address: '1', detail: 'detail' },
     { id: '3', name: 'lisdf', address: '33', detail: 'detail3333' },
@@ -32,12 +36,12 @@ export default function ClmmsPage() {
   return (
     <DatabaseTable
       sectionTitle='Clmms'
-      items={pairInfos}
+      items={clmmJsonInfos}
       getItemKey={(i) => i.ammId}
       tabelCellConfigs={[
         {
           category: 'Clmm',
-          place:'collapse-face',  
+          place: 'collapse-face',
           get: (i) => (
             <Row>
               <ClmmItemFaceTokenAvatarLabel info={i} />
@@ -46,7 +50,7 @@ export default function ClmmsPage() {
         },
         {
           category: 'liquidity',
-          place:'collapse-face',  
+          place: 'collapse-face',
           get: (i) => <ClmmItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
         },
       ]}

@@ -6,6 +6,8 @@ export interface ReceiveMessage<Data = any> {
   command: string
   payload: Data
 }
+/** used when don't need any query payloads */
+export type EmptyQuery = unknown
 export interface SenderMessage<Query = any> {
   command: string
   payload?: Query

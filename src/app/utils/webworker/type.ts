@@ -19,6 +19,7 @@ export const workerCommands = {
   'fetch raydium supported tokens': 'fetch raydium supported tokens',
   'fetch raydium pairs info': 'fetch raydium pairs info',
   'fetch raydium farms info': 'fetch raydium farms info',
+  'fetch raydium Clmm info': 'fetch raydium clmm info',
   'get raydium farms syn infos': 'get raydium farms syn infos',
   'get raydium token prices': 'get raydium token prices',
   'let webworker calculate swap route infos': 'let webworker calculate swap route infos',

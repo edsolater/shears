@@ -5,7 +5,7 @@ import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from '../utils
 
 let storedCleanUpFunction: AnyFn | undefined = undefined
 
-export function calculateSwapRouteInfos_worker(transformers: MessagePortTransformers) {
+export function calculateSwapRouteInfosInWorker(transformers: MessagePortTransformers) {
   const messageSender = transformers.getMessageSender('let webworker calculate swap route infos')
   const messageReceiver = transformers.getMessageReceiver<CalculateSwapRouteInfosParams>(
     'let webworker calculate swap route infos',

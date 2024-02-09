@@ -16,6 +16,7 @@ export type BranchStore<T extends object> = {
 }
 
 /**
+ * @deprecated not easy to learn, just use {@link shuck} instead
  * {@link createFakeTree} is a low-level api, this is a high-level api
  * {@link createFakeTree} + {@link createShuck}
  *

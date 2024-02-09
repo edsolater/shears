@@ -12,6 +12,7 @@ import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmInfo } from './types/farm'
 import { PairInfo } from './types/pairs'
 import { TxVersion } from '../../utils/txHandler/txVersion'
+import { loadClmmInfos } from './portActions/loadClmmInfos_main'
 
 export type StoreData = {
   // -------- swap --------
@@ -32,23 +33,24 @@ export type StoreData = {
   pairLoadCount?: number // not good, should change automaticly. change this will start loading pair related info
   pairInfos?: Record<PairInfo['ammId'], PairInfo>
   isPairInfoLoading?: boolean
-
+  
   // -------- token --------
   tokenLoadCount?: number // not good, should change automaticly. change this will start loading token related info
   isTokenListLoading?: boolean
   tokens?: Record<Token['mint'], Token>
-
+  
   // -------- price --------
   priceLoadCount?: number // not good, should change automaticly. change this will start loading price related info
   isTokenPriceLoading?: boolean
   prices?: { mint: string; price: Numberish }[]
-
+  
   // -------- app setting --------
   rpc?: RPCEndpoint
   txVersion?: TxVersion
-
+  
   // -------- clmm --------
   clmmJsonInfos?: Record<string, any>
+  isClmmJsonInfoLoading?: boolean
   clmmInfos?: Record<string, any>
 }
 
@@ -67,6 +69,7 @@ export const {
       pairInfos: loadPairs,
       prices: loadTokenPrice,
       tokens: loadTokens,
+      clmmJsonInfos: loadClmmInfos,
     },
   },
 )

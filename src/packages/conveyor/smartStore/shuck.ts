@@ -1,8 +1,7 @@
 import { MayFn, WeakerSet } from '@edsolater/fnkit'
-import { observe } from '../../fnkit/observe'
 import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
-import { TaskExecutor, invokeExecutor } from './task'
 import { ShuckOption, isShuckOption } from './shuckOption'
+import { TaskExecutor, invokeExecutor } from './task'
 
 export const shuckTag = Symbol('shuckTag')
 export const shuckOptionTag = Symbol('shuckOptionTag')
