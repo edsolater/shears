@@ -1,10 +1,4 @@
 import { capitalize, map, switchCase } from '@edsolater/fnkit'
-import { RouteSectionProps, useNavigate } from '@solidjs/router'
-import { createMemo } from 'solid-js'
-import { createBranchStore } from '../../packages/conveyor/smartStore/branch'
-import { setShuckVisiableChecker } from '../../packages/conveyor/smartStore/shuck'
-import { createTask } from '../../packages/conveyor/smartStore/task'
-import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import {
   Box,
   Input,
@@ -22,11 +16,17 @@ import {
   keyboardShortcutObserverPlugin,
   useKeyboardGlobalShortcut,
 } from '@edsolater/pivkit'
+import { RouteSectionProps, useNavigate } from '@solidjs/router'
+import { createMemo } from 'solid-js'
+import { createBranchStore } from '../../packages/conveyor/smartStore/branch'
+import { setShuckVisiableChecker } from '../../packages/conveyor/smartStore/shuck'
+import { createTask } from '../../packages/conveyor/smartStore/task'
+import { createLeafFromAccessor } from '../../packages/conveyor/solidjsAdapter/utils'
 import { globalPageShortcuts } from '../configs/globalPageShortcuts'
 import { useAppThemeMode } from '../hooks/useAppThemeMode'
-import { needAppPageLayout } from '../routes'
-import { store } from '../stores/data/store'
 import { AppPageLayout } from '../pageComponents/AppPageLayout'
+import { routes } from '../routes'
+import { store } from '../stores/data/store'
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -50,7 +50,7 @@ export function App(props: RouteSectionProps) {
   const title = createMemo(() =>
     switchCase(location.pathname, { '/': 'Home' }, (pathname) => pathname.split('/').map(capitalize).join(' ')),
   )
-  const needLayout = () => needAppPageLayout[location.pathname]
+  const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppPageLayout
 
   useExperimentalCode()
 
@@ -77,7 +77,7 @@ function KeyboardShortcutPanel() {
 
   // utils for update shortcut
   const updateSetting = (description: string, shortcut: KeybordShortcutKeys) => {
-    setNewSettings((s) => ({ ...s, [description]: { ...s[description], keyboardShortcut:shortcut } }))
+    setNewSettings((s) => ({ ...s, [description]: { ...s[description], keyboardShortcut: shortcut } }))
   }
 
   const increasing = createIncresingAccessor({ eachTime: 2000 })
