@@ -1,3 +1,4 @@
+import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { useMessagePort } from '../../../utils/webworker/messagePort'
 import { workerCommands } from '../../../utils/webworker/type'
 import { setStore } from '../store'
@@ -7,10 +8,8 @@ type QueryParams = { force?: boolean }
 type ReceiveData = ClmmJSON[]
 
 export function loadClmmInfos() {
-  console.log('start')
-  useMessagePort<QueryParams, ReceiveData>({
-    command: workerCommands['fetch raydium Clmm info'],
-    queryPayload: { force: false },
+  const { startQuery } = useMessagePort<QueryParams, ReceiveData>({
+    port: getMessagePort(workerCommands['fetch raydium Clmm info']),
     onBeforeSend() {
       console.log('[main] start loading Clmm infos')
       setStore({ isClmmJsonInfoLoading: true })
@@ -19,4 +18,5 @@ export function loadClmmInfos() {
       setStore({ isClmmJsonInfoLoading: false, clmmJsonInfos: jsonInfos })
     },
   })
+  startQuery({ force: false })
 }
