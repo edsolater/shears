@@ -10,4 +10,4 @@ const programIds = MAINNET_PROGRAM_ID
 export const appApiUrls = map(apiTailUrls, (url) => apiBase + url) as {
   [key in keyof typeof apiTailUrls]: `${typeof apiBase}${(typeof apiTailUrls)[key]}`
 }
-export const appProgramId = map(programIds, toPubString)
+export const appProgramId = map(programIds, (p) => toPubString(p))

@@ -2,8 +2,20 @@ import { Numberish } from '@edsolater/fnkit'
 import { Token } from '../../../utils/dataStructures/Token'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { Percent, PublicKey } from '../../../utils/dataStructures/type'
+import {
+  ApiClmmPoolsItem as SDK_ApiClmmPoolsItem,
+  ClmmPoolInfo as SDK_ClmmPoolInfo,
+  ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition,
+} from '@raydium-io/raydium-sdk'
 
-export interface ClmmInfo {
+export type ClmmJSON = SDK_ApiClmmPoolsItem
+export type ClmmJSONFile = { data: ClmmJSON[] }
+export type APIClmmInfo = ClmmJSON
+export type SDKClmmInfo = {
+  state: SDK_ClmmPoolInfo
+  positionAccount?: SDK_ClmmPoolPersonalPosition[]
+}
+export type ClmmInfo = {
   protocolFeeRate: Percent
   tradeFeeRate: Percent
   base: Token | undefined

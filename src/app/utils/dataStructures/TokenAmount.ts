@@ -1,4 +1,8 @@
-import { CurrencyAmount, Token as _Token, TokenAmount as _TokenAmount } from '@raydium-io/raydium-sdk'
+import {
+  CurrencyAmount as SDK_CurrencyAmount,
+  Token as SDK_Token,
+  TokenAmount as SDK_TokenAmount,
+} from '@raydium-io/raydium-sdk'
 import { parseSDKBN, toBN } from './BN'
 import { SDK_CURRENCY_SOL, TOKEN_SOL, Token, parseSDKToken } from './Token'
 import { mul } from './basicMath/operations'
@@ -12,19 +16,20 @@ export interface TokenAmount {
   amount: Numberish
 }
 
-export function deUITokenAmount(tokenAmount: TokenAmount): _TokenAmount | CurrencyAmount {
+export function deUITokenAmount(tokenAmount: TokenAmount): SDK_TokenAmount | SDK_CurrencyAmount {
   const isSol = tokenAmount.token.is === 'sol'
   if (isSol) {
     const token = SDK_CURRENCY_SOL
-    return new CurrencyAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
+    return new SDK_CurrencyAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
   } else {
-    const token = new _Token(
+    const token = new SDK_Token(
+      tokenAmount.token.programId,
       tokenAmount.token.mint,
       tokenAmount.token.decimals,
       tokenAmount.token.symbol,
       tokenAmount.token.name,
     )
-    return new _TokenAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
+    return new SDK_TokenAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears
   }
 }
 
@@ -32,20 +37,20 @@ export function toTokenAmount(token: Token, amount: Numberish, options?: { amoun
   return { token, amount: options?.amountIsRawBN ? div(amount, 10 ** token.decimals) : amount }
 }
 
-export function isSDKTokenAmount(amount: unknown): amount is _TokenAmount | CurrencyAmount {
-  return amount instanceof _TokenAmount || amount instanceof CurrencyAmount
+export function isSDKTokenAmount(amount: unknown): amount is SDK_TokenAmount | SDK_CurrencyAmount {
+  return amount instanceof SDK_TokenAmount || amount instanceof SDK_CurrencyAmount
 }
 
-export type FlatSDKTokenAmount<T> = ReplaceType<T, CurrencyAmount | _TokenAmount, TokenAmount>
+export type FlatSDKTokenAmount<T> = ReplaceType<T, SDK_CurrencyAmount | SDK_TokenAmount, TokenAmount>
 
 /**
  * SDK tokenAmount → UI prefer transformable object literal tokenAmount
  */
-export function parseSDKTokenAmount(tokenAmount: CurrencyAmount | _TokenAmount): TokenAmount {
+export function parseSDKTokenAmount(tokenAmount: SDK_CurrencyAmount | SDK_TokenAmount): TokenAmount {
   if (isSDKCurrencyAmount(tokenAmount)) {
     return { token: TOKEN_SOL, amount: div(parseSDKBN(tokenAmount.raw), 10 ** TOKEN_SOL.decimals) }
   } else {
-    const ta = tokenAmount as _TokenAmount
+    const ta = tokenAmount as SDK_TokenAmount
     return {
       token: parseSDKToken(ta.token),
       amount: div(parseSDKBN(ta.raw), 10 ** ta.token.decimals),
@@ -53,6 +58,6 @@ export function parseSDKTokenAmount(tokenAmount: CurrencyAmount | _TokenAmount):
   }
 }
 
-function isSDKCurrencyAmount(amount: unknown): amount is CurrencyAmount {
-  return amount instanceof CurrencyAmount
+function isSDKCurrencyAmount(amount: unknown): amount is SDK_CurrencyAmount {
+  return amount instanceof SDK_CurrencyAmount
 }

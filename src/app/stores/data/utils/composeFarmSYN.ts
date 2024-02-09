@@ -4,7 +4,7 @@ import { abortableAsyncTask } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
-import { slice, toArray, toRecord } from '../../../utils/dataTransmit/itemMethods'
+import { slice, toArray, toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { FarmInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
@@ -116,7 +116,7 @@ function hydrateFarmSYN({
   })
 
   const indexAccessList = slice(
-    toRecord(rawList, (i) => i.id),
+    toCollectionObject(rawList, (i) => i.id),
     20,
   )
   return indexAccessList

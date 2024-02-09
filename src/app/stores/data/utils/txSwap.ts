@@ -1,14 +1,15 @@
-import { assert } from '@edsolater/fnkit'
+import { assert, Numberish } from '@edsolater/fnkit'
 import { TradeV2 } from '@raydium-io/raydium-sdk'
+import { appProgramId } from '../../../utils/common/config'
 import { getConnection } from '../../../utils/common/getConnection'
-import toPubString from '../../../utils/dataStructures/Publickey'
+import { eq } from '../../../utils/dataStructures/basicMath/compare'
+import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { Token } from '../../../utils/dataStructures/Token'
 import { getOwnerTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
-import { Numberish } from '@edsolater/fnkit'
-import { SignAllTransactionsFunction, txHandler } from '../../../utils/txHandler'
+import { txHandler, type TxVersion } from '../../../utils/txHandler'
 import { getTxHandlerBudgetConfig } from '../../../utils/txHandler/getTxHandlerBudgetConfig'
+import { getRealSDKTxVersion } from '../../../utils/txHandler/txVersion'
 import { getBestCalcResultCache } from './calculateSwapRouteInfos'
-import { eq } from '../../../utils/dataStructures/basicMath/compare'
 
 export interface TxSwapOptions {
   owner: string
@@ -20,6 +21,7 @@ export interface TxSwapOptions {
     // amount2: Numberish
     direction: '1 → 2' | '2 → 1'
   }
+  txVersion?: TxVersion
 }
 
 export function txSwap_getInnerTransaction(options: TxSwapOptions) {
@@ -55,7 +57,8 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
           associatedOnly: true,
           checkCreateATAOwner: true,
         },
-        checkTransaction: true,
+        routeProgram: toPub(appProgramId.Router),
+        makeTxVersion: getRealSDKTxVersion(options.txVersion),
         computeBudgetConfig: txBudgetConfig,
       })
       console.log('innerTransactions: ', innerTransactions)

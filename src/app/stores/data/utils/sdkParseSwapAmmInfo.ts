@@ -1,4 +1,4 @@
-import { AmmV3, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-io/raydium-sdk'
+import { Clmm, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-io/raydium-sdk'
 import { Connection } from '@solana/web3.js'
 import { SOLMint, WSOLMint } from '../../../configs/wellKnownMints'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
@@ -30,14 +30,14 @@ export function sdkParseSwapAmmInfo({
   outputMint,
 
   apiPoolList,
-  sdkParsedAmmV3PoolInfo,
+  sdkParsedClmmPoolInfo,
 }: {
   connection: Connection
   inputMint: string
   outputMint: string
 
   apiPoolList: ApiPoolInfo
-  sdkParsedAmmV3PoolInfo: Awaited<ReturnType<(typeof AmmV3)['fetchMultiplePoolInfos']>>
+  sdkParsedClmmPoolInfo: Awaited<ReturnType<(typeof Clmm)['fetchMultiplePoolInfos']>>
 }) {
   const key = toPubString(inputMint) + toPubString(outputMint)
   if (!sdkCaches.has(key)) {
@@ -45,9 +45,9 @@ export function sdkParseSwapAmmInfo({
       inputMint: toPub(inputMint),
       outputMint: toPub(outputMint),
       apiPoolList: apiPoolList,
-      ammV3List: Object.values(sdkParsedAmmV3PoolInfo).map((i) => i.state),
+      clmmList: Object.values(sdkParsedClmmPoolInfo).map((i) => i.state),
     })
-    const tickCache = AmmV3.fetchMultiplePoolTickArrays({
+    const tickCache = Clmm.fetchMultiplePoolTickArrays({
       connection,
       poolKeys: routes.needTickArray,
       batchRequest: true,

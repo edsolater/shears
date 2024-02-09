@@ -11,6 +11,7 @@ import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
 import { FarmJSON, FarmInfo } from './types/farm'
 import { PairInfo } from './types/pairs'
+import { TxVersion } from '../../utils/txHandler/txVersion'
 
 export type StoreData = {
   // -------- swap --------
@@ -44,8 +45,10 @@ export type StoreData = {
 
   // -------- app setting --------
   rpc?: RPCEndpoint
+  txVersion?: TxVersion
 
   // -------- clmm --------
+  clmmJsonInfos?: Record<string, any>
   clmmInfos?: Record<string, any>
 }
 

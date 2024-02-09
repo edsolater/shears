@@ -1,5 +1,5 @@
 import { SOLToken } from '../../../utils/dataStructures/Token'
-import { toRecord } from '../../../utils/dataTransmit/itemMethods'
+import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
@@ -16,7 +16,7 @@ export function loadTokens_worker(transformers: MessagePortTransformers) {
         const availableTokens = res?.tokens
           .filter((t) => !res?.blacklist.includes(t.mint) || t.name === 'Native Solana')
           .concat(SOLToken) // replace api mistakely add SOL
-        return toRecord(availableTokens, (t) => t.mint) satisfies StoreData['tokens']
+        return toCollectionObject(availableTokens, (t) => t.mint) satisfies StoreData['tokens']
       })
       .then(sender.query)
   })
