@@ -56,3 +56,25 @@ function mutMap(collection: object | any[], mapCallback: (v: any) => any) {
   }
   return collection
 }
+
+/** TODO: move to fnkit */
+export function proxyObjectWithConfigs<T extends object>(
+  obj: T,
+  configFn: (options: { key: string | symbol; value: any }) => any,
+): unknown {
+  const valueMap = new Map<keyof any, any>()
+
+  return new Proxy(
+    {},
+    {
+      get(_target, key, receiver) {
+        if (valueMap.has(key)) return valueMap.get(key)
+        if (!(key in obj)) return undefined
+        const originalValue = Reflect.get(obj, key, receiver)
+        const newV = configFn({ key, value: originalValue })
+        valueMap.set(key, newV)
+        return newV
+      },
+    },
+  )
+}
