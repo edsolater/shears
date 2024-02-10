@@ -1,4 +1,4 @@
-import { isArray, isObject, isObjectLiteral, map } from '@edsolater/fnkit'
+import { isArray, isObject, isObjectLiteral, isString, map } from '@edsolater/fnkit'
 import { rules } from './rules'
 
 export function encode(
@@ -22,13 +22,7 @@ export function encode(
   return data
 }
 
-export function decode(
-  data: unknown,
-  options?: {
-    /** decode should true */
-    mutate?: boolean
-  },
-): any {
+export function decode(data: unknown): any {
   // try to match rule
   for (const rule of rules) {
     if (rule.canDecode?.(data)) {
@@ -37,7 +31,7 @@ export function decode(
   }
 
   // literal need to deeply parse
-  if (isObjectLiteral(data) || isArray(data)) return (options?.mutate ? mutMap : map)(data, (v) => decode(v)) // FIXME: immuteable will cause performance issue
+  if (isObjectLiteral(data) || isArray(data)) return proxyObjectWithConfigs(data, ({ key, value }) => decode(value))
 
   // no match rule
   return data
@@ -61,19 +55,43 @@ function mutMap(collection: object | any[], mapCallback: (v: any) => any) {
 export function proxyObjectWithConfigs<T extends object>(
   obj: T,
   configFn: (options: { key: string | symbol; value: any }) => any,
-): unknown {
+): object {
   const valueMap = new Map<keyof any, any>()
-
+  const keys = new Set(Reflect.ownKeys(obj))
   return new Proxy(
     {},
     {
-      get(_target, key, receiver) {
+      get(target, key, receiver) {
+        if (key in target) return target[key]
         if (valueMap.has(key)) return valueMap.get(key)
-        if (!(key in obj)) return undefined
+        if (!keys.has(key)) return undefined
         const originalValue = Reflect.get(obj, key, receiver)
         const newV = configFn({ key, value: originalValue })
         valueMap.set(key, newV)
         return newV
+      },
+      set(_target, p, newValue) {
+        valueMap.set(p, newValue)
+        keys.add(p)
+        return true
+      },
+      deleteProperty(_target, p) {
+        valueMap.delete(p)
+        keys.delete(p)
+        return true
+      },
+      has: (_target, key) => keys.has(key),
+      getPrototypeOf: () => Object.getPrototypeOf(obj),
+      ownKeys: () => Array.from(keys),
+      // for Object.keys to filter
+      getOwnPropertyDescriptor: (target, prop) =>
+        Reflect.getOwnPropertyDescriptor(target, prop) ?? Reflect.getOwnPropertyDescriptor(obj, prop),
+      defineProperty(_target, property, attributes) {
+        Reflect.defineProperty(obj, property, attributes)
+        Reflect.defineProperty(_target, property, attributes)
+        keys.add(property)
+        valueMap.delete(property) // so can re-calculate
+        return true
       },
     },
   )

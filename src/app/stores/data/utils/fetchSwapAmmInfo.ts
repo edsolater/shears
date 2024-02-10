@@ -2,7 +2,7 @@ import { MayPromise } from '@edsolater/fnkit'
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
 import type { ApiPoolInfo } from '../types/ammPools'
-import type { APIClmmInfo } from '../types/clmm'
+import type { APIClmmInfo, JsonClmm } from '../types/clmm'
 
 const apiCache = {} as {
   Clmm?: MayPromise<APIClmmInfo[] | undefined>
@@ -15,7 +15,7 @@ export function clearApiCache() {
 }
 
 async function fetchClmmPoolInfo() {
-  return jFetch<{ data: APIClmmInfo[] }>(appApiUrls.clmmPools).then((r) => r?.data) // note: previously Rudy has Test API for dev
+  return jFetch<{ data: JsonClmm[] }>(appApiUrls.clmmPools).then((r) => r?.data) // note: previously Rudy has Test API for dev
 }
 
 async function fetchOldAmmPoolInfo() {

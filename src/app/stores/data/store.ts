@@ -1,18 +1,18 @@
-import { createStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
 import { createSmartStore } from '@edsolater/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
+import { TxVersion } from '../../utils/txHandler/txVersion'
 import { RPCEndpoint, availableRpcs } from './RPCEndpoint'
+import { loadClmmInfos } from './portActions/loadClmmInfos_main'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
 import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
-import { FarmJSON, FarmInfo } from './types/farm'
+import type { APIClmmInfo, JsonClmm } from './types/clmm'
+import { FarmInfo, FarmJSON } from './types/farm'
 import { PairInfo } from './types/pairs'
-import { TxVersion } from '../../utils/txHandler/txVersion'
-import { loadClmmInfos } from './portActions/loadClmmInfos_main'
 
 export type StoreData = {
   // -------- swap --------
@@ -33,23 +33,23 @@ export type StoreData = {
   pairLoadCount?: number // not good, should change automaticly. change this will start loading pair related info
   pairInfos?: Record<PairInfo['ammId'], PairInfo>
   isPairInfoLoading?: boolean
-  
+
   // -------- token --------
   tokenLoadCount?: number // not good, should change automaticly. change this will start loading token related info
   isTokenListLoading?: boolean
   tokens?: Record<Token['mint'], Token>
-  
+
   // -------- price --------
   priceLoadCount?: number // not good, should change automaticly. change this will start loading price related info
   isTokenPriceLoading?: boolean
   prices?: { mint: string; price: Numberish }[]
-  
+
   // -------- app setting --------
   rpc?: RPCEndpoint
   txVersion?: TxVersion
-  
+
   // -------- clmm --------
-  clmmJsonInfos?: Record<string, any>
+  clmmJsonInfos?: Record<string, APIClmmInfo>
   isClmmJsonInfoLoading?: boolean
   clmmInfos?: Record<string, any>
 }

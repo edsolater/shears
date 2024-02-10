@@ -8,9 +8,9 @@ import {
   ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition,
 } from '@raydium-io/raydium-sdk'
 
-export type ClmmJSON = SDK_ApiClmmPoolsItem
-export type ClmmJSONFile = { data: ClmmJSON[] }
-export type APIClmmInfo = ClmmJSON
+export type JsonClmm = SDK_ApiClmmPoolsItem
+export type JsonClmmFile = { data: JsonClmm[] }
+export type APIClmmInfo = JsonClmm
 export type SDKClmmInfo = {
   state: SDK_ClmmPoolInfo
   positionAccount?: SDK_ClmmPoolPersonalPosition[]

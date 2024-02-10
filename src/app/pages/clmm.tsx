@@ -22,7 +22,11 @@ export function ClmmItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInf
 export default function ClmmsPage() {
   const clmmJsonInfos = createStorePropertySignal((s) => s.clmmJsonInfos)
   createEffect(() => {
-    console.log('🧪🧪 clmmJsons: ', clmmJsonInfos())
+    const jsonInfos = clmmJsonInfos()
+    if (jsonInfos) {
+      const key = Object.keys(jsonInfos)[0]
+      console.log('🧪🧪 first clmmJson: ', {...jsonInfos[key]})
+    }
   })
   const mockItems = [
     { id: '2', name: 'se', address: '1', detail: 'detail' },

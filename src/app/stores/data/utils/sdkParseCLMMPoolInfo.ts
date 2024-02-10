@@ -2,7 +2,7 @@ import { Clmm, ClmmPoolInfo, ClmmPoolPersonalPosition } from '@raydium-io/raydiu
 import toPubString from '../../../utils/dataStructures/Publickey'
 import { Connection } from '@solana/web3.js'
 import { listToMap } from '@edsolater/fnkit'
-import type { APIClmmInfo } from '../types/clmm'
+import type { JsonClmm } from '../types/clmm'
 
 const parsedClmmPoolInfoCache = new Map<
   string,
@@ -21,7 +21,7 @@ export async function sdkParseCLMMPoolInfo({
   chainTimeOffset = 0,
 }: {
   connection: Connection
-  apiAmmPools: APIClmmInfo[]
+  apiAmmPools: JsonClmm[]
   chainTimeOffset?: number
 }) {
   const needRefetchApiAmmPools = apiAmmPools.filter(({ id }) => !parsedClmmPoolInfoCache.has(toPubString(id)))

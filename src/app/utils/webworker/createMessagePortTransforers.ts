@@ -87,7 +87,7 @@ function createMessageReceiver<R extends ReceiveMessage>(
     const messageHandler = (ev: MessageEvent<any>): void => {
       const body = ev.data as ReceiveMessage<R['payload']>
       if (body.command === command) {
-        const decodedData = decode(body.payload, { mutate: true })
+        const decodedData = decode(body.payload)
         subscribable.set(decodedData)
       }
     }

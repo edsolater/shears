@@ -2,10 +2,10 @@ import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { useMessagePort } from '../../../utils/webworker/messagePort'
 import { workerCommands } from '../../../utils/webworker/type'
 import { setStore } from '../store'
-import type { ClmmJSON } from '../types/clmm'
+import type { APIClmmInfo } from '../types/clmm'
 
 type QueryParams = { force?: boolean }
-type ReceiveData = ClmmJSON[]
+type ReceiveData = Record<string, APIClmmInfo>
 
 export function loadClmmInfos() {
   const { startQuery } = useMessagePort<QueryParams, ReceiveData>({
