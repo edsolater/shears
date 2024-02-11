@@ -38,26 +38,27 @@ export default function ClmmsPage() {
     detail?: string
   }[]
   return (
-    <DatabaseTable
-      sectionTitle='Clmms'
-      items={clmmJsonInfos}
-      getItemKey={(i) => i.ammId}
-      tabelCellConfigs={[
-        {
-          category: 'Clmm',
-          place: 'collapse-face',
-          get: (i) => (
-            <Row>
-              <ClmmItemFaceTokenAvatarLabel info={i} />
-            </Row>
-          ),
-        },
-        {
-          category: 'liquidity',
-          place: 'collapse-face',
-          get: (i) => <ClmmItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
-        },
-      ]}
-    />
+    // <DatabaseTable
+    //   sectionTitle='Clmms'
+    //   items={clmmJsonInfos}
+    //   getItemKey={(i) => i.id}
+    //   tabelCellConfigs={[
+    //     {
+    //       category: 'Clmm',
+    //       place: 'collapse-face',
+    //       get: (i) => (
+    //         <Row>
+    //           <ClmmItemFaceTokenAvatarLabel info={i} />
+    //         </Row>
+    //       ),
+    //     },
+    //     {
+    //       category: 'liquidity',
+    //       place: 'collapse-face',
+    //       get: (i) => <ClmmItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
+    //     },
+    //   ]}
+    // />
+    <></>
   )
 }

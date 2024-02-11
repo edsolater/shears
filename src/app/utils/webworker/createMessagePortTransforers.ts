@@ -24,7 +24,7 @@ export type GetMessagePortFn = <Payload = any, Query = any>(
 }
 export type GetMessageReceiverFn = <Payload = any>(command: string) => Receiver<ReceiveMessage<Payload>>
 export type GetMessageSenderFn = <Query = any>(command: string) => Sender<SenderMessage<Query>, any>
-export type MessagePortTransformers = {
+export type MessagePortTransformers<Payload = any, Query = any> = {
   getMessageReceiver: GetMessageReceiverFn
   getMessageSender: GetMessageSenderFn
   getMessagePort: GetMessagePortFn

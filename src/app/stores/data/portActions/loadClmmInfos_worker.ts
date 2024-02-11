@@ -1,17 +1,27 @@
+import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
+import { getConnection } from '../../../utils/common/getConnection'
 import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
-import { useMessagePort } from '../../../utils/webworker/messagePort'
 import { workerCommands } from '../../../utils/webworker/type'
 import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
+import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
+
+type QueryParams = { force?: boolean; rpcUrl: string }
 
 export function loadClmmInfosInWorker({ getMessagePort }: MessagePortTransformers) {
-  useMessagePort({
-    port: getMessagePort(workerCommands['fetch raydium Clmm info']),
-    onBeforeSend() {
-      console.log('[worker] start loading Clmm infos')
-    },
-    onReceive(_, { sendBack }) {
-      console.log('[worker] received Clmm infos')
-      fetchClmmJsonInfo().then(sendBack)
-    },
+  const port = getMessagePort(workerCommands['fetch raydium Clmm info'])
+  console.log('[worker] start loading Clmm infos')
+  port.receiver.subscribe((query: QueryParams) => {
+    const apiClmmInfos = fetchClmmJsonInfo()
+    apiClmmInfos.then(port.sender.query)
+
+    const sdkClmmInfos = apiClmmInfos.then(
+      (infos) =>
+        infos &&
+        sdkParseClmmInfos({
+          connection: getConnection(query.rpcUrl),
+          apiClmmInfos: toList(infos),
+        }),
+    )
+    sdkClmmInfos.then((i) => console.log('sdk i: ', i))
   })
 }

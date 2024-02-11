@@ -18,7 +18,7 @@ import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/Toke
 import { Mint } from '../../../utils/dataStructures/type'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
-import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
+import { sdkParseClmmInfos } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
@@ -94,7 +94,7 @@ export function calculateSwapRouteInfos({
 
     const sdkParsedClmmPoolInfoPromise = ClmmPromise
       .then(inNextMainLoop(canContinueAsyncChecker))
-      .then((Clmm) => sdkParseCLMMPoolInfo({ connection, apiAmmPools: Clmm }))
+      .then((clmmPoolInfos) => sdkParseClmmInfos({ connection, apiClmmInfos: clmmPoolInfos }))
 
     const sdkParsedSwapAmmInfo = Promise.all([sdkParsedClmmPoolInfoPromise, apiPoolListPromise])
       .then(inNextMainLoop(canContinueAsyncChecker))

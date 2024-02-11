@@ -1,22 +1,23 @@
+import { createEffect } from 'solid-js'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
-import { useMessagePort } from '../../../utils/webworker/messagePort'
 import { workerCommands } from '../../../utils/webworker/type'
-import { setStore } from '../store'
+import { setStore, store } from '../store'
 import type { APIClmmInfo } from '../types/clmm'
 
-type QueryParams = { force?: boolean }
-type ReceiveData = Record<string, APIClmmInfo>
+ type QueryParams = { force?: boolean; rpcUrl: string }
+ type ReceiveData = Record<string, APIClmmInfo>
 
 export function loadClmmInfos() {
-  const { startQuery } = useMessagePort<QueryParams, ReceiveData>({
-    port: getMessagePort(workerCommands['fetch raydium Clmm info']),
-    onBeforeSend() {
+  const port = getMessagePort<ReceiveData, QueryParams>(workerCommands['fetch raydium clmm infos'])
+  createEffect(() => {
+    const rpcUrl = store.rpc?.url
+    if (rpcUrl) {
       console.log('[main] start loading Clmm infos')
       setStore({ isClmmJsonInfoLoading: true })
-    },
-    onReceive(jsonInfos) {
-      setStore({ isClmmJsonInfoLoading: false, clmmJsonInfos: jsonInfos })
-    },
+      port.sender.query({ force: false, rpcUrl })
+      port.receiver.subscribe((jsonInfos) => {
+        setStore({ isClmmJsonInfoLoading: false, clmmJsonInfos: jsonInfos })
+      })
+    }
   })
-  startQuery({ force: false })
 }

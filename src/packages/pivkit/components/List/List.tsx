@@ -18,7 +18,7 @@ import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 import { createRef } from '../../hooks/createRef'
 import { Piv } from '../../piv'
 import { ListItem } from './ListItem'
-import { toArray } from '../../fnkit/itemMethods'
+import { toList } from '../../fnkit/itemMethods'
 
 export type ItemList<T> =
   | Map<any, T>
@@ -78,8 +78,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [configs]
 
   const _allItems = props.lazy
-    ? createAsyncMemo(() => toArray(shrinkFn(props.items ?? [])), [] as T[])
-    : createMemo(() => toArray(shrinkFn(props.items ?? [])))
+    ? createAsyncMemo(() => toList(shrinkFn(props.items ?? [])), [] as T[])
+    : createMemo(() => toList(shrinkFn(props.items ?? [])))
   const allItems = createDeferred(_allItems) // ⚡ to smoother the render
   const increaseRenderCount = createMemo(
     () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30)

@@ -16,6 +16,7 @@ export type SDKClmmInfo = {
   positionAccount?: SDK_ClmmPoolPersonalPosition[]
 }
 export type ClmmInfo = {
+  hasLoad: ('api' | 'sdk')[]
   protocolFeeRate: Percent
   tradeFeeRate: Percent
   base: Token | undefined
@@ -24,7 +25,7 @@ export type ClmmInfo = {
   id: PublicKey
   userPositionAccount?: ClmmUserPositionAccount[]
   name: string
-  idString: string
+  // idString: string
   creator: PublicKey
 
   ammConfig: ClmmConfigInfo

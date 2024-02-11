@@ -9,7 +9,7 @@ export type ItemList<T> =
   | Iterable<T>
   | undefined
 /** accept all may iterable data type */
-export function toArray<T>(i: ItemList<T>) {
+export function toList<T>(i: ItemList<T>) {
   if (isUndefined(i)) return []
   if (isMap(i)) return Array.from(i.values())
   if (isIterable(i)) return Array.from(i)
