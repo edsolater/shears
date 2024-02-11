@@ -22,7 +22,13 @@ export function encode(
   return data
 }
 
-export function decode(data: unknown): any {
+export function decode(
+  data: unknown,
+  options?: {
+    /** encode should false */
+    mutate?: boolean
+  },
+): any {
   // try to match rule
   for (const rule of rules) {
     if (rule.canDecode?.(data)) {
@@ -31,7 +37,7 @@ export function decode(data: unknown): any {
   }
 
   // literal need to deeply parse
-  if (isObjectLiteral(data) || isArray(data)) return proxyObjectWithConfigs(data, ({ key, value }) => decode(value))
+  if (isObjectLiteral(data) || isArray(data)) return (options?.mutate ? mutMap : map)(data, (v) => decode(v))
 
   // no match rule
   return data
@@ -56,42 +62,35 @@ export function proxyObjectWithConfigs<T extends object>(
   obj: T,
   configFn: (options: { key: string | symbol; value: any }) => any,
 ): object {
-  const valueMap = new Map<keyof any, any>()
-  const keys = new Set(Reflect.ownKeys(obj))
   return new Proxy(
     {},
     {
       get(target, key, receiver) {
         if (key in target) return target[key]
-        if (valueMap.has(key)) return valueMap.get(key)
-        if (!keys.has(key)) return undefined
+        // if (valueMap.has(key)) return valueMap.get(key)
+        if (!(key in obj)) return undefined
         const originalValue = Reflect.get(obj, key, receiver)
         const newV = configFn({ key, value: originalValue })
-        valueMap.set(key, newV)
+        Reflect.set(target, key, newV)
         return newV
       },
-      set(_target, p, newValue) {
-        valueMap.set(p, newValue)
-        keys.add(p)
-        return true
+      set(target, p, newValue) {
+        Reflect.set(target, p, newValue)
+        return Reflect.set(obj, p, newValue)
       },
-      deleteProperty(_target, p) {
-        valueMap.delete(p)
-        keys.delete(p)
-        return true
+      deleteProperty(target, p) {
+        Reflect.deleteProperty(target, p)
+        return Reflect.deleteProperty(obj, p)
       },
-      has: (_target, key) => keys.has(key),
+      has: (target, key) => Reflect.has(obj, key) ?? Reflect.has(target, key),
       getPrototypeOf: () => Object.getPrototypeOf(obj),
-      ownKeys: () => Array.from(keys),
+      ownKeys: () => Reflect.ownKeys(obj),
       // for Object.keys to filter
       getOwnPropertyDescriptor: (target, prop) =>
         Reflect.getOwnPropertyDescriptor(target, prop) ?? Reflect.getOwnPropertyDescriptor(obj, prop),
-      defineProperty(_target, property, attributes) {
-        Reflect.defineProperty(obj, property, attributes)
-        Reflect.defineProperty(_target, property, attributes)
-        keys.add(property)
-        valueMap.delete(property) // so can re-calculate
-        return true
+      defineProperty(target, property, attributes) {
+        Reflect.defineProperty(target, property, attributes)
+        return Reflect.defineProperty(obj, property, attributes)
       },
     },
   )
