@@ -1,7 +1,8 @@
-import { Numberish, parseNumberInfo } from '@edsolater/fnkit'
-import { Percent } from '@raydium-io/raydium-sdk'
+import { Numberish, div, parseNumberInfo } from '@edsolater/fnkit'
+import { Percent as SDK_Percent } from '@raydium-io/raydium-sdk'
 import BN from 'bn.js'
 import { toBN } from './BN'
+import type { Percent } from './type'
 
 /**
  * only use this method for SDK, **not** use it in ui layer, it  will only appear in webworker(for data calculate)
@@ -9,7 +10,17 @@ import { toBN } from './BN'
  * toPercent(3.14) // => Percent { 314.00% }
  * toPercent(3.14, { alreadyDecimaled: true }) // => Percent {3.14%}
  */
-export function toPercent(n: Numberish, options?: { /* usually used for backend data */ alreadyDecimaled?: boolean }) {
+export function toSDKPercent(
+  n: Numberish,
+  options?: { /* usually used for backend data */ alreadyDecimaled?: boolean },
+) {
   const { numerator, denominator } = parseNumberInfo(n)
-  return new Percent(toBN(numerator), toBN(denominator).mul(options?.alreadyDecimaled ? new BN(100) : new BN(1)))
+  return new SDK_Percent(toBN(numerator), toBN(denominator).mul(options?.alreadyDecimaled ? new BN(100) : new BN(1)))
+}
+
+export function toPercent(
+  n: Numberish,
+  options?: { /* usually used for backend data */ alreadyDecimaled?: boolean },
+): Percent {
+  return options?.alreadyDecimaled ? div(n, 100) : n
 }

@@ -13,8 +13,13 @@ import { ReplaceType } from '@edsolater/fnkit'
 export interface TokenAmount {
   token: Token
   /** value that is amount */
-  amount: Numberish
+  amount: Amount
 }
+
+/**
+ * amount is not decimaled
+ */
+export type Amount = Numberish
 
 export function deUITokenAmount(tokenAmount: TokenAmount): SDK_TokenAmount | SDK_CurrencyAmount {
   const isSol = tokenAmount.token.is === 'sol'

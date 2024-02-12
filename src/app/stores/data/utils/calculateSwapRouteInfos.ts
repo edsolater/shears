@@ -11,7 +11,7 @@ import {
 } from '@raydium-io/raydium-sdk'
 import { inNextMainLoop, makeTaskAbortable } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
-import { toPercent } from '../../../utils/dataStructures/Percent'
+import { toSDKPercent } from '../../../utils/dataStructures/Percent'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import { Token, toSDKToken } from '../../../utils/dataStructures/Token'
 import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
@@ -130,7 +130,7 @@ export function calculateSwapRouteInfos({
           tickCache: awaitedTickCache,
           inputTokenAmount: deUITokenAmount(inputAmount),
           outputToken: toSDKToken(output),
-          slippage: toPercent(slippageTolerance),
+          slippage: toSDKPercent(slippageTolerance),
           chainTime,
         })
       })

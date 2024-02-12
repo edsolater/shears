@@ -3,7 +3,7 @@ import { Clmm as SDK_Clmm } from '@raydium-io/raydium-sdk'
 import type { Connection } from '@solana/web3.js'
 import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
 import toPubString from '../../../utils/dataStructures/Publickey'
-import type { APIClmmInfo, SDKClmmInfo } from '../types/clmm'
+import type { JsonClmmInfo, SDKClmmInfo } from '../types/clmm'
 
 const sdkClmmInfoCache = new Map<string, SDKClmmInfo>()
 
@@ -16,7 +16,7 @@ export async function sdkParseClmmInfos({
   chainTimeOffset = 0,
 }: {
   connection: Connection
-  apiClmmInfos: APIClmmInfo[] | Record<string, APIClmmInfo>
+  apiClmmInfos: JsonClmmInfo[] | Record<string, JsonClmmInfo>
   chainTimeOffset?: number
 }): Promise<Record<string, SDKClmmInfo>> {
   const apiClmmInfos = toList(apiInfos)

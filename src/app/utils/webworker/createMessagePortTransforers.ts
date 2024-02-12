@@ -16,18 +16,16 @@ export type Receiver<R extends ReceiveMessage> = Subscribable<R['payload']>
 export type Sender<P extends SenderMessage, R extends ReceiveMessage = any> = {
   query(payload?: P['payload']): Receiver<R>
 }
-export type GetMessagePortFn = <Payload = any, Query = any>(
-  command: string,
-) => {
+export type GetMessagePortFn<Payload = any, Query = any> = (command: string) => {
   receiver: Receiver<ReceiveMessage<Payload>>
   sender: Sender<SenderMessage<Query>, any>
 }
-export type GetMessageReceiverFn = <Payload = any>(command: string) => Receiver<ReceiveMessage<Payload>>
-export type GetMessageSenderFn = <Query = any>(command: string) => Sender<SenderMessage<Query>, any>
+export type GetMessageReceiverFn<Payload = any> = (command: string) => Receiver<ReceiveMessage<Payload>>
+export type GetMessageSenderFn<Query = any> = (command: string) => Sender<SenderMessage<Query>, any>
 export type MessagePortTransformers<Payload = any, Query = any> = {
-  getMessageReceiver: GetMessageReceiverFn
-  getMessageSender: GetMessageSenderFn
-  getMessagePort: GetMessagePortFn
+  getMessageReceiver: GetMessageReceiverFn<Payload>
+  getMessageSender: GetMessageSenderFn<Query>
+  getMessagePort: GetMessagePortFn<Payload, Query>
 }
 
 // store all registered message receivers

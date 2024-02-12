@@ -3,6 +3,7 @@ import { Currency as SDK_Currency, Token as SDK_Token } from '@raydium-io/raydiu
 
 import { PublicKey } from '@solana/web3.js'
 
+/** minium data shape that can be hydrated to a SPLToken */
 export interface Token {
   mint: string
   decimals: number
@@ -107,4 +108,8 @@ export function emptyToken(): Token {
  */
 export function isEmptyToken(token: Token): boolean {
   return token.mint === ''
+}
+
+export function toToken(config: Token){
+  return config
 }

@@ -10,7 +10,7 @@ import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
-import type { APIClmmInfo, JsonClmm } from './types/clmm'
+import type { JsonClmmInfo, JsonClmmInfo } from './types/clmm'
 import { FarmInfo, FarmJSON } from './types/farm'
 import { PairInfo } from './types/pairs'
 
@@ -49,7 +49,7 @@ export type StoreData = {
   txVersion?: TxVersion
 
   // -------- clmm --------
-  clmmJsonInfos?: Record<string, APIClmmInfo>
+  clmmJsonInfos?: Record<string, JsonClmmInfo>
   isClmmJsonInfoLoading?: boolean
   clmmInfos?: Record<string, any>
 }

@@ -7,7 +7,7 @@ import { calculateSwapRouteInfosInWorker } from '../../stores/data/portActions/c
 import { txSwapInWorker } from '../../stores/data/portActions/txSwap_worker'
 import { MessagePortTransformers } from './createMessagePortTransforers'
 import { logMessage } from '../../logger/logMessage'
-import { loadClmmInfosInWorker } from '../../stores/data/portActions/loadClmmInfos_worker'
+import { workerLoadClmmInfos } from '../../stores/data/portActions/loadClmmInfos_worker'
 
 export function applyWebworkerRegisters(messageTransformers: MessagePortTransformers) {
   logMessage({ from: '👾worker', twoWordTitle: 'messge port', detailDescription: 'registered load farm port' })
@@ -18,5 +18,5 @@ export function applyWebworkerRegisters(messageTransformers: MessagePortTransfor
   loadPairsInWorker(messageTransformers)
   loadTokensInWorker(messageTransformers)
   loadTokenPriceInWorker(messageTransformers)
-  loadClmmInfosInWorker(messageTransformers)
+  workerLoadClmmInfos(messageTransformers)
 }

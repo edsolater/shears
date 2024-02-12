@@ -7,7 +7,7 @@ import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
 
 type QueryParams = { force?: boolean; rpcUrl: string }
 
-export function loadClmmInfosInWorker({ getMessagePort }: MessagePortTransformers) {
+export function workerLoadClmmInfos({ getMessagePort }: MessagePortTransformers) {
   const port = getMessagePort(workerCommands['fetch raydium Clmm info'])
   console.log('[worker] start loading Clmm infos')
   port.receiver.subscribe((query: QueryParams) => {

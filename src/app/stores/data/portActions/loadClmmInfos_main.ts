@@ -2,10 +2,10 @@ import { createEffect } from 'solid-js'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { workerCommands } from '../../../utils/webworker/type'
 import { setStore, store } from '../store'
-import type { APIClmmInfo } from '../types/clmm'
+import type { JsonClmmInfo } from '../types/clmm'
 
  type QueryParams = { force?: boolean; rpcUrl: string }
- type ReceiveData = Record<string, APIClmmInfo>
+ type ReceiveData = Record<string, JsonClmmInfo>
 
 export function loadClmmInfos() {
   const port = getMessagePort<ReceiveData, QueryParams>(workerCommands['fetch raydium clmm infos'])
