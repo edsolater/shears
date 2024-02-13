@@ -3,6 +3,7 @@ import {
   Badge,
   Box,
   Button,
+  Fragnment,
   Icon,
   Input,
   KitProps,
@@ -111,7 +112,7 @@ export function RPCPanelBox(kitProps: KitProps) {
       >
         RPC CONNECTION
       </Text>
-      {props.children}
+      <Fragnment>{props.children}</Fragnment>
     </Box>
   )
 }

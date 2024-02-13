@@ -2,7 +2,7 @@ import { MayPromise } from '@edsolater/fnkit'
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
 import type { ApiPoolInfo } from '../types/ammPools'
-import type { JsonClmmInfo, JsonClmmInfo } from '../types/clmm'
+import type { JsonClmmInfo } from '../types/clmm'
 
 const apiCache = {} as {
   Clmm?: MayPromise<JsonClmmInfo[] | undefined>

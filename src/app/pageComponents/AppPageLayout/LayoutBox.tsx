@@ -2,6 +2,7 @@ import { createSignal } from 'solid-js'
 import {
   AddProps,
   Box,
+  Fragnment,
   Group,
   KitProps,
   PivChild,
@@ -70,7 +71,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
             },
           ]}
         >
-          {props['render:contentBanner']}
+          <Fragnment>{props['render:contentBanner']}</Fragnment>
           <Box
             icss={[
               icssCol({ childItems: 'none' }),
