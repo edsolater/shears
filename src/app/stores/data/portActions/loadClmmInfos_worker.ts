@@ -12,13 +12,10 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
   console.log('[worker] start loading clmm infos')
   port.receiveMessage((query: QueryParams) => {
     console.log('query: ', query)
-    try {
-      const apiClmmInfos = fetchClmmJsonInfo()
-    } catch (e) {
-      console.log('error: ', e)
-    }
+    const apiClmmInfos = fetchClmmJsonInfo()
+
     console.log('44: ', 44)
-    // apiClmmInfos.then(log('apiClmmInfos')).then(port.sender.query)
+    apiClmmInfos.then(log('[worker] apiClmmInfos')).then(port.postMessage)
 
     // const sdkClmmInfos = apiClmmInfos.then(
     //   (infos) =>
