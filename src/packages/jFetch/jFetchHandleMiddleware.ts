@@ -10,7 +10,7 @@ export interface JFetchMiddlewareItem {
 
 export interface JFetchOptions extends JFetchCoreOptions {
   middlewares?: JFetchMiddlewareItem[]
-  cachPlace?: 'sensionStorage' | 'localStorage' | 'indexedDB'
+  cachPlace?: 'memory' | 'sensionStorage' | 'localStorage' | 'indexedDB'
 }
 
 type JFetchResultCache = Map<

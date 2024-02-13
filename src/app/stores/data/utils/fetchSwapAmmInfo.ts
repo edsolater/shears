@@ -35,7 +35,7 @@ export async function fetchAmmPoolInfo() {
   return apiCache
 }
 
-export function prefetch() {
+export function prefetch() { // TODO: should only prefetch in swap page
   console.info('[prefetch] start prefetch ammPoolInfo')
   // fetchAmmPoolInfo()
 }
