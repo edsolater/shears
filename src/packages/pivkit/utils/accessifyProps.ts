@@ -1,5 +1,6 @@
 import { AnyFn, AnyObj, isFunction, isObject, isString } from '@edsolater/fnkit'
 import { ValidController } from '../piv/typeTools'
+import { mutateObject } from '../fnkit/mutateObject'
 
 export type Accessify<V, Controller extends ValidController | unknown = unknown> = V | ((controller: Controller) => V)
 export type DeAccessify<V> = V extends Accessify<infer T, any> ? T : V
@@ -17,8 +18,8 @@ export type AccessifyProps<P extends AnyObj, Controller extends ValidController 
     | 'children'
     ? P[K]
     : P[K] extends AnyFn | undefined
-      ? P[K]
-      : Accessify<P[K], Controller>
+    ? P[K]
+    : Accessify<P[K], Controller>
 }
 
 export type DeAccessifyProps<P> = {
@@ -36,14 +37,15 @@ export type DeAccessifyProps<P> = {
 /**
  * propertyName start with 'on' will treate as function
  */
-export function useAccessifiedProps<P extends AnyObj, Controller extends ValidController | unknown = unknown>(
+export function accessifyProps<P extends AnyObj, Controller extends ValidController | unknown = unknown>(
   props: P,
   controller?: Controller,
   /** default is on* and domRef and controllerRef, but you can add more */
   needAccessifyProps?: string[],
+  debug?: boolean
 ): DeAccessifyProps<P> {
   // why slower than just reduce? 🤔
-  return changeObject(props, ({ value, key }) => {
+  return mutateObject(props, ({ value, key }) => {
     const isPreferOriginalValue =
       isString(key) &&
       ((needAccessifyProps ? !needAccessifyProps?.includes(key) : false) ||
@@ -85,37 +87,7 @@ export function useAccessifiedProps<P extends AnyObj, Controller extends ValidCo
   // return accessifiedProps
 }
 
-/** like mergeObjects as faster as you can*/
-function changeObject(obj: object, mutateFn: (payload: { value: any; key: keyof any }) => any): object {
-  let keys: Set<string | symbol> | undefined = undefined
-  let keysArray: (string | symbol)[] | undefined = undefined
-
-  function getOwnKeys() {
-    if (!keys || !keysArray) {
-      keysArray = Reflect.ownKeys(obj)
-      keys = new Set(keysArray)
-    }
-    return { a: keysArray, s: keys }
-  }
-  return new Proxy(obj, {
-    apply(target, thisArg, argArray) {
-      const fn = target
-      return fn && Reflect.apply(fn as AnyFn, thisArg, argArray)
-    },
-    get: (target, key) => {
-      const value = target[key]
-      const v = mutateFn({ value, key })
-      return v
-    },
-    set: (_target, key, value) => Reflect.set(_target, key, value),
-    has: (_target, key) => getOwnKeys().s.has(key),
-    getPrototypeOf: (target) => Object.getPrototypeOf(target),
-    ownKeys: () => getOwnKeys().a,
-    // for Object.keys to filter
-    getOwnPropertyDescriptor: (target, p) => Reflect.getOwnPropertyDescriptor(target, p),
-  })
-}
-function fixFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(originalFn: F, preParams: P): F {
+export function fixFunctionParams<F extends AnyFn, P extends any[] = Parameters<F>>(originalFn: F, preParams: P): F {
   // @ts-expect-error no need to check
   return {
     [originalFn.name]: (...args: unknown[]) => originalFn(...shallowMergeTwoArray(preParams, args)),

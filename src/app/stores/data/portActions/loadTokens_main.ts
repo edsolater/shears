@@ -7,7 +7,7 @@ export function loadTokens() {
   console.log('[main] start loading tokens')
   setStore({ isTokenListLoading: true })
   const { sender, receiver } = getMessagePort(workerCommands['fetch raydium supported tokens'])
-  sender.query({ url: appApiUrls.tokenInfo })
+  sender.post({ url: appApiUrls.tokenInfo })
   receiver.subscribe((allTokens) => {
     setStore({ isTokenListLoading: false, tokens: allTokens })
   })

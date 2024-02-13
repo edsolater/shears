@@ -1,5 +1,5 @@
 import { AnyObj, switchCase } from '@edsolater/fnkit'
-import { JSX, JSXElement, Show, children, createMemo } from 'solid-js'
+import { JSX, JSXElement, Show } from 'solid-js'
 import { PivProps } from '../Piv'
 import { HTMLTag } from '../typeTools'
 import { domMap } from './domMap'
@@ -15,7 +15,7 @@ function getSolidJSXNode(type: HTMLTag, parsedProps: NativeProps, additionalProp
 export const renderHTMLDOM = (
   type: HTMLTag,
   rawProps: PivProps<any, any>,
-  additionalProps?: Record<any, any>,
+  additionalProps?: Record<any, any>
 ): JSXElement => {
   const { props, ifOnlyNeedRenderChildren, ifOnlyNeedRenderSelf, selfCoverNode } = parsePivProps(rawProps)
 

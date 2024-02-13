@@ -7,7 +7,7 @@ import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
 import { createController } from '../utils/createController'
 import { Box } from './Boxes'
-import { motivate } from '../../fnkit'
+import { motivate } from '../fnkit'
 
 export interface CollapseBoxRowProps {
   /** TODO: open still can't auto lock the trigger not controled component now */
@@ -104,7 +104,7 @@ export function CollapseFace(
       controller: CollapseBoxController
       htmlPropsTagName: 'summary'
     }
-  >,
+  >
 ) {
   const controller = useContext(CollapseContext)
   const { props } = useKitProps(rawProps, { name: 'CollapseFase', controller: () => controller })

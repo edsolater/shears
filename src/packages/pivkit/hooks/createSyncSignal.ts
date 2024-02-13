@@ -12,16 +12,16 @@ export function createSyncSignal<T>(options: {
   defaultValue?(): T
   getValueFromOutside: (prev?: T) => T
   onInvokeSetter?: (value: T) => void
-}): Signal<T|undefined>
+}): Signal<T | undefined>
 export function createSyncSignal<T>(options: {
   defaultValue?(): T
   getValueFromOutside: (prev?: T) => T | undefined
   onInvokeSetter?: (value: T) => void
-}): Signal<T|undefined> {
+}): Signal<T | undefined> {
   const [accessor, setAccessor] = createSignal(
     'defaultValue' in options
       ? options.defaultValue?.() ?? options.getValueFromOutside()
-      : options.getValueFromOutside(),
+      : options.getValueFromOutside()
   )
 
   // invoke `get`
@@ -36,8 +36,8 @@ export function createSyncSignal<T>(options: {
         if (newValue === options.getValueFromOutside()) return
         options.onInvokeSetter?.(newValue as T)
       },
-      { defer: true },
-    ),
+      { defer: true }
+    )
   )
 
   return [accessor, setAccessor]

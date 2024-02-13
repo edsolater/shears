@@ -1,4 +1,3 @@
-import { createMemo } from 'solid-js'
 import {
   Accessify,
   Box,
@@ -9,34 +8,48 @@ import {
   Row,
   cssOpacity,
   cssVar,
+  icssCol,
   useKitProps,
-} from '../../../../packages/pivkit'
-import { usePageMatcher } from '../../../routes'
+} from '@edsolater/pivkit'
+import { useLocation } from '@solidjs/router'
+import { Show, createEffect, createMemo, createSelector } from 'solid-js'
+import { Loop } from '../../../../packages/pivkit'
 import { Link } from '../../../components/Link'
+import { routes } from '../../../routes'
 
-export function NavLinkItems() {
-  const pageMatcher = usePageMatcher()
+export function NavRouteItems() {
+  const location = useLocation()
+  const pathnameSelector = createSelector(() => location.pathname)
   return (
-    <Col
-      icss:gap='0.25rem'
-      icss={{
-        overflowY: 'auto',
-        paddingBlock: '1rem',
-        paddingInline: '0.5rem',
-        marginInlineEnd: '0.5rem',
-        marginBlockEnd: '0.5rem',
-      }}
+    <Loop
+      of={routes}
+      icss={[
+        icssCol(),
+        {
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '.25rem',
+          overflowY: 'auto',
+          paddingBlock: '1rem',
+          paddingInline: '0.5rem',
+          marginInlineEnd: '0.5rem',
+          marginBlockEnd: '0.5rem',
+        },
+      ]}
     >
-      <LinkItem icon='/icons/entry-icon-swap.svg' href='/swap' isCurrentRoutePath={pageMatcher.isSwapPage}>
-        Swap
-      </LinkItem>
-      <LinkItem icon='/icons/entry-icon-pools.svg' href='/pools' isCurrentRoutePath={pageMatcher.isPairsPage}>
-        Pools
-      </LinkItem>
-      <LinkItem icon='/icons/entry-icon-farms.svg' href='/farms' isCurrentRoutePath={pageMatcher.isFarmsPage}>
-        Farms
-      </LinkItem>
-    </Col>
+      {(route) => (
+        <Show when={route.visiable}>
+          <LinkItem
+            icss={{ textTransform: 'capitalize' }}
+            icon={route.icon}
+            href={route.path}
+            isCurrentRoutePath={pathnameSelector(route.path)}
+          >
+            {route.name}
+          </LinkItem>
+        </Show>
+      )}
+    </Loop>
   )
 }
 type LinkItemProps = {
@@ -46,14 +59,16 @@ type LinkItemProps = {
   children?: Accessify<string>
 }
 function LinkItem(kitProps: KitProps<LinkItemProps>) {
-  const { props } = useKitProps(kitProps)
+  const { props, shadowProps } = useKitProps(kitProps)
   const isInnerLink = createMemo(() => props.href?.startsWith('/'))
   const isExternalLink = () => !isInnerLink
   return (
     <Link
       href={props.href}
       innerRoute={isInnerLink}
+      shadowProps={shadowProps}
       icss={{
+        display: 'block',
         paddingBlock: '0.5rem',
         paddingInline: '1rem',
         borderRadius: '0.5rem',

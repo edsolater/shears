@@ -82,7 +82,7 @@ export type KeyboardShortcutSettings = {
 export function bindKeyboardShortcutEventListener(
   el: HTMLElement,
   keyboardShortcutSettings: KeyboardShortcutSettings,
-  options?: { stopPropagation?: boolean },
+  options?: { stopPropagation?: boolean }
 ): EventListenerController {
   addTabIndex(el) // keydown must have fousable element
   const subscription = addEventListener(
@@ -93,7 +93,7 @@ export function bindKeyboardShortcutEventListener(
       const targetShortcutFn = Reflect.get(keyboardShortcutSettings, pressedKey)
       targetShortcutFn?.()
     },
-    { stopPropergation: options?.stopPropagation },
+    { stopPropergation: options?.stopPropagation }
   )
   return subscription
 }
@@ -105,7 +105,7 @@ export function preventDefaultKeyboardShortcut(pureEl: HTMLElement) {
       ev.stopPropagation()
       ev.preventDefault()
     },
-    { capture: true },
+    { capture: true }
   )
 }
 

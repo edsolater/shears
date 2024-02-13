@@ -42,7 +42,7 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
       key,
       [
         // special div props
-        ['domRef', () => (v1 && v2 ? () => mergeRefs(v1(), v2()) : v1 ?? v2)],
+        ['domRef', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['class', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['style', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['icss', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
@@ -55,8 +55,8 @@ export function mergeSignalProps<P extends SignalizeProps<ValidProps> | undefine
         ['render:lastChild', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
         ['controller', () => (v1 && v2 ? () => [v1(), v2()].flat() : v1 ?? v2)],
       ],
-      v1 && v2 ? () => v2() ?? v1() : v2 ?? v1,
-    ),
+      v1 && v2 ? () => v2() ?? v1() : v2 ?? v1
+    )
   )
   // @ts-ignore
   return mergedResult

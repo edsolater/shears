@@ -20,5 +20,3 @@ export function cssClamp(v: string | number, boundary?: { min?: string | number;
 function toPxIfNumber(n: number | string) {
   return isNumber(n) ? `${n}px` : n
 }
-
-

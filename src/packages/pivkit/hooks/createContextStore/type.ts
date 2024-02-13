@@ -17,6 +17,6 @@ export type OnStoreInitCallback<T extends Record<string, any>> = (store: Store<T
 export type OnChangeCallback<T extends Record<string, any>, K extends keyof T = keyof T> = (payload: {
   value: T[K]
   prevValue: T[K] | undefined
-  store: Store<T>,
+  store: Store<T>
   onCleanUp: (registeredCallback: () => void) => void
 }) => void /* clean function */

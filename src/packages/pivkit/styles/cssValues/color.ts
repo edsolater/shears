@@ -15,7 +15,7 @@ type ColorItem = { /** ='currentColor' */ color?: ColorString; percent?: ColorPe
 export function cssColorMix(...colors: (ColorString | ColorPercent | ColorItem)[]) {
   const colorItems = getColorItems(colors)
   const colorInfoList = colorItems.map(({ color, percent }) =>
-    isColorPercent(percent) ? `${color} ${isNumber(percent) ? toPercentString(percent) : percent}` : color,
+    isColorPercent(percent) ? `${color} ${isNumber(percent) ? toPercentString(percent) : percent}` : color
   )
   return `color-mix(in srgb, ${colorInfoList.join(', ')})`
 }

@@ -1,5 +1,5 @@
 import { createEffect, createMemo, createSignal, Setter } from 'solid-js'
-import { createCachedGlobalHook } from '../../../packages/pivkit'
+import { createCachedGlobalHook } from '@edsolater/pivkit'
 import toPubString from '../../utils/dataStructures/Publickey'
 import { Token } from '../../utils/dataStructures/Token'
 import { WalletAdapterInterface } from './type'

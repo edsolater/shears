@@ -1,5 +1,6 @@
 import { EventCenter, MayPromise, assert, createEventCenter, emptyFn, isObject, mergeFunction } from '@edsolater/fnkit'
 import { PublicKeyish, InnerTransaction as SDKInnerTransaction } from '@raydium-io/raydium-sdk'
+import { InnerSimpleLegacyTransaction as SDK_InnerSimpleTransaction } from '@raydium-io/raydium-sdk'
 import {
   Connection,
   Context,
@@ -72,7 +73,7 @@ export interface TxFinalBatchErrorInfo {
 export type TxFn = (utils: {
   eventCenter: TxHandlerEventCenter
   baseUtils: { owner: PublicKey; connection: Connection }
-}) => MayPromise<TransactionQueue | Transaction | SDKInnerTransaction>
+}) => MayPromise<TransactionQueue | Transaction | SDK_InnerSimpleTransaction>
 
 //#region ------------------- callbacks -------------------
 type TxSuccessCallback = (info: TxSuccessInfo) => void
@@ -141,14 +142,14 @@ export interface MultiTxCallbacks {
 }
 
 export type TransactionQueue = (
-  | [tx: SDKInnerTransaction | Transaction, singleTxOptions?: TxHandlerOption]
-  | SDKInnerTransaction
+  | [tx: SDK_InnerSimpleTransaction | Transaction, singleTxOptions?: TxHandlerOption]
+  | SDK_InnerSimpleTransaction
   | Transaction
 )[]
 
 export interface TransactionCollector {
   add(
-    transaction: TransactionQueue | Transaction | SDKInnerTransaction,
+    transaction: TransactionQueue | Transaction | SDK_InnerSimpleTransaction,
     options?: TxHandlerOption & MultiTxsOption,
   ): void
 }
@@ -302,7 +303,7 @@ function makeMultiOptionIntoSignalOptions({
   singleOptions,
   multiOption,
 }: {
-  transactions: (Transaction | SDKInnerTransaction)[]
+  transactions: (Transaction | SDK_InnerSimpleTransaction)[]
   singleOptions: TxHandlerOption[]
   multiOption: MultiTxsOption
 }): TxHandlerOption[] {

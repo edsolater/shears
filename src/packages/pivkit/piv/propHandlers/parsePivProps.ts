@@ -1,5 +1,5 @@
 import { flap, pipe, shakeFalsy, shrinkFn } from '@edsolater/fnkit'
-import { mutateByAdditionalObjectDescriptors } from '../../../fnkit'
+import { mutateByAdditionalObjectDescriptors } from '../../fnkit'
 import { ValidController } from '../typeTools'
 import { mergeRefs } from '../utils/mergeRefs'
 import { classname } from './classname'
@@ -22,12 +22,15 @@ export type NativeProps = ReturnType<typeof parsePivProps>['props']
 function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
   const parsedPivProps = pipe(
     raw as Partial<PivProps>,
+
+    // TODO: should recursively handle shadowProps and plugin. DO NOT manually handle them
     handleShadowProps,
     handlePluginProps,
     handleShadowProps,
+
     parsePivRenderPrependChildren,
     parsePivRenderAppendChildren,
-    handleMergifyOnCallbackProps,
+    handleMergifyOnCallbackProps
   )
   const controller = (parsedPivProps.innerController ?? {}) as ValidController
   const ifOnlyNeedRenderChildren = 'if' in parsedPivProps ? () => Boolean(shrinkFn(parsedPivProps.if)) : undefined
@@ -100,7 +103,6 @@ export function parsePivProps(rawProps: PivProps<any>) {
   const contextProps = getPropsFromPropContextContext({ componentName: 'Piv' })
   const addPropsContextProps = getPropsFromAddPropContext({ componentName: 'Piv' })
   const mergedContextProps = mergeProps(rawProps, contextProps, addPropsContextProps)
-
   const { parsedPivProps, controller, ifOnlyNeedRenderChildren, selfCoverNode, ifOnlyNeedRenderSelf } =
     getPropsInfoOfRawPivProps(mergedContextProps)
   debugLog(mergedContextProps, parsedPivProps, controller)
@@ -184,7 +186,7 @@ function debugLog(rawProps: PivProps<any>, props: PivProps<any>, controller: Val
       console.debug(
         '[piv debug] onClick (raw → parsed): ',
         props.onClick,
-        'onClick' in props && parseOnClick(props.onClick!, controller),
+        'onClick' in props && parseOnClick(props.onClick!, controller)
       )
     }
     if (props.debugLog.includes('children')) {

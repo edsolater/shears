@@ -4,6 +4,8 @@ import useResizeObserver from '../../domkit/hooks/useResizeObserver'
 import { createRef } from '../../hooks/createRef'
 import { Piv, PivProps, omit } from '../../piv'
 import { ListContext } from './List'
+import { createDomRef } from '../../hooks'
+import isClientSide from '../../jFetch/utils/isSSR'
 
 export interface ListItemProps extends Omit<PivProps, 'children'> {
   children: () => JSX.Element
@@ -23,13 +25,13 @@ export function ListItem(originalProps: ListItemProps) {
   const children = childrenProps.children
   const { props, lazyLoadController } = useKitProps(rawProps, { name: 'ListItem' })
 
-  const [itemRef, setRef] = createRef<HTMLElement>()
+  const [itemDomRef, setItemDom] = createRef<HTMLElement>()
 
   //=== isIntersecting with parent `<List>`'s intersectionObserver
   const listContext = useContext(ListContext)
   const [isIntersecting, setIsIntersecting] = createSignal(Boolean(props.forceVisiable))
   createEffect(() => {
-    const el = itemRef()
+    const el = itemDomRef()
     if (!el) return
     listContext.observeFunction?.(el, ({ entry }) => {
       setIsIntersecting(entry.isIntersecting)
@@ -49,12 +51,9 @@ export function ListItem(originalProps: ListItemProps) {
   return (
     <Piv
       class='ListItem'
-      domRef={[setRef, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
+      domRef={[setItemDom, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
       shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
-      style={{
-        height: isIntersecting() ? undefined : `${innerHeight()}px`,
-        width: isIntersecting() ? undefined : `${innerWidth()}px`,
-      }}
+      style={isIntersecting() ? undefined : { height: `${innerHeight()}px`, width: `${innerWidth()}px` }}
       icss={{ contentVisibility: isIntersecting() ? 'visible' : 'hidden', width: '100%' }}
     >
       {childContent}
@@ -67,7 +66,7 @@ function useElementSizeDetector() {
   const [innerWidth, setInnerWidth] = createSignal<number>()
   const [innerHeight, setInnerHeight] = createSignal<number>()
 
-  const [ref, setRef] = createRef<HTMLElement>()
+  const { dom: ref, setDom: setRef } = createDomRef<HTMLElement>()
 
   const { destory } = useResizeObserver(ref, ({ el }) => {
     detectSize(el)
@@ -75,8 +74,13 @@ function useElementSizeDetector() {
 
   function detectSize(el: HTMLElement) {
     if (!el) return
-    setInnerHeight(el.clientHeight)
-    setInnerWidth(el.clientWidth)
+    if (!isClientSide()) return
+
+    if (!('clientWidth' in el)) return
+    // setInnerWidth(el.clientWidth) //FIXME: why set is will cause error?🤔
+
+    if (!('clientHeight' in el)) return
+    // setInnerHeight(el.clientHeight) //FIXME: why set is will cause error?🤔
   }
   return { setRef, innerWidth, innerHeight }
 }

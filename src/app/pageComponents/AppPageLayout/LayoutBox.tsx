@@ -2,18 +2,19 @@ import { createSignal } from 'solid-js'
 import {
   AddProps,
   Box,
+  Fragnment,
   Group,
   KitProps,
   PivChild,
   cssLinearGradient,
   cssVar,
-  icss_col,
-  icss_grid,
+  icssCol,
+  icssGrid,
   renderAsHTMLAside,
   useKitProps,
-} from '../../../packages/pivkit'
+} from '@edsolater/pivkit'
 import { useMetaTitle } from '../../hooks/useDocumentMetaTitle'
-import { Main } from '../../../packages/pivkit/components/Boxes/Main'
+import { Main } from '@edsolater/pivkit'
 
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
@@ -59,10 +60,10 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       <Group name={'side-menu'} icss={{ gridArea: 'side' }} render:self={renderAsHTMLAside}>
         {props['render:sideBar']}
       </Group>
-      <Group name={'content'} icss={[{ gridArea: 'content' }, icss_grid]}>
+      <Group name={'content'} icss={[{ gridArea: 'content' }, icssGrid]}>
         <Main
           icss={[
-            icss_col,
+            icssCol,
             { position: 'relative', overflow: 'hidden' },
             {
               background: cssLinearGradient({ colors: [cssVar('--content-bg__01'), cssVar('--content-bg__02')] }),
@@ -70,10 +71,10 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
             },
           ]}
         >
-          {props['render:contentBanner']}
+          <Fragnment>{props['render:contentBanner']}</Fragnment>
           <Box
             icss={[
-              icss_col({ childItems: 'none' }),
+              icssCol({ childItems: 'none' }),
               {
                 flexGrow: 1,
                 height: 0,

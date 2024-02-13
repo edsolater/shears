@@ -22,7 +22,7 @@ export function useGestureHover(options: GestureHoverOptions): GestureHoverState
     if (options.disable) return
     const el = options.el()
     if (!el) return
-    let hoverDelayTimerId: number | undefined | NodeJS.Timeout
+    let hoverDelayTimerId: number | undefined
     const hoverStartHandler = (ev: PointerEvent) => {
       if (options.disable) return
       if (options.triggerDelay) {
@@ -31,7 +31,7 @@ export function useGestureHover(options: GestureHoverOptions): GestureHoverState
           turnonHover()
           options.onHover?.({ ev, is: 'start' })
           options.onHoverEnd?.({ ev })
-        }, options.triggerDelay)
+        }, options.triggerDelay) as any
       } else {
         turnonHover()
         options.onHover?.({ is: 'start', ev })

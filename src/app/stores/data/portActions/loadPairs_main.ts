@@ -5,7 +5,7 @@ export function loadPairs() {
   console.log('[main] start loading pairs')
   setStore({ isPairInfoLoading: true })
   const { sender, receiver } = getMessagePort('fetch raydium pairs info')
-  sender.query({ force: false })
+  sender.post({ force: false })
   receiver.subscribe((allPairJsonInfos) => {
     setStore({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 150) })
     let count = 0

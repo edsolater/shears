@@ -1,7 +1,6 @@
 import { AnyFn } from '@edsolater/fnkit'
+import { IconProps, ItemBoxProps, KitProps, PivProps, copyToClipboard, createDisclosure, useKitProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
-import { ItemBoxProps, IconProps, PivProps, KitProps, useKitProps, createDisclosure } from '../../packages/pivkit'
-import { copyToClipboard } from '../../packages/pivkit/domkit'
 import { motivate } from '../../packages/fnkit'
 
 export type AddressItemProps = ItemBoxProps &

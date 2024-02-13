@@ -1,24 +1,31 @@
 import { AnyObj, isFunction, overwriteFunctionName } from '@edsolater/fnkit'
 import { Accessor } from 'solid-js'
-import { ConfigableFunction, createConfigableFunction } from '../../../fnkit/configableFunction'
+import { ConfigableFunction, createConfigableFunction } from '../../fnkit/configableFunction'
 import { KitProps } from '../../createKit/KitProps'
 import { Accessify } from '../../utils'
 import { ValidController, ValidProps } from '../typeTools'
 import { PivProps } from '../Piv'
 
-export type GetPluginParams<T> = T extends Plugin<infer Px1>
-  ? Px1
-  : T extends Plugin<infer Px1>[]
-  ? Px1
-  : T extends (Plugin<infer Px1> | Plugin<infer Px2>)[]
-  ? Px1 & Px2
-  : T extends (Plugin<infer Px1> | Plugin<infer Px2> | Plugin<infer Px3>)[]
-  ? Px1 & Px2 & Px3
-  : T extends (Plugin<infer Px1> | Plugin<infer Px2> | Plugin<infer Px3> | Plugin<infer Px4>)[]
-  ? Px1 & Px2 & Px3 & Px4
-  : T extends (Plugin<infer Px1> | Plugin<infer Px2> | Plugin<infer Px3> | Plugin<infer Px4> | Plugin<infer Px5>)[]
-  ? Px1 & Px2 & Px3 & Px4 & Px5
-  : unknown
+export type GetPluginParams<T> =
+  T extends Plugin<infer Px1>
+    ? Px1
+    : T extends Plugin<infer Px1>[]
+      ? Px1
+      : T extends (Plugin<infer Px1> | Plugin<infer Px2>)[]
+        ? Px1 & Px2
+        : T extends (Plugin<infer Px1> | Plugin<infer Px2> | Plugin<infer Px3>)[]
+          ? Px1 & Px2 & Px3
+          : T extends (Plugin<infer Px1> | Plugin<infer Px2> | Plugin<infer Px3> | Plugin<infer Px4>)[]
+            ? Px1 & Px2 & Px3 & Px4
+            : T extends (
+                  | Plugin<infer Px1>
+                  | Plugin<infer Px2>
+                  | Plugin<infer Px3>
+                  | Plugin<infer Px4>
+                  | Plugin<infer Px5>
+                )[]
+              ? Px1 & Px2 & Px3 & Px4 & Px5
+              : unknown
 
 export type Plugin<
   PluginOptions extends Record<string, any> = any,
@@ -72,16 +79,13 @@ export function createPlugin<
     name?: string
   }
 ): PluginObj<PluginOptions, PluginState, Props, Controller> {
-  const pluginCoreFn = createConfigableFunction(
-    (params: PluginOptions) => {
-      const mayPluginCore = createrFn(params)
-      const renamedMayPluginCore =
-        options?.name && isFunction(mayPluginCore) ? overwriteFunctionName(mayPluginCore, options.name) : mayPluginCore
-      if (isFunction(renamedMayPluginCore)) return { plugin: renamedMayPluginCore, state: {} }
-      return renamedMayPluginCore
-    },
-    options?.defaultOptions
-  )
+  const pluginCoreFn = createConfigableFunction((params: PluginOptions) => {
+    const mayPluginCore = createrFn(params)
+    const renamedMayPluginCore =
+      options?.name && isFunction(mayPluginCore) ? overwriteFunctionName(mayPluginCore, options.name) : mayPluginCore
+    if (isFunction(renamedMayPluginCore)) return { plugin: renamedMayPluginCore, state: {} }
+    return renamedMayPluginCore
+  }, options?.defaultOptions)
 
   Object.assign(pluginCoreFn, { [isPluginObjSymbol]: true })
 

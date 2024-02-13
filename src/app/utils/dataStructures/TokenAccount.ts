@@ -2,14 +2,15 @@ import {
   GetTokenAccountsByOwnerConfig,
   SPL_ACCOUNT_LAYOUT,
   Spl,
-  TOKEN_PROGRAM_ID,
   TokenAccount as _TokenAccount,
 } from '@raydium-io/raydium-sdk'
 import { Connection } from '@solana/web3.js'
 import { parseSDKBN } from './BN'
 import toPubString, { toPub } from './Publickey'
+import { TOKEN_PROGRAM_ID } from './Token'
 
 export interface TokenAccount {
+  programId: string
   isAssociated?: boolean // is ATA
   mint?: string
   publicKey?: string
@@ -58,7 +59,7 @@ export async function getOwnerTokenAccounts({
     const solReq = connection.getAccountInfo(toPub(owner), config?.commitment)
     const tokenReq = connection.getTokenAccountsByOwner(
       toPub(owner),
-      { programId: TOKEN_PROGRAM_ID },
+      { programId: toPub(TOKEN_PROGRAM_ID) },
       config?.commitment,
     )
 
@@ -77,18 +78,24 @@ export async function getOwnerTokenAccounts({
       const rawResult = SPL_ACCOUNT_LAYOUT.decode(account.data)
       const { mint, amount } = rawResult
 
-      const associatedTokenAddress = Spl.getAssociatedTokenAccount({ mint, owner: toPub(owner) })
+      const associatedTokenAddress = Spl.getAssociatedTokenAccount({
+        mint,
+        owner: toPub(owner),
+        programId: account.owner,
+      })
       tokenAccounts.push({
+        programId: account.owner.toBase58(),
         publicKey: toPubString(pubkey),
         mint: toPubString(mint),
         isAssociated: associatedTokenAddress.equals(pubkey),
         amount: parseSDKBN(amount),
         isNative: false,
       })
-      sdkTokenAccounts.push({ pubkey, accountInfo: rawResult })
+      sdkTokenAccounts.push({ pubkey, accountInfo: rawResult, programId: account.owner})
     }
 
     tokenAccounts.push({
+      programId: TOKEN_PROGRAM_ID,
       amount: BigInt(solResp ? solResp.lamports : 0),
       isNative: true,
     })

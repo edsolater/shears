@@ -1,4 +1,4 @@
-import { Box, Text } from '../../packages/pivkit'
+import { Box, Text } from '@edsolater/pivkit'
 
 export function AppLogo(props: { }) {
   return (

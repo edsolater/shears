@@ -2,7 +2,7 @@
  * utils in this folder can be used to override the default theme of the component
  */
 
-import { get, has } from '../../../app/utils/dataTransmit/itemMethods'
+import { get, has } from '../fnkit/itemMethods'
 import { ButtonKitProps, InputKitProps } from '../components'
 import { ValidProps } from '../piv'
 

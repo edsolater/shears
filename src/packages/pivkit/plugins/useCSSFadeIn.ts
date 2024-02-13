@@ -1,6 +1,6 @@
 import { createEffect, createSignal } from 'solid-js'
 import { createRef } from '../hooks/createRef'
-import { AccessifyProps, useAccessifiedProps } from '../utils/accessifyProps'
+import { AccessifyProps, accessifyProps } from '../utils/accessifyProps'
 import { useCSSTransition } from './useCSSTransition'
 
 type UseFadeInOptions = AccessifyProps<{
@@ -12,7 +12,7 @@ type UseFadeInOptions = AccessifyProps<{
 
 // TODO: should be plugin
 export function useCSSFadeIn(additionalOpts: UseFadeInOptions) {
-  const options = useAccessifiedProps(additionalOpts)
+  const options = accessifyProps(additionalOpts)
 
   // TODO: should have util 👉 covert from getter to signal
   const [show, setShow] = createSignal(options.show ?? false)

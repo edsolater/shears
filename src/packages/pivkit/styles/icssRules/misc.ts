@@ -9,14 +9,14 @@ import { ICSS, createICSS } from '../../piv'
 import { cssOpacity, cssVar } from '../cssValues'
 
 /** for childrens (items or item-group) */
-export const icss_divider = createICSS(() => ({
+export const icssDivider = createICSS(() => ({
   '& > :not(:last-child)': {
     borderBottom: `thin solid ${cssOpacity('currentColor', 0.1)}`,
   },
 }))
 
 // somethings can't use  currentColor,  so use this instead
-export const icss_textColor = createICSS((options?: { color?: string | string[] }) =>
+export const icssTextColor = createICSS((options?: { color?: string | string[] }) =>
   mergeObjects(
     {
       '--current-color': (isArray(options?.color) ? options?.color[0] : options?.color) ?? cssVar('--secondary'),
@@ -24,11 +24,11 @@ export const icss_textColor = createICSS((options?: { color?: string | string[] 
     },
     options && isArray(options?.color)
       ? mergeObjects(...options!.color.map((c, idx) => ({ [`--color-${idx}`]: c })))
-      : undefined,
-  ),
+      : undefined
+  )
 )
 
-export const icss_cardPanel = createICSS(
+export const icssCardPanel = createICSS(
   (options?: { transparentCard?: boolean }) => ({
     backgroundColor: options?.transparentCard ? undefined : cssVar('--card-bg'),
     borderRadius: '0.5rem',
@@ -41,5 +41,5 @@ export const icss_cardPanel = createICSS(
         '--px': '1em',
       },
     },
-  },
+  }
 )

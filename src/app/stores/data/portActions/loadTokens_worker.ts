@@ -1,10 +1,10 @@
 import { SOLToken } from '../../../utils/dataStructures/Token'
-import { toRecord } from '../../../utils/dataTransmit/itemMethods'
-import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
+import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
+import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
 
-export function loadTokens_worker(transformers: MessagePortTransformers) {
+export function loadTokensInWorker(transformers: PortUtils) {
   const { receiver, sender } = transformers.getMessagePort('fetch raydium supported tokens')
   console.log('[👾worker  🚪port] registered load token')
   receiver.subscribe((options) => {
@@ -16,8 +16,8 @@ export function loadTokens_worker(transformers: MessagePortTransformers) {
         const availableTokens = res?.tokens
           .filter((t) => !res?.blacklist.includes(t.mint) || t.name === 'Native Solana')
           .concat(SOLToken) // replace api mistakely add SOL
-        return toRecord(availableTokens, (t) => t.mint) satisfies StoreData['tokens']
+        return toCollectionObject(availableTokens, (t) => t.mint) satisfies StoreData['tokens']
       })
-      .then(sender.query)
+      .then(sender.post)
   })
 }

@@ -66,7 +66,6 @@ function encodeVersionedTransaction(rawData: VersionedTransaction) {
 }
 
 function decodeVersionedTransaction(rawData: ReturnType<typeof encodeVersionedTransaction>) {
-  console.log('123: ', 123)
   const message = decodeMessage(rawData._info.message)
   const signatures = rawData._info.signatures
   return new VersionedTransaction(message, signatures)

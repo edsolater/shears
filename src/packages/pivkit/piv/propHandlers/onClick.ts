@@ -1,5 +1,5 @@
 import { AnyFn } from '@edsolater/fnkit'
-import { objectMerge } from '../../../fnkit'
+import { objectMerge } from '../../fnkit'
 import { ValidController } from '../typeTools'
 
 export function parseOnClick(onClick: AnyFn, controller: ValidController) {

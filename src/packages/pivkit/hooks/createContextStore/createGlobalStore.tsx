@@ -4,7 +4,7 @@ import { OnChangeCallback } from '../smartStore/features/onPropertyChange'
 
 export function createGlobalStore<T extends Record<string, any>>(
   defaultValue: T,
-  options?: CreateSmartStoreOptions<T>,
+  options?: CreateSmartStoreOptions<T>
 ): [
   useStore: () => T,
   // don't use if possible, data in store is reactive
@@ -12,7 +12,7 @@ export function createGlobalStore<T extends Record<string, any>>(
   // don't use if possible, data in store is reactive
   onPropertyChange: <K extends keyof T>(
     key: K,
-    cb: OnChangeCallback<T, K>,
+    cb: OnChangeCallback<T, K>
   ) => {
     remove(): void
   },

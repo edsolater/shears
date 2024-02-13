@@ -1,22 +1,25 @@
 import { AnyFn } from '@edsolater/fnkit'
 import { inNextMainLoop } from '../../../../packages/fnkit'
-import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
-import { CalculateSwapRouteInfosParams, calculateSwapRouteInfos } from '../utils/calculateSwapRouteInfos'
+import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
+import {
+  CalculateSwapRouteInfosParams,
+  calculateSwapRouteInfos,
+  type CalculateSwapRouteInfosResult,
+} from '../utils/calculateSwapRouteInfos'
 
 let storedCleanUpFunction: AnyFn | undefined = undefined
 
-export function calculateSwapRouteInfos_worker(transformers: MessagePortTransformers) {
-  const messageSender = transformers.getMessageSender('let webworker calculate swap route infos')
-  const messageReceiver = transformers.getMessageReceiver<CalculateSwapRouteInfosParams>(
-    'let webworker calculate swap route infos',
-  )
-  messageReceiver.subscribe((payload) => {
+export function calculateSwapRouteInfosInWorker({
+  getMessagePort,
+}: PortUtils<CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult>) {
+  const port = getMessagePort('let webworker calculate swap route infos')
+  port.receiveMessage((payload) => {
     storedCleanUpFunction?.()
     const { abort, result, assertNotAborted } = calculateSwapRouteInfos(payload)
     result.then(
       inNextMainLoop((result) => {
         assertNotAborted()
-        messageSender.query(result)
+        port.postMessage(result)
       }),
     )
     storedCleanUpFunction = abort

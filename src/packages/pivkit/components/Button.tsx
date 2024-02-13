@@ -1,6 +1,6 @@
 import { flap, isMeanfulArray, MayArray, MayFn, shrinkFn } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
-import { objectMerge } from '../../fnkit'
+import { mergeObjects } from '@edsolater/fnkit'
 import { createRef } from '../hooks/createRef'
 import { compressICSSToObj, ICSS, mergeProps, omit, parsePivChildren, Piv, PivChild } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
@@ -79,12 +79,12 @@ export function Button(kitProps: ButtonKitProps) {
   const failedTestValidator = createMemo(() =>
     isMeanfulArray(props.validators) || props.validators
       ? flap(props.validators!).find(({ should }) => !shrinkFn(should))
-      : undefined,
+      : undefined
   )
   const mergedProps = mergeProps(props, failedTestValidator()?.fallbackProps)
 
   const isActive = createMemo(
-    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled),
+    () => failedTestValidator()?.forceActive || (!failedTestValidator() && !mergedProps.disabled)
   )
 
   const mainBgColor = props.theme?.mainBgColor ?? cssColors.component_button_bg_primary
@@ -122,7 +122,7 @@ export function Button(kitProps: ButtonKitProps) {
   }[size]
 
   const mergedController =
-    'innerController' in props ? objectMerge(props.innerController!, innerController) : innerController
+    'innerController' in props ? mergeObjects(props.innerController!, innerController) : innerController
   return (
     <Piv<'button'>
       render:self={(selfProps) => renderHTMLDOM('button', selfProps)}

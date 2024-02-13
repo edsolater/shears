@@ -21,5 +21,11 @@ export function createGlobalConfigContext<Config extends AnyObj>(defaultGlobalCo
     return <context.Provider value={storedGlobalConfig}>{props.children}</context.Provider>
   }
 
-  return { GlobalConfigProvider, useGlobalConfigContext, setStoredGlobalConfig, storedGlobalConfig }
+  return {
+    /** just a normal context */
+    GlobalConfigProvider,
+    useGlobalConfigContext,
+    setStoredGlobalConfig,
+    storedGlobalConfig
+  }
 }

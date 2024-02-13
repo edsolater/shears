@@ -1,5 +1,5 @@
 import { KitProps, useKitProps } from '../../createKit'
-import { ICSSColOption, icss_col } from '../../styles/icssRules'
+import { ICSSColOption, icssCol } from '../../styles/icssRules'
 import { getICSSFromProps } from '../../utils/getICSSFromProps'
 import { Box, BoxProps } from './Box'
 
@@ -11,7 +11,7 @@ export type ColProps = {
  */
 export function Col(rawProps: KitProps<ColProps>) {
   const { props, shadowProps } = useKitProps(rawProps, { name: 'ColBox' })
-  const icss_option = getICSSFromProps(props)
+  const icssOption = getICSSFromProps(props)
   /* ---------------------------------- props --------------------------------- */
-  return <Box icss={icss_col(icss_option)} shadowProps={shadowProps} />
+  return <Box icss={icssCol(icssOption)} shadowProps={shadowProps} />
 }

@@ -24,7 +24,11 @@ export function toBigint(n: Numberish): bigint {
 
 export type FlatSDKBN<T> = ReplaceType<T, OriginalBN, bigint>
 
-export function parseSDKBN(n: OriginalBN): bigint {
+export function parseSDKBN(n: undefined): undefined
+export function parseSDKBN(n: OriginalBN): bigint
+export function parseSDKBN(n: OriginalBN | undefined): bigint | undefined 
+export function parseSDKBN(n: OriginalBN | undefined): bigint | undefined {
+  if (n == null) return n
   return toBigint(n.toString())
 }
 

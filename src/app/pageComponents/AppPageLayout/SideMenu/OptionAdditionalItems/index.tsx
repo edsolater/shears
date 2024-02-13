@@ -1,4 +1,4 @@
-import { Col } from '../../../../../packages/pivkit'
+import { Col } from '@edsolater/pivkit'
 import { OptionItemBox } from './OptionItem'
 import { RpcSettingFace } from './RpcOptionSetting'
 

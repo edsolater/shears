@@ -2,7 +2,7 @@ import { createICSS } from '../../piv'
 import { cssCurrentColor } from '../cssColors'
 import { cssOpacity, cssVar } from '../cssValues'
 
-export const icss_frostedGlass = createICSS((options?: { blurBg?: boolean }) => ({
+export const icssFrostedGlass = createICSS((options?: { blurBg?: boolean }) => ({
   '@layer default-variable': {
     '--text-color': cssCurrentColor,
     '--border-color': cssCurrentColor,
@@ -35,7 +35,7 @@ export const icss_frostedGlass = createICSS((options?: { blurBg?: boolean }) => 
   },
 }))
 
-export const icss_frostedCard = createICSS((options?: { size?: 'sm' | 'md' | 'lg' }) => ({
+export const icssFrostedCard = createICSS((options?: { size?: 'sm' | 'md' | 'lg' }) => ({
   padding: '24px 32px 20px',
   borderRadius: '1em',
   border: 'solid rgba(99,130,202,.2)',

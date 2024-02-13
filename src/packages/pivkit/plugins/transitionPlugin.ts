@@ -29,10 +29,10 @@ export interface TransitionOptions {
   progressProps?: PivProps
 
   onBeforeTransition?: (
-    payload: { from: TransitionDetectorActionPhase; to: TransitionDetectorActionPhase } & TransitionDetectorController,
+    payload: { from: TransitionDetectorActionPhase; to: TransitionDetectorActionPhase } & TransitionDetectorController
   ) => void
   onAfterTransition?: (
-    payload: { from: TransitionDetectorActionPhase; to: TransitionDetectorActionPhase } & TransitionDetectorController,
+    payload: { from: TransitionDetectorActionPhase; to: TransitionDetectorActionPhase } & TransitionDetectorController
   ) => void
 
   presets?: MayArray<MayFn<Omit<TransitionOptions, 'presets'>>>
@@ -66,18 +66,20 @@ export const transitionDetectorPlugin = createPlugin(
             flap(presets).map((i) => shrinkFn(i)?.fromProps), // not readable
             progressProps,
             fromProps,
-            { style: basic } as PivProps,
+            { style: basic } as PivProps
           ),
           to: mergeProps(
             flap(presets).map((i) => shrinkFn(i)?.toProps), // not readable
             progressProps,
             toProps,
-            { style: basic } as PivProps,
+            { style: basic } as PivProps
           ),
         } as Record<'from' | 'to', PivProps>
       })
 
-      const [currentPhase, setCurrentPhase] = createSignal<TransitionDetectorActionPhase>(appear ? 'before-going' : 'finish')
+      const [currentPhase, setCurrentPhase] = createSignal<TransitionDetectorActionPhase>(
+        appear ? 'before-going' : 'finish'
+      )
       const [currentTowards, setCurrentTowards] = createSignal<TransitionTowards>('enter')
 
       const controller: TransitionDetectorController = {
@@ -121,9 +123,9 @@ export const transitionDetectorPlugin = createPlugin(
             dom()?.clientHeight // force GPU render frame
             onBeforeTransition?.(payload)
           }
-        }),
+        })
       )
 
       return createMemo(() => transitionPhaseProps()[currentPhase() === 'before-going' ? 'from' : 'to'])
-    },
+    }
 )

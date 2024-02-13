@@ -11,7 +11,6 @@ import {
   createSignal,
   on,
 } from 'solid-js'
-import { ItemList, toArray } from '../../../../app/utils/dataTransmit/itemMethods'
 import { KitProps, useKitProps } from '../../createKit'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
@@ -19,7 +18,16 @@ import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 import { createRef } from '../../hooks/createRef'
 import { Piv } from '../../piv'
 import { ListItem } from './ListItem'
+import { toList } from '../../fnkit/itemMethods'
 
+export type ItemList<T> =
+  | Map<any, T>
+  | Set<T>
+  | T[]
+  | Record<keyof any, T>
+  | IterableIterator<T>
+  | Iterable<T>
+  | undefined
 export interface ListController {
   resetRenderCount(): void
 }
@@ -70,11 +78,11 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [configs]
 
   const _allItems = props.lazy
-    ? createAsyncMemo(() => toArray(shrinkFn(props.items ?? [])), [] as T[])
-    : createMemo(() => toArray(shrinkFn(props.items ?? [])))
-  const allItems = createDeferred(_allItems) // to smoother the render
+    ? createAsyncMemo(() => toList(shrinkFn(props.items ?? [])), [] as T[])
+    : createMemo(() => toList(shrinkFn(props.items ?? [])))
+  const allItems = createDeferred(_allItems) // ⚡ to smoother the render
   const increaseRenderCount = createMemo(
-    () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30),
+    () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30)
   )
   const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(allItems().length, 50))
 
@@ -105,8 +113,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
       () => {
         setRenderItemLength(initRenderCount())
         forceCalculate()
-      },
-    ),
+      }
+    )
   )
 
   const resetRenderCount: ListController['resetRenderCount'] = () => {

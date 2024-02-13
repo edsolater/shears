@@ -25,7 +25,7 @@ export function createDisclosure(
     onOpen?(): void
     /* usually it is for debug */
     onToggle?(isOn: boolean): void
-  } = {},
+  } = {}
 ): CreateDisclosureReturn {
   const defaultOptions = { delay: 800 }
   const opts = addDefaultProps(options, defaultOptions)
@@ -40,14 +40,14 @@ export function createDisclosure(
     }
   })
 
-  const [delayActionId, setDelayActionId] = createSignal<number | NodeJS.Timeout>(0)
+  const [delayActionId, setDelayActionId] = createSignal<unknown>(0)
   const setIsOn = (...params: any[]) => {
     if (options.locked) return
     //@ts-expect-error temp
     _setIsOn(...params)
   }
   const cancelDelayAction = () => {
-    globalThis.clearTimeout(delayActionId())
+    globalThis.clearTimeout(delayActionId() as any)
   }
   const coreOn = () => {
     cancelDelayAction()
@@ -94,7 +94,7 @@ export function createDisclosure(
     open,
     close,
     toggle,
-    set,
+    set
   }
   return [isOn, controller]
 }

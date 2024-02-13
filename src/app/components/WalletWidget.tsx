@@ -1,5 +1,5 @@
 import { createEffect } from 'solid-js'
-import { Button, createDisclosure } from '../../packages/pivkit'
+import { Button, createDisclosure } from '@edsolater/pivkit'
 import { useWalletStore } from '../stores/wallet/store'
 import { getWalletAdapter } from '../stores/wallet/utils/getWalletAdapter'
 

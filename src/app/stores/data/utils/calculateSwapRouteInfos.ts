@@ -1,6 +1,6 @@
 import { Numberish, assert, hasProperty, isDateAfter, shakeNil } from '@edsolater/fnkit'
 import {
-  AmmV3PoolInfo,
+  ClmmPoolInfo,
   ApiPoolInfoItem,
   ComputeAmountOutAmmLayout,
   ComputeAmountOutRouteLayout,
@@ -11,14 +11,14 @@ import {
 } from '@raydium-io/raydium-sdk'
 import { inNextMainLoop, makeTaskAbortable } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
-import { toPercent } from '../../../utils/dataStructures/Percent'
+import { toSDKPercent } from '../../../utils/dataStructures/Percent'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import { Token, toSDKToken } from '../../../utils/dataStructures/Token'
 import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
 import { Mint } from '../../../utils/dataStructures/type'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
-import { sdkParseCLMMPoolInfo } from './sdkParseCLMMPoolInfo'
+import { sdkParseClmmInfos } from './sdkParseCLMMPoolInfo'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
@@ -75,12 +75,12 @@ export function calculateSwapRouteInfos({
       assert(canContinue(), 'task aborted')
       return i
     }
-    const ammV3Promise = fetchedAmmPoolInfoPromise
+    const ClmmPromise = fetchedAmmPoolInfoPromise
       .then(inNextMainLoop(canContinueAsyncChecker))
-      .then((i) => i.ammV3)
-      .then((ammV3) => {
-        assert(ammV3, 'ammV3 api must be loaded')
-        return ammV3
+      .then((i) => i.Clmm)
+      .then((Clmm) => {
+        assert(Clmm, 'Clmm api must be loaded')
+        return Clmm
       })
     const apiPoolListPromise = fetchedAmmPoolInfoPromise
       .then(inNextMainLoop(canContinueAsyncChecker))
@@ -92,19 +92,19 @@ export function calculateSwapRouteInfos({
     const connection = getConnection(rpcUrl)
     const chainTime = Date.now() / 1000
 
-    const sdkParsedAmmV3PoolInfoPromise = ammV3Promise
+    const sdkParsedClmmPoolInfoPromise = ClmmPromise
       .then(inNextMainLoop(canContinueAsyncChecker))
-      .then((ammV3) => sdkParseCLMMPoolInfo({ connection, apiAmmPools: ammV3 }))
+      .then((clmmPoolInfos) => sdkParseClmmInfos({ connection, apiClmmInfos: clmmPoolInfos }))
 
-    const sdkParsedSwapAmmInfo = Promise.all([sdkParsedAmmV3PoolInfoPromise, apiPoolListPromise])
+    const sdkParsedSwapAmmInfo = Promise.all([sdkParsedClmmPoolInfoPromise, apiPoolListPromise])
       .then(inNextMainLoop(canContinueAsyncChecker))
-      .then(([sdkParsedAmmV3PoolInfo, apiPoolList]) =>
+      .then(([sdkParsedClmmPoolInfo, apiPoolList]) =>
         sdkParseSwapAmmInfo({
           connection,
           inputMint: input.mint,
           outputMint: output.mint,
           apiPoolList: apiPoolList,
-          sdkParsedAmmV3PoolInfo: sdkParsedAmmV3PoolInfo,
+          sdkParsedClmmPoolInfo: sdkParsedClmmPoolInfo,
         }),
       )
 
@@ -130,7 +130,7 @@ export function calculateSwapRouteInfos({
           tickCache: awaitedTickCache,
           inputTokenAmount: deUITokenAmount(inputAmount),
           outputToken: toSDKToken(output),
-          slippage: toPercent(slippageTolerance),
+          slippage: toSDKPercent(slippageTolerance),
           chainTime,
         })
       })
@@ -179,7 +179,7 @@ interface BestResultStartTimeInfo {
 }
 
 interface BestResultStartTimePoolInfo {
-  rawInfo: AmmV3PoolInfo | ApiPoolInfoItem
+  rawInfo: ClmmPoolInfo | ApiPoolInfoItem
   ammId: string
   quoteMint: string
   baseMint: string
@@ -226,6 +226,6 @@ function getPoolInfoFromPoolType(poolType: PoolType): BestResultStartTimeInfo['p
   }
 }
 
-function isClmmPoolInfo(poolType: PoolType): poolType is AmmV3PoolInfo {
+function isClmmPoolInfo(poolType: PoolType): poolType is ClmmPoolInfo {
   return hasProperty(poolType, 'protocolFeesTokenA')
 }

@@ -1,6 +1,6 @@
 import { isString, shrinkFn } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
-import { Accessify, createSmartStore } from '../../../../packages/pivkit'
+import { Accessify, createSmartStore } from '@edsolater/pivkit'
 import { Token, emptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
 import { get, has } from '../../../utils/dataTransmit/itemMethods'

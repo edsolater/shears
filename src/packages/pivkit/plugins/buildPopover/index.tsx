@@ -107,7 +107,7 @@ export function buildPopover(options?: PopoverPluginOptions) {
         // htmlProps: { popover: 'manual' } as any, //  lack of correct html type,
       } satisfies Partial<PivProps>
     },
-    { name: 'popoverPanel' },
+    { name: 'popoverPanel' }
   )
 
   /**

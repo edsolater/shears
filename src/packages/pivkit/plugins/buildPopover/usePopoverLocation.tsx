@@ -114,5 +114,5 @@ export function usePopoverLocation({
     return style
   })
 
-  return { locationInfo: panelCoordinates, forceUpdateLocation: update, coorStyle:panelStyle }
+  return { locationInfo: panelCoordinates, forceUpdateLocation: update, coorStyle: panelStyle }
 }

@@ -1,5 +1,5 @@
 import { createEffect, createSignal, onCleanup } from 'solid-js'
-import { requestLoopAnimationFrame } from '../../packages/pivkit'
+import { requestLoopAnimationFrame } from '@edsolater/pivkit'
 
 /**
  * 0 ~ 1

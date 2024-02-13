@@ -1,4 +1,4 @@
-import { KitProps, useKitProps, Piv, Box, Text } from '../../packages/pivkit'
+import { KitProps, useKitProps, Piv, Box, Text } from '@edsolater/pivkit'
 
 export interface ExamplePanelRawProps {
   name?: string

@@ -14,7 +14,7 @@ const recordedControllers = createSubscribable<WeakerMap<string, ValidController
  */
 export function registerControllerInCreateKit(
   proxyController: ValidController | unknown | undefined,
-  id: string | undefined,
+  id: string | undefined
 ) {
   if (!proxyController) return
   if (!id) return
@@ -28,7 +28,7 @@ export function registerControllerInCreateKit(
 
 export function recordController<Controller extends ValidController | unknown>(
   id: string,
-  proxyController: Controller,
+  proxyController: Controller
 ) {
   recordedControllers.set((m) => (m ?? new WeakerMap()).set(id, proxyController))
 }

@@ -29,7 +29,7 @@ export function delayDo<F extends AnyFn>(
 
     /** user can detect delay to use setTimeout */
     delayMethod?(task: () => void): void
-  },
+  }
 ): Promise<ReturnType<F>> {
   if (!allRegistedTasks.has(cb)) {
     const taskKey = options?.taskKey ?? cb

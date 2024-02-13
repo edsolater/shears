@@ -4,7 +4,7 @@ import { DeKitProps, KitProps, useKitProps } from '../../createKit'
 import { createDomRef, useClickOutside } from '../../hooks'
 import { AddDefaultPivProps, ClickController, Piv, PivChild } from '../../piv'
 import { buildPopover, useKeyboardShortcut } from '../../plugins'
-import { cssVar, icss_cardPanel, icss_clickable, icss_row } from '../../styles'
+import { cssVar, icssCardPanel, icssClickable, icssRow } from '../../styles'
 import { Box } from '../Boxes'
 import { ItemBox, ItemBoxKitProps } from '../ItemBox'
 import { Loop } from '../Loop'
@@ -115,7 +115,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         keyboardShortcut: 'ArrowDown',
       },
     },
-    { enabled: popoverState.isTriggerOn },
+    { enabled: popoverState.isTriggerOn }
   )
 
   // auto focus when open
@@ -147,7 +147,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         plugin={popoverPlugins.trigger}
         icss={[
           { background: '#000', minWidth: '3em', maxWidth: '12em', minHeight: '1lh', borderRadius: '8px' },
-          icss_row({}), //FIXME: 💩 why type is ANY?
+          icssRow({}), //FIXME: 💩 why type is ANY?
         ]}
       >
         {renderTriggerItem({
@@ -161,7 +161,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         domRef={setSelectListDom}
         shadowProps={props.selectListBoxProps}
         plugin={popoverPlugins.panel}
-        icss={[icss_cardPanel, { padding: 'revert', paddingBlock: '8px' }]}
+        icss={[icssCardPanel, { padding: 'revert', paddingBlock: '8px' }]}
       >
         <Loop of={items}>
           {(i, idx) => {
@@ -172,7 +172,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
                 shadowProps={props.selectListItemBoxProps}
                 onClick={(c) => onItemClick(c, i)}
                 icss={[
-                  icss_clickable,
+                  icssClickable,
                   {
                     padding: '4px 8px',
                     margin: '4px 4px',
@@ -200,7 +200,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
 
 function buildRenderFunction<T extends SelectableItem>(
   methods: AddDefaultPivProps<SelectKitProps<T>, {}>,
-  props: DeKitProps<SelectKitProps<T>>,
+  props: DeKitProps<SelectKitProps<T>>
 ) {
   const renderItem = methods.renderItem ?? (({ value }) => <>{value()}</>)
   const renderTriggerItem =

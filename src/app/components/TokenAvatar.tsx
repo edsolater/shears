@@ -1,14 +1,9 @@
 import {
-  Image,
-  ImageProps,
-  KitProps,
-  useKitProps,
-  addDefaultProps,
-  Piv,
   Box,
-  Accessify,
-  deAccessify,
-} from '../../packages/pivkit'
+  Image,
+  KitProps,
+  useKitProps
+} from '@edsolater/pivkit'
 import type { Token } from '../utils/dataStructures/Token'
 
 export interface TokenAvatarRawProps {

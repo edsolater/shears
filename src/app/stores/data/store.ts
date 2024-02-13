@@ -1,15 +1,17 @@
-import { createStore } from '../../../packages/conveyor/solidjsAdapter/smartStore/createSmartStore'
-import { createSmartStore } from '../../../packages/pivkit'
+import { createSmartStore } from '@edsolater/pivkit'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
 import { Mint, Numberish } from '../../utils/dataStructures/type'
+import { TxVersion } from '../../utils/txHandler/txVersion'
 import { RPCEndpoint, availableRpcs } from './RPCEndpoint'
+import { loadClmmInfos } from './portActions/loadClmmInfos_main'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
 import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
-import { FarmJSON, FarmSYNInfo } from './types/farm'
+import type { ClmmJsonInfo } from './types/clmm'
+import { FarmInfo, FarmJSON } from './types/farm'
 import { PairInfo } from './types/pairs'
 
 export type StoreData = {
@@ -24,7 +26,7 @@ export type StoreData = {
   farmLoadCount?: number // not good, should change automaticly. change this will start loading farm related info
   farmJsonInfos?: Record<FarmJSON['id'], FarmJSON>
   isFarmJsonLoading?: boolean
-  farmInfos?: Record<FarmSYNInfo['id'], FarmSYNInfo>
+  farmInfos?: Record<FarmInfo['id'], FarmInfo>
   isFarmInfosLoading?: boolean
 
   // -------- pairs --------
@@ -44,6 +46,12 @@ export type StoreData = {
 
   // -------- app setting --------
   rpc?: RPCEndpoint
+  txVersion?: TxVersion
+
+  // -------- clmm --------
+  clmmJsonInfos?: Record<string, ClmmJsonInfo>
+  isClmmJsonInfoLoading?: boolean
+  clmmInfos?: Record<string, any>
 }
 
 export const {
@@ -61,6 +69,7 @@ export const {
       pairInfos: loadPairs,
       prices: loadTokenPrice,
       tokens: loadTokens,
+      clmmJsonInfos: loadClmmInfos,
     },
   },
 )

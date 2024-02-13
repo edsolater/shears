@@ -10,7 +10,7 @@ import {
   cssOpacity,
   cssVar,
   useKitProps,
-} from '../../../../../packages/pivkit'
+} from '@edsolater/pivkit'
 import { Link } from '../../../../components/Link'
 
 export type OptionItemBoxProps = {
@@ -23,7 +23,7 @@ export type OptionItemBoxProps = {
   href?: string
 }
 
-const icss_optionItemBox = createICSS(() => ({
+const icssOptionItemBox = createICSS(() => ({
   display: 'block',
   paddingBlock: '0.75rem',
   paddingInline: '2rem',
@@ -76,7 +76,7 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
   }
 
   return (
-    <Link shadowProps={shadowProps} href={props.href} icss={icss_optionItemBox}>
+    <Link shadowProps={shadowProps} href={props.href} icss={icssOptionItemBox}>
       <Row>
         {subComponentsRender.dot()}
         <Span

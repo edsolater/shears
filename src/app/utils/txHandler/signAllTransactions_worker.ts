@@ -31,7 +31,7 @@ function signAllTransactionsFromWorker(
   const sender = getMessageSender('sign transaction in main thread')
   // send transaction form worker to main thread
   return new Promise((resolve, reject) => {
-    sender.query(transactions)
+    sender.post(transactions)
     receiver.subscribe((signedTransactions) => {
       resolve(signedTransactions)
     })

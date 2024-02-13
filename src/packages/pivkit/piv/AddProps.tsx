@@ -20,7 +20,7 @@ export function AddProps<Props extends ValidProps = PivProps>(props: Props) {
   const parentAddProp = useContext(AddPropContext)
   const selfContextValue = mergeProps(
     parentAddProp && !hasConsumed.has(parentAddProp) ? parentAddProp : undefined,
-    omit(props, 'children'),
+    omit(props, 'children')
   )
   return (
     <AddPropContext.Provider value={selfContextValue}>

@@ -1,6 +1,6 @@
 import { ApiFarmApr } from '@raydium-io/raydium-sdk'
 import { BN } from '../../../utils/dataStructures/BN'
-import { Mint, Numberish, Percent, Price, PublicKey as PublicKeyString } from '../../../utils/dataStructures/type'
+import { Mint, Numberish, Percent, Price, PublicKey as PublicKey } from '../../../utils/dataStructures/type'
 import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
 
 export interface FetchFarmsJSONPayloads {
@@ -58,18 +58,18 @@ export interface FarmJSONFile {
   ecosystem: Omit<FarmJSON, 'category'>[]
 }
 
-export interface FarmSYNInfo {
-  hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load state
+export interface FarmInfo {
+  hasLoad: ('sdk' | 'api' | 'ledger' | undefined)[] // easier detect info load progress
   base: Mint
   quote: Mint
   lp: Mint
   lpPrice: Price
 
-  id: PublicKeyString
+  id: PublicKey
   name: string
-  ammId: PublicKeyString
-  programId: PublicKeyString
-  authority: PublicKeyString
+  ammId: PublicKey
+  programId: PublicKey
+  authority: PublicKey
   category: 'stake' | 'raydium' | 'fusion' | 'ecosystem' // add by UI for unify the interface
 
   /** only for v3/v5 */
@@ -105,7 +105,7 @@ export interface FarmSYNInfo {
     /** only when user have deposited and connected wallet */
     userPendingReward: TokenAmount | undefined
     farmVersion: 3 | 5 | 6
-    rewardVault: PublicKeyString
+    rewardVault: PublicKey
     openTime?: Date // v6
     endTime?: Date // v6
     // this reward is sent by who
@@ -133,8 +133,8 @@ export interface FarmSYNInfo {
 
   /** only when user have deposited and connected wallet */
   ledger?: {
-    id: PublicKeyString
-    owner: PublicKeyString
+    id: PublicKey
+    owner: PublicKey
     state: BN
     deposited: BN
     rewardDebts: BN[]
@@ -148,6 +148,6 @@ export interface FarmSYNInfo {
 export interface FarmStore {
   readonly farmJsonInfos?: FarmJSON[]
   readonly isFarmJsonLoading?: boolean
-  readonly farmInfos?: FarmSYNInfo[]
+  readonly farmInfos?: FarmInfo[]
   readonly isFarmInfosLoading?: boolean
 }
