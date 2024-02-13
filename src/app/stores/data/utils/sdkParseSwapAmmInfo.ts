@@ -2,7 +2,7 @@ import { Clmm, ReturnTypeFetchMultiplePoolTickArrays, TradeV2 } from '@raydium-i
 import { Connection } from '@solana/web3.js'
 import { SOLMint, WSOLMint } from '../../../configs/wellKnownMints'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
-import { ApiPoolInfo } from '../types/ammPools'
+import { PoolJsonFile } from '../types/ammPools'
 
 type SimulatePoolCacheType = Promise<Awaited<ReturnType<(typeof TradeV2)['fetchMultipleInfo']>> | undefined>
 type TickCache = Promise<ReturnTypeFetchMultiplePoolTickArrays | undefined>
@@ -36,7 +36,7 @@ export function sdkParseSwapAmmInfo({
   inputMint: string
   outputMint: string
 
-  apiPoolList: ApiPoolInfo
+  apiPoolList: PoolJsonFile
   sdkParsedClmmPoolInfo: Awaited<ReturnType<(typeof Clmm)['fetchMultiplePoolInfos']>>
 }) {
   const key = toPubString(inputMint) + toPubString(outputMint)

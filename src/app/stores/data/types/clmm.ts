@@ -7,9 +7,9 @@ import {
 import { type Amount } from '../../../utils/dataStructures/TokenAmount'
 import { Percent, PublicKey, type Mint, type Price } from '../../../utils/dataStructures/type'
 
-export type JsonClmmInfo = SDK_ApiClmmPoolsItem
-export type JsonClmmFile = { data: JsonClmmInfo[] }
-export type SDKClmmInfo = {
+export type ClmmJsonInfo = SDK_ApiClmmPoolsItem
+export type ClmmJsonFile = { data: ClmmJsonInfo[] }
+export type ClmmSDKInfo = {
   state: SDK_ClmmPoolInfo
   positionAccount?: SDK_ClmmPoolPersonalPosition[]
 }

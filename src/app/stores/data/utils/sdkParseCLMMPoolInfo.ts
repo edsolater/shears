@@ -3,9 +3,9 @@ import { Clmm as SDK_Clmm } from '@raydium-io/raydium-sdk'
 import type { Connection } from '@solana/web3.js'
 import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
 import toPubString from '../../../utils/dataStructures/Publickey'
-import type { JsonClmmInfo, SDKClmmInfo } from '../types/clmm'
+import type { ClmmJsonInfo, ClmmSDKInfo } from '../types/clmm'
 
-const sdkClmmInfoCache = new Map<string, SDKClmmInfo>()
+const sdkClmmInfoCache = new Map<string, ClmmSDKInfo>()
 
 /**
  * pre-sdk-paresed amm info 2
@@ -16,9 +16,9 @@ export async function sdkParseClmmInfos({
   chainTimeOffset = 0,
 }: {
   connection: Connection
-  apiClmmInfos: JsonClmmInfo[] | Record<string, JsonClmmInfo>
+  apiClmmInfos: ClmmJsonInfo[] | Record<string, ClmmJsonInfo>
   chainTimeOffset?: number
-}): Promise<Record<string, SDKClmmInfo>> {
+}): Promise<Record<string, ClmmSDKInfo>> {
   const apiClmmInfos = toList(apiInfos)
   const needRefetchApiAmmPools = apiClmmInfos.filter(({ id }) => !sdkClmmInfoCache.has(toPubString(id)))
 

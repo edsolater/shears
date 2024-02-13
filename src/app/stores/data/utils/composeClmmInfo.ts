@@ -5,19 +5,19 @@ import { parseSDKDecimal } from '../../../utils/dataStructures/Decimal'
 import { toPercent } from '../../../utils/dataStructures/Percent'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import type { PublicKey } from '../../../utils/dataStructures/type'
-import type { ClmmInfo, ClmmRewardInfo, ClmmUserPositionAccount, JsonClmmInfo, SDKClmmInfo } from '../types/clmm'
+import type { ClmmInfo, ClmmRewardInfo, ClmmUserPositionAccount, ClmmJsonInfo, ClmmSDKInfo } from '../types/clmm'
 
 export function composeClmmInfos(
-  apiInfo: Record<PublicKey, JsonClmmInfo>,
-  sdkInfo?: Record<PublicKey, SDKClmmInfo | undefined>,
+  apiInfo: Record<PublicKey, ClmmJsonInfo>,
+  sdkInfo?: Record<PublicKey, ClmmSDKInfo | undefined>,
 ): Record<string, ClmmInfo>
 export async function composeClmmInfos(
-  apiInfo: MayPromise<Record<PublicKey, JsonClmmInfo>>,
-  sdkInfo?: Record<PublicKey, SDKClmmInfo | undefined>,
+  apiInfo: MayPromise<Record<PublicKey, ClmmJsonInfo>>,
+  sdkInfo?: Record<PublicKey, ClmmSDKInfo | undefined>,
 ): Promise<Record<string, ClmmInfo>>
 export function composeClmmInfos(
-  apiInfo: MayPromise<Record<PublicKey, JsonClmmInfo>>,
-  sdkInfo?: MayPromise<Record<PublicKey, SDKClmmInfo | undefined>>,
+  apiInfo: MayPromise<Record<PublicKey, ClmmJsonInfo>>,
+  sdkInfo?: MayPromise<Record<PublicKey, ClmmSDKInfo | undefined>>,
 ): Promise<Record<string, ClmmInfo>> | Record<string, ClmmInfo> {
   if (isPromise(apiInfo) || isPromise(sdkInfo)) {
     return (async () => {
@@ -34,7 +34,7 @@ export function composeClmmInfos(
     return result
   }
 }
-export function composeClmmInfo(jsonInfo: JsonClmmInfo, sdkInfo?: SDKClmmInfo): ClmmInfo {
+export function composeClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo): ClmmInfo {
   const currentPrice = sdkInfo && parseSDKDecimal(sdkInfo.state.currentPrice)
   
   const userPositionAccounts = sdkInfo?.positionAccount?.map((userPositionAccount) => {
@@ -132,7 +132,7 @@ export function composeClmmInfo(jsonInfo: JsonClmmInfo, sdkInfo?: SDKClmmInfo): 
   }
 }
 
-function checkIsInRange(sdkInfo: SDKClmmInfo, sdkPersonalPosition: SDK_ClmmPoolPersonalPosition): boolean {
+function checkIsInRange(sdkInfo: ClmmSDKInfo, sdkPersonalPosition: SDK_ClmmPoolPersonalPosition): boolean {
   const currentPrice = sdkInfo.state.currentPrice
   const priceLower = sdkPersonalPosition.priceLower
   const priceUpper = sdkPersonalPosition.priceUpper

@@ -1,12 +1,12 @@
 import { MayPromise } from '@edsolater/fnkit'
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
-import type { ApiPoolInfo } from '../types/ammPools'
-import type { JsonClmmInfo } from '../types/clmm'
+import type { PoolJsonFile } from '../types/ammPools'
+import type { ClmmJsonFile, ClmmJsonInfo } from '../types/clmm'
 
 const apiCache = {} as {
-  Clmm?: MayPromise<JsonClmmInfo[] | undefined>
-  liquidity?: MayPromise<ApiPoolInfo | undefined>
+  Clmm?: MayPromise<ClmmJsonInfo[] | undefined>
+  liquidity?: MayPromise<PoolJsonFile | undefined>
 }
 
 export function clearApiCache() {
@@ -14,12 +14,12 @@ export function clearApiCache() {
   apiCache.liquidity = undefined
 }
 
-async function fetchClmmPoolInfo() {
-  return jFetch<{ data: JsonClmmInfo[] }>(appApiUrls.clmmPools).then((r) => r?.data) // note: previously Rudy has Test API for dev
+async function fetchClmmPoolInfo(): Promise<ClmmJsonInfo[] | undefined> {
+  return jFetch<ClmmJsonFile>(appApiUrls.clmmPools, { cacheFreshTime: 1000 * 60 * 5 }).then((r) => r?.data) // note: previously Rudy has Test API for dev
 }
 
 async function fetchOldAmmPoolInfo() {
-  return jFetch<ApiPoolInfo>(appApiUrls.poolInfo)
+  return jFetch<PoolJsonFile>(appApiUrls.poolInfo, { cacheFreshTime: 1000 * 60 * 5 })
 }
 
 /**
@@ -37,7 +37,7 @@ export async function fetchAmmPoolInfo() {
 
 export function prefetch() {
   console.info('[prefetch] start prefetch ammPoolInfo')
-  return fetchAmmPoolInfo()
+  // fetchAmmPoolInfo()
 }
 
 // apply prefetch (ammPoolInfo)

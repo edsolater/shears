@@ -60,4 +60,4 @@ export interface ApiPoolInfoV5 {
 
 export type ApiPoolInfoItem = ApiPoolInfoV4 | ApiPoolInfoV5
 
-export type ApiPoolInfo = SDK_ApiPoolInfo
+export type PoolJsonFile = SDK_ApiPoolInfo

@@ -2,11 +2,11 @@ import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
 import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
 import { StoreData } from '../store'
-import { type JsonClmmInfo, type JsonClmmFile } from '../types/clmm'
+import { type ClmmJsonInfo, type ClmmJsonFile } from '../types/clmm'
 
 export async function fetchClmmJsonInfo(): Promise<StoreData['clmmJsonInfos']> {
-  const clmmJsonFile = await jFetch<JsonClmmFile>(appApiUrls.clmmPools, { cacheFreshTime: 5 * 60 * 1000 })
+  const clmmJsonFile = await jFetch<ClmmJsonFile>(appApiUrls.clmmPools, { cacheFreshTime: 5 * 60 * 1000 })
   console.log('clmmJsonFile: ', clmmJsonFile)
   if (!clmmJsonFile) return
-  return toCollectionObject(clmmJsonFile.data as JsonClmmInfo[], (i) => i.id) satisfies StoreData['clmmJsonInfos']
+  return toCollectionObject(clmmJsonFile.data as ClmmJsonInfo[], (i) => i.id) satisfies StoreData['clmmJsonInfos']
 }
