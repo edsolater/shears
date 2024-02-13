@@ -18,6 +18,6 @@ export function loadTokensInWorker(transformers: MessagePortTransformers) {
           .concat(SOLToken) // replace api mistakely add SOL
         return toCollectionObject(availableTokens, (t) => t.mint) satisfies StoreData['tokens']
       })
-      .then(sender.query)
+      .then(sender.post)
   })
 }

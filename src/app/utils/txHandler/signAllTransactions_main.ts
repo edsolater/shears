@@ -9,7 +9,7 @@ export function createSignTransactionPortInMainThread() {
   receiver.subscribe((transactions) => {
     const signedTransactions = signTrancations(transactions)
     signedTransactions?.then((signedTrancation) => {
-      sender.query(signedTrancation)
+      sender.post(signedTrancation)
     })
   })
 }

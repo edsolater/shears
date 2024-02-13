@@ -5,14 +5,14 @@ import { workerCommands } from '../../../utils/webworker/type'
 
 let storedCleanUpFunction: AnyFn | undefined = undefined
 
-export function loadFarmSYNInfosInWorker({ getMessagePort }: MessagePortTransformers) {
-  const { receiver, sender } = getMessagePort<ComposeFarmSYNInfoQuery, ComposedFarmSYNInfos>(
-    workerCommands['get raydium farms syn infos'],
-  )
+export function loadFarmSYNInfosInWorker({
+  getMessagePort,
+}: MessagePortTransformers<ComposeFarmSYNInfoQuery, ComposedFarmSYNInfos>) {
+  const { receiver, sender } = getMessagePort(workerCommands['get raydium farms syn infos'])
   receiver.subscribe((query) => {
     storedCleanUpFunction?.()
     const { abort, resultSubscribable } = composeFarmSYN(query)
-    resultSubscribable.subscribe(sender.query)
+    resultSubscribable.subscribe(sender.post)
     storedCleanUpFunction = abort
   })
 }

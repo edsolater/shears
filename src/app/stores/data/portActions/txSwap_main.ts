@@ -4,5 +4,5 @@ import { workerCommands } from '../../../utils/webworker/type'
 import { TxSwapOptions } from '../utils/txSwap'
 
 export function txSwap_main(txOptions: TxSwapOptions) {
-  return getMessageSender(workerCommands['txSwap start']).query(deepUnwrapSolidProxy(txOptions))
+  return getMessageSender(workerCommands['txSwap start']).post(deepUnwrapSolidProxy(txOptions))
 }

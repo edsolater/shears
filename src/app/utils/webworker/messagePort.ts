@@ -15,9 +15,9 @@ export function useMessagePort<Query, Data>(options: {
   }
   options.onBeforeSend?.()
   function startQuery(params: Query) {
-    sender.query(params)
+    sender.post(params)
   }
   const { subscribe: receive } = receiver as Receiver<ReceiveMessage<Data>>
-  receive((v) => options.onReceive(v, { sendBack: sender.query }))
+  receive((v) => options.onReceive(v, { sendBack: sender.post }))
   return { startQuery }
 }

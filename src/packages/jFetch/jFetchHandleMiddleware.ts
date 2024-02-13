@@ -10,6 +10,7 @@ export interface JFetchMiddlewareItem {
 
 export interface JFetchOptions extends JFetchCoreOptions {
   middlewares?: JFetchMiddlewareItem[]
+  cachPlace?: 'sensionStorage' | 'localStorage' | 'indexedDB'
 }
 
 type JFetchResultCache = Map<
@@ -27,7 +28,7 @@ function storeInResultCache(
   input: RequestInfo,
   rawText: Promise<string | undefined>,
   options: JFetchOptions | undefined,
-  formattedData: any
+  formattedData: any,
 ) {
   const key = typeof input === 'string' ? input : input.url
   finalResultCache.set(key, {
@@ -40,7 +41,7 @@ function storeInResultCache(
 function getCachedSuitableResult(
   input: RequestInfo,
   rawText: Promise<string | undefined>,
-  options: JFetchOptions | undefined
+  options: JFetchOptions | undefined,
 ) {
   const key = typeof input === 'string' ? input : input.url
   if (finalResultCache.has(key)) {
@@ -63,7 +64,7 @@ export async function jFetch<Shape = any>(input: RequestInfo, options?: JFetchOp
   const renamedText = await asyncReduce(
     shakeNil(options?.middlewares?.map((m) => m.parseResponseRaw) ?? []),
     (rawText, parseResponseRaw) => rawText && parseResponseRaw(rawText),
-    rawText
+    rawText,
   )
   if (!renamedText) return undefined
   try {
@@ -72,13 +73,13 @@ export async function jFetch<Shape = any>(input: RequestInfo, options?: JFetchOp
       () =>
         tryCatch(
           () => new Function('return ' + renamedText)(),
-          () => undefined
-        )
+          () => undefined,
+        ),
     )
     const formattedData = await asyncReduce(
       shakeNil(options?.middlewares?.map((m) => m.parseResponseJson) ?? []),
       (rawJson, parseResponseJson) => parseResponseJson(rawJson),
-      rawJson
+      rawJson,
     )
 
     storeInResultCache(input, rawText, options, formattedData)

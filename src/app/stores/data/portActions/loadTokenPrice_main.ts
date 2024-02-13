@@ -10,7 +10,7 @@ export function loadTokenPrice() {
   if (!hasAnyToken) return
   setStore({ isTokenPriceLoading: true })
   const { sender, receiver } = getMessagePort(workerCommands['get raydium token prices'])
-  sender.query({
+  sender.post({
     url: appApiUrls.price,
     tokens: toArray(allTokens),
   })

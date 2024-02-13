@@ -5,6 +5,6 @@ export function loadTokenPriceInWorker(transformers: MessagePortTransformers) {
   const { receiver, sender } = transformers.getMessagePort('get raydium token prices')
   console.log('get raydium token prices')
   receiver.subscribe((options) => {
-    fetchTokenPrices(options.tokens, options.url).then((res) => sender.query({ prices: res }))
+    fetchTokenPrices(options.tokens, options.url).then((res) => sender.post({ prices: res }))
   })
 }

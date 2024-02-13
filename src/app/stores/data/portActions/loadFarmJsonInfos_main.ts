@@ -6,7 +6,7 @@ import { setStore } from '../store'
 export function loadFarmJsonInfos() {
   setStore({ isFarmJsonLoading: true })
   const { sender, receiver } = getMessagePort(workerCommands['fetch raydium farms info'])
-  sender.query()
+  sender.post()
   receiver.subscribe((allFarmJsonInfos) => {
     setStore({ isFarmJsonLoading: false, farmJsonInfos: allFarmJsonInfos })
   })

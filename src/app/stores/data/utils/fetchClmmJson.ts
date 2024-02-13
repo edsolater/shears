@@ -6,6 +6,7 @@ import { type JsonClmmInfo, type JsonClmmFile } from '../types/clmm'
 
 export async function fetchClmmJsonInfo(): Promise<StoreData['clmmJsonInfos']> {
   const clmmJsonFile = await jFetch<JsonClmmFile>(appApiUrls.clmmPools, { cacheFreshTime: 5 * 60 * 1000 })
+  console.log('clmmJsonFile: ', clmmJsonFile)
   if (!clmmJsonFile) return
   return toCollectionObject(clmmJsonFile.data as JsonClmmInfo[], (i) => i.id) satisfies StoreData['clmmJsonInfos']
 }

@@ -12,7 +12,7 @@ export function txSwapInWorker(transformers: MessagePortTransformers) {
       txSubscribable.on('txSuccess', ({ txid }) => {
         console.log('success txid: ', txid)
         // send back txid to main thread
-        sender.query({ txid })
+        sender.post({ txid })
       }),
     )
   })

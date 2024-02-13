@@ -7,6 +7,6 @@ export function loadFarmJsonInfosInWorker({ getMessagePort }: MessagePortTransfo
   console.log('[worker] registered load farm port')
   receiver.subscribe((options) => {
     console.log('[worker] start loading farms')
-    fetchFarmJsonInfo().then(sender.query)
+    fetchFarmJsonInfo().then(sender.post)
   })
 }

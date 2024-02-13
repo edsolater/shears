@@ -10,11 +10,11 @@ export interface ReceiveMessage<Data = any> {
 export type EmptyQuery = unknown
 export interface SenderMessage<Query = any> {
   command: string
-  payload?: Query
+  query?: Query
 }
 export type Receiver<R extends ReceiveMessage> = Subscribable<R['payload']>
 export type Sender<P extends SenderMessage, R extends ReceiveMessage = any> = {
-  query(payload?: P['payload']): Receiver<R>
+  post(query?: P['query']): Receiver<R>
 }
 export type GetMessagePortFn<Payload = any, Query = any> = (command: string) => {
   receiver: Receiver<ReceiveMessage<Payload>>
@@ -113,7 +113,7 @@ function createMessageSender<P extends SenderMessage>(
 ): Sender<P> {
   function createNewWorkerMessageSender<P extends SenderMessage>(command: string): Sender<P> {
     return {
-      query(payload) {
+      post(payload) {
         Promise.resolve(towardsTarget).then((targetPort) =>
           targetPort.postMessage({ command, payload: encode(payload) }),
         )

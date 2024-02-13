@@ -6,6 +6,6 @@ export function loadPairsInWorker({ getMessagePort }: MessagePortTransformers) {
   console.info('loadPairs_worker')
   receiver.subscribe(() => {
     console.log('[worker] start fetch pairs info')
-    fetchPairJsonInfo().then(sender.query)
+    fetchPairJsonInfo().then(sender.post)
   })
 }
