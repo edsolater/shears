@@ -17,8 +17,8 @@ export function loadClmmInfos() {
     if (!url) return
     console.log('[main] start loading clmm infos')
     setStore({ isClmmJsonInfoLoading: true })
-    port.sender.post({ force: false, rpcUrl: url })
-    port.receiver.subscribe((jsonInfos) => {
+    port.postMessage({ force: false, rpcUrl: url })
+    port.receiveMessage((jsonInfos) => {
       setStore({ isClmmJsonInfoLoading: false, clmmJsonInfos: jsonInfos })
     })
   })

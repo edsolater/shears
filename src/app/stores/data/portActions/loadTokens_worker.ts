@@ -1,10 +1,10 @@
 import { SOLToken } from '../../../utils/dataStructures/Token'
 import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
-import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
+import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
 
-export function loadTokensInWorker(transformers: MessagePortTransformers) {
+export function loadTokensInWorker(transformers: PortUtils) {
   const { receiver, sender } = transformers.getMessagePort('fetch raydium supported tokens')
   console.log('[👾worker  🚪port] registered load token')
   receiver.subscribe((options) => {

@@ -1,16 +1,16 @@
 import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
 import { getConnection } from '../../../utils/common/getConnection'
-import { MessagePortTransformers } from '../../../utils/webworker/createMessagePortTransforers'
+import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { workerCommands } from '../../../utils/webworker/type'
 import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
 import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
 
 type QueryParams = { force?: boolean; rpcUrl: string }
 
-export function workerLoadClmmInfos({ getMessagePort }: MessagePortTransformers) {
+export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
   const port = getMessagePort(workerCommands['fetch raydium clmm infos'])
   console.log('[worker] start loading clmm infos')
-  port.receiver.subscribe((query: QueryParams) => {
+  port.receiveMessage((query: QueryParams) => {
     console.log('query: ', query)
     try {
       const apiClmmInfos = fetchClmmJsonInfo()
