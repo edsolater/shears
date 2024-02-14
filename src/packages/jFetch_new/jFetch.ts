@@ -1,16 +1,35 @@
-export type JFetchMiddlewareItem = (next: () => unknown) => void
+import { isString } from '@edsolater/fnkit'
+
+type JFetchResponseItem = Response | ArrayBuffer | undefined
+
+export type JFetchMiddlewareItem = (
+  ctx: { url: string; userParams?: { originalOption?: RequestInit } },
+  next: () => Promise<JFetchResponseItem>,
+) => Promise<JFetchResponseItem>
 
 export interface JFetchMiddlewareOptions {
   middlewares?: JFetchMiddlewareItem[]
 }
 
-/** see https://lxchuan12.gitee.io/koa-compose/#_3-1-%E6%AD%A3%E5%B8%B8%E6%B5%81%E7%A8%8B */
 export async function jFetch<Shape = any>(
   input: RequestInfo,
   options?: JFetchMiddlewareOptions & { originalOption?: RequestInit },
 ): Promise<Shape | undefined> {
-  const fetchCoreBodyAction = () => fetch(input, options?.originalOption)
-  const combinedAction = (options?.middlewares ?? []).reduce((prev: () => unknown, current) => {
-    return () => current(prev)
-  }, fetchCoreBodyAction)
+  const combinedTask = (options?.middlewares ?? []).reduce(
+    (prev: () => Promise<JFetchResponseItem>, current) => async () =>
+      current({ userParams: options, url: isString(input) ? input : input.url }, prev),
+    () => fetch(input, options?.originalOption),
+  )
+
+  return combinedTask() as Promise<Shape | undefined>
 }
+
+export const isResponse = (res: unknown): res is Response => res instanceof Response
+export function parseResponseInitConfig(res: Response): ResponseInit {
+  return {
+    status: res.status,
+    statusText: res.statusText,
+    headers: res.headers,
+  }
+}
+export const isArrayBuffer = (res: unknown): res is ArrayBuffer => res instanceof ArrayBuffer
