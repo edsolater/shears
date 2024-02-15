@@ -87,9 +87,6 @@ export function createIndexedDBStoreManager<T = unknown>(
     db.then((db) => {
       const transaction = db.transaction(storeName, 'readwrite')
       transaction.objectStore(storeName).put(body, key)
-      transaction.addEventListener('complete', () => {
-        transaction.abort()
-      })
     }).catch((e) => {
       console.error(e)
     })
@@ -111,9 +108,6 @@ export function createIndexedDBStoreManager<T = unknown>(
         request.addEventListener('error', (event) => {
           reject((event.target as IDBRequest).error)
         })
-        transaction.addEventListener('complete', () => {
-          transaction.abort()
-        })
         return result
       })
       .catch((e) => {
@@ -125,9 +119,6 @@ export function createIndexedDBStoreManager<T = unknown>(
     db.then((db) => {
       const transaction = db.transaction(storeName, 'readwrite')
       transaction.objectStore(storeName).delete(key)
-      transaction.addEventListener('complete', () => {
-        transaction.abort()
-      })
     }).catch((e) => {
       console.error(e)
       return undefined

@@ -21,7 +21,6 @@ type CircleProgressProps = KitProps<CircularProgressRawProps>
 export function CircularProgress(kitProps: CircleProgressProps) {
   const { props: rawProps } = useKitProps(kitProps)
   const props = addDefaultProps(rawProps, { svgWidth: 36, strokeWidth: 3, percent: 0.3 })
-  const [ref, setRef] = createRef<SVGSVGElement>()
 
   const r = createMemo(() => (0.5 * props.svgWidth) / 2)
   const p = createMemo(() => 2 * r() * Math.PI)
@@ -29,7 +28,6 @@ export function CircularProgress(kitProps: CircleProgressProps) {
   return (
     <div style={{ width: '100%', height: '100%' }}>
       <svg
-        ref={setRef}
         width={props.svgWidth}
         height={props.svgWidth}
         viewBox={`0 0 ${props.svgWidth} ${props.svgWidth}`}
