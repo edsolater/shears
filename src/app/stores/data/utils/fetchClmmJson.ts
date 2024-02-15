@@ -1,4 +1,4 @@
-import { jFetch } from '../../../../packages/jFetch_new'
+import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
 import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
 import { StoreData } from '../store'
