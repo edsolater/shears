@@ -1,4 +1,4 @@
-import { AnyFn, isFunction, isObject, switchCase } from '@edsolater/fnkit'
+import { AnyFn, isFunction, isObject, switchCase, } from '@edsolater/fnkit'
 import {
   Box,
   Icon,
@@ -49,11 +49,11 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
           { width: '1rem', height: '1rem', marginInlineEnd: '0.75rem', color: cssVar('--ternary') },
         ]}
       >
-        {switchCase(
+        {switchCase<boolean | PivChild | (() => PivChild), any>(
           props['render:dot'],
           [
             [(v) => isObject(v), (v) => v],
-            [(v) => isFunction(v), (v: AnyFn) => v()],
+            [(v) => isFunction(v), (v) => (v as AnyFn)()],
             [(v) => v === true, () => <Icon src={props.iconSrc} />],
           ],
           null,
@@ -65,7 +65,7 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
         props['render:arrow'],
         [
           [(v) => isObject(v), (v) => v],
-          [(v) => isFunction(v), (v: AnyFn) => v()],
+          [(v) => isFunction(v), (v) => (v as AnyFn)()],
           [
             (v) => v === true,
             () => <Icon icss={{ marginInlineEnd: '0.75rem', color: cssVar('--ternary') }} size={'sm'} />,

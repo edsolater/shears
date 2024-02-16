@@ -133,7 +133,6 @@ async function canUseCache(config: {
   storePlace: 'jsMemory' | 'localStorage' | 'sessionStorage' | 'indexedDB'
 }) {
   const durationMS = switchCase(config.unit, {
-    //TODO: type of switchCase
     'ms': config.cacheFreshDuraction,
     's': config.cacheFreshDuraction * 1000,
     'm': config.cacheFreshDuraction * 1000 * 60,
@@ -142,7 +141,7 @@ async function canUseCache(config: {
     'w': config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 7,
     'M': config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 30,
     'y': config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 365,
-  })!
+  })
   const responseCache = getResponseCache(config.storePlace)
   const hasCached = await responseCache.has(config.key)
   const isCacheFresh =

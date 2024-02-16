@@ -17,7 +17,6 @@ function createTempPendingRequest(url: string) {
   let loadTempPendingRequest: (res: Promise<JFetchResponseItem>) => void = () => {} // Initialize the variable
   const tempPendingRequestPromise = new Promise<JFetchResponseItem>((resolve, reject) => {
     loadTempPendingRequest = (res) => {
-      console.log('loadTempPendingRequest', res)
       res
         .then((res) => {
           resolve(res)
@@ -27,27 +26,20 @@ function createTempPendingRequest(url: string) {
           reject(e)
         })
         .finally(() => {
-          console.log('🔞delete')
           tempPendingRequest.delete(url)
         })
     }
   })
-  console.log('tempPendingRequestPromise: ', tempPendingRequestPromise)
-  console.log('tempPendingRequest before set: ', tempPendingRequest)
   tempPendingRequest.set(url, tempPendingRequestPromise)
-  console.log('tempPendingRequest after set: ', tempPendingRequest)
   return { loadTempPendingRequest }
 }
 export function middlewareUseTempPendingRequest(): JFetchMiddlewareFn {
   return async ({ url }, next) => {
-    console.log('👾tempPendingRequest: ', url)
     if (hasTempPendingRequest(url)) {
-      console.log('use temp cache')
       return getTempPendingRequest(url)?.then((res) => res?.clone())
     }
     const { loadTempPendingRequest } = createTempPendingRequest(url)
     const responsePromise = next()
-    console.log('load')
     loadTempPendingRequest(responsePromise)
     return responsePromise
   }
