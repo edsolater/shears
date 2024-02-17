@@ -8,24 +8,27 @@ import { assignObject } from '../../fnkit/assignObject'
 import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
 import { Shuck, isShuckVisiable, recordSubscribableToAtom } from './shuck'
 
-export type TaskExecutor = {
+export type TaskRunner = {
   (): void
   relatedShucks: WeakerSet<Shuck<any>>
   readonly visiable: boolean // TODO: need to be a subscribable
 }
-export type TaskRunner = {
+export type TaskManager = {
   // main method of task, force to run the effect
   run(): void
-  // main method of task, only register the effect (if haven't detect relatedShucks or any of leaves is visiable, it will run immediately)
+  // main method of task, run if needed (any of shucks is visiable)
   register(): void
-  executor: TaskExecutor
+  taskRunner: TaskRunner
+  observe(...shucks: Shuck<any>[]): void
 }
 
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
+ * try to re-invoke when shunk's value or shuck's visiablity changed
  *
  * when relatedShucks is hinted, task function will only run when relatedShucks is visiable
  * otherwise, initly task function must it to track the subscribables
+ *
  *
  * @example
  * const testObserverableSubscribable = createLeaf(1)
@@ -35,60 +38,66 @@ export type TaskRunner = {
  *   await Promise.resolve(3)
  * })
  */
+// param:shucks should can be a object that {}
 export function createTask(
-  ...params:
-    | [taskContentFn: (get: <T>(v: Shuck<T>) => T) => void]
-    | [relatedShucks: Shuck<any>[], taskContentFn: (get: <T>(v: Shuck<T>) => T) => void]
+  dependOns: (Shuck<any> )[],
+  task: () => void,
+  options?: { visiable?: boolean },
 ) {
-  const [relatedShucks, task] = params.length === 1 ? [undefined, params[0]] : params
-  const executor = (() => {
-    function pickSubscribableValue<T>(atom: Shuck<T>) {
-      recordSubscribableToExecutor(atom, executor)
-      recordSubscribableToAtom(executor, atom)
-      return atom()
-    }
-    task(pickSubscribableValue)
-  }) as TaskExecutor
-  assignObject(executor, {
-    relatedShucks: new WeakerSet<Shuck<any>>(relatedShucks),
+  const taskRunner = (() => task()) as TaskRunner
+  assignObject(taskRunner, {
+    relatedShucks: new WeakerSet<Shuck<any>>(dependOns),
     get visiable() {
-      return isExecutorVisiable(executor)
+      return isTaskRunnerVisiable(taskRunner)
     },
   })
-  const taskRunner: TaskRunner = {
+
+  const manager: TaskManager = {
     run() {
-      executor()
+      taskRunner()
     },
-    executor,
+    taskRunner,
     register() {
-      if (relatedShucks) {
-        relatedShucks.forEach((shuck) => {
-          recordSubscribableToExecutor(shuck, executor)
-          recordSubscribableToAtom(executor, shuck)
-        })
-        if (isExecutorVisiable(executor)) executor()
-      } else {
-        executor()
+      dependOns.forEach((shuck) => {
+        recordSubscribableToTaskRunner(shuck, taskRunner)
+        recordSubscribableToAtom(taskRunner, shuck) // task is triggered by subscribed shucks, but also attach shack to taskRunner make it easy to debug (easy for human to monitor the app tasks)
+      })
+      if (isTaskRunnerVisiable(taskRunner)) taskRunner()
+    },
+    observe(...shucks: Shuck<any>[]) {
+      shucks.forEach((shuck) => {
+        recordSubscribableToTaskRunner(shuck, taskRunner)
+        recordSubscribableToAtom(taskRunner, shuck)
+      })
+      if (shucks.some(isShuckVisiable)) {
+        taskRunner()
       }
     },
   }
-  return taskRunner
+  return manager
 }
 
-function recordSubscribableToExecutor<T>(subscribable: Shuck<T>, context: TaskExecutor) {
+export function registerTask(shucks: Shuck<any>[], task: () => void) {
+  const manager = createTask(shucks, task)
+  return manager.register()
+}
+
+function recordSubscribableToTaskRunner<T>(subscribable: Shuck<T>, context: TaskRunner) {
   context.relatedShucks.add(subscribable)
 }
 
-function isExecutorVisiable(context: TaskExecutor) {
+/** task is visiable when any  */
+function isTaskRunnerVisiable(context: TaskRunner) {
+  return true // test
   for (const shuck of context.relatedShucks) {
     if (isShuckVisiable(shuck)) return true
   }
   return false
 }
 
-/** **only place** to invoke task executor */
-export function invokeExecutor(executor: TaskExecutor) {
-  if (executor.visiable) {
-    asyncInvoke(executor)
+/** **only place** to invoke task taskrunner */
+export function invokeTaskRunner(taskrunner: TaskRunner) {
+  if (taskrunner.visiable) {
+    asyncInvoke(taskrunner)
   }
 }

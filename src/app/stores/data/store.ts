@@ -13,6 +13,8 @@ import { loadTokens } from './portActions/loadTokens_main'
 import type { ClmmJsonInfo } from './types/clmm'
 import { FarmInfo, FarmJSON } from './types/farm'
 import { PairInfo } from './types/pairs'
+import { createShuck } from '../../../packages/conveyor/smartStore/shuck'
+import { createSubscribable } from '@edsolater/fnkit'
 
 export type StoreData = {
   // -------- swap --------
@@ -73,6 +75,10 @@ export const {
     },
   },
 )
+
+// TODO: should all state just use shuck
+export const rpc = createShuck<RPCEndpoint | undefined>() // test
+// export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 
 // export const {
 //   store: rootStore,

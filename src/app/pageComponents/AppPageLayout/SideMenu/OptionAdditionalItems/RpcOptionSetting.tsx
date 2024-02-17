@@ -1,4 +1,4 @@
-import { createSignal } from 'solid-js'
+import { createEffect, createSignal, onCleanup, onMount } from 'solid-js'
 import {
   Badge,
   Box,
@@ -22,9 +22,10 @@ import {
   icssTextColor,
   useKitProps,
 } from '@edsolater/pivkit'
-import { setStore, store } from '../../../../stores/data/store'
+import { rpc, setStore, store } from '../../../../stores/data/store'
 import { RPCEndpoint, availableRpcs } from '../../../../stores/data/RPCEndpoint'
 import { OptionItemBox } from './OptionItem'
+import { unwrap } from 'solid-js/store'
 
 export function RpcSettingFace(kitProps: {
   currentRPC?: RPCEndpoint
@@ -92,6 +93,7 @@ function RPCPanel(props: {
         icss={{ flex: 1 }}
         onSwitchRpc={(rpcURL) => {
           setStore({ rpc: { url: rpcURL } })
+          rpc.set({ url: rpcURL })
         }}
       />
     </RPCPanelBox>
@@ -190,6 +192,15 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
   const applyRPCChange = () => {
     props.onSwitchRpc?.(currentRPCUrl())
   }
+  onMount(() => { // TEST
+    const timeoutId = setTimeout(() => {
+      console.log('has set')
+      rpc.set(unwrap(availableRpcs[0]))
+    }, 500)
+    onCleanup(() => {
+      clearTimeout(timeoutId)
+    })
+  })
   return (
     <Row>
       <Input

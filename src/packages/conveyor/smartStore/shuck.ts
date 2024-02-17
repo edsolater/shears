@@ -1,7 +1,7 @@
 import { MayFn, WeakerSet } from '@edsolater/fnkit'
 import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
 import { ShuckOption, isShuckOption } from './shuckOption'
-import { TaskExecutor, invokeExecutor } from './task'
+import { TaskRunner, invokeTaskRunner } from './task'
 
 export const shuckTag = Symbol('shuckTag')
 export const shuckOptionTag = Symbol('shuckOptionTag')
@@ -26,7 +26,7 @@ export interface Shuck<T> extends Subscribable<T> {
   visiable: Subscribable<boolean>
   visiableCheckers: Map<any, boolean>
   // when set this, means this object is a observable-subscribable
-  subscribedExecutors: WeakerSet<TaskExecutor>
+  subscribedExecutors: WeakerSet<TaskRunner>
 }
 
 export interface CreateShuckOptions<T> {
@@ -37,6 +37,7 @@ export interface CreateShuckOptions<T> {
 let globalShuckId = 0
 
 /** create special subscribable */
+export function createShuck<T>(): Shuck<T | undefined>
 export function createShuck<T>(defaultValue: MayFn<T>, options?: CreateShuckOptions<T>): Shuck<T>
 export function createShuck<T>(subscribable: Subscribable<T>, options?: CreateShuckOptions<T>): Shuck<T>
 export function createShuck<T>(shuckOption: ShuckOption<T>): Shuck<T>
@@ -69,7 +70,7 @@ export function createShuck<T>(
       subscribeFns: options?.onChangeToVisiable,
     }),
     visiableCheckers: new Map(),
-    subscribedExecutors: new WeakerSet<TaskExecutor>(),
+    subscribedExecutors: new WeakerSet<TaskRunner>(),
   }) as Shuck<T>
   const invokeTaskExecutors = () => invokeBindedExecutors(proxiedSubscribable)
   proxiedSubscribable.subscribe(invokeTaskExecutors)
@@ -92,13 +93,13 @@ export function isShuckHidden<T>(value: Shuck<T>) {
 /**
  * high function that create value getter from subscribable
  */
-export function recordSubscribableToAtom<T>(context: TaskExecutor, subscribable: Shuck<T>) {
+export function recordSubscribableToAtom<T>(context: TaskRunner, subscribable: Shuck<T>) {
   return subscribable.subscribedExecutors.add(context)
 }
 
 export function invokeBindedExecutors(subscribable: Shuck<any>) {
   if (subscribable.subscribedExecutors.size === 0) return
-  subscribable.subscribedExecutors.forEach(invokeExecutor)
+  subscribable.subscribedExecutors.forEach(invokeTaskRunner)
 }
 
 export function updateShuckVisiable<T>(shuck: Shuck<T>) {

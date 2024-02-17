@@ -1,14 +1,12 @@
 import {
-  MayPromise,
   AnyFn,
-  shrinkFn,
-  isFunction,
-  isPromise,
-  isObject,
-  isObjectLike,
   MayArray,
+  MayPromise,
   flap,
-  asyncInvoke,
+  isFunction,
+  isObjectLike,
+  isPromise,
+  shrinkFn
 } from '@edsolater/fnkit'
 
 const subscribableTag = Symbol('subscribable')
