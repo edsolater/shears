@@ -1,9 +1,9 @@
-import { Box, KitProps, Row, Text, useKitProps } from '@edsolater/pivkit'
-import { DatabaseTable } from '../components/DatabaseTable'
-import { Token } from '../components/TokenProps'
-import { createStorePropertySignal } from '../stores/data/store'
-import { PairInfo } from '../stores/data/types/pairs'
+import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
+import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
+import { Token } from '../components/TokenProps'
+import { clmmInfos as clmmInfosS, createStorePropertySignal } from '../stores/data/store'
+import { PairInfo } from '../stores/data/types/pairs'
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
@@ -21,11 +21,12 @@ export function ClmmItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInf
 
 export default function ClmmsPage() {
   const clmmJsonInfos = createStorePropertySignal((s) => s.clmmJsonInfos)
+  const [clmmInfos] = useShuck(clmmInfosS)
   createEffect(() => {
-    const jsonInfos = clmmJsonInfos()
-    if (jsonInfos) {
-      const key = Object.keys(jsonInfos)[0]
-      console.log('🧪🧪 first clmmJson: ', {...jsonInfos[key]})
+    const infos = clmmInfos()
+    if (infos) {
+      const key = Object.keys(infos)[0]
+      console.log('🧪🧪 first clmmJson: ', { ...infos[key] })
     }
   })
   const mockItems = [

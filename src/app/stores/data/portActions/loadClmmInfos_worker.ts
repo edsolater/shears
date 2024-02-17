@@ -2,7 +2,7 @@ import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
 import { getConnection } from '../../../utils/common/getConnection'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { workerCommands } from '../../../utils/webworker/type'
-import { composeClmmInfos, composeOneClmmInfo } from '../utils/composeClmmInfo'
+import { composeClmmInfos } from '../utils/composeClmmInfo'
 import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
 import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
 
@@ -19,19 +19,19 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
       .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
       .then(port.postMessage)
       .catch(logError)
-    // const sdkClmmInfos = apiClmmInfos.then(
-    //   (infos) =>
-    //     infos &&
-    //     sdkParseClmmInfos({
-    //       connection: getConnection(query.rpcUrl),
-    //       apiClmmInfos: toList(infos),
-    //     }),
-    // )
-    // Promise.all([apiClmmInfos, sdkClmmInfos])
-    //   .then(log('[worker] start compose clmmInfos'))
-    //   .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfo(apiClmmInfos, sdkClmmInfos))
-    //   .then(port.postMessage)
-    //   .catch(logError)
+    const sdkClmmInfos = apiClmmInfos.then(
+      (infos) =>
+        infos &&
+        sdkParseClmmInfos({
+          connection: getConnection(query.rpcUrl),
+          apiClmmInfos: toList(infos),
+        }),
+    )
+    Promise.all([apiClmmInfos, sdkClmmInfos])
+      .then(log('[worker] start compose clmmInfos'))
+      .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
+      .then(port.postMessage)
+      .catch(logError)
   })
 }
 

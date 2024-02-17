@@ -129,10 +129,10 @@ export function deleteShuckVisibaleChecker<T>(shuck: Shuck<T>, key: any) {
   updateShuckVisiable(shuck)
 }
 
-export function visualizeShuck<T>(shuck: Shuck<T>, key: any) {
+export function makeShuckVisiable<T>(shuck: Shuck<T>, key: any) {
   setShuckVisiableChecker(shuck, true, key)
 }
 
-export function hideShuck<T>(shuck: Shuck<T>, key: any) {
+export function makeShuckInvisiable<T>(shuck: Shuck<T>, key: any) {
   setShuckVisiableChecker(shuck, false, key)
 }

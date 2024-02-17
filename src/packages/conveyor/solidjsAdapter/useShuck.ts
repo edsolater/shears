@@ -1,17 +1,17 @@
 import { Accessor, Setter, createSignal, onCleanup, onMount } from 'solid-js'
-import { Shuck, hideShuck, visualizeShuck } from '../smartStore/shuck'
+import { Shuck, makeShuckInvisiable, makeShuckVisiable } from '../smartStore/shuck'
 
-let globalBranchNodeSignalID = 1
+let globalShuckInstanceSignalID = 1
 export function useShuck<T>(shuck: Shuck<T>): [Accessor<T>, Setter<T>] {
   // TODO: if multi has subscribed this shuck, shuck's visiable should depends on multi of them
-  const innerID = globalBranchNodeSignalID++
+  const innerID = globalShuckInstanceSignalID++
 
   const [accessor, set] = createSignal(shuck())
 
   onMount(() => {
-    visualizeShuck(shuck, innerID)
+    makeShuckVisiable(shuck, innerID)
     onCleanup(() => {
-      hideShuck(shuck, innerID)
+      makeShuckInvisiable(shuck, innerID)
     })
   })
 
