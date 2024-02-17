@@ -10,7 +10,7 @@ import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
 import { loadPairs } from './portActions/loadPairs_main'
 import { loadTokenPrice } from './portActions/loadTokenPrice_main'
 import { loadTokens } from './portActions/loadTokens_main'
-import type { ClmmJsonInfo } from './types/clmm'
+import type { ClmmInfo, ClmmJsonInfo } from './types/clmm'
 import { FarmInfo, FarmJSON } from './types/farm'
 import { PairInfo } from './types/pairs'
 import { createShuck } from '../../../packages/conveyor/smartStore/shuck'
@@ -77,7 +77,9 @@ export const {
 )
 
 // TODO: should all state just use shuck
-export const rpc = createShuck<RPCEndpoint | undefined>() // test
+export const rpc = createShuck<RPCEndpoint | undefined>()
+export const isClmmJsonInfoLoading = createShuck<boolean | undefined>()
+export const clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 
 // export const {

@@ -12,7 +12,7 @@ test('basic usage', async () => {
     const n = get(testCount)
     effectRunCount++
   })
-  effect.register()
+  effect.run()
   testCount.set((n) => n + 1)
   expect(testCount()).toBe(2)
   expect(effectRunCount, 'unvisiable effect not run yet').toBe(0)

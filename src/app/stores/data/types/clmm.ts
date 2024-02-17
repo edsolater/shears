@@ -14,7 +14,8 @@ export type ClmmSDKInfo = {
   positionAccount?: SDK_ClmmPoolPersonalPosition[]
 }
 export type ClmmInfo = {
-  hasLoad: ('api' | 'sdk')[]
+  hasLoadJsonApi: boolean
+  hasLoadSdk: boolean
   id: PublicKey
   liquidity?: Numberish // info from SDK
   tvl?: Amount // info from SDK

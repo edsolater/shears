@@ -1,7 +1,7 @@
-import { MayFn, WeakerSet } from '@edsolater/fnkit'
+import { MayFn, WeakerSet, asyncInvoke } from '@edsolater/fnkit'
 import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
 import { ShuckOption, isShuckOption } from './shuckOption'
-import { TaskRunner, invokeTaskRunner } from './task'
+import { TaskRunner } from './task'
 
 export const shuckTag = Symbol('shuckTag')
 export const shuckOptionTag = Symbol('shuckOptionTag')
@@ -93,10 +93,16 @@ export function isShuckHidden<T>(value: Shuck<T>) {
 /**
  * high function that create value getter from subscribable
  */
-export function recordSubscribableToAtom<T>(context: TaskRunner, subscribable: Shuck<T>) {
-  return subscribable.subscribedExecutors.add(context)
+export function attachTaskToShuck<T>(task: TaskRunner, shuck: Shuck<T>) {
+  return shuck.subscribedExecutors.add(task)
 }
 
+/** **only place** to invoke task taskrunner */
+export function invokeTaskRunner(taskrunner: TaskRunner) {
+  if (taskrunner.visiable) {
+    asyncInvoke(taskrunner)
+  }
+}
 export function invokeBindedExecutors(subscribable: Shuck<any>) {
   if (subscribable.subscribedExecutors.size === 0) return
   subscribable.subscribedExecutors.forEach(invokeTaskRunner)

@@ -114,7 +114,7 @@ function useExperimentalCode() {
   const effect = createTask([testCount], () => {
     effectRunCount++
   })
-  effect.register()
+  effect.run()
   testCount.set((n) => n + 1)
   setShuckVisiableChecker(testCount, true, undefined)
   testCount.set((n) => n + 1)

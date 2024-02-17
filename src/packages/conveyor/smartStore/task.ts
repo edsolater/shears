@@ -3,23 +3,19 @@
  * observe user action towards the object|function
  * *********
  */
-import { WeakerSet } from '@edsolater/fnkit'
+import { shrinkFn } from '@edsolater/fnkit'
 import { assignObject } from '../../fnkit/assignObject'
-import { asyncInvoke } from '../../pivkit/hooks/createContextStore/utils/asyncInvoke'
-import { Shuck, isShuckVisiable, recordSubscribableToAtom } from './shuck'
+import { Shuck, attachTaskToShuck, isShuckVisiable } from './shuck'
 
 export type TaskRunner = {
   (): void
-  relatedShucks: WeakerSet<Shuck<any>>
+  relatedShucks: Shuck<any>[]
   readonly visiable: boolean // TODO: need to be a subscribable
 }
 export type TaskManager = {
-  // main method of task, force to run the effect
-  run(): void
   // main method of task, run if needed (any of shucks is visiable)
-  register(): void
+  run(): void
   taskRunner: TaskRunner
-  observe(...shucks: Shuck<any>[]): void
 }
 
 /**
@@ -40,64 +36,26 @@ export type TaskManager = {
  */
 // param:shucks should can be a object that {}
 export function createTask(
-  dependOns: (Shuck<any> )[],
+  dependOns: Shuck<any>[],
   task: () => void,
-  options?: { visiable?: boolean },
+  options?: { visiable?: boolean | ((shucks: Shuck<any>[]) => boolean) },
 ) {
   const taskRunner = (() => task()) as TaskRunner
   assignObject(taskRunner, {
-    relatedShucks: new WeakerSet<Shuck<any>>(dependOns),
+    relatedShucks: dependOns,
     get visiable() {
-      return isTaskRunnerVisiable(taskRunner)
+      return shrinkFn(options?.visiable, [dependOns]) ?? dependOns.some(isShuckVisiable)
     },
   })
-
+  for (const shuck of dependOns) {
+    attachTaskToShuck(taskRunner, shuck) // task is triggered by subscribed shucks, but also attach shack to taskRunner make it easy to debug (easy for human to monitor the app tasks)
+  }
   const manager: TaskManager = {
-    run() {
-      taskRunner()
-    },
     taskRunner,
-    register() {
-      dependOns.forEach((shuck) => {
-        recordSubscribableToTaskRunner(shuck, taskRunner)
-        recordSubscribableToAtom(taskRunner, shuck) // task is triggered by subscribed shucks, but also attach shack to taskRunner make it easy to debug (easy for human to monitor the app tasks)
-      })
-      if (isTaskRunnerVisiable(taskRunner)) taskRunner()
-    },
-    observe(...shucks: Shuck<any>[]) {
-      shucks.forEach((shuck) => {
-        recordSubscribableToTaskRunner(shuck, taskRunner)
-        recordSubscribableToAtom(taskRunner, shuck)
-      })
-      if (shucks.some(isShuckVisiable)) {
-        taskRunner()
-      }
+    run(config?: { force?: boolean }) {
+      if (config?.force ?? taskRunner.visiable) taskRunner()
     },
   }
+  manager.run() // initly run the task
   return manager
-}
-
-export function registerTask(shucks: Shuck<any>[], task: () => void) {
-  const manager = createTask(shucks, task)
-  return manager.register()
-}
-
-function recordSubscribableToTaskRunner<T>(subscribable: Shuck<T>, context: TaskRunner) {
-  context.relatedShucks.add(subscribable)
-}
-
-/** task is visiable when any  */
-function isTaskRunnerVisiable(context: TaskRunner) {
-  return true // test
-  for (const shuck of context.relatedShucks) {
-    if (isShuckVisiable(shuck)) return true
-  }
-  return false
-}
-
-/** **only place** to invoke task taskrunner */
-export function invokeTaskRunner(taskrunner: TaskRunner) {
-  if (taskrunner.visiable) {
-    asyncInvoke(taskrunner)
-  }
 }

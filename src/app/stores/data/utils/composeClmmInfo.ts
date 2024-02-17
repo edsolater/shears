@@ -1,42 +1,26 @@
-import { add, div, isPromise, mul, type MayPromise } from '@edsolater/fnkit'
-import type { ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from '@raydium-io/raydium-sdk'
+import { add, div, mul } from '@edsolater/fnkit'
+import { type ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from '@raydium-io/raydium-sdk'
 import { parseSDKBN } from '../../../utils/dataStructures/BN'
 import { parseSDKDecimal } from '../../../utils/dataStructures/Decimal'
 import { toPercent } from '../../../utils/dataStructures/Percent'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import type { PublicKey } from '../../../utils/dataStructures/type'
-import type { ClmmInfo, ClmmRewardInfo, ClmmUserPositionAccount, ClmmJsonInfo, ClmmSDKInfo } from '../types/clmm'
+import type { ClmmInfo, ClmmJsonInfo, ClmmRewardInfo, ClmmSDKInfo, ClmmUserPositionAccount } from '../types/clmm'
 
 export function composeClmmInfos(
   apiInfo: Record<PublicKey, ClmmJsonInfo>,
   sdkInfo?: Record<PublicKey, ClmmSDKInfo | undefined>,
-): Record<string, ClmmInfo>
-export async function composeClmmInfos(
-  apiInfo: MayPromise<Record<PublicKey, ClmmJsonInfo>>,
-  sdkInfo?: Record<PublicKey, ClmmSDKInfo | undefined>,
-): Promise<Record<string, ClmmInfo>>
-export function composeClmmInfos(
-  apiInfo: MayPromise<Record<PublicKey, ClmmJsonInfo>>,
-  sdkInfo?: MayPromise<Record<PublicKey, ClmmSDKInfo | undefined>>,
-): Promise<Record<string, ClmmInfo>> | Record<string, ClmmInfo> {
-  if (isPromise(apiInfo) || isPromise(sdkInfo)) {
-    return (async () => {
-      const [apiInfoResolved, sdkInfoResolved] = await Promise.all([apiInfo, sdkInfo])
-      return composeClmmInfos(apiInfoResolved, sdkInfoResolved)
-    })()
-  } else {
-    const result: Record<string, ClmmInfo> = {}
-    for (const [id, api] of Object.entries(apiInfo)) {
-      const sdk = sdkInfo?.[id]
-      if (!sdk) continue
-      result[id] = composeClmmInfo(api, sdk)
-    }
-    return result
+): Record<PublicKey, ClmmInfo> {
+  const result: Record<string, ClmmInfo> = {}
+  for (const [id, api] of Object.entries(apiInfo)) {
+    const sdk = sdkInfo?.[id]
+    result[id] = composeOneClmmInfo(api, sdk)
   }
+  return result
 }
-export function composeClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo): ClmmInfo {
+export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo): ClmmInfo {
   const currentPrice = sdkInfo && parseSDKDecimal(sdkInfo.state.currentPrice)
-  
+
   const userPositionAccounts = sdkInfo?.positionAccount?.map((userPositionAccount) => {
     const amountBase = parseSDKBN(userPositionAccount.amountA)
     const amountQuote = parseSDKBN(userPositionAccount.amountB)
@@ -68,9 +52,9 @@ export function composeClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo): 
       positionPercentQuote,
     } satisfies ClmmUserPositionAccount
   })
-
   return {
-    hasLoad: sdkInfo ? ['api', 'sdk'] : ['api'],
+    hasLoadJsonApi: Boolean(jsonInfo),
+    hasLoadSdk: Boolean(sdkInfo),
     id: jsonInfo.id,
     liquidity: parseSDKBN(sdkInfo?.state.liquidity),
     tvl: sdkInfo?.state.tvl,
@@ -100,7 +84,7 @@ export function composeClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo): 
       '7d': toPercent(sdkInfo.state.week.apr, { alreadyDecimaled: true }),
       '30d': toPercent(sdkInfo.state.month.apr, { alreadyDecimaled: true }),
     },
-    rewardInfos: jsonInfo.rewardInfos.map(
+    rewardInfos: jsonInfo.rewardInfos?.map(
       (i, idx) =>
         ({
           tokenMint: i.mint,
