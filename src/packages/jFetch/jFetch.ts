@@ -1,7 +1,7 @@
 import { isString } from '@edsolater/fnkit'
 import { middlewareCache, type JFetchMiddlewareCacheOptions } from './middlewares/cache'
 import { middlewareUseTempPendingRequest } from './middlewares/cacheTempPendingRequest'
-import { middlewareJsonify } from './middlewares/jsonify'
+import { middlewareJsonifyTheResponse } from './middlewares/jsonifyTheResponse'
 
 export type JFetchResponseItem = Response | undefined
 
@@ -35,7 +35,11 @@ export interface JFetchOption extends JFetchMiddlewareOptions, JFetchMiddlewareC
 export async function jFetch<Shape = any>(input: RequestInfo, options?: JFetchOption): Promise<Shape | undefined> {
   const url = isString(input) ? input : input.url
   const fetcherCore = () => fetch(input, options?.originalOption)
-  const buildinMiddlewares = [middlewareJsonify(), middlewareUseTempPendingRequest(), middlewareCache(options ?? {})]
+  const buildinMiddlewares = [
+    middlewareJsonifyTheResponse(),
+    middlewareUseTempPendingRequest(),
+    middlewareCache(options ?? {}),
+  ]
   const middlewares = (options?.middlewares ?? []).concat(buildinMiddlewares)
   const getResponse = middlewares.reduceRight(
     (prev: () => Promise<any>, current) => async () => current({ userParams: options, url: url }, prev),
