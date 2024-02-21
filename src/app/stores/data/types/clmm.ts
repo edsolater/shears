@@ -1,11 +1,11 @@
-import { Numberish } from '@edsolater/fnkit'
-import {
+import type { Numberish } from '@edsolater/fnkit'
+import type {
   ApiClmmPoolsItem as SDK_ApiClmmPoolsItem,
   ClmmPoolInfo as SDK_ClmmPoolInfo,
   ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition,
 } from '@raydium-io/raydium-sdk'
-import { type Amount } from '../../../utils/dataStructures/TokenAmount'
-import { Percent, PublicKey, type Mint, type Price } from '../../../utils/dataStructures/type'
+import type { Amount } from '../../../utils/dataStructures/TokenAmount'
+import type { Mint, Percent, Price, PublicKey } from '../../../utils/dataStructures/type'
 
 export type ClmmJsonInfo = SDK_ApiClmmPoolsItem
 export type ClmmJsonFile = { data: ClmmJsonInfo[] }

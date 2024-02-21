@@ -22,7 +22,7 @@ import {
   icssTextColor,
   useKitProps,
 } from '@edsolater/pivkit'
-import { rpc, setStore, store } from '../../../../stores/data/store'
+import { s_rpc, setStore, store } from '../../../../stores/data/store'
 import { RPCEndpoint, availableRpcs } from '../../../../stores/data/RPCEndpoint'
 import { OptionItemBox } from './OptionItem'
 import { unwrap } from 'solid-js/store'
@@ -93,7 +93,7 @@ function RPCPanel(props: {
         icss={{ flex: 1 }}
         onSwitchRpc={(rpcURL) => {
           setStore({ rpc: { url: rpcURL } })
-          rpc.set({ url: rpcURL })
+          s_rpc.set({ url: rpcURL })
         }}
       />
     </RPCPanelBox>
@@ -196,7 +196,7 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
     // TEST
     const timeoutId = setTimeout(() => {
       console.log('has set')
-      rpc.set(availableRpcs[0])
+      s_rpc.set(availableRpcs[0])
     }, 500)
     onCleanup(() => {
       clearTimeout(timeoutId)

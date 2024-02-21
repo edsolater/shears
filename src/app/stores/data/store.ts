@@ -77,9 +77,15 @@ export const {
 )
 
 // TODO: should all state just use shuck
-export const rpc = createShuck<RPCEndpoint | undefined>()
-export const isClmmJsonInfoLoading = createShuck<boolean | undefined>()
-export const clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
+// app states
+export const s_rpc = createShuck<RPCEndpoint | undefined>()
+export const s_isMobile = createShuck<boolean | undefined>()
+// clmm
+export const s_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
+export const s_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
+
+type ClmmPageTab = 'ALL' | 'MY_POOLS'
+export const s_uiCurrentClmmTab = createShuck<ClmmPageTab | undefined>()
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 
 // export const {

@@ -27,11 +27,11 @@ import {
 import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
-import { BoardTitle } from './BoardTitle'
+import { Title } from './BoardTitle'
 
 type TabelCellConfigs<T> = {
-  category: string
-  place: 'collapse-face' | 'collapse-content'
+  name: string
+  contentExistIn: 'face' | 'content'
   get: (item: T, idx: Accessor<number>) => PivChild
 }[]
 
@@ -41,17 +41,16 @@ type TabelCellConfigs<T> = {
  *
  * show a list of items in CyberPanel
  */
-export function DatabaseTable<T>(
+export function DatabaseTableWidget<T>(
   kitProps: KitProps<
     {
       items: ItemList<T>
       // essiential for collection/favorite system
-      getItemKey: (item: T) => string
+      getKey: (item: T) => string
 
       tabelCellConfigs: TabelCellConfigs<T>
 
-      sectionTitle: string
-      tableName?: string
+      title: string
       subtitleDescription?: string
 
       TopMiddle?: PivChild
@@ -62,7 +61,7 @@ export function DatabaseTable<T>(
       CollapseBoxProps?: CollapseBoxProps
       renderItem?: (item: T) => PivChild
     },
-    { noNeedDeAccessifyProps: ['getItemKey'] }
+    { noNeedDeAccessifyProps: ['getKey'] }
   >,
 ) {
   const { props, shadowProps } = useKitProps(kitProps, {
@@ -71,7 +70,11 @@ export function DatabaseTable<T>(
   })
   return (
     <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
-      <BoardTitle>{props.sectionTitle}</BoardTitle>
+      <Row icss:justify='space-between' icss:align='center'>
+        <Title>{props.title}</Title>
+        <Box>{props.TopMiddle}</Box>
+        <Box>{props.TopRight}</Box>
+      </Row>
       <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
         <Box icss={{}}></Box>
         <List lazy items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
@@ -97,9 +100,37 @@ export function DatabaseTable<T>(
   )
 }
 
+function ItemStarIcon() {
+  const isFavourite = () => false
+  return (
+    <Box
+      icss={{
+        width: '24px',
+        alignSelf: 'center',
+        marginLeft: '24px',
+        marginRight: '8px',
+      }}
+    >
+      <Icon
+        src={isFavourite() ? '/icons/misc-star-filled.svg' : '/icons/misc-star-empty.svg'}
+        onClick={({ ev }) => {
+          ev.stopPropagation() // onUnFavorite?.(deAccessify(props.item).ammId)
+          // onStartFavorite?.(deAccessify(props.item).ammId)
+        }}
+        icss={[
+          icssClickable,
+          {
+            margin: 'auto',
+            alignSelf: 'center',
+          },
+        ]}
+      />
+    </Box>
+  )
+}
+
 function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemFace' })
-  const isFavourite = () => false
   return (
     <Row
       shadowProps={shadowProps}
@@ -112,24 +143,7 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
         transition: 'all 150ms',
       }}
     >
-      <Box
-        icss={{
-          width: '24px',
-          alignSelf: 'center',
-          marginLeft: '24px',
-          marginRight: '8px',
-        }}
-      >
-        <Icon
-          src={isFavourite() ? '/icons/misc-star-filled.svg' : '/icons/misc-star-empty.svg'}
-          onClick={({ ev }) => {
-            ev.stopPropagation()
-            // onUnFavorite?.(deAccessify(props.item).ammId)
-            // onStartFavorite?.(deAccessify(props.item).ammId)
-          }}
-          icss={[icssClickable, { margin: 'auto', alignSelf: 'center' }]}
-        />
-      </Box>
+      <ItemStarIcon></ItemStarIcon>
 
       {/* <PoolItemFaceTokenAvatarLabel info={kitProps.item} /> */}
 
@@ -139,7 +153,7 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
           const value = config.get(i, idx)
           return (
             <Box icss={{ display: 'flex', alignItems: 'center' }}>
-              <PoolItemFaceDetailInfoBoard name={config.category} value={value} />
+              <PoolItemFaceDetailInfoBoard name={config.name} value={value} />
             </Box>
           )
         }}

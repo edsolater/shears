@@ -1,5 +1,5 @@
 import { Box, KitProps, Row, Text, useKitProps } from '@edsolater/pivkit'
-import { DatabaseTable } from '../components/DatabaseTable'
+import { DatabaseTableWidget } from '../components/DatabaseTableWidget'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
@@ -30,14 +30,14 @@ export default function PoolsPage() {
     detail?: string
   }[]
   return (
-    <DatabaseTable
-      sectionTitle='Pools'
+    <DatabaseTableWidget
+      title='Pools'
       items={pairInfos}
-      getItemKey={(i) => i.ammId}
+      getKey={(i) => i.ammId}
       tabelCellConfigs={[
         {
-          category: 'Pool',
-          place:'collapse-face',  
+          name: 'Pool',
+          contentExistIn:'face',  
           get: (i) => (
             <Row>
               <PoolItemFaceTokenAvatarLabel info={i} />
@@ -45,8 +45,8 @@ export default function PoolsPage() {
           ),
         },
         {
-          category: 'liquidity',
-          place:'collapse-face',  
+          name: 'liquidity',
+          contentExistIn:'face',  
           get: (i) => <PoolItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
         },
       ]}
