@@ -10,6 +10,7 @@ import {
   createMemo,
   createSignal,
   on,
+  untrack,
 } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
@@ -36,7 +37,7 @@ export type ListProps<T> = {
   items?: MayFn<ItemList<T>>
 
   /** lazy render for get init frame faster */
-  lazy?: boolean
+  async?: boolean
   /**
    * only meaningfull when turnOnScrollObserver is true
    * @default 30
@@ -77,12 +78,12 @@ export function List<T>(kitProps: ListKitProps<T>) {
 
   // [configs]
 
-  const _allItems = props.lazy
+  const _allItems = props.async
     ? createAsyncMemo(() => toList(shrinkFn(props.items ?? [])), [] as T[])
     : createMemo(() => toList(shrinkFn(props.items ?? [])))
   const allItems = createDeferred(_allItems) // ⚡ to smoother the render
   const increaseRenderCount = createMemo(
-    () => props.increaseRenderCount ?? Math.min(Math.floor(allItems().length / 10), 30)
+    () => props.increaseRenderCount ?? Math.max(1, Math.min(Math.floor(allItems().length / 10), 30)),
   )
   const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(allItems().length, 50))
 
@@ -113,8 +114,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
       () => {
         setRenderItemLength(initRenderCount())
         forceCalculate()
-      }
-    )
+      },
+    ),
   )
 
   const resetRenderCount: ListController['resetRenderCount'] = () => {

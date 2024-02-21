@@ -1,4 +1,4 @@
-import { Accessor, createMemo } from 'solid-js'
+import { Accessor, createEffect, createMemo } from 'solid-js'
 import {
   Box,
   Button,
@@ -8,7 +8,6 @@ import {
   Group,
   Icon,
   KitProps,
-  List,
   Loop,
   Piv,
   PivChild,
@@ -28,12 +27,29 @@ import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
+import { List } from '../../packages/pivkit'
 
 type TabelCellConfigs<T> = {
   name: string
   contentExistIn: 'face' | 'content'
   get: (item: T, idx: Accessor<number>) => PivChild
 }[]
+
+type DatabaseTableWidgetProps<T> = {
+  items: ItemList<T>
+  // essiential for collection/favorite system
+  getKey: (item: T) => string
+  tabelCellConfigs: TabelCellConfigs<T>
+  title: string
+  subtitleDescription?: string
+  TopMiddle?: PivChild
+  TopRight?: PivChild
+  TableBodyTopLeft?: PivChild
+  TableBodyTopMiddle?: PivChild
+  TableBodyTopRight?: PivChild
+  CollapseBoxProps?: CollapseBoxProps
+  renderItem?: (item: T) => PivChild
+}
 
 /**
  * main page components
@@ -42,27 +58,7 @@ type TabelCellConfigs<T> = {
  * show a list of items in CyberPanel
  */
 export function DatabaseTableWidget<T>(
-  kitProps: KitProps<
-    {
-      items: ItemList<T>
-      // essiential for collection/favorite system
-      getKey: (item: T) => string
-
-      tabelCellConfigs: TabelCellConfigs<T>
-
-      title: string
-      subtitleDescription?: string
-
-      TopMiddle?: PivChild
-      TopRight?: PivChild
-      TableBodyTopLeft?: PivChild
-      TableBodyTopMiddle?: PivChild
-      TableBodyTopRight?: PivChild
-      CollapseBoxProps?: CollapseBoxProps
-      renderItem?: (item: T) => PivChild
-    },
-    { noNeedDeAccessifyProps: ['getKey'] }
-  >,
+  kitProps: KitProps<DatabaseTableWidgetProps<T>, { noNeedDeAccessifyProps: ['getKey'] }>,
 ) {
   const { props, shadowProps } = useKitProps(kitProps, {
     name: 'DatabaseTable',
@@ -77,7 +73,7 @@ export function DatabaseTableWidget<T>(
       </Row>
       <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
         <Box icss={{}}></Box>
-        <List lazy items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
+        <List async items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
           {(item) => (
             <Box icss={{ paddingBlock: '4px' }}>
               <CollapseBox

@@ -50,11 +50,10 @@ export function ListItem(originalProps: ListItemProps) {
 
   return (
     <Piv
-      class='ListItem'
       domRef={[setItemDom, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
       shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
       style={isIntersecting() ? undefined : { height: `${innerHeight()}px`, width: `${innerWidth()}px` }}
-      icss={{ contentVisibility: isIntersecting() ? 'visible' : 'hidden', width: '100%' }}
+      icss={{ width: '100%' }}
     >
       {childContent}
     </Piv>

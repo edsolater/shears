@@ -8,8 +8,8 @@ test('basic usage', async () => {
   let effectRunCount = 0
   const { branchStore } = createBranchStore({ testCount: 1 })
   const testCount = branchStore.testCount()
-  const effect = createTask([testCount], (get) => {
-    const n = get(testCount)
+  const effect = createTask([testCount], () => {
+    const n = testCount()
     effectRunCount++
   })
   effect.run()
