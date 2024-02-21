@@ -84,8 +84,8 @@ export const s_isMobile = createShuck<boolean | undefined>()
 export const s_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
 export const s_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
 
-type ClmmPageTab = 'ALL' | 'MY_POOLS'
-export const s_uiCurrentClmmTab = createShuck<ClmmPageTab | undefined>()
+export const allClmmTabs = ['ALL', 'MY POOLS'] as const
+export const s_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 
 // export const {

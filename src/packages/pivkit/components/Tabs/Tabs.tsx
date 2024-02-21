@@ -33,7 +33,7 @@ export type TabsController = {
   _onChange(cb: OnChangeCallback): { unregister(): void }
 } & TabsControllerWithTabValue
 
-export type TabProps = {
+export type TabsProps = {
   /** recommand to set, so can flat ui state to pure js object  */
   groupName?: string
   selectedIndex?: number
@@ -42,7 +42,7 @@ export type TabProps = {
 } & TabsPropsWithTabValue
 
 export type TabsKitProps<Controller extends ValidController = TabsController> = KitProps<
-  TabProps,
+  TabsProps,
   { controller: Controller }
 >
 
@@ -92,6 +92,7 @@ export function Tabs(rawProps: TabsKitProps) {
 
   const getDefaultIndex = () =>
     'defaultSelectedIndex' in props && props.defaultSelectedIndex != null ? props.defaultSelectedIndex : undefined
+
   const getIndex = () => ('selectedIndex' in props ? props.selectedIndex : undefined)
 
   const [selectedIndex, selectTabByIndex] = createSyncSignal({

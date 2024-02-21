@@ -1,13 +1,15 @@
-import { MayFn, flap, shrinkFn } from '@edsolater/fnkit'
+import { MayFn, shrinkFn } from '@edsolater/fnkit'
 import { For, JSXElement, createMemo } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
-import { Piv, PivChild, parsePivChildren } from '../piv'
 import { createRef } from '../hooks/createRef'
+import { AddProps, PivChild, parsePivChildren } from '../piv'
 
 export interface LoopController {}
 
+type ComponentStructure = (...anys: any[]) => JSXElement
+
 export type LoopProps<T> = {
-  wrapper?: (content: PivChild) => PivChild
+  wrapper?: ComponentStructure
   of?: MayFn<Iterable<T>>
   children(item: T, index: () => number): PivChild
 }
@@ -23,7 +25,7 @@ export function Loop<T>(kitProps: LoopKitProps<T>) {
     name: 'Loop',
     noNeedDeAccessifyChildren: true,
   })
-  const Wrapper = Piv //TODO: 🤔 maybe kitProps just export  Wrapper instead of shadowProps
+  const Wrapper = kitProps.wrapper ?? AddProps //TODO: 🤔 maybe kitProps just export  Wrapper instead of shadowProps
 
   // [configs]
   const allItems = createMemo(() => Array.from(shrinkFn(props.of ?? []) as T[]))

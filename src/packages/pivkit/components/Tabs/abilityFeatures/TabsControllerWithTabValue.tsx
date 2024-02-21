@@ -1,5 +1,5 @@
 import { Accessor, createMemo, createSignal } from 'solid-js'
-import { TabProps } from '../Tabs'
+import { TabsProps } from '../Tabs'
 import { isNumber } from '@edsolater/fnkit'
 
 export type TabsPropsWithTabValue = {
@@ -32,7 +32,7 @@ export type TabsControllerWithTabValue = {
  * ability hook
  * tab can handle both value or index */
 export function useAbilityFeature_TabValue_Tabs(opts: {
-  props: TabProps
+  props: TabsProps
   currentIndex: Accessor<number>
   setIndex: (v: number) => void
 }) {

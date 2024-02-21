@@ -22,6 +22,7 @@ export function NavRouteItems() {
   const pathnameSelector = createSelector(() => location.pathname)
   return (
     <Loop
+      wrapper={Piv}
       of={routes}
       icss={[
         icssCol(),
