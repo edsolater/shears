@@ -5,6 +5,7 @@ import {
   CollapseBox,
   CollapseBoxProps,
   Group,
+  ICSS,
   Icon,
   KitProps,
   Piv,
@@ -22,13 +23,14 @@ import {
   useElementSize,
   useKitProps,
 } from '@edsolater/pivkit'
-import { Accessor, createMemo } from 'solid-js'
+import { Accessor, createContext, createMemo } from 'solid-js'
 import { List, Loop } from '../../packages/pivkit'
 import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
 import { colors } from '../theme/colors'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
+import { scrollbarWidth } from '../theme/misc'
 
 type TabelCellConfigs<T> = {
   name: string
@@ -54,10 +56,19 @@ type DatabaseTableWidgetProps<T> = {
   renderItem?: (item: T) => PivChild
 }
 
-const databaseTableGridTemplate = createICSS(() => ({
-  display: 'grid',
-  gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
-}))
+export interface DatabaseTabelWidgetContextContent {
+  databaseTableGridTemplate?: ICSS
+}
+
+export const DatabaseTableWidgetContext = createContext<DatabaseTabelWidgetContextContent>(
+  {
+    databaseTableGridTemplate: createICSS(() => ({
+      display: 'grid',
+      gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
+    })),
+  },
+  { name: 'ListController' },
+)
 
 /**
  * main page components
@@ -73,61 +84,77 @@ export function DatabaseTableWidget<T>(
     noNeedDeAccessifyProps: ['getItemKey'],
   })
   const headers = () => ['pools', 'Liquidity']
+  const defaultDatabaseTableWidgetContextContent: DatabaseTabelWidgetContextContent = {
+    databaseTableGridTemplate: createICSS(() => ({
+      display: 'grid',
+      gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
+    })),
+  }
   const headerICSS = [
     {
       paddingBlock: '8px',
       borderRadius: '12px',
       background: colors.listHeaderBg,
-      '& > *': { marginInline: '8px' },
+      '& > *': { paddingInline: '8px' },
     },
-    databaseTableGridTemplate,
   ]
   return (
-    <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
-      <Row icss:justify='space-between' icss:align='center'>
-        <Title icss={{ color: colors.textPrimary }}>{props.title}</Title>
-        <Box>{props.TopMiddle}</Box>
-        <Box>{props.TopRight}</Box>
-      </Row>
-      <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
-        <Group name='subtitle'>
-          <Title>{props.subtitle}</Title>
-          <Text>{props.subtitleDescription}</Text>
-        </Group>
+    <DatabaseTableWidgetContext.Provider value={defaultDatabaseTableWidgetContextContent}>
+      <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
+        <Row icss:justify='space-between' icss:align='center'>
+          <Title icss={{ color: colors.textPrimary }}>{props.title}</Title>
+          <Box>{props.TopMiddle}</Box>
+          <Box>{props.TopRight}</Box>
+        </Row>
+        <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
+          <Group name='subtitle'>
+            <Title>{props.subtitle}</Title>
+            <Text>{props.subtitleDescription}</Text>
+          </Group>
 
-        <Group name='table-header'>
-          <Box icss={headerICSS}>
-            {/* collect star */}
-            <Box></Box>
+          <Group name='table-header'>
+            <Box icss={[headerICSS]}>
+              {/* collect star */}
+              <Box></Box>
 
-            <Loop of={headers}>
-              {(headerLabel) => <Text icss={{ fontWeight: 'bold', color: colors.textSecondary }}>{headerLabel}</Text>}
-            </Loop>
-          </Box>
-        </Group>
+              <Loop of={headers}>
+                {(headerLabel) => <Text icss={{ fontWeight: 'bold', color: colors.textSecondary }}>{headerLabel}</Text>}
+              </Loop>
+            </Box>
+          </Group>
 
-        <Group name='items'>
-          <List async items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
-            {(item) => (
-              <Box icss={{ paddingBlock: '4px' }}>
-                <CollapseBox
-                  shadowProps={props.CollapseBoxProps}
-                  icss={{
-                    borderRadius: '20px',
-                    overflow: 'hidden',
-                  }}
-                  // need to render multiple times to get the correct height, why not let it be a web component?
-                  renderFace={<DatabaseTableItemCollapseFace item={item} tabelCellConfigs={props.tabelCellConfigs} />}
-                  renderContent={
-                    <DatabaseTableItemCollapseContent item={item} tabelCellConfigs={props.tabelCellConfigs} />
-                  }
-                />
-              </Box>
-            )}
-          </List>
-        </Group>
-      </CyberPanel>
-    </Col>
+          <Group name='items'>
+            <List
+              async
+              items={props.items}
+              icss={{
+                maxHeight: '100%',
+                overflowY: 'scroll',
+                overflowX: 'hidden',
+                marginRight: `-${scrollbarWidth}px`,
+              }}
+            >
+              {(item) => (
+                <Box icss={{ paddingBlock: '4px' }}>
+                  <CollapseBox
+                    shadowProps={props.CollapseBoxProps}
+                    icss={{
+                      borderRadius: '20px',
+                      overflow: 'hidden',
+                    }}
+                    // need to render multiple times to get the correct height, why not let it be a web component?
+                    renderFace={<DatabaseTableItemCollapseFace item={item} tabelCellConfigs={props.tabelCellConfigs} />}
+                    renderContent={
+                      <DatabaseTableItemCollapseContent item={item} tabelCellConfigs={props.tabelCellConfigs} />
+                    }
+                  />
+                </Box>
+              )}
+            </List>
+          </Group>
+        </CyberPanel>
+      </Col>
+    </DatabaseTableWidgetContext.Provider>
   )
 }
 
@@ -171,7 +198,10 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
           background: colors.listItemBg,
           transition: 'all 150ms',
         },
-        databaseTableGridTemplate,
+        createICSS(() => ({
+          display: 'grid',
+          gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
+        })),
       ]}
     >
       <ItemStarIcon></ItemStarIcon>
