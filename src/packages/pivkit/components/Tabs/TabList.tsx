@@ -17,5 +17,9 @@ export function TabList(rawProps: TabListKitProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(rawProps, { name: 'TabList' })
   const tabListController: TabListController = {}
   lazyLoadController(tabListController)
-  return <Piv shadowProps={shadowProps}>{props.children}</Piv>
+  return (
+    <Piv icss={{ display: 'flex' }} shadowProps={shadowProps}>
+      {props.children}
+    </Piv>
+  )
 }

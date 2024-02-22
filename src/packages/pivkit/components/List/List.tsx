@@ -82,9 +82,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
     ? createAsyncMemo(() => toList(shrinkFn(props.items ?? [])), [] as T[])
     : createMemo(() => toList(shrinkFn(props.items ?? [])))
   const allItems = createDeferred(_allItems) // ⚡ to smoother the render
-  const increaseRenderCount = createMemo(
-    () => props.increaseRenderCount ?? Math.max(1, Math.min(Math.floor(allItems().length / 10), 30)),
-  )
+  const increaseRenderCount = () =>
+    props.increaseRenderCount ?? Math.max(1, Math.min(Math.floor(allItems().length / 10), 30))
   const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(allItems().length, 50))
 
   // [list ref]

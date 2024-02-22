@@ -1,4 +1,3 @@
-import { Accessor, createEffect, createMemo } from 'solid-js'
 import {
   Box,
   Button,
@@ -8,26 +7,28 @@ import {
   Group,
   Icon,
   KitProps,
-  Loop,
   Piv,
   PivChild,
   PivProps,
   Row,
   Text,
+  createICSS,
   createRef,
-  icssLabelTitle,
-  icssSubContent,
   icssClickable,
   icssCyberpenkBackground,
   icssCyberpenkBorder,
+  icssLabelTitle,
+  icssSubContent,
   useElementSize,
   useKitProps,
 } from '@edsolater/pivkit'
+import { Accessor, createMemo } from 'solid-js'
+import { List, Loop } from '../../packages/pivkit'
 import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
+import { colors } from '../theme/colors'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
-import { List } from '../../packages/pivkit'
 
 type TabelCellConfigs<T> = {
   name: string
@@ -41,7 +42,9 @@ type DatabaseTableWidgetProps<T> = {
   getKey: (item: T) => string
   tabelCellConfigs: TabelCellConfigs<T>
   title: string
+  subtitle?: string
   subtitleDescription?: string
+  SubtitleActions?: PivChild
   TopMiddle?: PivChild
   TopRight?: PivChild
   TableBodyTopLeft?: PivChild
@@ -50,6 +53,11 @@ type DatabaseTableWidgetProps<T> = {
   CollapseBoxProps?: CollapseBoxProps
   renderItem?: (item: T) => PivChild
 }
+
+const databaseTableGridTemplate = createICSS(() => ({
+  display: 'grid',
+  gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
+}))
 
 /**
  * main page components
@@ -64,33 +72,60 @@ export function DatabaseTableWidget<T>(
     name: 'DatabaseTable',
     noNeedDeAccessifyProps: ['getItemKey'],
   })
+  const headers = () => ['pools', 'Liquidity']
+  const headerICSS = [
+    {
+      paddingBlock: '8px',
+      borderRadius: '12px',
+      background: colors.listHeaderBg,
+      '& > *': { marginInline: '8px' },
+    },
+    databaseTableGridTemplate,
+  ]
   return (
     <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
       <Row icss:justify='space-between' icss:align='center'>
-        <Title>{props.title}</Title>
+        <Title icss={{ color: colors.textPrimary }}>{props.title}</Title>
         <Box>{props.TopMiddle}</Box>
         <Box>{props.TopRight}</Box>
       </Row>
       <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
-        <Box icss={{}}></Box>
-        <List async items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
-          {(item) => (
-            <Box icss={{ paddingBlock: '4px' }}>
-              <CollapseBox
-                shadowProps={props.CollapseBoxProps}
-                icss={{
-                  borderRadius: '20px',
-                  overflow: 'hidden',
-                }}
-                // need to render multiple times to get the correct height, why not let it be a web component?
-                renderFace={<DatabaseTableItemCollapseFace item={item} tabelCellConfigs={props.tabelCellConfigs} />}
-                renderContent={
-                  <DatabaseTableItemCollapseContent item={item} tabelCellConfigs={props.tabelCellConfigs} />
-                }
-              />
-            </Box>
-          )}
-        </List>
+        <Group name='subtitle'>
+          <Title>{props.subtitle}</Title>
+          <Text>{props.subtitleDescription}</Text>
+        </Group>
+
+        <Group name='table-header'>
+          <Box icss={headerICSS}>
+            {/* collect star */}
+            <Box></Box>
+
+            <Loop of={headers}>
+              {(headerLabel) => <Text icss={{ fontWeight: 'bold', color: colors.textSecondary }}>{headerLabel}</Text>}
+            </Loop>
+          </Box>
+        </Group>
+
+        <Group name='items'>
+          <List async items={props.items} icss={{ maxHeight: '100%', overflowY: 'scroll', overflowX: 'hidden' }}>
+            {(item) => (
+              <Box icss={{ paddingBlock: '4px' }}>
+                <CollapseBox
+                  shadowProps={props.CollapseBoxProps}
+                  icss={{
+                    borderRadius: '20px',
+                    overflow: 'hidden',
+                  }}
+                  // need to render multiple times to get the correct height, why not let it be a web component?
+                  renderFace={<DatabaseTableItemCollapseFace item={item} tabelCellConfigs={props.tabelCellConfigs} />}
+                  renderContent={
+                    <DatabaseTableItemCollapseContent item={item} tabelCellConfigs={props.tabelCellConfigs} />
+                  }
+                />
+              </Box>
+            )}
+          </List>
+        </Group>
       </CyberPanel>
     </Col>
   )
@@ -126,18 +161,18 @@ function ItemStarIcon() {
 }
 
 function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemFace' })
+  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
   return (
     <Row
       shadowProps={shadowProps}
-      icss={{
-        paddingBlock: '20px',
-        background: '#141041',
-        gap: '8px',
-        display: 'grid',
-        gridTemplateColumns: 'auto 1.6fr 1fr 1fr 1fr .8fr auto',
-        transition: 'all 150ms',
-      }}
+      icss={[
+        {
+          paddingBlock: '20px',
+          background: colors.listItemBg,
+          transition: 'all 150ms',
+        },
+        databaseTableGridTemplate,
+      ]}
     >
       <ItemStarIcon></ItemStarIcon>
 

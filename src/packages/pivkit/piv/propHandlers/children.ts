@@ -1,7 +1,7 @@
-import { AnyFn, hasProperty, isArray, isFunction, shrinkFn } from '@edsolater/fnkit'
+import { AnyFn, hasProperty, isArray, isFunction } from '@edsolater/fnkit'
+import { JSXElement } from 'solid-js'
 import { KitProps } from '../../createKit/KitProps'
 import { ValidController } from '../typeTools'
-import { JSXElement } from 'solid-js'
 
 export function loadPropsControllerRef<Controller extends ValidController | unknown>(
   props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>,

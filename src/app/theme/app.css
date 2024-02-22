@@ -110,20 +110,26 @@ input[type='number'] {
 input:focus-visible {
   outline: none;
 }
-* {
-}
 
 /* For the darkmode, or tailwindcss urgly and tedious `:dark` */
+/* default colorMode is light */
+/* source color */
 :root {
   --primary: #e3e3e3;
   /* this value will auto get by icssTextColor */
   --secondary: #bebebe;
   --ternary: #39d0d8;
   --app-bg: #f2f4f9;
-
   --card-bg: #fffc;
   --cyber-card-bg: linear-gradient(140.14deg, rgba(0, 182, 191, 0.15) 0%, rgba(27, 22, 89, 0.1) 86.61%),
     linear-gradient(321.82deg, #18134d 0%, #1b1659 100%);
+
+  /* text */
+  --text-primary: #0b1022;
+  --text-secondary: #474abb;
+  --text-ternary: #474abb99;
+  --text-link: #22d1f8;
+  --text-revert-primary: #ecf5ff;
 
   --style-color-fuchsia: #da2eef;
   --style-color-blue: #2b6aff;
@@ -137,7 +143,7 @@ input:focus-visible {
   --ground-color-light: rgba(57, 65, 106, 0.8);
   --ground-color-slim: hsla(230, 65%, 15%, 0.54); /* bonsai main color */
   --ground-color: #161c3982;
-  --ground-color-dark: hsl(230deg 43% 15% / 60%);
+  --ground-color-dark: hsla(231, 43%, 15%, 0.6);
   --ground-color-dark-solid: hsla(230, 43%, 16%, 0.9);
 
   --pop-over-bg-low: hsla(187, 25%, 34%, 0.75);
@@ -174,9 +180,18 @@ input:focus-visible {
   --ternary: #39d0d8;
   --ternary-pale: #ace3e5;
 
+  /* text */
+  --text-primary: #ecf5ff;
+  --text-secondary: #abc4ff;
+  --text-ternary: #abc4ff88;
+  --text-link: #22d1f8;
+  --text-revert-primary: #181f35;
+
+  /* list */
+  --list-item-bg: #141041;
+
   --app-bg: #131a35;
   --card-bg: #2b2f34;
-
 
   --content-bg__01: rgb(12, 9, 39);
   --content-bg__02: rgb(17, 13, 54);

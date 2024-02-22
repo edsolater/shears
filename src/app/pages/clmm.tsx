@@ -1,17 +1,11 @@
-import { Box, KitProps, Row, Text, useKitProps } from '@edsolater/pivkit'
+import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
-import { Loop, Tab, TabList, Tabs } from '../../packages/pivkit'
+import { Loop, Row, Tab, TabList, Tabs } from '../../packages/pivkit'
 import { DatabaseTableWidget } from '../components/DatabaseTableWidget'
 import { Token } from '../components/TokenProps'
 import { useToken } from '../stores/data/dataHooks/useToken'
-import {
-  allClmmTabs,
-  createStorePropertySignal,
-  s_clmmInfos,
-  s_isMobile,
-  s_uiCurrentClmmTab,
-} from '../stores/data/store'
+import { allClmmTabs, createStorePropertySignal, s_clmmInfos } from '../stores/data/store'
 import type { PairInfo } from '../stores/data/types/pairs'
 import { getToken } from '../stores/data/utils/getToken'
 
@@ -42,19 +36,25 @@ export default function ClmmsPage() {
   const t = useToken()
   return (
     <DatabaseTableWidget
-      title='Clmms List'
+      title='Concentrated Pools'
+      subtitle='Concentrated Pools'
+      subtitleDescription='Concentrate liquidity for increased capital efficiency'
       items={clmmInfos}
       getKey={(i) => i.id}
       tabelCellConfigs={[
         {
-          name: 'pool-name',
+          name: 'name',
           contentExistIn: 'face',
-          get: (i) => <Row>{getToken(i.base)?.symbol}</Row>,
+          get: (i) => (
+            <Row>
+              {getToken(i.base)?.symbol}-{getToken(i.quote)?.symbol}
+            </Row>
+          ),
         },
         {
           name: 'liquidity',
           contentExistIn: 'face',
-          get: (i) => <>Liquidity</>,
+          get: (i) => <Row>{i.liquidity != null && String(i.liquidity)}</Row>,
         },
       ]}
       TopMiddle={<ClmmPageTabBlock />}
@@ -66,7 +66,7 @@ export default function ClmmsPage() {
 function ClmmPageTabBlock(props: { className?: string }) {
   return (
     <Tabs>
-      <TabList icss={{ display: 'flex', '> *': { marginInline: '8px' } }}>
+      <TabList icss={{ '& > *': { marginInline: '8px' } }}>
         <Loop of={allClmmTabs}>{(clmmTab) => <Tab>{clmmTab}</Tab>}</Loop>
       </TabList>
     </Tabs>
