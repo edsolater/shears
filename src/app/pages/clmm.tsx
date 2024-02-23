@@ -1,15 +1,16 @@
+import { Numberish, isNumberish } from '@edsolater/fnkit'
 import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
 import { Loop, Row, Tab, TabList, Tabs } from '../../packages/pivkit'
 import { DatabaseTableWidget } from '../components/DatabaseTableWidget'
+import { TokenAvatar } from '../components/TokenAvatar'
 import { Token } from '../components/TokenProps'
 import { useToken } from '../stores/data/dataHooks/useToken'
 import { allClmmTabs, createStorePropertySignal, s_clmmInfos } from '../stores/data/store'
 import type { PairInfo } from '../stores/data/types/pairs'
 import { getToken } from '../stores/data/utils/getToken'
-import { TokenAvatar } from '../components/TokenAvatar'
-import { isString, isNumber, isBigInt, isObject, isNaN } from '@edsolater/fnkit'
+import { NumberishFormatOptions, parseNumberishToString } from '../utils/dataStructures/Numberish'
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
@@ -56,17 +57,17 @@ export default function ClmmsPage() {
         {
           name: 'Liquidity',
           in: 'face',
-          get: (i) => <Row>{toRenderable(i.liquidity)}</Row>,
+          get: (i) => <Row>{toRenderable(i.liquidity, { shortExpression: true, decimals: 0  })}</Row>,
         },
         {
           name: 'Volume(24h)',
           in: 'face',
-          get: (i) => <Row>{toRenderable(i.volume?.['24h'])}</Row>,
+          get: (i) => <Row>{toRenderable(i.volume?.['24h'], { shortExpression: true, decimals: 0  })}</Row>,
         },
         {
           name: 'Fees(24h)',
           in: 'face',
-          get: (i) => <Row>{toRenderable(i.volumeFee?.['24h'])}</Row>,
+          get: (i) => <Row>{toRenderable(i.volumeFee?.['24h'], { shortExpression: true, decimals: 0 })}</Row>,
         },
         {
           name: 'Rewards',
@@ -98,9 +99,15 @@ function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
 
-function toRenderable(v: any): string | undefined {
+function toRenderable(v: Numberish, options?: NumberishFormatOptions): string
+function toRenderable(v: Numberish | undefined, options?: NumberishFormatOptions): string | undefined
+function toRenderable(v: any, options?: any): string
+function toRenderable(v: any, options?: any): string | undefined
+function toRenderable(v: any, options?: any): string | undefined {
   if (v == null) return undefined
-  
+  if (isNumberish(v)) {
+    return parseNumberishToString(v, options)
+  }
   // if (
   //   isString(v) ||
   //   (isNumber(v) && !isNaN(v)) ||

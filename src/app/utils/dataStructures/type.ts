@@ -3,7 +3,7 @@ export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */
 
 // plain object for easier structure clone
-export type Percent = Numberish | number
+export type Percent = Numberish 
 
 // plain object for easier structure clone
 export type BN = Fraction | bigint

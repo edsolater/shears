@@ -24,14 +24,13 @@ import {
   useKitProps,
 } from '@edsolater/pivkit'
 import { Accessor, createContext, createMemo, useContext } from 'solid-js'
-import { List, Loop, icssGridItem, icssThreeSlotGrid } from '../../packages/pivkit'
+import { List, Loop, icssThreeSlotGrid } from '../../packages/pivkit'
 import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
 import { colors } from '../theme/colors'
 import { scrollbarWidth } from '../theme/misc'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
-import { MayFn } from '@edsolater/fnkit'
 
 type TabelCellConfigs<T> = {
   name: string
