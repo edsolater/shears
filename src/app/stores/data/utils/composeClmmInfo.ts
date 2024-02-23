@@ -84,6 +84,16 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
       '7d': toPercent(sdkInfo.state.week.apr, { alreadyDecimaled: true }),
       '30d': toPercent(sdkInfo.state.month.apr, { alreadyDecimaled: true }),
     },
+    volumeFee: sdkInfo && {
+      '24h': sdkInfo.state.day.volumeFee,
+      '7d': sdkInfo.state.week.volumeFee,
+      '30d': sdkInfo.state.month.volumeFee,
+    },
+    volume: sdkInfo && {
+      '24h': sdkInfo.state.day.volume,
+      '7d': sdkInfo.state.week.volume,
+      '30d': sdkInfo.state.month.volume,
+    },
     rewardInfos: jsonInfo.rewardInfos?.map(
       (i, idx) =>
         ({

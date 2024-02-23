@@ -42,7 +42,7 @@ export const icssRow = createICSS(
     justifyContent,
     gap,
     '> *': childItems ? { flex: childItems } : undefined,
-  })
+  }),
 )
 
 export type ICSSColOption = {
@@ -79,7 +79,7 @@ export const icssCol = createICSS(
     justifyContent,
     gap,
     '> *': childItems ? { flex: childItems } : undefined,
-  })
+  }),
 )
 
 //#region ------------------- grid -------------------
@@ -109,6 +109,16 @@ export type ICSSGridItemOption = {
 
 export const icssGridItem = createICSS((opts: ICSSGridItemOption = {}) => ({
   gridArea: opts?.area,
+}))
+
+export const icssThreeSlotGrid = createICSS((opts: { gap?: CSSObject['gap'] } = {}) => ({
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr 1fr',
+  gap: opts.gap ?? '8px',
+  alignItems: 'center',
+  '& > *:nth-child(1)': { justifySelf: 'start' },
+  '& > *:nth-child(2)': { justifySelf: 'center' },
+  '& > *:nth-child(3)': { justifySelf: 'end' },
 }))
 
 //#endregion

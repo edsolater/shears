@@ -7,3 +7,8 @@ component name meanings:
 
 
 svg background: https://loading.io/background/
+
+
+# Data flow
+worker thread: JSON info ==> JSON info + SDK info
+main thread: JSON info + SDK info ==(hook:useXXXInfo)=> UI info

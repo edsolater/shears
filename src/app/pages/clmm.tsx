@@ -8,6 +8,8 @@ import { useToken } from '../stores/data/dataHooks/useToken'
 import { allClmmTabs, createStorePropertySignal, s_clmmInfos } from '../stores/data/store'
 import type { PairInfo } from '../stores/data/types/pairs'
 import { getToken } from '../stores/data/utils/getToken'
+import { TokenAvatar } from '../components/TokenAvatar'
+import { isString, isNumber, isBigInt, isObject, isNaN } from '@edsolater/fnkit'
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
@@ -43,8 +45,8 @@ export default function ClmmsPage() {
       getKey={(i) => i.id}
       tabelCellConfigs={[
         {
-          name: 'name',
-          contentExistIn: 'face',
+          name: 'Pool',
+          in: 'face',
           get: (i) => (
             <Row>
               {getToken(i.base)?.symbol}-{getToken(i.quote)?.symbol}
@@ -52,9 +54,28 @@ export default function ClmmsPage() {
           ),
         },
         {
-          name: 'liquidity',
-          contentExistIn: 'face',
-          get: (i) => <Row>{i.liquidity != null && String(i.liquidity)}</Row>,
+          name: 'Liquidity',
+          in: 'face',
+          get: (i) => <Row>{toRenderable(i.liquidity)}</Row>,
+        },
+        {
+          name: 'Volume(24h)',
+          in: 'face',
+          get: (i) => <Row>{toRenderable(i.volume?.['24h'])}</Row>,
+        },
+        {
+          name: 'Fees(24h)',
+          in: 'face',
+          get: (i) => <Row>{toRenderable(i.volumeFee?.['24h'])}</Row>,
+        },
+        {
+          name: 'Rewards',
+          in: 'face',
+          get: (i) => (
+            <Row>
+              <Loop of={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} />}</Loop>
+            </Row>
+          ),
         },
       ]}
       TopMiddle={<ClmmPageTabBlock />}
@@ -75,4 +96,16 @@ function ClmmPageTabBlock(props: { className?: string }) {
 
 function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
+}
+
+function toRenderable(v: any): string | undefined {
+  if (v == null) return undefined
+  
+  // if (
+  //   isString(v) ||
+  //   (isNumber(v) && !isNaN(v)) ||
+  //   isBigInt(v) ||
+  //   (isObject(v) && ('valueOf' in v || 'toString' in v || Symbol.toPrimitive in v))
+  // )
+  return String(v)
 }

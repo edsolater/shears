@@ -6,12 +6,14 @@ import { Mint } from '../../../utils/dataStructures/type'
 import { get, has } from '../../../utils/dataTransmit/itemMethods'
 import { store } from '../store'
 
+export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
+
 /** 
  * easy to use & easy to read
  * turn a short info (only token'mint) into rich
  * whether loaded or not, it will return a token (even emptyToken)
  */
-export function useToken(v?: Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>): Token {
+export function useToken(v?: UseTokenParam): Token {
   const intputedToken = createMemo(() => {
     const inputParam = shrinkFn(v)
     if (isString(inputParam)) {

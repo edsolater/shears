@@ -9,17 +9,16 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  on,
-  untrack,
+  on
 } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
+import { toList } from '../../fnkit/itemMethods'
 import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 import { createRef } from '../../hooks/createRef'
 import { Piv } from '../../piv'
 import { ListItem } from './ListItem'
-import { toList } from '../../fnkit/itemMethods'
 
 export type ItemList<T> =
   | Map<any, T>
@@ -101,7 +100,9 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [scroll handler]
   const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
-      setRenderItemLength((n) => n + increaseRenderCount())
+      if (renderItemLength() < allItems().length) {
+        setRenderItemLength((n) => n + increaseRenderCount())
+      }
     },
     reachBottomMargin: props.reachBottomMargin,
   })
@@ -134,7 +135,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
 
   return (
     <ListContext.Provider value={{ observeFunction: observe, renderItemLength }}>
-      <Piv domRef={setRef} shadowProps={props} icss={{ scrollbarGutter:'stable', contain: 'paint' }}>
+      <Piv domRef={setRef} shadowProps={props} icss={{ scrollbarGutter: 'stable', contain: 'paint' }}>
         <For each={allItems()}>{renderListItems}</For>
       </Piv>
     </ListContext.Provider>

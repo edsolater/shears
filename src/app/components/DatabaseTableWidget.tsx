@@ -23,18 +23,19 @@ import {
   useElementSize,
   useKitProps,
 } from '@edsolater/pivkit'
-import { Accessor, createContext, createMemo } from 'solid-js'
-import { List, Loop } from '../../packages/pivkit'
+import { Accessor, createContext, createMemo, useContext } from 'solid-js'
+import { List, Loop, icssGridItem, icssThreeSlotGrid } from '../../packages/pivkit'
 import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
 import { colors } from '../theme/colors'
+import { scrollbarWidth } from '../theme/misc'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
-import { scrollbarWidth } from '../theme/misc'
+import { MayFn } from '@edsolater/fnkit'
 
 type TabelCellConfigs<T> = {
   name: string
-  contentExistIn: 'face' | 'content'
+  in: 'face' | 'content'
   get: (item: T, idx: Accessor<number>) => PivChild
 }[]
 
@@ -61,12 +62,7 @@ export interface DatabaseTabelWidgetContextContent {
 }
 
 export const DatabaseTableWidgetContext = createContext<DatabaseTabelWidgetContextContent>(
-  {
-    databaseTableGridTemplate: createICSS(() => ({
-      display: 'grid',
-      gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
-    })),
-  },
+  {},
   { name: 'ListController' },
 )
 
@@ -83,29 +79,38 @@ export function DatabaseTableWidget<T>(
     name: 'DatabaseTable',
     noNeedDeAccessifyProps: ['getItemKey'],
   })
-  const headers = () => ['pools', 'Liquidity']
-  const defaultDatabaseTableWidgetContextContent: DatabaseTabelWidgetContextContent = {
-    databaseTableGridTemplate: createICSS(() => ({
-      display: 'grid',
-      gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
-    })),
-  }
+  const headers = () => props.tabelCellConfigs.map((config) => config.name)
+  const itemGridTemplate = () =>
+    headers()
+      .map(() => '1fr')
+      .join(' ')
+
+  const databaseTableGridTemplateICSS = createICSS(() => ({
+    display: 'grid',
+    gridTemplateColumns: `4em ${itemGridTemplate()}`,
+  }))
+
   const headerICSS = [
+    // TODO: should also in createICSS
     {
       paddingBlock: '8px',
       borderRadius: '12px',
       background: colors.listHeaderBg,
       '& > *': { paddingInline: '8px' },
     },
+    databaseTableGridTemplateICSS,
   ]
+  const databaseTableWidgetContextContent: DatabaseTabelWidgetContextContent = {
+    databaseTableGridTemplate: databaseTableGridTemplateICSS,
+  }
   return (
-    <DatabaseTableWidgetContext.Provider value={defaultDatabaseTableWidgetContextContent}>
+    <DatabaseTableWidgetContext.Provider value={databaseTableWidgetContextContent}>
       <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
-        <Row icss:justify='space-between' icss:align='center'>
+        <Box icss={icssThreeSlotGrid}>
           <Title icss={{ color: colors.textPrimary }}>{props.title}</Title>
           <Box>{props.TopMiddle}</Box>
           <Box>{props.TopRight}</Box>
-        </Row>
+        </Box>
         <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
           <Group name='subtitle'>
             <Title>{props.subtitle}</Title>
@@ -189,6 +194,7 @@ function ItemStarIcon() {
 
 function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
+  const databaseTableWidgetContextContent = useContext(DatabaseTableWidgetContext)
   return (
     <Row
       shadowProps={shadowProps}
@@ -198,10 +204,7 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
           background: colors.listItemBg,
           transition: 'all 150ms',
         },
-        createICSS(() => ({
-          display: 'grid',
-          gridTemplateColumns: '4em 1.6fr 1fr 1fr 1fr .8fr auto',
-        })),
+        databaseTableWidgetContextContent.databaseTableGridTemplate,
       ]}
     >
       <ItemStarIcon></ItemStarIcon>

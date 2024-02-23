@@ -37,7 +37,7 @@ export default function PoolsPage() {
       tabelCellConfigs={[
         {
           name: 'Pool',
-          contentExistIn:'face',  
+          in:'face',  
           get: (i) => (
             <Row>
               <PoolItemFaceTokenAvatarLabel info={i} />
@@ -46,7 +46,7 @@ export default function PoolsPage() {
         },
         {
           name: 'liquidity',
-          contentExistIn:'face',  
+          in:'face',  
           get: (i) => <PoolItemFaceDetailInfoBoard name='liquidity' value={i.liquidity} />,
         },
       ]}
