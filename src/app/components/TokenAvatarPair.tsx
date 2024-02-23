@@ -1,10 +1,11 @@
 import { Box, KitProps, useKitProps } from '@edsolater/pivkit'
 import { Token } from '../utils/dataStructures/Token'
-import { TokenAvatar, TokenAvatarRawProps } from './TokenAvatar'
+import { TokenAvatar, type TokenAvatarRawProps } from './TokenAvatar'
+import type { UseTokenParam } from '../stores/data/dataHooks/useToken'
 
 export interface TokenAvatarPairProps {
-  token1?: Token
-  token2?: Token
+  token1?: UseTokenParam
+  token2?: UseTokenParam
   size?: TokenAvatarRawProps['size']
 
   token1Props?: TokenAvatarRawProps

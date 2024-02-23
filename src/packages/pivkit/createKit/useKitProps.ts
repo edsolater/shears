@@ -78,6 +78,7 @@ export function useKitProps<
    * TODO: access the props of this will omit the props of output:shadowProps
    */
   props: DeKitProps<P, Controller, DefaultProps>
+
   /**
    * TODO: access the props of this will omit the props of output:shadowProps
    * will not inject controller(input function will still be function, not auto-invoke, often used in `on-like` or )

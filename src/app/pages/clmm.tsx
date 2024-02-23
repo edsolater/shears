@@ -11,6 +11,8 @@ import { allClmmTabs, createStorePropertySignal, s_clmmInfos } from '../stores/d
 import type { PairInfo } from '../stores/data/types/pairs'
 import { getToken } from '../stores/data/utils/getToken'
 import { NumberishFormatOptions, parseNumberishToString } from '../utils/dataStructures/Numberish'
+import { TokenSymbol } from '../components/TokenSymbol'
+import { TokenSymbolPair } from '../components/TokenSymbolPair'
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
@@ -50,19 +52,19 @@ export default function ClmmsPage() {
           in: 'face',
           get: (i) => (
             <Row>
-              {getToken(i.base)?.symbol}-{getToken(i.quote)?.symbol}
+              <TokenSymbolPair token1={i.base} token2={i.quote} />
             </Row>
           ),
         },
         {
           name: 'Liquidity',
           in: 'face',
-          get: (i) => <Row>{toRenderable(i.liquidity, { shortExpression: true, decimals: 0  })}</Row>,
+          get: (i) => <Row>{toRenderable(i.liquidity, { shortExpression: true, decimals: 0 })}</Row>,
         },
         {
           name: 'Volume(24h)',
           in: 'face',
-          get: (i) => <Row>{toRenderable(i.volume?.['24h'], { shortExpression: true, decimals: 0  })}</Row>,
+          get: (i) => <Row>{toRenderable(i.volume?.['24h'], { shortExpression: true, decimals: 0 })}</Row>,
         },
         {
           name: 'Fees(24h)',
