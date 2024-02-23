@@ -30,7 +30,7 @@ export function TokenAvatar(kitProps: TokenAvatarProps) {
         borderRadius: '50%',
         padding: '4px',
         background: 'linear-gradient(126.6deg, rgba(171, 196, 255, 0.2) 28.69%, rgba(171, 196, 255, 0) 100%)',
-        border: 'solid #616A9D',
+        // border: 'solid #616A9D',
         borderWidth: 'thin',
         width: 'var(--size)',
         height: 'var(--size)',

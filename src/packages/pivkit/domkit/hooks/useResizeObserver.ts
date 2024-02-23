@@ -1,5 +1,6 @@
 import { Accessor, createEffect, on } from 'solid-js'
 import { ElementRefs, getElementFromRefs } from '../../utils'
+import { createDomRef } from '../../hooks'
 
 /**
  * only itself(ref)
@@ -11,7 +12,7 @@ import { ElementRefs, getElementFromRefs } from '../../utils'
  */
 export default function useResizeObserver<El extends HTMLElement>(
   refs: Accessor<ElementRefs>,
-  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown
+  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown,
 ): { destory: () => void } {
   const resizeObserver =
     'ResizeObserver' in globalThis
@@ -34,4 +35,13 @@ export default function useResizeObserver<El extends HTMLElement>(
     resizeObserver?.disconnect()
   }
   return { destory }
+}
+
+// used in props:ref so can have multiple features
+export function useResizeObserverRef<El extends HTMLElement>(
+  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown,
+): { ref: (el: El) => void; destory: () => void } {
+  const { dom, setDom } = createDomRef<El>()
+  const { destory } = useResizeObserver(dom, callback)
+  return { ref: setDom, destory }
 }

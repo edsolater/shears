@@ -23,7 +23,7 @@ import {
   useElementSize,
   useKitProps,
 } from '@edsolater/pivkit'
-import { Accessor, createContext, createMemo, useContext } from 'solid-js'
+import { Accessor, createContext, createEffect, createMemo, createSignal, useContext } from 'solid-js'
 import { List, Loop, icssThreeSlotGrid } from '../../packages/pivkit'
 import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
 import { colors } from '../theme/colors'
@@ -31,6 +31,7 @@ import { scrollbarWidth } from '../theme/misc'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
+import useResizeObserver, { useResizeObserverRef } from '../../packages/pivkit/domkit/hooks/useResizeObserver'
 
 type TabelCellConfigs<T> = {
   name: string
@@ -56,12 +57,15 @@ type DatabaseTableWidgetProps<T> = {
   renderItem?: (item: T) => PivChild
 }
 
+type RowWidths = number[]
+
 export interface DatabaseTabelWidgetContextContent {
   databaseTableGridTemplate?: ICSS
+  setItemPiecesWidth: (key: string, idx: number, width: number) => void
 }
 
 export const DatabaseTableWidgetContext = createContext<DatabaseTabelWidgetContextContent>(
-  {},
+  { setItemPiecesWidth: (key: string, idx: number, width: number) => {} },
   { name: 'ListController' },
 )
 
@@ -79,11 +83,15 @@ export function DatabaseTableWidget<T>(
     noNeedDeAccessifyProps: ['getItemKey'],
   })
   const headers = () => props.tabelCellConfigs.map((config) => config.name)
+  const [itemWidthRecord, setItemWidthRecord] = createSignal<Record<string, RowWidths>>({}) //TODO: handle with record
   const itemGridTemplate = () =>
     headers()
       .map(() => '1fr')
       .join(' ')
 
+  createEffect(() => {
+    console.log('itemWidthRecord: ', itemWidthRecord()) // FIXME: NOT work?
+  })
   const databaseTableGridTemplateICSS = createICSS(() => ({
     display: 'grid',
     gridTemplateColumns: `4em ${itemGridTemplate()}`,
@@ -101,6 +109,13 @@ export function DatabaseTableWidget<T>(
   ]
   const databaseTableWidgetContextContent: DatabaseTabelWidgetContextContent = {
     databaseTableGridTemplate: databaseTableGridTemplateICSS,
+    setItemPiecesWidth: (key, index, width) => {
+      setItemWidthRecord((record) => {
+        const widths = record[key] ?? []
+        widths[index] = width
+        return Object.assign(record, { [key]: widths })
+      })
+    },
   }
   return (
     <DatabaseTableWidgetContext.Provider value={databaseTableWidgetContextContent}>
@@ -147,7 +162,13 @@ export function DatabaseTableWidget<T>(
                       overflow: 'hidden',
                     }}
                     // need to render multiple times to get the correct height, why not let it be a web component?
-                    renderFace={<DatabaseTableItemCollapseFace item={item} tabelCellConfigs={props.tabelCellConfigs} />}
+                    renderFace={
+                      <DatabaseTableItemCollapseFace
+                        key={kitProps.getKey(item)}
+                        item={item}
+                        tabelCellConfigs={props.tabelCellConfigs}
+                      />
+                    }
                     renderContent={
                       <DatabaseTableItemCollapseContent item={item} tabelCellConfigs={props.tabelCellConfigs} />
                     }
@@ -191,9 +212,11 @@ function ItemStarIcon() {
   )
 }
 
-function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
+function DatabaseTableItemCollapseFace<T>(
+  kitProps: KitProps<{ key: string; item: T; tabelCellConfigs: TabelCellConfigs<T> }>,
+) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
-  const databaseTableWidgetContextContent = useContext(DatabaseTableWidgetContext)
+  const { databaseTableGridTemplate, setItemPiecesWidth } = useContext(DatabaseTableWidgetContext)
   return (
     <Row
       shadowProps={shadowProps}
@@ -203,22 +226,22 @@ function DatabaseTableItemCollapseFace<T>(kitProps: KitProps<{ item: T; tabelCel
           background: colors.listItemBg,
           transition: 'all 150ms',
         },
-        databaseTableWidgetContextContent.databaseTableGridTemplate,
+        databaseTableGridTemplate,
       ]}
     >
-      <ItemStarIcon></ItemStarIcon>
+      <ItemStarIcon />
 
       {/* <PoolItemFaceTokenAvatarLabel info={kitProps.item} /> */}
 
       <Loop of={props.tabelCellConfigs}>
         {(config, idx) => {
-          const i = props.item as T // TODO: fix this without `as`
+          const i = props.item
           const value = config.get(i, idx)
-          return (
-            <Box icss={{ display: 'flex', alignItems: 'center' }}>
-              <PoolItemFaceDetailInfoBoard name={config.name} value={value} />
-            </Box>
-          )
+          const { ref: resizeRef } = useResizeObserverRef(({ entry }) => {
+            const width = entry.contentRect.width
+            setItemPiecesWidth(props.key, idx(), width)
+          })
+          return <PoolItemFaceDetailInfoBoard ref={resizeRef} name={config.name} value={value} />
         }}
       </Loop>
       {/*<TextInfoItem

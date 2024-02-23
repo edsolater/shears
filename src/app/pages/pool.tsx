@@ -6,7 +6,7 @@ import { PairInfo } from '../stores/data/types/pairs'
 
 export function PoolItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseListItemFaceDetailInfoBoard' })
-  return <Text shadowProps={shadowProps}>{props.value || '--'}</Text>
+  return <Box shadowProps={shadowProps}>{props.value || '--'}</Box>
 }
 
 export function PoolItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInfo }>) {

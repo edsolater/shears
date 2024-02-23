@@ -184,6 +184,17 @@ export const icssLabelTitle = createICSS((options?: { fontSize?: ICSSFontSize })
   { fontWeight: '500', color: '#abc4ff88' },
 ])
 
+export const icssItemGroupRow = createICSS(
+  (options?: { itemWidths?: number[] }) =>
+    [
+      {
+        display: 'flex',
+        '& > *': { flexGrow: '1' },
+      },
+      options?.itemWidths?.map((w, idx) => ({ [`& > *:nth-child(${idx + 1})`]: { flexBase: `${w}px` } })),
+    ] as const,
+)
+
 export const icssSubContent = createICSS((options?: { fontSize?: ICSSFontSize }) => [
   icssFontSize({ fontSize: options?.fontSize ?? 'sm' }),
   { color: '#abc4ff88' },
