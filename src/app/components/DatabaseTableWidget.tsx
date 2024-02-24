@@ -21,10 +21,10 @@ import {
   icssLabelTitle,
   icssSubContent,
   useElementSize,
-  useKitProps
+  useKitProps,
 } from '@edsolater/pivkit'
-import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
-import { List, Loop, icssThreeSlotGrid } from '../../packages/pivkit'
+import { Accessor, createContext, createEffect, createMemo, createSignal, useContext } from 'solid-js'
+import { List, Loop, icssItemRowGrid, icssThreeSlotGrid } from '../../packages/pivkit'
 import { DatabaseItemFacePartTextDetail } from '../pages/pool'
 import { colors } from '../theme/colors'
 import { scrollbarWidth } from '../theme/misc'
@@ -59,7 +59,7 @@ type DatabaseTableWidgetProps<T> = {
 type RowWidths = number[]
 
 export interface DatabaseTabelWidgetContextContent {
-  databaseTableGridTemplate?: ICSS
+  databaseTableGridTemplate?: Accessor<ICSS>
   setItemPiecesWidth: (key: string, idx: number, width: number) => void
 }
 
@@ -110,20 +110,12 @@ export function DatabaseTableWidget<T>(
       .join(' ')
   })
 
-  const databaseTableGridTemplateICSS = createICSS(() => ({
-    display: 'grid',
-    gridTemplateColumns: `4em ${itemGridTemplate()}`,
-  }))
+  const databaseTableGridTemplateICSS = () => icssItemRowGrid({ itemWidths: itemWidthMaxRecord() })
 
-  const headerICSS = [
+  const headerICSS = () => [
     // TODO: should also in createICSS
-    {
-      paddingBlock: '8px',
-      borderRadius: '12px',
-      background: colors.listHeaderBg,
-      '& > *': { paddingInline: '8px' },
-    },
-    databaseTableGridTemplateICSS,
+    { '& > *': { paddingInline: '8px' } },
+    databaseTableGridTemplateICSS(),
   ]
   const databaseTableWidgetContextContent: DatabaseTabelWidgetContextContent = {
     databaseTableGridTemplate: databaseTableGridTemplateICSS,
@@ -149,11 +141,20 @@ export function DatabaseTableWidget<T>(
             <Text>{props.subtitleDescription}</Text>
           </Group>
 
-          <Group name='table-header'>
-            <Box icss={[headerICSS]}>
-              {/* collect star */}
-              <Box></Box>
+          <Group
+            name='table-header'
+            icss={{
+              display: 'flex',
+              paddingInline: '16px',
+              paddingBlock: '8px',
+              borderRadius: '12px',
+              background: colors.listHeaderBg,
+            }}
+          >
+            {/* collect star */}
+            <Box icss={{ width: '32px' }}></Box>
 
+            <Box icss={[{ flexGrow: 1 }, headerICSS()]}>
               <Loop of={headers}>
                 {(headerLabel) => <Text icss={{ fontWeight: 'bold', color: colors.textSecondary }}>{headerLabel}</Text>}
               </Loop>
@@ -208,8 +209,6 @@ function ItemStarIcon() {
       icss={{
         width: '24px',
         alignSelf: 'center',
-        marginLeft: '24px',
-        marginRight: '8px',
       }}
     >
       <Icon
@@ -233,68 +232,39 @@ function ItemStarIcon() {
 function DatabaseTableItemCollapseFace<T>(
   kitProps: KitProps<{ key: string; item: T; tabelCellConfigs: TabelCellConfigs<T> }>,
 ) {
+  // console.count('DatabaseTableItemCollapseFace') // TODO: why render so many times
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
   const { databaseTableGridTemplate, setItemPiecesWidth } = useContext(DatabaseTableWidgetContext)
+
   return (
     <Row
       shadowProps={shadowProps}
       icss={[
         {
           paddingBlock: '20px',
+          paddingInline: '16px',
           background: colors.listItemBg,
           transition: 'all 150ms',
         },
-        databaseTableGridTemplate,
       ]}
     >
-      <ItemStarIcon />
+      <Box icss={{ width: '24px', marginRight: '8px' }}>
+        <ItemStarIcon />
+      </Box>
 
-      {/* <PoolItemFaceTokenAvatarLabel info={kitProps.item} /> */}
-
-      <Loop of={props.tabelCellConfigs}>
-        {(config, idx) => (
-          <DatabaseItemFacePartTextDetail
-            name={config.name}
-            value={config.get(props.item, idx)}
-            onResize={({ entry, el }) => {
-              setItemPiecesWidth(props.key, idx(), entry.contentRect.width)
-            }}
-          />
-        )}
-      </Loop>
-      {/*<TextInfoItem
-        name={`Volume(${timeBasis})`}
-        value={
-          timeBasis === '24H'
-            ? toUsdVolume((correspondingJsonInfo ?? info).volume24h, { autoSuffix: isTablet, decimalPlace: 0 })
-            : timeBasis === '7D'
-              ? toUsdVolume((correspondingJsonInfo ?? info).volume7d, { autoSuffix: isTablet, decimalPlace: 0 })
-              : toUsdVolume((correspondingJsonInfo ?? info).volume30d, { autoSuffix: isTablet, decimalPlace: 0 })
-        }
-      />
-      <TextInfoItem
-        name={`Fees(${timeBasis})`}
-        value={
-          timeBasis === '24H'
-            ? toUsdVolume((correspondingJsonInfo ?? info).fee24h, { autoSuffix: isTablet, decimalPlace: 0 })
-            : timeBasis === '7D'
-              ? toUsdVolume((correspondingJsonInfo ?? info).fee7d, { autoSuffix: isTablet, decimalPlace: 0 })
-              : toUsdVolume((correspondingJsonInfo ?? info).fee30d, { autoSuffix: isTablet, decimalPlace: 0 })
-        }
-      />
-      <TextInfoItem
-        name={`APR(${timeBasis})`}
-        value={
-          timeBasis === '24H'
-            ? formatApr((correspondingJsonInfo ?? info).apr24h, { alreadyPercented: true })
-            : timeBasis === '7D'
-              ? formatApr((correspondingJsonInfo ?? info).apr7d, { alreadyPercented: true })
-              : formatApr((correspondingJsonInfo ?? info).apr30d, { alreadyPercented: true })
-        }
-      />
-      <Grid className='w-9 h-9 mr-8 place-items-center'>
-        <Icon size='sm' heroIconName={`${open ? 'chevron-up' : 'chevron-down'}`} />
-      </Grid> */}
+      <Group name='item-parts' icss={[{ flex: 1 }, databaseTableGridTemplate?.()]}>
+        <Loop of={props.tabelCellConfigs}>
+          {(config, idx) => (
+            <DatabaseItemFacePartTextDetail
+              name={config.name}
+              value={config.get(props.item, idx)}
+              onResize={({ entry, el }) => {
+                setItemPiecesWidth(props.key, idx(), entry.contentRect.width)
+              }}
+            />
+          )}
+        </Loop>
+      </Group>
     </Row>
   )
 }
