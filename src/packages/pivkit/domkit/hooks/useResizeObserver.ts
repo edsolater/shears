@@ -37,11 +37,3 @@ export default function useResizeObserver<El extends HTMLElement>(
   return { destory }
 }
 
-// used in props:ref so can have multiple features
-export function useResizeObserverRef<El extends HTMLElement>(
-  callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown,
-): { ref: (el: El) => void; destory: () => void } {
-  const { dom, setDom } = createDomRef<El>()
-  const { destory } = useResizeObserver(dom, callback)
-  return { ref: setDom, destory }
-}

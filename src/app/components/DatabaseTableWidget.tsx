@@ -21,17 +21,16 @@ import {
   icssLabelTitle,
   icssSubContent,
   useElementSize,
-  useKitProps,
+  useKitProps
 } from '@edsolater/pivkit'
-import { Accessor, createContext, createEffect, createMemo, createSignal, useContext } from 'solid-js'
+import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
 import { List, Loop, icssThreeSlotGrid } from '../../packages/pivkit'
-import { PoolItemFaceDetailInfoBoard } from '../pages/pool'
+import { DatabaseItemFacePartTextDetail } from '../pages/pool'
 import { colors } from '../theme/colors'
 import { scrollbarWidth } from '../theme/misc'
 import { ItemList } from '../utils/dataTransmit/itemMethods'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
-import useResizeObserver, { useResizeObserverRef } from '../../packages/pivkit/domkit/hooks/useResizeObserver'
 
 type TabelCellConfigs<T> = {
   name: string
@@ -84,14 +83,33 @@ export function DatabaseTableWidget<T>(
   })
   const headers = () => props.tabelCellConfigs.map((config) => config.name)
   const [itemWidthRecord, setItemWidthRecord] = createSignal<Record<string, RowWidths>>({}) //TODO: handle with record
-  const itemGridTemplate = () =>
-    headers()
-      .map(() => '1fr')
-      .join(' ')
+  const itemWidthMaxRecord = createMemo(
+    () => {
+      const record = itemWidthRecord()
+      const maxRecord: number[] = []
+      for (const key in record) {
+        const widths = record[key]
+        widths.forEach((width, idx) => {
+          maxRecord[idx] = maxRecord[idx] ? Math.max(maxRecord[idx], width) : width
+        })
+      }
+      return maxRecord
+    },
+    [],
+    { equals: (prev, next) => prev.length === next.length && prev.every((v, idx) => v === next[idx]) },
+  )
 
-  createEffect(() => {
-    console.log('itemWidthRecord: ', itemWidthRecord()) // FIXME: NOT work?
+  // dynamic css slot config
+  const itemGridTemplate = createMemo(() => {
+    const maxRecord = itemWidthMaxRecord()
+    return headers()
+      .map((n, idx) => {
+        const width = maxRecord[idx]
+        return width ? `${width.toFixed(0)}fr` : 'auto'
+      })
+      .join(' ')
   })
+
   const databaseTableGridTemplateICSS = createICSS(() => ({
     display: 'grid',
     gridTemplateColumns: `4em ${itemGridTemplate()}`,
@@ -113,7 +131,7 @@ export function DatabaseTableWidget<T>(
       setItemWidthRecord((record) => {
         const widths = record[key] ?? []
         widths[index] = width
-        return Object.assign(record, { [key]: widths })
+        return { ...record, [key]: widths }
       })
     },
   }
@@ -234,15 +252,15 @@ function DatabaseTableItemCollapseFace<T>(
       {/* <PoolItemFaceTokenAvatarLabel info={kitProps.item} /> */}
 
       <Loop of={props.tabelCellConfigs}>
-        {(config, idx) => {
-          const i = props.item
-          const value = config.get(i, idx)
-          const { ref: resizeRef } = useResizeObserverRef(({ entry }) => {
-            const width = entry.contentRect.width
-            setItemPiecesWidth(props.key, idx(), width)
-          })
-          return <PoolItemFaceDetailInfoBoard ref={resizeRef} name={config.name} value={value} />
-        }}
+        {(config, idx) => (
+          <DatabaseItemFacePartTextDetail
+            name={config.name}
+            value={config.get(props.item, idx)}
+            onResize={({ entry, el }) => {
+              setItemPiecesWidth(props.key, idx(), entry.contentRect.width)
+            }}
+          />
+        )}
       </Loop>
       {/*<TextInfoItem
         name={`Volume(${timeBasis})`}
