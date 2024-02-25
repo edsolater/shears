@@ -58,12 +58,12 @@ type DatabaseTableWidgetProps<T> = {
 
 type RowWidths = number[]
 
-export interface DatabaseTabelWidgetContextContent {
+export interface DatabaseTabelWidgetContextValue {
   databaseTableGridTemplate?: Accessor<ICSS>
   setItemPiecesWidth: (key: string, idx: number, width: number) => void
 }
 
-export const DatabaseTableWidgetContext = createContext<DatabaseTabelWidgetContextContent>(
+export const DatabaseTableWidgetContext = createContext<DatabaseTabelWidgetContextValue>(
   { setItemPiecesWidth: (key: string, idx: number, width: number) => {} },
   { name: 'ListController' },
 )
@@ -74,18 +74,18 @@ export const DatabaseTableWidgetContext = createContext<DatabaseTabelWidgetConte
  *
  * show a list of items in CyberPanel
  */
-export function DatabaseTableWidget<T>(
+export function DatabaseTableList<T>(
   kitProps: KitProps<DatabaseTableWidgetProps<T>, { noNeedDeAccessifyProps: ['getKey'] }>,
 ) {
   const { props, shadowProps } = useKitProps(kitProps, {
     name: 'DatabaseTable',
     noNeedDeAccessifyProps: ['getItemKey'],
   })
-  const headers = () => props.tabelCellConfigs.map((config) => config.name)
-  const [itemWidthRecord, setItemWidthRecord] = createSignal<Record<string, RowWidths>>({}) //TODO: handle with record
-  const itemWidthMaxRecord = createMemo(
+  const cellNames = () => props.tabelCellConfigs.map((config) => config.name)
+  const [cellWidths, setItemWidthRecord] = createSignal<Record<string, RowWidths>>({})
+  const cellMaxWidths = createMemo(
     () => {
-      const record = itemWidthRecord()
+      const record = cellWidths()
       const maxRecord: number[] = []
       for (const key in record) {
         const widths = record[key]
@@ -99,26 +99,15 @@ export function DatabaseTableWidget<T>(
     { equals: (prev, next) => prev.length === next.length && prev.every((v, idx) => v === next[idx]) },
   )
 
-  // dynamic css slot config
-  const itemGridTemplate = createMemo(() => {
-    const maxRecord = itemWidthMaxRecord()
-    return headers()
-      .map((n, idx) => {
-        const width = maxRecord[idx]
-        return width ? `${width.toFixed(0)}fr` : 'auto'
-      })
-      .join(' ')
-  })
-
-  const databaseTableGridTemplateICSS = () => icssItemRowGrid({ itemWidths: itemWidthMaxRecord() })
+  const databaseTableGridICSS = () => icssItemRowGrid({ itemWidths: cellMaxWidths() })
 
   const headerICSS = () => [
     // TODO: should also in createICSS
     { '& > *': { paddingInline: '8px' } },
-    databaseTableGridTemplateICSS(),
+    databaseTableGridICSS(),
   ]
-  const databaseTableWidgetContextContent: DatabaseTabelWidgetContextContent = {
-    databaseTableGridTemplate: databaseTableGridTemplateICSS,
+  const databaseTableWidgetContextRoot: DatabaseTabelWidgetContextValue = {
+    databaseTableGridTemplate: databaseTableGridICSS,
     setItemPiecesWidth: (key, index, width) => {
       setItemWidthRecord((record) => {
         const widths = record[key] ?? []
@@ -128,7 +117,7 @@ export function DatabaseTableWidget<T>(
     },
   }
   return (
-    <DatabaseTableWidgetContext.Provider value={databaseTableWidgetContextContent}>
+    <DatabaseTableWidgetContext.Provider value={databaseTableWidgetContextRoot}>
       <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
         <Box icss={icssThreeSlotGrid}>
           <Title icss={{ color: colors.textPrimary }}>{props.title}</Title>
@@ -155,7 +144,7 @@ export function DatabaseTableWidget<T>(
             <Box icss={{ width: '32px' }}></Box>
 
             <Box icss={[{ flexGrow: 1 }, headerICSS()]}>
-              <Loop of={headers}>
+              <Loop of={cellNames}>
                 {(headerLabel) => <Text icss={{ fontWeight: 'bold', color: colors.textSecondary }}>{headerLabel}</Text>}
               </Loop>
             </Box>
@@ -202,6 +191,9 @@ export function DatabaseTableWidget<T>(
   )
 }
 
+/**
+ * usually used for detecting user favorite/collected
+ */
 function ItemStarIcon() {
   const isFavourite = () => false
   return (

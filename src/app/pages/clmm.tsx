@@ -3,7 +3,7 @@ import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
 import { Loop, Row, Tab, TabList, Tabs } from '../../packages/pivkit'
-import { DatabaseTableWidget } from '../components/DatabaseTableWidget'
+import { DatabaseTableList } from '../components/DatabaseTableWidget'
 import { TokenAvatar } from '../components/TokenAvatar'
 import { TokenAvatarPair } from '../components/TokenAvatarPair'
 import { Token } from '../components/TokenProps'
@@ -39,7 +39,7 @@ export default function ClmmsPage() {
   })
   const t = useToken()
   return (
-    <DatabaseTableWidget
+    <DatabaseTableList
       title='Concentrated Pools'
       subtitle='Concentrated Pools'
       subtitleDescription='Concentrate liquidity for increased capital efficiency'

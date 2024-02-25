@@ -1,6 +1,6 @@
 import { Box, KitProps, Row, useKitProps } from '@edsolater/pivkit'
 import { useElementResize } from '../../packages/pivkit/domkit/hooks/useElementResize'
-import { DatabaseTableWidget } from '../components/DatabaseTableWidget'
+import { DatabaseTableList } from '../components/DatabaseTableWidget'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
@@ -42,7 +42,7 @@ export default function PoolsPage() {
     detail?: string
   }[]
   return (
-    <DatabaseTableWidget
+    <DatabaseTableList
       title='Pools'
       items={pairInfos}
       getKey={(i) => i.ammId}
