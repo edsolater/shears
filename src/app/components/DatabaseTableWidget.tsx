@@ -2,8 +2,6 @@ import {
   Box,
   Button,
   Col,
-  CollapseBox,
-  CollapseBoxProps,
   Group,
   ICSS,
   Icon,
@@ -24,7 +22,14 @@ import {
 } from '@edsolater/pivkit'
 import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
 import { ItemList } from '../../packages/fnkit/itemMethods'
-import { List, Loop, icssItemRowGrid, icssThreeSlotGrid } from '../../packages/pivkit'
+import {
+  CollapseBox,
+  List,
+  Loop,
+  icssItemRowGrid,
+  icssThreeSlotGrid,
+  type CollapseBoxKitProps,
+} from '../../packages/pivkit'
 import { DatabaseItemFacePartTextDetail } from '../pages/pool'
 import { colors } from '../theme/colors'
 import { scrollbarWidth } from '../theme/misc'
@@ -51,7 +56,7 @@ type DatabaseTableWidgetProps<T> = {
   TableBodyTopLeft?: PivChild
   TableBodyTopMiddle?: PivChild
   TableBodyTopRight?: PivChild
-  CollapseBoxProps?: CollapseBoxProps
+  CollapseBoxProps?: CollapseBoxKitProps
   renderItem?: (item: T) => PivChild
 }
 
@@ -149,7 +154,7 @@ export function DatabaseTableList<T>(
             </Box>
           </Group>
 
-          <Group name='items' icss={{ display: 'contents' }}>
+          <Group name='items'>
             <List
               async
               items={props.items}

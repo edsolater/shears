@@ -25,9 +25,9 @@ export function createDisclosure(
     onOpen?(): void
     /* usually it is for debug */
     onToggle?(isOn: boolean): void
-  } = {}
+  } = {},
 ): CreateDisclosureReturn {
-  const defaultOptions = { delay: 800 }
+  const defaultOptions = { delay: 24 }
   const opts = addDefaultProps(options, defaultOptions)
   const [isOn, _setIsOn] = createSignal(shrinkFn(initValue))
 
@@ -40,14 +40,14 @@ export function createDisclosure(
     }
   })
 
-  const [delayActionId, setDelayActionId] = createSignal<unknown>(0)
+  let delayActionId: NodeJS.Timeout | number = 0
   const setIsOn = (...params: any[]) => {
     if (options.locked) return
     //@ts-expect-error temp
     _setIsOn(...params)
   }
   const cancelDelayAction = () => {
-    globalThis.clearTimeout(delayActionId() as any)
+    globalThis.clearTimeout(delayActionId)
   }
   const coreOn = () => {
     cancelDelayAction()
@@ -71,30 +71,26 @@ export function createDisclosure(
 
   const open: DisclosureController['open'] = (options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(coreOn, options?.delay ?? opts.delay)
-    setDelayActionId(actionId)
+    delayActionId = globalThis.setTimeout(coreOn, options?.delay ?? opts.delay)
   }
   const close: DisclosureController['close'] = (options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(coreOff, options?.delay ?? opts.delay)
-    setDelayActionId(actionId)
+    delayActionId = globalThis.setTimeout(coreOff, options?.delay ?? opts.delay)
   }
   const toggle: DisclosureController['toggle'] = (options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(coreToggle, options?.delay ?? opts.delay)
-    setDelayActionId(actionId)
+    delayActionId = globalThis.setTimeout(coreToggle, options?.delay ?? opts.delay)
   }
   const set: DisclosureController['set'] = (v, options) => {
     cancelDelayAction()
-    const actionId = globalThis.setTimeout(() => setIsOn(v), options?.delay ?? opts.delay)
-    setDelayActionId(actionId)
+    delayActionId = globalThis.setTimeout(() => setIsOn(v), options?.delay ?? opts.delay)
   }
   const controller = {
     cancelDelayAction,
     open,
     close,
     toggle,
-    set
+    set,
   }
   return [isOn, controller]
 }
