@@ -1,6 +1,6 @@
 import { jFetch } from '../../../../packages/jFetch'
 import { appApiUrls } from '../../../utils/common/config'
-import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
+import { toCollectionObject } from '../../../../packages/fnkit/itemMethods'
 import type { StoreData } from '../store'
 import { type ClmmJsonFile, type ClmmJsonInfo } from '../types/clmm'
 

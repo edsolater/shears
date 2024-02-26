@@ -2,7 +2,7 @@ import { Box, Piv } from '@edsolater/pivkit'
 import { Link } from '../components/Link'
 import { store } from '../stores/data/store'
 import { useWalletStore } from '../stores/wallet/store'
-import { count } from '../utils/dataTransmit/itemMethods'
+import { count } from '../../packages/fnkit/itemMethods'
 
 export default function HomePage() {
   const walletStore = useWalletStore()

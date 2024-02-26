@@ -26,7 +26,7 @@ import {
 import { store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { slice } from '../utils/dataTransmit/itemMethods'
+import { slice } from '../../packages/fnkit/itemMethods'
 import { TokenAvatar } from './TokenAvatar'
 
 export interface TokenAmountInputBoxController {}

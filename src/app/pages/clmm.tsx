@@ -1,4 +1,4 @@
-import { Numberish, isNumberish } from '@edsolater/fnkit'
+import { count, isNumberish, toFormattedNumber, type Numberish, type NumberishFormatOptions } from '@edsolater/fnkit'
 import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
@@ -11,7 +11,6 @@ import { TokenSymbolPair } from '../components/TokenSymbolPair'
 import { useToken } from '../stores/data/dataHooks/useToken'
 import { allClmmTabs, createStorePropertySignal, s_clmmInfos } from '../stores/data/store'
 import type { PairInfo } from '../stores/data/types/pairs'
-import { NumberishFormatOptions, parseNumberishToString } from '../utils/dataStructures/Numberish'
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
@@ -35,6 +34,7 @@ export default function ClmmsPage() {
     if (infos) {
       const key = Object.keys(infos)[0]
       console.log('🧪🧪 first clmmJson: ', { ...infos[key] })
+      console.log('clmmJson count: ', count(infos))
     }
   })
   const t = useToken()
@@ -52,7 +52,7 @@ export default function ClmmsPage() {
           get: (i) => (
             <Row icss={{ alignItems: 'center' }}>
               <TokenAvatarPair token1={i.base} token2={i.quote} />
-              <TokenSymbolPair icss={{ fontWeight:500 }} token1={i.base} token2={i.quote} />
+              <TokenSymbolPair icss={{ fontWeight: 500 }} token1={i.base} token2={i.quote} />
             </Row>
           ),
         },
@@ -108,7 +108,7 @@ function toRenderable(v: any, options?: any): string | undefined
 function toRenderable(v: any, options?: any): string | undefined {
   if (v == null) return undefined
   if (isNumberish(v)) {
-    return parseNumberishToString(v, options)
+    return toFormattedNumber(v, options)
   }
   // if (
   //   isString(v) ||

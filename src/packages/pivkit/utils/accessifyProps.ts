@@ -31,7 +31,7 @@ export type DeAccessifyProps<P> = {
     | `controllerRef`
     | 'children'
     ? P[K]
-    : Exclude<P[K], AnyFn> // <-- bug here, type error
+    : Exclude<P[K], AnyFn> 
 }
 
 /**

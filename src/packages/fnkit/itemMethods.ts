@@ -1,4 +1,8 @@
+/* 
+ * 🔥 already moved to @edsolater/fnkit
+ */
 import { isArray, isIterable, isMap, isNumber, isObject, isSet, isUndefined, omit, pick } from '@edsolater/fnkit'
+
 
 export type ItemList<T> =
   | Map<any, T>
@@ -8,6 +12,7 @@ export type ItemList<T> =
   | IterableIterator<T>
   | Iterable<T>
   | undefined
+
 /** accept all may iterable data type */
 export function toArray<T>(i: ItemList<T>) {
   if (isUndefined(i)) return []

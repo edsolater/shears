@@ -1,5 +1,5 @@
 import { SOLToken } from '../../../utils/dataStructures/Token'
-import { toCollectionObject } from '../../../utils/dataTransmit/itemMethods'
+import { toCollectionObject } from '../../../../packages/fnkit/itemMethods'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'

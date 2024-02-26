@@ -3,7 +3,7 @@ import { createMemo } from 'solid-js'
 import { Accessify, createSmartStore } from '@edsolater/pivkit'
 import { Token, emptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
-import { get, has } from '../../../utils/dataTransmit/itemMethods'
+import { get, has } from '../../../../packages/fnkit/itemMethods'
 import { store } from '../store'
 
 export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
