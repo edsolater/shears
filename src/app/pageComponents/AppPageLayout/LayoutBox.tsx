@@ -1,20 +1,19 @@
-import { createSignal } from 'solid-js'
 import {
-  AddProps,
   Box,
   Fragnment,
-  Group,
   KitProps,
+  Main,
   PivChild,
   cssLinearGradient,
   cssVar,
   icssCol,
   icssGrid,
   renderAsHTMLAside,
-  useKitProps,
+  useKitProps
 } from '@edsolater/pivkit'
+import { createSignal } from 'solid-js'
+import { Item } from '../../../packages/pivkit'
 import { useMetaTitle } from '../../hooks/useDocumentMetaTitle'
-import { Main } from '@edsolater/pivkit'
 
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
@@ -51,16 +50,16 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
         willChange: 'opacity',
       }}
     >
-      <Group name={'top-banner'} icss={{ gridArea: 'ban' }}>
+      <Item name={'top-banner'} icss={{ gridArea: 'ban' }}>
         {props['render:topBarBanner']}
-      </Group>
-      <Group name={'top-menu'} icss={{ gridArea: 'top' }}>
+      </Item>
+      <Item name={'top-menu'} icss={{ gridArea: 'top' }}>
         {props['render:topBar']}
-      </Group>
-      <Group name={'side-menu'} icss={{ gridArea: 'side' }} render:self={renderAsHTMLAside}>
+      </Item>
+      <Item name={'side-menu'} icss={{ gridArea: 'side' }} render:self={renderAsHTMLAside}>
         {props['render:sideBar']}
-      </Group>
-      <Group name={'content'} icss={[{ gridArea: 'content' }, icssGrid]}>
+      </Item>
+      <Item name={'content'} icss={[{ gridArea: 'content' }, icssGrid]}>
         <Main
           icss={[
             icssCol,
@@ -90,7 +89,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
             {props.children}
           </Box>
         </Main>
-      </Group>
+      </Item>
     </Box>
   )
 }

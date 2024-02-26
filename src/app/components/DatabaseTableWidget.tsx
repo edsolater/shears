@@ -20,7 +20,7 @@ import {
   icssLabelTitle,
   icssSubContent,
   useElementSize,
-  useKitProps
+  useKitProps,
 } from '@edsolater/pivkit'
 import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
 import { ItemList } from '../../packages/fnkit/itemMethods'
@@ -149,7 +149,7 @@ export function DatabaseTableList<T>(
             </Box>
           </Group>
 
-          <Group name='items'>
+          <Group name='items' icss={{ display: 'contents' }}>
             <List
               async
               items={props.items}

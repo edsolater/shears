@@ -9,7 +9,7 @@ import {
   createEffect,
   createMemo,
   createSignal,
-  on
+  on,
 } from 'solid-js'
 import { KitProps, useKitProps } from '../../createKit'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
@@ -100,6 +100,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [scroll handler]
   const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
+      console.log('reach bottom')
       if (renderItemLength() < allItems().length) {
         setRenderItemLength((n) => n + increaseRenderCount())
       }
