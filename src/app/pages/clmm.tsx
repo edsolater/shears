@@ -108,7 +108,13 @@ function toRenderable(v: any, options?: any): string | undefined
 function toRenderable(v: any, options?: any): string | undefined {
   if (v == null) return undefined
   if (isNumberish(v)) {
-    return toFormattedNumber(v, options)
+    try {
+      return toFormattedNumber(v, options)
+    } catch (error) {
+      console.log(error)
+      console.log('input: ', v)
+      return ''
+    }
   }
   // if (
   //   isString(v) ||

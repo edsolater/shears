@@ -9,7 +9,7 @@ overrides:
 
 specifiers:
   '@babel/runtime': ^7.23.9
-  '@edsolater/fnkit': ^0.1.75
+  '@edsolater/fnkit': ^0.1.76
   '@edsolater/pivkit': ^0.0.8
   '@raydium-io/raydium-sdk': 1.3.1-beta.48
   '@solana/wallet-adapter-base': ^0.9.23
@@ -47,7 +47,7 @@ specifiers:
 
 dependencies:
   '@babel/runtime': 7.23.9
-  '@edsolater/fnkit': 0.1.75
+  '@edsolater/fnkit': 0.1.76
   '@edsolater/pivkit': 0.0.8
   '@raydium-io/raydium-sdk': 1.3.1-beta.48_@solana+web3.js@1.90.0
   '@solana/wallet-adapter-base': 0.9.23_@solana+web3.js@1.90.0
@@ -1399,14 +1399,14 @@ packages:
     engines: {node: '>=10.0.0'}
     dev: true
 
-  /@edsolater/fnkit/0.1.75:
-    resolution: {integrity: sha512-HVcJ4SPYqGZ4KRYCLXK1HjJvT3KAaGtFLzyz9DkVq8RcHgoSWIHDxP6KDiJR+tPmqgiS7KC6jNjnCwjIBycvUw==}
+  /@edsolater/fnkit/0.1.76:
+    resolution: {integrity: sha512-YWwcwnjLhHYbVaNUQM5VB8FpOd8e3vSQJa+jiYuLUmCXJm7tTQ86Ii54kmjocAdW0w1vyzn5SiydRPA16y53wQ==}
     dev: false
 
   /@edsolater/pivkit/0.0.8:
     resolution: {integrity: sha512-XLcdkWCCam1y8lft3oZRggNJEf3/mceeJHypljrRB97ySundXo8VOequYROG5iMuYnP9W1Ui7FD57VoqpFa2qA==}
     dependencies:
-      '@edsolater/fnkit': 0.1.75
+      '@edsolater/fnkit': 0.1.76
       goober: 2.1.14
       solid-js: 1.8.15
     transitivePeerDependencies:

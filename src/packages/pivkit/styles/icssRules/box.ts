@@ -1,4 +1,3 @@
-import { addDefault } from '@edsolater/fnkit'
 import { createICSS, CSSObject } from '../../piv'
 import { cssColors } from '../cssColors'
 import { ICSSFontSize, icssFontSize } from './fondation'
