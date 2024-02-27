@@ -37,7 +37,8 @@ export function decode(
   }
 
   // literal need to deeply parse
-  if (isObjectLiteral(data) || isArray(data)) return (options?.mutate ? mutMap : map)(data, (v) => decode(v))
+  // if (isObjectLiteral(data) || isArray(data)) return (options?.mutate ? mutMap : map)(data, (v) => decode(v)) // ⚡🤔 deep map will cause performance issue
+  return data
 
   // no match rule
   return data

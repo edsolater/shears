@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Col,
+  Fragnment,
   Group,
   ICSS,
   Icon,
@@ -36,7 +37,7 @@ import { scrollbarWidth } from '../theme/misc'
 import toUsdVolume from '../utils/format/toUsdVolume'
 import { Title } from './BoardTitle'
 
-type TabelCellConfigs<T> = {
+export type TabelCellConfigs<T> = {
   name: string
   in: 'face' | 'content'
   get: (item: T, idx: Accessor<number>) => PivChild
@@ -56,8 +57,7 @@ type DatabaseTableWidgetProps<T> = {
   TableBodyTopLeft?: PivChild
   TableBodyTopMiddle?: PivChild
   TableBodyTopRight?: PivChild
-  CollapseBoxProps?: CollapseBoxKitProps
-  renderItem?: (item: T) => PivChild
+  renderItem: (item: T) => PivChild
 }
 
 type RowWidths = number[]
@@ -165,28 +165,7 @@ export function DatabaseTableList<T>(
                 marginRight: `-${scrollbarWidth}px`,
               }}
             >
-              {(item) => (
-                <Box icss={{ paddingBlock: '4px' }}>
-                  <CollapseBox
-                    shadowProps={props.CollapseBoxProps}
-                    icss={{
-                      borderRadius: '20px',
-                      overflow: 'hidden',
-                    }}
-                    // need to render multiple times to get the correct height, why not let it be a web component?
-                    renderFace={
-                      <DatabaseTableItemCollapseFace
-                        key={kitProps.getKey(item)}
-                        item={item}
-                        tabelCellConfigs={props.tabelCellConfigs}
-                      />
-                    }
-                    renderContent={
-                      <DatabaseTableItemCollapseContent item={item} tabelCellConfigs={props.tabelCellConfigs} />
-                    }
-                  />
-                </Box>
-              )}
+              {(item) => <Fragnment>{kitProps.renderItem(item)}</Fragnment>}
             </List>
           </Group>
         </CyberPanel>
@@ -225,7 +204,7 @@ function ItemStarIcon() {
   )
 }
 
-function DatabaseTableItemCollapseFace<T>(
+export function DatabaseTableItemCollapseFace<T>(
   kitProps: KitProps<{ key: string; item: T; tabelCellConfigs: TabelCellConfigs<T> }>,
 ) {
   // console.count('DatabaseTableItemCollapseFace') // TODO: why render so many times
@@ -265,7 +244,7 @@ function DatabaseTableItemCollapseFace<T>(
   )
 }
 
-function DatabaseTableItemCollapseContent<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
+export function DatabaseTableItemCollapseContent<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemContent' })
   const isFavourite = () => false
   return (

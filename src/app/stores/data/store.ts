@@ -71,21 +71,21 @@ export const {
       pairInfos: loadPairs,
       prices: loadTokenPrice,
       tokens: loadTokens,
-      clmmJsonInfos: loadClmmInfos,
     },
   },
 )
 
 // TODO: should all state just use shuck
 // app states
-export const s_rpc = createShuck<RPCEndpoint | undefined>()
-export const s_isMobile = createShuck<boolean | undefined>()
+export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
+export const shuck_isMobile = createShuck<boolean | undefined>()
 // clmm
-export const s_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
-export const s_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
+export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
+// export const shuck_isTokenListLoading = createShuck<Record<string, ClmmInfo> | undefined>()
+export const shuck_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
 
 export const allClmmTabs = ['ALL', 'MY POOLS'] as const
-export const s_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
+export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 
 // export const {

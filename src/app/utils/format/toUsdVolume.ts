@@ -1,4 +1,4 @@
-import { FormatOptions, Numberish, div, parseNumberInfo, toFormattedNumber } from '@edsolater/fnkit'
+import { NumberishFormatOptions, Numberish, div, parseNumberInfo, toFormattedNumber } from '@edsolater/fnkit'
 /**
  * it depends on 'toFixed'
  */
@@ -6,7 +6,7 @@ export default function toUsdVolume(
   amount: Numberish | undefined,
   options?: {
     shortcut?: boolean
-  } & FormatOptions,
+  } & NumberishFormatOptions,
 ) {
   if (!amount) return '$0'
   return `$${
@@ -26,7 +26,7 @@ export function toShortcutNumber(
   n: Numberish,
   options?: {
     disabled?: boolean
-  } & FormatOptions,
+  } & NumberishFormatOptions,
 ): string {
   const formatFn = (n: Numberish) =>
     toFormattedNumber(n, {
