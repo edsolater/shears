@@ -19,3 +19,11 @@ export function useShuck<T>(shuck: Shuck<T>): [Accessor<T>, Setter<T>] {
 
   return [accessor, set]
 }
+
+/**
+ * a shoutcut from {@link useShuck}
+ */
+export function useShuckValue<T>(shuck: Shuck<T>): Accessor<T> {
+  const [accessor] = useShuck(shuck)
+  return accessor
+}

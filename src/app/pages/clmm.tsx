@@ -98,13 +98,13 @@ export default function ClmmsPage() {
               overflow: 'hidden',
             }}
             // need to render multiple times to get the correct height, why not let it be a web component?
-            renderFace={<DatabaseTableItemCollapseFace key={item.id} item={item} tabelCellConfigs={tabelCellConfigs} />}
-            renderContent={<DatabaseTableItemCollapseContent item={item} tabelCellConfigs={tabelCellConfigs} />}
+            renderFace={<DatabaseTableItemCollapseFace key={item.id} item={item} tabelItemRowConfig={tabelCellConfigs} />}
+            renderContent={<DatabaseTableItemCollapseContent item={item} tabelItemRowConfig={tabelCellConfigs} />}
           />
         </Box>
       )}
       getKey={(i) => i.id}
-      tabelCellConfigs={tabelCellConfigs}
+      tabelItemRowConfig={tabelCellConfigs}
       TopMiddle={<ClmmPageTabBlock />}
       TopRight={<ClmmPageActionHandlersBlock />}
     />

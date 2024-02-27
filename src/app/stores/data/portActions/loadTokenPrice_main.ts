@@ -1,21 +1,21 @@
+import { count, toArray } from '@edsolater/fnkit'
+import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
 import { appApiUrls } from '../../../utils/common/config'
-import { toArray } from '../../../../packages/fnkit/itemMethods'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { workerCommands } from '../../../utils/webworker/type'
-import { setStore, storeData } from '../store'
+import { setStore, shuck_tokens } from '../store'
 
 export function loadTokenPrice() {
-  const allTokens = storeData.tokens
-  const hasAnyToken = Boolean(allTokens?.size)
+  const allTokens = useShuckValue(shuck_tokens)
+  const hasAnyToken = count(allTokens()) > 0
   if (!hasAnyToken) return
   setStore({ isTokenPriceLoading: true })
   const { sender, receiver } = getMessagePort(workerCommands['get raydium token prices'])
   sender.post({
     url: appApiUrls.price,
-    tokens: toArray(allTokens),
+    tokens: toArray(allTokens()),
   })
   receiver.subscribe((workerResult) => {
     setStore({ isTokenPriceLoading: false, prices: workerResult.prices })
   })
 }
-

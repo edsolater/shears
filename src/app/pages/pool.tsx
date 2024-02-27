@@ -1,6 +1,11 @@
-import { Box, KitProps, Row, useKitProps } from '@edsolater/pivkit'
+import { Box, CollapseBox, KitProps, Row, useKitProps } from '@edsolater/pivkit'
 import { useElementResize } from '../../packages/pivkit/domkit/hooks/useElementResize'
-import { DatabaseTableList } from '../components/DatabaseTableWidget'
+import {
+  DatabaseTableItemCollapseContent,
+  DatabaseTableItemCollapseFace,
+  DatabaseTableList,
+  type TabelCellConfigs,
+} from '../components/DatabaseTableWidget'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
@@ -32,36 +37,43 @@ export function DatabaseItemFacePartTokenAvatarLabel(kitProps: KitProps<{ info?:
 
 export default function PoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
-  const mockItems = [
-    { id: '2', name: 'se', address: '1', detail: 'detail' },
-    { id: '3', name: 'lisdf', address: '33', detail: 'detail3333' },
-  ] satisfies {
-    id: string
-    name: string
-    address: string
-    detail?: string
-  }[]
+  const tabelItemRowConfig: TabelCellConfigs<PairInfo> = [
+    {
+      name: 'Pool',
+      in: 'face',
+      get: (i) => (
+        <Row>
+          <DatabaseItemFacePartTokenAvatarLabel info={i} />
+        </Row>
+      ),
+    },
+    {
+      name: 'liquidity',
+      in: 'face',
+      get: (i) => <DatabaseItemFacePartTextDetail name='liquidity' value={i.liquidity} />,
+    },
+  ]
   return (
     <DatabaseTableList
       title='Pools'
       items={pairInfos}
       getKey={(i) => i.ammId}
-      tabelCellConfigs={[
-        {
-          name: 'Pool',
-          in: 'face',
-          get: (i) => (
-            <Row>
-              <DatabaseItemFacePartTokenAvatarLabel info={i} />
-            </Row>
-          ),
-        },
-        {
-          name: 'liquidity',
-          in: 'face',
-          get: (i) => <DatabaseItemFacePartTextDetail name='liquidity' value={i.liquidity} />,
-        },
-      ]}
+      renderItem={(item) => (
+        <Box icss={{ paddingBlock: '4px' }}>
+          <CollapseBox
+            icss={{
+              borderRadius: '20px',
+              overflow: 'hidden',
+            }}
+            // need to render multiple times to get the correct height, why not let it be a web component?
+            renderFace={
+              <DatabaseTableItemCollapseFace key={item.ammId} item={item} tabelItemRowConfig={tabelItemRowConfig} />
+            }
+            renderContent={<DatabaseTableItemCollapseContent item={item} tabelItemRowConfig={tabelItemRowConfig} />}
+          />
+        </Box>
+      )}
+      tabelItemRowConfig={tabelItemRowConfig}
     />
   )
 }

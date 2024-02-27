@@ -21,13 +21,14 @@ import {
   icssLabel,
   icssRow,
   plugin_modalTitle,
-  useKitProps
+  useKitProps,
 } from '@edsolater/pivkit'
-import { store } from '../stores/data/store'
+import { shuck_tokens, store } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
 import { slice } from '../../packages/fnkit/itemMethods'
 import { TokenAvatar } from './TokenAvatar'
+import { useShuck, useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
 
 export interface TokenAmountInputBoxController {}
 
@@ -117,7 +118,7 @@ type TokenSelectorModalContentProps = KitProps<TokenSelectorModalContentRawProps
  */
 function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props, shadowProps } = useKitProps(rawProps)
-  const tokens = store.tokens
+  const tokens = useShuckValue(shuck_tokens)
   const increasing = createIncresingAccessor()
   return (
     <Panel shadowProps={shadowProps}>

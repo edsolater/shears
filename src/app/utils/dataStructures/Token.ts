@@ -5,26 +5,28 @@ import { PublicKey } from '@solana/web3.js'
 
 /** minium data shape that can be hydrated to a SPLToken */
 export interface Token {
-  mint: string
+  mint: string // SOL's mint is PublicKey.default.toString() // WSOL(symbol is SOL) is 'So11111111111111111111111111111111111111112'
   decimals: number
   programId: string
 
-  symbol?: string
+  symbol?: string // WSOL has wrapped to SOL, SOL is SOL
   name?: string
+
+  // --------- needed 🤔 computed data 😂? ----------
   extensions?: {
     coingeckoId?: string
   }
-  is?: 'sol' | 'raydium-official' | 'raydium-unofficial' | 'raydium-unnamed' | 'raydium-blacklist'
-  userAdded?: boolean // only if token is added by user
+  realSymbol?: string // WSOL is WSOL, SOL is SOL. For normal tokens, this property is the same as symbol
+  is?: 'sol' | 'raydium-official' | 'raydium-unofficial' | 'raydium-unnamed' | 'raydium-blacklist' // online-info
+  userAdded?: boolean // only if token is added by user // online-info
   icon?: string
-  hasFreeze?: boolean
+  hasFreeze?: boolean // online-info
 }
 
 /** Address of the SPL Token program */
-export const TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' // SDK
-
+export const TOKEN_PROGRAM_ID = 'TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA' // from SDK
 /** Address of the SPL Token 2022 program */
-export const TOKEN_2022_PROGRAM_ID = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb' // SDK
+export const TOKEN_2022_PROGRAM_ID = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb' // from SDK
 
 export const SOLToken = {
   mint: PublicKey.default.toString(),
@@ -86,11 +88,20 @@ export function isToken(token: unknown): token is Token {
   return isObject(token) && isString((token as Token).mint) && typeof (token as Token).decimals === 'number'
 }
 
+
+/**
+ * check whether token is default {@link genEmptyToken}
+ * @param token to be checked
+ * @returns boolean(type guard)
+ */
+export function isEmptyToken(token: Token): boolean {
+  return token.mint === ''
+}
 /**
  * for easier use, usually as defaut value
  * if alway use same emptyToken, it will make some bug of solidjs's createStore, so have to be a function
  */
-export function emptyToken(): Token {
+export function genEmptyToken(): Token {
   return {
     programId: TOKEN_PROGRAM_ID,
     mint: '',
@@ -100,16 +111,8 @@ export function emptyToken(): Token {
     icon: '',
   }
 }
+export const emptyToken = genEmptyToken()
 
-/**
- * check whether token is default {@link emptyToken}
- * @param token to be checked
- * @returns boolean(type guard)
- */
-export function isEmptyToken(token: Token): boolean {
-  return token.mint === ''
-}
-
-export function toToken(config: Token){
+export function toToken(config: Token) {
   return config
 }

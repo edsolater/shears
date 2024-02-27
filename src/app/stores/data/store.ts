@@ -37,9 +37,6 @@ export type StoreData = {
   isPairInfoLoading?: boolean
 
   // -------- token --------
-  tokenLoadCount?: number // not good, should change automaticly. change this will start loading token related info
-  isTokenListLoading?: boolean
-  tokens?: Record<Token['mint'], Token>
 
   // -------- price --------
   priceLoadCount?: number // not good, should change automaticly. change this will start loading price related info
@@ -70,10 +67,12 @@ export const {
       farmInfos: loadFarmSYNInfos,
       pairInfos: loadPairs,
       prices: loadTokenPrice,
-      tokens: loadTokens,
     },
   },
 )
+globalThis.document.addEventListener('DOMContentLoaded', () => {
+  loadTokens()
+})
 
 // TODO: should all state just use shuck
 // app states
@@ -81,8 +80,10 @@ export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
 export const shuck_isMobile = createShuck<boolean | undefined>()
 // clmm
 export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
-// export const shuck_isTokenListLoading = createShuck<Record<string, ClmmInfo> | undefined>()
 export const shuck_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
+// token
+export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
+export const shuck_tokens = createShuck<Record<Token['mint'], Token> | undefined>()
 
 export const allClmmTabs = ['ALL', 'MY POOLS'] as const
 export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()

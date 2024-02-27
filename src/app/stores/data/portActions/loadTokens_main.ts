@@ -1,14 +1,18 @@
 import { appApiUrls } from '../../../utils/common/config'
+import type { Token } from '../../../utils/dataStructures/Token'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { workerCommands } from '../../../utils/webworker/type'
-import { setStore } from '../store'
+import { shuck_isTokenListLoading, shuck_tokens } from '../store'
 
 export function loadTokens() {
   console.log('[main] start loading tokens')
-  setStore({ isTokenListLoading: true })
-  const { sender, receiver } = getMessagePort(workerCommands['fetch raydium supported tokens'])
+  const { sender, receiver } = getMessagePort<Record<string, Token>, { url: string }>(
+    workerCommands['fetch raydium supported tokens'],
+  )
+  shuck_isTokenListLoading.set(true)
   sender.post({ url: appApiUrls.tokenInfo })
   receiver.subscribe((allTokens) => {
-    setStore({ isTokenListLoading: false, tokens: allTokens })
+    shuck_isTokenListLoading.set(false)
+    shuck_tokens.set(allTokens)
   })
 }

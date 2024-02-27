@@ -47,7 +47,7 @@ type DatabaseTableWidgetProps<T> = {
   items: ItemList<T>
   // essiential for collection/favorite system
   getKey: (item: T) => string
-  tabelCellConfigs: TabelCellConfigs<T>
+  tabelItemRowConfig: TabelCellConfigs<T>
   title: string
   subtitle?: string
   subtitleDescription?: string
@@ -85,7 +85,7 @@ export function DatabaseTableList<T>(
     name: 'DatabaseTable',
     noNeedDeAccessifyProps: ['getItemKey'],
   })
-  const cellNames = () => props.tabelCellConfigs.map((config) => config.name)
+  const cellNames = () => props.tabelItemRowConfig.map((config) => config.name)
   const [cellWidths, setItemWidthRecord] = createSignal<Record<string, RowWidths>>({})
   const cellMaxWidths = createMemo(
     () => {
@@ -205,7 +205,7 @@ function ItemStarIcon() {
 }
 
 export function DatabaseTableItemCollapseFace<T>(
-  kitProps: KitProps<{ key: string; item: T; tabelCellConfigs: TabelCellConfigs<T> }>,
+  kitProps: KitProps<{ key: string; item: T; tabelItemRowConfig: TabelCellConfigs<T> }>,
 ) {
   // console.count('DatabaseTableItemCollapseFace') // TODO: why render so many times
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
@@ -228,7 +228,7 @@ export function DatabaseTableItemCollapseFace<T>(
       </Box>
 
       <Group name='item-parts' icss={[{ flex: 1 }, databaseTableGridTemplate?.()]}>
-        <Loop of={props.tabelCellConfigs}>
+        <Loop of={props.tabelItemRowConfig}>
           {(config, idx) => (
             <DatabaseItemFacePartTextDetail
               name={config.name}
@@ -245,7 +245,7 @@ export function DatabaseTableItemCollapseFace<T>(
 }
 
 export function DatabaseTableItemCollapseContent<T>(
-  kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>,
+  kitProps: KitProps<{ item: T; tabelItemRowConfig: TabelCellConfigs<T> }>,
 ) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemContent' })
   const isFavourite = () => false

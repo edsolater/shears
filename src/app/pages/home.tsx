@@ -1,20 +1,25 @@
 import { Box, Piv } from '@edsolater/pivkit'
 import { Link } from '../components/Link'
-import { store } from '../stores/data/store'
+import { shuck_isTokenListLoading, shuck_tokens, store } from '../stores/data/store'
 import { useWalletStore } from '../stores/wallet/store'
 import { count } from '../../packages/fnkit/itemMethods'
+import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
 
 export default function HomePage() {
   const walletStore = useWalletStore()
+  const tokens = useShuckValue(shuck_tokens)
+  const isTokenListLoading = useShuckValue(shuck_isTokenListLoading)
   return (
     <div>
       <Box icss={{ margin: '8px' }}>
         {/* info */}
-        <Piv>token count: {store.isTokenListLoading ? '(loading)' : count(store.tokens)}</Piv>
+        <Piv>token count: {isTokenListLoading() ? '(loading)' : count(tokens())}</Piv>
         <Piv>current owner: {walletStore.owner}</Piv>
         <Piv>pair count: {store.isPairInfoLoading ? '(loading)' : count(store.pairInfos)}</Piv>
       </Box>
-      <Link href={'/swap'}innerRoute>Swap</Link>
+      <Link href={'/swap'} innerRoute>
+        Swap
+      </Link>
 
       {/* <LinkItem icon='/icons/entry-icon-pools.svg' href='/pools' isCurrentRoutePath={pageMatcher.isPairsPage}>
         Pools

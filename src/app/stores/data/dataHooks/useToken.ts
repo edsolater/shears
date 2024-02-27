@@ -1,48 +1,43 @@
-import { isString, shrinkFn } from '@edsolater/fnkit'
-import { createMemo } from 'solid-js'
+import { cloneObject, isString, shrinkFn } from '@edsolater/fnkit'
+import { createEffect, createMemo } from 'solid-js'
 import { Accessify, createSmartStore } from '@edsolater/pivkit'
-import { Token, emptyToken } from '../../../utils/dataStructures/Token'
+import { Token, emptyToken, genEmptyToken } from '../../../utils/dataStructures/Token'
 import { Mint } from '../../../utils/dataStructures/type'
 import { get, has } from '../../../../packages/fnkit/itemMethods'
-import { store } from '../store'
+import { shuck_tokens, store } from '../store'
+import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
+import { createStore, reconcile } from 'solid-js/store'
 
 export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
 
-/** 
+/**
  * easy to use & easy to read
  * turn a short info (only token'mint) into rich
  * whether loaded or not, it will return a token (even emptyToken)
+ *
+ * it use solidjs's createStore to store a object data
  */
-export function useToken(v?: UseTokenParam): Token {
-  const intputedToken = createMemo(() => {
-    const inputParam = shrinkFn(v)
+export function useToken(input?: UseTokenParam): Token {
+  const tokens = useShuckValue(shuck_tokens)
+  const intputToken = createMemo(() => {
+    const inputParam = shrinkFn(input)
     if (isString(inputParam)) {
       const mint = inputParam
-      return get(store.tokens, mint)
+      return get(tokens(), mint)
     } else {
       const token = inputParam
       return token
     }
   })
-
-  /** every use Token should give back a solidjs store */
-  const { store: storeToken} = createSmartStore(
-    () => (intputedToken() ?? emptyToken())
-  )
-
-  /**
-   * can detect whether token is default empty token
-   */
-  const isTokenLoaded = createMemo(() => {
-    const inputParam = shrinkFn(v)
-    const mint = isString(inputParam) ? inputParam : inputParam?.mint
-    return has(store.tokens, mint)
+  const [outputToken, setOutputToken] = createStore<Token>(intputToken() ?? cloneObject(emptyToken))
+  createEffect(() => {
+    const newToken = intputToken()
+    if (newToken && newToken !== outputToken) {
+      setOutputToken(reconcile(newToken, { key: 'mint' }))
+    }
   })
-
-
-  return storeToken
+  return outputToken
 }
-
 
 // /** 🤔is it neccessory? just useTokenInfo is ok? */
 // type RawTokenInfo = {
