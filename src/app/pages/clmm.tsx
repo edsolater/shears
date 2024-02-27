@@ -90,19 +90,24 @@ export default function ClmmsPage() {
       subtitle='Concentrated Pools'
       subtitleDescription='Concentrate liquidity for increased capital efficiency'
       items={clmmInfos}
-      renderItem={(item) => (
-        <Box icss={{ paddingBlock: '4px' }}>
-          <CollapseBox
-            icss={{
-              borderRadius: '20px',
-              overflow: 'hidden',
-            }}
-            // need to render multiple times to get the correct height, why not let it be a web component?
-            renderFace={<DatabaseTableItemCollapseFace key={item.id} item={item} tabelItemRowConfig={tabelCellConfigs} />}
-            renderContent={<DatabaseTableItemCollapseContent item={item} tabelItemRowConfig={tabelCellConfigs} />}
-          />
-        </Box>
-      )}
+      renderItem={(item, idx) => {
+        console.log('idx: ', idx())
+        return (
+          <Box icss={{ paddingBlock: '4px' }}>
+            <CollapseBox
+              icss={{
+                borderRadius: '20px',
+                overflow: 'hidden',
+              }}
+              // need to render multiple times to get the correct height, why not let it be a web component?
+              renderFace={
+                <DatabaseTableItemCollapseFace key={item.id} item={item} tabelItemRowConfig={tabelCellConfigs} />
+              }
+              renderContent={<DatabaseTableItemCollapseContent item={item} tabelItemRowConfig={tabelCellConfigs} />}
+            />
+          </Box>
+        )
+      }}
       getKey={(i) => i.id}
       tabelItemRowConfig={tabelCellConfigs}
       TopMiddle={<ClmmPageTabBlock />}

@@ -1,12 +1,12 @@
-import { cloneObject, isString, shrinkFn } from '@edsolater/fnkit'
+import { isString, shrinkFn, unifyItem, type AnyObj } from '@edsolater/fnkit'
+import { Accessify } from '@edsolater/pivkit'
 import { createEffect, createMemo } from 'solid-js'
-import { Accessify, createSmartStore } from '@edsolater/pivkit'
-import { Token, emptyToken, genEmptyToken } from '../../../utils/dataStructures/Token'
-import { Mint } from '../../../utils/dataStructures/type'
-import { get, has } from '../../../../packages/fnkit/itemMethods'
-import { shuck_tokens, store } from '../store'
-import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
 import { createStore, reconcile } from 'solid-js/store'
+import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
+import { get } from '../../../../packages/fnkit/itemMethods'
+import { Token, emptyToken } from '../../../utils/dataStructures/Token'
+import { Mint } from '../../../utils/dataStructures/type'
+import { shuck_tokens } from '../store'
 
 export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
 
@@ -37,6 +37,31 @@ export function useToken(input?: UseTokenParam): Token {
     }
   })
   return outputToken
+}
+
+// 🔥already in fnkit
+/**
+ *  shallow clone like {...obj}, but don't access it's getter
+ *  @example
+ * cloneObject({get a() {return 1}}) //=> {get a() {return 1}}
+ */
+function cloneObject<T extends AnyObj>(original: T): T {
+  return new Proxy(
+    {},
+    {
+      get: (target, key, receiver) =>
+        key in target ? Reflect.get(target, key, receiver) : Reflect.get(original, key, receiver),
+      has: (target, key) => key in target || key in original,
+      set: (target, key, value) => Reflect.set(target, key, value),
+      defineProperty: (target, property, attributes) => Reflect.defineProperty(target, property, attributes),
+      deleteProperty: (target, property) => Reflect.deleteProperty(target, property),
+      getPrototypeOf: () => Object.getPrototypeOf(original),
+      ownKeys: (target) => unifyItem(Reflect.ownKeys(target).concat(Reflect.ownKeys(original))),
+      // for Object.keys to filter
+      getOwnPropertyDescriptor: (target, key) =>
+        key in target ? Object.getOwnPropertyDescriptor(target, key) : Object.getOwnPropertyDescriptor(original, key),
+    },
+  ) as T
 }
 
 // /** 🤔is it neccessory? just useTokenInfo is ok? */

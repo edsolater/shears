@@ -1,8 +1,8 @@
-import { createContext, createEffect, useContext } from 'solid-js'
+import { Show, createContext, createEffect, createSignal, useContext } from 'solid-js'
 import { KitProps, useKitProps } from '../createKit'
 import { createDomRef, useClickOutside } from '../hooks'
 import { createDisclosure } from '../hooks/createDisclosure'
-import { Piv, PivChild, PivProps } from '../piv'
+import { Fragnment, Piv, PivChild, PivProps } from '../piv'
 import { renderHTMLDOM } from '../piv/propHandlers/renderHTMLDOM'
 import { createCSSCollapsePlugin } from '../plugins/useCSSTransition'
 import { createController } from '../utils/createController'
@@ -69,6 +69,10 @@ export function CollapseBox(kitProps: CollapseBoxKitProps) {
     plugin,
   } = createCSSCollapsePlugin()
 
+  // only render content when opened, but don't open twice
+  const [hasCollapseBeenOpened, setHasCollapseBeenOpened] = createSignal(isCollapseOpened())
+  createEffect(() => setHasCollapseBeenOpened(isCollapseOpened()))
+
   //sync with innerOpen
   createEffect(() => (innerOpen() ? openCollapse() : closeCollapse()))
 
@@ -78,7 +82,7 @@ export function CollapseBox(kitProps: CollapseBoxKitProps) {
   return (
     <Box shadowProps={shadowProps} domRef={setBoxDom}>
       {/* Face */}
-      {props['renderFace'] && (
+      {'renderFace' in props && (
         <Box
           class='Face'
           onClick={() => {
@@ -90,9 +94,11 @@ export function CollapseBox(kitProps: CollapseBoxKitProps) {
       )}
 
       {/* Content */}
-      {props['renderContent'] && (
+      {'renderContent' in props && (
         <Piv class='Content' plugin={plugin} icss={{ overflow: 'hidden' }}>
-          {props['renderContent']}
+          <Show when={hasCollapseBeenOpened()}>
+            <Fragnment>{props['renderContent']}</Fragnment>
+          </Show>
         </Piv>
       )}
     </Box>

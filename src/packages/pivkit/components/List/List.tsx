@@ -82,8 +82,8 @@ export function List<T>(kitProps: ListKitProps<T>) {
     : createMemo(() => toList(shrinkFn(props.items ?? [])))
   const allItems = createDeferred(_allItems) // ⚡ to smoother the render
   const increaseRenderCount = () =>
-    props.increaseRenderCount ?? Math.max(1, Math.min(Math.floor(allItems().length / 10), 30))
-  const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(allItems().length, 50))
+    props.increaseRenderCount ?? Math.max(1, Math.min(Math.floor(allItems().length / 10), 20))
+  const initRenderCount = createMemo(() => props.initRenderCount ?? Math.min(allItems().length, 20))
 
   // [list ref]
   const [listRef, setRef] = createRef<HTMLElement>()
@@ -100,7 +100,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [scroll handler]
   const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
-      console.log('reach bottom')
+      console.log('list gesture:scroll reach bottom')
       if (renderItemLength() < allItems().length) {
         setRenderItemLength((n) => n + increaseRenderCount())
       }

@@ -24,12 +24,11 @@ import {
 import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
 import { ItemList } from '../../packages/fnkit/itemMethods'
 import {
-  CollapseBox,
   List,
   Loop,
   icssItemRowGrid,
   icssThreeSlotGrid,
-  type CollapseBoxKitProps,
+  type ListKitProps
 } from '../../packages/pivkit'
 import { DatabaseItemFacePartTextDetail } from '../pages/pool'
 import { colors } from '../theme/colors'
@@ -45,6 +44,7 @@ export type TabelCellConfigs<T> = {
 
 type DatabaseTableWidgetProps<T> = {
   items: ItemList<T>
+  propForList?: ListKitProps<T>
   // essiential for collection/favorite system
   getKey: (item: T) => string
   tabelItemRowConfig: TabelCellConfigs<T>
@@ -156,7 +156,7 @@ export function DatabaseTableList<T>(
 
           <Group name='items'>
             <List
-              async
+              shadowProps={props.propForList}
               items={props.items}
               icss={{
                 maxHeight: '100%',
@@ -210,7 +210,6 @@ export function DatabaseTableItemCollapseFace<T>(
   // console.count('DatabaseTableItemCollapseFace') // TODO: why render so many times
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
   const { databaseTableGridTemplate, setItemPiecesWidth } = useContext(DatabaseTableWidgetContext)
-
   return (
     <Row
       shadowProps={shadowProps}

@@ -1,7 +1,6 @@
-import { SOLToken, type Token } from '../../../utils/dataStructures/Token'
 import { toCollectionObject } from '../../../../packages/fnkit/itemMethods'
+import { SOLToken, type Token } from '../../../utils/dataStructures/Token'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
-import { StoreData } from '../store'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
 
 export function loadTokensInWorker(transformers: PortUtils) {
