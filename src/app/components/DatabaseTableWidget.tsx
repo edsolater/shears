@@ -57,7 +57,7 @@ type DatabaseTableWidgetProps<T> = {
   TableBodyTopLeft?: PivChild
   TableBodyTopMiddle?: PivChild
   TableBodyTopRight?: PivChild
-  renderItem: (item: T) => PivChild
+  renderItem: (item: T, idx: Accessor<number>) => PivChild
 }
 
 type RowWidths = number[]
@@ -165,7 +165,7 @@ export function DatabaseTableList<T>(
                 marginRight: `-${scrollbarWidth}px`,
               }}
             >
-              {(item) => <Fragnment>{kitProps.renderItem(item)}</Fragnment>}
+              {(item, idx) => <Fragnment>{kitProps.renderItem(item, idx)}</Fragnment>}
             </List>
           </Group>
         </CyberPanel>
@@ -244,7 +244,9 @@ export function DatabaseTableItemCollapseFace<T>(
   )
 }
 
-export function DatabaseTableItemCollapseContent<T>(kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>) {
+export function DatabaseTableItemCollapseContent<T>(
+  kitProps: KitProps<{ item: T; tabelCellConfigs: TabelCellConfigs<T> }>,
+) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'PoolItemContent' })
   const isFavourite = () => false
   return (
