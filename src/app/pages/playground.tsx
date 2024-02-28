@@ -11,7 +11,6 @@ import {
   Modal,
   ModalController,
   Piv,
-  PluginObj,
   Radio,
   RenderFactory,
   Select,
@@ -34,13 +33,21 @@ import {
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
-  useKitProps,
+  useKitProps
 } from '@edsolater/pivkit'
-import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from 'solid-js'
+import {
+  Accessor,
+  JSXElement,
+  createContext,
+  createEffect,
+  createSignal,
+  onCleanup
+} from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { motivate } from '../../packages/fnkit'
 import { CircularProgress } from '../components/CircularProgress'
 import { ExamplePanel } from '../components/ExamplePanel'
+import { ViewTransitionSliderBox } from '../components/ViewTransitionSliderBox'
 import { useLoopPercent } from '../hooks/useLoopPercent'
 
 export default function PlaygroundPage() {
@@ -100,6 +107,10 @@ function ComponentSpecList() {
       <ExamplePanel name='Radio'>
         <RadioExample />
       </ExamplePanel> */}
+
+      <ExamplePanel name='ViewTransitionSliderBox'>
+        <ViewTransitionSliderBoxExample />
+      </ExamplePanel>
 
       <ExamplePanel name='Popover'>
         <PopoverExample />
@@ -645,7 +656,34 @@ function useTabs() {
   return { TabsContextProvider }
 }
 
-/**
- * should can strightforward get plugin's core function\state\etc.
- */
-function usePlugin(plugin: PluginObj<object>) {}
+function ViewTransitionSliderBoxExample() {
+  const [contentIndex, setContentIndex] = createSignal(0)
+  const [count, setCount] = createSignal(0)
+  return (
+    <Box>
+      <ViewTransitionSliderBox contentIndex={contentIndex()}>
+        <Box
+          icss={{
+            width: '20em',
+            height: '10em',
+            background: count() % 2 === 0 ? 'crimson' : 'dodgerblue',
+            color: 'white',
+          }}
+        >
+          content {count()}
+        </Box>
+      </ViewTransitionSliderBox>
+
+      <Button
+        onClick={() => {
+          setContentIndex((n) => n + 1)
+          setTimeout(() => {
+            setCount((c) => c + 1)
+          }, 0)
+        }}
+      >
+        Increase Count
+      </Button>
+    </Box>
+  )
+}
