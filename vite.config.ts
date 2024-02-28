@@ -3,7 +3,6 @@
 
 import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
-import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   optimizeDeps: {
@@ -11,7 +10,6 @@ export default defineConfig({
   },
   plugins: [
     solidPlugin(),
-    VitePWA({ registerType: 'autoUpdate' }),
     // your plugins,
     // https://github.com/vitejs/vite/issues/3033#issuecomment-1360691044
     {
