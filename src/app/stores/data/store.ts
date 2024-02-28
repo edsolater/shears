@@ -83,6 +83,7 @@ export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
 export const shuck_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
 // token
 export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
+export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()
 export const shuck_tokens = createShuck<Record<Token['mint'], Token> | undefined>()
 
 export const allClmmTabs = ['ALL', 'MY POOLS'] as const

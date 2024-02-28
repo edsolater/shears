@@ -1,23 +1,33 @@
-import { ReplaceType, isObject, isString } from '@edsolater/fnkit'
+import { ReplaceType, cloneObject, isObject, isString } from '@edsolater/fnkit'
 import { Currency as SDK_Currency, Token as SDK_Token } from '@raydium-io/raydium-sdk'
 
 import { PublicKey } from '@solana/web3.js'
 
-/** minium data shape that can be hydrated to a SPLToken */
-export interface Token {
+export interface TokenBase {
   mint: string // SOL's mint is PublicKey.default.toString() // WSOL(symbol is SOL) is 'So11111111111111111111111111111111111111112'
   decimals: number
   programId: string
 
   symbol?: string // WSOL has wrapped to SOL, SOL is SOL
   name?: string
+}
 
+/** minium data shape that can be hydrated to a SPLToken */
+export interface Token extends TokenBase {
   // --------- needed 🤔 computed data 😂? ----------
   extensions?: {
     coingeckoId?: string
   }
   realSymbol?: string // WSOL is WSOL, SOL is SOL. For normal tokens, this property is the same as symbol
-  is?: 'sol' | 'raydium-official' | 'raydium-unofficial' | 'raydium-unnamed' | 'raydium-blacklist' // online-info
+  is?:
+    | 'default-empty-token' // fake status token
+    | 'loading-token' // fake status token
+    | 'error-token' // fake status token
+    | 'sol' // fake token
+    | 'raydium-official'
+    | 'raydium-unofficial'
+    | 'raydium-unnamed'
+    | 'raydium-blacklist' // online-info
   userAdded?: boolean // only if token is added by user // online-info
   icon?: string
   hasFreeze?: boolean // online-info
@@ -88,30 +98,53 @@ export function isToken(token: unknown): token is Token {
   return isObject(token) && isString((token as Token).mint) && typeof (token as Token).decimals === 'number'
 }
 
-
 /**
- * check whether token is default {@link genEmptyToken}
+ * check whether token is {@link defaultToken}
  * @param token to be checked
  * @returns boolean(type guard)
  */
-export function isEmptyToken(token: Token): boolean {
-  return token.mint === ''
+export function isDefaultToken(token: Token): boolean {
+  return token.is === 'default-empty-token'
 }
+
 /**
- * for easier use, usually as defaut value
- * if alway use same emptyToken, it will make some bug of solidjs's createStore, so have to be a function
+ * check whether token is {@link loadingToken}
+ * @param token to be checked
+ * @returns boolean(type guard)
  */
-export function genEmptyToken(): Token {
-  return {
-    programId: TOKEN_PROGRAM_ID,
-    mint: '',
-    decimals: 0,
-    symbol: '',
-    name: '',
-    icon: '',
-  }
+export function isLoadingToken(token: Token): boolean {
+  return token.is === 'loading-token'
 }
-export const emptyToken = genEmptyToken()
+
+/**
+ * check whether token is {@link errorToken}
+ * @param token to be checked
+ * @returns boolean(type guard)
+ */
+export function isErrorToken(token: Token): boolean {
+  return token.is === 'error-token'
+}
+
+export const defaultToken: () => Token = () => ({
+  programId: TOKEN_PROGRAM_ID,
+  mint: '',
+  decimals: 0,
+  is: 'default-empty-token',
+})
+
+export const loadingToken: () => Token = () => ({
+  programId: TOKEN_PROGRAM_ID,
+  mint: '',
+  decimals: 0,
+  is: 'loading-token',
+})
+
+export const errorToken: () => Token = () => ({
+  programId: TOKEN_PROGRAM_ID,
+  mint: '',
+  decimals: 0,
+  is: 'error-token',
+})
 
 export function toToken(config: Token) {
   return config

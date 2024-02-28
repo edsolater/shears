@@ -1,5 +1,5 @@
 import { Box, Image, KitProps, useKitProps } from '@edsolater/pivkit'
-import { UseTokenParam, useToken } from '../stores/data/structures/handleToken'
+import { UseTokenParam, useToken } from '../stores/data/shapeParser/token'
 
 export interface TokenAvatarRawProps {
   token?: UseTokenParam

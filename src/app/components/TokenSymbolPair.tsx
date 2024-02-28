@@ -1,5 +1,5 @@
 import { Box, Text, icssRow, useKitProps, type KitProps } from '@edsolater/pivkit'
-import { type UseTokenParam } from '../stores/data/structures/handleToken'
+import { type UseTokenParam } from '../stores/data/shapeParser/token'
 import { TokenSymbol, TokenSymbolBaseOption } from './TokenSymbol'
 
 export interface TokenSymbolPairProps extends TokenSymbolBaseOption {

@@ -19,8 +19,13 @@ export interface Subscribable<T> {
 
   (): T
   subscribe: (cb: SubscribeFn<NonNullable<T>>) => { unsubscribe(): void }
-  /** can not export this property by type */
+  /** set inner value */
   set(dispatcher: SubscribableSetValueDispatcher<T>): void
+  /** return new subscribable base on this subscribable */
+  pipe: <R>(fn: (value: T) => R) => Subscribable<R>
+  /** unsubscribe if it subscribe from others */
+  destroy(): void
+  [Symbol.dispose](): void
 }
 
 type SubscribableSetValueDispatcher<T> = MayPromise<T> | ((oldValue: T) => MayPromise<T>)
@@ -42,12 +47,12 @@ export function createSubscribable<T>(
   defaultValue?: T | (() => T),
   options?: { subscribeFns?: MayArray<SubscribeFn<T>> },
 ): Subscribable<T | undefined> {
-  const subscribeFns = new Set<SubscribeFn<T>>(options?.subscribeFns ? flap(options.subscribeFns) : undefined)
-  const cleanFnMap = new Map<SubscribeFn<T>, AnyFn>()
+  const subscribeFnsStore = new Set<SubscribeFn<T>>(options?.subscribeFns ? flap(options.subscribeFns) : undefined)
+  const cleanFnsStore = new Map<SubscribeFn<T>, AnyFn>()
 
   let innerValue = shrinkFn(defaultValue) as T | undefined
 
-  subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, innerValue, undefined))
+  subscribeFnsStore.forEach((cb) => invokeSubscribedCallbacks(cb, innerValue, undefined))
 
   function changeValue(dispatcher: SubscribableSetValueDispatcher<T | undefined>) {
     const newValue = isFunction(dispatcher) ? dispatcher(innerValue) : dispatcher
@@ -56,37 +61,55 @@ export function createSubscribable<T>(
         if (innerValue !== newValue) {
           const oldValue = innerValue
           innerValue = newValue // update holded data
-          subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
+          subscribeFnsStore.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
         }
       })
     } else {
       if (innerValue !== newValue) {
         const oldValue = innerValue
         innerValue = newValue // update holded data
-        subscribeFns.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
+        subscribeFnsStore.forEach((cb) => invokeSubscribedCallbacks(cb, newValue, oldValue))
       }
     }
   }
 
   function invokeSubscribedCallbacks(cb: SubscribeFn<T>, newValue: T | undefined, prevValue: T | undefined) {
-    const oldCleanFn = cleanFnMap.get(cb)
+    const oldCleanFn = cleanFnsStore.get(cb)
     if (isFunction(oldCleanFn)) oldCleanFn(innerValue)
     const cleanFn = cb(newValue as T /*  type force */, prevValue)
-    if (isFunction(cleanFn)) cleanFnMap.set(cb, cleanFn)
+    if (isFunction(cleanFn)) cleanFnsStore.set(cb, cleanFn)
   }
 
   const subscribable = Object.assign(() => innerValue, {
     [subscribableTag]: true,
     subscribe(cb: any) {
       if (innerValue != null) invokeSubscribedCallbacks(cb, innerValue, undefined) // immediately invoke callback, if has value
-      subscribeFns.add(cb)
+      subscribeFnsStore.add(cb)
       return {
         unsubscribe() {
-          subscribeFns.delete(cb)
+          const cleanFn = cleanFnsStore.get(cb)
+          if (isFunction(cleanFn)) cleanFn(innerValue)
+          cleanFnsStore.delete(cb)
+          subscribeFnsStore.delete(cb)
         },
       }
     },
     set: changeValue,
+    pipe: (fn) => {
+      const newSubscribable = createSubscribable(fn(innerValue))
+      const subscribeFn: any = (value) => newSubscribable.set(fn(value))
+      const { unsubscribe } = subscribable.subscribe(subscribeFn)
+      cleanFnsStore.set(subscribeFn, unsubscribe)
+      return newSubscribable
+    },
+    destroy() {
+      subscribeFnsStore.clear()
+      cleanFnsStore.forEach((fn) => fn(innerValue))
+      cleanFnsStore.clear()
+    },
+    [Symbol.dispose]: () => {
+      subscribable.destroy()
+    },
   })
 
   return subscribable
