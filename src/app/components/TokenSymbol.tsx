@@ -1,5 +1,5 @@
 import { type KitProps, Text, useKitProps } from '@edsolater/pivkit'
-import { type UseTokenParam, useToken } from '../stores/data/dataHooks/useToken'
+import { type UseTokenParam, useToken } from '../stores/data/structures/handleToken'
 import { Token } from '../utils/dataStructures/Token'
 
 export interface TokenSymbolBaseOption {

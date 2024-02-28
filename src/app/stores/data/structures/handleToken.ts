@@ -1,4 +1,4 @@
-import { isString, shrinkFn, unifyItem, type AnyObj } from '@edsolater/fnkit'
+import { isString, shrinkFn, unifyItem, type AnyObj, Subscribable, createSubscribable } from '@edsolater/fnkit'
 import { Accessify } from '@edsolater/pivkit'
 import { createEffect, createMemo } from 'solid-js'
 import { createStore, reconcile } from 'solid-js/store'
@@ -11,6 +11,7 @@ import { shuck_tokens } from '../store'
 export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
 
 /**
+ * use this in .tsx
  * easy to use & easy to read
  * turn a short info (only token'mint) into rich
  * whether loaded or not, it will return a token (even emptyToken)
@@ -39,6 +40,37 @@ export function useToken(input?: UseTokenParam): Token {
   return outputToken
 }
 
+/**
+ * use this in .ts
+ */
+export function getToken(input?: UseTokenParam): Subscribable<Token | undefined> {
+  const outputToken = createSubscribable<Token | undefined>()
+  shuck_tokens.subscribe((tokens) => {
+    const inputParam = shrinkFn(input)
+    if (isString(inputParam)) {
+      const mint = inputParam
+      outputToken.set(get(tokens, mint))
+    } else {
+      const token = inputParam
+      outputToken.set(token)
+    }
+  })
+  return outputToken
+}
+
+/** not reactable!! use this in .tsx|.ts  */
+export function getCurrentToken(input?: UseTokenParam): Token | undefined {
+  const tokens = shuck_tokens()
+  const inputParam = shrinkFn(input)
+  if (isString(inputParam)) {
+    const mint = inputParam
+    return get(tokens, mint)
+  } else {
+    const token = inputParam
+    return token
+  }
+}
+
 // 🔥already in fnkit
 /**
  *  shallow clone like {...obj}, but don't access it's getter
@@ -63,41 +95,3 @@ function cloneObject<T extends AnyObj>(original: T): T {
     },
   ) as T
 }
-
-// /** 🤔is it neccessory? just useTokenInfo is ok? */
-// type RawTokenInfo = {
-//   token: Token
-//   isTokenLoaded: boolean
-// }
-// /** 🤔is it neccessory? just useTokenInfo is ok? */
-// function tokenInfo(mint: Mint): RawTokenInfo
-// function tokenInfo(token: Token): RawTokenInfo
-// function tokenInfo(v: Mint | Token): RawTokenInfo {
-//   return untrack(() => {
-//     const isMint = isString(v)
-//     if (isMint) {
-//       const rv = deeplyDeAccessify(useToken({ mint: v }))
-//       return rv
-//     } else {
-//       return deeplyDeAccessify(useToken({ token: v }))
-//     }
-//   })
-// }
-
-// /**
-//  * recursively deAccessify object
-//  * @param o target object
-//  * @param controller [optional] controller
-//  * @returns a pure object
-//  */
-// function deeplyDeAccessify<T extends object>(o: T, controller?: object): { [K in keyof T]: DeAccessify<T[K]> } {
-//   const result = {}
-//   for (const [k, v] of Object.entries(o)) {
-//     if (isObject(v)) {
-//       result[k] = deeplyDeAccessify(v, controller)
-//     } else {
-//       result[k] = deAccessify(v, controller)
-//     }
-//   }
-//   return mergeObjects(o, result) as { [K in keyof T]: DeAccessify<T[K]> }
-// }

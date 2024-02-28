@@ -12,7 +12,7 @@ import {
   icssCyberpenkBorder
 } from '@edsolater/pivkit'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import { useToken } from '../stores/data/dataHooks/useToken'
+import { useToken } from '../stores/data/structures/handleToken'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../stores/data/portActions/txSwap_main'
 import {
