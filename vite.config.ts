@@ -26,9 +26,9 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  // resolve: {
-  //   conditions: ['development', 'browser'],
-  // },
+  resolve: {
+    conditions: ['development', 'browser'],
+  },
   define: {
     'process.env': {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
