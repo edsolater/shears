@@ -3,6 +3,7 @@
 
 import { defineConfig } from 'vite'
 import solidPlugin from 'vite-plugin-solid'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
   optimizeDeps: {
@@ -10,6 +11,7 @@ export default defineConfig({
   },
   plugins: [
     solidPlugin(),
+    nodePolyfills(),
     // your plugins,
     // https://github.com/vitejs/vite/issues/3033#issuecomment-1360691044
     {
@@ -26,9 +28,9 @@ export default defineConfig({
   server: {
     port: 3000,
   },
-  resolve: {
-    conditions: ['development', 'browser'],
-  },
+  // resolve: {
+  //   conditions: ['development', 'browser'],
+  // },
   define: {
     'process.env': {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),

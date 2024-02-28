@@ -64,6 +64,7 @@
     "goober": "^2.1.14",
     "immer": "^10.0.3",
     "rollup-plugin-node-polyfills": "^0.2.1",
-    "solid-js": "^1.8.15"
+    "solid-js": "^1.8.15",
+    "vite-plugin-node-polyfills": "^0.21.0"
   }
 }
