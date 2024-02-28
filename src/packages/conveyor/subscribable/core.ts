@@ -2,11 +2,13 @@ import {
   AnyFn,
   MayArray,
   MayPromise,
+  WeakerMap,
+  WeakerSet,
   flap,
   isFunction,
   isObjectLike,
   isPromise,
-  shrinkFn
+  shrinkFn,
 } from '@edsolater/fnkit'
 
 const subscribableTag = Symbol('subscribable')
@@ -47,8 +49,10 @@ export function createSubscribable<T>(
   defaultValue?: T | (() => T),
   options?: { subscribeFns?: MayArray<SubscribeFn<T>> },
 ): Subscribable<T | undefined> {
-  const subscribeFnsStore = new Set<SubscribeFn<T>>(options?.subscribeFns ? flap(options.subscribeFns) : undefined)
-  const cleanFnsStore = new Map<SubscribeFn<T>, AnyFn>()
+  const subscribeFnsStore = new WeakerSet<SubscribeFn<T>>(
+    options?.subscribeFns ? flap(options.subscribeFns) : undefined,
+  )
+  const cleanFnsStore = new WeakerMap<SubscribeFn<T>, AnyFn>()
 
   let innerValue = shrinkFn(defaultValue) as T | undefined
 
