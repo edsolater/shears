@@ -1,7 +1,13 @@
-import { MayFn, WeakerSet, asyncInvoke } from '@edsolater/fnkit'
-import { Subscribable, createSubscribable, isSubscribable } from '../subscribable/core'
-import { ShuckOption, isShuckOption } from './shuckOption'
-import { TaskRunner } from './task'
+import {
+  WeakerSet,
+  asyncInvoke,
+  createSubscribable,
+  isSubscribable,
+  type MayFn,
+  type Subscribable,
+} from '@edsolater/fnkit'
+import { isShuckOption, type ShuckOption } from './shuckOption'
+import { type TaskRunner } from './task'
 
 export const shuckTag = Symbol('shuckTag')
 export const shuckOptionTag = Symbol('shuckOptionTag')
