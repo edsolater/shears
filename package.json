@@ -63,6 +63,7 @@
     "decimal.js": "^10.4.3",
     "goober": "^2.1.14",
     "immer": "^10.0.3",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "solid-js": "^1.8.15"
   }
 }
