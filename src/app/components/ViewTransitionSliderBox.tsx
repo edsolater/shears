@@ -1,6 +1,5 @@
-import { Box, type KitProps, createDomRef, useKitProps } from '@edsolater/pivkit'
+import { Box, createDomRef, useKitProps, type KitProps } from '@edsolater/pivkit'
 import { createEffect, on } from 'solid-js'
-import { Group } from '../../packages/pivkit'
 
 export type ViewTransitionSliderBoxProps = {
   /** change this will cause view transition */
@@ -10,6 +9,7 @@ export type ViewTransitionSliderBoxProps = {
 
 export type ViewTransitionSliderBoxKitProps = KitProps<ViewTransitionSliderBoxProps>
 
+// 🔥already in pivkit
 export function ViewTransitionSliderBox(kitProps: ViewTransitionSliderBoxKitProps) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ViewTransitionSliderBox' })
 
@@ -35,7 +35,6 @@ export function ViewTransitionSliderBox(kitProps: ViewTransitionSliderBoxKitProp
         const toNextIndex = prevContentIndex != null && contentIndex != null && prevContentIndex < contentIndex
         const toPrevIndex = prevContentIndex != null && contentIndex != null && prevContentIndex > contentIndex
         if (toNextIndex) {
-          console.log('newClonedNode: ', newClonedNode)
           prevBox?.appendChild(newClonedNode)
         }
         if (toPrevIndex) {
