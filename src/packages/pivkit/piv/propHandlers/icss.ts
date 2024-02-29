@@ -44,11 +44,11 @@ type TaggedICSS<T extends AnyFn> = ConfigableFunction<T> & {
 export function injectRuleToGlobal(rule: ICSS) {}
 export function createICSS<T extends RuleCreatorFn>(
   rule: T,
-  options?: { name?: string; defaultSettings?: Partial<AnyObj>; globalSyle?: ICSS }
+  options?: { name?: string; defaultSettings?: Partial<AnyObj>; globalSyle?: ICSS },
 ): TaggedICSS<any> {
   const factory = createConfigableFunction(
     (settings?: AnyObj) => rule(settings),
-    options?.defaultSettings
+    options?.defaultSettings,
   ) as unknown as TaggedICSS<T>
   Reflect.set(factory, isTaggedICSSSybol, true)
   Reflect.set(factory, toICSSSymbol, (...args: any[]) => invokeTaggedICSS(factory, ...args))
@@ -69,25 +69,39 @@ function invokeTaggedICSS<T extends RuleCreatorFn>(v: TaggedICSS<T>, params?: An
 /** for piv to parse icss props */
 export function handleICSSProps<Controller extends ValidController | unknown = unknown>(
   cssProp: ICSS<Controller>,
-  controller: Controller = {} as Controller
+  controller: Controller = {} as Controller,
 ) {
-  const cssObjList = flapDeep(cssProp)
-    .map((i) => {
-      const fn = isTaggedICSS(i) ? invokeTaggedICSS(i as any) : i
-      return shrinkFn(fn, [controller])
-    })
-    .filter((i) => isString(i) || (isObject(i) && getKeys(i).length > 0)) as (CSSObject | string)[]
-  const classes = cssObjList.map((i) => (isString(i) ? i : css(i)))
-  return classes.join(' ')
+  let outputClassName = ''
+  for (const i of flapDeep(cssProp)) {
+    const fn = isTaggedICSS(i) ? invokeTaggedICSS(i as any) : i
+    const shrinked = shrinkFn(fn, [controller])
+    if (!shrinked || (!isString(shrinked) && !isObject(shrinked))) continue
+
+    const className = isString(shrinked) ? shrinked : css(shrinked as any)
+    outputClassName += (outputClassName ? ' ' : '') + className
+  }
+
+  return outputClassName
+}
+
+/**
+ * ICSS => string(class-name)
+ * you can parse icss not in component-show-time to speed up
+ */
+export function parseICSSToClassName<Controller extends ValidController | unknown = unknown>(
+  icss: ICSS<Controller>,
+  controller?: Controller,
+) {
+  return handleICSSProps(icss, controller)
 }
 
 export function compressICSSToObj<Controller extends ValidController | unknown = unknown>(
-  icss: ICSS<Controller>
+  icss: ICSS<Controller>,
 ): ICSSObject<Controller> {
   return (controller: Controller) => {
     const cssObjList = filter(
       flap(icss).map((i) => shrinkFn(i, [controller])),
-      isObject
+      isObject,
     ) as ICSSObject<Controller>[]
     const l = cssObjList.reduce((acc, cur) => mergeICSSObject<Controller>(acc, cur), {} as ICSSObject<Controller>)
     return shrinkFn(l, [controller])
@@ -100,6 +114,6 @@ function mergeICSSObject<Controller extends ValidController | unknown = unknown>
   return (controller: Controller) =>
     mergeObjectsWithConfigs(
       icssEs.map((ic) => shrinkFn(ic, [controller])),
-      ({ valueA: v1, valueB: v2 }) => v2 ?? v1
+      ({ valueA: v1, valueB: v2 }) => v2 ?? v1,
     )
 }

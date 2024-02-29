@@ -9,6 +9,9 @@ import {
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
+import { parseICSSToClassName } from '../../packages/pivkit'
+
+const databaseItemFacePartTextDetailInnerStyle = parseICSSToClassName({ width: 'fit-content' })
 
 export function DatabaseItemFacePartTextDetail(
   kitProps: KitProps<{ onResize?({ entry, el }): void; name: string; value?: any }>,
@@ -19,7 +22,7 @@ export function DatabaseItemFacePartTextDetail(
   })
   return (
     <Box shadowProps={shadowProps}>
-      <Box class={'itemInnerBox'} domRef={resizeRef} icss={{ width: 'fit-content' }}>
+      <Box class={'itemInnerBox'} domRef={resizeRef} icss={databaseItemFacePartTextDetailInnerStyle}>
         {props.value || '--'}
       </Box>
     </Box>

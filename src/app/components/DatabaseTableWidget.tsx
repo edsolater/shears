@@ -28,7 +28,8 @@ import {
   Loop,
   icssItemRowGrid,
   icssThreeSlotGrid,
-  type ListKitProps
+  type ListKitProps,
+  parseICSSToClassName
 } from '../../packages/pivkit'
 import { DatabaseItemFacePartTextDetail } from '../pages/pool'
 import { colors } from '../theme/colors'
@@ -204,6 +205,15 @@ function ItemStarIcon() {
   )
 }
 
+const databaseTableRowCollapseFaceStyle = parseICSSToClassName([
+  {
+    paddingBlock: '20px',
+    paddingInline: '16px',
+    background: colors.listItemBg,
+    transition: 'all 150ms',
+  },
+])
+
 export function DatabaseTableItemCollapseFace<T>(
   kitProps: KitProps<{ key: string; item: T; tabelItemRowConfig: TabelCellConfigs<T> }>,
 ) {
@@ -213,14 +223,7 @@ export function DatabaseTableItemCollapseFace<T>(
   return (
     <Row
       shadowProps={shadowProps}
-      icss={[
-        {
-          paddingBlock: '20px',
-          paddingInline: '16px',
-          background: colors.listItemBg,
-          transition: 'all 150ms',
-        },
-      ]}
+      icss={databaseTableRowCollapseFaceStyle}
     >
       <Box icss={{ width: '24px', marginRight: '8px' }}>
         <ItemStarIcon />

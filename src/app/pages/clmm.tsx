@@ -2,7 +2,7 @@ import { count, isNumberish, toFormattedNumber, type Numberish, type NumberishFo
 import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect, onMount } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
-import { CollapseBox, Loop, Row, Tab, TabList, Tabs } from '../../packages/pivkit'
+import { CollapseBox, Loop, Row, Tab, TabList, Tabs, parseICSSToClassName } from '../../packages/pivkit'
 import {
   DatabaseTableItemCollapseContent,
   DatabaseTableItemCollapseFace,
@@ -92,27 +92,40 @@ export default function ClmmsPage() {
       items={clmmInfos}
       renderItem={(item, idx) => {
         console.log('idx: ', idx())
-        return (
-          <Box icss={{ paddingBlock: '4px' }}>
-            <CollapseBox
-              icss={{
-                borderRadius: '20px',
-                overflow: 'hidden',
-              }}
-              // need to render multiple times to get the correct height, why not let it be a web component?
-              renderFace={
-                <DatabaseTableItemCollapseFace key={item.id} item={item} tabelItemRowConfig={tabelCellConfigs} />
-              }
-              renderContent={<DatabaseTableItemCollapseContent item={item} tabelItemRowConfig={tabelCellConfigs} />}
-            />
-          </Box>
-        )
+        return <ClmmItemRow item={item} tabelCellConfigs={tabelCellConfigs} />
       }}
       getKey={(i) => i.id}
       tabelItemRowConfig={tabelCellConfigs}
       TopMiddle={<ClmmPageTabBlock />}
       TopRight={<ClmmPageActionHandlersBlock />}
     />
+  )
+}
+
+const clmmItemRowClassName = parseICSSToClassName({ paddingBlock: '4px' })
+const clmmItemRowCollapseClassName = parseICSSToClassName({
+  borderRadius: '20px',
+  overflow: 'hidden',
+})
+
+function ClmmItemRow(props: { item: ClmmInfo; tabelCellConfigs: TabelCellConfigs<ClmmInfo> }) {
+  return (
+    <Box icss={clmmItemRowClassName} class='ClmmItemRow'>
+      <CollapseBox
+        icss={clmmItemRowCollapseClassName}
+        // need to render multiple times to get the correct height, why not let it be a web component?
+        renderFace={
+          <DatabaseTableItemCollapseFace
+            key={props.item.id}
+            item={props.item}
+            tabelItemRowConfig={props.tabelCellConfigs}
+          />
+        }
+        renderContent={
+          <DatabaseTableItemCollapseContent item={props.item} tabelItemRowConfig={props.tabelCellConfigs} />
+        }
+      />
+    </Box>
   )
 }
 
