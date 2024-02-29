@@ -2,8 +2,8 @@ import { Box, Piv } from '@edsolater/pivkit'
 import { Link } from '../components/Link'
 import { shuck_isTokenListLoading, shuck_tokens, store } from '../stores/data/store'
 import { useWalletStore } from '../stores/wallet/store'
-import { count } from '../../packages/fnkit/itemMethods'
 import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
+import { count } from '@edsolater/fnkit'
 
 export default function HomePage() {
   const walletStore = useWalletStore()

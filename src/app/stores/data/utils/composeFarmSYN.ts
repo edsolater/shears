@@ -1,10 +1,9 @@
-import { createSubscribableFromPromise, listToJSMap, map } from '@edsolater/fnkit'
+import { createSubscribableFromPromise, listToJSMap, map, slice, toList, toRecord } from '@edsolater/fnkit'
 import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
 import { abortableAsyncTask } from '../../../../packages/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { mul } from '../../../utils/dataStructures/basicMath/operations'
-import { slice, toArray, toCollectionObject } from '../../../../packages/fnkit/itemMethods'
 import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
 import { FarmInfo } from '../types/farm'
 import { fetchFarmJsonInfo } from './fetchFarmJson'
@@ -30,7 +29,7 @@ export function composeFarmSYN(query: ComposeFarmSYNInfoQuery) {
       if (!farmJsonInfos) return
       const paramOptions: FarmFetchMultipleInfoParams = {
         connection: getConnection(query.rpcUrl),
-        pools: toArray(farmJsonInfos).map(jsonInfo2PoolKeys),
+        pools: toList(farmJsonInfos).map(jsonInfo2PoolKeys),
         owner: toPub(query.owner),
         config: { batchRequest: true, commitment: 'confirmed' },
         chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet
@@ -116,7 +115,7 @@ function hydrateFarmSYN({
   })
 
   const indexAccessList = slice(
-    toCollectionObject(rawList, (i) => i.id),
+    toRecord(rawList, (i) => i.id),
     20,
   )
   return indexAccessList

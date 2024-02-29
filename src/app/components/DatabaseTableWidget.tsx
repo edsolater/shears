@@ -20,9 +20,9 @@ import {
   icssSubContent,
   useElementSize,
   useKitProps,
+  type ItemList,
 } from '@edsolater/pivkit'
 import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
-import { ItemList } from '../../packages/fnkit/itemMethods'
 import {
   List,
   Loop,

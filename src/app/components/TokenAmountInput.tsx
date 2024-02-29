@@ -1,4 +1,4 @@
-import { Numberish, isStringNumber } from '@edsolater/fnkit'
+import { Numberish, isStringNumber, slice } from '@edsolater/fnkit'
 import {
   Box,
   BoxProps,
@@ -23,12 +23,11 @@ import {
   plugin_modalTitle,
   useKitProps,
 } from '@edsolater/pivkit'
-import { shuck_tokens, store } from '../stores/data/store'
+import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
+import { shuck_tokens } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
 import { toString } from '../utils/dataStructures/basicMath/format'
-import { slice } from '../../packages/fnkit/itemMethods'
 import { TokenAvatar } from './TokenAvatar'
-import { useShuck, useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
 
 export interface TokenAmountInputBoxController {}
 

@@ -1,7 +1,7 @@
 import { listToMap } from '@edsolater/fnkit'
 import { Clmm as SDK_Clmm } from '@raydium-io/raydium-sdk'
 import type { Connection } from '@solana/web3.js'
-import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
+import { toList } from '@edsolater/fnkit'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import type { ClmmJsonInfo, ClmmSDKInfo } from '../types/clmm'
 

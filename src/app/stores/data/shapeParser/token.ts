@@ -1,7 +1,7 @@
 import { isString, shrinkFn, type Subscribable } from '@edsolater/fnkit'
 import type { Accessify } from '@edsolater/pivkit'
 import { createStore } from 'solid-js/store'
-import { get } from '../../../../packages/fnkit/itemMethods'
+import { get } from '@edsolater/fnkit'
 import { defaultToken, errorToken, loadingToken, type Token } from '../../../utils/dataStructures/Token'
 import type { Mint } from '../../../utils/dataStructures/type'
 import { shuck_isTokenListLoading, shuck_isTokenListLoadingError, shuck_tokens } from '../store'

@@ -1,4 +1,4 @@
-import { toList } from '../../../../packages/pivkit/fnkit/itemMethods'
+import { toList } from '@edsolater/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { workerCommands } from '../../../utils/webworker/type'

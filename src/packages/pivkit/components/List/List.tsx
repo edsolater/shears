@@ -1,4 +1,4 @@
-import { MayFn, shrinkFn } from '@edsolater/fnkit'
+import { MayFn, shrinkFn, toList, type ItemList } from '@edsolater/fnkit'
 import {
   Accessor,
   For,
@@ -14,20 +14,11 @@ import {
 import { KitProps, useKitProps } from '../../createKit'
 import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
 import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
-import { toList } from '../../fnkit/itemMethods'
 import { createAsyncMemo } from '../../hooks/createAsyncMemo'
 import { createRef } from '../../hooks/createRef'
 import { Piv } from '../../piv'
 import { ListItem } from './ListItem'
 
-export type ItemList<T> =
-  | Map<any, T>
-  | Set<T>
-  | T[]
-  | Record<keyof any, T>
-  | IterableIterator<T>
-  | Iterable<T>
-  | undefined
 export interface ListController {
   resetRenderCount(): void
 }

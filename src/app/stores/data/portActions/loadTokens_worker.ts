@@ -1,4 +1,4 @@
-import { toCollectionObject } from '../../../../packages/fnkit/itemMethods'
+import { toRecord } from '@edsolater/fnkit'
 import { SOLToken, type Token } from '../../../utils/dataStructures/Token'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { fetchTokenJsonFile } from '../utils/fetchTokenJson'
@@ -14,7 +14,7 @@ export function loadTokensInWorker(transformers: PortUtils) {
         const availableTokens = res?.tokens
           .filter((t) => !res?.blacklist.includes(t.mint) || t.name === 'Native Solana')
           .concat(SOLToken) // replace api mistakely add SOL
-        return toCollectionObject(availableTokens, (t) => t.mint) satisfies Record<string, Token>
+        return toRecord(availableTokens, (t) => t.mint) satisfies Record<string, Token>
       })
       .then(sender.post)
   })

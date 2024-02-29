@@ -1,4 +1,4 @@
-import { count, toArray } from '@edsolater/fnkit'
+import { count, toList } from '@edsolater/fnkit'
 import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
 import { appApiUrls } from '../../../utils/common/config'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
@@ -13,7 +13,7 @@ export function loadTokenPrice() {
   const { sender, receiver } = getMessagePort(workerCommands['get raydium token prices'])
   sender.post({
     url: appApiUrls.price,
-    tokens: toArray(allTokens()),
+    tokens: toList(allTokens()),
   })
   receiver.subscribe((workerResult) => {
     setStore({ isTokenPriceLoading: false, prices: workerResult.prices })
