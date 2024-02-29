@@ -1,7 +1,6 @@
 import { toList } from '@edsolater/fnkit'
 import { getConnection } from '../../../utils/common/getConnection'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
-import { workerCommands } from '../../../utils/webworker/type'
 import { composeClmmInfos } from '../utils/composeClmmInfo'
 import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
 import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
@@ -9,7 +8,7 @@ import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
 type QueryParams = { force?: boolean; rpcUrl: string }
 
 export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
-  const port = getMessagePort(workerCommands['fetch raydium clmm infos'])
+  const port = getMessagePort('fetch raydium clmm info')
   console.log('[worker] start loading clmm infos')
   port.receiveMessage((query: QueryParams) => {
     const apiClmmInfos = fetchClmmJsonInfo()

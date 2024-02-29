@@ -2,22 +2,28 @@ import { count, isNumberish, toFormattedNumber, type Numberish, type NumberishFo
 import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
 import { createEffect, onMount } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
-import { CollapseBox, Loop, Row, Tab, TabList, Tabs, parseICSSToClassName } from '../../packages/pivkit'
+import { Loop, Row, Tab, TabList, Tabs, parseICSSToClassName } from '../../packages/pivkit'
 import {
-  DatabaseTableItemCollapseContent,
-  DatabaseTableItemCollapseFace,
-  DatabaseTableList,
-  type TabelCellConfigs,
-} from '../components/DatabaseTableWidget'
+  DatabaseTable,
+  type DatabaseTabelItemCollapseContentRenderConfig,
+  type DatabaseTabelItemCollapseFaceRenderConfig,
+  type TabelHeaderConfigs,
+} from '../components/DatabaseTable'
 import { TokenAvatar } from '../components/TokenAvatar'
 import { TokenAvatarPair } from '../components/TokenAvatarPair'
 import { Token } from '../components/TokenProps'
 import { TokenSymbolPair } from '../components/TokenSymbolPair'
-import { useToken } from '../stores/data/shapeParser/token'
 import { loadClmmInfos } from '../stores/data/portActions/loadClmmInfos_main'
+import { useToken } from '../stores/data/shapeParser/token'
 import { allClmmTabs, createStorePropertySignal, shuck_clmmInfos } from '../stores/data/store'
 import type { ClmmInfo } from '../stores/data/types/clmm'
 import type { PairInfo } from '../stores/data/types/pairs'
+
+export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: '4px' })
+export const icssClmmItemRowCollapse = parseICSSToClassName({
+  borderRadius: '20px',
+  overflow: 'hidden',
+})
 
 export function ClmmItemFaceDetailInfoBoard(kitProps: KitProps<{ name: string; value?: any }>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'ClmmItemFaceDetailInfoBoard' })
@@ -48,11 +54,27 @@ export default function ClmmsPage() {
     }
   })
   const t = useToken()
-  const tabelCellConfigs: TabelCellConfigs<ClmmInfo> = [
+  const headerConfig: TabelHeaderConfigs<ClmmInfo> = [
     {
       name: 'Pool',
-      in: 'face',
-      get: (i) => (
+    },
+    {
+      name: 'Liquidity',
+    },
+    {
+      name: 'Volume(24h)',
+    },
+    {
+      name: 'Fees(24h)',
+    },
+    {
+      name: 'Rewards',
+    },
+  ]
+  const itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<ClmmInfo> = [
+    {
+      name: 'Pool',
+      render: (i) => (
         <Row icss={{ alignItems: 'center' }}>
           <TokenAvatarPair token1={i.base} token2={i.quote} />
           <TokenSymbolPair icss={{ fontWeight: 500 }} token1={i.base} token2={i.quote} />
@@ -61,71 +83,55 @@ export default function ClmmsPage() {
     },
     {
       name: 'Liquidity',
-      in: 'face',
-      get: (i) => <Row>{toRenderable(i.liquidity, { shortExpression: true, decimals: 0 })}</Row>,
+      render: (i) => <Row>{toRenderable(i.liquidity, { shortExpression: true, decimals: 0 })}</Row>,
     },
     {
       name: 'Volume(24h)',
-      in: 'face',
-      get: (i) => <Row>{toRenderable(i.volume?.['24h'], { shortExpression: true, decimals: 0 })}</Row>,
+      render: (i) => <Row>{toRenderable(i.volume?.['24h'], { shortExpression: true, decimals: 0 })}</Row>,
     },
     {
       name: 'Fees(24h)',
-      in: 'face',
-      get: (i) => <Row>{toRenderable(i.volumeFee?.['24h'], { shortExpression: true, decimals: 0 })}</Row>,
+      render: (i) => <Row>{toRenderable(i.volumeFee?.['24h'], { shortExpression: true, decimals: 0 })}</Row>,
     },
     {
       name: 'Rewards',
-      in: 'face',
-      get: (i) => (
+      render: (i) => (
         <Row icss={{ gap: '2px' }}>
           <Loop of={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} size={'sm'} />}</Loop>
         </Row>
       ),
     },
   ]
+  const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
+    render: (i) => (
+      <Row icss={{ alignItems: 'center' }}>
+        <Loop of={i.userPositionAccounts}>
+          {(account) => (
+            <Row icss={{ gap: '2px' }}>
+              <Box icss={{ border: 'solid', borderRadius: '12px' }}>
+                <Text>{toRenderable(account.priceLower)}-{toRenderable(account.priceUpper)}</Text>
+              </Box>
+            </Row>
+          )}
+        </Loop>
+        <TokenAvatarPair token1={i.base} token2={i.quote} />
+        <TokenSymbolPair icss={{ fontWeight: 500 }} token1={i.base} token2={i.quote} />
+      </Row>
+    ),
+  }
   return (
-    <DatabaseTableList
+    <DatabaseTable
       title='Concentrated Pools'
       subtitle='Concentrated Pools'
       subtitleDescription='Concentrate liquidity for increased capital efficiency'
       items={clmmInfos}
-      renderItem={(item, idx) => {
-        console.log('idx: ', idx())
-        return <ClmmItemRow item={item} tabelCellConfigs={tabelCellConfigs} />
-      }}
       getKey={(i) => i.id}
-      tabelItemRowConfig={tabelCellConfigs}
+      headerConfig={headerConfig}
+      itemFaceConfig={itemFaceConfig}
+      itemContentConfig={itemContentConfig}
       TopMiddle={<ClmmPageTabBlock />}
       TopRight={<ClmmPageActionHandlersBlock />}
     />
-  )
-}
-
-const clmmItemRowClassName = parseICSSToClassName({ paddingBlock: '4px' })
-const clmmItemRowCollapseClassName = parseICSSToClassName({
-  borderRadius: '20px',
-  overflow: 'hidden',
-})
-
-function ClmmItemRow(props: { item: ClmmInfo; tabelCellConfigs: TabelCellConfigs<ClmmInfo> }) {
-  return (
-    <Box icss={clmmItemRowClassName} class='ClmmItemRow'>
-      <CollapseBox
-        icss={clmmItemRowCollapseClassName}
-        // need to render multiple times to get the correct height, why not let it be a web component?
-        renderFace={
-          <DatabaseTableItemCollapseFace
-            key={props.item.id}
-            item={props.item}
-            tabelItemRowConfig={props.tabelCellConfigs}
-          />
-        }
-        renderContent={
-          <DatabaseTableItemCollapseContent item={props.item} tabelItemRowConfig={props.tabelCellConfigs} />
-        }
-      />
-    </Box>
   )
 }
 
@@ -143,11 +149,11 @@ function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
 
-function toRenderable(v: Numberish, options?: NumberishFormatOptions): string
-function toRenderable(v: Numberish | undefined, options?: NumberishFormatOptions): string | undefined
-function toRenderable(v: any, options?: any): string
-function toRenderable(v: any, options?: any): string | undefined
-function toRenderable(v: any, options?: any): string | undefined {
+export function toRenderable(v: Numberish, options?: NumberishFormatOptions): string
+export function toRenderable(v: Numberish | undefined, options?: NumberishFormatOptions): string | undefined
+export function toRenderable(v: any, options?: any): string
+export function toRenderable(v: any, options?: any): string | undefined
+export function toRenderable(v: any, options?: any): string | undefined {
   if (v == null) return undefined
   if (isNumberish(v)) {
     try {

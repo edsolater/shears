@@ -1,15 +1,13 @@
-import { Box, CollapseBox, KitProps, Row, useKitProps } from '@edsolater/pivkit'
+import { Box, KitProps, Row, useKitProps } from '@edsolater/pivkit'
+import { parseICSSToClassName } from '../../packages/pivkit'
 import { useElementResize } from '../../packages/pivkit/domkit/hooks/useElementResize'
 import {
-  DatabaseTableItemCollapseContent,
-  DatabaseTableItemCollapseFace,
-  DatabaseTableList,
-  type TabelCellConfigs,
-} from '../components/DatabaseTableWidget'
+  DatabaseTable, type DatabaseTabelItemCollapseContentRenderConfig,
+  type DatabaseTabelItemCollapseFaceRenderConfig, type TabelHeaderConfigs
+} from '../components/DatabaseTable'
 import { Token } from '../components/TokenProps'
 import { createStorePropertySignal } from '../stores/data/store'
 import { PairInfo } from '../stores/data/types/pairs'
-import { parseICSSToClassName } from '../../packages/pivkit'
 
 const databaseItemFacePartTextDetailInnerStyle = parseICSSToClassName({ width: 'fit-content' })
 
@@ -40,11 +38,18 @@ export function DatabaseItemFacePartTokenAvatarLabel(kitProps: KitProps<{ info?:
 
 export default function PoolsPage() {
   const pairInfos = createStorePropertySignal((s) => s.pairInfos)
-  const tabelItemRowConfig: TabelCellConfigs<PairInfo> = [
+  const tabelHeaderConfig: TabelHeaderConfigs<PairInfo> = [
     {
       name: 'Pool',
-      in: 'face',
-      get: (i) => (
+    },
+    {
+      name: 'liquidity',
+    },
+  ]
+  const tabelItemRowFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<PairInfo> = [
+    {
+      name: 'Pool',
+      render: (i) => (
         <Row>
           <DatabaseItemFacePartTokenAvatarLabel info={i} />
         </Row>
@@ -52,31 +57,20 @@ export default function PoolsPage() {
     },
     {
       name: 'liquidity',
-      in: 'face',
-      get: (i) => <DatabaseItemFacePartTextDetail name='liquidity' value={i.liquidity} />,
+      render: (i) => <DatabaseItemFacePartTextDetail name='liquidity' value={i.liquidity} />,
     },
   ]
+  const tabelItemRowContentConfig: DatabaseTabelItemCollapseContentRenderConfig<PairInfo> = {
+    render: (i) => void 0,
+  }
   return (
-    <DatabaseTableList
+    <DatabaseTable
       title='Pools'
       items={pairInfos}
       getKey={(i) => i.ammId}
-      renderItem={(item) => (
-        <Box icss={{ paddingBlock: '4px' }}>
-          <CollapseBox
-            icss={{
-              borderRadius: '20px',
-              overflow: 'hidden',
-            }}
-            // need to render multiple times to get the correct height, why not let it be a web component?
-            renderFace={
-              <DatabaseTableItemCollapseFace key={item.ammId} item={item} tabelItemRowConfig={tabelItemRowConfig} />
-            }
-            renderContent={<DatabaseTableItemCollapseContent item={item} tabelItemRowConfig={tabelItemRowConfig} />}
-          />
-        </Box>
-      )}
-      tabelItemRowConfig={tabelItemRowConfig}
+      itemContentConfig={tabelItemRowContentConfig}
+      itemFaceConfig={tabelItemRowFaceConfig}
+      headerConfig={tabelHeaderConfig}
     />
   )
 }

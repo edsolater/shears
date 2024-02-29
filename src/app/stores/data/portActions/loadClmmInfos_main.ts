@@ -1,14 +1,13 @@
 import { createTask } from '../../../../packages/conveyor/smartStore/task'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
-import { workerCommands } from '../../../utils/webworker/type'
-import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_rpc, setStore } from '../store'
+import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_rpc } from '../store'
 import type { ClmmInfo } from '../types/clmm'
 
 type QueryParams = { force?: boolean; rpcUrl: string }
 type ReceiveData = Record<string, ClmmInfo>
 
 export function loadClmmInfos() {
-  const port = getMessagePort<ReceiveData, QueryParams>(workerCommands['fetch raydium clmm infos'])
+  const port = getMessagePort<ReceiveData, QueryParams>('fetch raydium clmm info')
   createTask(
     [shuck_rpc],
     () => {

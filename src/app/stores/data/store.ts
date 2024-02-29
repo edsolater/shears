@@ -73,6 +73,8 @@ globalThis.document.addEventListener('DOMContentLoaded', () => {
 })
 
 // TODO: should all state just use shuck
+// wallet
+export const shuck_owner = createShuck<string | undefined>()
 // app states
 export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
 export const shuck_isMobile = createShuck<boolean | undefined>()
