@@ -1,11 +1,11 @@
 import { assert, Numberish } from '@edsolater/fnkit'
 import { TradeV2 } from '@raydium-io/raydium-sdk'
 import { appProgramId } from '../../../utils/common/config'
-import { getConnection } from '../../../utils/common/getConnection'
+import { getConnection } from '../../../utils/dataStructures/Connection'
 import { eq } from '../../../utils/dataStructures/basicMath/compare'
 import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
 import { Token } from '../../../utils/dataStructures/Token'
-import { getOwnerTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
+import { getTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
 import { txHandler, type TxVersion } from '../../../utils/txHandler'
 import { getTxHandlerBudgetConfig } from '../../../utils/txHandler/getTxHandlerBudgetConfig'
 import { getRealSDKTxVersion } from '../../../utils/txHandler/txVersion'
@@ -46,7 +46,7 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
       console.log(1)
       const txBudgetConfig = await getTxHandlerBudgetConfig()
       console.log(2)
-      const { sdkTokenAccounts } = await getOwnerTokenAccounts({ connection, owner: toPubString(owner) })
+      const { sdkTokenAccounts } = await getTokenAccounts({ connection, owner: toPubString(owner) })
       console.log(3)
       const { innerTransactions } = await TradeV2.makeSwapInstructionSimple({
         connection,

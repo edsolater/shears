@@ -1,6 +1,6 @@
-import { count, isNumberish, toFormattedNumber, type Numberish, type NumberishFormatOptions } from '@edsolater/fnkit'
-import { Box, KitProps, Text, useKitProps } from '@edsolater/pivkit'
-import { createEffect, onMount } from 'solid-js'
+import { count } from '@edsolater/fnkit'
+import { Box, Col, KitProps, Text, useKitProps } from '@edsolater/pivkit'
+import { createEffect, onMount, type Accessor, createMemo } from 'solid-js'
 import { useShuck } from '../../packages/conveyor/solidjsAdapter/useShuck'
 import { Loop, Row, Tab, TabList, Tabs, parseICSSToClassName } from '../../packages/pivkit'
 import {
@@ -16,8 +16,10 @@ import { TokenSymbolPair } from '../components/TokenSymbolPair'
 import { loadClmmInfos } from '../stores/data/portActions/loadClmmInfos_main'
 import { useToken } from '../stores/data/shapeParser/token'
 import { allClmmTabs, createStorePropertySignal, shuck_clmmInfos } from '../stores/data/store'
-import type { ClmmInfo } from '../stores/data/types/clmm'
+import type { ClmmInfo, ClmmUserPositionAccount } from '../stores/data/types/clmm'
 import type { PairInfo } from '../stores/data/types/pairs'
+import { toRenderable } from '../utils/common/toRenderable'
+import { createStore, reconcile } from 'solid-js/store'
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: '4px' })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -104,19 +106,9 @@ export default function ClmmsPage() {
   ]
   const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
     render: (i) => (
-      <Row icss={{ alignItems: 'center' }}>
-        <Loop of={i.userPositionAccounts}>
-          {(account) => (
-            <Row icss={{ gap: '2px' }}>
-              <Box icss={{ border: 'solid', borderRadius: '12px' }}>
-                <Text>{toRenderable(account.priceLower)}-{toRenderable(account.priceUpper)}</Text>
-              </Box>
-            </Row>
-          )}
-        </Loop>
-        <TokenAvatarPair token1={i.base} token2={i.quote} />
-        <TokenSymbolPair icss={{ fontWeight: 500 }} token1={i.base} token2={i.quote} />
-      </Row>
+      <Col icss={{ alignItems: 'center' }}>
+        <Loop of={i.userPositionAccounts}>{(account) => <ClmmUserPositionAccountRow account={account} />}</Loop>
+      </Col>
     ),
   }
   return (
@@ -135,6 +127,17 @@ export default function ClmmsPage() {
   )
 }
 
+function ClmmUserPositionAccountRow(props: { account: ClmmUserPositionAccount }) {
+  const { rangeText } = useClmmUserPositionAccount(() => props.account)
+  return (
+    <Row icss={{ gap: '2px' }}>
+      <Box icss={{ borderRadius: '12px' }}>
+        <Text>{rangeText()}</Text>
+      </Box>
+    </Row>
+  )
+}
+
 function ClmmPageTabBlock(props: { className?: string }) {
   return (
     <Tabs>
@@ -149,26 +152,29 @@ function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
 
-export function toRenderable(v: Numberish, options?: NumberishFormatOptions): string
-export function toRenderable(v: Numberish | undefined, options?: NumberishFormatOptions): string | undefined
-export function toRenderable(v: any, options?: any): string
-export function toRenderable(v: any, options?: any): string | undefined
-export function toRenderable(v: any, options?: any): string | undefined {
-  if (v == null) return undefined
-  if (isNumberish(v)) {
-    try {
-      return toFormattedNumber(v, options)
-    } catch (error) {
-      console.log(error)
-      console.log('input: ', v)
-      return ''
-    }
-  }
-  // if (
-  //   isString(v) ||
-  //   (isNumber(v) && !isNaN(v)) ||
-  //   isBigInt(v) ||
-  //   (isObject(v) && ('valueOf' in v || 'toString' in v || Symbol.toPrimitive in v))
-  // )
-  return String(v)
+/**
+ * hydrate {@link ClmmUserPositionAccount} to ui used data
+ */
+function useClmmUserPositionAccount(account: Accessor<ClmmUserPositionAccount>) {
+  const userPositionAccount = createStoreFromAccessor(account)
+  const rangeText = createMemo(
+    () =>
+      `${toRenderable(userPositionAccount.priceLower, { decimals: 4 })}-${toRenderable(userPositionAccount.priceUpper, { decimals: 4 })}`,
+  )
+  return { rangeText }
+}
+
+// 🔥 already in pivkit
+/** T must is object */
+function createStoreFromAccessor<T extends object>(
+  signal: Accessor<T>,
+  options?: {
+    key: string
+  },
+) {
+  const [store, setStore] = createStore(signal())
+  createEffect(() => {
+    setStore(reconcile(signal(), { key: options?.key }))
+  })
+  return store
 }

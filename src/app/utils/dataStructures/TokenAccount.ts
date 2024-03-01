@@ -1,11 +1,11 @@
 import {
   GetTokenAccountsByOwnerConfig,
+  TokenAccount as SDK_TokenAccount,
   SPL_ACCOUNT_LAYOUT,
   Spl,
-  TokenAccount as _TokenAccount,
 } from '@raydium-io/raydium-sdk'
-import { Connection } from '@solana/web3.js'
 import { parseSDKBN } from './BN'
+import { getConnection } from './Connection'
 import toPubString, { toPub } from './Publickey'
 import { TOKEN_PROGRAM_ID } from './Token'
 
@@ -17,24 +17,28 @@ export interface TokenAccount {
   amount: bigint
   isNative: boolean // only SOL is true
 }
+export type { SDK_TokenAccount }
 
 /**
  * Converts a TokenAccount to a SDK TokenAccount.
  * @param account The TokenAccount to convert.
  * @returns The converted _TokenAccount or undefined if the publicKey is null.
  */
-export function toSDKTokenAccount(account: TokenAccount): _TokenAccount | undefined {
+export function toSDKTokenAccount(account: TokenAccount): SDK_TokenAccount | undefined {
   return account.publicKey != null ? SDKTokenAccountCache.get(toPubString(account.publicKey))?.account : undefined
 }
 
-export function toUITokenAccount(account: _TokenAccount): TokenAccount | undefined {
+export function toUITokenAccount(account: SDK_TokenAccount): TokenAccount | undefined {
   return TokenAccountCache.get(toPubString(account.pubkey))?.account ?? undefined
 }
 
 /** store token account  */
-const queriedOwner = new Map<string /* owner */, { tokenAccounts: TokenAccount[]; sdkTokenAccounts: _TokenAccount[] }>()
+const queriedOwner = new Map<
+  string /* owner */,
+  { tokenAccounts: TokenAccount[]; sdkTokenAccounts: SDK_TokenAccount[] }
+>()
 const TokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: TokenAccount }>()
-const SDKTokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: _TokenAccount }>()
+const SDKTokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: SDK_TokenAccount }>()
 
 export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
   return queriedOwner.has(owner)
@@ -44,15 +48,16 @@ export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
  * core logic
  * just relay on connection
  */
-export async function getOwnerTokenAccounts({
-  connection,
+export async function getTokenAccounts({
+  endpointUrl,
   owner,
   config,
 }: {
-  connection: Connection
+  endpointUrl: string
   owner: string
   config?: GetTokenAccountsByOwnerConfig
-}): Promise<{ tokenAccounts: TokenAccount[]; sdkTokenAccounts: _TokenAccount[] }> {
+}): Promise<{ tokenAccounts: TokenAccount[]; sdkTokenAccounts: SDK_TokenAccount[] }> {
+  const connection = getConnection(endpointUrl)
   if (ownerHasStoredTokenAccounts({ owner })) {
     return queriedOwner.get(owner)!
   } else {
@@ -66,7 +71,7 @@ export async function getOwnerTokenAccounts({
     const [solResp, tokenResp] = await Promise.all([solReq, tokenReq])
 
     const tokenAccounts: TokenAccount[] = []
-    const sdkTokenAccounts: _TokenAccount[] = []
+    const sdkTokenAccounts: SDK_TokenAccount[] = []
 
     for (const { pubkey, account } of tokenResp.value) {
       // double check layout length
@@ -91,7 +96,7 @@ export async function getOwnerTokenAccounts({
         amount: parseSDKBN(amount),
         isNative: false,
       })
-      sdkTokenAccounts.push({ pubkey, accountInfo: rawResult, programId: account.owner})
+      sdkTokenAccounts.push({ pubkey, accountInfo: rawResult, programId: account.owner })
     }
 
     tokenAccounts.push({
@@ -111,4 +116,3 @@ export async function getOwnerTokenAccounts({
   }
 }
 
-export function getTokenAccount(mint: string, owner: string) {}

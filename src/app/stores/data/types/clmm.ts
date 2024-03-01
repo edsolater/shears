@@ -123,6 +123,7 @@ export interface ClmmConfigInfo {
   description: string
 }
 
+/** only contain unHydrated data which is 'dry' */
 export interface ClmmUserPositionAccount {
   rewardInfos: {
     token: Mint | undefined

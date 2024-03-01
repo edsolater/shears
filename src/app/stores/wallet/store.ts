@@ -6,6 +6,7 @@ import { WalletAdapterInterface } from './type'
 import { connect } from './methods/connect'
 import { disconnect } from './methods/disconnect'
 import { initlyConnectPhantom } from './methods/initlyConnectPhantom'
+import { shuck_owner } from '../data/store'
 
 export interface WalletStore {
   // for extract method
@@ -35,6 +36,9 @@ export const useWalletStore = createCachedGlobalHook(() => {
   const [connected, setConnected] = createSignal(false)
   const [currentWallet, setCurrentWallet] = createSignal<WalletAdapterInterface>()
   const owner = createMemo(() => toPubString(currentWallet()?.adapter.publicKey))
+  createEffect(() => {
+    shuck_owner.set(owner())
+  })
   createEffect(initlyConnectPhantom)
   const store: WalletStore = {
     $setters: {

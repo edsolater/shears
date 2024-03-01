@@ -1,11 +1,12 @@
 import { toList } from '@edsolater/fnkit'
-import { getConnection } from '../../../utils/common/getConnection'
+import { getConnection } from '../../../utils/dataStructures/Connection'
+import { getTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { composeClmmInfos } from '../utils/composeClmmInfo'
 import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
 import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
 
-type QueryParams = { force?: boolean; rpcUrl: string }
+type QueryParams = { force?: boolean; rpcUrl: string; owner?: string }
 
 export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
   const port = getMessagePort('fetch raydium clmm info')
@@ -18,17 +19,29 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
       .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
       .then(port.postMessage)
       .catch(logError)
-    const sdkClmmInfos = apiClmmInfos.then(
-      (infos) =>
-        infos &&
-        sdkParseClmmInfos({
-          connection: getConnection(query.rpcUrl),
-          apiClmmInfos: toList(infos),
-        }),
-    )
+
+    const ownerInfo = query.owner ? getTokenAccounts({ owner: query.owner, endpointUrl: query.rpcUrl }) : undefined
+
+    const sdkClmmInfos = Promise.all([apiClmmInfos, ownerInfo]).then(([infos, ownerInfo]) => (
+      infos &&
+      sdkParseClmmInfos({
+        connection: getConnection(query.rpcUrl),
+        apiClmmInfos: toList(infos),
+        ownerInfo: ownerInfo && query.owner
+          ? {
+            owner: query.owner,
+            tokenAccounts: ownerInfo.sdkTokenAccounts,
+          }
+          : undefined,
+      })
+    ))
+
     Promise.all([apiClmmInfos, sdkClmmInfos])
       .then(log('[worker] start compose clmmInfos'))
-      .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
+      .then(([apiClmmInfos, sdkClmmInfos]) => {
+        console.log('sdkClmmInfos: ', sdkClmmInfos)
+        return composeClmmInfos(apiClmmInfos, sdkClmmInfos)
+      })
       .then(port.postMessage)
       .catch(logError)
   })

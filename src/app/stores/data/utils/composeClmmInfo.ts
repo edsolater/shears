@@ -6,6 +6,7 @@ import { toPercent } from '../../../utils/dataStructures/Percent'
 import toPubString from '../../../utils/dataStructures/Publickey'
 import type { PublicKey } from '../../../utils/dataStructures/type'
 import type { ClmmInfo, ClmmJsonInfo, ClmmRewardInfo, ClmmSDKInfo, ClmmUserPositionAccount } from '../types/clmm'
+import { toRenderable } from '../../../utils/common/toRenderable'
 
 export function composeClmmInfos(
   apiInfo: Record<PublicKey, ClmmJsonInfo>,
@@ -22,22 +23,27 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
   const currentPrice = sdkInfo && parseSDKDecimal(sdkInfo.state.currentPrice)
 
   const userPositionAccounts = sdkInfo?.positionAccount?.map((userPositionAccount) => {
+    console.log('userPositionAccount.rewardInfo: ', userPositionAccount.rewardInfos)
+    console.log('jsonInfo.rewardInfos: ', jsonInfo.rewardInfos, sdkInfo.state.rewardInfos)
     const amountBase = parseSDKBN(userPositionAccount.amountA)
     const amountQuote = parseSDKBN(userPositionAccount.amountB)
     const innerVolumeBase = mul(currentPrice!, amountBase) ?? 0
     const innerVolumeQuote = amountQuote ?? 0
     const positionPercentBase = toPercent(div(innerVolumeBase, add(innerVolumeBase, innerVolumeQuote)))
     const positionPercentQuote = toPercent(div(innerVolumeQuote, add(innerVolumeBase, innerVolumeQuote)))
+    const priceLower = parseSDKDecimal(userPositionAccount.priceLower)
+    console.log('userPositionAccount.priceLower: ', {...userPositionAccount.priceLower});
+    console.log('priceLower: ',priceLower, toRenderable(priceLower, { decimals: 6 }))
     return {
-      rewardInfos: userPositionAccount.rewardInfos.map((i, idx) => ({
-        token: jsonInfo.rewardInfos[idx].mint,
+      rewardInfos: userPositionAccount.rewardInfos.slice(0, jsonInfo.rewardInfos.length).map((i, idx) => ({
+        token: toPubString(jsonInfo.rewardInfos[idx].mint),
         penddingReward: parseSDKBN(i.pendingReward),
       })),
       liquidity: parseSDKBN(userPositionAccount.liquidity),
       inRange: checkIsInRange(sdkInfo, userPositionAccount),
       poolId: toPubString(userPositionAccount.poolId),
       nftMint: toPubString(userPositionAccount.nftMint),
-      priceLower: parseSDKDecimal(userPositionAccount.priceLower),
+      priceLower: priceLower,
       priceUpper: parseSDKDecimal(userPositionAccount.priceUpper),
       amountBase: amountBase,
       amountQuote: amountQuote,
