@@ -5,7 +5,7 @@
 import { createSmartStore } from '@edsolater/pivkit'
 import { createShuck } from '../../../packages/conveyor/smartStore/shuck'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
-import { Token } from '../../utils/dataStructures/Token'
+import { Token, type Tokens } from './token/type'
 import { Mint, Numberish, type Price } from '../../utils/dataStructures/type'
 import { TxVersion } from '../../utils/txHandler/txVersion'
 import { RPCEndpoint, availableRpcs } from './RPCEndpoint'
@@ -91,7 +91,7 @@ export const shuck_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>
 // token
 export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
 export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()
-export const shuck_tokens = createShuck<Record<Token['mint'], Token> | undefined>()
+export const shuck_tokens = createShuck<Tokens | undefined>()
 
 export const allClmmTabs = ['ALL', 'MY POOLS'] as const
 export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()

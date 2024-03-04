@@ -1,4 +1,5 @@
-import { type TokenQueryParam, getCurrentToken } from "./shapeParser/token";
+import { type TokenQueryParam } from './token/type';
+import { getCurrentToken } from './token/getCurrentToken';
 
 /**
  * check whether token is Token2022

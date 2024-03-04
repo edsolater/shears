@@ -15,7 +15,7 @@ type ColorItem = { /** ='currentColor' */ color?: ColorString; percent?: ColorPe
 export function cssColorMix(...colors: (ColorString | ColorPercent | ColorItem)[]) {
   const colorItems = getColorItems(colors)
   const colorInfoList = colorItems.map(({ color, percent }) =>
-    isColorPercent(percent) ? `${color} ${isNumber(percent) ? toPercentString(percent) : percent}` : color
+    isColorPercent(percent) ? `${color} ${isNumber(percent) ? toPercentString(percent) : percent}` : color,
   )
   return `color-mix(in srgb, ${colorInfoList.join(', ')})`
 }
@@ -76,9 +76,6 @@ function isColorItem(c: ColorPercent | ColorString | ColorItem | undefined): c i
  * @returns color-mix() string
  */
 export function cssOpacity(color: string, alpha: number) {
-  if (color.toLocaleLowerCase() === 'currentcolor') {
-    console.warn('in edge 109, currentColor is not supported in color-mix()', new Error().stack)
-  }
   return cssColorMix(color, 'transparent', 1 - alpha)
 }
 

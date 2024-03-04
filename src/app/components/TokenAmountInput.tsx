@@ -25,7 +25,7 @@ import {
 } from '@edsolater/pivkit'
 import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
 import { shuck_tokens } from '../stores/data/store'
-import { Token } from '../utils/dataStructures/Token'
+import { Token } from '../stores/data/token/type'
 import { TokenAvatar } from './TokenAvatar'
 
 export interface TokenAmountInputBoxController {}

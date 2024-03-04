@@ -8,7 +8,7 @@ export default function toUsdVolume(
     shortcut?: boolean
   } & NumberishFormatOptions,
 ) {
-  if (!amount) return '$0'
+  if (!amount) return '$--'
   return `$${
     options?.shortcut
       ? toShortcutNumber(amount, { decimals: 2, ...options })

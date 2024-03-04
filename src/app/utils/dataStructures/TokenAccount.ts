@@ -7,7 +7,7 @@ import {
 import { Connection } from '@solana/web3.js'
 import { parseSDKBN } from './BN'
 import toPubString, { toPub } from './Publickey'
-import { TOKEN_PROGRAM_ID } from './Token'
+import { TOKEN_PROGRAM_ID } from '../../stores/data/token/utils'
 import { getConnection } from './Connection'
 
 export interface TokenAccount {

@@ -1,5 +1,5 @@
 import { Box, Text, icssRow, useKitProps, type KitProps } from '@edsolater/pivkit'
-import { type TokenQueryParam } from '../stores/data/shapeParser/token'
+import { type TokenQueryParam } from '../stores/data/token/type'
 import { TokenSymbol, TokenSymbolBaseOption } from './TokenSymbol'
 
 export interface TokenSymbolPairProps extends TokenSymbolBaseOption {

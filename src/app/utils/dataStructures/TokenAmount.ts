@@ -5,7 +5,8 @@ import {
   TokenAmount as SDK_TokenAmount,
 } from '@raydium-io/raydium-sdk'
 import { parseSDKBN, toBN } from './BN'
-import { SDK_CURRENCY_SOL, TOKEN_SOL, Token, parseSDKToken } from './Token'
+import { SDK_CURRENCY_SOL, TOKEN_SOL, parseSDKToken } from '../../stores/data/token/utils'
+import { Token } from '../../stores/data/token/type'
 
 export interface TokenAmount {
   token: Token

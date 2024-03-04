@@ -1,5 +1,5 @@
 import { type KitProps, Row, useKitProps } from '@edsolater/pivkit'
-import type { Token } from '../utils/dataStructures/Token'
+import type { Token } from '../stores/data/token/type'
 import { TokenAvatar, type TokenAvatarRawProps } from './TokenAvatar'
 import { TokenSymbol, type TokenSymbolProps } from './TokenSymbol'
 

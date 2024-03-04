@@ -1,6 +1,7 @@
 import { type KitProps, Text, useKitProps } from '@edsolater/pivkit'
-import { type TokenQueryParam, useToken } from '../stores/data/shapeParser/token'
-import { Token } from '../utils/dataStructures/Token'
+import { type TokenQueryParam } from '../stores/data/token/type'
+import { useToken } from '../stores/data/token/useToken'
+import { Token } from '../stores/data/token/type'
 
 export interface TokenSymbolBaseOption {
   /** @default true */

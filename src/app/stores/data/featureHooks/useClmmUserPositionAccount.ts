@@ -1,7 +1,7 @@
 import { add, get, isPositive, mul, shakeNil, type Numberish, asyncMap } from '@edsolater/fnkit'
 import { createMemo, createSignal, on } from 'solid-js'
-import { useToken } from '../shapeParser/token'
-import { useTokenPrice } from '../shapeParser/tokenPrice'
+import { useToken } from '../token/useToken'
+import { useTokenPrice } from '../tokenPrice/useTokenPrice'
 import type { ClmmInfo, ClmmUserPositionAccount } from '../types/clmm'
 import { toRenderable } from '../../../utils/common/toRenderable'
 import type { Price, USDVolume } from '../../../utils/dataStructures/type'
@@ -13,6 +13,7 @@ import isCurrentToken2022 from '../isCurrentToken2022'
 import { getEpochInfo } from '../connection/getEpochInfo'
 import { getMultiMintInfos } from '../connection/getMultiMintInfos'
 import { getTransferFeeInfo } from '../connection/getTransferFeeInfos'
+import { usePromise } from '@edsolater/pivkit'
 
 /**
  * hooks
@@ -106,7 +107,7 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
       ),
   )
 
-  const pendingRewardAmount = createMemo(
+  const pendingRewardAmountPromise = createMemo(
     on([rewardsAmountsWithFees, feesAmountsWithFees], async () => {
       const mints = shakeNil(
         rewardsAmountsWithFees()
@@ -139,6 +140,7 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
       )
     }),
   )
+  const pendingRewardAmount = usePromise(pendingRewardAmountPromise)
 
   const isHarvestable = createMemo(() =>
     isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount() ? true : false,

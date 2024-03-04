@@ -12,7 +12,7 @@ import {
   icssCyberpenkBorder
 } from '@edsolater/pivkit'
 import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import { useToken } from '../stores/data/shapeParser/token'
+import { useToken } from '../stores/data/token/useToken'
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
 import { txSwap_main } from '../stores/data/portActions/txSwap_main'
 import {
@@ -22,7 +22,7 @@ import {
   store
 } from '../stores/data/store'
 import { useWalletOwner } from '../stores/wallet/store'
-import { Token } from '../utils/dataStructures/Token'
+import { Token } from '../stores/data/token/type'
 
 export default function SwapPage() {
   const owner = useWalletOwner()

@@ -16,7 +16,7 @@ import { TokenAvatarPair } from '../components/TokenAvatarPair'
 import { Token } from '../components/TokenProps'
 import { TokenSymbolPair } from '../components/TokenSymbolPair'
 import { loadClmmInfos } from '../stores/data/portActions/loadClmmInfos_main'
-import { useToken } from '../stores/data/shapeParser/token'
+import { useToken } from '../stores/data/token/useToken'
 import {
   allClmmTabs,
   createStorePropertySignal,
@@ -152,7 +152,6 @@ export default function ClmmsPage() {
  */
 function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUserPositionAccount }) {
   const { rangeName, userLiquidity, pendingRewardAmount } = useClmmUserPositionAccount(props.clmmInfo, props.account)
-  const pd = usePromise(pendingRewardAmount)
   return (
     <Row icss={{ gap: '20px', margin: '8px 32px' }}>
       {/* range */}
@@ -161,14 +160,14 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       </Box>
 
       {/* my liquidity */}
-      <Text>{toRenderable(props.account.liquidity, { decimals: 0 })}</Text>
+      <Text>{toRenderable(userLiquidity(), { decimals: 0 })}</Text>
 
       {/* pending yield */}
-      <Text>{toUsdVolume(pd(), { decimals: 4 })}</Text>
+      <Text>{toUsdVolume(pendingRewardAmount(), { decimals: 4 })}</Text>
 
       <Button>Harvest</Button>
-      <Button>Increase</Button>
-      <Button>Decrease</Button>
+      <Button>➕</Button>
+      <Button>➖</Button>
     </Row>
   )
 }

@@ -1,7 +1,7 @@
 import { Box, KitProps, useKitProps } from '@edsolater/pivkit'
-import { Token } from '../utils/dataStructures/Token'
+import { Token } from '../stores/data/token/type'
 import { TokenAvatar, type TokenAvatarRawProps } from './TokenAvatar'
-import type { TokenQueryParam } from '../stores/data/shapeParser/token'
+import type { TokenQueryParam } from '../stores/data/token/type'
 
 export interface TokenAvatarPairProps {
   token1?: TokenQueryParam

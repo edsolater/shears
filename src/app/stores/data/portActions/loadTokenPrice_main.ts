@@ -1,10 +1,9 @@
 import { count, toList } from '@edsolater/fnkit'
-import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
 import { appApiUrls } from '../../../utils/common/config'
 import { getMessagePort } from '../../../utils/webworker/loadWorker_main'
 import { setStore, shuck_isTokenPricesLoading, shuck_tokenPrices, shuck_tokens } from '../store'
+import type { Token } from '../token/type'
 import type { TokenPricesMap } from '../utils/fetchTokenPrices'
-import type { Token } from '../../../utils/dataStructures/Token'
 
 export function loadTokenPrice() {
   shuck_tokens.subscribe((tokens) => {

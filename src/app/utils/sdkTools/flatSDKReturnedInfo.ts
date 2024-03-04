@@ -4,7 +4,7 @@ import { FlatSDKDecimal, isSDKDecimal, parseSDKDecimal } from '../dataStructures
 import { FlatSDKFraction, isSDKFraction, parseSDKFraction } from '../dataStructures/Fraction'
 import { FlatSDKPrice, isSDKPrice, parseSDKPrice } from '../dataStructures/Price'
 import toPubString, { isPublicKey } from '../dataStructures/Publickey'
-import { FlatSDKToken, isSDKToken, parseSDKToken } from '../dataStructures/Token'
+import { FlatSDKToken, isSDKToken, parseSDKToken } from '../../stores/data/token/utils'
 import { FlatSDKTokenAmount, isSDKTokenAmount, parseSDKTokenAmount } from '../dataStructures/TokenAmount'
 
 /**
