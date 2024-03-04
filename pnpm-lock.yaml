@@ -16,11 +16,11 @@ dependencies:
     specifier: ^7.23.9
     version: 7.23.9
   '@edsolater/fnkit':
-    specifier: ^0.1.84
-    version: 0.1.84
+    specifier: ^0.1.85
+    version: 0.1.85
   '@edsolater/pivkit':
-    specifier: ^0.0.11
-    version: 0.0.11(csstype@3.1.3)(solid-js@1.8.15)
+    specifier: ^0.0.12
+    version: 0.0.12(csstype@3.1.3)(solid-js@1.8.15)
   '@raydium-io/raydium-sdk':
     specifier: 1.3.1-beta.48
     version: 1.3.1-beta.48(@solana/web3.js@1.90.0)(fastestsmallesttextencoderdecoder@1.0.22)
@@ -1428,16 +1428,16 @@ packages:
     engines: {node: '>=10.0.0'}
     dev: true
 
-  /@edsolater/fnkit@0.1.84:
-    resolution: {integrity: sha512-8BxuBYQzjn9FoIBtW0c1bpZqMxNBeo0ecv/XTRan+miE73+G2OPUUWtIGk4nS5IKjRLkImQQtn/M54w6XWpOPw==}
+  /@edsolater/fnkit@0.1.85:
+    resolution: {integrity: sha512-RMYGOBcWmjpir7wW0VVxowIcdJLEhDqsxYCVG5gq6p2+LJRNbzl3pbO9dhXMhJf0gvfgyl+kZyv7+qZPedxzDQ==}
     dev: false
 
-  /@edsolater/pivkit@0.0.11(csstype@3.1.3)(solid-js@1.8.15):
-    resolution: {integrity: sha512-w2oBrCz0MXtn03w+DiOa7wPXjwc2V2HVhQjb46FlJsQf9xpJGnnqaeZOei9etxBib3I0Dgye7E4QrmFujS+KLA==}
+  /@edsolater/pivkit@0.0.12(csstype@3.1.3)(solid-js@1.8.15):
+    resolution: {integrity: sha512-ftx4grJEXuDyeT8tO5w1u92WC4GOStZeqGlUXFRMo5CcmBJ0H3FN+ksh1y1CTYhOz8h7jrIIoj07WDGnrOKQEQ==}
     peerDependencies:
       solid-js: ^1.6.0
     dependencies:
-      '@edsolater/fnkit': 0.1.84
+      '@edsolater/fnkit': 0.1.85
       goober: 2.1.14(csstype@3.1.3)
       solid-js: 1.8.15
     transitivePeerDependencies:
