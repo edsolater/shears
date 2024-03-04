@@ -1,5 +1,5 @@
 import { count, div, toStringNumber, type Numberish } from '@edsolater/fnkit'
-import { Box, Col, KitProps, Text, useKitProps } from '@edsolater/pivkit'
+import { Box, Col, KitProps, Text, useKitProps, usePromise } from '@edsolater/pivkit'
 import { createEffect, onMount, type Accessor } from 'solid-js'
 import { createStore, reconcile } from 'solid-js/store'
 import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
@@ -151,7 +151,8 @@ export default function ClmmsPage() {
  * comopnent render clmm user position account
  */
 function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUserPositionAccount }) {
-  const { rangeName, userLiquidity } = useClmmUserPositionAccount(props.clmmInfo, props.account)
+  const { rangeName, userLiquidity, pendingRewardAmount } = useClmmUserPositionAccount(props.clmmInfo, props.account)
+  const pd = usePromise(pendingRewardAmount)
   return (
     <Row icss={{ gap: '20px', margin: '8px 32px' }}>
       {/* range */}
@@ -163,7 +164,7 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       <Text>{toRenderable(props.account.liquidity, { decimals: 0 })}</Text>
 
       {/* pending yield */}
-      <Text>{toUsdVolume(userLiquidity(), { decimals: 4 })}</Text>
+      <Text>{toUsdVolume(pd(), { decimals: 4 })}</Text>
 
       <Button>Harvest</Button>
       <Button>Increase</Button>

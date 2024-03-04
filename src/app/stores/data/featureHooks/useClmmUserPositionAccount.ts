@@ -1,4 +1,4 @@
-import { add, get, isPositive, mul, shakeNil, type Numberish } from '@edsolater/fnkit'
+import { add, get, isPositive, mul, shakeNil, type Numberish, asyncMap } from '@edsolater/fnkit'
 import { createMemo, createSignal, on } from 'solid-js'
 import { useToken } from '../shapeParser/token'
 import { useTokenPrice } from '../shapeParser/tokenPrice'
@@ -9,6 +9,10 @@ import { applyDecimal } from '../../../pages/clmm'
 import { shuck_tokenPrices, shuck_tokens } from '../store'
 import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
 import { toTokenAmount, type TokenAmount } from '../../../utils/dataStructures/TokenAmount'
+import isCurrentToken2022 from '../isCurrentToken2022'
+import { getEpochInfo } from '../connection/getEpochInfo'
+import { getMultiMintInfos } from '../connection/getMultiMintInfos'
+import { getTransferFeeInfo } from '../connection/getTransferFeeInfos'
 
 /**
  * hooks
@@ -102,44 +106,44 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
       ),
   )
 
-  // const pendingRewardAmount = createMemo(
-  //   on([rewardsAmountsWithFees, feesAmountsWithFees], async () => {
-  //     const mints = shakeNil(
-  //       rewardsAmountsWithFees()
-  //         .concat(feesAmountsWithFees())
-  //         .map((i) => i.tokenAmount?.tokenMint),
-  //     )
+  const pendingRewardAmount = createMemo(
+    on([rewardsAmountsWithFees, feesAmountsWithFees], async () => {
+      const mints = shakeNil(
+        rewardsAmountsWithFees()
+          .concat(feesAmountsWithFees())
+          .map((i) => i.tokenAmount?.token.mint),
+      )
 
-  //     const [epochInfo, mintInfos] = mints.some((m) => !isCurrentToken2022(m))
-  //       ? []
-  //       : await Promise.all([getEpochInfo(), getMultiMintInfos({ mints })])
+      const [epochInfo, mintInfos] = mints.some((m) => !isCurrentToken2022(m))
+        ? []
+        : await Promise.all([getEpochInfo(), getMultiMintInfos({ mints })])
 
-  //     const ams = await asyncMap(
-  //       rewardsAmountsWithFees().concat(feesAmountsWithFees()),
-  //       async ({ tokenAmount, ...rest }) => {
-  //         if (!tokenAmount) return
-  //         const feeInfo = await getTransferFeeInfo({
-  //           tokenAmount,
-  //           fetchedEpochInfo: epochInfo,
-  //           fetchedMints: mintInfos,
-  //         })
-  //         return { ...rest, tokenAmount: feeInfo?.pure }
-  //       },
-  //     )
-  //     return shakeNil(ams).reduce(
-  //       (acc, { tokenAmount, price }) => {
-  //         if (!tokenAmount || !price) return acc
-  //         return add(acc ?? toFraction(0), mul(tokenAmount.amount, price))
-  //       },
-  //       undefined as Numberish | undefined,
-  //     )
-  //   }),
-  // )
+      const ams = await asyncMap(
+        rewardsAmountsWithFees().concat(feesAmountsWithFees()),
+        async ({ tokenAmount, ...rest }) => {
+          if (!tokenAmount) return
+          const feeInfo = await getTransferFeeInfo({
+            tokenAmount,
+            fetchedEpochInfo: epochInfo,
+            fetchedMints: mintInfos,
+          })
+          return { ...rest, tokenAmount: feeInfo?.pure }
+        },
+      )
+      return shakeNil(ams).reduce(
+        (acc, { tokenAmount, price }) => {
+          if (!tokenAmount || !price) return acc
+          return add(acc ?? 0, mul(tokenAmount.amount, price))
+        },
+        undefined as Numberish | undefined,
+      )
+    }),
+  )
 
   const isHarvestable = createMemo(() =>
     isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount() ? true : false,
   )
-  return { rangeName, userLiquidity, hasRewardTokenAmount, isHarvestable }
+  return { rangeName, userLiquidity, pendingRewardAmount, hasRewardTokenAmount, isHarvestable }
 }
 
 /**

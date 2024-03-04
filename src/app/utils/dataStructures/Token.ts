@@ -17,6 +17,7 @@ export interface Token extends TokenBase {
   // --------- needed 🤔 computed data 😂? ----------
   extensions?: {
     coingeckoId?: string
+    version?:'TOKEN2022'
   }
   realSymbol?: string // WSOL is WSOL, SOL is SOL. For normal tokens, this property is the same as symbol
   is?:
