@@ -1,4 +1,4 @@
-import { Numberish, isStringNumber, slice } from '@edsolater/fnkit'
+import { Numberish, isStringNumber, slice, toStringNumber } from '@edsolater/fnkit'
 import {
   Box,
   BoxProps,
@@ -26,7 +26,6 @@ import {
 import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
 import { shuck_tokens } from '../stores/data/store'
 import { Token } from '../utils/dataStructures/Token'
-import { toString } from '../utils/dataStructures/basicMath/format'
 import { TokenAvatar } from './TokenAvatar'
 
 export interface TokenAmountInputBoxController {}
@@ -61,7 +60,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
     },
   })
   const [amount, setAmount] = createSyncSignal({
-    getValueFromOutside: () => (props.amount != null ? toString(props.amount) : undefined),
+    getValueFromOutside: () => (props.amount != null ? toStringNumber(props.amount) : undefined),
     onInvokeSetter: (amount) => {
       props.onAmountChange?.(amount)
     },

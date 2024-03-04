@@ -4,13 +4,18 @@ let currentRpcUrl: string | null = null
 let currentConnection: Connection | null = null
 
 // stay in worker
-export function getConnection(endpointUrl: string, commitmentOrConfig: Commitment | ConnectionConfig = 'confirmed') {
-  if (currentRpcUrl === endpointUrl && currentConnection) {
+export function getConnection(
+  endpointUrlOrConnection: string | Connection,
+  commitmentOrConfig: Commitment | ConnectionConfig = 'confirmed',
+) {
+  if (endpointUrlOrConnection instanceof Connection) {
+    return endpointUrlOrConnection
+  } else if (currentRpcUrl === endpointUrlOrConnection && currentConnection) {
     return currentConnection
   } else {
-    const newConnection = new Connection(endpointUrl, commitmentOrConfig)
+    const newConnection = new Connection(endpointUrlOrConnection, commitmentOrConfig)
     currentConnection = newConnection
-    currentRpcUrl = endpointUrl
+    currentRpcUrl = endpointUrlOrConnection
     return newConnection
   }
 }

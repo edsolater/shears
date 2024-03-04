@@ -274,8 +274,7 @@ export type DatabaseTabelItemCollapseContentRenderConfig<T> = {
   render: (item: T) => PivChild
 }
 const databaseTableItemCollapseContentStyle = parseICSSToClassName({
-  background: 'linear-gradient(126.6deg, rgba(171, 196, 255, 0.12), rgb(171 196 255 / 4%) 100%)',
-  justifyContent: 'space-between',
+  background: 'linear-gradient(126.6deg, rgba(171, 196, 255, 0.12), rgb(171 196 255 / 4%) 100%)'
 })
 
 export function DatabaseTableItemCollapseContent<T>(
@@ -283,5 +282,5 @@ export function DatabaseTableItemCollapseContent<T>(
 ) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseContent' })
   const isFavourite = () => false
-  return <Row icss={databaseTableItemCollapseContentStyle}>{props.innerConfig.render(props.item)}</Row>
+  return <Box icss={databaseTableItemCollapseContentStyle}>{props.innerConfig.render(props.item)}</Box>
 }

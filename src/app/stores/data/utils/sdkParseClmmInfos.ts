@@ -34,6 +34,7 @@ export async function sdkParseClmmInfos({
         tokenAccounts: ownerInfo.tokenAccounts,
       },
     })
+    // const sdkParsed = {}
     for (const sdk of Object.values(sdkParsed)) {
       sdkClmmInfoCache.set(toPubString(sdk.state.id), sdk)
     }

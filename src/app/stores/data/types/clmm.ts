@@ -135,8 +135,8 @@ export interface ClmmUserPositionAccount {
   nftMint: PublicKey
   priceLower: Numberish
   priceUpper: Numberish
-  amountBase?: Amount
-  amountQuote?: Amount
+  amountBaseBN?: Amount
+  amountQuoteBN?: Amount
   tokenBase?: Mint
   tokenQuote?: Mint
   leverage: number

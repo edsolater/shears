@@ -1,10 +1,10 @@
 import { Box, Text, icssRow, useKitProps, type KitProps } from '@edsolater/pivkit'
-import { type UseTokenParam } from '../stores/data/shapeParser/token'
+import { type TokenQueryParam } from '../stores/data/shapeParser/token'
 import { TokenSymbol, TokenSymbolBaseOption } from './TokenSymbol'
 
 export interface TokenSymbolPairProps extends TokenSymbolBaseOption {
-  token1?: UseTokenParam
-  token2?: UseTokenParam
+  token1?: TokenQueryParam
+  token2?: TokenQueryParam
 }
 export function TokenSymbolPair(kitProps: KitProps<TokenSymbolPairProps>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'TokenSymbol' })

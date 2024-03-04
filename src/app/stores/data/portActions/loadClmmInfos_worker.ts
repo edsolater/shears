@@ -4,7 +4,7 @@ import { getTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
 import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
 import { composeClmmInfos } from '../utils/composeClmmInfo'
 import { fetchClmmJsonInfo } from '../utils/fetchClmmJson'
-import { sdkParseClmmInfos } from '../utils/sdkParseCLMMPoolInfo'
+import { sdkParseClmmInfos } from '../utils/sdkParseClmmInfos'
 
 type QueryParams = { force?: boolean; rpcUrl: string; owner?: string }
 
@@ -20,7 +20,7 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
       .then(port.postMessage)
       .catch(logError)
 
-    const ownerInfo = query.owner ? getTokenAccounts({ owner: query.owner, endpointUrl: query.rpcUrl }) : undefined
+    const ownerInfo = query.owner ? getTokenAccounts({ owner: query.owner, connection: query.rpcUrl }) : undefined
 
     const sdkClmmInfos = Promise.all([apiClmmInfos, ownerInfo]).then(([infos, ownerInfo]) => (
       infos &&

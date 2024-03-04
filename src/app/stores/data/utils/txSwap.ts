@@ -1,11 +1,9 @@
-import { assert, Numberish } from '@edsolater/fnkit'
+import { assert, eq, Numberish } from '@edsolater/fnkit'
 import { TradeV2 } from '@raydium-io/raydium-sdk'
 import { appProgramId } from '../../../utils/common/config'
 import { getConnection } from '../../../utils/dataStructures/Connection'
-import { eq } from '../../../utils/dataStructures/basicMath/compare'
-import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
+import { toPub } from '../../../utils/dataStructures/Publickey'
 import { Token } from '../../../utils/dataStructures/Token'
-import { getTokenAccounts } from '../../../utils/dataStructures/TokenAccount'
 import { txHandler, type TxVersion } from '../../../utils/txHandler'
 import { getTxHandlerBudgetConfig } from '../../../utils/txHandler/getTxHandlerBudgetConfig'
 import { getRealSDKTxVersion } from '../../../utils/txHandler/txVersion'
@@ -41,12 +39,14 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
       owner: options.owner,
       txVersion: 'V0',
     },
-    async ({ baseUtils: { owner, connection } }) => {
+    async ({ baseUtils: { owner, connection, getSDKTokenAccounts } }) => {
       //TODO: no two fetch await
       console.log(1)
       const txBudgetConfig = await getTxHandlerBudgetConfig()
       console.log(2)
-      const { sdkTokenAccounts } = await getTokenAccounts({ connection, owner: toPubString(owner) })
+      const sdkTokenAccounts = await getSDKTokenAccounts()
+      assert(sdkTokenAccounts, "token account can't load")
+      // const { sdkTokenAccounts } = await getTokenAccounts({ connection, owner: toPubString(owner) })
       console.log(3)
       const { innerTransactions } = await TradeV2.makeSwapInstructionSimple({
         connection,

@@ -1,5 +1,5 @@
 import { type KitProps, Text, useKitProps } from '@edsolater/pivkit'
-import { type UseTokenParam, useToken } from '../stores/data/shapeParser/token'
+import { type TokenQueryParam, useToken } from '../stores/data/shapeParser/token'
 import { Token } from '../utils/dataStructures/Token'
 
 export interface TokenSymbolBaseOption {
@@ -7,7 +7,7 @@ export interface TokenSymbolBaseOption {
   wsolToSol?: boolean
 }
 export interface TokenSymbolProps extends TokenSymbolBaseOption {
-  token?: UseTokenParam
+  token?: TokenQueryParam
 }
 export function TokenSymbol(kitProps: KitProps<TokenSymbolProps>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: 'TokenSymbol' })

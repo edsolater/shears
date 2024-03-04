@@ -1,4 +1,4 @@
-import { NumberishFormatOptions, Numberish, div, parseNumberInfo, toFormattedNumber } from '@edsolater/fnkit'
+import { NumberishFormatOptions, Numberish, div, parseAnatomyNumberInfo, toFormattedNumber } from '@edsolater/fnkit'
 /**
  * it depends on 'toFixed'
  */
@@ -34,7 +34,7 @@ export function toShortcutNumber(
       ...options,
     })
   try {
-    const { int = '' } = parseNumberInfo(n)
+    const { int = '' } = parseAnatomyNumberInfo(n)
     const numberWeigth = int.length
     if (!options?.disabled && numberWeigth > 3 * 4) return `${formatFn(div(n, 1e12))}T`
     if (!options?.disabled && numberWeigth > 3 * 3) return `${formatFn(div(n, 1e9))}B`

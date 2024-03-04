@@ -1,3 +1,4 @@
+import { type ReplaceType, div, mul, type Numberish } from '@edsolater/fnkit'
 import {
   CurrencyAmount as SDK_CurrencyAmount,
   Token as SDK_Token,
@@ -5,10 +6,6 @@ import {
 } from '@raydium-io/raydium-sdk'
 import { parseSDKBN, toBN } from './BN'
 import { SDK_CURRENCY_SOL, TOKEN_SOL, Token, parseSDKToken } from './Token'
-import { mul } from './basicMath/operations'
-import { Numberish } from './type'
-import { div } from './basicMath/operations'
-import { ReplaceType } from '@edsolater/fnkit'
 
 export interface TokenAmount {
   token: Token

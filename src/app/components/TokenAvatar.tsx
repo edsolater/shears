@@ -1,8 +1,8 @@
 import { Box, Image, KitProps, useKitProps } from '@edsolater/pivkit'
-import { UseTokenParam, useToken } from '../stores/data/shapeParser/token'
+import { TokenQueryParam, useToken } from '../stores/data/shapeParser/token'
 
 export interface TokenAvatarRawProps {
-  token?: UseTokenParam
+  token?: TokenQueryParam
   /** xs: 12px | sm: 20px | smi: 24px | md: 32px | lg: 48px | 2xl: 80px | (default: md) */
   size?: 'xs' | 'sm' | 'smi' | 'md' | 'lg' | '2xl'
 }

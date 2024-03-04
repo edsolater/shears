@@ -6,7 +6,7 @@ import { defaultToken, errorToken, loadingToken, type Token } from '../../../uti
 import type { Mint } from '../../../utils/dataStructures/type'
 import { shuck_isTokenListLoading, shuck_isTokenListLoadingError, shuck_tokens } from '../store'
 
-export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
+export type TokenQueryParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint | Token>
 
 /**
  * use this in .tsx
@@ -16,7 +16,7 @@ export type UseTokenParam = Accessify<Mint> | Accessify<Token> | Accessify<Mint 
  *
  * it use solidjs's createStore to store a object data
  */
-export function useToken(input?: UseTokenParam): Token {
+export function useToken(input?: TokenQueryParam): Token {
   const outputTokenSubscribable = getToken(input)
   const [outputToken, setOutputToken] = createStore<Token>(outputTokenSubscribable())
   outputTokenSubscribable.subscribe((newToken) => {
@@ -30,7 +30,7 @@ export function useToken(input?: UseTokenParam): Token {
 /**
  * use this in .ts
  */
-export function getToken(input?: UseTokenParam): Subscribable<Token> {
+export function getToken(input?: TokenQueryParam): Subscribable<Token> {
   const inputToken = shuck_tokens.pipe((tokens) => {
     const inputParam = shrinkFn(input)
     if (isString(inputParam)) {
@@ -63,7 +63,7 @@ export function getToken(input?: UseTokenParam): Subscribable<Token> {
 }
 
 /** not reactable!! use this in .tsx|.ts  */
-export function getCurrentToken(input?: UseTokenParam): Token | undefined {
+export function getCurrentToken(input?: TokenQueryParam): Token | undefined {
   const outputTokenSubscribable = getToken(input)
   return outputTokenSubscribable()
 }

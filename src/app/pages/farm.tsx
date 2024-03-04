@@ -1,4 +1,4 @@
-import { find } from '@edsolater/fnkit'
+import { add, find, toStringNumber } from '@edsolater/fnkit'
 import { Box, CollapseBox, CollapseFace, List, Piv, createCachedGlobalHook } from '@edsolater/pivkit'
 import { For, Setter, Show, createMemo, createSignal } from 'solid-js'
 import { TokenAvatar } from '../components/TokenAvatar'
@@ -6,8 +6,6 @@ import { TokenAvatarPair } from '../components/TokenAvatarPair'
 import { store } from '../stores/data/store'
 import { FarmJSON } from '../stores/data/types/farm'
 import { getToken } from '../stores/data/utils/getToken'
-import { toString } from '../utils/dataStructures/basicMath/format'
-import { add } from '../utils/dataStructures/basicMath/operations'
 
 export interface FarmPageStates {
   // setters
@@ -87,10 +85,14 @@ function FarmList() {
                 </Piv>
 
                 {/* part 4 total apr */}
-                <Piv>{toString(info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => add(acc, r), 0))}</Piv>
+                <Piv>
+                  {toStringNumber(
+                    info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => (r ? add(acc ?? 0, r) : acc), 0),
+                  )}
+                </Piv>
 
                 {/* part 5 tvl */}
-                <Piv>{toString(info.tvl)}</Piv>
+                <Piv>{toStringNumber(info.tvl)}</Piv>
 
                 {/* <Show when={controller.isOpen}>
                     <Piv>{info.version}</Piv>
@@ -102,8 +104,8 @@ function FarmList() {
             <Piv>
               <Piv>state: {info.hasLoad.join(' ')}</Piv>
               <Show when={info.userStakedLpAmount}>
-                <Piv>deposited: {toString(info.userStakedLpAmount?.amount)}</Piv>
-                <Piv>to havest: {toString(info.userStakedLpAmount?.amount)}</Piv>
+                <Piv>deposited: {toStringNumber(info.userStakedLpAmount?.amount)}</Piv>
+                <Piv>to havest: {toStringNumber(info.userStakedLpAmount?.amount)}</Piv>
               </Show>
             </Piv>
           </CollapseBox.Content>

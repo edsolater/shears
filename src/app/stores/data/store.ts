@@ -1,8 +1,12 @@
+/************ store ************
+ * only in main thread
+ *******************************/
+
 import { createSmartStore } from '@edsolater/pivkit'
 import { createShuck } from '../../../packages/conveyor/smartStore/shuck'
 import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
 import { Token } from '../../utils/dataStructures/Token'
-import { Mint, Numberish } from '../../utils/dataStructures/type'
+import { Mint, Numberish, type Price } from '../../utils/dataStructures/type'
 import { TxVersion } from '../../utils/txHandler/txVersion'
 import { RPCEndpoint, availableRpcs } from './RPCEndpoint'
 import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
@@ -64,15 +68,18 @@ export const {
       farmJsonInfos: loadFarmJsonInfos,
       farmInfos: loadFarmSYNInfos,
       pairInfos: loadPairs,
-      prices: loadTokenPrice,
     },
   },
 )
 globalThis.document.addEventListener('DOMContentLoaded', () => {
   loadTokens()
+  loadTokenPrice()
 })
 
 // TODO: should all state just use shuck
+// token
+export const shuck_isTokenPricesLoading = createShuck<boolean | undefined>()
+export const shuck_tokenPrices = createShuck<Map<Mint, Price> | undefined>()
 // wallet
 export const shuck_owner = createShuck<string | undefined>()
 // app states

@@ -1,19 +1,13 @@
-import { mapEntry, Numberish, shakeFalsy, shakeNil } from '@edsolater/fnkit'
-import { parallelAsyncTasks } from '../../../../packages/fnkit'
-import { recordToMap } from '../../../../packages/fnkit'
+import { mapEntry, shakeFalsy, shakeNil } from '@edsolater/fnkit'
+import { parallelAsyncTasks, recordToMap } from '../../../../packages/fnkit'
 import { jFetch } from '../../../../packages/jFetch'
-import { TokenListStore } from '../types/tokenList'
+import type { Mint, Price } from '../../../utils/dataStructures/type'
+import type { TokenListStore } from '../types/tokenList'
 
-export async function fetchTokenPrices(
-  tokens: TokenListStore['tokens'],
-  raydiumUrl: string,
-): Promise<Map<string, Numberish>> {
-  type CoingeckoPriceFile = Record<
-    string /* coingeckoid */,
-    {
-      usd?: number
-    }
-  >
+export type TokenPricesMap = Map<Mint, Price>
+
+export async function fetchTokenPrices(tokens: TokenListStore['tokens'], raydiumUrl: string): Promise<TokenPricesMap> {
+  type CoingeckoPriceFile = Record<string /* coingeckoid */, { usd?: number }>
   type RaydiumPriceFile = Record<string, number>
   if (!tokens || tokens.length === 0) return new Map()
   const coingeckoIds = shakeFalsy(Array.from(tokens.values()).map((t) => t?.extensions?.coingeckoId))

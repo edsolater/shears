@@ -1,4 +1,4 @@
-import { assert } from '@edsolater/fnkit'
+import { assert, notZero, toStringNumber } from '@edsolater/fnkit'
 import { createMemo } from 'solid-js'
 import {
   Button,
@@ -23,8 +23,6 @@ import {
 } from '../stores/data/store'
 import { useWalletOwner } from '../stores/wallet/store'
 import { Token } from '../utils/dataStructures/Token'
-import { notZero } from '../utils/dataStructures/basicMath/compare'
-import { toString } from '../utils/dataStructures/basicMath/format'
 
 export default function SwapPage() {
   const owner = useWalletOwner()
@@ -42,10 +40,10 @@ export default function SwapPage() {
   const setAmount1 = createStorePropertySetter((s) => s.swapInputTokenAmount1)
   const setAmount2 = createStorePropertySetter((s) => s.swapInputTokenAmount2)
   const tokenAmount1 = createMemo(() =>
-    amount1() ? toString(amount1(), { decimalLength: token1.decimals }) : undefined,
+    amount1() ? toStringNumber(amount1(), { decimals: token1.decimals }) : undefined,
   )
   const tokenAmount2 = createMemo(() =>
-    amount2() ? toString(amount2(), { decimalLength: token2.decimals }) : undefined,
+    amount2() ? toStringNumber(amount2(), { decimals: token2.decimals }) : undefined,
   )
 
   useSwapAmountCalculatorEffect()

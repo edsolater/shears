@@ -1,14 +1,14 @@
-import { Numberish as Fnkit_Numberish } from '@edsolater/fnkit'
+import { Numberish as Fnkit_Numberish, Fraction as Fnkit_Fraction } from '@edsolater/fnkit'
 export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */
 
 // plain object for easier structure clone
-export type Percent = Numberish 
+export type Percent = Numberish
 
 // plain object for easier structure clone
-export type BN = Fraction | bigint
+export type BN = Fraction
 
-export type Price = Fraction
+export type Price = Numberish
 
 // this structure is not mathematics elegant
 export interface Decimal {
@@ -16,9 +16,8 @@ export interface Decimal {
   decimal: number
 }
 
-export interface Fraction {
-  numerator: bigint
-  denominator: bigint
-}
+export type Fraction = Fnkit_Fraction
 
 export type Numberish = Fnkit_Numberish
+
+export type USDVolume = Numberish

@@ -16,6 +16,7 @@ import { innerTxCollector } from './innerTxCollector'
 import { sendTransactionCore } from './sendTransactionCore'
 import { signAllTransactions } from './signAllTransactions_worker'
 import { subscribeTx } from './subscribeTx'
+import { getTokenAccounts, type SDK_TokenAccount } from '../dataStructures/TokenAccount'
 
 export type TxVersion = 'V0' | 'LEGACY'
 //#region ------------------- basic info -------------------
@@ -72,7 +73,11 @@ export interface TxFinalBatchErrorInfo {
 
 export type TxFn = (utils: {
   eventCenter: TxHandlerEventCenter
-  baseUtils: { owner: PublicKey; connection: Connection }
+  baseUtils: {
+    owner: PublicKey
+    connection: Connection
+    getSDKTokenAccounts(): Promise<SDK_TokenAccount[] | undefined>
+  }
 }) => MayPromise<TransactionQueue | Transaction | SDK_InnerSimpleTransaction>
 
 //#region ------------------- callbacks -------------------
@@ -174,7 +179,7 @@ export type SignAllTransactionsFunction = <T extends Transaction | VersionedTran
 
 export interface TxHandlerPayload {
   connection: Connection
-  owner: PublicKeyish
+  owner: string
   txVersion: TxVersion
 }
 
@@ -218,7 +223,14 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     assert(payload.owner, 'wallet not connected')
     const userLoadedTransactionQueue = await txFn({
       eventCenter,
-      baseUtils: { owner: toPub(payload.owner), connection: payload.connection },
+      baseUtils: {
+        owner: toPub(payload.owner),
+        connection: payload.connection,
+        getSDKTokenAccounts: () =>
+          getTokenAccounts({ connection: payload.connection, owner: payload.owner }).then(
+            (res) => res.sdkTokenAccounts,
+          ),
+      },
     })
     transactionCollector.add(userLoadedTransactionQueue)
     console.log('userLoadedTransactionQueue: ', userLoadedTransactionQueue)

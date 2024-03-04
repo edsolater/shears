@@ -1,4 +1,4 @@
-import { Numberish, div, parseNumberInfo } from '@edsolater/fnkit'
+import { Numberish, div, parseAnatomyFractionInfo } from '@edsolater/fnkit'
 import { Percent as SDK_Percent } from '@raydium-io/raydium-sdk'
 import BN from 'bn.js'
 import { toBN } from './BN'
@@ -14,7 +14,7 @@ export function toSDKPercent(
   n: Numberish,
   options?: { /* usually used for backend data */ alreadyDecimaled?: boolean },
 ) {
-  const { numerator, denominator } = parseNumberInfo(n)
+  const { numerator, denominator } = parseAnatomyFractionInfo(n)
   return new SDK_Percent(toBN(numerator), toBN(denominator).mul(options?.alreadyDecimaled ? new BN(100) : new BN(1)))
 }
 

@@ -18,7 +18,7 @@ import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/Toke
 import { Mint } from '../../../utils/dataStructures/type'
 import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
 import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
-import { sdkParseClmmInfos } from './sdkParseCLMMPoolInfo'
+import { sdkParseClmmInfos } from './sdkParseClmmInfos'
 import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
