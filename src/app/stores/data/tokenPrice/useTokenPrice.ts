@@ -3,7 +3,7 @@ import { createMemo, type Accessor } from 'solid-js'
 import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
 import type { Price } from '../../../utils/dataStructures/type'
 import { shuck_tokenPrices } from '../store'
-import { type TokenQueryParam } from '../token/type'
+import { type Tokenable } from '../token/type'
 import { useToken } from '../token/useToken'
 
 /**
@@ -15,7 +15,7 @@ import { useToken } from '../token/useToken'
  * it use solidjs's createStore to store a object data
  */
 
-export function useTokenPrice(params?: TokenQueryParam): Accessor<Price | undefined> {
+export function useTokenPrice(params?: Tokenable): Accessor<Price | undefined> {
   const token = useToken(params)
   const pricesMap = useShuckValue(shuck_tokenPrices)
   const price = createMemo(() => {

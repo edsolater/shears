@@ -1,6 +1,6 @@
 import { createStore } from 'solid-js/store';
 import { type Token } from './type';
-import { TokenQueryParam } from './type';
+import { Tokenable } from './type';
 import { getTokenSubscribable } from './getTokenSubscribable';
 
 /**
@@ -12,7 +12,7 @@ import { getTokenSubscribable } from './getTokenSubscribable';
  * it use solidjs's createStore to store a object data
  */
 
-export function useToken(input?: TokenQueryParam): Token {
+export function useToken(input?: Tokenable): Token {
   const outputTokenSubscribable = getTokenSubscribable(input);
   const [outputToken, setOutputToken] = createStore<Token>(outputTokenSubscribable());
   outputTokenSubscribable.subscribe((newToken) => {

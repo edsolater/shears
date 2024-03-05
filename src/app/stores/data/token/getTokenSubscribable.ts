@@ -1,13 +1,13 @@
 import { get, isString, shrinkFn, type Subscribable } from '@edsolater/fnkit'
 import { shuck_isTokenListLoading, shuck_isTokenListLoadingError, shuck_tokens } from '../store'
-import { TokenQueryParam, type Token } from './type'
+import { Tokenable, type Token } from './type'
 import { defaultToken, errorToken, loadingToken } from './utils'
 
 /**
  * use this in .ts
  */
 
-export function getTokenSubscribable(input?: TokenQueryParam): Subscribable<Token> {
+export function getTokenSubscribable(input?: Tokenable): Subscribable<Token> {
   const inputToken = shuck_tokens.pipe((tokens) => {
     const inputParam = shrinkFn(input)
     if (isString(inputParam)) {
