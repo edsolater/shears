@@ -9,7 +9,7 @@ import { SDK_CURRENCY_SOL, TOKEN_SOL, parseSDKToken } from "../../stores/data/to
 import { Token } from "../../stores/data/token/type"
 
 export interface TokenAmount {
-  token: Token
+  token: Token // TODO: Tokenable
   /** value that is amount */
   amount: Amount
 }
