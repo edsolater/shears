@@ -10,6 +10,7 @@ export interface ListBoxController {}
 
 export type ListBoxProps<T> = {
   of?: MayFn<Iterable<T>>
+  sortCompareFn?: (a: T, b: T) => number
   children(item: T, index: Accessor<number>): PivChild
   Divider?: MayFn<PivChild, [payload: { prevIndex: Accessor<number>; currentIndex: Accessor<number> }]>
 }
@@ -28,7 +29,14 @@ export function ListBox<T>(kitProps: ListBoxKitProps<T>) {
   })
 
   // [configs]
-  const allItems = createMemo(() => Array.from(shrinkFn(props.of ?? []) as T[]))
+  const allItems = createMemo(() => {
+    const sourceItems = Array.from(shrinkFn(props.of ?? []) as T[])
+    const sorted =
+      kitProps.sortCompareFn && sourceItems.length > 1
+        ? sourceItems.sort((a, b) => kitProps.sortCompareFn!(a, b))
+        : sourceItems
+    return sorted
+  })
   const itemLength = () => allItems().length
 
   // [listBox ref]

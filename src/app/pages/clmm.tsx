@@ -1,9 +1,9 @@
-import { count, div, type Numberish } from "@edsolater/fnkit"
-import { Box, Button, Col, cssOpacity, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
+import { count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
+import { Box, Col, cssOpacity, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
 import { createEffect, onMount, type Accessor } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
-import { parseICSSToClassName, Tab, TabList, Tabs } from "../../packages/pivkit"
+import { Button, icssFrostedGlass, parseICSSToClassName, Tab, TabList, Tabs } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
 import {
   DatabaseTable,
@@ -66,11 +66,6 @@ export default function ClmmsPage() {
   })
   const tokenPrices = useShuckValue(shuck_tokenPrices)
   const tokens = useShuckValue(shuck_tokens)
-  const t = useToken()
-  createEffect(() => {
-    console.log("🧪🧪 tokenPrices: ", tokenPrices())
-    console.log("🧪🧪 tokens: ", tokens())
-  })
   const headerConfig: TabelHeaderConfigs<ClmmInfo> = [
     {
       name: "Pool",
@@ -124,6 +119,8 @@ export default function ClmmsPage() {
       <Col class="collapse-content">
         <ListBox
           of={i.userPositionAccounts}
+          // TODO: should be sortBy to more readable
+          sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
           Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
         >
           {(account) => <ClmmUserPositionAccountRow clmmInfo={i} account={account} />}
@@ -158,6 +155,9 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
   return (
     <Row
       icss={{
+        display: "grid",
+        gridAutoFlow: "column",
+        gridAutoColumns: "1fr",
         gap: "20px",
         margin: "8px 32px",
         paddingInline: "40px",
@@ -166,23 +166,21 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       }}
     >
       {/* range */}
-      <Row icss={{ gap: "10%" }}>
+      <Row>
         <Text>{rangeName()}</Text>
         <Text>{String(inRange())}</Text>
       </Row>
 
-      <Row icss={{ gap: "10%" }}>
-        {/* my liquidity */}
-        <Text>{toUsdVolume(userLiquidityUSD())}</Text>
+      {/* my liquidity */}
+      <Text icss={{ textAlign: "end" }}>{toUsdVolume(userLiquidityUSD())}</Text>
 
-        {/* pending yield */}
-        <Text>{toUsdVolume(pendingRewardAmountUSD())}</Text>
-      </Row>
+      {/* pending yield */}
+      <Text icss={{ textAlign: "end" }}>{toUsdVolume(pendingRewardAmountUSD())}</Text>
 
       <Row icss={{ gap: "10%" }}>
-        <Button>Harvest</Button>
-        <Button> + </Button>
-        <Button> - </Button>
+        <Button icss={icssFrostedGlass}>Harvest</Button>
+        <Button icss={icssFrostedGlass}> + </Button>
+        <Button icss={icssFrostedGlass}> - </Button>
       </Row>
     </Row>
   )

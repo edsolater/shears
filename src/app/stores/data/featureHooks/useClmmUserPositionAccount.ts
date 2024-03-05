@@ -43,7 +43,7 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
 
   const rangeName = createMemo(
     () =>
-      `${toRenderable(userPositionAccount.priceLower, { decimals: 4 })}-${toRenderable(userPositionAccount.priceUpper, { decimals: 4 })}`,
+      `${toRenderable(userPositionAccount.priceLower, { decimals: 5 })}-${toRenderable(userPositionAccount.priceUpper, { decimals: 5 })}`,
   )
 
   const inRange = createMemo(

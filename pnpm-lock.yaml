@@ -16,8 +16,8 @@ dependencies:
     specifier: ^7.23.9
     version: 7.23.9
   '@edsolater/fnkit':
-    specifier: ^0.1.85
-    version: 0.1.85
+    specifier: ^0.1.86
+    version: 0.1.86
   '@edsolater/pivkit':
     specifier: ^0.0.12
     version: 0.0.12(csstype@3.1.3)(solid-js@1.8.15)
@@ -1428,8 +1428,8 @@ packages:
     engines: {node: '>=10.0.0'}
     dev: true
 
-  /@edsolater/fnkit@0.1.85:
-    resolution: {integrity: sha512-RMYGOBcWmjpir7wW0VVxowIcdJLEhDqsxYCVG5gq6p2+LJRNbzl3pbO9dhXMhJf0gvfgyl+kZyv7+qZPedxzDQ==}
+  /@edsolater/fnkit@0.1.86:
+    resolution: {integrity: sha512-uqbLJEke3hLp3bh7KMAyyQTE0bZq0tE/gUneyVAgGEvlQvIVr1kBIATgj/SFHtmkCZyiLRYwqUjdQl092Jb23w==}
     dev: false
 
   /@edsolater/pivkit@0.0.12(csstype@3.1.3)(solid-js@1.8.15):
@@ -1437,7 +1437,7 @@ packages:
     peerDependencies:
       solid-js: ^1.6.0
     dependencies:
-      '@edsolater/fnkit': 0.1.85
+      '@edsolater/fnkit': 0.1.86
       goober: 2.1.14(csstype@3.1.3)
       solid-js: 1.8.15
     transitivePeerDependencies:
