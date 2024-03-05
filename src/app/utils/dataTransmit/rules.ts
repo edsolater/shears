@@ -1,15 +1,15 @@
-import { getType, hasProperty, isObject, toBigint } from '@edsolater/fnkit'
-import BN from 'bn.js'
-import { TransmitRule } from './type'
-import { toDecodedBN } from '../dataStructures/BN'
+import { getType, hasProperty, isObject, toBigint } from "@edsolater/fnkit"
+import BN from "bn.js"
+import { TransmitRule } from "./type"
+import { toDecodedBN } from "../dataStructures/BN"
 import {
   MessageAddressTableLookup,
   MessageV0,
   PublicKey,
   VersionedMessage,
   VersionedTransaction,
-} from '@solana/web3.js'
-import toPubString, { toPub } from '../dataStructures/Publickey'
+} from "@solana/web3.js"
+import toPubString, { toPub } from "../dataStructures/Publickey"
 
 function encodeBN(rawData: BN) {
   return toBigint(toDecodedBN(rawData))
@@ -20,7 +20,7 @@ function encodePublicKey(rawData: PublicKey) {
 }
 
 function encodeTransaction(transaction: VersionedTransaction) {
-  console.log('transaction: ', transaction)
+  console.log("transaction: ", transaction)
   return {
     message: encodeMessage(transaction.message as MessageV0 /* TODO: support Message and MessageV0 */),
     signatures: transaction.signatures,
@@ -62,7 +62,7 @@ function decodeMessageAddressTableLookup(rawData: ReturnType<typeof encodeMessag
 }
 
 function encodeVersionedTransaction(rawData: VersionedTransaction) {
-  return { _type: 'encoded VersionedTransaction', _info: encodeTransaction(rawData) }
+  return { _type: "encoded VersionedTransaction", _info: encodeTransaction(rawData) }
 }
 
 function decodeVersionedTransaction(rawData: ReturnType<typeof encodeVersionedTransaction>) {
@@ -73,14 +73,14 @@ function decodeVersionedTransaction(rawData: ReturnType<typeof encodeVersionedTr
 
 const BNRule: TransmitRule = {
   canEncode: (data) =>
-    isObject(data) && (data instanceof BN || (getType(data) as string) === 'BN' || data.constructor === BN),
+    isObject(data) && (data instanceof BN || (getType(data) as string) === "BN" || data.constructor === BN),
   encode: encodeBN,
 }
 
 const PublickeyRule: TransmitRule = {
   canEncode: (data) =>
     isObject(data) &&
-    (data instanceof PublicKey || (getType(data) as string).startsWith('PublicKey') || data.constructor === PublicKey),
+    (data instanceof PublicKey || (getType(data) as string).startsWith("PublicKey") || data.constructor === PublicKey),
   encode: encodePublicKey,
 }
 
@@ -88,12 +88,12 @@ const VersionedTransactionRule: TransmitRule = {
   canEncode: (data) =>
     isObject(data) &&
     (data instanceof VersionedTransaction ||
-      (getType(data) as string) === 'VersionedTransaction' ||
+      (getType(data) as string) === "VersionedTransaction" ||
       data.constructor === VersionedTransaction ||
-      (hasProperty(data, 'message') && hasProperty(data, 'signatures'))),
+      (hasProperty(data, "message") && hasProperty(data, "signatures"))),
   encode: encodeVersionedTransaction,
   canDecode: (data) =>
-    isObject(data) && '_type' in data && '_info' in data && data._type === 'encoded VersionedTransaction',
+    isObject(data) && "_type" in data && "_info" in data && data._type === "encoded VersionedTransaction",
   decode: decodeVersionedTransaction,
 }
 

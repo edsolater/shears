@@ -1,13 +1,13 @@
 /// <reference lib="webworker" />
-import './worker_polyfill' // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import "./worker_polyfill" // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { Subscribable, createSubscribable } from '@edsolater/fnkit'
-import { invoke, invokeOnce } from '../../../packages/fnkit'
-import { encode } from '../dataTransmit/handlers'
-import { createMessagePortTransforers } from './createMessagePortTransforers'
-import { isSenderMessage } from './genMessageSender'
-import { WorkerMessage } from './type'
-import { applyWebworkerRegisters } from './worker_registers'
+import { Subscribable, createSubscribable } from "@edsolater/fnkit"
+import { invoke, invokeOnce } from "../../../packages/fnkit"
+import { encode } from "../dataTransmit/handlers"
+import { createMessagePortTransforers } from "./createMessagePortTransforers"
+import { isSenderMessage } from "./genMessageSender"
+import { WorkerMessage } from "./type"
+import { applyWebworkerRegisters } from "./worker_registers"
 
 type onMessage<D> = (utils: { payload: D; resolve(value: any): void }) => void
 
@@ -20,7 +20,7 @@ export const { getMessageReceiver, getMessageSender, getMessagePort } = createMe
  * register receiver utils in worker-side
  */
 function initMessageReceiver() {
-  globalThis.addEventListener('message', async (ev) => {
+  globalThis.addEventListener("message", async (ev) => {
     const messageBody = ev.data
     if (!isSenderMessage(messageBody)) return
     const { command, payload } = messageBody

@@ -1,5 +1,5 @@
-import { Buffer } from 'buffer'
+import { Buffer } from "buffer"
 
-if (typeof globalThis !== 'undefined' && globalThis.Buffer === undefined) {
+if (typeof globalThis !== "undefined" && globalThis.Buffer === undefined) {
   globalThis.Buffer = Buffer
 }

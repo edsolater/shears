@@ -1,6 +1,6 @@
-import { MayPromise } from '@edsolater/fnkit'
-import { cacheMapGet } from '../../../packages/fnkit'
-import { encode } from '../dataTransmit/handlers'
+import { MayPromise } from "@edsolater/fnkit"
+import { cacheMapGet } from "../../../packages/fnkit"
+import { encode } from "../dataTransmit/handlers"
 
 interface SenderMessage<Query = any> {
   command: string
@@ -8,13 +8,13 @@ interface SenderMessage<Query = any> {
 }
 
 export function isSenderMessage(v: unknown): v is SenderMessage {
-  return typeof v === 'object' && v !== null && 'command' in v
+  return typeof v === "object" && v !== null && "command" in v
 }
 /**
  * send a command to webworker
  */
 interface Sender<P extends SenderMessage> {
-  query(payload: P['payload']): void
+  query(payload: P["payload"]): void
   // onMessageBack(payload: any): Promise<unknown> //TODO: imply it later
 }
 // cache store
@@ -34,7 +34,9 @@ export function createMessageSender<P extends SenderMessage>(
   function createNewWorkerMessageSender<P extends SenderMessage>(command: string): Sender<P> {
     return {
       query(payload) {
-        Promise.resolve(towardsTarget).then((targetPort) => targetPort.postMessage({ command, payload: encode(payload) }))
+        Promise.resolve(towardsTarget).then((targetPort) =>
+          targetPort.postMessage({ command, payload: encode(payload) }),
+        )
       },
     }
   }

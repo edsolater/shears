@@ -1,4 +1,4 @@
-import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCase } from '@edsolater/fnkit'
+import { cloneObject, isArray, isObject, isObjectLike, isObjectLiteral, switchCase } from "@edsolater/fnkit"
 
 /**
  * array and objectLiteral will be wrapped to deeper
@@ -97,7 +97,7 @@ function _wrapLeaves<Result = any>({
           return new Proxy(target, {
             get: (target, key) => {
               // record
-              if (key === Symbol.for('raw')) return target
+              if (key === Symbol.for("raw")) return target
               return _wrapLeaves({
                 target: target[key],
                 wrapFn,
@@ -118,7 +118,7 @@ function _wrapLeaves<Result = any>({
 
 /** get raw data before wrap Leaves */
 export function unwrapWrappedLeaves<Result = any>(target: any): Result {
-  return target[Symbol.for('raw')] ?? target
+  return target[Symbol.for("raw")] ?? target
 }
 /**
  * FP utils : give opportunity to handle/change value in parallel

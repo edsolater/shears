@@ -1,4 +1,4 @@
-import { Accessor, createEffect } from 'solid-js'
+import { Accessor, createEffect } from "solid-js"
 import {
   Accessify,
   Box,
@@ -13,23 +13,23 @@ import {
   createControllerRef,
   icssClickable,
   createFormField,
-} from '@edsolater/pivkit'
-import { useInputController } from '@edsolater/pivkit'
-import { store } from '../../../stores/data/store'
-import { parseUrl } from '../../../utils/parseUrl'
-import { AppLogo } from '../../../components/AppLogo'
-import { WalletWidget } from '../../../components/WalletWidget'
-import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from './NavWrapBox'
+} from "@edsolater/pivkit"
+import { useInputController } from "@edsolater/pivkit"
+import { store } from "../../../stores/data/store"
+import { parseUrl } from "../../../utils/parseUrl"
+import { AppLogo } from "../../../components/AppLogo"
+import { WalletWidget } from "../../../components/WalletWidget"
+import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from "./NavWrapBox"
 
 export type AppPageLayout_NavBarProps = NaBar_NavWrapBoxProps
 
 export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
   return (
     <NaBar_NavWrapBox>
-      <Row icss:justify='space-between'>
+      <Row icss:justify="space-between">
         {/* TODO: not correct for this */}
         <AppLogo />
-        <Row icss:align='end'>
+        <Row icss:align="end">
           <SettingButtonTrigger />
           <WalletWidget />
         </Row>
@@ -45,7 +45,7 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: '8px', borderRadius: '8px' }, icssClickable]}
+        icss={[{ padding: "8px", borderRadius: "8px" }, icssClickable]}
         // onClick={() => {
         //   appSettingsModalControllers()?.open()
         // }}
@@ -75,13 +75,13 @@ function SettingsPanelDialog() {
  */
 function SettingsContent() {
   const { value, setValue, isValid, isEmpty } = createFormField({
-    name: 'rpcUrl',
+    name: "rpcUrl",
     value: store.rpc?.url,
     validRule: (value) => parseUrl(value).isValid,
   })
-  const inputController = useInputController('Input__rpcUrl')
+  const inputController = useInputController("Input__rpcUrl")
   createEffect(() => {
-    console.log('isFocused: ', inputController.isFocused?.())
+    console.log("isFocused: ", inputController.isFocused?.())
   })
   return (
     <Box>
@@ -89,12 +89,12 @@ function SettingsContent() {
         <ItemBox>
           <Text>RPC:</Text>
           <Input
-            id='Input__rpcUrl'
+            id="Input__rpcUrl"
             value={value}
             onInput={(text) => {
               setValue(text)
             }}
-            icss={{ borderStyle: 'solid', borderColor: isEmpty() ? 'gray' : isValid() ? 'green' : 'crimson' }}
+            icss={{ borderStyle: "solid", borderColor: isEmpty() ? "gray" : isValid() ? "green" : "crimson" }}
           />
         </ItemBox>
       </Section>

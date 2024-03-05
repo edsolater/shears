@@ -1,6 +1,6 @@
-import { Fraction as _Fraction } from '@raydium-io/raydium-sdk'
-import { Fraction } from './type'
-import { ReplaceType } from '@edsolater/fnkit'
+import { Fraction as _Fraction } from "@raydium-io/raydium-sdk"
+import { Fraction } from "./type"
+import { ReplaceType } from "@edsolater/fnkit"
 
 export function isSDKFraction(n: unknown): n is _Fraction {
   return n instanceof _Fraction

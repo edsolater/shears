@@ -1,12 +1,12 @@
-import { mapEntry, shakeFalsy, shakeNil } from '@edsolater/fnkit'
-import { parallelAsyncTasks, recordToMap } from '../../../../packages/fnkit'
-import { jFetch } from '../../../../packages/jFetch'
-import type { Mint, Price } from '../../../utils/dataStructures/type'
-import type { TokenListStore } from '../types/tokenList'
+import { mapEntry, shakeFalsy, shakeNil } from "@edsolater/fnkit"
+import { parallelAsyncTasks, recordToMap } from "../../../../packages/fnkit"
+import { jFetch } from "../../../../packages/jFetch"
+import type { Mint, Price } from "../../../utils/dataStructures/type"
+import type { TokenListStore } from "../types/tokenList"
 
 export type TokenPricesMap = Map<Mint, Price>
 
-export async function fetchTokenPrices(tokens: TokenListStore['tokens'], raydiumUrl: string): Promise<TokenPricesMap> {
+export async function fetchTokenPrices(tokens: TokenListStore["tokens"], raydiumUrl: string): Promise<TokenPricesMap> {
   type CoingeckoPriceFile = Record<string /* coingeckoid */, { usd?: number }>
   type RaydiumPriceFile = Record<string, number>
   if (!tokens || tokens.length === 0) return new Map()

@@ -1,4 +1,4 @@
-import { Accessor, createSignal } from 'solid-js'
+import { Accessor, createSignal } from "solid-js"
 
 /** accept promise return a signal  */
 export function useAsync<T, F>(promise: Promise<T>): Accessor<T | undefined>

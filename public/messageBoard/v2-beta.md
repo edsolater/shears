@@ -1,8 +1,6 @@
-
 # 🎉 New UI is live on Beta
 
-
-What’s up Raydiatooors? 
+What’s up Raydiatooors?
 
 Raydium's new UI is finally here!
 
@@ -12,4 +10,4 @@ Keep in mind that this Beta version is still a work in progress, so we’d love 
 
 The new UI has also been re-built on top of [Raydium’s comprehensive SDK](https://github.com/raydium-io/raydium-sdk). The SDK also took countless hours to build out, but now means that future updates, improvements, and integrations with other projects can happen much more smoothly.
 
-*Please note that this is a beta version of Raydium V2, which is still undergoing final testing before official release. The platform, its software and all content found on it are provided on an “as is” and “as available” basis. Raydium does not give any warranties, whether express or implied, as to the suitability or usability of the website.*
+_Please note that this is a beta version of Raydium V2, which is still undergoing final testing before official release. The platform, its software and all content found on it are provided on an “as is” and “as available” basis. Raydium does not give any warranties, whether express or implied, as to the suitability or usability of the website._

@@ -3,8 +3,8 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter,
   TrustWalletAdapter,
-} from '@solana/wallet-adapter-wallets'
-import { WalletAdapterInterface } from '../type'
+} from "@solana/wallet-adapter-wallets"
+import { WalletAdapterInterface } from "../type"
 
 export const supportedWallets: WalletAdapterInterface[] = [
   { adapter: new PhantomWalletAdapter() },

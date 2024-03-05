@@ -1,6 +1,6 @@
-import { Connection, Transaction, VersionedTransaction } from '@solana/web3.js'
-import { MultiTxExtraInfo, TxErrorInfo, TxFinalInfo, TxSuccessInfo } from './txHandler'
-import { EventCenter, createEventCenter, assert } from '@edsolater/fnkit'
+import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
+import { MultiTxExtraInfo, TxErrorInfo, TxFinalInfo, TxSuccessInfo } from "./txHandler"
+import { EventCenter, createEventCenter, assert } from "@edsolater/fnkit"
 
 export interface SubscribeSignatureCallbacks {
   onTxSuccess?(ev: TxSuccessInfo): void
@@ -15,7 +15,7 @@ type TxSubscribeEventCenter = EventCenter<{
 }>
 
 // @ts-ignore
-globalThis['window'] = globalThis // load for connection rpc use window 😥
+globalThis["window"] = globalThis // load for connection rpc use window 😥
 
 export function subscribeTx({
   txid,
@@ -30,12 +30,12 @@ export function subscribeTx({
 }): TxSubscribeEventCenter {
   // TODO:
   const eventCenter = createEventCenter() as unknown as TxSubscribeEventCenter
-  assert(connection, 'successful connection is required')
+  assert(connection, "successful connection is required")
   connection?.onSignature(
     txid,
     (signatureResult, context) => {
       if (signatureResult.err) {
-        eventCenter.emit('txError', [
+        eventCenter.emit("txError", [
           {
             txid,
             transaction,
@@ -45,17 +45,17 @@ export function subscribeTx({
             ...extraTxidInfo,
           },
         ])
-        eventCenter.emit('txFinally', [
-          { txid, transaction, signatureResult, context, type: 'error', ...extraTxidInfo },
+        eventCenter.emit("txFinally", [
+          { txid, transaction, signatureResult, context, type: "error", ...extraTxidInfo },
         ])
       } else {
-        eventCenter.emit('txSuccess', [{ txid, transaction, signatureResult, context, ...extraTxidInfo }])
-        eventCenter.emit('txFinally', [
-          { txid, transaction, signatureResult, context, type: 'success', ...extraTxidInfo },
+        eventCenter.emit("txSuccess", [{ txid, transaction, signatureResult, context, ...extraTxidInfo }])
+        eventCenter.emit("txFinally", [
+          { txid, transaction, signatureResult, context, type: "success", ...extraTxidInfo },
         ])
       }
     },
-    'processed',
+    "processed",
   )
   connection.getSignatureStatus(txid)
   return eventCenter

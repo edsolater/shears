@@ -1,17 +1,17 @@
-import { Box, Text } from '@edsolater/pivkit'
+import { Box, Text } from "@edsolater/pivkit"
 
-export function AppLogo(props: { }) {
+export function AppLogo(props: {}) {
   return (
     <Box
       icss={{
-        display: 'flex',
-        gap: '64px',
+        display: "flex",
+        gap: "64px",
       }}
     >
       <Text
         icss={{
-          fontSize: '36px',
-          fontWeight: '800',
+          fontSize: "36px",
+          fontWeight: "800",
         }}
       >
         Shear

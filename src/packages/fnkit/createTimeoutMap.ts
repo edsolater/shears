@@ -25,7 +25,7 @@ export function createTimeoutMap<K, V>({ maxAgeMs }: { maxAgeMs: number }) {
     },
     has(key: K) {
       return timeoutMap.get(key) !== undefined
-    }
+    },
   }
   return timeoutMap
 }

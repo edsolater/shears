@@ -1,35 +1,35 @@
-import { isCurrentDateAfter, switchCase, type MayPromise } from '@edsolater/fnkit'
-import { type JFetchMiddlewareFn } from '../../jFetch'
-import { isResponse } from '../../utils/isResponse'
+import { isCurrentDateAfter, switchCase, type MayPromise } from "@edsolater/fnkit"
+import { type JFetchMiddlewareFn } from "../../jFetch"
+import { isResponse } from "../../utils/isResponse"
 import {
   createIndexedDBStoreManager,
   createLocalStorageStoreManager,
   createMemoryStoreManager,
   createSessionStorageStoreManager,
-} from './storageManagers'
+} from "./storageManagers"
 
 type ResourceUrl = string
 
 export type JFetchMiddlewareCacheOptions = {
   /** if still within cache fresh time, use cache. */
   cacheFreshTime?: number // (default: ms)
-  cacheFreshTimeUnit?: 'ms' | 's' | 'm' | 'h' | 'd' | 'w' | 'M' | 'y'
+  cacheFreshTimeUnit?: "ms" | "s" | "m" | "h" | "d" | "w" | "M" | "y"
   cacheStorePlace?:
-    | 'jsMemory'
-    | 'localStorage' /* can't used in worker_threads */
-    | 'sessionStorage' /* can't used in worker_threads */
-    | 'indexedDB'
+    | "jsMemory"
+    | "localStorage" /* can't used in worker_threads */
+    | "sessionStorage" /* can't used in worker_threads */
+    | "indexedDB"
 }
 
 export function middlewareCache(options: JFetchMiddlewareCacheOptions): JFetchMiddlewareFn {
   return async ({ url }, next) => {
-    const { cacheFreshTime = 1000, cacheStorePlace = 'indexedDB' } = options
+    const { cacheFreshTime = 1000, cacheStorePlace = "indexedDB" } = options
     // const { originalOption } = userParams
     const key = url satisfies ResourceUrl
     const shouldUseCache = await canUseCache({
       key,
       cacheFreshDuraction: options?.cacheFreshTime ?? 1000,
-      unit: options?.cacheFreshTimeUnit ?? 'ms',
+      unit: options?.cacheFreshTimeUnit ?? "ms",
       storePlace: cacheStorePlace,
     })
     if (shouldUseCache) {
@@ -57,22 +57,22 @@ interface JFetchCacheItem {
   expireAt?: number // milliseconds
 }
 
-const getResponseCache = (storePlace: 'jsMemory' | 'localStorage' | 'sessionStorage' | 'indexedDB') => {
-  if (storePlace === 'localStorage' && globalThis.localStorage == null)
-    throw new Error('localStorage is not available in this environment')
-  if (storePlace === 'sessionStorage' && globalThis.sessionStorage == null)
-    throw new Error('sessionStorage is not available in this environment')
-  if (storePlace === 'indexedDB' && !('indexedDB' in globalThis))
-    throw new Error('indexedDB is not available in this environment')
+const getResponseCache = (storePlace: "jsMemory" | "localStorage" | "sessionStorage" | "indexedDB") => {
+  if (storePlace === "localStorage" && globalThis.localStorage == null)
+    throw new Error("localStorage is not available in this environment")
+  if (storePlace === "sessionStorage" && globalThis.sessionStorage == null)
+    throw new Error("sessionStorage is not available in this environment")
+  if (storePlace === "indexedDB" && !("indexedDB" in globalThis))
+    throw new Error("indexedDB is not available in this environment")
   switch (storePlace) {
-    case 'jsMemory':
+    case "jsMemory":
       return createMemoryStoreManager<JFetchCacheItem>()
-    case 'localStorage':
+    case "localStorage":
       return createLocalStorageStoreManager<JFetchCacheItem>()
-    case 'sessionStorage':
+    case "sessionStorage":
       return createSessionStorageStoreManager<JFetchCacheItem>()
-    case 'indexedDB':
-      return createIndexedDBStoreManager<JFetchCacheItem>('jFetch', 'cache')
+    case "indexedDB":
+      return createIndexedDBStoreManager<JFetchCacheItem>("jFetch", "cache")
   }
 }
 
@@ -83,7 +83,7 @@ async function recordResponse(config: {
   key: string
   response: MayPromise<Response>
   shelfLife: number /* unit:s */
-  storePlace: 'jsMemory' | 'localStorage' | 'sessionStorage' | 'indexedDB'
+  storePlace: "jsMemory" | "localStorage" | "sessionStorage" | "indexedDB"
 }) {
   const { key, response } = config
   return Promise.resolve(response).then((res) => {
@@ -113,7 +113,7 @@ async function recordResponse(config: {
  */
 async function getRecordedResponse(config: {
   key: string
-  storePlace: 'jsMemory' | 'localStorage' | 'sessionStorage' | 'indexedDB'
+  storePlace: "jsMemory" | "localStorage" | "sessionStorage" | "indexedDB"
 }): Promise<Response | undefined> {
   const { key } = config
   const responseCache = getResponseCache(config.storePlace)
@@ -129,18 +129,18 @@ async function getRecordedResponse(config: {
 async function canUseCache(config: {
   key: string
   cacheFreshDuraction: number
-  unit: 'ms' | 's' | 'm' | 'h' | 'd' | 'w' | 'M' | 'y'
-  storePlace: 'jsMemory' | 'localStorage' | 'sessionStorage' | 'indexedDB'
+  unit: "ms" | "s" | "m" | "h" | "d" | "w" | "M" | "y"
+  storePlace: "jsMemory" | "localStorage" | "sessionStorage" | "indexedDB"
 }) {
   const durationMS = switchCase(config.unit, {
-    'ms': config.cacheFreshDuraction,
-    's': config.cacheFreshDuraction * 1000,
-    'm': config.cacheFreshDuraction * 1000 * 60,
-    'h': config.cacheFreshDuraction * 1000 * 60 * 60,
-    'd': config.cacheFreshDuraction * 1000 * 60 * 60 * 24,
-    'w': config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 7,
-    'M': config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 30,
-    'y': config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 365,
+    ms: config.cacheFreshDuraction,
+    s: config.cacheFreshDuraction * 1000,
+    m: config.cacheFreshDuraction * 1000 * 60,
+    h: config.cacheFreshDuraction * 1000 * 60 * 60,
+    d: config.cacheFreshDuraction * 1000 * 60 * 60 * 24,
+    w: config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 7,
+    M: config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 30,
+    y: config.cacheFreshDuraction * 1000 * 60 * 60 * 24 * 365,
   })
   const responseCache = getResponseCache(config.storePlace)
   const hasCached = await responseCache.has(config.key)

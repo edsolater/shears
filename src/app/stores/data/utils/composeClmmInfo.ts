@@ -1,12 +1,12 @@
-import { add, div, mul } from '@edsolater/fnkit'
-import { type ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from '@raydium-io/raydium-sdk'
-import { parseSDKBN } from '../../../utils/dataStructures/BN'
-import { parseSDKDecimal } from '../../../utils/dataStructures/Decimal'
-import { toPercent } from '../../../utils/dataStructures/Percent'
-import toPubString from '../../../utils/dataStructures/Publickey'
-import type { PublicKey } from '../../../utils/dataStructures/type'
-import type { ClmmInfo, ClmmJsonInfo, ClmmRewardInfo, ClmmSDKInfo, ClmmUserPositionAccount } from '../types/clmm'
-import { toRenderable } from '../../../utils/common/toRenderable'
+import { add, div, mul } from "@edsolater/fnkit"
+import { type ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from "@raydium-io/raydium-sdk"
+import { parseSDKBN } from "../../../utils/dataStructures/BN"
+import { parseSDKDecimal } from "../../../utils/dataStructures/Decimal"
+import { toPercent } from "../../../utils/dataStructures/Percent"
+import toPubString from "../../../utils/dataStructures/Publickey"
+import type { PublicKey } from "../../../utils/dataStructures/type"
+import type { ClmmInfo, ClmmJsonInfo, ClmmRewardInfo, ClmmSDKInfo, ClmmUserPositionAccount } from "../types/clmm"
+import { toRenderable } from "../../../utils/common/toRenderable"
 
 export function composeClmmInfos(
   apiInfo: Record<PublicKey, ClmmJsonInfo>,
@@ -23,8 +23,8 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
   const currentPrice = sdkInfo && parseSDKDecimal(sdkInfo.state.currentPrice)
 
   const userPositionAccounts = sdkInfo?.positionAccount?.map((userPositionAccount) => {
-    console.log('userPositionAccount.rewardInfo: ', userPositionAccount.rewardInfos)
-    console.log('jsonInfo.rewardInfos: ', jsonInfo.rewardInfos, sdkInfo.state.rewardInfos)
+    console.log("userPositionAccount.rewardInfo: ", userPositionAccount.rewardInfos)
+    console.log("jsonInfo.rewardInfos: ", jsonInfo.rewardInfos, sdkInfo.state.rewardInfos)
     const amountBase = parseSDKBN(userPositionAccount.amountA)
     const amountQuote = parseSDKBN(userPositionAccount.amountB)
     const innerVolumeBase = mul(currentPrice!, amountBase) ?? 0
@@ -32,8 +32,8 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
     const positionPercentBase = toPercent(div(innerVolumeBase, add(innerVolumeBase, innerVolumeQuote)))
     const positionPercentQuote = toPercent(div(innerVolumeQuote, add(innerVolumeBase, innerVolumeQuote)))
     const priceLower = parseSDKDecimal(userPositionAccount.priceLower)
-    console.log('userPositionAccount.priceLower: ', {...userPositionAccount.priceLower});
-    console.log('priceLower: ',priceLower, toRenderable(priceLower, { decimals: 6 }))
+    console.log("userPositionAccount.priceLower: ", { ...userPositionAccount.priceLower })
+    console.log("priceLower: ", priceLower, toRenderable(priceLower, { decimals: 6 }))
     return {
       rewardInfos: userPositionAccount.rewardInfos.slice(0, jsonInfo.rewardInfos.length).map((i, idx) => ({
         token: toPubString(jsonInfo.rewardInfos[idx].mint),
@@ -81,24 +81,24 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
     currentPrice: currentPrice,
     // change to shape
     feeApr: sdkInfo && {
-      '24h': toPercent(sdkInfo.state.day.feeApr, { alreadyDecimaled: true }),
-      '7d': toPercent(sdkInfo.state.week.feeApr, { alreadyDecimaled: true }),
-      '30d': toPercent(sdkInfo.state.month.feeApr, { alreadyDecimaled: true }),
+      "24h": toPercent(sdkInfo.state.day.feeApr, { alreadyDecimaled: true }),
+      "7d": toPercent(sdkInfo.state.week.feeApr, { alreadyDecimaled: true }),
+      "30d": toPercent(sdkInfo.state.month.feeApr, { alreadyDecimaled: true }),
     },
     totalApr: sdkInfo && {
-      '24h': toPercent(sdkInfo.state.day.apr, { alreadyDecimaled: true }),
-      '7d': toPercent(sdkInfo.state.week.apr, { alreadyDecimaled: true }),
-      '30d': toPercent(sdkInfo.state.month.apr, { alreadyDecimaled: true }),
+      "24h": toPercent(sdkInfo.state.day.apr, { alreadyDecimaled: true }),
+      "7d": toPercent(sdkInfo.state.week.apr, { alreadyDecimaled: true }),
+      "30d": toPercent(sdkInfo.state.month.apr, { alreadyDecimaled: true }),
     },
     volumeFee: sdkInfo && {
-      '24h': sdkInfo.state.day.volumeFee,
-      '7d': sdkInfo.state.week.volumeFee,
-      '30d': sdkInfo.state.month.volumeFee,
+      "24h": sdkInfo.state.day.volumeFee,
+      "7d": sdkInfo.state.week.volumeFee,
+      "30d": sdkInfo.state.month.volumeFee,
     },
     volume: sdkInfo && {
-      '24h': sdkInfo.state.day.volume,
-      '7d': sdkInfo.state.week.volume,
-      '30d': sdkInfo.state.month.volume,
+      "24h": sdkInfo.state.day.volume,
+      "7d": sdkInfo.state.week.volume,
+      "30d": sdkInfo.state.month.volume,
     },
     rewardInfos: jsonInfo.rewardInfos?.map(
       (i, idx) =>
@@ -117,13 +117,13 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
           perDayBN: parseSDKDecimal(sdkInfo?.state.rewardInfos[idx].perSecond.mul(86400)),
           perWeekBN: parseSDKDecimal(sdkInfo?.state.rewardInfos[idx].perSecond.mul(86400 * 7)),
           apr: sdkInfo && {
-            '24h': toPercent(sdkInfo.state.day.rewardApr[idx == 0 ? 'A' : idx == 1 ? 'B' : 'C'], {
+            "24h": toPercent(sdkInfo.state.day.rewardApr[idx == 0 ? "A" : idx == 1 ? "B" : "C"], {
               alreadyDecimaled: true,
             }),
-            '7d': toPercent(sdkInfo.state.week.rewardApr[idx == 0 ? 'A' : idx == 1 ? 'B' : 'C'], {
+            "7d": toPercent(sdkInfo.state.week.rewardApr[idx == 0 ? "A" : idx == 1 ? "B" : "C"], {
               alreadyDecimaled: true,
             }),
-            '30d': toPercent(sdkInfo.state.month.rewardApr[idx == 0 ? 'A' : idx == 1 ? 'B' : 'C'], {
+            "30d": toPercent(sdkInfo.state.month.rewardApr[idx == 0 ? "A" : idx == 1 ? "B" : "C"], {
               alreadyDecimaled: true,
             }),
           },

@@ -1,12 +1,12 @@
-import { type ReplaceType, div, mul, type Numberish } from '@edsolater/fnkit'
+import { type ReplaceType, div, mul, type Numberish } from "@edsolater/fnkit"
 import {
   CurrencyAmount as SDK_CurrencyAmount,
   Token as SDK_Token,
   TokenAmount as SDK_TokenAmount,
-} from '@raydium-io/raydium-sdk'
-import { parseSDKBN, toBN } from './BN'
-import { SDK_CURRENCY_SOL, TOKEN_SOL, parseSDKToken } from '../../stores/data/token/utils'
-import { Token } from '../../stores/data/token/type'
+} from "@raydium-io/raydium-sdk"
+import { parseSDKBN, toBN } from "./BN"
+import { SDK_CURRENCY_SOL, TOKEN_SOL, parseSDKToken } from "../../stores/data/token/utils"
+import { Token } from "../../stores/data/token/type"
 
 export interface TokenAmount {
   token: Token
@@ -20,7 +20,7 @@ export interface TokenAmount {
 export type Amount = Numberish
 
 export function deUITokenAmount(tokenAmount: TokenAmount): SDK_TokenAmount | SDK_CurrencyAmount {
-  const isSol = tokenAmount.token.is === 'sol'
+  const isSol = tokenAmount.token.is === "sol"
   if (isSol) {
     const token = SDK_CURRENCY_SOL
     return new SDK_CurrencyAmount(token, toBN(mul(tokenAmount.amount, 10 ** token.decimals))) // which means error appears

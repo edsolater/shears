@@ -1,4 +1,4 @@
-import { ApiPoolInfo as SDK_ApiPoolInfo } from '@raydium-io/raydium-sdk'
+import { ApiPoolInfo as SDK_ApiPoolInfo } from "@raydium-io/raydium-sdk"
 
 // old AMM pool
 export interface ApiPoolInfoV4 {

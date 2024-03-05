@@ -1,5 +1,5 @@
-import { createMemo } from 'solid-js'
-import { KitProps, useKitProps, addDefaultProps, createRef } from '@edsolater/pivkit'
+import { createMemo } from "solid-js"
+import { KitProps, useKitProps, addDefaultProps, createRef } from "@edsolater/pivkit"
 
 interface CircularProgressRawProps {
   /** like animation run */
@@ -26,33 +26,29 @@ export function CircularProgress(kitProps: CircleProgressProps) {
   const p = createMemo(() => 2 * r() * Math.PI)
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <svg
-        width={props.svgWidth}
-        height={props.svgWidth}
-        viewBox={`0 0 ${props.svgWidth} ${props.svgWidth}`}
-      >
+    <div style={{ width: "100%", height: "100%" }}>
+      <svg width={props.svgWidth} height={props.svgWidth} viewBox={`0 0 ${props.svgWidth} ${props.svgWidth}`}>
         <circle
           r={r()}
-          cx='50%'
-          cy='50%'
-          fill='transparent'
-          style={{ 'stroke-width': `${props.strokeWidth}px`, stroke: '#00000014' }}
+          cx="50%"
+          cy="50%"
+          fill="transparent"
+          style={{ "stroke-width": `${props.strokeWidth}px`, stroke: "#00000014" }}
         />
         <circle
-          id='bar'
+          id="bar"
           r={r()}
-          cx='50%'
-          cy='50%'
-          fill='transparent'
+          cx="50%"
+          cy="50%"
+          fill="transparent"
           stroke-dasharray={String(p())}
           stroke-dashoffset={p() - Math.min(props.percent, 1) * p()}
           style={{
-            'stroke-width': `${props.strokeWidth}px`,
-            stroke: 'currentcolor',
-            transform: 'rotate(-90deg)',
-            'transform-origin': 'center',
-            'stroke-linecap': 'round',
+            "stroke-width": `${props.strokeWidth}px`,
+            stroke: "currentcolor",
+            transform: "rotate(-90deg)",
+            "transform-origin": "center",
+            "stroke-linecap": "round",
           }}
         />
       </svg>

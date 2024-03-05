@@ -1,4 +1,4 @@
-import { isArray, isNumber } from '@edsolater/fnkit'
+import { isArray, isNumber } from "@edsolater/fnkit"
 
 /**
  *  can hold both array and object
@@ -10,7 +10,7 @@ interface Collection<T> {
   delete(key: keyof any): void
   add(value: T, getKey: (i: T, idx: number) => keyof any): void
   set(key: keyof any, value: T): void
-  
+
   size: number
 
   /** Iterator */

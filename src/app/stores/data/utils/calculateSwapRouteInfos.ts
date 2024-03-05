@@ -1,4 +1,4 @@
-import { Numberish, assert, hasProperty, isDateAfter, shakeNil } from '@edsolater/fnkit'
+import { Numberish, assert, hasProperty, isDateAfter, shakeNil } from "@edsolater/fnkit"
 import {
   ClmmPoolInfo,
   ApiPoolInfoItem,
@@ -8,22 +8,22 @@ import {
   ReturnTypeFetchMultipleInfo,
   ReturnTypeGetAllRouteComputeAmountOut,
   TradeV2,
-} from '@raydium-io/raydium-sdk'
-import { inNextMainLoop, makeTaskAbortable } from '../../../../packages/fnkit'
-import { getConnection } from '../../../utils/dataStructures/Connection'
-import { toSDKPercent } from '../../../utils/dataStructures/Percent'
-import toPubString from '../../../utils/dataStructures/Publickey'
-import { toSDKToken } from '../token/utils'
-import { Token } from '../token/type'
-import { TokenAmount, deUITokenAmount } from '../../../utils/dataStructures/TokenAmount'
-import { Mint } from '../../../utils/dataStructures/type'
-import { flatSDKReturnedInfo } from '../../../utils/sdkTools/flatSDKReturnedInfo'
-import { fetchAmmPoolInfo } from './fetchSwapAmmInfo'
-import { sdkParseClmmInfos } from './sdkParseClmmInfos'
-import { sdkParseSwapAmmInfo } from './sdkParseSwapAmmInfo'
+} from "@raydium-io/raydium-sdk"
+import { inNextMainLoop, makeTaskAbortable } from "../../../../packages/fnkit"
+import { getConnection } from "../../../utils/dataStructures/Connection"
+import { toSDKPercent } from "../../../utils/dataStructures/Percent"
+import toPubString from "../../../utils/dataStructures/Publickey"
+import { toSDKToken } from "../token/utils"
+import { Token } from "../token/type"
+import { TokenAmount, deUITokenAmount } from "../../../utils/dataStructures/TokenAmount"
+import { Mint } from "../../../utils/dataStructures/type"
+import { flatSDKReturnedInfo } from "../../../utils/sdkTools/flatSDKReturnedInfo"
+import { fetchAmmPoolInfo } from "./fetchSwapAmmInfo"
+import { sdkParseClmmInfos } from "./sdkParseClmmInfos"
+import { sdkParseSwapAmmInfo } from "./sdkParseSwapAmmInfo"
 
 export type CalculateSwapRouteInfosParams = Parameters<typeof calculateSwapRouteInfos>[0]
-export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>['result']>
+export type CalculateSwapRouteInfosResult = Awaited<ReturnType<typeof calculateSwapRouteInfos>["result"]>
 
 type CacheKey = `${Mint}-${Mint}`
 
@@ -73,29 +73,29 @@ export function calculateSwapRouteInfos({
   return makeTaskAbortable((canContinue) => {
     const fetchedAmmPoolInfoPromise = fetchAmmPoolInfo()
     const canContinueAsyncChecker = <T>(i: T): T => {
-      assert(canContinue(), 'task aborted')
+      assert(canContinue(), "task aborted")
       return i
     }
     const ClmmPromise = fetchedAmmPoolInfoPromise
       .then(inNextMainLoop(canContinueAsyncChecker))
       .then((i) => i.Clmm)
       .then((Clmm) => {
-        assert(Clmm, 'Clmm api must be loaded')
+        assert(Clmm, "Clmm api must be loaded")
         return Clmm
       })
     const apiPoolListPromise = fetchedAmmPoolInfoPromise
       .then(inNextMainLoop(canContinueAsyncChecker))
       .then((i) => i.liquidity)
       .then((apiPoolList) => {
-        assert(apiPoolList, 'liquidity api must be loaded')
+        assert(apiPoolList, "liquidity api must be loaded")
         return apiPoolList
       })
     const connection = getConnection(rpcUrl)
     const chainTime = Date.now() / 1000
 
-    const sdkParsedClmmPoolInfoPromise = ClmmPromise
-      .then(inNextMainLoop(canContinueAsyncChecker))
-      .then((clmmPoolInfos) => sdkParseClmmInfos({ connection, apiClmmInfos: clmmPoolInfos }))
+    const sdkParsedClmmPoolInfoPromise = ClmmPromise.then(inNextMainLoop(canContinueAsyncChecker)).then(
+      (clmmPoolInfos) => sdkParseClmmInfos({ connection, apiClmmInfos: clmmPoolInfos }),
+    )
 
     const sdkParsedSwapAmmInfo = Promise.all([sdkParsedClmmPoolInfoPromise, apiPoolListPromise])
       .then(inNextMainLoop(canContinueAsyncChecker))
@@ -218,7 +218,7 @@ function getBestCalcResult(
   }
 }
 
-function getPoolInfoFromPoolType(poolType: PoolType): BestResultStartTimeInfo['poolInfo'] {
+function getPoolInfoFromPoolType(poolType: PoolType): BestResultStartTimeInfo["poolInfo"] {
   return {
     rawInfo: poolType,
     ammId: toPubString(poolType.id),
@@ -228,5 +228,5 @@ function getPoolInfoFromPoolType(poolType: PoolType): BestResultStartTimeInfo['p
 }
 
 function isClmmPoolInfo(poolType: PoolType): poolType is ClmmPoolInfo {
-  return hasProperty(poolType, 'protocolFeesTokenA')
+  return hasProperty(poolType, "protocolFeesTokenA")
 }

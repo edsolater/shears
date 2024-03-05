@@ -1,23 +1,23 @@
-import { flap, MayArray, MayFn, shrinkFn, switchCase } from '@edsolater/fnkit'
-import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from 'solid-js'
-import { runtimeObject } from '../fnkit/runtimeObject'
-import { addEventListener } from '../domkit'
-import { createDomRef } from '../hooks'
-import { createRef } from '../hooks/createRef'
-import { createPlugin, CSSObject, mergeProps, PivProps } from '../piv'
-import { Accessify, accessifyProps } from '../utils/accessifyProps'
-import { createController2 } from '../utils/createController'
+import { flap, MayArray, MayFn, shrinkFn, switchCase } from "@edsolater/fnkit"
+import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from "solid-js"
+import { runtimeObject } from "../fnkit/runtimeObject"
+import { addEventListener } from "../domkit"
+import { createDomRef } from "../hooks"
+import { createRef } from "../hooks/createRef"
+import { createPlugin, CSSObject, mergeProps, PivProps } from "../piv"
+import { Accessify, accessifyProps } from "../utils/accessifyProps"
+import { createController2 } from "../utils/createController"
 
 type TransitionPhase =
-  | 'hidden' /* UI unvisiable */
-  | 'shown' /* UI visiable and stable(not in transition) */
-  | 'during-process'
+  | "hidden" /* UI unvisiable */
+  | "shown" /* UI visiable and stable(not in transition) */
+  | "during-process"
 
-type TransitionCurrentPhasePropsName = 'enterFrom' | 'enterTo' | 'leaveFrom' | 'leaveTo'
+type TransitionCurrentPhasePropsName = "enterFrom" | "enterTo" | "leaveFrom" | "leaveTo"
 
 export interface CSSTransactionOptions {
   cssTransitionDurationMs?: Accessify<number | undefined, TransitionController>
-  cssTransitionTimingFunction?: CSSObject['transitionTimingFunction']
+  cssTransitionTimingFunction?: CSSObject["transitionTimingFunction"]
 
   /* detect transition should be turn on */
   show?: Accessify<boolean | undefined, TransitionController>
@@ -44,19 +44,19 @@ export interface CSSTransactionOptions {
   onBeforeEnter?: (payloads: {
     el: HTMLElement | undefined
     from: TransitionPhase
-    to: 'shown' | 'hidden'
+    to: "shown" | "hidden"
     isFromAbortted: boolean
   }) => void
-  onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: 'shown' | 'hidden' }) => void
+  onAfterEnter?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: "shown" | "hidden" }) => void
   onBeforeLeave?: (payloads: {
     el: HTMLElement | undefined
     from: TransitionPhase
-    to: 'shown' | 'hidden'
+    to: "shown" | "hidden"
     isFromAbortted: boolean
   }) => void
-  onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: 'shown' | 'hidden' }) => void
+  onAfterLeave?: (payloads: { el: HTMLElement | undefined; from: TransitionPhase; to: "shown" | "hidden" }) => void
 
-  presets?: MayArray<MayFn<Omit<CSSTransactionOptions, 'presets'>>> //🤔 is it plugin? No, pluginHook can't have plugin prop
+  presets?: MayArray<MayFn<Omit<CSSTransactionOptions, "presets">>> //🤔 is it plugin? No, pluginHook can't have plugin prop
   // children?: ReactNode | ((state: { phase: TransitionPhase }) => ReactNode)
 }
 
@@ -85,49 +85,49 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
         presets.map((i) => shrinkFn(i)?.enterFromProps),
         opts.enterProps,
         opts.enterFromProps ?? opts.hideProps,
-        { style: basic }
+        { style: basic },
       ) as PivProps,
       enterTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.enterToProps),
         opts.enterProps,
         opts.enterToProps ?? opts.showProps,
-        { style: basic }
+        { style: basic },
       ) as PivProps,
       leaveFrom: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveFromProps),
         opts.leaveProps,
         opts.leaveFromProps ?? opts.showProps,
-        { style: basic }
+        { style: basic },
       ) as PivProps,
       leaveTo: mergeProps(
         presets.map((i) => shrinkFn(i)?.leaveToProps),
         opts.leaveProps,
         opts.leaveToProps ?? opts.hideProps,
-        { style: basic }
+        { style: basic },
       ) as PivProps,
     } as Record<TransitionCurrentPhasePropsName, PivProps>
   })
 
-  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? 'shown' : 'hidden')
-  const targetPhase = createMemo(() => (opts.show ? 'shown' : 'hidden'))
+  const [currentPhase, setCurrentPhase] = createSignal<TransitionPhase>(opts.show && !opts.appear ? "shown" : "hidden")
+  const targetPhase = createMemo(() => (opts.show ? "shown" : "hidden"))
   // this accessor is to hold collapse state
-  const opened = createMemo(() => targetPhase() === 'shown')
+  const opened = createMemo(() => targetPhase() === "shown")
   const currentPhasePropsName = createMemo<TransitionCurrentPhasePropsName>(() =>
-    targetPhase() === 'shown'
-      ? currentPhase() === 'hidden'
-        ? 'enterFrom'
-        : 'enterTo'
-      : currentPhase() === 'shown'
-        ? 'leaveFrom'
-        : 'leaveTo'
+    targetPhase() === "shown"
+      ? currentPhase() === "hidden"
+        ? "enterFrom"
+        : "enterTo"
+      : currentPhase() === "shown"
+        ? "leaveFrom"
+        : "leaveTo",
   )
 
   // set data-** to element for semantic
   createEffect(() => {
     const el = contentDom()
     if (el) {
-      el.dataset['from'] = currentPhase()
-      el.dataset['to'] = targetPhase()
+      el.dataset["from"] = currentPhase()
+      el.dataset["to"] = targetPhase()
     }
   })
 
@@ -138,11 +138,11 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
     if (!el) return
     const subscription = addEventListener(
       el,
-      'transitionend',
+      "transitionend",
       () => {
         setCurrentPhase(targetPhase())
       },
-      { onlyTargetIsSelf: true /* not event fired by bubbled */ }
+      { onlyTargetIsSelf: true /* not event fired by bubbled */ },
     )
     // const subscription2 = addEventListener(
     //   el,
@@ -160,8 +160,8 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
 
   // change current phase by target phase
   createEffect(() => {
-    if (targetPhase() !== currentPhase() && currentPhase() !== 'during-process') {
-      setCurrentPhase('during-process')
+    if (targetPhase() !== currentPhase() && currentPhase() !== "during-process") {
+      setCurrentPhase("during-process")
     }
   })
 
@@ -171,23 +171,23 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
       [currentPhase, targetPhase],
       ([currentPhase, targetPhase], prev) => {
         const el = contentDom()
-        const [prevCurrentPhase, prevTargetPhase]: [phase?: TransitionPhase, to?: 'hidden' | 'shown'] = prev ?? []
+        const [prevCurrentPhase, prevTargetPhase]: [phase?: TransitionPhase, to?: "hidden" | "shown"] = prev ?? []
 
         const status = {
           el,
           from: currentPhase,
           to: targetPhase,
           prevPhase: prevCurrentPhase,
-          isFromAbortted: currentPhase === 'during-process' && prevCurrentPhase === 'during-process', // not right
+          isFromAbortted: currentPhase === "during-process" && prevCurrentPhase === "during-process", // not right
         } as const
         // -------- process judgers --------
         const isFirstRender = prevCurrentPhase === undefined
-        const isCurrentPhaseShown = currentPhase === 'shown'
-        const isCurrentPhaseHidden = currentPhase === 'hidden'
-        const isCurrentPhaseDuringProcess = currentPhase === 'during-process'
-        const isPreviousPhaseDuringProcess = prevCurrentPhase === 'during-process'
-        const isTargetShown = targetPhase === 'shown'
-        const isTargetHidden = targetPhase === 'hidden'
+        const isCurrentPhaseShown = currentPhase === "shown"
+        const isCurrentPhaseHidden = currentPhase === "hidden"
+        const isCurrentPhaseDuringProcess = currentPhase === "during-process"
+        const isPreviousPhaseDuringProcess = prevCurrentPhase === "during-process"
+        const isTargetShown = targetPhase === "shown"
+        const isTargetHidden = targetPhase === "hidden"
 
         // -------- lifecycle judgers --------
         const isAfterEnter = isCurrentPhaseShown && isTargetShown
@@ -206,8 +206,8 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
           [isBeforeLeave, () => opts.onBeforeLeave?.(status)],
         ])
       },
-      { defer: true }
-    )
+      { defer: true },
+    ),
   )
 
   const transitionProps = () => {
@@ -218,7 +218,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
   return { dom: contentDom, setDom: setContentDom, transitionProps, opened }
 }
 
-export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'show'>) {
+export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, "show">) {
   const [show, setShow] = createSignal(false)
 
   function toggle() {
@@ -251,7 +251,7 @@ export function createTransitionPlugin(options?: Omit<CSSTransactionOptions, 'sh
           // if not use runtimeObject, the props will be consumed too early
           shadowProps: () => transitionProps(),
           domRef: () => setDom,
-        })
+        }),
     ),
     el: dom,
     controller,
@@ -268,15 +268,15 @@ export function createCSSCollapsePlugin(options?: {
   let cachedElementHeight: number | undefined = undefined // for transition start may start from transition cancel, which height is not correct
   const { plugin, controller, el } = createTransitionPlugin({
     cssTransitionDurationMs: options?.durationMs ?? 170,
-    cssTransitionTimingFunction: 'ease-out',
+    cssTransitionTimingFunction: "ease-out",
     enterProps: {
       icss: {
-        userSelect: 'none',
+        userSelect: "none",
       },
     },
     leaveProps: {
       icss: {
-        userSelect: 'none',
+        userSelect: "none",
       },
     },
     hideProps: {
@@ -295,61 +295,61 @@ export function createCSSCollapsePlugin(options?: {
       //why not invoked? 🤔
       if (options?.ignoreEnterTransition) {
         resumeDOMCache(el)
-        el?.style.removeProperty('position')
-        el?.style.removeProperty('visibility')
+        el?.style.removeProperty("position")
+        el?.style.removeProperty("visibility")
         return
       }
 
       window.requestAnimationFrame(() => {
         if (!el) return
-        el.style.removeProperty('position')
-        el.style.removeProperty('visibility')
+        el.style.removeProperty("position")
+        el.style.removeProperty("visibility")
 
         if (inTransitionDuration) {
-          if (cachedElementHeight) el.style.setProperty('height', cachedElementHeight + 'px')
+          if (cachedElementHeight) el.style.setProperty("height", cachedElementHeight + "px")
         } else {
           const { height } = el.getBoundingClientRect()
 
           cachedElementHeight = height
           const originalTransitionProps = getComputedStyle(el).transition
-          el.style.setProperty('transition', 'none')
+          el.style.setProperty("transition", "none")
 
           el.clientHeight
 
           // frequent ui action may cause element havn't attach to DOM yet, when occors, just ignore it.
-          el.style.setProperty('height', '0')
+          el.style.setProperty("height", "0")
           el.clientHeight
-          el.style.setProperty('transition', originalTransitionProps)
+          el.style.setProperty("transition", originalTransitionProps)
           /// Force bowser to paint the frame  🤯🤯🤯🤯
-          el.style.setProperty('height', height + 'px')
+          el.style.setProperty("height", height + "px")
         }
         inTransitionDuration = true
       })
     },
     onAfterEnter({ el }) {
-      el?.style.removeProperty('height')
+      el?.style.removeProperty("height")
       inTransitionDuration = false
     },
     onBeforeLeave({ el }) {
       if (!el) return
       if (options?.ignoreLeaveTransition) return
       if (inTransitionDuration) {
-        el.style.setProperty('height', `0`)
+        el.style.setProperty("height", `0`)
       } else {
         const { height } = el.getBoundingClientRect()
         cachedElementHeight = height
 
-        el.style.setProperty('height', height + 'px')
+        el.style.setProperty("height", height + "px")
         // Force bowser to paint the frame  🤯🤯🤯🤯
         el.clientHeight
-        el.style.setProperty('height', '0')
+        el.style.setProperty("height", "0")
       }
       inTransitionDuration = true
     },
     onAfterLeave({ el }) {
-      el?.style.removeProperty('height')
-      el?.style.setProperty('position', 'absolute')
-      el?.style.setProperty('visibility', 'hidden')
+      el?.style.removeProperty("height")
+      el?.style.setProperty("position", "absolute")
+      el?.style.setProperty("visibility", "hidden")
       destoryDOMCache(el)
       inTransitionDuration = false
     },
@@ -357,17 +357,17 @@ export function createCSSCollapsePlugin(options?: {
 
   // init collapse
   createEffect(() => {
-    el()?.style.setProperty('pointer-events', 'none')
-    el()?.style.setProperty('position', 'absolute')
+    el()?.style.setProperty("pointer-events", "none")
+    el()?.style.setProperty("position", "absolute")
   })
 
   function resumeDOMCache(element: HTMLElement | undefined) {
-    element?.style.removeProperty('pointer-events')
+    element?.style.removeProperty("pointer-events")
   }
 
   // innerChildren.current = null // clean from internal storage to avoid still render dom
   function destoryDOMCache(element: HTMLElement | undefined) {
-    element?.style.setProperty('pointer-events', 'none')
+    element?.style.setProperty("pointer-events", "none")
   }
 
   return {

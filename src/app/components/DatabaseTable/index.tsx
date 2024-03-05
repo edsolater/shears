@@ -11,8 +11,8 @@ import {
   icssClickable,
   useKitProps,
   type ItemList,
-} from '@edsolater/pivkit'
-import { Accessor, createContext, createMemo, createSignal, useContext } from 'solid-js'
+} from "@edsolater/pivkit"
+import { Accessor, createContext, createMemo, createSignal, useContext } from "solid-js"
 import {
   CollapseBox,
   List,
@@ -21,13 +21,13 @@ import {
   icssThreeSlotGrid,
   parseICSSToClassName,
   type ListKitProps,
-} from '../../../packages/pivkit'
-import { icssClmmItemRow, icssClmmItemRowCollapse } from '../../pages/clmm'
-import { DatabaseItemFacePartTextDetail } from '../../pages/pool'
-import { colors } from '../../theme/colors'
-import { scrollbarWidth } from '../../theme/misc'
-import { Title } from '../BoardTitle'
-import { CyberPanel } from '../CyberPanel'
+} from "../../../packages/pivkit"
+import { icssClmmItemRow, icssClmmItemRowCollapse } from "../../pages/clmm"
+import { DatabaseItemFacePartTextDetail } from "../../pages/pool"
+import { colors } from "../../theme/colors"
+import { scrollbarWidth } from "../../theme/misc"
+import { Title } from "../BoardTitle"
+import { CyberPanel } from "../CyberPanel"
 
 // for sort and search
 export type TabelHeaderConfigs<T> = {
@@ -63,7 +63,7 @@ interface DatabaseTabelContextValue {
 
 const DatabaseTableContext = createContext<DatabaseTabelContextValue>(
   { setItemPiecesWidth: (key: string, idx: number, width: number) => {} },
-  { name: 'ListController' },
+  { name: "ListController" },
 )
 
 /**
@@ -72,10 +72,10 @@ const DatabaseTableContext = createContext<DatabaseTabelContextValue>(
  *
  * show a list of items in CyberPanel
  */
-export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noNeedDeAccessifyProps: ['getKey'] }>) {
+export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noNeedDeAccessifyProps: ["getKey"] }>) {
   const { props, shadowProps } = useKitProps(kitProps, {
-    name: 'DatabaseTable',
-    noNeedDeAccessifyProps: ['getItemKey'],
+    name: "DatabaseTable",
+    noNeedDeAccessifyProps: ["getItemKey"],
   })
   const cellNames = () => props.headerConfig.map((config) => config.name)
   const [cellWidths, setItemWidthRecord] = createSignal<Record<string, RowWidths>>({})
@@ -99,7 +99,7 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
 
   const headerICSS = () => [
     // TODO: should also in createICSS
-    { '& > *': { paddingInline: '8px' } },
+    { "& > *": { paddingInline: "8px" } },
     databaseTableGridICSS(),
   ]
   const databaseTableContextRoot: DatabaseTabelContextValue = {
@@ -114,46 +114,46 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
   }
   return (
     <DatabaseTableContext.Provider value={databaseTableContextRoot}>
-      <Col icss={{ maxHeight: '100%', overflowY: 'hidden' }} shadowProps={shadowProps}>
+      <Col icss={{ maxHeight: "100%", overflowY: "hidden" }} shadowProps={shadowProps}>
         <Box icss={icssThreeSlotGrid}>
           <Title icss={{ color: colors.textPrimary }}>{props.title}</Title>
           <Box>{props.TopMiddle}</Box>
           <Box>{props.TopRight}</Box>
         </Box>
-        <CyberPanel icss={{ overflow: 'hidden', paddingInline: '24px' }}>
-          <Group name='subtitle'>
+        <CyberPanel icss={{ overflow: "hidden", paddingInline: "24px" }}>
+          <Group name="subtitle">
             <Title>{props.subtitle}</Title>
             <Text>{props.subtitleDescription}</Text>
           </Group>
 
           <Group
-            name='table-header'
+            name="table-header"
             icss={{
-              display: 'flex',
-              paddingInline: '16px',
-              paddingBlock: '8px',
-              borderRadius: '12px',
+              display: "flex",
+              paddingInline: "16px",
+              paddingBlock: "8px",
+              borderRadius: "12px",
               background: colors.listHeaderBg,
             }}
           >
             {/* collect star */}
-            <Box icss={{ width: '32px' }}></Box>
+            <Box icss={{ width: "32px" }}></Box>
 
             <Box icss={[{ flexGrow: 1 }, headerICSS()]}>
               <Loop of={cellNames}>
-                {(headerLabel) => <Text icss={{ fontWeight: 'bold', color: colors.textSecondary }}>{headerLabel}</Text>}
+                {(headerLabel) => <Text icss={{ fontWeight: "bold", color: colors.textSecondary }}>{headerLabel}</Text>}
               </Loop>
             </Box>
           </Group>
 
-          <Group name='items'>
+          <Group name="items">
             <List
               shadowProps={props.propForList}
               items={props.items}
               icss={{
-                maxHeight: '100%',
-                overflowY: 'scroll',
-                overflowX: 'hidden',
+                maxHeight: "100%",
+                overflowY: "scroll",
+                overflowX: "hidden",
                 marginRight: `-${scrollbarWidth}px`,
               }}
             >
@@ -185,7 +185,7 @@ function DatabaseTableItem<T>(props: {
   itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<any>
 }) {
   return (
-    <Box icss={icssClmmItemRow} class='ClmmItemRow'>
+    <Box icss={icssClmmItemRow} class="ClmmItemRow">
       <CollapseBox
         icss={icssClmmItemRowCollapse}
         renderFace={
@@ -199,10 +199,10 @@ function DatabaseTableItem<T>(props: {
 
 const databaseTableRowCollapseFaceStyle = parseICSSToClassName([
   {
-    paddingBlock: '20px',
-    paddingInline: '16px',
+    paddingBlock: "20px",
+    paddingInline: "16px",
     background: colors.listItemBg,
-    transition: 'all 150ms',
+    transition: "all 150ms",
   },
 ])
 
@@ -215,15 +215,15 @@ function DatabaseTableItemCollapseFace<T>(
   kitProps: KitProps<{ key: string; item: T; innerConfig: DatabaseTabelItemCollapseFaceRenderConfig<T> }>,
 ) {
   // console.count('DatabaseTableItemCollapseFace') // TODO: why render so many times
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseFace' })
+  const { props, shadowProps } = useKitProps(kitProps, { name: "DatabaseTableItemCollapseFace" })
   const { databaseTableGridTemplate, setItemPiecesWidth } = useContext(DatabaseTableContext)
   return (
     <Row shadowProps={shadowProps} icss={databaseTableRowCollapseFaceStyle}>
-      <Box icss={{ width: '24px', marginRight: '8px' }}>
+      <Box icss={{ width: "24px", marginRight: "8px" }}>
         <ItemStarIcon />
       </Box>
 
-      <Group name='item-parts' icss={[{ flex: 1 }, databaseTableGridTemplate?.()]}>
+      <Group name="item-parts" icss={[{ flex: 1 }, databaseTableGridTemplate?.()]}>
         <Loop of={props.innerConfig}>
           {(config, idx) => (
             <DatabaseItemFacePartTextDetail
@@ -247,12 +247,12 @@ export function ItemStarIcon() {
   return (
     <Box
       icss={{
-        width: '24px',
-        alignSelf: 'center',
+        width: "24px",
+        alignSelf: "center",
       }}
     >
       <Icon
-        src={isFavourite() ? '/icons/misc-star-filled.svg' : '/icons/misc-star-empty.svg'}
+        src={isFavourite() ? "/icons/misc-star-filled.svg" : "/icons/misc-star-empty.svg"}
         onClick={({ ev }) => {
           ev.stopPropagation() // onUnFavorite?.(deAccessify(props.item).ammId)
 
@@ -261,8 +261,8 @@ export function ItemStarIcon() {
         icss={[
           icssClickable,
           {
-            margin: 'auto',
-            alignSelf: 'center',
+            margin: "auto",
+            alignSelf: "center",
           },
         ]}
       />
@@ -274,13 +274,13 @@ export type DatabaseTabelItemCollapseContentRenderConfig<T> = {
   render: (item: T) => PivChild
 }
 const databaseTableItemCollapseContentStyle = parseICSSToClassName({
-  background: 'linear-gradient(126.6deg, rgba(171, 196, 255, 0.12), rgb(171 196 255 / 4%) 100%)'
+  background: "linear-gradient(126.6deg, rgba(171, 196, 255, 0.12), rgb(171 196 255 / 4%) 100%)",
 })
 
 export function DatabaseTableItemCollapseContent<T>(
   kitProps: KitProps<{ item: T; innerConfig: DatabaseTabelItemCollapseContentRenderConfig<T> }>,
 ) {
-  const { props, shadowProps } = useKitProps(kitProps, { name: 'DatabaseTableItemCollapseContent' })
+  const { props, shadowProps } = useKitProps(kitProps, { name: "DatabaseTableItemCollapseContent" })
   const isFavourite = () => false
   return <Box icss={databaseTableItemCollapseContentStyle}>{props.innerConfig.render(props.item)}</Box>
 }

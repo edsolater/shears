@@ -1,5 +1,5 @@
-import { createDomRef } from '@edsolater/pivkit'
-import useResizeObserver from './useResizeObserver'
+import { createDomRef } from "@edsolater/pivkit"
+import useResizeObserver from "./useResizeObserver"
 
 // used in props:ref so can have multiple features
 // 🔥 already in pivkit

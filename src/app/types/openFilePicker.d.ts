@@ -8,7 +8,7 @@ export {}
 
 declare global {
   interface FileSystemHandle {
-    readonly kind: 'file' | 'directory'
+    readonly kind: "file" | "directory"
     readonly name: string
 
     isSameEntry(other: FileSystemHandle): Promise<boolean>
@@ -52,7 +52,7 @@ declare global {
   // tslint:disable-next-line:no-empty-interface
   interface DirectoryPickerOptions {}
 
-  type FileSystemPermissionMode = 'read' | 'readwrite'
+  type FileSystemPermissionMode = "read" | "readwrite"
 
   interface FileSystemPermissionDescriptor extends PermissionDescriptor {
     handle: FileSystemHandle
@@ -99,7 +99,7 @@ declare global {
   // }
 
   interface FileSystemFileHandle extends FileSystemHandle {
-    readonly kind: 'file'
+    readonly kind: "file"
     getFile(): Promise<File>
     createWritable(options?: FileSystemCreateWritableOptions): Promise<FileSystemWritableFileStream>
     /**
@@ -118,7 +118,7 @@ declare global {
   }
 
   interface FileSystemDirectoryHandle extends FileSystemHandle {
-    readonly kind: 'directory'
+    readonly kind: "directory"
     getDirectoryHandle(name: string, options?: FileSystemGetDirectoryOptions): Promise<FileSystemDirectoryHandle>
     getFileHandle(name: string, options?: FileSystemGetFileOptions): Promise<FileSystemFileHandle>
     removeEntry(name: string, options?: FileSystemRemoveOptions): Promise<void>
@@ -126,7 +126,7 @@ declare global {
     keys(): AsyncIterableIterator<string>
     values(): AsyncIterableIterator<FileSystemDirectoryHandle | FileSystemFileHandle>
     entries(): AsyncIterableIterator<[string, FileSystemDirectoryHandle | FileSystemFileHandle]>
-    [Symbol.asyncIterator]: FileSystemDirectoryHandle['entries']
+    [Symbol.asyncIterator]: FileSystemDirectoryHandle["entries"]
     /**
      * @deprecated Old property just for Chromium <=85. Use `kind` property in the new API.
      */
@@ -151,7 +151,7 @@ declare global {
   }
 
   function showOpenFilePicker(
-    options?: OpenFilePickerOptions & { multiple?: false | undefined }
+    options?: OpenFilePickerOptions & { multiple?: false | undefined },
   ): Promise<[FileSystemFileHandle]>
   function showOpenFilePicker(options?: OpenFilePickerOptions): Promise<FileSystemFileHandle[]>
   function showSaveFilePicker(options?: SaveFilePickerOptions): Promise<FileSystemFileHandle>
@@ -175,51 +175,51 @@ declare global {
    */
   function chooseFileSystemEntries(
     options?: ChooseFileSystemEntriesFileOptions & {
-      type?: 'open-file' | undefined
+      type?: "open-file" | undefined
       multiple?: false | undefined
-    }
+    },
   ): Promise<FileSystemFileHandle>
   /**
    * @deprecated Old method just for Chromium <=85. Use `showOpenFilePicker()` in the new API.
    */
   function chooseFileSystemEntries(
     options: ChooseFileSystemEntriesFileOptions & {
-      type?: 'open-file' | undefined
+      type?: "open-file" | undefined
       multiple: true
-    }
+    },
   ): Promise<FileSystemFileHandle[]>
   /**
    * @deprecated Old method just for Chromium <=85. Use `showSaveFilePicker()` in the new API.
    */
   function chooseFileSystemEntries(
     options: ChooseFileSystemEntriesFileOptions & {
-      type: 'save-file'
-    }
+      type: "save-file"
+    },
   ): Promise<FileSystemFileHandle>
   /**
    * @deprecated Old method just for Chromium <=85. Use `showDirectoryPicker()` in the new API.
    */
-  function chooseFileSystemEntries(options: { type: 'open-directory' }): Promise<FileSystemDirectoryHandle>
+  function chooseFileSystemEntries(options: { type: "open-directory" }): Promise<FileSystemDirectoryHandle>
 
   interface GetSystemDirectoryOptions {
-    type: 'sandbox'
+    type: "sandbox"
   }
 
   interface FileSystemDirectoryHandle {
     /**
      * @deprecated Old property just for Chromium <=85. Use `.getFileHandle()` in the new API.
      */
-    getFile: FileSystemDirectoryHandle['getFileHandle']
+    getFile: FileSystemDirectoryHandle["getFileHandle"]
 
     /**
      * @deprecated Old property just for Chromium <=85. Use `.getDirectoryHandle()` in the new API.
      */
-    getDirectory: FileSystemDirectoryHandle['getDirectoryHandle']
+    getDirectory: FileSystemDirectoryHandle["getDirectoryHandle"]
 
     /**
      * @deprecated Old property just for Chromium <=85. Use `.keys()`, `.values()`, `.entries()`, or the directory itself as an async iterable in the new API.
      */
-    getEntries: FileSystemDirectoryHandle['values']
+    getEntries: FileSystemDirectoryHandle["values"]
   }
 
   interface FileSystemHandlePermissionDescriptor {

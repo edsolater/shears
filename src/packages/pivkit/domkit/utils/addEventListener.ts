@@ -1,4 +1,4 @@
-import { AnyFn } from '@edsolater/fnkit'
+import { AnyFn } from "@edsolater/fnkit"
 
 let eventId = 1
 
@@ -37,7 +37,7 @@ export function addEventListener<
   eventName: K,
   fn: (payload: EventCallback<K, El>) => void,
   /** default is `{ passive: true }` */
-  options?: EventListenerOptions
+  options?: EventListenerOptions,
 ): EventListenerController {
   const defaultedOptions = { passive: true, ...options }
   const targetEventId = eventId++

@@ -1,4 +1,4 @@
-import { NumberishFormatOptions, Numberish, div, parseAnatomyNumberInfo, toFormattedNumber } from '@edsolater/fnkit'
+import { NumberishFormatOptions, Numberish, div, parseAnatomyNumberInfo, toFormattedNumber } from "@edsolater/fnkit"
 /**
  * it depends on 'toFixed'
  */
@@ -8,7 +8,7 @@ export default function toUsdVolume(
     shortcut?: boolean
   } & NumberishFormatOptions,
 ) {
-  if (!amount) return '$--'
+  if (!amount) return "$--"
   return `$${
     options?.shortcut
       ? toShortcutNumber(amount, { decimals: 2, ...options })
@@ -30,11 +30,11 @@ export function toShortcutNumber(
 ): string {
   const formatFn = (n: Numberish) =>
     toFormattedNumber(n, {
-      decimals: 'auto',
+      decimals: "auto",
       ...options,
     })
   try {
-    const { int = '' } = parseAnatomyNumberInfo(n)
+    const { int = "" } = parseAnatomyNumberInfo(n)
     const numberWeigth = int.length
     if (!options?.disabled && numberWeigth > 3 * 4) return `${formatFn(div(n, 1e12))}T`
     if (!options?.disabled && numberWeigth > 3 * 3) return `${formatFn(div(n, 1e9))}B`
@@ -42,6 +42,6 @@ export function toShortcutNumber(
     if (!options?.disabled && numberWeigth > 3 * 1) return `${formatFn(div(n, 1e3))}K`
     return `${formatFn(n)}`
   } catch {
-    return '0'
+    return "0"
   }
 }

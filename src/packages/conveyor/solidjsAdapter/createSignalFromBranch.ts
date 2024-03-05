@@ -1,7 +1,7 @@
-import { Accessor, createSignal } from 'solid-js'
-import { Branch } from '../smartStore/branch'
-import { Shuck } from '../smartStore/shuck'
-import { shrinkFn } from '@edsolater/fnkit'
+import { Accessor, createSignal } from "solid-js"
+import { Branch } from "../smartStore/branch"
+import { Shuck } from "../smartStore/shuck"
+import { shrinkFn } from "@edsolater/fnkit"
 
 export function createSignalFromBranch<T extends object, U>(
   branch: Branch<T>,

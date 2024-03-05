@@ -1,4 +1,4 @@
-import { MayPromise, assert, isObject } from '@edsolater/fnkit'
+import { MayPromise, assert, isObject } from "@edsolater/fnkit"
 
 type TaskPayload = any
 type TaskResult = any
@@ -21,7 +21,7 @@ export function batchRunTask<Payload extends TaskPayload = TaskPayload, Result e
   taskHandler: TaskHandler<Payload, Result>,
   taskPayload: Payload,
 ): Promise<Result> {
-  assert(isObject(taskPayload), 'taskPayload must be an object')
+  assert(isObject(taskPayload), "taskPayload must be an object")
 
   // add To queue
   _taskPayloadQueue.set(taskHandler, new Set(_taskPayloadQueue.get(taskHandler)).add(taskPayload))
@@ -34,13 +34,13 @@ export function batchRunTask<Payload extends TaskPayload = TaskPayload, Result e
   function getResultFromHandlerResult(results: Map<Payload, Result>) {
     const allPayloads = _taskPayloadQueue.get(taskHandler)
     if (!allPayloads) {
-      throw new Error('no allPayloads, why?')
+      throw new Error("no allPayloads, why?")
     }
     allPayloads.forEach((payload) => {
       const thisResult = results.get(payload)
       const promiseHandlers = _taskResultPromiseHandler.get(taskPayload)
       if (!promiseHandlers) {
-        throw new Error('no promiseHandlers, why?')
+        throw new Error("no promiseHandlers, why?")
       } else {
         if (results.has(taskPayload)) {
           promiseHandlers.resolve(thisResult)

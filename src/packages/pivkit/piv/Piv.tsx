@@ -1,5 +1,5 @@
-import { MayArray, MayFn, flap, pipe } from '@edsolater/fnkit'
-import { JSX, JSXElement } from 'solid-js'
+import { MayArray, MayFn, flap, pipe } from "@edsolater/fnkit"
+import { JSX, JSXElement } from "solid-js"
 import {
   ClassName,
   HTMLProps,
@@ -9,10 +9,10 @@ import {
   PluginCoreFn,
   handlePluginProps,
   handleShadowProps,
-} from './propHandlers'
-import { renderHTMLDOM } from './propHandlers/renderHTMLDOM'
-import { HTMLTag, PivChild, ValidController } from './typeTools'
-import { omit } from './utils'
+} from "./propHandlers"
+import { renderHTMLDOM } from "./propHandlers/renderHTMLDOM"
+import { HTMLTag, PivChild, ValidController } from "./typeTools"
+import { omit } from "./utils"
 
 type Boollike = any
 
@@ -51,14 +51,14 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
 
   onClick?: (utils: ClickController<Controller>) => void // for accessifyProps, onClick can't be array
 
-  'merge:onClick'?: (
+  "merge:onClick"?: (
     utils: {
       ev: MouseEvent & {
         currentTarget: HTMLElement
         target: Element
       }
       el: HTMLElement
-    } & Controller
+    } & Controller,
   ) => void // for accessifyProps, "merge:onClick" can't be array
 
   /**
@@ -107,17 +107,17 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
    * const Button = () => <Piv as={(parsedPivProps) => <button {...parsedPivProps} />} />
    */
   as?: any // TODO: imply it // 💡soft `render-self`, props will merge other than cover
-  'render:self'?: (selfProps: PivProps<any, any>) => JSX.Element // assume a function return ReactNode is a Component
+  "render:self"?: (selfProps: PivProps<any, any>) => JSX.Element // assume a function return ReactNode is a Component
 
   /**
    * auto merge by shadowProps
    * change outter wrapper element
    */
-  'render:outWrapper'?: MayArray<DangerousWrapperNodeFn>
+  "render:outWrapper"?: MayArray<DangerousWrapperNodeFn>
 
-  'render:firstChild'?: MayArray<PivChild<Controller>>
+  "render:firstChild"?: MayArray<PivChild<Controller>>
 
-  'render:lastChild'?: MayArray<PivChild<Controller>>
+  "render:lastChild"?: MayArray<PivChild<Controller>>
 }
 
 type DangerousWrapperNodeFn = (originalChildren: JSXElement) => JSXElement // change outter wrapper element
@@ -125,49 +125,49 @@ type DangerousWrapperNodeFn = (originalChildren: JSXElement) => JSXElement // ch
 export type CRef<T> = (el: T) => void // not right
 
 export const pivPropsNames = [
-  'id',
-  'if',
-  'ifSelfShown',
+  "id",
+  "if",
+  "ifSelfShown",
 
-  'domRef',
-  'class',
-  'htmlProps',
-  'icss',
-  'onClick',
+  "domRef",
+  "class",
+  "htmlProps",
+  "icss",
+  "onClick",
 
-  'plugin',
-  'shadowProps',
+  "plugin",
+  "shadowProps",
 
-  'style',
-  'debugLog',
+  "style",
+  "debugLog",
 
-  'innerController',
-  'children',
+  "innerController",
+  "children",
 
-  'render:self',
-  'render:outWrapper',
-  'render:firstChild',
-  'render:lastChild',
+  "render:self",
+  "render:outWrapper",
+  "render:firstChild",
+  "render:lastChild",
 ] satisfies (keyof PivProps<any>)[]
 
 export const Piv = <TagName extends HTMLTag = HTMLTag, Controller extends ValidController = ValidController>(
-  kitProps: PivProps<TagName, Controller>
+  kitProps: PivProps<TagName, Controller>,
 ) => {
   // 📝 render:outWrapper may in showProps or plugin. so need to handle it first
   const props = pipe(kitProps, handleShadowProps, handlePluginProps, handleShadowProps)
-  return 'render:outWrapper' in props ? handlePropRenderOutWrapper(props) : handleNormalPivProps(props)
+  return "render:outWrapper" in props ? handlePropRenderOutWrapper(props) : handleNormalPivProps(props)
 }
 
-function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, 'plugin' | 'shadowProps'>) {
+function handleNormalPivProps(rawProps?: Omit<PivProps<any, any>, "plugin" | "shadowProps">) {
   if (!rawProps) return
-  return renderHTMLDOM('div', rawProps)
+  return renderHTMLDOM("div", rawProps)
 }
 
 function handlePropRenderOutWrapper(props: PivProps<any, any>): JSXElement {
-  console.log('detect render:outWrapper') // FIXME: <-- why not detected?
-  return flap(props['render:outWrapper']).reduce(
+  console.log("detect render:outWrapper") // FIXME: <-- why not detected?
+  return flap(props["render:outWrapper"]).reduce(
     (prevNode, getWrappedNode) => (getWrappedNode ? getWrappedNode(prevNode) : prevNode),
     // @ts-expect-error force
-    (() => handleNormalPivProps(omit(props, 'render:outWrapper'))) as JSXElement // 📝 wrap function to let not solidjs read at once when array.prototype.reduce not finish yet
+    (() => handleNormalPivProps(omit(props, "render:outWrapper"))) as JSXElement, // 📝 wrap function to let not solidjs read at once when array.prototype.reduce not finish yet
   )
 }

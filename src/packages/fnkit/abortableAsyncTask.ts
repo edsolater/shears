@@ -1,5 +1,5 @@
-import { Subscribable, createSubscribable } from '@edsolater/fnkit'
-import { invoke } from './invoke'
+import { Subscribable, createSubscribable } from "@edsolater/fnkit"
+import { invoke } from "./invoke"
 
 export type AbortableTask<T> = {
   abort(): void

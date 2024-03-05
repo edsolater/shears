@@ -1,6 +1,6 @@
-import { Col, Grid, KitProps } from '@edsolater/pivkit'
-import { NavRouteItems } from './NavigationItems'
-import { OptionAdditionalItems } from './OptionAdditionalItems'
+import { Col, Grid, KitProps } from "@edsolater/pivkit"
+import { NavRouteItems } from "./NavigationItems"
+import { OptionAdditionalItems } from "./OptionAdditionalItems"
 
 /**
  * for easier to code and read
@@ -12,16 +12,16 @@ export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
     <>
       <Col
         icss={{
-          height: '100%',
-          width: '16rem',
-          overflowY: 'auto',
+          height: "100%",
+          width: "16rem",
+          overflowY: "auto",
         }}
       >
         <Grid
           icss={{
-            gridTemplateRows: '2fr 1fr auto',
-            overflow: 'hidden',
-            height: '100%',
+            gridTemplateRows: "2fr 1fr auto",
+            overflow: "hidden",
+            height: "100%",
           }}
         >
           <NavRouteItems />

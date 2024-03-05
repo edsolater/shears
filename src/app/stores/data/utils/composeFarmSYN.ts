@@ -1,13 +1,13 @@
-import { createSubscribableFromPromise, listToJSMap, map, mul, slice, toList, toRecord } from '@edsolater/fnkit'
-import { Farm, FarmFetchMultipleInfoParams } from '@raydium-io/raydium-sdk'
-import { abortableAsyncTask } from '../../../../packages/fnkit'
-import { getConnection } from '../../../utils/dataStructures/Connection'
-import toPubString, { toPub } from '../../../utils/dataStructures/Publickey'
-import { jsonInfo2PoolKeys } from '../../../utils/sdkTools/jsonInfo2PoolKeys'
-import { FarmInfo } from '../types/farm'
-import { fetchFarmJsonInfo } from './fetchFarmJson'
-import { fetchLiquidityJson } from './fetchLiquidityJson'
-import { fetchPairJsonInfo } from './fetchPairJson'
+import { createSubscribableFromPromise, listToJSMap, map, mul, slice, toList, toRecord } from "@edsolater/fnkit"
+import { Farm, FarmFetchMultipleInfoParams } from "@raydium-io/raydium-sdk"
+import { abortableAsyncTask } from "../../../../packages/fnkit"
+import { getConnection } from "../../../utils/dataStructures/Connection"
+import toPubString, { toPub } from "../../../utils/dataStructures/Publickey"
+import { jsonInfo2PoolKeys } from "../../../utils/sdkTools/jsonInfo2PoolKeys"
+import { FarmInfo } from "../types/farm"
+import { fetchFarmJsonInfo } from "./fetchFarmJson"
+import { fetchLiquidityJson } from "./fetchLiquidityJson"
+import { fetchPairJsonInfo } from "./fetchPairJson"
 
 export type ComposedFarmSYNInfos = Record<string, FarmInfo> | undefined
 export type ComposeFarmSYNInfoQuery = {
@@ -30,7 +30,7 @@ export function composeFarmSYN(query: ComposeFarmSYNInfoQuery) {
         connection: getConnection(query.rpcUrl),
         pools: toList(farmJsonInfos).map(jsonInfo2PoolKeys),
         owner: toPub(query.owner),
-        config: { batchRequest: true, commitment: 'confirmed' },
+        config: { batchRequest: true, commitment: "confirmed" },
         chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet
       }
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
@@ -54,7 +54,7 @@ function hydrateFarmSYN({
   pairJsons,
 }: {
   farmJsons?: Awaited<ReturnType<typeof fetchFarmJsonInfo>>
-  farmSDKs?: Awaited<ReturnType<(typeof Farm)['fetchMultipleInfoAndUpdate']>>
+  farmSDKs?: Awaited<ReturnType<(typeof Farm)["fetchMultipleInfoAndUpdate"]>>
   liquidityJsons?: Awaited<ReturnType<typeof fetchLiquidityJson>>
   pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
 }) {
@@ -72,12 +72,12 @@ function hydrateFarmSYN({
     const apr =
       pairJson &&
       ({
-        '24h': pairJson.apr24h,
-        '30d': pairJson.apr30d,
-        '7d': pairJson.apr7d,
-      } as FarmInfo['rewards'][number]['apr'])
+        "24h": pairJson.apr24h,
+        "30d": pairJson.apr30d,
+        "7d": pairJson.apr7d,
+      } as FarmInfo["rewards"][number]["apr"])
     return {
-      hasLoad: [farmSDK ? 'sdk' : undefined, farmSDK?.ledger ? 'ledger' : undefined, 'api'],
+      hasLoad: [farmSDK ? "sdk" : undefined, farmSDK?.ledger ? "ledger" : undefined, "api"],
 
       id: farmJson.id,
 
@@ -108,7 +108,7 @@ function hydrateFarmSYN({
           perSecond: rewardJson.rewardPerSecond,
           openTime: rewardJson.rewardOpenTime && new Date(rewardJson.rewardOpenTime * 1000),
           endTime: rewardJson.rewardEndTime && new Date(rewardJson.rewardEndTime * 1000),
-        } as FarmInfo['rewards'][number]
+        } as FarmInfo["rewards"][number]
       }),
     } as FarmInfo
   })

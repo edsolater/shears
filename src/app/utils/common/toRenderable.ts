@@ -1,4 +1,4 @@
-import { isNumberish, toFormattedNumber, type Numberish, type NumberishFormatOptions } from '@edsolater/fnkit'
+import { isNumberish, toFormattedNumber, type Numberish, type NumberishFormatOptions } from "@edsolater/fnkit"
 
 export function toRenderable(v: Numberish, options?: NumberishFormatOptions): string
 export function toRenderable(v: Numberish | undefined, options?: NumberishFormatOptions): string | undefined
@@ -16,8 +16,8 @@ export function toRenderable(v: any, options?: any): string | undefined {
       return toFormattedNumber(v, options)
     } catch (error) {
       console.log(error)
-      console.log('input: ', v)
-      return ''
+      console.log("input: ", v)
+      return ""
     }
   }
   return String(v)

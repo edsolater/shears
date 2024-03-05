@@ -85,7 +85,7 @@ export function createIndexedDBStoreManager<T = unknown>(
 
   async function set(key: string, body: unknown) {
     db.then((db) => {
-      const transaction = db.transaction(storeName, 'readwrite')
+      const transaction = db.transaction(storeName, "readwrite")
       transaction.objectStore(storeName).put(body, key)
     }).catch((e) => {
       console.error(e)
@@ -100,12 +100,12 @@ export function createIndexedDBStoreManager<T = unknown>(
           resolve = innerResolve
           reject = innerReject
         })
-        const transaction = db.transaction(storeName, 'readonly')
+        const transaction = db.transaction(storeName, "readonly")
         const request = transaction.objectStore(storeName).get(key)
-        request.addEventListener('success', (event) => {
+        request.addEventListener("success", (event) => {
           resolve((event.target as IDBRequest).result)
         })
-        request.addEventListener('error', (event) => {
+        request.addEventListener("error", (event) => {
           reject((event.target as IDBRequest).error)
         })
         return result
@@ -117,7 +117,7 @@ export function createIndexedDBStoreManager<T = unknown>(
   }
   async function deleteItem(key: string) {
     db.then((db) => {
-      const transaction = db.transaction(storeName, 'readwrite')
+      const transaction = db.transaction(storeName, "readwrite")
       transaction.objectStore(storeName).delete(key)
     }).catch((e) => {
       console.error(e)

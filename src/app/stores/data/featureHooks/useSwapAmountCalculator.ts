@@ -1,9 +1,9 @@
-import { notZero } from '@edsolater/fnkit'
-import { createEffect } from 'solid-js'
-import { TokenAmount } from '../../../utils/dataStructures/TokenAmount'
-import { createStorePropertySetter, createStorePropertySignal } from '../store'
-import { getToken } from '../utils/getToken'
-import { calculatedSwapRouteInfos_main } from '../portActions/calculateSwapRouteInfos_main'
+import { notZero } from "@edsolater/fnkit"
+import { createEffect } from "solid-js"
+import { TokenAmount } from "../../../utils/dataStructures/TokenAmount"
+import { createStorePropertySetter, createStorePropertySignal } from "../store"
+import { getToken } from "../utils/getToken"
+import { calculatedSwapRouteInfos_main } from "../portActions/calculateSwapRouteInfos_main"
 
 /**
  * calculate swap amount from up to down

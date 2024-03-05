@@ -1,5 +1,5 @@
-import { isFunction, isNullish, isObject, isPrimitive, type AnyObj } from '@edsolater/fnkit'
-import { produce } from 'solid-js/store'
+import { isFunction, isNullish, isObject, isPrimitive, type AnyObj } from "@edsolater/fnkit"
+import { produce } from "solid-js/store"
 
 /** it pass returned function to  setStore  */
 export function createStoreSetter<T extends Record<string, any>>(newStorePieces: Partial<T>) {

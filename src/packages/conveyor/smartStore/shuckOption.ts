@@ -1,5 +1,5 @@
-import { isExist } from '@edsolater/fnkit'
-import { shuckOptionTag } from './shuck'
+import { isExist } from "@edsolater/fnkit"
+import { shuckOptionTag } from "./shuck"
 
 export type ShuckOption<T = any> = {
   value: T

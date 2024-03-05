@@ -1,13 +1,13 @@
-import { Accessor, JSX, createEffect, createMemo, createSignal, splitProps, useContext } from 'solid-js'
-import { useKitProps } from '../../createKit'
-import useResizeObserver from '../../domkit/hooks/useResizeObserver'
-import { createRef } from '../../hooks/createRef'
-import { Piv, PivProps, omit } from '../../piv'
-import { ListContext } from './List'
-import { createDomRef } from '../../hooks'
-import isClientSide from '../../jFetch/utils/isSSR'
+import { Accessor, JSX, createEffect, createMemo, createSignal, splitProps, useContext } from "solid-js"
+import { useKitProps } from "../../createKit"
+import useResizeObserver from "../../domkit/hooks/useResizeObserver"
+import { createRef } from "../../hooks/createRef"
+import { Piv, PivProps, omit } from "../../piv"
+import { ListContext } from "./List"
+import { createDomRef } from "../../hooks"
+import isClientSide from "../../jFetch/utils/isSSR"
 
-export interface ListItemProps extends Omit<PivProps, 'children'> {
+export interface ListItemProps extends Omit<PivProps, "children"> {
   children: () => JSX.Element
   // TODO: just forceVisiable is not enough, should have more control props
   forceVisiable?: boolean
@@ -21,9 +21,9 @@ export interface ListItemController {
  * only used in `<List>`
  */
 export function ListItem(originalProps: ListItemProps) {
-  const [childrenProps, rawProps] = splitProps(originalProps, ['children'])
+  const [childrenProps, rawProps] = splitProps(originalProps, ["children"])
   const children = childrenProps.children
-  const { props, lazyLoadController } = useKitProps(rawProps, { name: 'ListItem' })
+  const { props, lazyLoadController } = useKitProps(rawProps, { name: "ListItem" })
 
   const [itemDomRef, setItemDom] = createRef<HTMLElement>()
 
@@ -51,9 +51,9 @@ export function ListItem(originalProps: ListItemProps) {
   return (
     <Piv
       domRef={[setItemDom, setSizeDetectorTarget]} // FIXME: why ref not setted🤔?
-      shadowProps={omit(props, 'children')} // FIXME: should not use tedius omit
+      shadowProps={omit(props, "children")} // FIXME: should not use tedius omit
       style={isIntersecting() ? undefined : { height: `${innerHeight()}px`, width: `${innerWidth()}px` }}
-      icss={{ width: '100%' }}
+      icss={{ width: "100%" }}
     >
       {childContent}
     </Piv>
@@ -75,10 +75,10 @@ function useElementSizeDetector() {
     if (!el) return
     if (!isClientSide()) return
 
-    if (!('clientWidth' in el)) return
+    if (!("clientWidth" in el)) return
     // setInnerWidth(el.clientWidth) //FIXME: why set is will cause error?🤔
 
-    if (!('clientHeight' in el)) return
+    if (!("clientHeight" in el)) return
     // setInnerHeight(el.clientHeight) //FIXME: why set is will cause error?🤔
   }
   return { setRef, innerWidth, innerHeight }

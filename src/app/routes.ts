@@ -1,10 +1,10 @@
-import { JSX } from 'solid-js'
-import ClmmsPage from './pages/clmm'
-import FarmPage from './pages/farm'
-import HomePage from './pages/home'
-import PlaygroundPage from './pages/playground'
-import PoolsPage from './pages/pool'
-import SwapPage from './pages/swap'
+import { JSX } from "solid-js"
+import ClmmsPage from "./pages/clmm"
+import FarmPage from "./pages/farm"
+import HomePage from "./pages/home"
+import PlaygroundPage from "./pages/playground"
+import PoolsPage from "./pages/pool"
+import SwapPage from "./pages/swap"
 
 type RouteItem = {
   name: string
@@ -27,53 +27,53 @@ function createRouteItem(options: RouteItem): RouteItem {
   }
 }
 
-export const poolsRoutePath = '/pools'
-export const homeRoutePath = '/'
-export const farmsRoutePath = '/farms'
-export const playgroundRoutePath = '/playground'
-export const swapRoutePath = '/swap'
-export const clmmRoutePath = '/clmm'
+export const poolsRoutePath = "/pools"
+export const homeRoutePath = "/"
+export const farmsRoutePath = "/farms"
+export const playgroundRoutePath = "/playground"
+export const swapRoutePath = "/swap"
+export const clmmRoutePath = "/clmm"
 
 export const homeRouteItem = createRouteItem({
-  name: 'home',
+  name: "home",
   path: homeRoutePath,
   component: HomePage,
   needAppPageLayout: false,
   visiable: false,
 })
 export const swapRouteItem = createRouteItem({
-  name: 'swap',
+  name: "swap",
   path: swapRoutePath,
   component: SwapPage,
-  icon: '/icons/entry-icon-swap.svg',
+  icon: "/icons/entry-icon-swap.svg",
   visiable: true,
   needAppPageLayout: true,
 })
 export const poolsRouteItem = createRouteItem({
-  name: 'pools',
+  name: "pools",
   path: poolsRoutePath,
   component: PoolsPage,
-  icon: '/icons/entry-icon-pools.svg',
+  icon: "/icons/entry-icon-pools.svg",
   visiable: true,
   needAppPageLayout: true,
 })
 export const farmsRouteItem = createRouteItem({
-  name: 'farms',
+  name: "farms",
   path: farmsRoutePath,
   component: FarmPage,
-  icon: '/icons/entry-icon-farms.svg',
+  icon: "/icons/entry-icon-farms.svg",
   visiable: true,
   needAppPageLayout: true,
 })
 export const playgroundRouteItem = createRouteItem({
-  name: 'playground',
+  name: "playground",
   path: playgroundRoutePath,
   component: PlaygroundPage,
   visiable: true,
   needAppPageLayout: true,
 })
 export const clmmRouteItem = createRouteItem({
-  name: 'clmm',
+  name: "clmm",
   path: clmmRoutePath,
   component: ClmmsPage,
   visiable: true,
@@ -81,4 +81,4 @@ export const clmmRouteItem = createRouteItem({
 })
 export const routes = [homeRouteItem, swapRouteItem, poolsRouteItem, farmsRouteItem, playgroundRouteItem, clmmRouteItem]
 
-export const isLocalhost = () => window.location.hostname === 'localhost'
+export const isLocalhost = () => window.location.hostname === "localhost"

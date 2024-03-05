@@ -1,6 +1,6 @@
-import { Accessor, createEffect, on } from 'solid-js'
-import { ElementRefs, getElementFromRefs } from '../../utils'
-import { createDomRef } from '../../hooks'
+import { Accessor, createEffect, on } from "solid-js"
+import { ElementRefs, getElementFromRefs } from "../../utils"
+import { createDomRef } from "../../hooks"
 
 /**
  * only itself(ref)
@@ -15,7 +15,7 @@ export default function useResizeObserver<El extends HTMLElement>(
   callback?: (utilities: { entry: ResizeObserverEntry; el: El }) => unknown,
 ): { destory: () => void } {
   const resizeObserver =
-    'ResizeObserver' in globalThis
+    "ResizeObserver" in globalThis
       ? new globalThis.ResizeObserver((entries) => {
           entries.forEach((entry) => callback?.({ entry, el: entry.target as any }))
         })
@@ -23,7 +23,7 @@ export default function useResizeObserver<El extends HTMLElement>(
 
   createEffect(() => {
     if (!resizeObserver) return
-    if (!('observe' in resizeObserver)) return
+    if (!("observe" in resizeObserver)) return
     for (const el of getElementFromRefs(refs())) {
       if (el) {
         resizeObserver.observe(el)
@@ -36,4 +36,3 @@ export default function useResizeObserver<El extends HTMLElement>(
   }
   return { destory }
 }
-

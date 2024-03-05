@@ -1,7 +1,7 @@
-import { isString } from '@edsolater/fnkit'
-import { middlewareCache, type JFetchMiddlewareCacheOptions } from './middlewares/cache'
-import { middlewareUseTempPendingRequest } from './middlewares/cacheTempPendingRequest'
-import { middlewareJsonifyTheResponse } from './middlewares/jsonifyTheResponse'
+import { isString } from "@edsolater/fnkit"
+import { middlewareCache, type JFetchMiddlewareCacheOptions } from "./middlewares/cache"
+import { middlewareUseTempPendingRequest } from "./middlewares/cacheTempPendingRequest"
+import { middlewareJsonifyTheResponse } from "./middlewares/jsonifyTheResponse"
 
 export type JFetchResponseItem = Response | undefined
 

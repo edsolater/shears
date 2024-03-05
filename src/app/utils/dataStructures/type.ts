@@ -1,4 +1,4 @@
-import { Numberish as Fnkit_Numberish, Fraction as Fnkit_Fraction } from '@edsolater/fnkit'
+import { Numberish as Fnkit_Numberish, Fraction as Fnkit_Fraction } from "@edsolater/fnkit"
 export type Mint = string /* just special in string content */
 export type PublicKey = string /* just special in string content */
 

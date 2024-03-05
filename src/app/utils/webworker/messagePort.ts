@@ -1,4 +1,4 @@
-import type { ReceiveMessage, Receiver, Sender, SenderMessage } from './createMessagePortTransforers';
+import type { ReceiveMessage, Receiver, Sender, SenderMessage } from "./createMessagePortTransforers"
 
 export function useMessagePort<Query, Data>(options: {
   port: { sender: Sender<SenderMessage<any>>; receiver: Receiver<ReceiveMessage<any>> }

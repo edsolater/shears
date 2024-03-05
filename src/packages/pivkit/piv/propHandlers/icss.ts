@@ -12,9 +12,9 @@ import {
   mergeObjectsWithConfigs,
   overwriteFunctionName,
   shrinkFn,
-} from '@edsolater/fnkit'
-import { CSSAttribute, css } from 'goober'
-import { ConfigableFunction, createConfigableFunction } from '../../fnkit/configableFunction'
+} from "@edsolater/fnkit"
+import { CSSAttribute, css } from "goober"
+import { ConfigableFunction, createConfigableFunction } from "../../fnkit/configableFunction"
 
 type ValidController = AnyObj
 type LoadController<Target, Controller extends ValidController | unknown = unknown> = MayFn<Target, [Controller]>
@@ -30,8 +30,8 @@ export type ICSS<Controller extends ValidController | unknown = unknown> = MayDe
   LoadController<boolean | string | number | null | undefined, Controller> | ICSSObject<Controller>
 >
 
-const isTaggedICSSSybol = Symbol('isTaggedICSS')
-const toICSSSymbol = Symbol('toICSS') // 🤔 is it necessary?
+const isTaggedICSSSybol = Symbol("isTaggedICSS")
+const toICSSSymbol = Symbol("toICSS") // 🤔 is it necessary?
 
 type RuleCreatorFn = (settings?: AnyObj) => ICSS
 type TaggedICSS<T extends AnyFn> = ConfigableFunction<T> & {
@@ -71,14 +71,14 @@ export function handleICSSProps<Controller extends ValidController | unknown = u
   cssProp: ICSS<Controller>,
   controller: Controller = {} as Controller,
 ) {
-  let outputClassName = ''
+  let outputClassName = ""
   for (const i of flapDeep(cssProp)) {
     const fn = isTaggedICSS(i) ? invokeTaggedICSS(i as any) : i
     const shrinked = shrinkFn(fn, [controller])
     if (!shrinked || (!isString(shrinked) && !isObject(shrinked))) continue
 
     const className = isString(shrinked) ? shrinked : css(shrinked as any)
-    outputClassName += (outputClassName ? ' ' : '') + className
+    outputClassName += (outputClassName ? " " : "") + className
   }
 
   return outputClassName

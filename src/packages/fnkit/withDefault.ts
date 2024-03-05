@@ -1,4 +1,4 @@
-import { MayFn, shrinkFn } from '@edsolater/fnkit';
+import { MayFn, shrinkFn } from "@edsolater/fnkit"
 
 /**
  * just like js:`??` operator
@@ -7,5 +7,5 @@ import { MayFn, shrinkFn } from '@edsolater/fnkit';
  * @param defaultValue
  */
 export function withDefault<T>(value: MayFn<T | undefined>, defaultValue: MayFn<T>): NonNullable<T> {
-  return (shrinkFn(value) ?? shrinkFn(defaultValue)) as NonNullable<T>;
+  return (shrinkFn(value) ?? shrinkFn(defaultValue)) as NonNullable<T>
 }

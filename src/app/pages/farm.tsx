@@ -1,11 +1,11 @@
-import { add, find, toStringNumber } from '@edsolater/fnkit'
-import { Box, CollapseBox, CollapseFace, List, Piv, createCachedGlobalHook } from '@edsolater/pivkit'
-import { For, Setter, Show, createMemo, createSignal } from 'solid-js'
-import { TokenAvatar } from '../components/TokenAvatar'
-import { TokenAvatarPair } from '../components/TokenAvatarPair'
-import { store } from '../stores/data/store'
-import { FarmJSON } from '../stores/data/types/farm'
-import { getToken } from '../stores/data/utils/getToken'
+import { add, find, toStringNumber } from "@edsolater/fnkit"
+import { Box, CollapseBox, CollapseFace, List, Piv, createCachedGlobalHook } from "@edsolater/pivkit"
+import { For, Setter, Show, createMemo, createSignal } from "solid-js"
+import { TokenAvatar } from "../components/TokenAvatar"
+import { TokenAvatarPair } from "../components/TokenAvatarPair"
+import { store } from "../stores/data/store"
+import { FarmJSON } from "../stores/data/types/farm"
+import { getToken } from "../stores/data/utils/getToken"
 
 export interface FarmPageStates {
   // setters
@@ -33,7 +33,7 @@ export const useFarmPageStates = createCachedGlobalHook(() => {
 })
 
 const icssSmoothBoxShadow =
-  '0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)'
+  "0 1px 1px rgb(16 27 30 / 8%), 0 2px 2px rgb(16 27 30 / 8%), 0 4px 4px rgb(16 27 30 / 8%), 0 8px 8px rgb(16 27 30 / 8%), 0 16px 16px rgb(16 27 30 / 8%)"
 
 export default function FarmPage() {
   return (
@@ -50,15 +50,15 @@ function FarmList() {
   return (
     <List items={farmInfos}>
       {(info, idx) => (
-        <CollapseBox icss={{ background: idx() % 2 ? '#eeee' : 'transparent' }}>
+        <CollapseBox icss={{ background: idx() % 2 ? "#eeee" : "transparent" }}>
           <CollapseFace>
             {(controller) => (
               <Box
                 icss={{
-                  display: 'grid',
-                  gridTemplateColumns: '.3fr 1fr 1fr 1fr 1fr',
-                  padding: '6px',
-                  borderRadius: '4px',
+                  display: "grid",
+                  gridTemplateColumns: ".3fr 1fr 1fr 1fr 1fr",
+                  padding: "6px",
+                  borderRadius: "4px",
                 }}
                 onClick={() => {
                   farmPageStates.setDetailViewFarmId(info.id)
@@ -70,9 +70,9 @@ function FarmList() {
                 {/* part 2 */}
                 <Box
                   icss={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px',
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
                   }}
                 >
                   <TokenAvatarPair token1={getToken(info.base)} token2={getToken(info.quote)} />
@@ -87,7 +87,7 @@ function FarmList() {
                 {/* part 4 total apr */}
                 <Piv>
                   {toStringNumber(
-                    info.rewards.map((r) => r.apr?.['24h']).reduce((acc, r) => (r ? add(acc ?? 0, r) : acc), 0),
+                    info.rewards.map((r) => r.apr?.["24h"]).reduce((acc, r) => (r ? add(acc ?? 0, r) : acc), 0),
                   )}
                 </Piv>
 
@@ -102,7 +102,7 @@ function FarmList() {
           </CollapseFace>
           <CollapseBox.Content>
             <Piv>
-              <Piv>state: {info.hasLoad.join(' ')}</Piv>
+              <Piv>state: {info.hasLoad.join(" ")}</Piv>
               <Show when={info.userStakedLpAmount}>
                 <Piv>deposited: {toStringNumber(info.userStakedLpAmount?.amount)}</Piv>
                 <Piv>to havest: {toStringNumber(info.userStakedLpAmount?.amount)}</Piv>

@@ -1,4 +1,4 @@
-import { Commitment, Connection, ConnectionConfig } from '@solana/web3.js'
+import { Commitment, Connection, ConnectionConfig } from "@solana/web3.js"
 
 let currentRpcUrl: string | null = null
 let currentConnection: Connection | null = null
@@ -6,7 +6,7 @@ let currentConnection: Connection | null = null
 // stay in worker
 export function getConnection(
   endpointUrlOrConnection: string | Connection,
-  commitmentOrConfig: Commitment | ConnectionConfig = 'confirmed',
+  commitmentOrConfig: Commitment | ConnectionConfig = "confirmed",
 ) {
   if (endpointUrlOrConnection instanceof Connection) {
     return endpointUrlOrConnection

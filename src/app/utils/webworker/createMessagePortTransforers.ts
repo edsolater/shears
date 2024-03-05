@@ -1,6 +1,6 @@
-import { MayPromise, Subscribable, createSubscribable, hasProperty } from '@edsolater/fnkit'
-import { cacheMapGet } from '../../../packages/fnkit'
-import { decode, encode } from '../dataTransmit/handlers'
+import { MayPromise, Subscribable, createSubscribable, hasProperty } from "@edsolater/fnkit"
+import { cacheMapGet } from "../../../packages/fnkit"
+import { decode, encode } from "../dataTransmit/handlers"
 
 export interface ReceiveMessage<Data = any> {
   command: string
@@ -12,17 +12,17 @@ export interface SenderMessage<Query = any> {
   command: string
   query?: Query
 }
-export type Receiver<R extends ReceiveMessage> = Subscribable<R['data']>
+export type Receiver<R extends ReceiveMessage> = Subscribable<R["data"]>
 export type Sender<P extends SenderMessage, R extends ReceiveMessage = any> = {
-  post(query?: P['query']): Receiver<R>
+  post(query?: P["query"]): Receiver<R>
 }
 export type GetMessagePortFn<Payload = any, Query = any> = (command: string) => {
   /** usually just use postMessage and receiveMessage*/
   receiver: Receiver<ReceiveMessage<Payload>>
   /** usually just use postMessage and receiveMessage*/
   sender: Sender<SenderMessage<Query>, ReceiveMessage<Payload>>
-  postMessage: (query?: Query) => Sender<SenderMessage<Query>, any>['post']
-  receiveMessage: Receiver<ReceiveMessage<Payload>>['subscribe']
+  postMessage: (query?: Query) => Sender<SenderMessage<Query>, any>["post"]
+  receiveMessage: Receiver<ReceiveMessage<Payload>>["subscribe"]
 }
 export type GetMessageReceiverFn<Payload = any> = (command: string) => Receiver<ReceiveMessage<Payload>>
 export type GetMessageSenderFn<Query = any> = (command: string) => Sender<SenderMessage<Query>, any>
@@ -41,14 +41,14 @@ const registeredWorkerMessageSender = new Map<string, Sender<any>>()
  * type guard
  */
 export function isSenderMessage(v: unknown): v is SenderMessage {
-  return hasProperty(v, 'command')
+  return hasProperty(v, "command")
 }
 
 /**
  * type guard
  */
 export function isReceiveMessage(v: unknown): v is ReceiveMessage {
-  return hasProperty(v, 'command') && hasProperty(v, 'data' satisfies keyof ReceiveMessage)
+  return hasProperty(v, "command") && hasProperty(v, "data" satisfies keyof ReceiveMessage)
 }
 
 export function createMessagePortTransforers(towrardsTarget: MayPromise<Worker | ServiceWorker | typeof globalThis>): {
@@ -61,8 +61,8 @@ export function createMessagePortTransforers(towrardsTarget: MayPromise<Worker |
     receiver: Receiver<ReceiveMessage<Payload>>
     /** usually just use postMessage and receiveMessage*/
     sender: Sender<SenderMessage<Query>, ReceiveMessage<Payload>>
-    postMessage: (query?: Query) => Sender<SenderMessage<Query>, any>['post']
-    receiveMessage: Receiver<ReceiveMessage<Payload>>['subscribe']
+    postMessage: (query?: Query) => Sender<SenderMessage<Query>, any>["post"]
+    receiveMessage: Receiver<ReceiveMessage<Payload>>["subscribe"]
   }
 } {
   const getReceiver = <Payload = any>(command: string) =>
@@ -98,16 +98,16 @@ function createMessageReceiver<R extends ReceiveMessage>(
    * @returns subscribable
    */
   function createNewMessageReceiver<R extends ReceiveMessage>(command: string): Receiver<R> {
-    const subscribable = createSubscribable<R['data']>()
+    const subscribable = createSubscribable<R["data"]>()
     const messageHandler = (ev: MessageEvent<any>): void => {
-      const body = ev.data as ReceiveMessage<R['data']>
+      const body = ev.data as ReceiveMessage<R["data"]>
       if (body.command === command) {
         const decodedData = decode(body.data, { mutate: true })
         subscribable.set(decodedData)
       }
     }
     Promise.resolve(towardsTarget).then((worker) =>
-      worker.addEventListener('message', messageHandler as any /*  seems it's typescript's fault */),
+      worker.addEventListener("message", messageHandler as any /*  seems it's typescript's fault */),
     )
     return subscribable
   }

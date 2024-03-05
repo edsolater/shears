@@ -1,4 +1,4 @@
-import { AnyFn, isObject, mergeObjects } from '@edsolater/fnkit'
+import { AnyFn, isObject, mergeObjects } from "@edsolater/fnkit"
 
 export type ConfigableFunction<F extends AnyFn = AnyFn> = F & {
   /** inject params */
@@ -44,7 +44,7 @@ export function createConfigableFunction<F extends AnyFn>(
     const settingsFunction = new Proxy(coreFn, {
       apply: (target, thisArg, argArray) => Reflect.apply(target, thisArg, mergeParams(cachedParameters, argArray)),
       get: (target, p, receiver) =>
-        p === 'config'
+        p === "config"
           ? (...additionalParams: any[]) => createProxyWithCache(mergeParams(cachedParameters, additionalParams))
           : Reflect.get(target, p, receiver),
     }) as ConfigableFunction<F>
@@ -58,5 +58,5 @@ export function createConfigableFunction<F extends AnyFn>(
 }
 
 export function isSettingsFunction(v: any): v is ConfigableFunction {
-  return Reflect.has(v, 'config')
+  return Reflect.has(v, "config")
 }

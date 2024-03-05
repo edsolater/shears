@@ -1,4 +1,4 @@
-import { JFetchResponseItem, JFetchMiddlewareFn } from '../jFetch'
+import { JFetchResponseItem, JFetchMiddlewareFn } from "../jFetch"
 
 // store for on-going request to avoid duplicated request very fast.(100 times in 1ms)
 const tempPendingRequest = new Map<string, Promise<JFetchResponseItem>>()

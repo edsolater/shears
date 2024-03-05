@@ -1,4 +1,4 @@
-import { isFunction, isString, shrinkFn } from '@edsolater/fnkit'
+import { isFunction, isString, shrinkFn } from "@edsolater/fnkit"
 
 const clearMap = (resultMap: Map<any, any>) => resultMap.clear()
 // register clean up function

@@ -10,8 +10,8 @@ import {
   shakeNil,
   shrinkFn,
   shrinkToValue,
-} from '@edsolater/fnkit'
-import { isStringInsensitivelyEqual, isStringInsensitivelyContain } from './isStringEqual'
+} from "@edsolater/fnkit"
+import { isStringInsensitivelyEqual, isStringInsensitivelyContain } from "./isStringEqual"
 
 type SearchConfigItemObj = {
   text: string | undefined
@@ -46,15 +46,15 @@ export function searchItems<T>(items: T[], options?: SearchOptions<T>): T[] {
 function extractItemBeSearchedText(item: unknown): SearchConfigItemObj[] {
   if (isString(item) || isNumber(item)) return [{ text: String(item) } as SearchConfigItemObj]
   if (isObject(item)) {
-    const obj = map(omit(item as any, ['id', 'key']), (value) =>
+    const obj = map(omit(item as any, ["id", "key"]), (value) =>
       isString(value) || isNumber(value) ? ({ text: String(value) } as SearchConfigItemObj) : undefined,
     )
     return shakeNil(Object.values(obj))
   }
-  return [{ text: '' }]
+  return [{ text: "" }]
 }
 
-function getMatchedInfos<T>(item: T, searchText: string, searchTarget: NonNullable<SearchOptions<T>['matchConfigs']>) {
+function getMatchedInfos<T>(item: T, searchText: string, searchTarget: NonNullable<SearchOptions<T>["matchConfigs"]>) {
   const searchKeyWords = String(searchText).trim().split(/\s|-/)
   const searchConfigs: SearchConfigItemObj[] = shakeNil(
     flap(searchTarget)

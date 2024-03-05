@@ -1,8 +1,8 @@
-import { MayPromise } from '@edsolater/fnkit'
-import { jFetch } from '../../../../packages/jFetch'
-import { appApiUrls } from '../../../utils/common/config'
-import type { PoolJsonFile } from '../types/ammPools'
-import type { ClmmJsonFile, ClmmJsonInfo } from '../types/clmm'
+import { MayPromise } from "@edsolater/fnkit"
+import { jFetch } from "../../../../packages/jFetch"
+import { appApiUrls } from "../../../utils/common/config"
+import type { PoolJsonFile } from "../types/ammPools"
+import type { ClmmJsonFile, ClmmJsonInfo } from "../types/clmm"
 
 const apiCache = {} as {
   Clmm?: MayPromise<ClmmJsonInfo[] | undefined>
@@ -35,8 +35,9 @@ export async function fetchAmmPoolInfo() {
   return apiCache
 }
 
-export function prefetch() { // TODO: should only prefetch in swap page
-  console.info('[prefetch] start prefetch ammPoolInfo')
+export function prefetch() {
+  // TODO: should only prefetch in swap page
+  console.info("[prefetch] start prefetch ammPoolInfo")
   // fetchAmmPoolInfo()
 }
 

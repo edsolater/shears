@@ -1,1 +1,1 @@
-export { omit } from '@edsolater/fnkit'
+export { omit } from "@edsolater/fnkit"

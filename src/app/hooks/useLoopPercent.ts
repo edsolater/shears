@@ -1,5 +1,5 @@
-import { createEffect, createSignal, onCleanup } from 'solid-js'
-import { requestLoopAnimationFrame } from '@edsolater/pivkit'
+import { createEffect, createSignal, onCleanup } from "solid-js"
+import { requestLoopAnimationFrame } from "@edsolater/pivkit"
 
 /**
  * 0 ~ 1
@@ -13,7 +13,8 @@ export function useLoopPercent() {
     // console.log('onEnd')
   }
   createEffect(() => {
-    const { cancel } = requestLoopAnimationFrame(() => {``
+    const { cancel } = requestLoopAnimationFrame(() => {
+      ;``
       setPercent((percent) => {
         if (percent >= 1) {
           onEnd()

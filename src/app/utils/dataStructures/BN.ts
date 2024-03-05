@@ -1,5 +1,5 @@
-import { toBigint, type Fraction, type Numberish, type ReplaceType } from '@edsolater/fnkit'
-import OriginalBN from 'bn.js'
+import { toBigint, type Fraction, type Numberish, type ReplaceType } from "@edsolater/fnkit"
+import OriginalBN from "bn.js"
 
 // plain object for easier structure clone
 export type BN = Fraction
@@ -11,7 +11,6 @@ export function toBN(n: Numberish): OriginalBN {
 export function toDecodedBN(n: OriginalBN): BN {
   return { numerator: BigInt(n.toString()), denominator: BigInt(1) }
 }
-
 
 export type FlatSDKBN<T> = ReplaceType<T, OriginalBN, bigint>
 

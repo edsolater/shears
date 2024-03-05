@@ -1,4 +1,4 @@
-import { MayFn, shrinkFn, toList, type ItemList } from '@edsolater/fnkit'
+import { MayFn, shrinkFn, toList, type ItemList } from "@edsolater/fnkit"
 import {
   Accessor,
   For,
@@ -10,14 +10,14 @@ import {
   createMemo,
   createSignal,
   on,
-} from 'solid-js'
-import { KitProps, useKitProps } from '../../createKit'
-import { ObserveFn, useIntersectionObserver } from '../../domkit/hooks/useIntersectionObserver'
-import { useScrollDegreeDetector } from '../../domkit/hooks/useScrollDegreeDetector'
-import { createAsyncMemo } from '../../hooks/createAsyncMemo'
-import { createRef } from '../../hooks/createRef'
-import { Piv } from '../../piv'
-import { ListItem } from './ListItem'
+} from "solid-js"
+import { KitProps, useKitProps } from "../../createKit"
+import { ObserveFn, useIntersectionObserver } from "../../domkit/hooks/useIntersectionObserver"
+import { useScrollDegreeDetector } from "../../domkit/hooks/useScrollDegreeDetector"
+import { createAsyncMemo } from "../../hooks/createAsyncMemo"
+import { createRef } from "../../hooks/createRef"
+import { Piv } from "../../piv"
+import { ListItem } from "./ListItem"
 
 export interface ListController {
   resetRenderCount(): void
@@ -52,14 +52,14 @@ export interface InnerListContext {
   renderItemLength?: Accessor<number>
 }
 
-export const ListContext = createContext<InnerListContext>({} as InnerListContext, { name: 'ListController' })
+export const ListContext = createContext<InnerListContext>({} as InnerListContext, { name: "ListController" })
 
 /**
  * if for layout , don't render important content in Box
  */
 export function List<T>(kitProps: ListKitProps<T>) {
   const { props, lazyLoadController } = useKitProps(kitProps, {
-    name: 'List',
+    name: "List",
     noNeedDeAccessifyChildren: true,
     defaultProps: {
       reachBottomMargin: 50,
@@ -82,7 +82,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [add to context, this observer can make listItem can auto render or not]
   const { observe } = useIntersectionObserver({
     rootRef: listRef,
-    options: { rootMargin: '100%' },
+    options: { rootMargin: "100%" },
   })
 
   // [actually showed item count]
@@ -91,7 +91,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
   // [scroll handler]
   const { forceCalculate } = useScrollDegreeDetector(listRef, {
     onReachBottom: () => {
-      console.log('list gesture:scroll reach bottom')
+      console.log("list gesture:scroll reach bottom")
       if (renderItemLength() < allItems().length) {
         setRenderItemLength((n) => n + increaseRenderCount())
       }
@@ -110,7 +110,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
     ),
   )
 
-  const resetRenderCount: ListController['resetRenderCount'] = () => {
+  const resetRenderCount: ListController["resetRenderCount"] = () => {
     setRenderItemLength(initRenderCount())
   }
 
@@ -127,7 +127,7 @@ export function List<T>(kitProps: ListKitProps<T>) {
 
   return (
     <ListContext.Provider value={{ observeFunction: observe, renderItemLength }}>
-      <Piv domRef={setRef} shadowProps={props} icss={{ scrollbarGutter: 'stable', contain: 'paint' }}>
+      <Piv domRef={setRef} shadowProps={props} icss={{ scrollbarGutter: "stable", contain: "paint" }}>
         <For each={allItems()}>{renderListItems}</For>
       </Piv>
     </ListContext.Provider>

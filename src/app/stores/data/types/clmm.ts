@@ -1,11 +1,11 @@
-import type { Numberish } from '@edsolater/fnkit'
+import type { Numberish } from "@edsolater/fnkit"
 import type {
   ApiClmmPoolsItem as SDK_ApiClmmPoolsItem,
   ClmmPoolInfo as SDK_ClmmPoolInfo,
   ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition,
-} from '@raydium-io/raydium-sdk'
-import type { Amount } from '../../../utils/dataStructures/TokenAmount'
-import type { Mint, Percent, Price, PublicKey } from '../../../utils/dataStructures/type'
+} from "@raydium-io/raydium-sdk"
+import type { Amount } from "../../../utils/dataStructures/TokenAmount"
+import type { Mint, Percent, Price, PublicKey } from "../../../utils/dataStructures/type"
 
 export type ClmmJsonInfo = SDK_ApiClmmPoolsItem
 export type ClmmJsonFile = { data: ClmmJsonInfo[] }
@@ -36,38 +36,38 @@ export type ClmmInfo = {
   rewardInfos: ClmmRewardInfo[]
   feeApr?: {
     // info from SDK
-    '24h': Percent
-    '7d': Percent
-    '30d': Percent
+    "24h": Percent
+    "7d": Percent
+    "30d": Percent
   }
   totalApr?: {
     // info from SDK
-    '24h': Percent
-    '7d': Percent
-    '30d': Percent
+    "24h": Percent
+    "7d": Percent
+    "30d": Percent
   }
   volume?: {
     // info from SDK
-    '24h': Percent
-    '7d': Percent
-    '30d': Percent
+    "24h": Percent
+    "7d": Percent
+    "30d": Percent
   }
   fee?: {
     base: {
-      '24h': Amount
-      '7d': Amount
-      '30d': Amount
+      "24h": Amount
+      "7d": Amount
+      "30d": Amount
     }
     quote: {
-      '24h': Amount
-      '7d': Amount
-      '30d': Amount
+      "24h": Amount
+      "7d": Amount
+      "30d": Amount
     }
   }
   volumeFee?: {
-    '24h': Amount
-    '7d': Amount
-    '30d': Amount
+    "24h": Amount
+    "7d": Amount
+    "30d": Amount
   }
 
   // getApr({ timeBasis }: { timeBasis: '24h' | '7d' | '30d' }): {
@@ -106,9 +106,9 @@ export interface ClmmRewardInfo {
   perWeekBN?: Numberish // info from SDK
 
   apr?: {
-    '24h': Percent // info from SDK
-    '7d': Percent // info from SDK
-    '30d': Percent // info from SDK
+    "24h": Percent // info from SDK
+    "7d": Percent // info from SDK
+    "30d": Percent // info from SDK
   }
 }
 

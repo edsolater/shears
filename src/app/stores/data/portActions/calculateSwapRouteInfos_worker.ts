@@ -1,18 +1,18 @@
-import { AnyFn } from '@edsolater/fnkit'
-import { inNextMainLoop } from '../../../../packages/fnkit'
-import { PortUtils } from '../../../utils/webworker/createMessagePortTransforers'
+import { AnyFn } from "@edsolater/fnkit"
+import { inNextMainLoop } from "../../../../packages/fnkit"
+import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
 import {
   CalculateSwapRouteInfosParams,
   calculateSwapRouteInfos,
   type CalculateSwapRouteInfosResult,
-} from '../utils/calculateSwapRouteInfos'
+} from "../utils/calculateSwapRouteInfos"
 
 let storedCleanUpFunction: AnyFn | undefined = undefined
 
 export function calculateSwapRouteInfosInWorker({
   getMessagePort,
 }: PortUtils<CalculateSwapRouteInfosParams, CalculateSwapRouteInfosResult>) {
-  const port = getMessagePort('let webworker calculate swap route infos')
+  const port = getMessagePort("let webworker calculate swap route infos")
   port.receiveMessage((payload) => {
     storedCleanUpFunction?.()
     const { abort, result, assertNotAborted } = calculateSwapRouteInfos(payload)

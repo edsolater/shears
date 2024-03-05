@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
 
-import { defineConfig } from 'vite'
-import solidPlugin from 'vite-plugin-solid'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { defineConfig } from "vite"
+import solidPlugin from "vite-plugin-solid"
+import { nodePolyfills } from "vite-plugin-node-polyfills"
 
 export default defineConfig({
   optimizeDeps: {
@@ -15,7 +15,7 @@ export default defineConfig({
     // your plugins,
     // https://github.com/vitejs/vite/issues/3033#issuecomment-1360691044
     {
-      name: 'singleHMR',
+      name: "singleHMR",
       handleHotUpdate({ modules }) {
         modules.map((m) => {
           m.importers = new Set()
@@ -32,12 +32,12 @@ export default defineConfig({
   //   conditions: ['development', 'browser'],
   // },
   define: {
-    'process.env': {
+    "process.env": {
       NODE_ENV: JSON.stringify(process.env.NODE_ENV),
     },
   },
   worker: {
-    format: 'es',
+    format: "es",
   },
   // test: {
   //   environment: 'jsdom',
@@ -52,6 +52,6 @@ export default defineConfig({
   //   isolate: false,
   // },
   build: {
-    target: 'esnext',
+    target: "esnext",
   },
 })

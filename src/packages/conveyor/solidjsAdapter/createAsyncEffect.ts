@@ -1,4 +1,4 @@
-import { createEffect } from 'solid-js'
+import { createEffect } from "solid-js"
 
 /** run in microstask, so can avoid warning: computations created outside a `createRoot` or `render` will never be disposed */
 // @ts-ignore force

@@ -1,4 +1,4 @@
-import { isUndefined } from '@edsolater/fnkit';
+import { isUndefined } from "@edsolater/fnkit"
 
 /**
  * Checks if two strings are equal in a case-insensitive manner.
@@ -11,8 +11,8 @@ import { isUndefined } from '@edsolater/fnkit';
  * isStringInsensitivelyEqual('Hello World', 'world'); // false
  */
 export function isStringInsensitivelyEqual(s1: string | undefined, s2: string | undefined) {
-  if (isUndefined(s1) || isUndefined(s2)) return false;
-  return s1.toLowerCase() === s2.toLowerCase();
+  if (isUndefined(s1) || isUndefined(s2)) return false
+  return s1.toLowerCase() === s2.toLowerCase()
 }
 /**
  * Checks if a string is contained within another string in a case-insensitive manner.
@@ -25,6 +25,6 @@ export function isStringInsensitivelyEqual(s1: string | undefined, s2: string | 
  * isStringInsensitivelyContain('Hello World', 'hello world'); // true
  */
 export function isStringInsensitivelyContain(s1: string | undefined, s2: string | undefined) {
-  if (isUndefined(s1) || isUndefined(s2)) return false;
-  return s1.toLowerCase().includes(s2.toLowerCase());
+  if (isUndefined(s1) || isUndefined(s2)) return false
+  return s1.toLowerCase().includes(s2.toLowerCase())
 }

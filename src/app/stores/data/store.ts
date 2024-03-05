@@ -2,21 +2,21 @@
  * only in main thread
  *******************************/
 
-import { createSmartStore } from '@edsolater/pivkit'
-import { createShuck } from '../../../packages/conveyor/smartStore/shuck'
-import { RAYMint, SOLMint } from '../../configs/wellKnownMints'
-import { Token, type Tokens } from './token/type'
-import { Mint, Numberish, type Price } from '../../utils/dataStructures/type'
-import { TxVersion } from '../../utils/txHandler/txVersion'
-import { RPCEndpoint, availableRpcs } from './RPCEndpoint'
-import { loadFarmJsonInfos } from './portActions/loadFarmJsonInfos_main'
-import { loadFarmSYNInfos } from './portActions/loadFarmSYNInfos_main'
-import { loadPairs } from './portActions/loadPairs_main'
-import { loadTokenPrice } from './portActions/loadTokenPrice_main'
-import { loadTokens } from './portActions/loadTokens_main'
-import type { ClmmInfo, ClmmJsonInfo } from './types/clmm'
-import { FarmInfo, FarmJSON } from './types/farm'
-import { PairInfo } from './types/pairs'
+import { createSmartStore } from "@edsolater/pivkit"
+import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
+import { RAYMint, SOLMint } from "../../configs/wellKnownMints"
+import { Token, type Tokens } from "./token/type"
+import { Mint, Numberish, type Price } from "../../utils/dataStructures/type"
+import { TxVersion } from "../../utils/txHandler/txVersion"
+import { RPCEndpoint, availableRpcs } from "./RPCEndpoint"
+import { loadFarmJsonInfos } from "./portActions/loadFarmJsonInfos_main"
+import { loadFarmSYNInfos } from "./portActions/loadFarmSYNInfos_main"
+import { loadPairs } from "./portActions/loadPairs_main"
+import { loadTokenPrice } from "./portActions/loadTokenPrice_main"
+import { loadTokens } from "./portActions/loadTokens_main"
+import type { ClmmInfo, ClmmJsonInfo } from "./types/clmm"
+import { FarmInfo, FarmJSON } from "./types/farm"
+import { PairInfo } from "./types/pairs"
 
 export type StoreData = {
   // -------- swap --------
@@ -28,14 +28,14 @@ export type StoreData = {
 
   // -------- farms --------
   farmLoadCount?: number // not good, should change automaticly. change this will start loading farm related info
-  farmJsonInfos?: Record<FarmJSON['id'], FarmJSON>
+  farmJsonInfos?: Record<FarmJSON["id"], FarmJSON>
   isFarmJsonLoading?: boolean
-  farmInfos?: Record<FarmInfo['id'], FarmInfo>
+  farmInfos?: Record<FarmInfo["id"], FarmInfo>
   isFarmInfosLoading?: boolean
 
   // -------- pairs --------
   pairLoadCount?: number // not good, should change automaticly. change this will start loading pair related info
-  pairInfos?: Record<PairInfo['ammId'], PairInfo>
+  pairInfos?: Record<PairInfo["ammId"], PairInfo>
   isPairInfoLoading?: boolean
 
   // -------- token --------
@@ -71,7 +71,7 @@ export const {
     },
   },
 )
-globalThis.document.addEventListener('DOMContentLoaded', () => {
+globalThis.document.addEventListener("DOMContentLoaded", () => {
   loadTokens()
   loadTokenPrice()
 })
@@ -93,7 +93,7 @@ export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
 export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()
 export const shuck_tokens = createShuck<Tokens | undefined>()
 
-export const allClmmTabs = ['ALL', 'MY POOLS'] as const
+export const allClmmTabs = ["ALL", "MY POOLS"] as const
 export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 

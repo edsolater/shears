@@ -3,9 +3,9 @@
  * observe user action towards the object|function
  * *********
  */
-import { shrinkFn } from '@edsolater/fnkit'
-import { assignObject } from '../../fnkit/assignObject'
-import { Shuck, attachTaskToShuck, isShuckVisiable } from './shuck'
+import { shrinkFn } from "@edsolater/fnkit"
+import { assignObject } from "../../fnkit/assignObject"
+import { Shuck, attachTaskToShuck, isShuckVisiable } from "./shuck"
 
 export type TaskRunner = {
   (): void

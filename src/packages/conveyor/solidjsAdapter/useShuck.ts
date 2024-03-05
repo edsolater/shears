@@ -1,5 +1,5 @@
-import { Accessor, Setter, createSignal, onCleanup, onMount } from 'solid-js'
-import { Shuck, makeShuckInvisiable, makeShuckVisiable } from '../smartStore/shuck'
+import { Accessor, Setter, createSignal, onCleanup, onMount } from "solid-js"
+import { Shuck, makeShuckInvisiable, makeShuckVisiable } from "../smartStore/shuck"
 
 let globalShuckInstanceSignalID = 1
 export function useShuck<T>(shuck: Shuck<T>): [Accessor<T>, Setter<T>] {

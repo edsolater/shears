@@ -1,1 +1,1 @@
-export * from './jFetch'
+export * from "./jFetch"

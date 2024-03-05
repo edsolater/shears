@@ -1,7 +1,7 @@
-import { createStore } from 'solid-js/store';
-import { type Token } from './type';
-import { Tokenable } from './type';
-import { getTokenSubscribable } from './getTokenSubscribable';
+import { createStore } from "solid-js/store"
+import { type Token } from "./type"
+import { Tokenable } from "./type"
+import { getTokenSubscribable } from "./getTokenSubscribable"
 
 /**
  * use this in .tsx
@@ -13,12 +13,12 @@ import { getTokenSubscribable } from './getTokenSubscribable';
  */
 
 export function useToken(input?: Tokenable): Token {
-  const outputTokenSubscribable = getTokenSubscribable(input);
-  const [outputToken, setOutputToken] = createStore<Token>(outputTokenSubscribable());
+  const outputTokenSubscribable = getTokenSubscribable(input)
+  const [outputToken, setOutputToken] = createStore<Token>(outputTokenSubscribable())
   outputTokenSubscribable.subscribe((newToken) => {
     if (newToken !== outputToken) {
-      setOutputToken(newToken);
+      setOutputToken(newToken)
     }
-  });
-  return outputToken;
+  })
+  return outputToken
 }

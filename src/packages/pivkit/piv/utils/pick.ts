@@ -1,1 +1,1 @@
-export { pick } from '@edsolater/fnkit'
+export { pick } from "@edsolater/fnkit"

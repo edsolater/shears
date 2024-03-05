@@ -1,7 +1,7 @@
-import { shrinkFn } from '@edsolater/fnkit'
-import type { Tokenable } from './type'
-import { isToken } from './utils'
-import { type Token, type Tokens } from './type'
+import { shrinkFn } from "@edsolater/fnkit"
+import type { Tokenable } from "./type"
+import { isToken } from "./utils"
+import { type Token, type Tokens } from "./type"
 
 export function getToken(input: Tokenable | undefined, tokens: Tokens | undefined): Token | undefined {
   if (!tokens) return undefined

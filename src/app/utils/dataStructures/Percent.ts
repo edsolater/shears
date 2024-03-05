@@ -1,8 +1,8 @@
-import { Numberish, div, parseAnatomyFractionInfo } from '@edsolater/fnkit'
-import { Percent as SDK_Percent } from '@raydium-io/raydium-sdk'
-import BN from 'bn.js'
-import { toBN } from './BN'
-import type { Percent } from './type'
+import { Numberish, div, parseAnatomyFractionInfo } from "@edsolater/fnkit"
+import { Percent as SDK_Percent } from "@raydium-io/raydium-sdk"
+import BN from "bn.js"
+import { toBN } from "./BN"
+import type { Percent } from "./type"
 
 /**
  * only use this method for SDK, **not** use it in ui layer, it  will only appear in webworker(for data calculate)

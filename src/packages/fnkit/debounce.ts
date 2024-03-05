@@ -1,4 +1,4 @@
-import { AnyFn, createCurrentTimestamp, mergeFunction } from '@edsolater/fnkit'
+import { AnyFn, createCurrentTimestamp, mergeFunction } from "@edsolater/fnkit"
 
 const defaultDebouneDelay = 400
 const defaultThrottleDelay = 400
@@ -31,16 +31,13 @@ export function debounce<F extends (...args: any[]) => any>(fn: F, options?: Deb
       hasFirstInvoke = true
       return fn()
     }
-    setTimeoutController.set(
-      () => {
-        try {
-          promiseController.resolve(fn())
-        } catch {
-          promiseController.reject('debounce task failed')
-        }
-      },
-      options?.delay ?? defaultDebouneDelay,
-    )
+    setTimeoutController.set(() => {
+      try {
+        promiseController.resolve(fn())
+      } catch {
+        promiseController.reject("debounce task failed")
+      }
+    }, options?.delay ?? defaultDebouneDelay)
     return promiseController.result
   }
 

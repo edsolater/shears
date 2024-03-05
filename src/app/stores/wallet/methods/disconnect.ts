@@ -1,5 +1,5 @@
-import { disconnectWallet } from '../utils/disconnectWallet'
-import { useWalletStore } from '../store'
+import { disconnectWallet } from "../utils/disconnectWallet"
+import { useWalletStore } from "../store"
 
 export async function disconnect() {
   return useWalletStore().currentWallet

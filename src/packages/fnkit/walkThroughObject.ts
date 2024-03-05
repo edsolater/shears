@@ -1,4 +1,4 @@
-import { isObject, isObjectLike } from '@edsolater/fnkit'
+import { isObject, isObjectLike } from "@edsolater/fnkit"
 
 /**
  * only walk through string enumtable object key (not symbol)

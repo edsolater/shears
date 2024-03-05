@@ -1,6 +1,6 @@
-import { jFetch } from '../../../../packages/jFetch'
-import { RaydiumTokenListJsonFile, TokenWorkerData } from '../types/tokenList'
-import { Token } from '../token/type'
+import { jFetch } from "../../../../packages/jFetch"
+import { RaydiumTokenListJsonFile, TokenWorkerData } from "../types/tokenList"
+import { Token } from "../token/type"
 
 /**
  * used in webworker
@@ -14,8 +14,8 @@ export async function fetchTokenJsonFile(options: { url: string }) {
 
 function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerData {
   const tokens = [
-    ...((res.official.map((t) => ({ ...t, is: 'raydium-official' })) ?? []) as Token[]),
-    ...((res.unOfficial.map((t) => ({ ...t, is: 'raydium-unofficial' })) ?? []) as Token[]),
+    ...((res.official.map((t) => ({ ...t, is: "raydium-official" })) ?? []) as Token[]),
+    ...((res.unOfficial.map((t) => ({ ...t, is: "raydium-unofficial" })) ?? []) as Token[]),
   ]
   return { tokens: tokens, blacklist: res.blacklist }
 }

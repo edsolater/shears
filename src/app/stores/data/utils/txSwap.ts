@@ -1,13 +1,13 @@
-import { assert, eq, Numberish } from '@edsolater/fnkit'
-import { TradeV2 } from '@raydium-io/raydium-sdk'
-import { appProgramId } from '../../../utils/common/config'
-import { getConnection } from '../../../utils/dataStructures/Connection'
-import { toPub } from '../../../utils/dataStructures/Publickey'
-import { Token } from '../token/type'
-import { txHandler, type TxVersion } from '../../../utils/txHandler'
-import { getTxHandlerBudgetConfig } from '../../../utils/txHandler/getTxHandlerBudgetConfig'
-import { getRealSDKTxVersion } from '../../../utils/txHandler/txVersion'
-import { getBestCalcResultCache } from './calculateSwapRouteInfos'
+import { assert, eq, Numberish } from "@edsolater/fnkit"
+import { TradeV2 } from "@raydium-io/raydium-sdk"
+import { appProgramId } from "../../../utils/common/config"
+import { getConnection } from "../../../utils/dataStructures/Connection"
+import { toPub } from "../../../utils/dataStructures/Publickey"
+import { Token } from "../token/type"
+import { txHandler, type TxVersion } from "../../../utils/txHandler"
+import { getTxHandlerBudgetConfig } from "../../../utils/txHandler/getTxHandlerBudgetConfig"
+import { getRealSDKTxVersion } from "../../../utils/txHandler/txVersion"
+import { getBestCalcResultCache } from "./calculateSwapRouteInfos"
 
 export interface TxSwapOptions {
   owner: string
@@ -17,7 +17,7 @@ export interface TxSwapOptions {
     coin2: Token
     amount1: Numberish
     // amount2: Numberish
-    direction: '1 → 2' | '2 → 1'
+    direction: "1 → 2" | "2 → 1"
   }
   txVersion?: TxVersion
 }
@@ -25,19 +25,19 @@ export interface TxSwapOptions {
 export function txSwap_getInnerTransaction(options: TxSwapOptions) {
   const connection = getConnection(options.checkInfo.rpcURL)
   const neariestSwapBestResultCache = getBestCalcResultCache()
-  assert(neariestSwapBestResultCache, 'swapInfo not found')
-  assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, 'coin1 is not match')
-  assert(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, 'coin2 is not match')
+  assert(neariestSwapBestResultCache, "swapInfo not found")
+  assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, "coin1 is not match")
+  assert(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, "coin2 is not match")
   assert(
     eq(neariestSwapBestResultCache.params.inputAmount.amount, options.checkInfo.amount1),
-    'inputAmount is not match',
+    "inputAmount is not match",
   )
 
   return txHandler(
     {
       connection,
       owner: options.owner,
-      txVersion: 'V0',
+      txVersion: "V0",
     },
     async ({ baseUtils: { owner, connection, getSDKTokenAccounts } }) => {
       //TODO: no two fetch await
@@ -61,9 +61,9 @@ export function txSwap_getInnerTransaction(options: TxSwapOptions) {
         makeTxVersion: getRealSDKTxVersion(options.txVersion),
         computeBudgetConfig: txBudgetConfig,
       })
-      console.log('innerTransactions: ', innerTransactions)
+      console.log("innerTransactions: ", innerTransactions)
       return innerTransactions
     },
-    { sendMode: 'queue(all-settle)' },
+    { sendMode: "queue(all-settle)" },
   )
 }

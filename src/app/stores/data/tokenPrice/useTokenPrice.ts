@@ -1,10 +1,10 @@
-import { get } from '@edsolater/fnkit'
-import { createMemo, type Accessor } from 'solid-js'
-import { useShuckValue } from '../../../../packages/conveyor/solidjsAdapter/useShuck'
-import type { Price } from '../../../utils/dataStructures/type'
-import { shuck_tokenPrices } from '../store'
-import { type Tokenable } from '../token/type'
-import { useToken } from '../token/useToken'
+import { get } from "@edsolater/fnkit"
+import { createMemo, type Accessor } from "solid-js"
+import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
+import type { Price } from "../../../utils/dataStructures/type"
+import { shuck_tokenPrices } from "../store"
+import { type Tokenable } from "../token/type"
+import { useToken } from "../token/useToken"
 
 /**
  * use this in .tsx

@@ -1,5 +1,5 @@
-import { jFetch } from '../../../../packages/jFetch'
-import { FarmAprJSONInfo } from '../types/farm'
+import { jFetch } from "../../../../packages/jFetch"
+import { FarmAprJSONInfo } from "../types/farm"
 
 export async function fetchFarmAprJsonFile(options: { url: string }): Promise<Map<string, FarmAprJSONInfo>> {
   const result = await jFetch<{ data: FarmAprJSONInfo[] }>(options.url, { cacheFreshTime: 5 * 60 * 1000 })

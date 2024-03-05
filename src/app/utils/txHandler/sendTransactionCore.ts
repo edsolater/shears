@@ -1,7 +1,7 @@
-import { Connection, Transaction, VersionedTransaction } from '@solana/web3.js'
+import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
 
-import { serializeTransaction } from './serializeTransaction'
-import { TxHandlerPayload } from './txHandler'
+import { serializeTransaction } from "./serializeTransaction"
+import { TxHandlerPayload } from "./txHandler"
 
 type Txid = string
 
@@ -12,8 +12,8 @@ const tempBatchedTransactionsQueue: {
 }[] = []
 
 function canBatchTransactions(connection: Connection, transaction: Transaction | VersionedTransaction) {
-  const isConnectionSatisfied = '_buildArgs' in connection && '_rpcBatchRequest' in connection
-  const isTransactionSatisfied = '_compile' in transaction && '_serialize' in transaction
+  const isConnectionSatisfied = "_buildArgs" in connection && "_rpcBatchRequest" in connection
+  const isTransactionSatisfied = "_compile" in transaction && "_serialize" in transaction
   return isConnectionSatisfied && isTransactionSatisfied
 }
 
@@ -69,11 +69,11 @@ async function sendBatchedTransactions(
   allSignedTransactions: (Transaction | VersionedTransaction)[],
   payload: TxHandlerPayload,
 ): Promise<Txid[]> {
-  const encodedTransactions = allSignedTransactions.map((i) => i.serialize().toString('base64'))
+  const encodedTransactions = allSignedTransactions.map((i) => i.serialize().toString("base64"))
 
   const batch = encodedTransactions.map((keys) => {
-    const args = payload.connection._buildArgs([keys], undefined, 'base64')
-    return { methodName: 'sendTransaction', args }
+    const args = payload.connection._buildArgs([keys], undefined, "base64")
+    return { methodName: "sendTransaction", args }
   })
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -1,6 +1,6 @@
-import { MayFn, cloneObject, shrinkFn } from '@edsolater/fnkit'
-import { InfinityObjNode, createTreeableInfinityNode, loadInfinityObjNode } from '../../fnkit/createInfinityObj'
-import { getByPath, setByPath, walkThroughObject } from '../../fnkit/walkThroughObject'
+import { MayFn, cloneObject, shrinkFn } from "@edsolater/fnkit"
+import { InfinityObjNode, createTreeableInfinityNode, loadInfinityObjNode } from "../../fnkit/createInfinityObj"
+import { getByPath, setByPath, walkThroughObject } from "../../fnkit/walkThroughObject"
 
 /** user can define their own FakeTree type to get more accurate type */
 export type FakeTreeify<T> = T extends object

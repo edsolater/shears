@@ -1,5 +1,5 @@
-import { AnyFn, MayArray, MayPromise, flap, shakeUndefinedItem } from '@edsolater/fnkit'
-import { delayDo } from './invokeInMicroTaskLoop'
+import { AnyFn, MayArray, MayPromise, flap, shakeUndefinedItem } from "@edsolater/fnkit"
+import { delayDo } from "./invokeInMicroTaskLoop"
 
 interface CallbackStore<Callback extends AnyFn> {
   invoke(...params: Parameters<Callback>): void

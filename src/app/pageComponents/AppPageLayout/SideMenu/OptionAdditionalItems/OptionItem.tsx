@@ -1,4 +1,4 @@
-import { AnyFn, isFunction, isObject, switchCase, } from '@edsolater/fnkit'
+import { AnyFn, isFunction, isObject, switchCase } from "@edsolater/fnkit"
 import {
   Box,
   Icon,
@@ -10,47 +10,47 @@ import {
   cssOpacity,
   cssVar,
   useKitProps,
-} from '@edsolater/pivkit'
-import { Link } from '../../../../components/Link'
+} from "@edsolater/pivkit"
+import { Link } from "../../../../components/Link"
 
 export type OptionItemBoxProps = {
   /** @default true */
-  ['render:dot']?: boolean | PivChild | (() => PivChild)
+  ["render:dot"]?: boolean | PivChild | (() => PivChild)
   // NOTE: when start with 'visiable' this part of component can be shown, 🤔 just whether 'render:' exist is enough ?
   /** @default false */
-  ['render:arrow']?: boolean | PivChild | (() => PivChild)
+  ["render:arrow"]?: boolean | PivChild | (() => PivChild)
   iconSrc?: string
   href?: string
 }
 
 const icssOptionItemBox = createICSS(() => ({
-  display: 'block',
-  paddingBlock: '0.75rem',
-  paddingInline: '2rem',
-  '&:hover': {
-    backgroundColor: cssOpacity(cssVar('--ternary'), 0.1),
+  display: "block",
+  paddingBlock: "0.75rem",
+  paddingInline: "2rem",
+  "&:hover": {
+    backgroundColor: cssOpacity(cssVar("--ternary"), 0.1),
   },
-  '&:active': {
-    backgroundColor: cssOpacity(cssVar('--ternary'), 0.1),
+  "&:active": {
+    backgroundColor: cssOpacity(cssVar("--ternary"), 0.1),
   },
-  cursor: 'pointer',
-  position: 'relative',
+  cursor: "pointer",
+  position: "relative",
 }))
 
 export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
   const { props, shadowProps } = useKitProps(kitProps, {
-    defaultProps: { ['render:arrow']: true, ['render:dot']: true },
+    defaultProps: { ["render:arrow"]: true, ["render:dot"]: true },
   })
   const subComponentsRender = {
     dot: () => (
       <Box
         icss={[
-          { display: 'grid', placeItems: 'center' },
-          { width: '1rem', height: '1rem', marginInlineEnd: '0.75rem', color: cssVar('--ternary') },
+          { display: "grid", placeItems: "center" },
+          { width: "1rem", height: "1rem", marginInlineEnd: "0.75rem", color: cssVar("--ternary") },
         ]}
       >
         {switchCase<boolean | PivChild | (() => PivChild), any>(
-          props['render:dot'],
+          props["render:dot"],
           [
             [(v) => isObject(v), (v) => v],
             [(v) => isFunction(v), (v) => (v as AnyFn)()],
@@ -62,13 +62,13 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
     ),
     arrow: () =>
       /* TODO: add arrow */ switchCase(
-        props['render:arrow'],
+        props["render:arrow"],
         [
           [(v) => isObject(v), (v) => v],
           [(v) => isFunction(v), (v) => (v as AnyFn)()],
           [
             (v) => v === true,
-            () => <Icon icss={{ marginInlineEnd: '0.75rem', color: cssVar('--ternary') }} size={'sm'} />,
+            () => <Icon icss={{ marginInlineEnd: "0.75rem", color: cssVar("--ternary") }} size={"sm"} />,
           ],
         ],
         null,
@@ -82,9 +82,9 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
         <Span
           icss={{
             flexGrow: 1,
-            color: cssVar('--ternary'),
-            fontSize: '0.875rem',
-            fontWeight: '500',
+            color: cssVar("--ternary"),
+            fontSize: "0.875rem",
+            fontWeight: "500",
           }}
         >
           {props.children}

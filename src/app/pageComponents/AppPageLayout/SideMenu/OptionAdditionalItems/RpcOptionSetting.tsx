@@ -1,4 +1,4 @@
-import { createEffect, createSignal, onCleanup, onMount } from 'solid-js'
+import { createEffect, createSignal, onCleanup, onMount } from "solid-js"
 import {
   Badge,
   Box,
@@ -21,11 +21,11 @@ import {
   icssDivider,
   icssTextColor,
   useKitProps,
-} from '@edsolater/pivkit'
-import { shuck_rpc, setStore, store } from '../../../../stores/data/store'
-import { RPCEndpoint, availableRpcs } from '../../../../stores/data/RPCEndpoint'
-import { OptionItemBox } from './OptionItem'
-import { unwrap } from 'solid-js/store'
+} from "@edsolater/pivkit"
+import { shuck_rpc, setStore, store } from "../../../../stores/data/store"
+import { RPCEndpoint, availableRpcs } from "../../../../stores/data/RPCEndpoint"
+import { OptionItemBox } from "./OptionItem"
+import { unwrap } from "solid-js/store"
 
 export function RpcSettingFace(kitProps: {
   currentRPC?: RPCEndpoint
@@ -34,17 +34,17 @@ export function RpcSettingFace(kitProps: {
 }) {
   const { props, shadowProps } = useKitProps(kitProps)
   const { plugins: popoverPlugins } = buildPopover({
-    placement: 'right',
-    triggerBy: 'click',
+    placement: "right",
+    triggerBy: "click",
     defaultOpen: true,
   }) // <-- run on define, not good
   const dotIcss = {
-    width: '0.375rem',
-    height: '0.375rem',
-    background: '#2de680',
-    color: '#2de680',
-    borderRadius: '50%',
-    boxShadow: '0 0 6px 1px currentColor',
+    width: "0.375rem",
+    height: "0.375rem",
+    background: "#2de680",
+    color: "#2de680",
+    borderRadius: "50%",
+    boxShadow: "0 0 6px 1px currentColor",
   }
   return (
     <>
@@ -54,9 +54,9 @@ export function RpcSettingFace(kitProps: {
         render:dot={<Piv icss={dotIcss}></Piv>}
         shadowProps={shadowProps}
       >
-        RPC:({store.rpc?.url ?? 'none'})
+        RPC:({store.rpc?.url ?? "none"})
       </OptionItemBox>
-      <Panel plugin={popoverPlugins.panel} icss={[{ width: '24rem' }, icssCard, icssCyberpenkBackground]}>
+      <Panel plugin={popoverPlugins.panel} icss={[{ width: "24rem" }, icssCard, icssCyberpenkBackground]}>
         <RPCPanel
           currentRPC={props.currentRPC}
           availableRpcs={availableRpcs}
@@ -79,7 +79,7 @@ function RPCPanel(props: {
       <Loop of={props.availableRpcs} icss={icssDivider}>
         {(rpc) => (
           <RPCPanelItem
-            icss={{ paddingBlock: '0.75rem' }}
+            icss={{ paddingBlock: "0.75rem" }}
             rpc={rpc}
             isCurrent={rpc.url === props.currentRPC?.url}
             isLoading={props.isLoading}
@@ -106,10 +106,10 @@ export function RPCPanelBox(kitProps: KitProps) {
     <Box shadowProps={shadowProps}>
       <Text
         icss={{
-          paddingBlock: '0.75rem',
+          paddingBlock: "0.75rem",
           // paddingInline: '1.5rem',
-          color: cssVar('--secondary-half'),
-          fontSize: '0.75rem',
+          color: cssVar("--secondary-half"),
+          fontSize: "0.75rem",
         }}
       >
         RPC CONNECTION
@@ -134,37 +134,37 @@ function RPCPanelItem(
   const { props, shadowProps } = useKitProps(kitProps)
   const { rpc, isCurrent } = props
   const dotIcss = {
-    width: '0.375rem',
-    height: '0.375rem',
-    background: '#2de680',
-    color: '#2de680',
-    borderRadius: '50%',
-    boxShadow: '0 0 6px 1px currentColor',
+    width: "0.375rem",
+    height: "0.375rem",
+    background: "#2de680",
+    color: "#2de680",
+    borderRadius: "50%",
+    boxShadow: "0 0 6px 1px currentColor",
   }
   return (
     <Row
       shadowProps={shadowProps}
-      class='group flex-wrap gap-3 py-4 px-6 mobile:px-3 border-[rgba(171,196,255,0.05)]'
+      class="group flex-wrap gap-3 py-4 px-6 mobile:px-3 border-[rgba(171,196,255,0.05)]"
       onClick={() => {
         props.onClickRPCItem?.(rpc)
       }}
     >
-      <Row class='items-center w-full'>
+      <Row class="items-center w-full">
         <Row
           icss={{
-            width: '100%',
-            color: props.isCurrent ? 'rgba(255,255,255,0.85)' : 'white',
-            '&:hover': { color: 'white' },
-            transition: 'color 0.2s',
-            cursor: 'pointer',
+            width: "100%",
+            color: props.isCurrent ? "rgba(255,255,255,0.85)" : "white",
+            "&:hover": { color: "white" },
+            transition: "color 0.2s",
+            cursor: "pointer",
           }}
-          icss:gap={'.25rem'}
+          icss:gap={".25rem"}
         >
-          <Text icss={{ whiteSpace: 'nowrap' }}>{props.rpc.name ?? '--'}</Text>
+          <Text icss={{ whiteSpace: "nowrap" }}>{props.rpc.name ?? "--"}</Text>
 
-          <Row icss={{ gap: '.5rem' }}>
-            {props.isRecommanded && <Badge icss={icssTextColor({ color: '#5ac4be' })}>recommended</Badge>}
-            {props.isUserCustomized && <Badge icss={icssTextColor({ color: '#c4d6ff' })}>user added</Badge>}
+          <Row icss={{ gap: ".5rem" }}>
+            {props.isRecommanded && <Badge icss={icssTextColor({ color: "#5ac4be" })}>recommended</Badge>}
+            {props.isUserCustomized && <Badge icss={icssTextColor({ color: "#c4d6ff" })}>user added</Badge>}
             {props.isCurrent && <Icon>✅</Icon>}
           </Row>
 
@@ -180,7 +180,7 @@ function RPCPanelItem(
             </Icon>
           )}
         </Row>
-        {props.isLoading && props.isCurrent && <Icon icss={{ marginLeft: '.75rem' }}>💫</Icon>}
+        {props.isLoading && props.isCurrent && <Icon icss={{ marginLeft: ".75rem" }}>💫</Icon>}
       </Row>
     </Row>
   )
@@ -188,14 +188,14 @@ function RPCPanelItem(
 
 function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }>) {
   const { props, shadowProps } = useKitProps(kitProps)
-  const [currentRPCUrl, setCurrentRPCUrl] = createSignal('https://')
+  const [currentRPCUrl, setCurrentRPCUrl] = createSignal("https://")
   const applyRPCChange = () => {
     props.onSwitchRpc?.(currentRPCUrl())
   }
   onMount(() => {
     // TEST
     const timeoutId = setTimeout(() => {
-      console.log('has set')
+      console.log("has set")
       shuck_rpc.set(availableRpcs[0])
     }, 500)
     onCleanup(() => {
@@ -206,7 +206,7 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
     <Row>
       <Input
         shadowProps={shadowProps}
-        icss={{ border: 'solid', borderColor: cssOpacity(cssCurrentColor, 0.1), borderRadius: '12px' }}
+        icss={{ border: "solid", borderColor: cssOpacity(cssCurrentColor, 0.1), borderRadius: "12px" }}
         value={currentRPCUrl}
         onUserInput={setCurrentRPCUrl}
         onEnter={applyRPCChange}

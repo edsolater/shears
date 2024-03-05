@@ -1,4 +1,4 @@
-import { isUndefined } from '@edsolater/fnkit'
+import { isUndefined } from "@edsolater/fnkit"
 
 /**
  * Checks if two strings are equal in a case-insensitive manner.

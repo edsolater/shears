@@ -1,7 +1,7 @@
-import { get, isString, shrinkFn, type Subscribable } from '@edsolater/fnkit'
-import { shuck_isTokenListLoading, shuck_isTokenListLoadingError, shuck_tokens } from '../store'
-import { Tokenable, type Token } from './type'
-import { defaultToken, errorToken, loadingToken } from './utils'
+import { get, isString, shrinkFn, type Subscribable } from "@edsolater/fnkit"
+import { shuck_isTokenListLoading, shuck_isTokenListLoadingError, shuck_tokens } from "../store"
+import { Tokenable, type Token } from "./type"
+import { defaultToken, errorToken, loadingToken } from "./utils"
 
 /**
  * use this in .ts

@@ -1,5 +1,5 @@
-import { AnyFn, AnyObj, MayFn } from '@edsolater/fnkit'
-import { JSX, JSXElement } from 'solid-js'
+import { AnyFn, AnyObj, MayFn } from "@edsolater/fnkit"
+import { JSX, JSXElement } from "solid-js"
 
 export type ValidProps = Record<keyof any, Exclude<any, Promise<any>>>
 
@@ -19,7 +19,7 @@ export type ExtendsProps<
   P4 extends ValidProps = {},
 > = P1 & Omit<P2, keyof P1> & Omit<P3, keyof P1 | keyof P2> & Omit<P4, keyof P1 | keyof P2 | keyof P3>
 
-export type RawChild = JSXElement 
+export type RawChild = JSXElement
 export type PivChild<Controller extends ValidController = ValidController> =
   | RawChild
   | ((controller: Controller) => RawChild)

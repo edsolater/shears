@@ -1,12 +1,12 @@
-import { createEffect, createMemo, createSignal, Setter } from 'solid-js'
-import { createCachedGlobalHook } from '@edsolater/pivkit'
-import toPubString from '../../utils/dataStructures/Publickey'
-import { Token } from '../data/token/type'
-import { WalletAdapterInterface } from './type'
-import { connect } from './methods/connect'
-import { disconnect } from './methods/disconnect'
-import { initlyConnectPhantom } from './methods/initlyConnectPhantom'
-import { shuck_owner } from '../data/store'
+import { createEffect, createMemo, createSignal, Setter } from "solid-js"
+import { createCachedGlobalHook } from "@edsolater/pivkit"
+import toPubString from "../../utils/dataStructures/Publickey"
+import { Token } from "../data/token/type"
+import { WalletAdapterInterface } from "./type"
+import { connect } from "./methods/connect"
+import { disconnect } from "./methods/disconnect"
+import { initlyConnectPhantom } from "./methods/initlyConnectPhantom"
+import { shuck_owner } from "../data/store"
 
 export interface WalletStore {
   // for extract method

@@ -1,16 +1,16 @@
-import { loadFarmJsonInfosInWorker } from '../../stores/data/portActions/loadFarmJsonInfos_worker'
-import { loadFarmSYNInfosInWorker } from '../../stores/data/portActions/loadFarmSYNInfos_worker'
-import { loadPairsInWorker } from '../../stores/data/portActions/loadPairs_worker'
-import { loadTokenPriceInWorker } from '../../stores/data/portActions/loadTokenPrice_worker'
-import { loadTokensInWorker } from '../../stores/data/portActions/loadTokens_worker'
-import { calculateSwapRouteInfosInWorker } from '../../stores/data/portActions/calculateSwapRouteInfos_worker'
-import { txSwapInWorker } from '../../stores/data/portActions/txSwap_worker'
-import { PortUtils } from './createMessagePortTransforers'
-import { logMessage } from '../../logger/logMessage'
-import { workerLoadClmmInfos } from '../../stores/data/portActions/loadClmmInfos_worker'
+import { loadFarmJsonInfosInWorker } from "../../stores/data/portActions/loadFarmJsonInfos_worker"
+import { loadFarmSYNInfosInWorker } from "../../stores/data/portActions/loadFarmSYNInfos_worker"
+import { loadPairsInWorker } from "../../stores/data/portActions/loadPairs_worker"
+import { loadTokenPriceInWorker } from "../../stores/data/portActions/loadTokenPrice_worker"
+import { loadTokensInWorker } from "../../stores/data/portActions/loadTokens_worker"
+import { calculateSwapRouteInfosInWorker } from "../../stores/data/portActions/calculateSwapRouteInfos_worker"
+import { txSwapInWorker } from "../../stores/data/portActions/txSwap_worker"
+import { PortUtils } from "./createMessagePortTransforers"
+import { logMessage } from "../../logger/logMessage"
+import { workerLoadClmmInfos } from "../../stores/data/portActions/loadClmmInfos_worker"
 
 export function applyWebworkerRegisters(messageTransformers: PortUtils) {
-  logMessage({ from: '👾worker', twoWordTitle: 'messge port', detailDescription: 'registered load farm port' })
+  logMessage({ from: "👾worker", twoWordTitle: "messge port", detailDescription: "registered load farm port" })
   calculateSwapRouteInfosInWorker(messageTransformers)
   txSwapInWorker(messageTransformers)
   loadFarmJsonInfosInWorker(messageTransformers)

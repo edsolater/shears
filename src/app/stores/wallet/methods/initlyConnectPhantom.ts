@@ -1,5 +1,5 @@
-import { autoConnectWallet } from '../utils/autoConnectWallet'
-import { useWalletStore } from '../store'
+import { autoConnectWallet } from "../utils/autoConnectWallet"
+import { useWalletStore } from "../store"
 
 export function initlyConnectPhantom() {
   autoConnectWallet({

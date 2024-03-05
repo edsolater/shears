@@ -1,4 +1,4 @@
-import { isObjectLike } from '@edsolater/fnkit'
+import { isObjectLike } from "@edsolater/fnkit"
 
 /** shortcut of multi Reflect.set
  * @example
@@ -66,5 +66,5 @@ export function assignObjectWithConfigs<T extends object>(
 }
 
 function isObjectLikeDiscriptor(value: any): value is PropertyDescriptor {
-  return isObjectLike(value) && isObjectLike(value['value'])
+  return isObjectLike(value) && isObjectLike(value["value"])
 }

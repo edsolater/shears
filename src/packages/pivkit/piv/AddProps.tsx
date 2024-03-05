@@ -2,9 +2,9 @@
 /**
  * this component is related to useKitProps
  */
-import { createContext, useContext } from 'solid-js'
-import { PivProps, ValidProps, mergeProps, omit } from '.'
-import { Fragnment } from './Fragnment'
+import { createContext, useContext } from "solid-js"
+import { PivProps, ValidProps, mergeProps, omit } from "."
+import { Fragnment } from "./Fragnment"
 
 /** set this to true, means addProps has already comsumed, no need subchildren to consume again */
 const hasConsumed = new WeakSet<ValidProps>()
@@ -20,7 +20,7 @@ export function AddProps<Props extends ValidProps = PivProps>(props: Props) {
   const parentAddProp = useContext(AddPropContext)
   const selfContextValue = mergeProps(
     parentAddProp && !hasConsumed.has(parentAddProp) ? parentAddProp : undefined,
-    omit(props, 'children')
+    omit(props, "children"),
   )
   return (
     <AddPropContext.Provider value={selfContextValue}>

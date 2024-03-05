@@ -1,10 +1,10 @@
-import { MayFn, shrinkFn } from '@edsolater/fnkit'
-import { For, JSXElement, createMemo, type Accessor } from 'solid-js'
-import { KitProps, useKitProps } from '../createKit'
-import { createRef } from '../hooks/createRef'
-import { AddProps, PivChild, parsePivChildren } from '../piv'
-import { Box } from './Boxes'
-import { Fragnment } from '@edsolater/pivkit'
+import { MayFn, shrinkFn } from "@edsolater/fnkit"
+import { For, JSXElement, createMemo, type Accessor } from "solid-js"
+import { KitProps, useKitProps } from "../createKit"
+import { createRef } from "../hooks/createRef"
+import { AddProps, PivChild, parsePivChildren } from "../piv"
+import { Box } from "./Boxes"
+import { Fragnment } from "@edsolater/pivkit"
 
 export interface ListBoxController {}
 
@@ -23,7 +23,7 @@ export type ListBoxKitProps<T> = KitProps<ListBoxProps<T>, { controller: ListBox
  */
 export function ListBox<T>(kitProps: ListBoxKitProps<T>) {
   const { props, shadowProps } = useKitProps(kitProps, {
-    name: 'ListBox',
+    name: "ListBox",
     noNeedDeAccessifyChildren: true,
   })
 
@@ -39,9 +39,9 @@ export function ListBox<T>(kitProps: ListBoxKitProps<T>) {
       <For each={allItems()}>
         {(item, idx) => (
           <Fragnment>
-            <Box class='list-item'>{parsePivChildren(props.children(item, idx))}</Box>
+            <Box class="list-item">{parsePivChildren(props.children(item, idx))}</Box>
             {idx() < itemLength() - 1 &&
-              'Divider' in kitProps &&
+              "Divider" in kitProps &&
               parsePivChildren(shrinkFn(kitProps.Divider, [{ prevIndex: idx, currentIndex: () => idx() + 1 }]))}
           </Fragnment>
         )}

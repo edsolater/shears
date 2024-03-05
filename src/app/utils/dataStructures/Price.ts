@@ -1,7 +1,7 @@
-import { Price as _Price } from '@raydium-io/raydium-sdk'
-import { Price } from './type'
-import { parseSDKFraction } from './Fraction'
-import { ReplaceType } from '@edsolater/fnkit'
+import { Price as _Price } from "@raydium-io/raydium-sdk"
+import { Price } from "./type"
+import { parseSDKFraction } from "./Fraction"
+import { ReplaceType } from "@edsolater/fnkit"
 
 export function isSDKPrice(n: unknown): n is _Price {
   return n instanceof _Price

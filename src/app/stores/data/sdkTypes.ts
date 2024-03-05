@@ -1,4 +1,4 @@
-import { BN, PublicKey } from '../../utils/dataStructures/type'
+import { BN, PublicKey } from "../../utils/dataStructures/type"
 
 export interface SDKSplAccount {
   owner: PublicKey

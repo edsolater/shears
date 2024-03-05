@@ -1,14 +1,14 @@
-import { isArray } from '@edsolater/fnkit'
-import { InnerTransaction } from '@raydium-io/raydium-sdk'
-import { Transaction } from '@solana/web3.js'
-import { objectMerge } from '../../../packages/fnkit'
-import { TxHandlerOptions, TxHandlerOption, MultiTxsOption, TransactionQueue, TransactionCollector } from './txHandler'
+import { isArray } from "@edsolater/fnkit"
+import { InnerTransaction } from "@raydium-io/raydium-sdk"
+import { Transaction } from "@solana/web3.js"
+import { objectMerge } from "../../../packages/fnkit"
+import { TxHandlerOptions, TxHandlerOption, MultiTxsOption, TransactionQueue, TransactionCollector } from "./txHandler"
 
 /**
  * collector's aim: use `.add` method to load innerTransactions
  */
 export function innerTxCollector(
-  additionOptions?: Pick<TxHandlerOptions, 'additionalMultiOptionCallback' | 'additionalSingleOptionCallback'>,
+  additionOptions?: Pick<TxHandlerOptions, "additionalMultiOptionCallback" | "additionalSingleOptionCallback">,
 ) {
   const singleTxOptions = [] as TxHandlerOption[]
   const multiTxOption = {} as MultiTxsOption
@@ -37,7 +37,7 @@ export function innerTxCollector(
   /**
    * {@link addSingle} + {@link addQueue}
    */
-  const add: TransactionCollector['add'] = (transactions, option) => {
+  const add: TransactionCollector["add"] = (transactions, option) => {
     const isQueue = isArray(transactions)
     if (isQueue) {
       const injectedTransactions: TransactionQueue = transactions.map((t) =>

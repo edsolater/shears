@@ -1,7 +1,7 @@
-import { TxVersion as SDK_TxVersion } from '@raydium-io/raydium-sdk'
+import { TxVersion as SDK_TxVersion } from "@raydium-io/raydium-sdk"
 
-export const txVersionV0 = 'V0'
-export const txVersionLegacy = 'LEGACY'
+export const txVersionV0 = "V0"
+export const txVersionLegacy = "LEGACY"
 export type TxVersion = typeof txVersionV0 | typeof txVersionLegacy
 export function getRealSDKTxVersion(txVersion?: TxVersion) {
   if (!txVersion) return SDK_TxVersion.LEGACY

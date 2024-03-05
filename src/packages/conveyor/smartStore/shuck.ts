@@ -5,12 +5,12 @@ import {
   isSubscribable,
   type MayFn,
   type Subscribable,
-} from '@edsolater/fnkit'
-import { isShuckOption, type ShuckOption } from './shuckOption'
-import { type TaskRunner } from './task'
+} from "@edsolater/fnkit"
+import { isShuckOption, type ShuckOption } from "./shuckOption"
+import { type TaskRunner } from "./task"
 
-export const shuckTag = Symbol('shuckTag')
-export const shuckOptionTag = Symbol('shuckOptionTag')
+export const shuckTag = Symbol("shuckTag")
+export const shuckOptionTag = Symbol("shuckOptionTag")
 
 /**
  * add ability to pure subscribable
@@ -36,7 +36,7 @@ export interface Shuck<T> extends Subscribable<T> {
 }
 
 export interface CreateShuckOptions<T> {
-  visiable?: boolean | 'auto' // TODO: inply it means auto
+  visiable?: boolean | "auto" // TODO: inply it means auto
   onChangeToVisiable?: () => void
 }
 

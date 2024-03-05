@@ -3,7 +3,7 @@
 
 // TODO: should return a proxy to fake proxy
 
-const fakeEmptyObjectBadge = Symbol('fakeEmptyObject')
+const fakeEmptyObjectBadge = Symbol("fakeEmptyObject")
 
 export const injectToFakeEmptyObject = (fakeEmptyObject: object, realObject) => {}
 

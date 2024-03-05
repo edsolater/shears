@@ -1,5 +1,5 @@
-import { JFetchMiddlewareFn } from '../jFetch'
-import { isResponse } from '../utils/isResponse'
+import { JFetchMiddlewareFn } from "../jFetch"
+import { isResponse } from "../utils/isResponse"
 
 export function middlewareJsonifyTheResponse(): JFetchMiddlewareFn {
   return async ({ url }, next) => {

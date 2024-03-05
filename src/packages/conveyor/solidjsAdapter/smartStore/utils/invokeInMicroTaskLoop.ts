@@ -1,5 +1,5 @@
-import { AnyFn } from '@edsolater/fnkit'
-import { PromiseWithInjecters, createPromiseWithInjecters } from './createPromiseWithInjecters'
+import { AnyFn } from "@edsolater/fnkit"
+import { PromiseWithInjecters, createPromiseWithInjecters } from "./createPromiseWithInjecters"
 
 const allRegistedTasks = new Map<any, AnyFn>()
 const allTaskResult = new WeakMap<AnyFn, PromiseWithInjecters>()

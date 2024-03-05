@@ -1,5 +1,5 @@
-import { assert, notZero, toStringNumber } from '@edsolater/fnkit'
-import { createMemo } from 'solid-js'
+import { assert, notZero, toStringNumber } from "@edsolater/fnkit"
+import { createMemo } from "solid-js"
 import {
   Button,
   Panel,
@@ -9,20 +9,15 @@ import {
   icssCol,
   icssCyberpenkBackground,
   icssCyberpenkBackgroundGlow,
-  icssCyberpenkBorder
-} from '@edsolater/pivkit'
-import { TokenAmountInputBox } from '../components/TokenAmountInput'
-import { useToken } from '../stores/data/token/useToken'
-import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from '../stores/data/featureHooks/useSwapAmountCalculator'
-import { txSwap_main } from '../stores/data/portActions/txSwap_main'
-import {
-  createStorePropertySetter,
-  createStorePropertySignal,
-  setStore,
-  store
-} from '../stores/data/store'
-import { useWalletOwner } from '../stores/wallet/store'
-import { Token } from '../stores/data/token/type'
+  icssCyberpenkBorder,
+} from "@edsolater/pivkit"
+import { TokenAmountInputBox } from "../components/TokenAmountInput"
+import { useToken } from "../stores/data/token/useToken"
+import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from "../stores/data/featureHooks/useSwapAmountCalculator"
+import { txSwap_main } from "../stores/data/portActions/txSwap_main"
+import { createStorePropertySetter, createStorePropertySignal, setStore, store } from "../stores/data/store"
+import { useWalletOwner } from "../stores/wallet/store"
+import { Token } from "../stores/data/token/type"
 
 export default function SwapPage() {
   const owner = useWalletOwner()
@@ -50,14 +45,14 @@ export default function SwapPage() {
 
   return (
     <Piv>
-      <Section icss={{ display: 'grid', justifyContent: 'center' }}>
+      <Section icss={{ display: "grid", justifyContent: "center" }}>
         <Panel
           icss={[
             icssCard,
             icssCyberpenkBackground,
             icssCyberpenkBorder,
             icssCyberpenkBackgroundGlow,
-            icssCol({ gap: '.5em' }),
+            icssCol({ gap: ".5em" }),
           ]}
         >
           <TokenAmountInputBox
@@ -75,17 +70,17 @@ export default function SwapPage() {
 
           <Button
             onClick={() => {
-              console.info('start swap')
+              console.info("start swap")
               const coin1 = token1
-              assert(coin1, 'coin1 is undefined')
+              assert(coin1, "coin1 is undefined")
               const coin2 = token2
-              assert(coin2, 'coin2 is undefined')
+              assert(coin2, "coin2 is undefined")
               const amount1 = tokenAmount1()
-              assert(notZero(amount1), 'amount1 is undefined or zero')
+              assert(notZero(amount1), "amount1 is undefined or zero")
               const walletOwner = owner()
-              assert(walletOwner, 'walletOwner is undefined')
+              assert(walletOwner, "walletOwner is undefined")
               const rpcURL = store.rpc?.url
-              assert(rpcURL, 'should set url')
+              assert(rpcURL, "should set url")
 
               txSwap_main({
                 owner: walletOwner,
@@ -94,7 +89,7 @@ export default function SwapPage() {
                   coin1,
                   coin2,
                   amount1,
-                  direction: '1 → 2',
+                  direction: "1 → 2",
                 },
               })
             }}

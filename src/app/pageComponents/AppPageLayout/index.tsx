@@ -1,11 +1,11 @@
-import { KitProps, useKitProps } from '@edsolater/pivkit'
-import { useMetaTitle } from '../../hooks/useMetaTitle'
-import { AppPageLayout_LayoutBoxProps, AppPageLayout_LayoutBox } from './LayoutBox'
-import { AppPageLayout_NavBar } from './NavBar'
-import { NavSideMenu } from './SideMenu'
+import { KitProps, useKitProps } from "@edsolater/pivkit"
+import { useMetaTitle } from "../../hooks/useMetaTitle"
+import { AppPageLayout_LayoutBoxProps, AppPageLayout_LayoutBox } from "./LayoutBox"
+import { AppPageLayout_NavBar } from "./NavBar"
+import { NavSideMenu } from "./SideMenu"
 
 type AppPageLayoutProps = {
-  metaTitle?: AppPageLayout_LayoutBoxProps['metaTitle']
+  metaTitle?: AppPageLayout_LayoutBoxProps["metaTitle"]
 }
 
 export function AppPageLayout(kitProps: KitProps<AppPageLayoutProps>) {

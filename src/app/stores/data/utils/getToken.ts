@@ -1,5 +1,5 @@
-import { createSubscribable, get } from '@edsolater/fnkit'
-import { shuck_tokens, store } from '../store'
+import { createSubscribable, get } from "@edsolater/fnkit"
+import { shuck_tokens, store } from "../store"
 
 /**
  * @todo should link to a proxy that may return when token is aviliable in future

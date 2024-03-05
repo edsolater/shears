@@ -1,5 +1,5 @@
-import { isArray, isObject, isObjectLiteral, map } from '@edsolater/fnkit'
-import { rules } from './rules'
+import { isArray, isObject, isObjectLiteral, map } from "@edsolater/fnkit"
+import { rules } from "./rules"
 
 export function encode(
   data: unknown,

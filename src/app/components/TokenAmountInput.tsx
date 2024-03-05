@@ -1,4 +1,4 @@
-import { Numberish, isStringNumber, slice, toStringNumber } from '@edsolater/fnkit'
+import { Numberish, isStringNumber, slice, toStringNumber } from "@edsolater/fnkit"
 import {
   Box,
   BoxProps,
@@ -22,11 +22,11 @@ import {
   icssRow,
   plugin_modalTitle,
   useKitProps,
-} from '@edsolater/pivkit'
-import { useShuckValue } from '../../packages/conveyor/solidjsAdapter/useShuck'
-import { shuck_tokens } from '../stores/data/store'
-import { Token } from '../stores/data/token/type'
-import { TokenAvatar } from './TokenAvatar'
+} from "@edsolater/pivkit"
+import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
+import { shuck_tokens } from "../stores/data/store"
+import { Token } from "../stores/data/token/type"
+import { TokenAvatar } from "./TokenAvatar"
 
 export interface TokenAmountInputBoxController {}
 
@@ -35,8 +35,8 @@ export type TokenAmountInputBoxProps = KitProps<
     token?: Token
     tokenProps?: TextProps
     amount?: Numberish
-    'anatomy:amountInput'?: InputKitProps
-    'anatomy:tokenSelectorModalContent'?: TokenSelectorModalContentProps
+    "anatomy:amountInput"?: InputKitProps
+    "anatomy:tokenSelectorModalContent"?: TokenSelectorModalContentProps
     onSelectToken?: (token: Token | undefined) => void
     onAmountChange?: (amount: Numberish | undefined) => void
   },
@@ -46,11 +46,11 @@ export type TokenAmountInputBoxProps = KitProps<
 export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const { props, lazyLoadController } = useKitProps(rawProps, {
     defaultProps: {
-      'anatomy:tokenSelectorModalContent': {
+      "anatomy:tokenSelectorModalContent": {
         icss: [icssCyberpenkBackground, icssFrostedCard],
       },
     },
-    name: 'TokenAmountInputBox',
+    name: "TokenAmountInputBox",
   })
 
   const [token, setToken] = createSyncSignal({
@@ -69,7 +69,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   const [modalRef, setModalRef] = createRef<ModalController>()
 
   return (
-    <Box icss={icssRow({ gap: '8px' })}>
+    <Box icss={icssRow({ gap: "8px" })}>
       {/* show current token info */}
       <Box shadowProps={props.tokenProps} onClick={() => modalRef()?.open()} icss={[icssLabel, icssClickable]}>
         {token()?.symbol}
@@ -84,7 +84,7 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
 
       {/* token amount info */}
       <Input
-        shadowProps={props['anatomy:amountInput']}
+        shadowProps={props["anatomy:amountInput"]}
         icss={icssInputType()}
         value={amount}
         onUserInput={(text) => {
@@ -93,9 +93,9 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
       />
 
       {/* modal dialog */}
-      <Modal title='select token' controllerRef={setModalRef as any}>
+      <Modal title="select token" controllerRef={setModalRef as any}>
         <TokenSelectorModalContent
-          shadowProps={props['anatomy:tokenSelectorModalContent']}
+          shadowProps={props["anatomy:tokenSelectorModalContent"]}
           onTokenSelect={(token) => {
             setToken(token ?? props.token)
             modalRef()?.close()
@@ -123,10 +123,10 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
       <Text plugin={plugin_modalTitle}>{`Select a token ${increasing()}`}</Text>
 
       <Box>
-        search: <Input icss={{ border: 'solid' }} />
+        search: <Input icss={{ border: "solid" }} />
       </Box>
 
-      <Text icss={{ fontSize: '14px', fontWeight: 'bold' }}>Token</Text>
+      <Text icss={{ fontSize: "14px", fontWeight: "bold" }}>Token</Text>
 
       <List items={slice(tokens, 10)}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}

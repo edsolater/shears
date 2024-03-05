@@ -1,6 +1,6 @@
-import { MayArray, MayFn, flap, isNumber, isObject, isString, map, shakeNil, shrinkFn } from '@edsolater/fnkit'
-import { isStringInsensitivelyContain, isStringInsensitivelyEqual } from './isStringEqual'
-import { omit } from '../../pivkit/piv/utils'
+import { MayArray, MayFn, flap, isNumber, isObject, isString, map, shakeNil, shrinkFn } from "@edsolater/fnkit"
+import { isStringInsensitivelyContain, isStringInsensitivelyEqual } from "./isStringEqual"
+import { omit } from "../../pivkit/piv/utils"
 
 type SearchConfigItemObj = {
   text: string | undefined
@@ -26,7 +26,7 @@ export function searchItems<T>(items: T[] | undefined, options?: SearchOptions<T
   if (!options) return items
   if (!options.text) return items
   const allMatchedStatusInfos = shakeNil(
-    items.map((item) => getMatchedInfos(item, options.text!, options?.matchConfigs ?? extractItemBeSearchedText(item)))
+    items.map((item) => getMatchedInfos(item, options.text!, options?.matchConfigs ?? extractItemBeSearchedText(item))),
   )
   const meaningfulMatchedInfos = allMatchedStatusInfos.filter((m) => m?.matched)
   const sortedMatchedInfos = sortByMatchedInfos<T>(meaningfulMatchedInfos)
@@ -36,21 +36,21 @@ export function searchItems<T>(items: T[] | undefined, options?: SearchOptions<T
 function extractItemBeSearchedText(item: unknown): SearchConfigItemObj[] {
   if (isString(item) || isNumber(item)) return [{ text: String(item) } as SearchConfigItemObj]
   if (isObject(item)) {
-    const obj = map(omit(item as any, ['id', 'key']), (value) =>
-      isString(value) || isNumber(value) ? ({ text: String(value) } as SearchConfigItemObj) : undefined
+    const obj = map(omit(item as any, ["id", "key"]), (value) =>
+      isString(value) || isNumber(value) ? ({ text: String(value) } as SearchConfigItemObj) : undefined,
     )
     return shakeNil(Object.values(obj))
   }
-  return [{ text: '' }]
+  return [{ text: "" }]
 }
 
-function getMatchedInfos<T>(item: T, searchText: string, searchTarget: NonNullable<SearchOptions<T>['matchConfigs']>) {
+function getMatchedInfos<T>(item: T, searchText: string, searchTarget: NonNullable<SearchOptions<T>["matchConfigs"]>) {
   const searchKeyWords = String(searchText).trim().split(/\s|-/)
   const searchConfigs: SearchConfigItemObj[] = shakeNil(
     flap(searchTarget)
       .map((i) => shrinkFn(i, [item]))
       .flatMap((i) => flap(i))
-      .map((c) => (isString(c) ? { text: c } : c))
+      .map((c) => (isString(c) ? { text: c } : c)),
   )
   return patchSearchInfos({ item, searchKeyWords, searchConfigs })
 }
@@ -106,7 +106,7 @@ function patchSearchInfos<T>(options: {
 }
 function sortByMatchedInfos<T>(matchedInfos: MatchedStatus<T>[]) {
   return [...matchedInfos].sort(
-    (matchedInfoA, matchedInfoB) => toMatchedStatusSignature(matchedInfoB) - toMatchedStatusSignature(matchedInfoA)
+    (matchedInfoA, matchedInfoB) => toMatchedStatusSignature(matchedInfoB) - toMatchedStatusSignature(matchedInfoA),
   )
 }
 /**
@@ -136,7 +136,7 @@ function toMatchedStatusSignature<T>(matchedInfo: MatchedStatus<T>): number {
     const max = Math.max(...sequence)
     return sequence.reduce(
       (acc, currentValue, currentIdx) => acc + currentValue * (max + 1) ** (sequence.length - currentIdx),
-      0
+      0,
     )
   }
   const characteristicSequence = calcCharateristicN([

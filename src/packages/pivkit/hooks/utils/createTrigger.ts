@@ -1,7 +1,7 @@
-import { AnyFn, createEventCenter } from '@edsolater/fnkit'
-import { Accessor } from 'solid-js'
-import { createSignalWithPlugin } from '../createSignalWithPlugin'
-import { UUID, createUUID } from './createUUID'
+import { AnyFn, createEventCenter } from "@edsolater/fnkit"
+import { Accessor } from "solid-js"
+import { createSignalWithPlugin } from "../createSignalWithPlugin"
+import { UUID, createUUID } from "./createUUID"
 
 // global cache
 const triggerControllers = new Map<UUID, TriggerController>()
@@ -52,28 +52,28 @@ export function createTrigger({
     toggle(): void
   }>()
   eventCenter.registEvents({
-    'on': () => {
+    on: () => {
       setIsTriggerOn(true)
       callbackOnStack.forEach((cb) => cb())
     },
-    'off': () => {
+    off: () => {
       setIsTriggerOn(false)
       callbackOffStack.forEach((cb) => cb())
     },
-    'toggle': () => {
+    toggle: () => {
       setIsTriggerOn((b) => !b)
       callbackToggleStack.forEach((cb) => cb())
     },
   })
 
   function turnTriggerOn() {
-    eventCenter.emit('on', [])
+    eventCenter.emit("on", [])
   }
   function turnTriggerOff() {
-    eventCenter.emit('off', [])
+    eventCenter.emit("off", [])
   }
   function toggleTrigger() {
-    eventCenter.emit('toggle', [])
+    eventCenter.emit("toggle", [])
   }
 
   const callbackRegisterer = {
@@ -101,7 +101,7 @@ export function createTrigger({
         },
       }
     },
-  } as TriggerController['callbackRegisterer']
+  } as TriggerController["callbackRegisterer"]
 
   return { isTriggerOn, callbackRegisterer, close: turnTriggerOff, open: turnTriggerOn, toggle: toggleTrigger }
 }

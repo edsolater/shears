@@ -1,10 +1,6 @@
-import { Accessor, createEffect, createSignal, on, Setter } from 'solid-js'
-import {
-  createShuck,
-  CreateShuckOptions,
-  Shuck,
-} from '../smartStore/shuck'
-import { asynclyCreateEffect } from './createAsyncEffect'
+import { Accessor, createEffect, createSignal, on, Setter } from "solid-js"
+import { createShuck, CreateShuckOptions, Shuck } from "../smartStore/shuck"
+import { asynclyCreateEffect } from "./createAsyncEffect"
 
 export function createLeafFromAccessor<T>(accessor: () => T, options?: CreateShuckOptions<T>) {
   const leaf = createShuck(accessor(), options)

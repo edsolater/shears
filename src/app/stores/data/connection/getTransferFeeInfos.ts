@@ -1,11 +1,11 @@
-import { minus } from '@edsolater/fnkit'
-import { getTransferAmountFee, type ReturnTypeFetchMultipleMintInfos } from '@raydium-io/raydium-sdk'
-import type { EpochInfo } from '@solana/web3.js'
-import { parseSDKBN, toBN } from '../../../utils/dataStructures/BN'
-import { toTokenAmount, type TokenAmount } from '../../../utils/dataStructures/TokenAmount'
-import { getEpochInfo } from './getEpochInfo'
-import { getMultiMintInfos } from './getMultiMintInfos'
-import isCurrentToken2022 from '../isCurrentToken2022'
+import { minus } from "@edsolater/fnkit"
+import { getTransferAmountFee, type ReturnTypeFetchMultipleMintInfos } from "@raydium-io/raydium-sdk"
+import type { EpochInfo } from "@solana/web3.js"
+import { parseSDKBN, toBN } from "../../../utils/dataStructures/BN"
+import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
+import { getEpochInfo } from "./getEpochInfo"
+import { getMultiMintInfos } from "./getMultiMintInfos"
+import isCurrentToken2022 from "../isCurrentToken2022"
 
 export type ITransferAmountFee = {
   amount: TokenAmount
@@ -32,7 +32,8 @@ export async function getTransferFeeInfo({
   const getMints = () => fetchedMints ?? getMultiMintInfos({ mints: [tokenAmount].flat().map((i) => i.token.mint) })
   const getEpoch = () => fetchedEpochInfo ?? getEpochInfo()
 
-  if (!isCurrentToken2022(tokenAmount.token.mint)) return { amount: tokenAmount, pure: tokenAmount } as ITransferAmountFee
+  if (!isCurrentToken2022(tokenAmount.token.mint))
+    return { amount: tokenAmount, pure: tokenAmount } as ITransferAmountFee
   const [epochInfo, mintInfos] = await Promise.all([getEpoch(), getMints()])
   return getTransferFeeInfoSync({ tokenAmount, addFee, mintInfos, epochInfo })
 }

@@ -1,20 +1,28 @@
-import { AnyFn } from '@edsolater/fnkit'
-import { IconProps, ItemBoxProps, KitProps, PivProps, copyToClipboard, createDisclosure, useKitProps } from '@edsolater/pivkit'
-import { createEffect } from 'solid-js'
-import { motivate } from '../../packages/fnkit'
+import { AnyFn } from "@edsolater/fnkit"
+import {
+  IconProps,
+  ItemBoxProps,
+  KitProps,
+  PivProps,
+  copyToClipboard,
+  createDisclosure,
+  useKitProps,
+} from "@edsolater/pivkit"
+import { createEffect } from "solid-js"
+import { motivate } from "../../packages/fnkit"
 
 export type AddressItemProps = ItemBoxProps &
   KitProps<{
     publicKey: string
-    showDigitCount?: number | 'all'
-    addressType?: 'token' | 'account'
+    showDigitCount?: number | "all"
+    addressType?: "token" | "account"
 
     canCopy?: boolean
     showCopyIcon?: boolean
     canExternalLink?: boolean
     /** default sm */
-    iconSize?: 'xs' | 'sm' | 'smi' | 'md' | 'lg'
-    iconSrc?: IconProps['src']
+    iconSize?: "xs" | "sm" | "smi" | "md" | "lg"
+    iconSrc?: IconProps["src"]
     iconProps?: IconProps
     iconRowProps?: PivProps
     onCopied?(text: string): void // TODO: imply it
@@ -26,7 +34,7 @@ export type AddressItemProps = ItemBoxProps &
 export function AddressChip(kitProps: AddressItemProps) {
   const { props } = useKitProps(kitProps, {
     defaultProps: {
-      iconSize: 'sm',
+      iconSize: "sm",
     },
   })
 
