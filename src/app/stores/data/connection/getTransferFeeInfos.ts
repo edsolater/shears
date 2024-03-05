@@ -16,6 +16,7 @@ export type ITransferAmountFee = {
   expirationTime?: number
 }
 
+/**  in main thread */
 export async function getTransferFeeInfo({
   tokenAmount,
   addFee,
@@ -38,6 +39,7 @@ export async function getTransferFeeInfo({
   return getTransferFeeInfoSync({ tokenAmount, addFee, mintInfos, epochInfo })
 }
 
+/**  in main thread */
 export function getTransferFeeInfoSync({
   tokenAmount,
   addFee,
@@ -53,9 +55,10 @@ export function getTransferFeeInfoSync({
   const mint = tokenAmount.token.mint
   const feeConfig = mintInfos[mint]?.feeConfig
   const rawInfo = getTransferAmountFee(toBN(tokenAmount.amount), feeConfig, epochInfo, Boolean(addFee))
-  const allAmount = toTokenAmount(tokenAmount.token, parseSDKBN(rawInfo.amount))
-  const fee = rawInfo.fee != null ? toTokenAmount(tokenAmount.token, parseSDKBN(rawInfo.fee)) : undefined
-  const pure = toTokenAmount(tokenAmount.token, minus(allAmount.amount, fee?.amount ?? 0))
+  const allAmount = toTokenAmount(tokenAmount.token, parseSDKBN(rawInfo.amount), { amountIsBN: true })
+  const fee =
+    rawInfo.fee != null ? toTokenAmount(tokenAmount.token, parseSDKBN(rawInfo.fee), { amountIsBN: true }) : undefined
+  const pure = toTokenAmount(tokenAmount.token, minus(allAmount.amount, fee?.amount ?? 0), { amountIsBN: true })
   const info = { amount: allAmount, fee, pure, expirationTime: rawInfo.expirationTime } as ITransferAmountFee
   return info
 }

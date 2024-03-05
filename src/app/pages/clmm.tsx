@@ -1,9 +1,9 @@
-import { count, div, toStringNumber, type Numberish } from "@edsolater/fnkit"
-import { Box, Col, KitProps, Text, useKitProps, usePromise } from "@edsolater/pivkit"
+import { count, div, type Numberish } from "@edsolater/fnkit"
+import { Box, Button, Col, cssOpacity, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
 import { createEffect, onMount, type Accessor } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
-import { Button, cssOpacity, Loop, parseICSSToClassName, Row, Tab, TabList, Tabs } from "../../packages/pivkit"
+import { parseICSSToClassName, Tab, TabList, Tabs } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
 import {
   DatabaseTable,
@@ -15,8 +15,8 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
+import { useClmmUserPositionAccount } from "../stores/data/featureHooks/useClmmUserPositionAccount"
 import { loadClmmInfos } from "../stores/data/portActions/loadClmmInfos_main"
-import { useToken } from "../stores/data/token/useToken"
 import {
   allClmmTabs,
   createStorePropertySignal,
@@ -24,11 +24,11 @@ import {
   shuck_tokenPrices,
   shuck_tokens,
 } from "../stores/data/store"
+import { useToken } from "../stores/data/token/useToken"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
-import { useClmmUserPositionAccount } from "../stores/data/featureHooks/useClmmUserPositionAccount"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -151,23 +151,39 @@ export default function ClmmsPage() {
  * comopnent render clmm user position account
  */
 function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUserPositionAccount }) {
-  const { rangeName, userLiquidity, pendingRewardAmount } = useClmmUserPositionAccount(props.clmmInfo, props.account)
+  const { rangeName, inRange, userLiquidityUSD, pendingRewardAmountUSD } = useClmmUserPositionAccount(
+    props.clmmInfo,
+    props.account,
+  )
   return (
-    <Row icss={{ gap: "20px", margin: "8px 32px" }}>
+    <Row
+      icss={{
+        gap: "20px",
+        margin: "8px 32px",
+        paddingInline: "40px",
+        alignItems: "center",
+        justifyContent: "space-between",
+      }}
+    >
       {/* range */}
-      <Box icss={{ borderRadius: "12px" }}>
+      <Row icss={{ gap: "10%" }}>
         <Text>{rangeName()}</Text>
-      </Box>
+        <Text>{String(inRange())}</Text>
+      </Row>
 
-      {/* my liquidity */}
-      <Text>{toRenderable(userLiquidity(), { decimals: 0 })}</Text>
+      <Row icss={{ gap: "10%" }}>
+        {/* my liquidity */}
+        <Text>{toUsdVolume(userLiquidityUSD())}</Text>
 
-      {/* pending yield */}
-      <Text>{toUsdVolume(pendingRewardAmount(), { decimals: 4 })}</Text>
+        {/* pending yield */}
+        <Text>{toUsdVolume(pendingRewardAmountUSD())}</Text>
+      </Row>
 
-      <Button>Harvest</Button>
-      <Button>➕</Button>
-      <Button>➖</Button>
+      <Row icss={{ gap: "10%" }}>
+        <Button>Harvest</Button>
+        <Button> + </Button>
+        <Button> - </Button>
+      </Row>
     </Row>
   )
 }

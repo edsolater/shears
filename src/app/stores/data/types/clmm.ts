@@ -4,7 +4,7 @@ import type {
   ClmmPoolInfo as SDK_ClmmPoolInfo,
   ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition,
 } from "@raydium-io/raydium-sdk"
-import type { Amount } from "../../../utils/dataStructures/TokenAmount"
+import type { BNAmount } from "../../../utils/dataStructures/TokenAmount"
 import type { Mint, Percent, Price, PublicKey } from "../../../utils/dataStructures/type"
 
 export type ClmmJsonInfo = SDK_ApiClmmPoolsItem
@@ -18,7 +18,7 @@ export type ClmmInfo = {
   hasLoadSdk: boolean
   id: PublicKey
   liquidity?: Numberish // info from SDK
-  tvl?: Amount // info from SDK
+  tvl?: BNAmount // info from SDK
   protocolFeeRate?: Percent // info from SDK
   tradeFeeRate?: Percent // info from SDK
   base: Mint
@@ -54,20 +54,20 @@ export type ClmmInfo = {
   }
   fee?: {
     base: {
-      "24h": Amount
-      "7d": Amount
-      "30d": Amount
+      "24h": BNAmount
+      "7d": BNAmount
+      "30d": BNAmount
     }
     quote: {
-      "24h": Amount
-      "7d": Amount
-      "30d": Amount
+      "24h": BNAmount
+      "7d": BNAmount
+      "30d": BNAmount
     }
   }
   volumeFee?: {
-    "24h": Amount
-    "7d": Amount
-    "30d": Amount
+    "24h": BNAmount
+    "7d": BNAmount
+    "30d": BNAmount
   }
 
   // getApr({ timeBasis }: { timeBasis: '24h' | '7d' | '30d' }): {
@@ -97,9 +97,9 @@ export interface ClmmRewardInfo {
   openTime?: number /* timestamp */ // info from SDK
   endTime?: number /* timestamp */ // info from SDK
   lastUpdateTime?: number /* timestamp */ // info from SDK
-  claimed?: Amount // info from SDK
-  totalEmissioned?: Amount // info from SDK
-  remainingRewards?: Amount // info from SDK
+  claimed?: BNAmount // info from SDK
+  totalEmissioned?: BNAmount // info from SDK
+  remainingRewards?: BNAmount // info from SDK
 
   perSecondBN?: Numberish // info from SDK
   perDayBN?: Numberish // info from SDK
@@ -127,7 +127,7 @@ export interface ClmmConfigInfo {
 export interface ClmmUserPositionAccount {
   rewardInfos: {
     token: Mint | undefined
-    penddingReward: Amount | undefined
+    penddingReward: BNAmount | undefined
   }[]
   liquidity: Numberish
   inRange: boolean
@@ -135,8 +135,8 @@ export interface ClmmUserPositionAccount {
   nftMint: PublicKey
   priceLower: Numberish
   priceUpper: Numberish
-  amountBaseBN?: Amount
-  amountQuoteBN?: Amount
+  amountBaseBN?: BNAmount
+  amountQuoteBN?: BNAmount
   tokenBase?: Mint
   tokenQuote?: Mint
   leverage: number
@@ -144,8 +144,8 @@ export interface ClmmUserPositionAccount {
   tickUpper: number
   positionPercentBase: Percent
   positionPercentQuote: Percent
-  tokenFeeAmountBase?: Amount
-  tokenFeeAmountQuote?: Amount
+  tokenFeeAmountBase?: BNAmount
+  tokenFeeAmountQuote?: BNAmount
   // getLiquidityVolume(tokenPrices: Record<string, Price>): {
   //   wholeLiquidity: Numberish | undefined
   //   baseLiquidity: Numberish | undefined

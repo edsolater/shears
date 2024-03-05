@@ -1,4 +1,4 @@
-import { add, get, isPositive, mul, shakeNil, type Numberish, asyncMap } from "@edsolater/fnkit"
+import { add, get, isPositive, mul, shakeNil, type Numberish, asyncMap, gt, lt } from "@edsolater/fnkit"
 import { createMemo, createSignal, on } from "solid-js"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
@@ -27,7 +27,7 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
   const pricesMap = useShuckValue(shuck_tokenPrices)
   const tokens = useShuckValue(shuck_tokens)
 
-  const userLiquidity = createMemo(() => {
+  const userLiquidityUSD = createMemo(() => {
     const tokenAPrices = priceA()
     const tokenBPrices = priceB()
     if (!tokenAPrices || !tokenBPrices) return undefined
@@ -46,6 +46,12 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
       `${toRenderable(userPositionAccount.priceLower, { decimals: 4 })}-${toRenderable(userPositionAccount.priceUpper, { decimals: 4 })}`,
   )
 
+  const inRange = createMemo(
+    () =>
+      gt(clmmInfo.currentPrice, userPositionAccount.priceLower) &&
+      lt(clmmInfo.currentPrice, userPositionAccount.priceUpper),
+  )
+
   const rewardsAmountsWithFees: () => {
     tokenAmount: TokenAmount | undefined
     price: Price | undefined
@@ -59,7 +65,8 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
 
         const t = info.token ? get(tokens(), info.token) : undefined
         return {
-          tokenAmount: t && info.penddingReward ? toTokenAmount(t, info.penddingReward) : undefined,
+          tokenAmount:
+            t && info.penddingReward ? toTokenAmount(t, info.penddingReward, { amountIsBN: true }) : undefined,
           price: price,
         }
       }) ?? [],
@@ -76,14 +83,14 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
           {
             tokenAmount:
               t1 && userPositionAccount.tokenFeeAmountBase
-                ? toTokenAmount(t1, userPositionAccount.tokenFeeAmountBase)
+                ? toTokenAmount(t1, userPositionAccount.tokenFeeAmountBase, { amountIsBN: true })
                 : undefined,
             price: userPositionAccount.tokenBase && pricesMap()?.get(userPositionAccount.tokenBase),
           },
           {
             tokenAmount:
               t2 && userPositionAccount.tokenFeeAmountQuote
-                ? toTokenAmount(t2, userPositionAccount.tokenFeeAmountQuote)
+                ? toTokenAmount(t2, userPositionAccount.tokenFeeAmountQuote, { amountIsBN: true })
                 : undefined,
             price: userPositionAccount.tokenQuote && pricesMap()?.get(userPositionAccount.tokenQuote),
           },
@@ -140,12 +147,12 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
       )
     }),
   )
-  const pendingRewardAmount = usePromise(pendingRewardAmountPromise)
+  const pendingRewardAmountUSD = usePromise(pendingRewardAmountPromise)
 
   const isHarvestable = createMemo(() =>
     isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount() ? true : false,
   )
-  return { rangeName, userLiquidity, pendingRewardAmount, hasRewardTokenAmount, isHarvestable }
+  return { rangeName, inRange, userLiquidityUSD, pendingRewardAmountUSD, hasRewardTokenAmount, isHarvestable }
 }
 
 /**

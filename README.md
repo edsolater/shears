@@ -9,5 +9,5 @@ svg background: https://loading.io/background/
 
 # Data flow
 
-worker thread: JSON info ==> JSON info + SDK info
-main thread: JSON info + SDK info ==(hook:useXXXInfo)=> UI info
+worker thread: JSON info ==> JSON info + SDK info ==> Composed info
+main thread: Composed info ==> UI info (has decimaled) (hook:useXXXInfo)
