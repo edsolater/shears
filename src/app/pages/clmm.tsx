@@ -1,6 +1,6 @@
 import { count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
-import { Box, Col, cssOpacity, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
-import { createEffect, onMount, type Accessor } from "solid-js"
+import { Box, Col, cssOpacity, Icon, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
+import { createEffect, onMount, type Accessor, Show } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, icssFrostedGlass, parseICSSToClassName, Tab, TabList, Tabs } from "../../packages/pivkit"
@@ -166,9 +166,14 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       }}
     >
       {/* range */}
-      <Row>
+      <Row icss={{ alignItems: "center", gap: ".5em" }}>
+        <Show when={inRange()}>
+          <Icon icss={{ width: "1em", height: "1em" }} name="in-range" src="/icons/check-circle.svg" />
+        </Show>
+        <Show when={!inRange()}>
+          <Icon icss={{ width: "1em", height: "1em" }} name="out-of-range" src="/icons/warn-stick.svg" />
+        </Show>
         <Text>{rangeName()}</Text>
-        <Text>{String(inRange())}</Text>
       </Row>
 
       {/* my liquidity */}

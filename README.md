@@ -11,3 +11,12 @@ svg background: https://loading.io/background/
 
 worker thread: JSON info ==> JSON info + SDK info ==> Composed info
 main thread: Composed info ==> UI info (has decimaled) (hook:useXXXInfo)
+
+
+# Map
+- main thread: ui show data
+- worker thread: 
+  - fetch json file
+  - parse sdk file
+  - compose to Composed info
+  - handle tx functions
