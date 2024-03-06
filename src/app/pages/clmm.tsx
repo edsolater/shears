@@ -1,5 +1,5 @@
 import { count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
-import { Box, Col, cssOpacity, Icon, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
+import { Box, Col, cssDarken, cssLighten, cssOpacity, Icon, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
 import { createEffect, onMount, type Accessor, Show } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
@@ -167,13 +167,18 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
     >
       {/* range */}
       <Row icss={{ alignItems: "center", gap: ".5em" }}>
-        <Show when={inRange()}>
-          <Icon icss={{ width: "1em", height: "1em" }} name="in-range" src="/icons/check-circle.svg" />
-        </Show>
-        <Show when={!inRange()}>
-          <Icon icss={{ width: "1em", height: "1em" }} name="out-of-range" src="/icons/warn-stick.svg" />
-        </Show>
+        <Box icss={{ alignSelf: "stretch", width: ".2em", background: inRange() ? "#39D0D8" : undefined }}></Box>
         <Text>{rangeName()}</Text>
+        <Row icss={{ fontSize: "small", gap:'.25em', alignItems: "center", color: inRange() ? "#39D0D8" : "#DA2EEF", background:cssOpacity('currentcolor', .2) , borderRadius:'4px', padding:'2px 4px'}}>
+          <Show when={inRange()}>
+            <Icon icss={{ width: "1em", height: "1em" }} name="in-range" src="/icons/check-circle.svg" />
+            <Text>In range</Text>
+          </Show>
+          <Show when={!inRange()}>
+            <Icon icss={{ width: "1em", height: "1em" }} name="out-of-range" src="/icons/warn-stick.svg" />
+            <Text icss={{ color:cssDarken('currentcolor', .3) }}>Out of range</Text>
+          </Show>
+        </Row>
       </Row>
 
       {/* my liquidity */}
