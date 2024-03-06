@@ -50,7 +50,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.23.9",
-    "@edsolater/fnkit": "^0.1.86",
+    "@edsolater/fnkit": "^0.1.87",
     "@edsolater/pivkit": "^0.0.12",
     "@raydium-io/raydium-sdk": "1.3.1-beta.48",
     "@solana/wallet-adapter-base": "^0.9.23",
