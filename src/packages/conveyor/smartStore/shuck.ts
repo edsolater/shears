@@ -32,7 +32,7 @@ export interface Shuck<T> extends Subscribable<T> {
   visiable: Subscribable<boolean>
   visiableCheckers: Map<any, boolean>
   // when set this, means this object is a observable-subscribable
-  subscribedExecutors: WeakerSet<TaskRunner>
+  subscribedExecutors: Set<TaskRunner>
 }
 
 export interface CreateShuckOptions<T> {
@@ -76,7 +76,7 @@ export function createShuck<T>(
       subscribeFns: options?.onChangeToVisiable,
     }),
     visiableCheckers: new Map(),
-    subscribedExecutors: new WeakerSet<TaskRunner>(),
+    subscribedExecutors: new Set<TaskRunner>(),
   }) as Shuck<T>
   const invokeTaskExecutors = () => invokeBindedExecutors(proxiedSubscribable)
   proxiedSubscribable.subscribe(invokeTaskExecutors)

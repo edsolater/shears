@@ -87,7 +87,9 @@ export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
 export const shuck_isMobile = createShuck<boolean | undefined>()
 // clmm
 export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
-export const shuck_clmmInfos = createShuck<Record<string, ClmmInfo> | undefined>()
+export type ClmmInfos = Record<string, ClmmInfo>
+
+export const shuck_clmmInfos = createShuck<ClmmInfos | undefined>()
 // token
 export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
 export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()

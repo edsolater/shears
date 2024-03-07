@@ -7,6 +7,7 @@ import { connect } from "./methods/connect"
 import { disconnect } from "./methods/disconnect"
 import { initlyConnectPhantom } from "./methods/initlyConnectPhantom"
 import { shuck_owner } from "../data/store"
+import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
 
 export interface WalletStore {
   // for extract method
@@ -69,4 +70,6 @@ export const useWalletOwner = () => createMemo(() => useWalletStore().owner)
 
 // TODO: use atom-like
 export const useWalletAdapter = () => createMemo(() => useWalletStore().currentWallet?.adapter)
+
+export const shuck_adapter = createShuck<WalletAdapterInterface | undefined>()
 
