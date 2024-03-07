@@ -41,7 +41,9 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
     Promise.all([apiClmmInfos, sdkClmmInfos])
       .then(log("[worker] start compose clmmInfos"))
       .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
-      .then((r) => port.postMessage(toMap(r)))
+      .then((r) => {
+        port.postMessage(toMap(r))
+      })
       .catch(logError)
   })
 }

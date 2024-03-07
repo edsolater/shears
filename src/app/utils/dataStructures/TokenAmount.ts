@@ -18,13 +18,15 @@ export interface TokenAmount {
  * bnamount is not decimaled
  * e.g. 1234124
  */
-export type BNAmount = Numberish
+export type AmountBN = Numberish
 
 /**
  * decimaled amount
  * e.g. 1234.124
  */
 export type Amount = Numberish
+
+export type FlatSDKTokenAmount<T> = ReplaceType<T, SDK_CurrencyAmount | SDK_TokenAmount, TokenAmount>
 
 export function deUITokenAmount(tokenAmount: TokenAmount): SDK_TokenAmount | SDK_CurrencyAmount {
   const isSol = tokenAmount.token.is === "sol"
@@ -51,8 +53,6 @@ export function isSDKTokenAmount(amount: unknown): amount is SDK_TokenAmount | S
   return amount instanceof SDK_TokenAmount || amount instanceof SDK_CurrencyAmount
 }
 
-export type FlatSDKTokenAmount<T> = ReplaceType<T, SDK_CurrencyAmount | SDK_TokenAmount, TokenAmount>
-
 /**
  * SDK tokenAmount → UI prefer transformable object literal tokenAmount
  */
@@ -63,6 +63,10 @@ export function parseSDKTokenAmount(tokenAmount: SDK_CurrencyAmount | SDK_TokenA
     const ta = tokenAmount as SDK_TokenAmount
     return toTokenAmount(parseSDKToken(ta.token), parseSDKBN(ta.raw), { amountIsBN: true })
   }
+}
+
+export function getAmountBNFromTokenAmount(tokenAmount: TokenAmount): AmountBN {
+  return applyDecimal(tokenAmount.amount, -tokenAmount.token.decimals)
 }
 
 function isSDKCurrencyAmount(amount: unknown): amount is SDK_CurrencyAmount {

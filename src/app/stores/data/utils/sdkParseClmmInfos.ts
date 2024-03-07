@@ -5,7 +5,7 @@ import toPubString, { toPub } from "../../../utils/dataStructures/Publickey"
 import type { SDK_TokenAccount } from "../../../utils/dataStructures/TokenAccount"
 import type { ClmmJsonInfo, ClmmSDKInfo } from "../types/clmm"
 
-const sdkClmmInfoCache = new Map<string, ClmmSDKInfo>()
+export const sdkClmmInfoCache = new Map<string, ClmmSDKInfo>()
 
 /**
  * pre-sdk-paresed amm info 2

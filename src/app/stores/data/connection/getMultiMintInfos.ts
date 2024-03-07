@@ -11,12 +11,14 @@ const mintInfoCache = createTimeoutMap<string, Promise<ReturnTypeFetchMultipleMi
   maxAgeMs: 10 * 60 * 1000,
 })
 
-export async function getMultiMintInfos({ mints }: { mints: Mint[] }) {
+export async function getMultiMintInfos(options: {
+  mints: Mint[]
+}): Promise<Record<Mint, ReturnTypeFetchMultipleMintInfo>> {
   const url = shuck_rpc()?.url
   assert(url, "rpc url is not ready")
   const connection = getConnection(url)
   if (!connection) return Promise.reject("connection is not ready")
-  const allMints = [mints].flat()
+  const allMints = [options.mints].flat()
 
   const alreadyCachedInfos = Object.fromEntries(
     shakeNil(allMints.map((m) => (mintInfoCache.has(m) ? [m, mintInfoCache.get(m)!] : undefined))),
@@ -42,6 +44,7 @@ export async function getMultiMintInfos({ mints }: { mints: Mint[] }) {
 
 /**
  * { a: Promise<'hello'>, b: Promise<'world'>} => Promise<{a: 'hello', b: 'world'}>
+ * @todo move to fnkit; rename to `awaitAll`
  */
 function awaitAllObjectValue<T extends Record<string, any>>(o: T): Record<keyof T, Awaited<T[keyof T]>> {
   return Promise.all(Object.values(o)).then((values) => {

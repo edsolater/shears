@@ -8,6 +8,8 @@ import type { PublicKey } from "../../../utils/dataStructures/type"
 import type { ClmmInfo, ClmmJsonInfo, ClmmRewardInfo, ClmmSDKInfo, ClmmUserPositionAccount } from "../types/clmm"
 import { toRenderable } from "../../../utils/common/toRenderable"
 
+export const clmmInfoCache = new Map<string, ClmmInfo>()
+
 export function composeClmmInfos(
   apiInfo: Record<PublicKey, ClmmJsonInfo>,
   sdkInfo?: Record<PublicKey, ClmmSDKInfo | undefined>,
@@ -15,7 +17,9 @@ export function composeClmmInfos(
   const result: Record<string, ClmmInfo> = {}
   for (const [id, api] of Object.entries(apiInfo)) {
     const sdk = sdkInfo?.[id]
-    result[id] = composeOneClmmInfo(api, sdk)
+    const composedInfo = composeOneClmmInfo(api, sdk)
+    result[id] = composedInfo
+    clmmInfoCache.set(id, composedInfo)
   }
   return result
 }

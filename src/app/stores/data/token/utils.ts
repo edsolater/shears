@@ -1,8 +1,7 @@
-import { ReplaceType, cloneObject, isObject, isString } from "@edsolater/fnkit"
+import { isObject, isString, type ReplaceType } from "@edsolater/fnkit"
 import { Currency as SDK_Currency, Token as SDK_Token } from "@raydium-io/raydium-sdk"
-
 import { PublicKey } from "@solana/web3.js"
-import { Token } from "./type"
+import type { Token } from "./type"
 
 /** Address of the SPL Token program */
 export const TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" // from SDK
