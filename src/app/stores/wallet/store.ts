@@ -69,3 +69,4 @@ export const useWalletOwner = () => createMemo(() => useWalletStore().owner)
 
 // TODO: use atom-like
 export const useWalletAdapter = () => createMemo(() => useWalletStore().currentWallet?.adapter)
+

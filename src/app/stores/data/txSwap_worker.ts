@@ -1,11 +1,11 @@
-import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
-import { TxSwapOptions, txSwap_getInnerTransaction } from "../utils/txSwap"
+import { PortUtils } from "../../utils/webworker/createMessagePortTransforers"
+import { TxSwapOptions, txSwap_core } from "./txSwap_core"
 
-export function txSwapInWorker(transformers: PortUtils<TxSwapOptions>) {
+export function txSwap_worker(transformers: PortUtils<TxSwapOptions>) {
   const { receiver, sender } = transformers.getMessagePort("txSwap start")
   receiver.subscribe((txSwapOptions) => {
     console.log("receive tx swap option: ", txSwapOptions)
-    const txSubscribable = txSwap_getInnerTransaction(txSwapOptions)
+    const txSubscribable = txSwap_core(txSwapOptions)
 
     console.log(
       "txSubscribable: ",
