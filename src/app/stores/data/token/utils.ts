@@ -10,6 +10,7 @@ export const TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" //
 export const TOKEN_2022_PROGRAM_ID = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb" // from SDK
 
 export const SOLToken = {
+  id: PublicKey.default.toString(),
   mint: PublicKey.default.toString(),
   programId: TOKEN_PROGRAM_ID,
   decimals: 9,
@@ -23,6 +24,7 @@ const WSOLMint = "So11111111111111111111111111111111111111112"
 export const SDK_TOKEN_WSOL = new SDK_Token(TOKEN_PROGRAM_ID, WSOLMint, SOLToken.decimals, "WSOL", "wrapped solana")
 export const SDK_CURRENCY_SOL = new SDK_Currency(SOLToken.decimals, "SOL", "solana")
 export const TOKEN_SOL: Token = {
+  id: PublicKey.default.toString(),
   mint: PublicKey.default.toString(),
   programId: TOKEN_PROGRAM_ID,
   decimals: 9,
@@ -51,9 +53,11 @@ export function parseSDKToken(token: SDK_Currency | SDK_Token): Token {
     return TOKEN_SOL
   } else {
     const t = token as SDK_Token
+    const mint = t.mint.toString()
     return {
+      id: mint,
+      mint: mint,
       programId: t.programId.toString(),
-      mint: t.mint.toString(),
       decimals: t.decimals,
       symbol: t.symbol,
       name: t.name,
@@ -96,7 +100,10 @@ export function isErrorToken(token: Token): boolean {
   return token.is === "error-token"
 }
 
+let tempTokenId = 1
+const tempTokenIdGenerator = () => tempTokenId++
 export const defaultToken: () => Token = () => ({
+  id: tempTokenIdGenerator().toString(),
   programId: TOKEN_PROGRAM_ID,
   mint: "",
   decimals: 0,
@@ -104,6 +111,7 @@ export const defaultToken: () => Token = () => ({
 })
 
 export const loadingToken: () => Token = () => ({
+  id: tempTokenIdGenerator().toString(),
   programId: TOKEN_PROGRAM_ID,
   mint: "",
   decimals: 0,
@@ -111,6 +119,7 @@ export const loadingToken: () => Token = () => ({
 })
 
 export const errorToken: () => Token = () => ({
+  id: tempTokenIdGenerator().toString(),
   programId: TOKEN_PROGRAM_ID,
   mint: "",
   decimals: 0,

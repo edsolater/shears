@@ -1,4 +1,4 @@
-import type { Numberish } from "@edsolater/fnkit"
+import type { ItemList, Numberish } from "@edsolater/fnkit"
 import type {
   ApiClmmPoolsItem as SDK_ApiClmmPoolsItem,
   ClmmPoolInfo as SDK_ClmmPoolInfo,
@@ -69,23 +69,6 @@ export type ClmmInfo = {
     "7d": BNAmount
     "30d": BNAmount
   }
-
-  // getApr({ timeBasis }: { timeBasis: '24h' | '7d' | '30d' }): {
-  //   fee: {
-  //     apr: Percent
-  //     percentInTotal: Percent
-  //   }
-  //   rewards: { apr: Percent; percentInTotal: Percent; token: Token | undefined }[]
-  //   apr: Percent
-  // }
-  // getTickApr(args: Omit<GetAprPoolTickParameters, 'ammPoolInfo' | 'poolRewardTokens'>): {
-  //   fee: {
-  //     apr: Percent
-  //     percentInTotal: Percent
-  //   }
-  //   rewards: { apr: Percent; percentInTotal: Percent; token: Token | undefined }[]
-  //   apr: Percent
-  // }
 }
 
 export interface ClmmRewardInfo {
@@ -164,3 +147,4 @@ export interface ClmmUserPositionAccount {
   // tokenFeesOwedA: BN__default; // currently useless
   // tokenFeesOwedB: BN__default; // currently useless
 }
+export type ClmmInfos = ItemList<ClmmInfo>

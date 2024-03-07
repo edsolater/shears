@@ -1,4 +1,4 @@
-import { toList } from "@edsolater/fnkit"
+import { toList, toMap } from "@edsolater/fnkit"
 import { getConnection } from "../../../utils/dataStructures/Connection"
 import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
@@ -40,11 +40,8 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
 
     Promise.all([apiClmmInfos, sdkClmmInfos])
       .then(log("[worker] start compose clmmInfos"))
-      .then(([apiClmmInfos, sdkClmmInfos]) => {
-        console.log("sdkClmmInfos: ", sdkClmmInfos)
-        return composeClmmInfos(apiClmmInfos, sdkClmmInfos)
-      })
-      .then(port.postMessage)
+      .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
+      .then((r) => port.postMessage(toMap(r)))
       .catch(logError)
   })
 }

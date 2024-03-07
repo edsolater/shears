@@ -5,7 +5,6 @@
 import { createSmartStore } from "@edsolater/pivkit"
 import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
 import { RAYMint, SOLMint } from "../../configs/wellKnownMints"
-import { Token, type Tokens } from "./token/type"
 import { Mint, Numberish, type Price } from "../../utils/dataStructures/type"
 import { TxVersion } from "../../utils/txHandler/txVersion"
 import { RPCEndpoint, availableRpcs } from "./RPCEndpoint"
@@ -14,7 +13,9 @@ import { loadFarmSYNInfos } from "./portActions/loadFarmSYNInfos_main"
 import { loadPairs } from "./portActions/loadPairs_main"
 import { loadTokenPrice } from "./portActions/loadTokenPrice_main"
 import { loadTokens } from "./portActions/loadTokens_main"
-import type { ClmmInfo, ClmmJsonInfo } from "./types/clmm"
+import { Token, type Tokens } from "./token/type"
+import type { ClmmJsonInfo } from "./types/clmm"
+import { ClmmInfos } from "./types/clmm"
 import { FarmInfo, FarmJSON } from "./types/farm"
 import { PairInfo } from "./types/pairs"
 
@@ -87,8 +88,6 @@ export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
 export const shuck_isMobile = createShuck<boolean | undefined>()
 // clmm
 export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
-export type ClmmInfos = Record<string, ClmmInfo>
-
 export const shuck_clmmInfos = createShuck<ClmmInfos | undefined>()
 // token
 export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
