@@ -1,6 +1,6 @@
 /**************************************************************************
  *
- * @tags CLMM utils txHandler
+ * @tags CLMM utils data-calculation
  *
  **************************************************************************/
 
@@ -10,7 +10,7 @@ import type { ClmmInfos } from "./types/clmm"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import toPubString from "../../utils/dataStructures/Publickey"
-import { parseSDKBN, toBN } from "../../utils/dataStructures/BN"
+import { parseSDKBN, toSDKBN } from "../../utils/dataStructures/BN"
 import { getEpochInfo } from "./connection/getEpochInfo"
 import { getMultiMintInfos } from "./connection/getMultiMintInfos"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
@@ -57,7 +57,7 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(
     inputA: isInputSideA,
     tickLower: sdkClmmPositionInfo.tickLower,
     tickUpper: sdkClmmPositionInfo.tickUpper,
-    amount: toBN(getAmountBNFromTokenAmount(tokenAmount)),
+    amount: toSDKBN(getAmountBNFromTokenAmount(tokenAmount)),
     add: true,
     epochInfo,
     token2022Infos,

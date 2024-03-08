@@ -4,12 +4,8 @@ import OriginalBN from "bn.js"
 // plain object for easier structure clone
 export type BN = Fraction
 
-export function toBN(n: Numberish): OriginalBN {
+export function toSDKBN(n: Numberish): OriginalBN {
   return new OriginalBN(String(toBigint(n)))
-}
-
-export function toDecodedBN(n: OriginalBN): BN {
-  return { numerator: BigInt(n.toString()), denominator: BigInt(1) }
 }
 
 export type FlatSDKBN<T> = ReplaceType<T, OriginalBN, bigint>

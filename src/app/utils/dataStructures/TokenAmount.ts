@@ -6,7 +6,7 @@ import {
 } from "@raydium-io/raydium-sdk"
 import type { Token } from "../../stores/data/token/type"
 import { SDK_CURRENCY_SOL, TOKEN_SOL, parseSDKToken } from "../../stores/data/token/utils"
-import { parseSDKBN, toBN } from "./BN"
+import { parseSDKBN, toSDKBN } from "./BN"
 
 export interface TokenAmount {
   token: Token
@@ -32,7 +32,7 @@ export function deUITokenAmount(tokenAmount: TokenAmount): SDK_TokenAmount | SDK
   const isSol = tokenAmount.token.is === "sol"
   if (isSol) {
     const token = SDK_CURRENCY_SOL
-    return new SDK_CurrencyAmount(token, toBN(applyDecimal(tokenAmount.amount, -token.decimals))) // which means error appears
+    return new SDK_CurrencyAmount(token, toSDKBN(applyDecimal(tokenAmount.amount, -token.decimals))) // which means error appears
   } else {
     const token = new SDK_Token(
       tokenAmount.token.programId,
@@ -41,7 +41,7 @@ export function deUITokenAmount(tokenAmount: TokenAmount): SDK_TokenAmount | SDK
       tokenAmount.token.symbol,
       tokenAmount.token.name,
     )
-    return new SDK_TokenAmount(token, toBN(applyDecimal(tokenAmount.amount, -token.decimals))) // which means error appears
+    return new SDK_TokenAmount(token, toSDKBN(applyDecimal(tokenAmount.amount, -token.decimals))) // which means error appears
   }
 }
 

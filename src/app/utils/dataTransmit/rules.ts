@@ -1,18 +1,17 @@
 import { getType, hasProperty, isObject, toBigint } from "@edsolater/fnkit"
-import BN from "bn.js"
-import { TransmitRule } from "./type"
-import { toDecodedBN } from "../dataStructures/BN"
 import {
   MessageAddressTableLookup,
   MessageV0,
   PublicKey,
-  VersionedMessage,
-  VersionedTransaction,
+  VersionedTransaction
 } from "@solana/web3.js"
+import BN from "bn.js"
+import { parseSDKBN } from "../dataStructures/BN"
 import toPubString, { toPub } from "../dataStructures/Publickey"
+import { TransmitRule } from "./type"
 
 function encodeBN(rawData: BN) {
-  return toBigint(toDecodedBN(rawData))
+  return toBigint(parseSDKBN(rawData))
 }
 
 function encodePublicKey(rawData: PublicKey) {

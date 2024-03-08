@@ -8,7 +8,7 @@ import { BNDivCeil, type GetTransferAmountFee as SDK_GetTransferAmountFee } from
 import type { TransferFee, TransferFeeConfig } from "@solana/spl-token"
 import type { EpochInfo } from "@solana/web3.js"
 import BN from "bn.js"
-import { parseSDKBN, toBN } from "../../../utils/dataStructures/BN"
+import { parseSDKBN, toSDKBN } from "../../../utils/dataStructures/BN"
 import type { AmountBN } from "../../../utils/dataStructures/TokenAmount"
 
 export interface TransferAmountFee {
@@ -31,7 +31,7 @@ export function getTransferAmountFee(
   epochInfo: EpochInfo,
   addFee: boolean,
 ): TransferAmountFee {
-  const amountSDKBN = toBN(amount)
+  const amountSDKBN = toSDKBN(amount)
   if (feeConfig === undefined) {
     return {
       amount,
@@ -57,7 +57,7 @@ export function getTransferAmountFee(
         expirationTime,
       }
     } else {
-      const _TAmount = BNDivCeil(toBN(amount).mul(new BN(POINT)), new BN(POINT - nowFeeConfig.transferFeeBasisPoints))
+      const _TAmount = BNDivCeil(toSDKBN(amount).mul(new BN(POINT)), new BN(POINT - nowFeeConfig.transferFeeBasisPoints))
 
       const nowMaxFee = new BN(nowFeeConfig.maximumFee.toString())
       const TAmount = _TAmount.sub(amountSDKBN).gt(nowMaxFee) ? amountSDKBN.add(nowMaxFee) : _TAmount

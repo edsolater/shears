@@ -1,7 +1,7 @@
 import { minus } from "@edsolater/fnkit"
 import { getTransferAmountFee, type ReturnTypeFetchMultipleMintInfos } from "@raydium-io/raydium-sdk"
 import type { EpochInfo } from "@solana/web3.js"
-import { parseSDKBN, toBN } from "../../../utils/dataStructures/BN"
+import { parseSDKBN, toSDKBN } from "../../../utils/dataStructures/BN"
 import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
 import { getEpochInfo } from "./getEpochInfo"
 import { getMultiMintInfos } from "./getMultiMintInfos"
@@ -54,7 +54,7 @@ export function getTransferFeeInfoSync({
 }): ITransferAmountFee {
   const mint = tokenAmount.token.mint
   const feeConfig = mintInfos[mint]?.feeConfig
-  const rawInfo = getTransferAmountFee(toBN(tokenAmount.amount), feeConfig, epochInfo, Boolean(addFee))
+  const rawInfo = getTransferAmountFee(toSDKBN(tokenAmount.amount), feeConfig, epochInfo, Boolean(addFee))
   const allAmount = toTokenAmount(tokenAmount.token, parseSDKBN(rawInfo.amount), { amountIsBN: true })
   const fee =
     rawInfo.fee != null ? toTokenAmount(tokenAmount.token, parseSDKBN(rawInfo.fee), { amountIsBN: true }) : undefined
