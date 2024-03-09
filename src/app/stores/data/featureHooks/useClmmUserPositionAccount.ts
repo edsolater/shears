@@ -8,10 +8,11 @@ import {
   mul,
   shakeNil,
   toFormattedNumber,
-  type Numberish,
+  type Numberish
 } from "@edsolater/fnkit"
 import { usePromise } from "@edsolater/pivkit"
-import { createMemo, createSignal, on } from "solid-js"
+import { createEffect, createMemo, createSignal, on } from "solid-js"
+import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import { applyDecimal } from "../../../pages/clmm"
 import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
@@ -25,11 +26,23 @@ import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 
+type AdditionalClmmUserPositionAccount = {
+  rangeName: string
+  inRange: boolean
+  userLiquidityUSD: USDVolume | undefined
+  pendingRewardAmountUSD: Numberish | undefined
+  hasRewardTokenAmount: boolean
+  isHarvestable: boolean
+}
+
 /**
  * hooks
  * hydrate {@link ClmmUserPositionAccount} to ui used data
  */
-export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccount: ClmmUserPositionAccount) {
+export function useClmmUserPositionAccount(
+  clmmInfo: ClmmInfo,
+  userPositionAccount: ClmmUserPositionAccount,
+): AdditionalClmmUserPositionAccount & ClmmUserPositionAccount {
   const tokenA = useToken(() => clmmInfo.base)
   const tokenB = useToken(() => clmmInfo.quote)
   const priceA = useTokenPrice(() => clmmInfo.base)
@@ -167,7 +180,28 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
   const isHarvestable = createMemo(() =>
     isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount() ? true : false,
   )
-  return { rangeName, inRange, userLiquidityUSD, pendingRewardAmountUSD, hasRewardTokenAmount, isHarvestable }
+
+  const [userPositionAccountStore, setUserPositionStore] = createStore(
+    userPositionAccount as AdditionalClmmUserPositionAccount & ClmmUserPositionAccount,
+  )
+  // 🤔 really need this?
+  createEffect(
+    on(
+      () => userPositionAccount,
+      () => {
+        //@ts-expect-error no need to check
+        setUserPositionStore(reconcile(userPositionAccount))
+      },
+    ),
+  )
+  createEffect(() => setUserPositionStore({ rangeName: rangeName() }))
+  createEffect(() => setUserPositionStore({ inRange: inRange() }))
+  createEffect(() => setUserPositionStore({ userLiquidityUSD: userLiquidityUSD() }))
+  createEffect(() => setUserPositionStore({ pendingRewardAmountUSD: pendingRewardAmountUSD() }))
+  createEffect(() => setUserPositionStore({ hasRewardTokenAmount: hasRewardTokenAmount() }))
+  createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
+
+  return userPositionAccountStore
 }
 
 /**

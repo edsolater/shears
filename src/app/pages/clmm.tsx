@@ -127,15 +127,16 @@ export default function ClmmsPage() {
     },
   ]
   const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
-    render: (i) => (
+    render: (clmmInfo) => (
       <Col class="collapse-content">
+        current price: {toRenderable(clmmInfo.currentPrice, { decimals: 4 })}
         <ListBox
-          of={i.userPositionAccounts}
+          of={clmmInfo.userPositionAccounts}
           // TODO: should be sortBy to more readable
           sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
           Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
         >
-          {(account) => <ClmmUserPositionAccountRow clmmInfo={i} account={account} />}
+          {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
         </ListBox>
       </Col>
     ),
@@ -160,10 +161,7 @@ export default function ClmmsPage() {
  * comopnent render clmm user position account
  */
 function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUserPositionAccount }) {
-  const { rangeName, inRange, userLiquidityUSD, pendingRewardAmountUSD } = useClmmUserPositionAccount(
-    props.clmmInfo,
-    props.account,
-  )
+  const positionAccount = useClmmUserPositionAccount(props.clmmInfo, props.account)
   return (
     <Row
       icss={{
@@ -179,35 +177,41 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
     >
       {/* range */}
       <Row icss={{ alignItems: "center", gap: ".5em" }}>
-        <Box icss={{ alignSelf: "stretch", width: ".2em", background: inRange() ? "#39D0D8" : undefined }}></Box>
-        <Text>{rangeName()}</Text>
+        <Box
+          icss={{ alignSelf: "stretch", width: ".2em", background: positionAccount.inRange ? "#39D0D8" : undefined }}
+        ></Box>
+        <Text>{positionAccount.rangeName}</Text>
         <Row
           icss={{
             fontSize: "small",
             gap: ".25em",
             alignItems: "center",
-            color: inRange() ? "#39D0D8" : "#DA2EEF",
+            color: positionAccount.inRange ? "#39D0D8" : "#DA2EEF",
             background: cssOpacity("currentcolor", 0.15),
             borderRadius: "4px",
             padding: "2px 4px",
           }}
         >
-          <Show when={inRange()}>
+          <Show when={positionAccount.inRange}>
             <Icon icss={{ width: "1em", height: "1em" }} name="in-range" src="/icons/check-circle.svg" />
-            <Text>Range valid</Text>
+            <Text>In Range</Text>
           </Show>
-          <Show when={!inRange()}>
-            <Icon icss={{ width: "1em", height: "1em",filter: "brightness(1.4)" }} name="out-of-range" src="/icons/warn-stick.svg" />
+          <Show when={!positionAccount.inRange}>
+            <Icon
+              icss={{ width: "1em", height: "1em", filter: "brightness(1.4)" }}
+              name="out-of-range"
+              src="/icons/warn-stick.svg"
+            />
             <Text icss={{ filter: "brightness(1.4)" }}>Range out</Text>
           </Show>
         </Row>
       </Row>
 
       {/* my liquidity */}
-      <Text icss={{ textAlign: "end" }}>{toUsdVolume(userLiquidityUSD())}</Text>
+      <Text icss={{ textAlign: "end" }}>{toUsdVolume(positionAccount.userLiquidityUSD)}</Text>
 
       {/* pending yield */}
-      <Text icss={{ textAlign: "end" }}>{toUsdVolume(pendingRewardAmountUSD())}</Text>
+      <Text icss={{ textAlign: "end" }}>{toUsdVolume(positionAccount.pendingRewardAmountUSD)}</Text>
 
       <Row icss={{ gap: "10%" }}>
         <Button icss={icssFrostedGlass}>Harvest</Button>
