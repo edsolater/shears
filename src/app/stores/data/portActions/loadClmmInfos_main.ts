@@ -12,6 +12,7 @@ export function loadClmmInfos() {
     () => {
       const url = shuck_rpc()?.url
       const owner = shuck_owner()
+      console.log('🐛🐛🐛 url, owner: ', url, owner)
       if (!url) return
       console.log("owner: ", owner)
       console.log("[main] start loading clmm infos")

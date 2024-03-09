@@ -12,16 +12,16 @@ import { parseSDKBN, toSDKBN } from "../../../utils/dataStructures/BN"
 import type { AmountBN } from "../../../utils/dataStructures/TokenAmount"
 
 export interface TransferAmountFee {
-  amount: AmountBN
-  fee: AmountBN | undefined
+  amountWithFeeBN: AmountBN
+  feeBN: AmountBN | undefined
   expirationTime: number | undefined
 }
 const POINT = 10_000
 
 export function parseSDKTransferAmountFee(transferAmountFee: SDK_GetTransferAmountFee): TransferAmountFee {
   return {
-    amount: parseSDKBN(transferAmountFee.amount),
-    fee: transferAmountFee.fee && parseSDKBN(transferAmountFee.fee),
+    amountWithFeeBN: parseSDKBN(transferAmountFee.amount),
+    feeBN: transferAmountFee.fee && parseSDKBN(transferAmountFee.fee),
     expirationTime: transferAmountFee.expirationTime,
   }
 }
@@ -31,15 +31,15 @@ export function getTransferAmountFee(
   epochInfo: EpochInfo,
   addFee: boolean,
 ): TransferAmountFee {
-  const amountSDKBN = toSDKBN(amount)
   if (feeConfig === undefined) {
     return {
-      amount,
-      fee: undefined,
+      amountWithFeeBN: amount,
+      feeBN: undefined,
       expirationTime: undefined,
     }
   }
 
+  const amountSDKBN = toSDKBN(amount)
   const nowFeeConfig: TransferFee =
     epochInfo.epoch < feeConfig.newerTransferFee.epoch ? feeConfig.olderTransferFee : feeConfig.newerTransferFee
   const maxFee = nowFeeConfig.maximumFee
@@ -52,31 +52,34 @@ export function getTransferAmountFee(
     if (nowFeeConfig.transferFeeBasisPoints === POINT) {
       const nowMaxFee = nowFeeConfig.maximumFee
       return {
-        amount: add(amount, nowMaxFee),
-        fee: nowMaxFee,
+        amountWithFeeBN: add(amount, nowMaxFee),
+        feeBN: nowMaxFee,
         expirationTime,
       }
     } else {
-      const _TAmount = BNDivCeil(toSDKBN(amount).mul(new BN(POINT)), new BN(POINT - nowFeeConfig.transferFeeBasisPoints))
+      const _TAmount = BNDivCeil(
+        toSDKBN(amount).mul(new BN(POINT)),
+        new BN(POINT - nowFeeConfig.transferFeeBasisPoints),
+      )
 
       const nowMaxFee = new BN(nowFeeConfig.maximumFee.toString())
       const TAmount = _TAmount.sub(amountSDKBN).gt(nowMaxFee) ? amountSDKBN.add(nowMaxFee) : _TAmount
 
       const _fee = parseSDKBN(BNDivCeil(TAmount.mul(new BN(nowFeeConfig.transferFeeBasisPoints)), new BN(POINT)))
-      const fee = _fee > maxFee ? maxFee : _fee
+      const feeBN = _fee > maxFee ? maxFee : _fee
       return {
-        amount: parseSDKBN(TAmount),
-        fee,
+        amountWithFeeBN: parseSDKBN(TAmount),
+        feeBN,
         expirationTime,
       }
     }
   } else {
     const _fee = parseSDKBN(BNDivCeil(amountSDKBN.mul(new BN(nowFeeConfig.transferFeeBasisPoints)), new BN(POINT)))
-    const fee = _fee > maxFee ? maxFee : _fee
+    const feeBN = _fee > maxFee ? maxFee : _fee
 
     return {
-      amount,
-      fee,
+      amountWithFeeBN: amount,
+      feeBN,
       expirationTime,
     }
   }

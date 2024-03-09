@@ -1,16 +1,18 @@
 import { isObject, isString, type ReplaceType } from "@edsolater/fnkit"
 import { Currency as SDK_Currency, Token as SDK_Token } from "@raydium-io/raydium-sdk"
 import { PublicKey } from "@solana/web3.js"
-import type { Token } from "./type"
+import type { Token, Tokenable } from "./type"
+import type { Mint } from "../../../utils/dataStructures/type"
 
 /** Address of the SPL Token program */
 export const TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA" // from SDK
 /** Address of the SPL Token 2022 program */
 export const TOKEN_2022_PROGRAM_ID = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb" // from SDK
 
+const SOLMint = PublicKey.default.toString()
 export const SOLToken = {
-  id: PublicKey.default.toString(),
-  mint: PublicKey.default.toString(),
+  id: SOLMint,
+  mint: SOLMint,
   programId: TOKEN_PROGRAM_ID,
   decimals: 9,
 
@@ -23,8 +25,8 @@ const WSOLMint = "So11111111111111111111111111111111111111112"
 export const SDK_TOKEN_WSOL = new SDK_Token(TOKEN_PROGRAM_ID, WSOLMint, SOLToken.decimals, "WSOL", "wrapped solana")
 export const SDK_CURRENCY_SOL = new SDK_Currency(SOLToken.decimals, "SOL", "solana")
 export const TOKEN_SOL: Token = {
-  id: PublicKey.default.toString(),
-  mint: PublicKey.default.toString(),
+  id: SOLMint,
+  mint: SOLMint,
   programId: TOKEN_PROGRAM_ID,
   decimals: 9,
   symbol: "SOL",
@@ -66,6 +68,9 @@ export function parseSDKToken(token: SDK_Currency | SDK_Token): Token {
 
 function isSDKTokenSOL(token: SDK_Currency | SDK_Token): token is typeof TOKEN_SOL {
   return token.name === "solana" && token.symbol?.toLowerCase() === "SOL".toLowerCase()
+}
+export function isTokenSOLWSOL(token: Token | Mint): boolean {
+  return isString(token) ? token === SOLMint || token === WSOLMint : token.id === SOLMint || token.id === WSOLMint
 }
 
 export function isToken(token: unknown): token is Token {

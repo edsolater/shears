@@ -15,7 +15,7 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
     const apiClmmInfos = fetchClmmJsonInfo()
 
     apiClmmInfos
-      .then(log("[worker] get apiClmmInfos"))
+      .then(log("[worker] get clmm apiClmmInfos"))
       .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
       .then(port.postMessage)
       .catch(logError)

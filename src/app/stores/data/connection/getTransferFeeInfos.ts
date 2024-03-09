@@ -6,6 +6,7 @@ import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/T
 import { getEpochInfo } from "./getEpochInfo"
 import { getMultiMintInfos } from "./getMultiMintInfos"
 import isCurrentToken2022 from "../isCurrentToken2022"
+import type { Tokens } from "../token/type"
 
 export type ITransferAmountFee = {
   amount: TokenAmount
@@ -18,11 +19,15 @@ export type ITransferAmountFee = {
 
 /**  in main thread */
 export async function getTransferFeeInfo({
+  rpcUrl,
+  tokens,
   tokenAmount,
   addFee,
   fetchedEpochInfo,
   fetchedMints,
 }: {
+  rpcUrl: string
+  tokens: Tokens
   tokenAmount: TokenAmount
   addFee?: boolean
   /** provied for faster fetch */
@@ -30,10 +35,15 @@ export async function getTransferFeeInfo({
   /** provied for faster fetch */
   fetchedMints?: Promise<ReturnTypeFetchMultipleMintInfos> | ReturnTypeFetchMultipleMintInfos
 }): Promise<ITransferAmountFee | undefined> {
-  const getMints = () => fetchedMints ?? getMultiMintInfos({ mints: [tokenAmount].flat().map((i) => i.token.mint) })
-  const getEpoch = () => fetchedEpochInfo ?? getEpochInfo()
+  const getMints = () =>
+    fetchedMints ??
+    getMultiMintInfos(
+      [tokenAmount].flat().map((i) => i.token.mint),
+      { rpcUrl },
+    )
+  const getEpoch = () => fetchedEpochInfo ?? getEpochInfo({ rpcUrl })
 
-  if (!isCurrentToken2022(tokenAmount.token.mint))
+  if (!isCurrentToken2022(tokenAmount.token.mint, { tokens }))
     return { amount: tokenAmount, pure: tokenAmount } as ITransferAmountFee
   const [epochInfo, mintInfos] = await Promise.all([getEpoch(), getMints()])
   return getTransferFeeInfoSync({ tokenAmount, addFee, mintInfos, epochInfo })

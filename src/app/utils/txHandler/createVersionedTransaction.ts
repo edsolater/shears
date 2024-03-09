@@ -2,7 +2,7 @@ import { isObject } from "@edsolater/fnkit"
 import { InnerTransaction, PublicKeyish, TxVersion as _TxVersion, buildTransaction } from "@raydium-io/raydium-sdk"
 import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
 import { toPub } from "../dataStructures/Publickey"
-import { TxVersion } from "./txHandler"
+import { UITxVersion } from "./txHandler"
 
 export async function buildTransactionsFromSDKInnerTransactions({
   connection,
@@ -12,7 +12,7 @@ export async function buildTransactionsFromSDKInnerTransactions({
 }: {
   connection: Connection
   owner: PublicKeyish
-  txVersion: TxVersion
+  txVersion: UITxVersion
   transactions: InnerTransaction[]
 }): Promise<(Transaction | VersionedTransaction)[]> {
   const spawnedTransactions = await buildTransaction({
@@ -25,7 +25,7 @@ export async function buildTransactionsFromSDKInnerTransactions({
 }
 
 /** from customized value to SDK specific value */
-export function getSDKTxVersion(input: TxVersion): _TxVersion {
+export function getSDKTxVersion(input: UITxVersion): _TxVersion {
   return input === "V0" ? _TxVersion.V0 : _TxVersion.LEGACY
 }
 

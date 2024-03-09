@@ -4,7 +4,7 @@ import { appProgramId } from "../../utils/common/config"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPub } from "../../utils/dataStructures/Publickey"
 import { Token } from "./token/type"
-import { txHandler, type TxVersion } from "../../utils/txHandler"
+import { txHandler, type UITxVersion } from "../../utils/txHandler"
 import { getTxHandlerBudgetConfig } from "../../utils/txHandler/getTxHandlerBudgetConfig"
 import { getRealSDKTxVersion } from "../../utils/txHandler/txVersion"
 import { getBestCalcResultCache } from "./utils/calculateSwapRouteInfos"
@@ -19,10 +19,10 @@ export interface TxSwapOptions {
     // amount2: Numberish
     direction: "1 → 2" | "2 → 1"
   }
-  txVersion?: TxVersion
+  txVersion?: UITxVersion
 }
 
-export function txSwap_core(options: TxSwapOptions) {
+export function txSwap(options: TxSwapOptions) {
   const connection = getConnection(options.checkInfo.rpcURL)
   const neariestSwapBestResultCache = getBestCalcResultCache()
   assert(neariestSwapBestResultCache, "swapInfo not found")
@@ -64,6 +64,6 @@ export function txSwap_core(options: TxSwapOptions) {
       console.log("innerTransactions: ", innerTransactions)
       return innerTransactions
     },
-    { sendMode: "queue(all-settle)" },
+    { sendMode: "queue(continue-without-check-transaction-response)" },
   )
 }

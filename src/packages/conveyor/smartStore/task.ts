@@ -3,9 +3,9 @@
  * observe user action towards the object|function
  * *********
  */
-import { shrinkFn } from "@edsolater/fnkit"
+import { createSubscribable, shrinkFn } from "@edsolater/fnkit"
 import { assignObject } from "../../fnkit/assignObject"
-import { Shuck, attachTaskToShuck, isShuckVisiable } from "./shuck"
+import { Shuck, isShuckVisiable } from "./shuck"
 
 export type TaskRunner = {
   (): void
@@ -40,6 +40,7 @@ export function createTask(
   task: () => void,
   options?: { visiable?: boolean | ((shucks: Shuck<any>[]) => boolean) },
 ) {
+  const isTaskVisiable = createSubscribable(checkAnyDependsVisiable(dependOns))
   const taskRunner = (() => task()) as TaskRunner
   assignObject(taskRunner, {
     relatedShucks: dependOns,
@@ -48,8 +49,24 @@ export function createTask(
     },
   })
   for (const shuck of dependOns) {
-    attachTaskToShuck(taskRunner, shuck) // task is triggered by subscribed shucks, but also attach shack to taskRunner make it easy to debug (easy for human to monitor the app tasks)
+    shuck.visiable.subscribe((v) => {})
+    // attachTaskToShuck(taskRunner, shuck) // task is triggered by subscribed shucks, but also attach shack to taskRunner make it easy to debug (easy for human to monitor the app tasks)
+    shuck.subscribe((v) => {
+      if (isTaskVisiable()) {
+        taskRunner()
+      }
+    })
+    shuck.visiable.subscribe(() => {
+      const isAnyVisiable = checkAnyDependsVisiable(dependOns)
+      isTaskVisiable.set(isAnyVisiable)
+    })
   }
+  isTaskVisiable.subscribe((v) => {
+    if (v) {
+      taskRunner()
+    }
+  })
+
   const manager: TaskManager = {
     taskRunner,
     run(config?: { force?: boolean }) {
@@ -58,4 +75,8 @@ export function createTask(
   }
   manager.run() // initly run the task
   return manager
+}
+
+function checkAnyDependsVisiable(dependOns: Shuck<any>[]) {
+  return dependOns.some((shuck) => shuck.visiable)
 }

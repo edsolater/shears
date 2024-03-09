@@ -6,7 +6,7 @@ import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 import { toRenderable } from "../../../utils/common/toRenderable"
 import type { Price, USDVolume } from "../../../utils/dataStructures/type"
 import { applyDecimal } from "../../../pages/clmm"
-import { shuck_tokenPrices, shuck_tokens } from "../store"
+import { shuck_rpc, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
 import isCurrentToken2022 from "../isCurrentToken2022"
@@ -14,6 +14,7 @@ import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
 import { getTransferFeeInfo } from "../connection/getTransferFeeInfos"
 import { usePromise } from "@edsolater/pivkit"
+import { min } from "bn.js"
 
 /**
  * hooks
@@ -26,6 +27,7 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
   const priceB = useTokenPrice(() => clmmInfo.quote)
   const pricesMap = useShuckValue(shuck_tokenPrices)
   const tokens = useShuckValue(shuck_tokens)
+  const rpc = useShuckValue(shuck_rpc)
 
   const userLiquidityUSD = createMemo(() => {
     const tokenAPrices = priceA()
@@ -115,22 +117,26 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
   )
 
   const pendingRewardAmountPromise = createMemo(
-    on([rewardsAmountsWithFees, feesAmountsWithFees], async () => {
+    on([rewardsAmountsWithFees, feesAmountsWithFees, rpc, tokens], async () => {
+      const rpcUrl = rpc()?.url
+      if (!rpcUrl) return undefined
       const mints = shakeNil(
         rewardsAmountsWithFees()
           .concat(feesAmountsWithFees())
           .map((i) => i.tokenAmount?.token.mint),
       )
 
-      const [epochInfo, mintInfos] = mints.some((m) => !isCurrentToken2022(m))
+      const [epochInfo, mintInfos] = mints.some((m) => !isCurrentToken2022(m, { tokens: tokens() }))
         ? []
-        : await Promise.all([getEpochInfo(), getMultiMintInfos({ mints })])
+        : await Promise.all([getEpochInfo({ rpcUrl: rpcUrl }), getMultiMintInfos(mints, { rpcUrl: rpcUrl })])
 
       const ams = await asyncMap(
         rewardsAmountsWithFees().concat(feesAmountsWithFees()),
         async ({ tokenAmount, ...rest }) => {
           if (!tokenAmount) return
           const feeInfo = await getTransferFeeInfo({
+            rpcUrl: rpcUrl,
+            tokens: tokens(),
             tokenAmount,
             fetchedEpochInfo: epochInfo,
             fetchedMints: mintInfos,

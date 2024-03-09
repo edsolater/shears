@@ -1,5 +1,9 @@
 import { EventCenter, MayPromise, assert, createEventCenter, emptyFn, isObject, mergeFunction } from "@edsolater/fnkit"
-import { PublicKeyish, InnerTransaction as SDKInnerTransaction } from "@raydium-io/raydium-sdk"
+import {
+  PublicKeyish,
+  InnerTransaction as SDKInnerTransaction,
+  type ComputeBudgetConfig, TxVersion, type CacheLTA,
+} from "@raydium-io/raydium-sdk"
 import { InnerSimpleLegacyTransaction as SDK_InnerSimpleTransaction } from "@raydium-io/raydium-sdk"
 import {
   Connection,
@@ -17,8 +21,9 @@ import { sendTransactionCore } from "./sendTransactionCore"
 import { signAllTransactions } from "./signAllTransactions_worker"
 import { subscribeTx } from "./subscribeTx"
 import { getTokenAccounts, type SDK_TokenAccount } from "../dataStructures/TokenAccount"
+import { getTxHandlerBudgetConfig } from "./getTxHandlerBudgetConfig"
 
-export type TxVersion = "V0" | "LEGACY"
+export type UITxVersion = "V0" | "LEGACY"
 //#region ------------------- basic info -------------------
 export interface TxInfo {
   txid: string
@@ -71,12 +76,19 @@ export interface TxFinalBatchErrorInfo {
 
 //#endregion
 
+/**
+ *  defined user logic in this function
+ */
 export type TxFn = (utils: {
   eventCenter: TxHandlerEventCenter
   baseUtils: {
     owner: PublicKey
     connection: Connection
+    sdkTxVersion: TxVersion
     getSDKTokenAccounts(): Promise<SDK_TokenAccount[] | undefined>
+    getBudgetConfig(): Promise<ComputeBudgetConfig | undefined>
+    /** just past to sdk method. UI should do nothing with sdkLookupTableCache */
+    sdkLookupTableCache: CacheLTA
   }
 }) => MayPromise<TransactionQueue | Transaction | SDK_InnerSimpleTransaction>
 
@@ -112,7 +124,7 @@ export interface TxHandlerOption extends SingleTxCallbacks {
    * (will ignore in first tx)
    *
    * @default 'success' when sendMode is 'queue'
-   * @default 'finally' when sendMode is 'queue(all-settle)'
+   * @default 'finally' when sendMode is 'queue(continue-without-check-transaction-response)'
    */
   continueWhenPreviousTx?: "success" | "error" | "finally"
 
@@ -133,10 +145,11 @@ export interface MultiTxsOption extends MultiTxCallbacks {
   /**
    * send next when prev is complete (default)
    * send all at once
+   * @default 'queue'
    */
   sendMode?:
     | "queue"
-    | "queue(all-settle)"
+    | "queue(continue-without-check-transaction-response)"
     | "parallel(dangerous-without-order)" /* couldn't promise tx's order */
     | "parallel(batch-transactions)" /* it will in order */
 }
@@ -180,7 +193,7 @@ export type SignAllTransactionsFunction = <T extends Transaction | VersionedTran
 export interface TxHandlerPayload {
   connection: Connection
   owner: string
-  txVersion: TxVersion
+  txVersion: UITxVersion
 }
 
 export interface TxHandlerEventCenter
@@ -206,6 +219,9 @@ export function isVersionedTransaction(
   return isObject(transaction) && "version" in transaction
 }
 
+
+/** just pass to SDK Methods */
+export const sdkLookupTableCache: CacheLTA = {}
 /**
  *  function for sending transaction
  */
@@ -226,10 +242,13 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       baseUtils: {
         owner: toPub(payload.owner),
         connection: payload.connection,
+        sdkTxVersion: payload.txVersion === 'LEGACY' ? TxVersion.LEGACY : TxVersion.V0,
         getSDKTokenAccounts: () =>
           getTokenAccounts({ connection: payload.connection, owner: payload.owner }).then(
             (res) => res.sdkTokenAccounts,
           ),
+        getBudgetConfig: getTxHandlerBudgetConfig,
+        sdkLookupTableCache,
       },
     })
     transactionCollector.add(userLoadedTransactionQueue)
@@ -410,7 +429,9 @@ function composeTransactionSenderWithDifferentSendMode({
                 onTxError: mergeFunction(fn, callbacks?.onTxError ?? emptyFn),
               },
             }),
-          method: singleOption.continueWhenPreviousTx ?? (sendMode === "queue(all-settle)" ? "finally" : "success"),
+          method:
+            singleOption.continueWhenPreviousTx ??
+            (sendMode === "queue(continue-without-check-transaction-response)" ? "finally" : "success"),
         }
       },
       { fn: () => {}, method: "success" },

@@ -1,24 +1,24 @@
-import { assert, shakeNil } from "@edsolater/fnkit"
+import { shakeNil } from "@edsolater/fnkit"
 import { fetchMultipleMintInfos, type ReturnTypeFetchMultipleMintInfo } from "@raydium-io/raydium-sdk"
 import { createTimeoutMap } from "../../../../packages/fnkit/createTimeoutMap"
 import { getConnection } from "../../../utils/dataStructures/Connection"
 import { toPub } from "../../../utils/dataStructures/Publickey"
 import type { Mint } from "../../../utils/dataStructures/type"
-import { shuck_rpc } from "../store"
 
 // cache for 10 mins
 const mintInfoCache = createTimeoutMap<string, Promise<ReturnTypeFetchMultipleMintInfo>>({
   maxAgeMs: 10 * 60 * 1000,
 })
 
-export async function getMultiMintInfos(options: {
-  mints: Mint[]
-}): Promise<Record<Mint, ReturnTypeFetchMultipleMintInfo>> {
-  const url = shuck_rpc()?.url
-  assert(url, "rpc url is not ready")
-  const connection = getConnection(url)
+export async function getMultiMintInfos(
+  mints: Mint[],
+  payload: {
+    rpcUrl: string
+  },
+): Promise<Record<Mint, ReturnTypeFetchMultipleMintInfo>> {
+  const connection = getConnection(payload.rpcUrl)
   if (!connection) return Promise.reject("connection is not ready")
-  const allMints = [options.mints].flat()
+  const allMints = [mints].flat()
 
   const alreadyCachedInfos = Object.fromEntries(
     shakeNil(allMints.map((m) => (mintInfoCache.has(m) ? [m, mintInfoCache.get(m)!] : undefined))),
