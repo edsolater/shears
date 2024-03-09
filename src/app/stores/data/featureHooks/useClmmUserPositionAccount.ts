@@ -1,20 +1,29 @@
-import { add, get, isPositive, mul, shakeNil, type Numberish, asyncMap, gt, lt } from "@edsolater/fnkit"
+import {
+  add,
+  asyncMap,
+  get,
+  gt,
+  isPositive,
+  lt,
+  mul,
+  shakeNil,
+  toFormattedNumber,
+  type Numberish,
+} from "@edsolater/fnkit"
+import { usePromise } from "@edsolater/pivkit"
 import { createMemo, createSignal, on } from "solid-js"
-import { useToken } from "../token/useToken"
-import { useTokenPrice } from "../tokenPrice/useTokenPrice"
-import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
-import { toRenderable } from "../../../utils/common/toRenderable"
-import type { Price, USDVolume } from "../../../utils/dataStructures/type"
-import { applyDecimal } from "../../../pages/clmm"
-import { shuck_rpc, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
+import { applyDecimal } from "../../../pages/clmm"
 import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
-import isCurrentToken2022 from "../isCurrentToken2022"
+import type { Price, USDVolume } from "../../../utils/dataStructures/type"
 import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
 import { getTransferFeeInfo } from "../connection/getTransferFeeInfos"
-import { usePromise } from "@edsolater/pivkit"
-import { min } from "bn.js"
+import isCurrentToken2022 from "../isCurrentToken2022"
+import { shuck_rpc, shuck_tokenPrices, shuck_tokens } from "../store"
+import { useToken } from "../token/useToken"
+import { useTokenPrice } from "../tokenPrice/useTokenPrice"
+import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 
 /**
  * hooks
@@ -45,7 +54,7 @@ export function useClmmUserPositionAccount(clmmInfo: ClmmInfo, userPositionAccou
 
   const rangeName = createMemo(
     () =>
-      `${toRenderable(userPositionAccount.priceLower, { decimals: 4 })}-${toRenderable(userPositionAccount.priceUpper, { decimals: 4 })}`,
+      `${toFormattedNumber(userPositionAccount.priceLower, { decimals: 4 })}-${toFormattedNumber(userPositionAccount.priceUpper, { decimals: 4 })}`,
   )
 
   const inRange = createMemo(

@@ -8,6 +8,7 @@ import { nodePolyfills } from "vite-plugin-node-polyfills"
 export default defineConfig({
   optimizeDeps: {
     // include: ['@edsolater/fnkit', '@raydium-io/raydium-sdk'],
+    exclude: ["@edsolater/fnkit", "@edsolater/pivkit"],
   },
   plugins: [
     solidPlugin(),

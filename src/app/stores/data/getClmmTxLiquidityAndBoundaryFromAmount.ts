@@ -8,14 +8,14 @@ import type { Numberish } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { parseSDKBN, toSDKBN } from "../../utils/dataStructures/BN"
 import toPubString from "../../utils/dataStructures/Publickey"
-import { type AmountBN } from "../../utils/dataStructures/TokenAmount"
+import type { AmountBN } from "../../utils/dataStructures/TokenAmount"
 import { getEpochInfo } from "./connection/getEpochInfo"
 import { getMultiMintInfos } from "./connection/getMultiMintInfos"
 import isCurrentToken2022 from "./isCurrentToken2022"
 import { parseSDKTransferAmountFee, type TransferAmountFee } from "./misc/transferAmountFee"
+import { tokensMap } from "./portActions/loadTokens_worker"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
-import { tokensMap } from "./portActions/loadTokens_worker"
 
 /**
  * in worker thread
