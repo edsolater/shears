@@ -21,12 +21,10 @@ import { createMemo } from "solid-js"
 import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
 import { createTask } from "../../packages/conveyor/smartStore/task"
-import { createLeafFromAccessor } from "../../packages/conveyor/solidjsAdapter/utils"
 import { globalPageShortcuts } from "../configs/globalPageShortcuts"
 import { useAppThemeMode } from "../hooks/useAppThemeMode"
 import { AppPageLayout } from "../pageComponents/AppPageLayout"
 import { routes } from "../routes"
-import { store } from "../stores/data/store"
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -103,8 +101,6 @@ function KeyboardShortcutPanel() {
     </Box>
   )
 }
-
-const rpcUrlTaskAtom = createLeafFromAccessor(() => store.rpc?.url, { visiable: true })
 
 /** code for test */
 function useExperimentalCode() {

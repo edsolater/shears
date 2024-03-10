@@ -57,14 +57,14 @@ function SettingButtonTrigger() {
   )
 }
 
-const [appSettingsModalControllers, setSettingControllerRef] = createControllerRef<ModalController>()
+// const [appSettingsModalControllers, setSettingControllerRef] = createControllerRef<ModalController>() // it will cause bug: computations created outside a `createRoot` or `render` will never be disposed
 
 /**
  * modal
  */
 function SettingsPanelDialog() {
   return (
-    <Modal controllerRef={setSettingControllerRef} open>
+    <Modal  open>
       <SettingsContent />
     </Modal>
   )
