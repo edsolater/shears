@@ -1,4 +1,4 @@
-import { createSubscribableFromPromise, listToJSMap, map, mul, slice, toList, toRecord } from "@edsolater/fnkit"
+import { createSubscribableFromPromise, listToJSMap, map, mul, turncate, toList, toRecord } from "@edsolater/fnkit"
 import { Farm, FarmFetchMultipleInfoParams } from "@raydium-io/raydium-sdk"
 import { abortableAsyncTask } from "../../../../packages/fnkit"
 import { getConnection } from "../../../utils/dataStructures/Connection"
@@ -113,7 +113,7 @@ function hydrateFarmSYN({
     } as FarmInfo
   })
 
-  const indexAccessList = slice(
+  const indexAccessList = turncate(
     toRecord(rawList, (i) => i.id),
     20,
   )

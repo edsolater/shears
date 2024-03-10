@@ -1,4 +1,4 @@
-import { Numberish, isStringNumber, slice, toStringNumber } from "@edsolater/fnkit"
+import { Numberish, isStringNumber, turncate, toStringNumber } from "@edsolater/fnkit"
 import {
   Box,
   BoxProps,
@@ -128,7 +128,7 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
 
       <Text icss={{ fontSize: "14px", fontWeight: "bold" }}>Token</Text>
 
-      <List items={slice(tokens, 10)}>
+      <List items={turncate(tokens, 10)}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
       </List>
     </Panel>

@@ -28,6 +28,7 @@ import { colors } from "../../theme/colors"
 import { scrollbarWidth } from "../../theme/misc"
 import { Title } from "../BoardTitle"
 import { CyberPanel } from "../CyberPanel"
+import { turncate } from "@edsolater/fnkit"
 
 // for sort and search
 export type TabelHeaderConfigs<T> = {
@@ -149,7 +150,7 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
           <Group name="items">
             <List
               shadowProps={props.propForList}
-              items={props.items}
+              items={turncate(props.items, 2)}
               icss={{
                 maxHeight: "100%",
                 overflowY: "scroll",
