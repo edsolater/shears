@@ -1,4 +1,4 @@
-import { Accessor, Setter, createSignal, onCleanup, onMount } from "solid-js"
+import { Accessor, Setter, createMemo, createSignal, onCleanup, onMount } from "solid-js"
 import { Shuck, makeShuckInvisiable, makeShuckVisiable } from "../smartStore/shuck"
 
 let globalShuckInstanceSignalID = 1
@@ -23,7 +23,13 @@ export function useShuck<T>(shuck: Shuck<T>): [Accessor<T>, Setter<T>] {
 /**
  * a shoutcut from {@link useShuck}
  */
-export function useShuckValue<T>(shuck: Shuck<T>): Accessor<T> {
+export function useShuckValue<T>(shuck: Shuck<T>): Accessor<T>
+export function useShuckValue<T, U>(shuck: Shuck<T>, map?: (i: T) => U): Accessor<U>
+export function useShuckValue<T, U>(shuck: Shuck<T>, map?: (i: T) => U): Accessor<U | T> {
   const [accessor] = useShuck(shuck)
+  if (map) {
+    const memo = createMemo(() => map(accessor()))
+    return memo
+  }
   return accessor
 }

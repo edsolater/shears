@@ -1,4 +1,4 @@
-import { count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
+import { assert, count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
 import {
   Box,
   Col,
@@ -33,6 +33,7 @@ import {
   allClmmTabs,
   createStorePropertySignal,
   shuck_clmmInfos,
+  shuck_rpc,
   shuck_tokenPrices,
   shuck_tokens,
 } from "../stores/data/store"
@@ -41,6 +42,8 @@ import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clm
 import type { PairInfo } from "../stores/data/types/pairs"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
+import { txDispatcher } from "../utils/txHandler/txDispatcher_main"
+import { useWalletOwner } from "../stores/wallet/store"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -162,6 +165,8 @@ export default function ClmmsPage() {
  */
 function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUserPositionAccount }) {
   const positionAccount = useClmmUserPositionAccount(props.clmmInfo, props.account)
+  const rpcUrlS = useShuckValue(shuck_rpc, (r) => r?.url)
+  const ownerS = useWalletOwner()
   return (
     <Row
       icss={{
@@ -214,9 +219,35 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       <Text icss={{ textAlign: "end" }}>{toUsdVolume(positionAccount.pendingRewardAmountUSD)}</Text>
 
       <Row icss={{ gap: "10%" }}>
-        <Button icss={icssFrostedGlass}>Harvest</Button>
-        <Button icss={icssFrostedGlass}> + </Button>
-        <Button icss={icssFrostedGlass}> - </Button>
+        {/* <Button icss={icssFrostedGlass}>Harvest</Button>
+        <Button icss={icssFrostedGlass}> + </Button> */}
+        <Button
+          // icss={icssFrostedGlass}
+          onClick={() => {
+            console.log("clicked: ")
+            const rpcUrl = rpcUrlS()
+            assert(rpcUrl, "for clmm position increase, rpc url not ready")
+
+            const owner = ownerS()
+            assert(owner, "for clmm position increase, owner not ready")
+
+            txDispatcher({
+              name: "clmm position increase",
+              txParams: {
+                clmmId: props.clmmInfo.id,
+                positionNftMint: props.account.nftMint,
+                rpcUrl: rpcUrl,
+                amount: 10000000, // TODO: should be input
+                amountSide: "A", // TODO: should be input
+                owner: owner,
+                slippage: 0.1, // TODO: should be input
+              },
+            })
+          }}
+        >
+          {" "}
+          -{" "}
+        </Button>
       </Row>
     </Row>
   )

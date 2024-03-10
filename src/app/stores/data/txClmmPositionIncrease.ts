@@ -17,7 +17,7 @@ import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 
 export type TxClmmPositionIncreaseParams = {
-  rpcURL: string
+  rpcUrl: string
   owner: string
   clmmId: string
   positionNftMint: string
@@ -29,7 +29,7 @@ export type TxClmmPositionIncreaseParams = {
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
   assert(gt(params.slippage, 1), "slippage shouldnot bigger than 1")
   assert(isPositive(params.amount), "amountA should be positive")
-  const connection = getConnection(params.rpcURL)
+  const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready")
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
   const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
@@ -41,7 +41,7 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
   assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready")
 
   const info = await getClmmIncreaseTxLiquidityAndBoundaryFromAmount(params.amount, {
-    rpcUrl: params.rpcURL,
+    rpcUrl: params.rpcUrl,
     clmmId: params.clmmId,
     positionNftMint: params.positionNftMint,
     amountSide: params.amountSide,
