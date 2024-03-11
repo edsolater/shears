@@ -19,17 +19,17 @@ import {
   Text,
   ValidProps,
   buildPopover,
-  createAutoSizeTransitionPlugin,
-  createCSSCollapsePlugin,
   createDisclosure,
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
-  createTransitionPlugin,
   cssOpacity,
   icssCardPanel,
   icssCol,
   icssRow,
+  loadModuleAutoSizeTransition,
+  loadModuleCSSCollapse,
+  loadModuleTransition,
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
@@ -75,11 +75,11 @@ function ComponentSpecList() {
 
       {/* <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
-      </ExamplePanel>
+      </ExamplePanel>*/}
 
-      <ExamplePanel name='CollapseComponent'>
+      <ExamplePanel name="CollapseComponent">
         <CSSCollapseComponentExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       {/* <ExamplePanel name='Input'>
         <InputExample />
@@ -218,7 +218,7 @@ function CSSTransitionExample() {
   const {
     controller: { toggle, opened },
     plugin,
-  } = createTransitionPlugin({
+  } = loadModuleTransition({
     onBeforeEnter() {
       console.log("👨‍💻 before enter👉")
     },
@@ -254,7 +254,7 @@ function CSSCollapseExample() {
   const {
     controller: { toggle, opened },
     plugin,
-  } = createCSSCollapsePlugin()
+  } = loadModuleCSSCollapse()
   return (
     <>
       <Button onClick={toggle}>Collapse</Button>
@@ -281,33 +281,12 @@ function CSSCollapseComponentExample() {
     <>
       <Button onClick={motivate(toggle)}>Collapse</Button>
       <CollapseBox
-        open={isOpen}
-        renderFace={
-          <Piv
-            icss={{
-              backgroundColor: "crimson",
-              height: "40px",
-              display: "grid",
-              placeItems: "center",
-              overflow: "hidden",
-            }}
-          >
-            <Box>Face</Box>
-          </Piv>
-        }
-        renderContent={
-          <Piv
-            icss={{
-              backgroundColor: "dodgerblue",
-              height: "100px",
-              display: "grid",
-              placeItems: "center",
-              overflow: "hidden",
-            }}
-          >
-            <Box>Content</Box>
-          </Piv>
-        }
+        open={isOpen()}
+        icss={{
+          backgroundColor: "dodgerblue",
+        }}
+        renderFace={() => <Box icss={{ width: "30vw", height: "3em", background: "dodgerblue" }}>blue</Box>}
+        renderContent={() => <Box icss={{ width: "30vw", height: "3em", background: "crimson" }}>red</Box>}
       />
     </>
   )
@@ -315,7 +294,7 @@ function CSSCollapseComponentExample() {
 
 // 🤔 maybe can use MutationObserver to detect height change, if change record
 function CSSAutoSizeTransitionExample() {
-  const { plugin } = createAutoSizeTransitionPlugin()
+  const { plugin } = loadModuleAutoSizeTransition()
   const [isOpen, { toggle }] = createDisclosure()
   return (
     <>

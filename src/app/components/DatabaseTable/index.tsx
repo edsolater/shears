@@ -11,10 +11,10 @@ import {
   icssClickable,
   useKitProps,
   type ItemList,
+  CollapseBox,
 } from "@edsolater/pivkit"
 import { Accessor, createContext, createMemo, createSignal, useContext } from "solid-js"
 import {
-  CollapseBox,
   List,
   Loop,
   icssItemRowGrid,
@@ -28,7 +28,6 @@ import { colors } from "../../theme/colors"
 import { scrollbarWidth } from "../../theme/misc"
 import { Title } from "../BoardTitle"
 import { CyberPanel } from "../CyberPanel"
-import { turncate } from "@edsolater/fnkit"
 
 // for sort and search
 export type TabelHeaderConfigs<T> = {
@@ -150,7 +149,7 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
           <Group name="items">
             <List
               shadowProps={props.propForList}
-              items={turncate(props.items, 2)}
+              items={props.items}
               icss={{
                 maxHeight: "100%",
                 overflowY: "scroll",
@@ -189,10 +188,12 @@ function DatabaseTableItem<T>(props: {
     <Box icss={icssClmmItemRow} class="ClmmItemRow">
       <CollapseBox
         icss={icssClmmItemRowCollapse}
-        renderFace={
+        renderFace={() => (
           <DatabaseTableItemCollapseFace key={props.key} item={props.item} innerConfig={props.itemFaceConfig} />
-        }
-        renderContent={<DatabaseTableItemCollapseContent item={props.item} innerConfig={props.itemContentConfig} />}
+        )}
+        renderContent={() => (
+          <DatabaseTableItemCollapseContent item={props.item} innerConfig={props.itemContentConfig} />
+        )}
       />
     </Box>
   )
