@@ -1,6 +1,6 @@
 import { MayPromise, Subscribable, createSubscribable, hasProperty } from "@edsolater/fnkit"
 import { cacheMapGet } from "../../../packages/fnkit"
-import { decode, encode } from "../dataTransmit/handlers"
+import { decode } from "../dataTransmit/handlers"
 
 export interface ReceiveMessage<Data = any> {
   command: string
@@ -132,7 +132,7 @@ function createMessageSender<P extends SenderMessage>(
     return {
       post(data) {
         Promise.resolve(towardsTarget).then((targetPort) =>
-          targetPort.postMessage({ command, data: encode(data) } satisfies ReceiveMessage),
+          targetPort.postMessage({ command, data: data } satisfies ReceiveMessage),
         )
         return createMessageReceiver(towardsTarget, command)
       },

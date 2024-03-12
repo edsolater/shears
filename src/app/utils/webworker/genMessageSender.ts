@@ -1,6 +1,5 @@
 import { MayPromise } from "@edsolater/fnkit"
 import { cacheMapGet } from "../../../packages/fnkit"
-import { encode } from "../dataTransmit/handlers"
 
 interface SenderMessage<Query = any> {
   command: string
@@ -34,9 +33,7 @@ export function createMessageSender<P extends SenderMessage>(
   function createNewWorkerMessageSender<P extends SenderMessage>(command: string): Sender<P> {
     return {
       query(payload) {
-        Promise.resolve(towardsTarget).then((targetPort) =>
-          targetPort.postMessage({ command, payload: encode(payload) }),
-        )
+        Promise.resolve(towardsTarget).then((targetPort) => targetPort.postMessage({ command, payload: payload }))
       },
     }
   }

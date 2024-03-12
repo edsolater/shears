@@ -8,10 +8,9 @@ import type { TokenPricesMap } from "../utils/fetchTokenPrices"
 export function loadTokenPrice() {
   shuck_tokens.subscribe((tokens) => {
     const hasAnyToken = count(tokens) > 0
-    console.log("tokens: ", tokens)
+    // console.log("tokens: ", tokens)
     if (!hasAnyToken) return
     shuck_isTokenPricesLoading.set(true)
-    setStore({ isTokenPriceLoading: true })
     const { sender, receiver } = getMessagePort<{ prices: TokenPricesMap }, { url: string; tokens: Token[] }>(
       "get raydium token prices",
     )

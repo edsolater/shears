@@ -33,7 +33,7 @@ function initMessageReceiver() {
     invoke(onMessage, { payload, resolve: subscribable.set })
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
-      const encodedData = encode(outputData)
+      const encodedData = outputData
       // LOG
       // console.log(`transforming ${description}...`, outputData, 'to', encodedData)
       globalThis.postMessage({ command, payload: encodedData } as WorkerMessage)

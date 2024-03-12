@@ -19,7 +19,7 @@ export function loadClmmInfos() {
       shuck_isClmmJsonInfoLoading.set(true)
       port.postMessage({ force: false, rpcUrl: url, owner })
       port.receiveMessage((infos) => {
-        console.log("[main] get clmm infos ", infos)
+        // console.log("[main] get clmm infos ", infos)
         shuck_isClmmJsonInfoLoading.set(false)
         shuck_clmmInfos.set(infos)
       })
