@@ -1,11 +1,11 @@
-import { Transaction, VersionedTransaction } from "@solana/web3.js"
-import { isVersionedTransaction } from "./txHandler"
+import { VersionedTransaction } from "@solana/web3.js"
 
-const txSerializeCache = new Map<string, Buffer | Uint8Array>()
+const txSerializeCache = new Map<string, Uint8Array>()
 // show serialize before send tx (by raw connection)
 
-export function serializeTransaction(transaction: Transaction | VersionedTransaction, options?: { cache?: boolean }) {
-  const key = isVersionedTransaction(transaction) ? transaction.message.recentBlockhash : transaction.recentBlockhash
+/** @deprecated too complex, just use xxx.serialize() is enough */
+export function serializeTransaction(transaction: VersionedTransaction, options?: { cache?: boolean }): Uint8Array {
+  const key = transaction.message.recentBlockhash
   if (key && txSerializeCache.has(key)) {
     return txSerializeCache.get(key)!
   } else {
@@ -13,4 +13,9 @@ export function serializeTransaction(transaction: Transaction | VersionedTransac
     if (key && options?.cache) txSerializeCache.set(key, serialized)
     return serialized
   }
+}
+
+/** @deprecated too complex, just use VersionedTransaction.deserialize() is enough */
+export function deserializeTransaction(serialized: Uint8Array): VersionedTransaction {
+  return VersionedTransaction.deserialize(serialized)
 }

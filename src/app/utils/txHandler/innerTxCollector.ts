@@ -1,8 +1,13 @@
 import { isArray } from "@edsolater/fnkit"
-import { InnerTransaction } from "@raydium-io/raydium-sdk"
-import { Transaction } from "@solana/web3.js"
+import type { InnerTransaction } from "@raydium-io/raydium-sdk"
 import { objectMerge } from "../../../packages/fnkit"
-import { TxHandlerOptions, TxHandlerOption, MultiTxsOption, TransactionQueue, TransactionCollector } from "./txHandler"
+import type {
+  MultiTxsOption,
+  TransactionCollector,
+  TransactionQueue,
+  TxHandlerOption,
+  TxHandlerOptions,
+} from "./txHandler"
 
 /**
  * collector's aim: use `.add` method to load innerTransactions
@@ -12,13 +17,13 @@ export function innerTxCollector(
 ) {
   const singleTxOptions = [] as TxHandlerOption[]
   const multiTxOption = {} as MultiTxsOption
-  const innerTransactions = [] as (Transaction | InnerTransaction)[]
+  const innerTransactions = [] as InnerTransaction[]
   const { additionalSingleOptionCallback, additionalMultiOptionCallback } = additionOptions ?? {}
 
   /**
    * mutable
    */
-  const addSingle = (transaction: Transaction | InnerTransaction, options?: TxHandlerOption) => {
+  const addSingle = (transaction: InnerTransaction, options?: TxHandlerOption) => {
     innerTransactions.push(transaction)
     singleTxOptions.push(objectMerge(options ?? {}, additionalSingleOptionCallback ?? {}))
   }

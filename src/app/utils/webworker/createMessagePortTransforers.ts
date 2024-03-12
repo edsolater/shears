@@ -1,6 +1,5 @@
 import { MayPromise, Subscribable, createSubscribable, hasProperty } from "@edsolater/fnkit"
 import { cacheMapGet } from "../../../packages/fnkit"
-import { decode } from "../dataTransmit/handlers"
 
 export interface ReceiveMessage<Data = any> {
   command: string
@@ -102,7 +101,7 @@ function createMessageReceiver<R extends ReceiveMessage>(
     const messageHandler = (ev: MessageEvent<any>): void => {
       const body = ev.data as ReceiveMessage<R["data"]>
       if (body.command === command) {
-        const decodedData = decode(body.data, { mutate: true })
+        const decodedData = body.data
         subscribable.set(decodedData)
       }
     }

@@ -1,37 +1,27 @@
-import { InnerTransaction } from "@raydium-io/raydium-sdk"
-import { Transaction, VersionedTransaction } from "@solana/web3.js"
+import type { InnerTransaction as SDKInnerTransaction } from "@raydium-io/raydium-sdk"
+import type { VersionedTransaction } from "@solana/web3.js"
 import { getMessageReceiver, getMessageSender } from "../webworker/loadWorker_worker"
-import { buildTransactionsFromSDKInnerTransactions, isInnerTransaction } from "./createVersionedTransaction"
-import { TxHandlerPayload } from "./txHandler"
+import { composeSDKInnerTransactions } from "./createVersionedTransaction"
+import type { TxHandlerPayload } from "./txHandler"
 
 export async function signAllTransactions({
   transactions,
   payload,
 }: {
-  transactions: (Transaction | InnerTransaction)[]
+  transactions: SDKInnerTransaction[]
   payload: TxHandlerPayload
-}): Promise<(Transaction | VersionedTransaction)[]> {
-  const buildedTransactions = transactions.every(isInnerTransaction)
-    ? await buildTransactionsFromSDKInnerTransactions({
-        connection: payload.connection,
-        owner: payload.owner,
-        txVersion: payload.txVersion,
-        transactions,
-      })
-    : (transactions as Transaction[])
-
-  const allSignedTransactions = await signAllTransactionsFromWorker(buildedTransactions) // sign transactions
-  return allSignedTransactions
-}
-
-function signAllTransactionsFromWorker(
-  transactions: (Transaction | VersionedTransaction)[],
-): Promise<(Transaction | VersionedTransaction)[]> {
-  const receiver = getMessageReceiver("sign transaction in main thread")
-  const sender = getMessageSender("sign transaction in main thread")
+}): Promise<VersionedTransaction[]> {
+  const buildedTransactions = await composeSDKInnerTransactions({
+    connection: payload.connection,
+    owner: payload.owner,
+    transactions,
+  })
+  const receiver = getMessageReceiver("transform transaction")
+  const sender = getMessageSender("transform transaction")
   // send transaction form worker to main thread
   return new Promise((resolve, reject) => {
-    sender.post(transactions)
+    console.log("[worker] send transactions to main thread", buildedTransactions)
+    sender.post(buildedTransactions.map((tx) => tx.serialize()))
     receiver.subscribe((signedTransactions) => {
       resolve(signedTransactions)
     })

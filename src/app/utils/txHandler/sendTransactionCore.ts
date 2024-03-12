@@ -1,17 +1,17 @@
-import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
+import type { Connection, VersionedTransaction } from "@solana/web3.js"
 
 import { serializeTransaction } from "./serializeTransaction"
-import { TxHandlerPayload } from "./txHandler"
+import type { TxHandlerPayload } from "./txHandler"
 
 type Txid = string
 
 const tempBatchedTransactionsQueue: {
-  tx: Transaction | VersionedTransaction
+  tx: VersionedTransaction
   txidPromise: Promise<string>
   resolveFn: (value: string) => void
 }[] = []
 
-function canBatchTransactions(connection: Connection, transaction: Transaction | VersionedTransaction) {
+function canBatchTransactions(connection: Connection, transaction: VersionedTransaction) {
   const isConnectionSatisfied = "_buildArgs" in connection && "_rpcBatchRequest" in connection
   const isTransactionSatisfied = "_compile" in transaction && "_serialize" in transaction
   return isConnectionSatisfied && isTransactionSatisfied
@@ -23,9 +23,9 @@ export async function sendTransactionCore({
   batchOptions,
   cache = true,
 }: {
-  transaction: Transaction | VersionedTransaction
+  transaction: VersionedTransaction
   payload: TxHandlerPayload
-  batchOptions?: { allSignedTransactions: (Transaction | VersionedTransaction)[] }
+  batchOptions?: { allSignedTransactions: VersionedTransaction[] }
   cache?: boolean
 }): Promise<Txid> {
   if (batchOptions && canBatchTransactions(payload.connection, transaction)) {
@@ -54,7 +54,7 @@ export async function sendTransactionCore({
 }
 
 async function sendSingleTransaction(
-  transaction: Transaction | VersionedTransaction,
+  transaction: VersionedTransaction,
   payload: TxHandlerPayload,
   cache: boolean,
 ): Promise<Txid> {
@@ -66,10 +66,10 @@ async function sendSingleTransaction(
 
 /** @deprecated */
 async function sendBatchedTransactions(
-  allSignedTransactions: (Transaction | VersionedTransaction)[],
+  allSignedTransactions: VersionedTransaction[],
   payload: TxHandlerPayload,
 ): Promise<Txid[]> {
-  const encodedTransactions = allSignedTransactions.map((i) => i.serialize().toString("base64"))
+  const encodedTransactions = allSignedTransactions.map((i) => i.serialize().toString())
 
   const batch = encodedTransactions.map((keys) => {
     const args = payload.connection._buildArgs([keys], undefined, "base64")

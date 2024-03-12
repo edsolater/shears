@@ -12,7 +12,7 @@ import { workerLoadClmmInfos } from "../../stores/data/portActions/loadClmmInfos
 export function applyWebworkerRegisters(messageTransformers: PortUtils) {
   logMessage({ from: "👾worker", twoWordTitle: "messge port", detailDescription: "registered load farm port" })
   calculateSwapRouteInfosInWorker(messageTransformers)
-  // txDispatcher_worker(messageTransformers)
+  txDispatcher_worker(messageTransformers)
   loadFarmJsonInfosInWorker(messageTransformers)
   loadFarmSYNInfosInWorker(messageTransformers)
   loadPairsInWorker(messageTransformers)

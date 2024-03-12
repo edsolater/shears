@@ -82,17 +82,14 @@ export default function SwapPage() {
               const rpcURL = store.rpc?.url
               assert(rpcURL, "should set url")
 
-              txDispatcher({
-                name: "swap",
-                txParams: {
-                  owner: walletOwner,
-                  checkInfo: {
-                    rpcURL,
-                    coin1,
-                    coin2,
-                    amount1,
-                    direction: "1 → 2",
-                  },
+              txDispatcher("swap", {
+                owner: walletOwner,
+                checkInfo: {
+                  rpcURL,
+                  coin1,
+                  coin2,
+                  amount1,
+                  direction: "1 → 2",
                 },
               })
             }}

@@ -4,7 +4,7 @@
  *
  **************************************************************************/
 
-import { assert, gt, isPositive, minus, mul, type Percent } from "@edsolater/fnkit"
+import { assert, gt, isLessThanOne, isPositive, lte, minus, mul, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
@@ -27,18 +27,19 @@ export type TxClmmPositionIncreaseParams = {
 }
 
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
-  assert(gt(params.slippage, 1), "slippage shouldnot bigger than 1")
-  assert(isPositive(params.amount), "amountA should be positive")
+  console.log("start compose tx clmm position increase")
+  assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
+  assert(isPositive(params.amount), "amountA should be positive, amountA: " + params.amount.toString())
   const connection = getConnection(params.rpcUrl)
-  assert(connection, "connection not ready")
+  assert(connection, "connection not ready, connection: " + connection)
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
   const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
   const sdkClmmPositionInfo = sdkClmmInfo?.positionAccount?.find(
     (p) => toPubString(p.nftMint) === params.positionNftMint,
   )
-  assert(jsonClmmInfo, "jsonClmmInfo not ready")
-  assert(sdkClmmInfo, "sdkClmmInfo not ready")
-  assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready")
+  assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
+  assert(sdkClmmInfo, "sdkClmmInfo not ready, sdkClmmInfo: " + sdkClmmInfo)
+  assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready, sdkClmmPositionInfo: " + sdkClmmPositionInfo)
 
   const info = await getClmmIncreaseTxLiquidityAndBoundaryFromAmount(params.amount, {
     rpcUrl: params.rpcUrl,
@@ -92,5 +93,3 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
     { sendMode: "queue" },
   )
 }
-
-function toSDKTxVersion() {}

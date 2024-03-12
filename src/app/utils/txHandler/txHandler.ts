@@ -1,11 +1,19 @@
-import { EventCenter, MayPromise, assert, createEventCenter, emptyFn, isObject, mergeFunction } from "@edsolater/fnkit"
 import {
-  PublicKeyish,
-  InnerTransaction as SDKInnerTransaction,
-  type ComputeBudgetConfig, TxVersion, type CacheLTA,
+  assert,
+  createEventCenter,
+  emptyFn,
+  isObject,
+  mergeFunction,
+  type EventCenter,
+  type MayPromise,
+} from "@edsolater/fnkit"
+import {
+  TxVersion,
+  type CacheLTA,
+  type ComputeBudgetConfig,
+  type InnerSimpleLegacyTransaction as SDK_InnerSimpleTransaction,
 } from "@raydium-io/raydium-sdk"
-import { InnerSimpleLegacyTransaction as SDK_InnerSimpleTransaction } from "@raydium-io/raydium-sdk"
-import {
+import type {
   Connection,
   Context,
   PublicKey,
@@ -16,24 +24,24 @@ import {
 } from "@solana/web3.js"
 import { produce } from "immer"
 import { toPub } from "../dataStructures/Publickey"
+import { getTokenAccounts, type SDK_TokenAccount } from "../dataStructures/TokenAccount"
+import { getTxHandlerBudgetConfig } from "./getTxHandlerBudgetConfig"
 import { innerTxCollector } from "./innerTxCollector"
 import { sendTransactionCore } from "./sendTransactionCore"
 import { signAllTransactions } from "./signAllTransactions_worker"
 import { subscribeTx } from "./subscribeTx"
-import { getTokenAccounts, type SDK_TokenAccount } from "../dataStructures/TokenAccount"
-import { getTxHandlerBudgetConfig } from "./getTxHandlerBudgetConfig"
 
 export type UITxVersion = "V0" | "LEGACY"
 //#region ------------------- basic info -------------------
 export interface TxInfo {
   txid: string
-  transaction: Transaction | VersionedTransaction
+  transaction: VersionedTransaction
 }
 
 export interface MultiTxExtraInfo {
   isMulti: boolean
   /** only used in multi mode */
-  transactions: (Transaction | VersionedTransaction)[]
+  transactions: VersionedTransaction[]
   /** only used in multi mode */
   passedMultiTxids: string[]
   /** only used in multi mode */
@@ -90,7 +98,7 @@ export type TxFn = (utils: {
     /** just past to sdk method. UI should do nothing with sdkLookupTableCache */
     sdkLookupTableCache: CacheLTA
   }
-}) => MayPromise<TransactionQueue | Transaction | SDK_InnerSimpleTransaction>
+}) => MayPromise<TransactionQueue | SDK_InnerSimpleTransaction>
 
 //#region ------------------- callbacks -------------------
 type TxSuccessCallback = (info: TxSuccessInfo) => void
@@ -160,16 +168,12 @@ export interface MultiTxCallbacks {
 }
 
 export type TransactionQueue = (
-  | [tx: SDK_InnerSimpleTransaction | Transaction, singleTxOptions?: TxHandlerOption]
+  | [tx: SDK_InnerSimpleTransaction, singleTxOptions?: TxHandlerOption]
   | SDK_InnerSimpleTransaction
-  | Transaction
 )[]
 
 export interface TransactionCollector {
-  add(
-    transaction: TransactionQueue | Transaction | SDK_InnerSimpleTransaction,
-    options?: TxHandlerOption & MultiTxsOption,
-  ): void
+  add(transaction: TransactionQueue | SDK_InnerSimpleTransaction, options?: TxHandlerOption & MultiTxsOption): void
 }
 
 // TODO: should also export addTxSuccessListener() and addTxErrorListener() and addTxFinallyListener()
@@ -186,9 +190,7 @@ export interface TxHandlerOptions extends MultiTxCallbacks, MultiTxsOption {
   additionalMultiOptionCallback?: MultiTxCallbacks
 }
 
-export type SignAllTransactionsFunction = <T extends Transaction | VersionedTransaction>(
-  transactions: T[],
-) => Promise<T[]>
+export type SignAllTransactionsFunction = <T extends VersionedTransaction>(transactions: T[]) => Promise<T[]>
 
 export interface TxHandlerPayload {
   connection: Connection
@@ -209,16 +211,9 @@ export interface TxHandlerEventCenter
     txAnyError: AnyErrorCallback
   }> {}
 
-export function isTransaction(x: any): x is Transaction {
-  return x instanceof Transaction
-}
-
-export function isVersionedTransaction(
-  transaction: Transaction | VersionedTransaction,
-): transaction is VersionedTransaction {
+export function isVersionedTransaction(transaction: VersionedTransaction): transaction is VersionedTransaction {
   return isObject(transaction) && "version" in transaction
 }
-
 
 /** just pass to SDK Methods */
 export const sdkLookupTableCache: CacheLTA = {}
@@ -232,9 +227,9 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
   } = innerTxCollector(options)
 
   const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
-  console.log("start 1")
+  console.log("start compose tx 1")
   ;(async () => {
-    console.log("start 2")
+    console.log("start compose tx 2")
     assert(payload.connection, "provided connection not working")
     assert(payload.owner, "wallet not connected")
     const userLoadedTransactionQueue = await txFn({
@@ -242,7 +237,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       baseUtils: {
         owner: toPub(payload.owner),
         connection: payload.connection,
-        sdkTxVersion: payload.txVersion === 'LEGACY' ? TxVersion.LEGACY : TxVersion.V0,
+        sdkTxVersion: payload.txVersion === "LEGACY" ? TxVersion.LEGACY : TxVersion.V0,
         getSDKTokenAccounts: () =>
           getTokenAccounts({ connection: payload.connection, owner: payload.owner }).then(
             (res) => res.sdkTokenAccounts,
@@ -291,6 +286,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       transactions: collectedTransactions,
       payload,
     })
+    console.log("allSignedTransactions: ", allSignedTransactions)
 
     // load send tx function
     const senderFn = composeTransactionSenderWithDifferentSendMode({
@@ -381,7 +377,7 @@ function composeTransactionSenderWithDifferentSendMode({
   payload,
   callbacks,
 }: {
-  transactions: (Transaction | VersionedTransaction)[]
+  transactions: VersionedTransaction[]
   sendMode: MultiTxsOption["sendMode"]
   singleOptions: TxHandlerOption[]
   payload: TxHandlerPayload
@@ -451,7 +447,7 @@ async function sendOneTransactionWithOptions({
   payload,
   isBatched,
 }: {
-  transaction: Transaction | VersionedTransaction
+  transaction: VersionedTransaction
   wholeTxidInfo: Omit<MultiTxExtraInfo, "currentIndex">
   singleOption?: TxHandlerOption
   callbacks?: {

@@ -1,15 +1,5 @@
 import { assert, count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
-import {
-  Box,
-  Col,
-  cssOpacity,
-  Icon,
-  KitProps,
-  Loop,
-  Row,
-  Text,
-  useKitProps
-} from "@edsolater/pivkit"
+import { Box, Col, cssOpacity, Icon, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
 import { createEffect, onMount, Show, type Accessor } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
@@ -228,17 +218,16 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
             const owner = ownerS()
             assert(owner, "for clmm position increase, owner not ready")
 
-            txDispatcher({
-              name: "clmm position increase",
-              txParams: {
-                clmmId: props.clmmInfo.id,
-                positionNftMint: props.account.nftMint,
-                rpcUrl: rpcUrl,
-                amount: 10000000, // TODO: should be input
-                amountSide: "A", // TODO: should be input
-                owner: owner,
-                slippage: 0.1, // TODO: should be input
-              },
+            console.log("rpcUrl: ", rpcUrl)
+            console.log("owner: ", owner)
+            txDispatcher("clmm position increase", {
+              clmmId: props.clmmInfo.id,
+              positionNftMint: props.account.nftMint,
+              rpcUrl: rpcUrl,
+              amount: 10000000, // TODO: should be input
+              amountSide: "A", // TODO: should be input
+              owner: owner,
+              slippage: 0.1, // TODO: should be input
             })
           }}
         >

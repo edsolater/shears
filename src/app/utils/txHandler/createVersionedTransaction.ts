@@ -1,34 +1,39 @@
 import { isObject } from "@edsolater/fnkit"
-import { InnerTransaction, PublicKeyish, TxVersion as _TxVersion, buildTransaction } from "@raydium-io/raydium-sdk"
-import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
+import {
+  type InnerTransaction as SDKInnerTransaction,
+  type PublicKeyish,
+  LOOKUP_TABLE_CACHE as SDK_LOOKUP_TABLE_CACHE,
+  TxVersion,
+  buildSimpleTransaction,
+} from "@raydium-io/raydium-sdk"
+import type { Connection, VersionedTransaction } from "@solana/web3.js"
 import { toPub } from "../dataStructures/Publickey"
-import { UITxVersion } from "./txHandler"
 
-export async function buildTransactionsFromSDKInnerTransactions({
+export async function composeSDKInnerTransactions({
   connection,
   owner,
-  txVersion,
   transactions,
 }: {
   connection: Connection
   owner: PublicKeyish
-  txVersion: UITxVersion
-  transactions: InnerTransaction[]
-}): Promise<(Transaction | VersionedTransaction)[]> {
-  const spawnedTransactions = await buildTransaction({
+  transactions: SDKInnerTransaction[]
+}): Promise<VersionedTransaction[]> {
+  const params = {
     connection,
     payer: toPub(owner),
     innerTransactions: transactions,
-    makeTxVersion: getSDKTxVersion(txVersion),
-  })
+    makeTxVersion: TxVersion.V0, // force
+    addLookupTableInfo: SDK_LOOKUP_TABLE_CACHE,
+  }
+  console.log("[worker] params: ", params)
+  const spawnedTransactions = (await buildSimpleTransaction(params).catch((e) => {
+    console.error(e)
+  })) as VersionedTransaction[]
+  if (!spawnedTransactions) return []
+  console.log("[worker] spawnedTransactions: ", spawnedTransactions)
   return spawnedTransactions
 }
 
-/** from customized value to SDK specific value */
-export function getSDKTxVersion(input: UITxVersion): _TxVersion {
-  return input === "V0" ? _TxVersion.V0 : _TxVersion.LEGACY
-}
-
-export function isInnerTransaction(x: any): x is InnerTransaction {
+export function isInnerTransaction(x: any): x is SDKInnerTransaction {
   return isObject(x) && "instructions" in x && "instructionTypes" in x
 }

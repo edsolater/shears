@@ -1,11 +1,12 @@
-import { createSubscribable, switchCase, type MayPromise } from "@edsolater/fnkit"
+import { createSubscribable, type MayPromise } from "@edsolater/fnkit"
 import { txClmmPositionIncrease } from "../../stores/data/txClmmPositionIncrease"
 import { txSwap } from "../../stores/data/txSwap"
 import type { PortUtils } from "../webworker/createMessagePortTransforers"
-import type { TxTransformConfig } from "./txDispatcher_main"
 import type { TxHandlerEventCenter } from "./txHandler"
 
-export async function txDispatcher_worker(transformers: PortUtils<TxTransformConfig>) {
+export async function txDispatcher_worker(
+  transformers: PortUtils<{ name: string; txParams: any /* too difficult to type details */ }>,
+) {
   const { receiver, sender } = transformers.getMessagePort("tx start")
   const txSubscribable = createSubscribable<MayPromise<TxHandlerEventCenter>>()
   txSubscribable.subscribe((s) => {
@@ -16,6 +17,7 @@ export async function txDispatcher_worker(transformers: PortUtils<TxTransformCon
     )
   })
   receiver.subscribe((config) => {
+    console.log("[worker] config: ", config)
     switch (config.name) {
       case "swap": {
         txSubscribable.set(txSwap(config.txParams))

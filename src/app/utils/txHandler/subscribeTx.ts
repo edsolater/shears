@@ -1,6 +1,6 @@
-import { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
-import { MultiTxExtraInfo, TxErrorInfo, TxFinalInfo, TxSuccessInfo } from "./txHandler"
-import { EventCenter, createEventCenter, assert } from "@edsolater/fnkit"
+import type { Connection, Transaction, VersionedTransaction } from "@solana/web3.js"
+import type { MultiTxExtraInfo, TxErrorInfo, TxFinalInfo, TxSuccessInfo } from "./txHandler"
+import { type EventCenter, createEventCenter, assert } from "@edsolater/fnkit"
 
 export interface SubscribeSignatureCallbacks {
   onTxSuccess?(ev: TxSuccessInfo): void
@@ -24,7 +24,7 @@ export function subscribeTx({
   extraTxidInfo,
 }: {
   txid: string
-  transaction: Transaction | VersionedTransaction
+  transaction: VersionedTransaction
   connection?: Connection
   extraTxidInfo: MultiTxExtraInfo
 }): TxSubscribeEventCenter {
