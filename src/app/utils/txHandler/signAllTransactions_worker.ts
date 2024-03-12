@@ -1,5 +1,5 @@
 import type { InnerTransaction as SDKInnerTransaction } from "@raydium-io/raydium-sdk"
-import type { VersionedTransaction } from "@solana/web3.js"
+import { VersionedTransaction } from "@solana/web3.js"
 import { getMessageReceiver, getMessageSender } from "../webworker/loadWorker_worker"
 import { composeSDKInnerTransactions } from "./createVersionedTransaction"
 import type { TxHandlerPayload } from "./txHandler"
@@ -23,7 +23,8 @@ export async function signAllTransactions({
     console.log("[worker] send transactions to main thread", buildedTransactions)
     sender.post(buildedTransactions.map((tx) => tx.serialize()))
     receiver.subscribe((signedTransactions) => {
-      resolve(signedTransactions)
+      const decoded = signedTransactions.map((transaction) => VersionedTransaction.deserialize(transaction))
+      resolve(decoded)
     })
   })
 }

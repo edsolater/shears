@@ -3,28 +3,42 @@ import { txClmmPositionIncrease } from "../../stores/data/txClmmPositionIncrease
 import { txSwap } from "../../stores/data/txSwap"
 import type { PortUtils } from "../webworker/createMessagePortTransforers"
 import type { TxHandlerEventCenter } from "./txHandler"
+import type { TxResponse } from "./txDispatcher_main"
 
 export async function txDispatcher_worker(
-  transformers: PortUtils<{ name: string; txParams: any /* too difficult to type details */ }>,
+  transformers: PortUtils<{ name: string; txParams: any /* too difficult to type details */ }, TxResponse>,
 ) {
   const { receiver, sender } = transformers.getMessagePort("tx start")
-  const txSubscribable = createSubscribable<MayPromise<TxHandlerEventCenter>>()
-  txSubscribable.subscribe((s) => {
-    Promise.resolve(s).then((s) =>
-      s.on("txSuccess", ({ txid }) => {
-        sender.post({ txid })
-      }),
-    )
+  const txSubscribable = createSubscribable<{ name: string; txEventCenter: MayPromise<TxHandlerEventCenter> }>()
+  // 🤔 whether should destory after tx is end?
+  txSubscribable.subscribe(({ name, txEventCenter }) => {
+    Promise.resolve(txEventCenter).then((txEventCenter) => {
+      txEventCenter.on("txSuccess", (payload) => {
+        sender.post({ name, status: "txSuccess", payload })
+      })
+      txEventCenter.on("txError", (payload) => {
+        sender.post({ name, status: "txError", payload })
+      })
+      txEventCenter.on("sendSuccess", (payload) => {
+        sender.post({ name, status: "sendSuccess", payload })
+      })
+      txEventCenter.on("sendError", (payload) => {
+        sender.post({ name, status: "sendError", payload })
+      })
+    })
   })
   receiver.subscribe((config) => {
     console.log("[worker] config: ", config)
     switch (config.name) {
       case "swap": {
-        txSubscribable.set(txSwap(config.txParams))
+        const txEventCenter = txSwap(config.txParams)
+        txSubscribable.set({ name: config.name, txEventCenter })
         break
       }
       case "clmm position increase": {
-        txSubscribable.set(txClmmPositionIncrease(config.txParams))
+        const txEventCenter = txClmmPositionIncrease(config.txParams)
+        txSubscribable.set({ name: config.name, txEventCenter })
+        break
       }
     }
     //🏷️ switchCase has type-error

@@ -68,7 +68,6 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
       const [txBudgetConfig, sdkTokenAccounts] = await Promise.all([txBudgetConfigPromise, sdkTokenAccountsPromise])
       assert(sdkTokenAccounts, "token account can't load")
       const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
-      console.log("sdkLookupTableCache:222 ", sdkLookupTableCache)
       const txParams = {
         connection: connection,
         liquidity: toSDKBN(mul(liquidity, minus(1, params.slippage))),
@@ -87,7 +86,6 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
         makeTxVersion: sdkTxVersion,
         lookupTableCache: sdkLookupTableCache,
       }
-      console.log("txParams: ", toHumanReadable(txParams))
       const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams)
       assert(innerTransactions, "sdk compose innerTransactions failed, innerTransactions: " + innerTransactions)
       return innerTransactions

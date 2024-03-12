@@ -285,7 +285,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       transactions: collectedTransactions,
       payload,
     })
-    console.log("allSignedTransactions: ", allSignedTransactions)
+    console.log("main thread sign transactions complete: ", allSignedTransactions)
 
     // load send tx function
     const senderFn = composeTransactionSenderWithDifferentSendMode({
@@ -295,15 +295,19 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       payload,
       callbacks: {
         onSentError: (info) => {
+          console.log("txSendError", info)
           eventCenter.emit("sendError", [info])
         },
         onSentSuccess(info) {
+          console.log("txSendSuccess", info)
           eventCenter.emit("sendSuccess", [info])
         },
         onTxError(info) {
+          console.log("txError", info)
           eventCenter.emit("txError", [info])
         },
         onTxSuccess(info) {
+          console.log("txSuccess", info)
           eventCenter.emit("txSuccess", [info])
         },
       },

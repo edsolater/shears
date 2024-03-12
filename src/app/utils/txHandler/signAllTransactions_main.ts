@@ -10,7 +10,7 @@ export function createSignTransactionPortInMainThread() {
     console.log("[main] receive transactions from worker", transactions, decodedTransactions)
     const signedTransactions = signTrancations(decodedTransactions)
     signedTransactions?.then((signedTrancation) => {
-      sender.post(signedTrancation)
+      sender.post(signedTrancation.map((tx) => tx.serialize()))
     })
   })
 }
