@@ -4,7 +4,7 @@
  *
  **************************************************************************/
 
-import { assert, gt, isLessThanOne, isPositive, lte, minus, mul, type Percent } from "@edsolater/fnkit"
+import { assert, isLessThanOne, isObject, isPositive, minus, mul, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
@@ -15,6 +15,7 @@ import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiqu
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
+import { toHumanReadable } from "./utils/toHumanReadable"
 
 export type TxClmmPositionIncreaseParams = {
   rpcUrl: string
@@ -41,35 +42,34 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
   assert(sdkClmmInfo, "sdkClmmInfo not ready, sdkClmmInfo: " + sdkClmmInfo)
   assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready, sdkClmmPositionInfo: " + sdkClmmPositionInfo)
 
-  const info = await getClmmIncreaseTxLiquidityAndBoundaryFromAmount(params.amount, {
+  const info = await getClmmIncreaseTxLiquidityAndBoundaryFromAmount({
+    amount: params.amount,
     rpcUrl: params.rpcUrl,
     clmmId: params.clmmId,
     positionNftMint: params.positionNftMint,
     amountSide: params.amountSide,
   })
-  assert(info, `${getClmmIncreaseTxLiquidityAndBoundaryFromAmount} fail to work`)
+  assert(info, `${getClmmIncreaseTxLiquidityAndBoundaryFromAmount.name} fail to work`)
   const { liquidity, amountAInfo, amountBInfo } = info
   const amountA = amountAInfo.amountWithFeeBN
   const amountB = amountBInfo.amountWithFeeBN
 
-  // assert(options.liquidity, "liquidity not found") // Temp for Dev. // TODO: use getClmmIncreaseTxLiquidityAndBoundaryFromAmount
-  // assert(options.amountB, "amountB not found") // Temp for Dev. // TODO: use getClmmIncreaseTxLiquidityAndBoundaryFromAmount
-
-  return txHandler(
+  const txEventCenter = txHandler(
     {
       connection,
       owner: params.owner,
-      txVersion: "V0",
     },
     async ({
       baseUtils: { owner, connection, getSDKTokenAccounts, sdkLookupTableCache, sdkTxVersion, getBudgetConfig },
     }) => {
       //TODO: no two fetch await
-      const txBudgetConfig = await getBudgetConfig()
-      const sdkTokenAccounts = await getSDKTokenAccounts()
+      const txBudgetConfigPromise = getBudgetConfig()
+      const sdkTokenAccountsPromise = getSDKTokenAccounts()
+      const [txBudgetConfig, sdkTokenAccounts] = await Promise.all([txBudgetConfigPromise, sdkTokenAccountsPromise])
       assert(sdkTokenAccounts, "token account can't load")
       const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
-      const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple({
+      console.log("sdkLookupTableCache:222 ", sdkLookupTableCache)
+      const txParams = {
         connection: connection,
         liquidity: toSDKBN(mul(liquidity, minus(1, params.slippage))),
         poolInfo: sdkClmmInfo.state,
@@ -86,10 +86,16 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
         amountMaxB: toSDKBN(amountB),
         makeTxVersion: sdkTxVersion,
         lookupTableCache: sdkLookupTableCache,
-      })
-      assert(innerTransactions, "sdk compose innerTransactions failed")
+      }
+      console.log("txParams: ", toHumanReadable(txParams))
+      const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams)
+      assert(innerTransactions, "sdk compose innerTransactions failed, innerTransactions: " + innerTransactions)
       return innerTransactions
     },
     { sendMode: "queue" },
   )
+  // assert(options.liquidity, "liquidity not found") // Temp for Dev. // TODO: use getClmmIncreaseTxLiquidityAndBoundaryFromAmount
+  // assert(options.amountB, "amountB not found") // Temp for Dev. // TODO: use getClmmIncreaseTxLiquidityAndBoundaryFromAmount
+
+  return txEventCenter
 }

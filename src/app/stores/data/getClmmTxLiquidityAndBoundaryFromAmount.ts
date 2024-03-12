@@ -16,20 +16,19 @@ import { parseSDKTransferAmountFee, type TransferAmountFee } from "./misc/transf
 import { tokensMap } from "./portActions/loadTokens_worker"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
+import { toHumanReadable } from "./utils/toHumanReadable"
 
 /**
  * in worker thread
  */
-export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(
-  amount: AmountBN,
-  payload: {
-    rpcUrl: string
-    clmmId: string
-    positionNftMint: string
+export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
+  amount: AmountBN
+  rpcUrl: string
+  clmmId: string
+  positionNftMint: string
 
-    amountSide: "A" | "B"
-  },
-): Promise<
+  amountSide: "A" | "B"
+}): Promise<
   | {
       liquidity: Numberish
       amountAInfo: TransferAmountFee
@@ -37,6 +36,7 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(
     }
   | undefined
 > {
+  console.log("input: ", toHumanReadable(payload))
   const epochInfoPromise = getEpochInfo({ rpcUrl: payload.rpcUrl })
   const jsonClmmInfo = jsonClmmInfoCache.get(payload.clmmId)
   if (!jsonClmmInfo) return undefined
@@ -52,21 +52,25 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(
   if (!sdkClmmInfo || !sdkClmmPositionInfo) return undefined
   const isInputSideA = payload.amountSide === "A"
   const [epochInfo, token2022Infos] = await Promise.all([epochInfoPromise, token2022InfosPromise])
-  const { liquidity, amountA, amountB, amountSlippageA, amountSlippageB } = Clmm.getLiquidityAmountOutFromAmountIn({
+  const inputParams = {
     poolInfo: sdkClmmInfo.state,
     slippage: 0,
     inputA: isInputSideA,
     tickLower: sdkClmmPositionInfo.tickLower,
     tickUpper: sdkClmmPositionInfo.tickUpper,
-    amount: toSDKBN(amount),
+    amount: toSDKBN(payload.amount),
     add: true,
     epochInfo,
     token2022Infos,
     amountHasFee: true,
-  })
-  return {
+  }
+  console.log('inputParams: ', toHumanReadable(inputParams))
+  const { liquidity, amountA, amountB, amountSlippageA, amountSlippageB } = Clmm.getLiquidityAmountOutFromAmountIn(inputParams)
+  const output = {
     liquidity: parseSDKBN(liquidity),
     amountAInfo: parseSDKTransferAmountFee(amountA),
     amountBInfo: parseSDKTransferAmountFee(amountB),
   }
+  console.log('output: ', output)
+  return output
 }

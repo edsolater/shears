@@ -195,7 +195,6 @@ export type SignAllTransactionsFunction = <T extends VersionedTransaction>(trans
 export interface TxHandlerPayload {
   connection: Connection
   owner: string
-  txVersion: UITxVersion
 }
 
 export interface TxHandlerEventCenter
@@ -237,7 +236,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       baseUtils: {
         owner: toPub(payload.owner),
         connection: payload.connection,
-        sdkTxVersion: payload.txVersion === "LEGACY" ? TxVersion.LEGACY : TxVersion.V0,
+        sdkTxVersion: TxVersion.V0,
         getSDKTokenAccounts: () =>
           getTokenAccounts({ connection: payload.connection, owner: payload.owner }).then(
             (res) => res.sdkTokenAccounts,

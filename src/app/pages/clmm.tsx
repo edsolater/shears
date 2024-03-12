@@ -211,21 +211,18 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         <Button
           // icss={icssFrostedGlass}
           onClick={() => {
-            console.log("clicked: ")
             const rpcUrl = rpcUrlS()
             assert(rpcUrl, "for clmm position increase, rpc url not ready")
 
             const owner = ownerS()
             assert(owner, "for clmm position increase, owner not ready")
 
-            console.log("rpcUrl: ", rpcUrl)
-            console.log("owner: ", owner)
             txDispatcher("clmm position increase", {
               clmmId: props.clmmInfo.id,
               positionNftMint: props.account.nftMint,
               rpcUrl: rpcUrl,
-              amount: 10000000, // TODO: should be input
-              amountSide: "A", // TODO: should be input
+              amount: 100000, // TODO: should be input
+              amountSide: "B", // TODO: should be input
               owner: owner,
               slippage: 0.1, // TODO: should be input
             })
