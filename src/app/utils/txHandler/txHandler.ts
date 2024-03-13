@@ -201,11 +201,10 @@ export interface TxHandlerEventCenter
   extends EventCenter<{
     txSuccess: TxSuccessCallback
     txError: TxErrorCallback
-    // readonly txFinally: TxFinallyCallback // can on but can't emit
     sendSuccess: TxSentSuccessCallback
     sendError: TxSentErrorCallback
+
     beforeSendError: TxBeforeSendErrorCallback
-    // readonly sendFinally: TxSentFinallyCallback // can on but can't emit
     txAllSuccess: AllSuccessCallback
     txAnyError: AnyErrorCallback
   }> {}

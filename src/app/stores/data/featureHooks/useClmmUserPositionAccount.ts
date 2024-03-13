@@ -8,7 +8,9 @@ import {
   mul,
   shakeNil,
   toFormattedNumber,
-  type Numberish
+  type Numberish,
+  type Optional,
+  assert,
 } from "@edsolater/fnkit"
 import { usePromise } from "@edsolater/pivkit"
 import { createEffect, createMemo, createSignal, on } from "solid-js"
@@ -21,10 +23,14 @@ import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
 import { getTransferFeeInfo } from "../connection/getTransferFeeInfos"
 import isCurrentToken2022 from "../isCurrentToken2022"
-import { shuck_rpc, shuck_tokenPrices, shuck_tokens } from "../store"
+import { shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
+import type { TxClmmPositionIncreaseParams } from "../txClmmPositionIncrease"
+import { useWalletOwner } from "../../wallet/store"
+import { txDispatcher } from "../../../utils/txHandler/txDispatcher_main"
+import type { TxHandlerEventCenter } from "../../../utils/txHandler"
 
 type AdditionalClmmUserPositionAccount = {
   rangeName: string
@@ -33,8 +39,14 @@ type AdditionalClmmUserPositionAccount = {
   pendingRewardAmountUSD: Numberish | undefined
   hasRewardTokenAmount: boolean
   isHarvestable: boolean
+  txClmmPositionIncrease: (params: TxClmmPositionIncreaseUIFnParams) => TxHandlerEventCenter
 }
 
+/** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionIncrease */
+type TxClmmPositionIncreaseUIFnParams = Optional<
+  TxClmmPositionIncreaseParams,
+  "clmmId" | "positionNftMint" | "rpcUrl" | "owner" | "slippage"
+>
 /**
  * hooks
  * hydrate {@link ClmmUserPositionAccount} to ui used data
@@ -48,8 +60,10 @@ export function useClmmUserPositionAccount(
   const priceA = useTokenPrice(() => clmmInfo.base)
   const priceB = useTokenPrice(() => clmmInfo.quote)
   const pricesMap = useShuckValue(shuck_tokenPrices)
-  const tokens = useShuckValue(shuck_tokens)
+  const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
   const rpc = useShuckValue(shuck_rpc)
+  const ownerS = useWalletOwner()
+  const slippageS = useShuckValue(shuck_slippage)
 
   const userLiquidityUSD = createMemo(() => {
     const tokenAPrices = priceA()
@@ -181,10 +195,31 @@ export function useClmmUserPositionAccount(
     isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount() ? true : false,
   )
 
+  function txClmmPositionIncrease(params: TxClmmPositionIncreaseUIFnParams) {
+    const rpcUrl = params.rpcUrl ?? rpc()?.url
+    assert(rpcUrl, "for clmm position increase, rpc url not ready")
+    const owner = params.owner ?? ownerS()
+    assert(owner, "for clmm position increase, owner not ready")
+    const clmmId = params.clmmId ?? clmmInfo.id
+    const positionNftMint = params.positionNftMint ?? userPositionAccount.nftMint
+    const slippage = params.slippage ?? slippageS()
+    const amount = params.amount
+    const amountSide = params.amountSide
+    return txDispatcher("clmm position increase", {
+      clmmId,
+      positionNftMint,
+      rpcUrl,
+      amount,
+      amountSide,
+      owner,
+      slippage,
+    })
+  }
+
   const [userPositionAccountStore, setUserPositionStore] = createStore(
     userPositionAccount as AdditionalClmmUserPositionAccount & ClmmUserPositionAccount,
   )
-  // 🤔 really need this?
+  // 🤔 really need this? is this really work?
   createEffect(
     on(
       () => userPositionAccount,
@@ -200,6 +235,7 @@ export function useClmmUserPositionAccount(
   createEffect(() => setUserPositionStore({ pendingRewardAmountUSD: pendingRewardAmountUSD() }))
   createEffect(() => setUserPositionStore({ hasRewardTokenAmount: hasRewardTokenAmount() }))
   createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
+  createEffect(() => setUserPositionStore({ txClmmPositionIncrease: txClmmPositionIncrease }))
 
   return userPositionAccountStore
 }

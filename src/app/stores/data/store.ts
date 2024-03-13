@@ -83,9 +83,12 @@ export const shuck_isTokenPricesLoading = createShuck<boolean | undefined>()
 export const shuck_tokenPrices = createShuck<Map<Mint, Price> | undefined>()
 // wallet
 export const shuck_owner = createShuck<string | undefined>()
-// app states
+
+// app settings
+export const shuck_txVersion = createShuck<TxVersion | undefined>()
 export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
 export const shuck_isMobile = createShuck<boolean | undefined>()
+export const shuck_slippage = createShuck<Numberish>(0.03)
 // clmm
 export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
 export const shuck_clmmInfos = createShuck<ClmmInfos | undefined>()

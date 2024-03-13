@@ -149,11 +149,10 @@ export default function ClmmsPage() {
 
 /**
  * comopnent render clmm user position account
+ * @todo what if it is a collapse box💡💡✨👻
  */
 function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUserPositionAccount }) {
   const positionAccount = useClmmUserPositionAccount(props.clmmInfo, props.account)
-  const rpcUrlS = useShuckValue(shuck_rpc, (r) => r?.url)
-  const ownerS = useWalletOwner()
   return (
     <Row
       icss={{
@@ -211,20 +210,9 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         <Button
           // icss={icssFrostedGlass}
           onClick={() => {
-            const rpcUrl = rpcUrlS()
-            assert(rpcUrl, "for clmm position increase, rpc url not ready")
-
-            const owner = ownerS()
-            assert(owner, "for clmm position increase, owner not ready")
-
-            txDispatcher("clmm position increase", {
-              clmmId: props.clmmInfo.id,
-              positionNftMint: props.account.nftMint,
-              rpcUrl: rpcUrl,
+            positionAccount.txClmmPositionIncrease({
               amount: 100000, // TODO: should be input
               amountSide: "B", // TODO: should be input
-              owner: owner,
-              slippage: 0.1, // TODO: should be input
             })
           }}
         >

@@ -13,17 +13,9 @@ export async function txDispatcher_worker(
   // 🤔 whether should destory after tx is end?
   txSubscribable.subscribe(({ name, txEventCenter }) => {
     Promise.resolve(txEventCenter).then((txEventCenter) => {
-      txEventCenter.on("txSuccess", (payload) => {
-        sender.post({ name, status: "txSuccess", payload })
-      })
-      txEventCenter.on("txError", (payload) => {
-        sender.post({ name, status: "txError", payload })
-      })
-      txEventCenter.on("sendSuccess", (payload) => {
-        sender.post({ name, status: "sendSuccess", payload })
-      })
-      txEventCenter.on("sendError", (payload) => {
-        sender.post({ name, status: "sendError", payload })
+      txEventCenter.onAnyEvent((eventName, [payload]) => {
+        // @ts-expect-error no need to check type
+        sender.post({ name, status: eventName, payload })
       })
     })
   })
@@ -48,3 +40,4 @@ export async function txDispatcher_worker(
     // })
   })
 }
+

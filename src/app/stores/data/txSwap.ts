@@ -34,11 +34,7 @@ export function txSwap(options: TxSwapOptions) {
   )
 
   return txHandler(
-    {
-      connection,
-      owner: options.owner,
-      txVersion: "V0",
-    },
+    { connection, owner: options.owner },
     async ({ baseUtils: { owner, connection, getSDKTokenAccounts } }) => {
       //TODO: no two fetch await
       console.log(1)
