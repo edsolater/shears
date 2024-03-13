@@ -208,20 +208,18 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       <Text icss={{ textAlign: "end" }}>{toUsdVolume(positionAccount.pendingRewardAmountUSD)}</Text>
 
       <Row icss={{ gap: "10%" }}>
-        {/* <Button icss={icssFrostedGlass}>Harvest</Button>
-        <Button icss={icssFrostedGlass}> + </Button> */}
+        <Button>Harvest</Button>
         <Button
-          // icss={icssFrostedGlass}
           onClick={() => {
             positionAccount.txClmmPositionIncrease({
-              amount: 100000, // TODO: should be input
-              amountSide: "B", // TODO: should be input
+              amountB: 100000, // TODO: should be input
             })
           }}
         >
           {" "}
-          -{" "}
-        </Button>
+          +{" "}
+        </Button> 
+        <Button> - </Button>
       </Row>
     </Row>
   )

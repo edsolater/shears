@@ -4,7 +4,7 @@
  *
  **************************************************************************/
 
-import { assert, isLessThanOne, isObject, isPositive, minus, mul, type Percent } from "@edsolater/fnkit"
+import { assert, isLessThanOne, isPositive, minus, mul, toFormattedNumber, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
@@ -15,7 +15,6 @@ import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiqu
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
-import { toHumanReadable } from "./utils/toHumanReadable"
 
 export type TxClmmPositionIncreaseParams = {
   rpcUrl: string
@@ -23,14 +22,18 @@ export type TxClmmPositionIncreaseParams = {
   clmmId: string
   positionNftMint: string
   slippage: Percent // e.g. 0.01
-  amount: AmountBN
-  amountSide: "A" | "B"
+
+  amountA?: AmountBN
+  amountB?: AmountBN
 }
 
+/** need amountA or amountB */
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
+  const amount = "amountA" in params ? params.amountA : params.amountB
+  const amountSide = "amountA" in params ? "A" : "B"
   console.log("start compose tx clmm position increase")
   assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
-  assert(isPositive(params.amount), "amountA should be positive, amountA: " + params.amount.toString())
+  assert(isPositive(amount), "amountA should be positive, amountA: " + toFormattedNumber(amount))
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
@@ -43,11 +46,11 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
   assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready, sdkClmmPositionInfo: " + sdkClmmPositionInfo)
 
   const info = await getClmmIncreaseTxLiquidityAndBoundaryFromAmount({
-    amount: params.amount,
+    amount: amount,
     rpcUrl: params.rpcUrl,
     clmmId: params.clmmId,
     positionNftMint: params.positionNftMint,
-    amountSide: params.amountSide,
+    amountSide: amountSide,
   })
   assert(info, `${getClmmIncreaseTxLiquidityAndBoundaryFromAmount.name} fail to work`)
   const { liquidity, amountAInfo, amountBInfo } = info
@@ -60,12 +63,13 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
       owner: params.owner,
     },
     async ({
-      baseUtils: { owner, connection, getSDKTokenAccounts, sdkLookupTableCache, sdkTxVersion, getBudgetConfig },
+      baseUtils: { owner, connection, sdkLookupTableCache, sdkTxVersion, getSDKTokenAccounts, getSDKBudgetConfig },
     }) => {
       //TODO: no two fetch await
-      const txBudgetConfigPromise = getBudgetConfig()
+      const txBudgetConfigPromise = getSDKBudgetConfig()
       const sdkTokenAccountsPromise = getSDKTokenAccounts()
       const [txBudgetConfig, sdkTokenAccounts] = await Promise.all([txBudgetConfigPromise, sdkTokenAccountsPromise])
+      assert(txBudgetConfig, "txBudgetConfig can't load")
       assert(sdkTokenAccounts, "token account can't load")
       const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
       const txParams = {
@@ -86,7 +90,12 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
         makeTxVersion: sdkTxVersion,
         lookupTableCache: sdkLookupTableCache,
       }
-      const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams)
+      const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams).catch(
+        (e) => {
+          console.error(e)
+          return { innerTransactions: [] }
+        },
+      )
       assert(innerTransactions, "sdk compose innerTransactions failed, innerTransactions: " + innerTransactions)
       return innerTransactions
     },

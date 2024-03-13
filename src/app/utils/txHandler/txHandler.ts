@@ -94,7 +94,7 @@ export type TxFn = (utils: {
     connection: Connection
     sdkTxVersion: TxVersion
     getSDKTokenAccounts(): Promise<SDK_TokenAccount[] | undefined>
-    getBudgetConfig(): Promise<ComputeBudgetConfig | undefined>
+    getSDKBudgetConfig(): Promise<ComputeBudgetConfig | undefined>
     /** just past to sdk method. UI should do nothing with sdkLookupTableCache */
     sdkLookupTableCache: CacheLTA
   }
@@ -236,12 +236,12 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
         owner: toPub(payload.owner),
         connection: payload.connection,
         sdkTxVersion: TxVersion.V0,
+        sdkLookupTableCache,
         getSDKTokenAccounts: () =>
           getTokenAccounts({ connection: payload.connection, owner: payload.owner }).then(
             (res) => res.sdkTokenAccounts,
           ),
-        getBudgetConfig: getTxHandlerBudgetConfig,
-        sdkLookupTableCache,
+        getSDKBudgetConfig: getTxHandlerBudgetConfig,
       },
     })
     transactionCollector.add(userLoadedTransactionQueue)

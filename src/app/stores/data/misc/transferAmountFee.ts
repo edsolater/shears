@@ -27,7 +27,7 @@ const POINT = 10_000
 export function parseSDKTransferAmountFee(
   transferAmountFee: SDK_GetTransferAmountFee | SDK_TransferAmountFee,
 ): TransferAmountFee {
-  if (isSDKBN(transferAmountFee.amount) && isSDKBN(transferAmountFee.fee)) {
+  if (isSDKBN(transferAmountFee.amount) && (transferAmountFee.fee == null || isSDKBN(transferAmountFee.fee))) {
     return {
       amountWithFeeBN: parseSDKBN(transferAmountFee.amount),
       feeBN: transferAmountFee.fee && parseSDKBN(transferAmountFee.fee),

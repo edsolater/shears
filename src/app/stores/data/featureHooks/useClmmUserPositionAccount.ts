@@ -203,14 +203,11 @@ export function useClmmUserPositionAccount(
     const clmmId = params.clmmId ?? clmmInfo.id
     const positionNftMint = params.positionNftMint ?? userPositionAccount.nftMint
     const slippage = params.slippage ?? slippageS()
-    const amount = params.amount
-    const amountSide = params.amountSide
     return txDispatcher("clmm position increase", {
+      ...params,
       clmmId,
       positionNftMint,
       rpcUrl,
-      amount,
-      amountSide,
       owner,
       slippage,
     })
