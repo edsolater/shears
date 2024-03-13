@@ -4,11 +4,17 @@
  *
  **************************************************************************/
 import { add } from "@edsolater/fnkit"
-import { BNDivCeil, type GetTransferAmountFee as SDK_GetTransferAmountFee } from "@raydium-io/raydium-sdk"
+import {
+  BNDivCeil,
+  type TransferAmountFee as SDK_TransferAmountFee,
+  type CurrencyAmount as SDK_CurrencyAmount,
+  type GetTransferAmountFee as SDK_GetTransferAmountFee,
+  type TokenAmount as SDK_TokenAmount,
+} from "@raydium-io/raydium-sdk"
 import type { TransferFee, TransferFeeConfig } from "@solana/spl-token"
 import type { EpochInfo } from "@solana/web3.js"
 import BN from "bn.js"
-import { parseSDKBN, toSDKBN } from "../../../utils/dataStructures/BN"
+import { isSDKBN, parseSDKBN, toSDKBN } from "../../../utils/dataStructures/BN"
 import type { AmountBN } from "../../../utils/dataStructures/TokenAmount"
 
 export interface TransferAmountFee {
@@ -18,11 +24,24 @@ export interface TransferAmountFee {
 }
 const POINT = 10_000
 
-export function parseSDKTransferAmountFee(transferAmountFee: SDK_GetTransferAmountFee): TransferAmountFee {
-  return {
-    amountWithFeeBN: parseSDKBN(transferAmountFee.amount),
-    feeBN: transferAmountFee.fee && parseSDKBN(transferAmountFee.fee),
-    expirationTime: transferAmountFee.expirationTime,
+export function parseSDKTransferAmountFee(
+  transferAmountFee: SDK_GetTransferAmountFee | SDK_TransferAmountFee,
+): TransferAmountFee {
+  if (isSDKBN(transferAmountFee.amount) && isSDKBN(transferAmountFee.fee)) {
+    return {
+      amountWithFeeBN: parseSDKBN(transferAmountFee.amount),
+      feeBN: transferAmountFee.fee && parseSDKBN(transferAmountFee.fee),
+      expirationTime: transferAmountFee.expirationTime,
+    }
+  } else {
+    const amount = transferAmountFee.amount as SDK_TokenAmount | SDK_CurrencyAmount
+    const fee = transferAmountFee.fee as SDK_TokenAmount | SDK_CurrencyAmount | undefined
+
+    return {
+      amountWithFeeBN: parseSDKBN(amount.raw),
+      feeBN: fee && parseSDKBN(fee.raw),
+      expirationTime: transferAmountFee.expirationTime,
+    }
   }
 }
 export function getTransferAmountFee(

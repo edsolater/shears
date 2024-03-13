@@ -28,6 +28,7 @@ import { colors } from "../../theme/colors"
 import { scrollbarWidth } from "../../theme/misc"
 import { Title } from "../BoardTitle"
 import { CyberPanel } from "../CyberPanel"
+import { shrinkFn } from "@edsolater/fnkit"
 
 // for sort and search
 export type TabelHeaderConfigs<T> = {
@@ -41,6 +42,7 @@ type DatabaseTableProps<T> = {
   getKey: (item: T) => string
   // config for sort
   headerConfig: TabelHeaderConfigs<T>
+  itemRowConfig?: DatabaseTabelItemRenderConfig<T>
   itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<T>
   itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<T>
   title: string
@@ -162,6 +164,7 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
                   item={item}
                   key={kitProps.getKey(item)}
                   headerConfig={props.headerConfig}
+                  itemRowConfig={props.itemRowConfig}
                   itemFaceConfig={props.itemFaceConfig}
                   itemContentConfig={props.itemContentConfig}
                 />
@@ -174,6 +177,10 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
   )
 }
 
+type DatabaseTabelItemRenderConfig<T> = {
+  collapseTransitionDuration?: number | ((item: T) => number)
+}
+
 /**
  * components to show clmm info
  */
@@ -181,6 +188,7 @@ function DatabaseTableItem<T>(props: {
   key: string
   item: T
   headerConfig: TabelHeaderConfigs<any>
+  itemRowConfig?: DatabaseTabelItemRenderConfig<T>
   itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<any>
   itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<any>
 }) {
@@ -188,6 +196,9 @@ function DatabaseTableItem<T>(props: {
     <Box icss={icssClmmItemRow} class="ClmmItemRow">
       <CollapseBox
         icss={icssClmmItemRowCollapse}
+        optionsOfCSSCollapse={{
+          durationMs: shrinkFn(props.itemRowConfig?.collapseTransitionDuration, [props.item]),
+        }}
         renderFace={() => (
           <DatabaseTableItemCollapseFace key={props.key} item={props.item} innerConfig={props.itemFaceConfig} />
         )}

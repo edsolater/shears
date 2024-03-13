@@ -139,6 +139,9 @@ export default function ClmmsPage() {
       items={clmmInfos}
       getKey={(i) => i.id}
       headerConfig={headerConfig}
+      itemRowConfig={{
+        collapseTransitionDuration: (clmmInfo) => (clmmInfo.userPositionAccounts?.length ?? 0) * 10 + 150,
+      }}
       itemFaceConfig={itemFaceConfig}
       itemContentConfig={itemContentConfig}
       TopMiddle={<ClmmPageTabBlock />}

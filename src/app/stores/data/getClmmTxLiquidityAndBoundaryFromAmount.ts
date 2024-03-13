@@ -4,7 +4,7 @@
  *
  **************************************************************************/
 
-import type { Numberish } from "@edsolater/fnkit"
+import { div, mul, type Numberish, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { parseSDKBN, toSDKBN } from "../../utils/dataStructures/BN"
 import toPubString from "../../utils/dataStructures/Publickey"
@@ -12,11 +12,16 @@ import type { AmountBN } from "../../utils/dataStructures/TokenAmount"
 import { getEpochInfo } from "./connection/getEpochInfo"
 import { getMultiMintInfos } from "./connection/getMultiMintInfos"
 import isCurrentToken2022 from "./isCurrentToken2022"
-import { parseSDKTransferAmountFee, type TransferAmountFee } from "./misc/transferAmountFee"
+import { getTransferAmountFee, parseSDKTransferAmountFee, type TransferAmountFee } from "./misc/transferAmountFee"
 import { tokensMap } from "./portActions/loadTokens_worker"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
-import { toHumanReadable } from "./utils/toHumanReadable"
+
+type ClmmPositionAmountBoundary = {
+  liquidity: Numberish
+  amountAInfo: TransferAmountFee
+  amountBInfo: TransferAmountFee
+}
 
 /**
  * in worker thread
@@ -28,15 +33,8 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
   positionNftMint: string
 
   amountSide: "A" | "B"
-}): Promise<
-  | {
-      liquidity: Numberish
-      amountAInfo: TransferAmountFee
-      amountBInfo: TransferAmountFee
-    }
-  | undefined
-> {
-  console.log("input: ", toHumanReadable(payload))
+}): Promise<ClmmPositionAmountBoundary | undefined> {
+  // console.log("input: ", toHumanReadable(payload))
   const epochInfoPromise = getEpochInfo({ rpcUrl: payload.rpcUrl })
   const jsonClmmInfo = jsonClmmInfoCache.get(payload.clmmId)
   if (!jsonClmmInfo) return undefined
@@ -64,13 +62,65 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
     token2022Infos,
     amountHasFee: true,
   }
-  console.log('inputParams: ', toHumanReadable(inputParams))
-  const { liquidity, amountA, amountB, amountSlippageA, amountSlippageB } = Clmm.getLiquidityAmountOutFromAmountIn(inputParams)
+  // console.log("inputParams: ", toHumanReadable(inputParams))
+  const { liquidity, amountA, amountB, amountSlippageA, amountSlippageB } =
+    Clmm.getLiquidityAmountOutFromAmountIn(inputParams)
   const output = {
     liquidity: parseSDKBN(liquidity),
-    amountAInfo: parseSDKTransferAmountFee(amountA),
-    amountBInfo: parseSDKTransferAmountFee(amountB),
+    amountAInfo: parseSDKTransferAmountFee(amountSlippageA),
+    amountBInfo: parseSDKTransferAmountFee(amountSlippageB),
   }
-  console.log('output: ', output)
+  // console.log("output: ", output)
   return output
+}
+
+/**
+ * in worker thread
+ */
+export async function getClmmDecreaseTxLiquidityAndBoundaryFromAmount(payload: {
+  amount: AmountBN
+  rpcUrl: string
+  clmmId: string
+  positionNftMint: string
+
+  amountSide: "A" | "B"
+}): Promise<ClmmPositionAmountBoundary | undefined> {
+  const jsonClmmInfo = jsonClmmInfoCache.get(payload.clmmId)
+  if (!jsonClmmInfo) return undefined
+  const sdkClmmInfo = sdkClmmInfoCache.get(payload.clmmId)
+  const sdkClmmPositionInfo = sdkClmmInfo?.positionAccount?.find(
+    (p) => toPubString(p.nftMint) === payload.positionNftMint,
+  )
+
+  if (!sdkClmmInfo || !sdkClmmPositionInfo) return undefined
+
+  const positionAmountA = parseSDKBN(sdkClmmPositionInfo.amountA)
+  const positionAmountB = parseSDKBN(sdkClmmPositionInfo.amountB)
+  const isInputSideA = payload.amountSide === "A"
+  const inputRadio: Percent = div(payload.amount, isInputSideA ? positionAmountA : positionAmountB)
+  const mintInfosPromise = getMultiMintInfos([jsonClmmInfo.mintA, jsonClmmInfo.mintB], {
+    rpcUrl: payload.rpcUrl,
+  })
+  const epochInfoPromise = getEpochInfo({ rpcUrl: payload.rpcUrl })
+  const [mintInfos, epochInfo] = await Promise.all([mintInfosPromise, epochInfoPromise])
+  const mintInfoA = mintInfos[jsonClmmInfo.mintA]
+  const mintInfoB = mintInfos[jsonClmmInfo.mintB]
+
+  const inputAmountA = mul(inputRadio, positionAmountA)
+  const inputAmountB = mul(inputRadio, positionAmountB)
+  return {
+    liquidity: mul(parseSDKBN(sdkClmmPositionInfo.liquidity), inputRadio),
+    amountAInfo: getTransferAmountFee(
+      isInputSideA ? inputAmountA : inputAmountB,
+      (isInputSideA ? mintInfoA : mintInfoB).feeConfig,
+      epochInfo,
+      false,
+    ),
+    amountBInfo: getTransferAmountFee(
+      isInputSideA ? inputAmountB : inputAmountA,
+      (isInputSideA ? mintInfoB : mintInfoA).feeConfig,
+      epochInfo,
+      false,
+    ),
+  }
 }
