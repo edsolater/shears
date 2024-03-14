@@ -212,7 +212,7 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         <Button
           onClick={() => {
             positionAccount.txClmmPositionIncrease({
-              amountB: 100000, // TODO: should be input
+              amountB: 0.1, // TODO: should be input
             })
           }}
         >
@@ -221,11 +221,20 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         <Button
           onClick={() => {
             positionAccount.txClmmPositionDecrease({
-              amountB: 100000, // TODO: should be input
+              amountB: 0.1, // TODO: should be input
             })
           }}
         >
           -
+        </Button>
+        <Button
+          onClick={() => {
+            positionAccount.txClmmPositionSetToUSD({
+              usd: 5, // TODO: should be input
+            })
+          }}
+        >
+          To
         </Button>
       </Row>
     </Row>

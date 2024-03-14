@@ -88,7 +88,7 @@ export const shuck_owner = createShuck<string | undefined>()
 export const shuck_txVersion = createShuck<TxVersion | undefined>()
 export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
 export const shuck_isMobile = createShuck<boolean | undefined>()
-export const shuck_slippage = createShuck<Numberish>(0.03)
+export const shuck_slippage = createShuck<Numberish>(0.003)
 // clmm
 export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
 export const shuck_clmmInfos = createShuck<ClmmInfos | undefined>()

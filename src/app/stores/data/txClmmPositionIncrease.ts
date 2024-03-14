@@ -4,12 +4,21 @@
  *
  **************************************************************************/
 
-import { assert, isLessThanOne, isPositive, minus, mul, toFormattedNumber, type Percent } from "@edsolater/fnkit"
+import {
+  applyDecimal,
+  assert,
+  isLessThanOne,
+  isPositive,
+  minus,
+  mul,
+  toFormattedNumber,
+  type Percent,
+} from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import toPubString from "../../utils/dataStructures/Publickey"
-import { type AmountBN } from "../../utils/dataStructures/TokenAmount"
+import { type Amount } from "../../utils/dataStructures/TokenAmount"
 import { txHandler } from "../../utils/txHandler"
 import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
@@ -24,8 +33,8 @@ export type TxClmmPositionIncreaseParams = {
   positionNftMint: string
   slippage: Percent // e.g. 0.01
 
-  amountA?: AmountBN
-  amountB?: AmountBN
+  amountA?: Amount
+  amountB?: Amount
 }
 
 /** need amountA or amountB */
@@ -34,15 +43,15 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
   const amountSide = "amountA" in params ? "A" : "B"
   console.log("[worker tx core algorithm] start compose tx clmm position increase")
   assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
-  assert(isPositive(amount), "amountA should be positive, amountA: " + toFormattedNumber(amount))
+  assert(isPositive(amount), "amountA should be positive")
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
   const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
+  assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
   const sdkClmmPositionInfo = sdkClmmInfo?.positionAccount?.find(
     (p) => toPubString(p.nftMint) === params.positionNftMint,
   )
-  assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
   assert(sdkClmmInfo, "sdkClmmInfo not ready, sdkClmmInfo: " + sdkClmmInfo)
   assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready, sdkClmmPositionInfo: " + sdkClmmPositionInfo)
 
@@ -73,9 +82,10 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
       assert(txBudgetConfig, "txBudgetConfig can't load")
       assert(sdkTokenAccounts, "token account can't load")
       const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
+      const liquidityMin = mul(liquidity, minus(1, params.slippage))
       const txParams = {
         connection: connection,
-        liquidity: toSDKBN(mul(liquidity, minus(1, params.slippage))),
+        liquidity: toSDKBN(liquidityMin),
         poolInfo: sdkClmmInfo.state,
         ownerInfo: {
           feePayer: owner,
@@ -91,7 +101,8 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
         makeTxVersion: sdkTxVersion,
         lookupTableCache: sdkLookupTableCache,
       }
-      console.log('[tx] clmm position increase txParams: ', toHumanReadable(txParams))
+
+      console.log("[tx] clmm position increase txParams: ", toHumanReadable(txParams))
       const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams).catch(
         (e) => {
           console.error(e)

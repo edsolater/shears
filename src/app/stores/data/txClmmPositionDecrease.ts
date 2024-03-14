@@ -4,12 +4,12 @@
  *
  **************************************************************************/
 
-import { assert, isLessThanOne, isPositive, minus, mul, toFormattedNumber, type Percent } from "@edsolater/fnkit"
+import { assert, isPositive, minus, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import toPubString from "../../utils/dataStructures/Publickey"
-import { type AmountBN } from "../../utils/dataStructures/TokenAmount"
+import { type Amount } from "../../utils/dataStructures/TokenAmount"
 import { txHandler } from "../../utils/txHandler"
 import { getClmmDecreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
@@ -24,8 +24,8 @@ export type TxClmmPositionDecreaseParams = {
   positionNftMint: string
   slippage?: Percent // e.g. 0.01
 
-  amountA?: AmountBN
-  amountB?: AmountBN
+  amountA?: Amount
+  amountB?: Amount
 }
 
 /** need amountA or amountB */
@@ -34,15 +34,15 @@ export async function txClmmPositionDecrease(params: TxClmmPositionDecreaseParam
   const amountSide = "amountA" in params ? "A" : "B"
   console.log('amountSide: ', amountSide)
   console.log("[worker tx core algorithm] start compose tx clmm position decrease")
-  assert(isPositive(amount), "amountA should be positive, amountA: " + toFormattedNumber(amount))
+  assert(isPositive(amount), "amountA should be positive")
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
+  assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
   const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
   const sdkClmmPositionInfo = sdkClmmInfo?.positionAccount?.find(
     (p) => toPubString(p.nftMint) === params.positionNftMint,
   )
-  assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
   assert(sdkClmmInfo, "sdkClmmInfo not ready, sdkClmmInfo: " + sdkClmmInfo)
   assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready, sdkClmmPositionInfo: " + sdkClmmPositionInfo)
 
@@ -58,8 +58,6 @@ export async function txClmmPositionDecrease(params: TxClmmPositionDecreaseParam
   const { amountWithFeeBN: amountA, feeBN: feeA } = amountAInfo
   const { amountWithFeeBN: amountB, feeBN: feeB } = amountBInfo
 
-  console.log('amountA: ', amountA)
-  console.log('amountB: ', amountB)
   const txEventCenter = txHandler(
     {
       connection,

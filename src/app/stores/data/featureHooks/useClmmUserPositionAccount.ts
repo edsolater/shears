@@ -11,13 +11,14 @@ import {
   toFormattedNumber,
   type Numberish,
   type Optional,
+  type Percent,
 } from "@edsolater/fnkit"
 import { usePromise } from "@edsolater/pivkit"
 import { createEffect, createMemo, createSignal, on } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import { applyDecimal } from "../../../pages/clmm"
-import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
+import { toTokenAmount, type TokenAmount, type Amount } from "../../../utils/dataStructures/TokenAmount"
 import type { Price, USDVolume } from "../../../utils/dataStructures/type"
 import type { TxHandlerEventCenter } from "../../../utils/txHandler"
 import { txDispatcher } from "../../../utils/txHandler/txDispatcher_main"
@@ -42,18 +43,21 @@ type AdditionalClmmUserPositionAccount = {
   isHarvestable: boolean
   txClmmPositionIncrease: (params: TxClmmPositionIncreaseUIFnParams) => TxHandlerEventCenter
   txClmmPositionDecrease: (params: TxClmmPositionDecreaseUIFnParams) => TxHandlerEventCenter
+  txClmmPositionSetToUSD: (params: TxClmmPositionSetToUIFnParams) => TxHandlerEventCenter
 }
 
 /** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionIncrease */
-type TxClmmPositionIncreaseUIFnParams = Optional<
-  TxClmmPositionIncreaseParams,
-  "clmmId" | "positionNftMint" | "rpcUrl" | "owner" | "slippage"
->
+type TxClmmPositionIncreaseUIFnParams = { amountA: Amount } | { amountB: Amount }
 /** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionDecrease */
-type TxClmmPositionDecreaseUIFnParams = Optional<
-  TxClmmPositionDecreaseParams,
-  "clmmId" | "positionNftMint" | "rpcUrl" | "owner" | "slippage"
->
+type TxClmmPositionDecreaseUIFnParams = { amountA: Amount } | { amountB: Amount }
+type TxClmmPositionSetToUIFnParams = {
+  clmmId?: string
+  positionNftMint?: string
+  rpcUrl?: string
+  owner?: string
+  slippage?: Percent
+  usd: Amount
+}
 /**
  * hooks
  * hydrate {@link ClmmUserPositionAccount} to ui used data
@@ -202,14 +206,15 @@ export function useClmmUserPositionAccount(
     isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount() ? true : false,
   )
 
+  /** to txDispatcher("clmm position increase") */
   function txClmmPositionIncrease(params: TxClmmPositionIncreaseUIFnParams) {
-    const rpcUrl = params.rpcUrl ?? rpc()?.url
+    const rpcUrl = rpc()?.url
     assert(rpcUrl, "for clmm position increase, rpc url not ready")
-    const owner = params.owner ?? ownerS()
+    const owner = ownerS()
     assert(owner, "for clmm position increase, owner not ready")
-    const clmmId = params.clmmId ?? clmmInfo.id
-    const positionNftMint = params.positionNftMint ?? userPositionAccount.nftMint
-    const slippage = params.slippage ?? slippageS()
+    const clmmId = clmmInfo.id
+    const positionNftMint = userPositionAccount.nftMint
+    const slippage = slippageS()
     return txDispatcher("clmm position increase", {
       ...params,
       clmmId,
@@ -219,7 +224,27 @@ export function useClmmUserPositionAccount(
       slippage,
     })
   }
+
+  /** to txDispatcher("clmm position decrease") */
   function txClmmPositionDecrease(params: TxClmmPositionDecreaseUIFnParams) {
+    const rpcUrl = rpc()?.url
+    assert(rpcUrl, "for clmm position decrease, rpc url not ready")
+    const owner = ownerS()
+    assert(owner, "for clmm position decrease, owner not ready")
+    const clmmId = clmmInfo.id
+    const positionNftMint = userPositionAccount.nftMint
+    const slippage = slippageS()
+    return txDispatcher("clmm position decrease", {
+      ...params,
+      clmmId,
+      positionNftMint,
+      rpcUrl,
+      owner,
+      slippage,
+    })
+  }
+
+  function txClmmPositionSetToUSD(params: TxClmmPositionSetToUIFnParams) {
     const rpcUrl = params.rpcUrl ?? rpc()?.url
     assert(rpcUrl, "for clmm position decrease, rpc url not ready")
     const owner = params.owner ?? ownerS()
@@ -256,7 +281,7 @@ export function useClmmUserPositionAccount(
   createEffect(() => setUserPositionStore({ pendingRewardAmountUSD: pendingRewardAmountUSD() }))
   createEffect(() => setUserPositionStore({ hasRewardTokenAmount: hasRewardTokenAmount() }))
   createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
-  createEffect(() => setUserPositionStore({ txClmmPositionIncrease, txClmmPositionDecrease }))
+  createEffect(() => setUserPositionStore({ txClmmPositionIncrease, txClmmPositionDecrease, txClmmPositionSetToUSD }))
 
   return userPositionAccountStore
 }

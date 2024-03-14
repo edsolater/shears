@@ -4,11 +4,11 @@
  *
  **************************************************************************/
 
-import { div, mul, type Numberish, type Percent } from "@edsolater/fnkit"
+import { applyDecimal, div, mul, type Numberish, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { parseSDKBN, toSDKBN } from "../../utils/dataStructures/BN"
 import toPubString from "../../utils/dataStructures/Publickey"
-import type { AmountBN } from "../../utils/dataStructures/TokenAmount"
+import type { Amount, AmountBN } from "../../utils/dataStructures/TokenAmount"
 import { getEpochInfo } from "./connection/getEpochInfo"
 import { getMultiMintInfos } from "./connection/getMultiMintInfos"
 import isCurrentToken2022 from "./isCurrentToken2022"
@@ -27,7 +27,7 @@ type ClmmPositionAmountBoundary = {
  * in worker thread
  */
 export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
-  amount: AmountBN
+  amount: Amount
   rpcUrl: string
   clmmId: string
   positionNftMint: string
@@ -56,7 +56,7 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
     inputA: isInputSideA,
     tickLower: sdkClmmPositionInfo.tickLower,
     tickUpper: sdkClmmPositionInfo.tickUpper,
-    amount: toSDKBN(payload.amount),
+    amount: toSDKBN(applyDecimal(payload.amount, -jsonClmmInfo.mintDecimalsA)),
     add: true,
     epochInfo,
     token2022Infos,
@@ -78,7 +78,7 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
  * in worker thread
  */
 export async function getClmmDecreaseTxLiquidityAndBoundaryFromAmount(payload: {
-  amount: AmountBN
+  amount: Amount
   rpcUrl: string
   clmmId: string
   positionNftMint: string
@@ -96,7 +96,10 @@ export async function getClmmDecreaseTxLiquidityAndBoundaryFromAmount(payload: {
   const positionAmountA = parseSDKBN(sdkClmmPositionInfo.amountA)
   const positionAmountB = parseSDKBN(sdkClmmPositionInfo.amountB)
   const isInputSideA = payload.amountSide === "A"
-  const inputRadio: Percent = div(payload.amount, isInputSideA ? positionAmountA : positionAmountB)
+  const inputRadio: Percent = div(
+    applyDecimal(payload.amount, -jsonClmmInfo.mintDecimalsA),
+    isInputSideA ? positionAmountA : positionAmountB,
+  )
   const mintInfosPromise = getMultiMintInfos([jsonClmmInfo.mintA, jsonClmmInfo.mintB], {
     rpcUrl: payload.rpcUrl,
   })
