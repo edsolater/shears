@@ -82,7 +82,6 @@ export async function getClmmDecreaseTxLiquidityAndBoundaryFromAmount(payload: {
   rpcUrl: string
   clmmId: string
   positionNftMint: string
-
   amountSide: "A" | "B"
 }): Promise<ClmmPositionAmountBoundary | undefined> {
   const jsonClmmInfo = jsonClmmInfoCache.get(payload.clmmId)
@@ -110,17 +109,7 @@ export async function getClmmDecreaseTxLiquidityAndBoundaryFromAmount(payload: {
   const inputAmountB = mul(inputRadio, positionAmountB)
   return {
     liquidity: mul(parseSDKBN(sdkClmmPositionInfo.liquidity), inputRadio),
-    amountAInfo: getTransferAmountFee(
-      isInputSideA ? inputAmountA : inputAmountB,
-      (isInputSideA ? mintInfoA : mintInfoB).feeConfig,
-      epochInfo,
-      false,
-    ),
-    amountBInfo: getTransferAmountFee(
-      isInputSideA ? inputAmountB : inputAmountA,
-      (isInputSideA ? mintInfoB : mintInfoA).feeConfig,
-      epochInfo,
-      false,
-    ),
+    amountAInfo: getTransferAmountFee(inputAmountA, mintInfoA.feeConfig, epochInfo, false),
+    amountBInfo: getTransferAmountFee(inputAmountB, mintInfoB.feeConfig, epochInfo, false),
   }
 }

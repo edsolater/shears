@@ -3,11 +3,10 @@ import { txClmmPositionIncrease } from "../../stores/data/txClmmPositionIncrease
 import { txSwap } from "../../stores/data/txSwap"
 import type { PortUtils } from "../webworker/createMessagePortTransforers"
 import type { TxHandlerEventCenter } from "./txHandler"
-import type { TxResponse } from "./txDispatcher_main"
+import type { TxDispatcherParams, TxResponse } from "./txDispatcher_main"
+import { txClmmPositionDecrease } from "../../stores/data/txClmmPositionDecrease"
 
-export async function txDispatcher_worker(
-  transformers: PortUtils<{ name: string; txParams: any /* too difficult to type details */ }, TxResponse>,
-) {
+export async function txDispatcher_worker(transformers: PortUtils<TxDispatcherParams, TxResponse>) {
   const { receiver, sender } = transformers.getMessagePort("tx start")
   const txSubscribable = createSubscribable<{ name: string; txEventCenter: MayPromise<TxHandlerEventCenter> }>()
   // 🤔 whether should destory after tx is end?
@@ -20,16 +19,22 @@ export async function txDispatcher_worker(
     })
   })
   receiver.subscribe((config) => {
-    console.log("[worker] config: ", config)
-    switch (config.name) {
+    const [name, txParams] = config
+    console.log("[worker txDispatcher] get name: ", name, "txParams: ", txParams)
+    switch (name) {
       case "swap": {
-        const txEventCenter = txSwap(config.txParams)
-        txSubscribable.set({ name: config.name, txEventCenter })
+        const txEventCenter = txSwap(txParams)
+        txSubscribable.set({ name: name, txEventCenter })
         break
       }
       case "clmm position increase": {
-        const txEventCenter = txClmmPositionIncrease(config.txParams)
-        txSubscribable.set({ name: config.name, txEventCenter })
+        const txEventCenter = txClmmPositionIncrease(txParams)
+        txSubscribable.set({ name: name, txEventCenter })
+        break
+      }
+      case "clmm position decrease": {
+        const txEventCenter = txClmmPositionDecrease(txParams)
+        txSubscribable.set({ name: name, txEventCenter })
         break
       }
     }
@@ -40,4 +45,3 @@ export async function txDispatcher_worker(
     // })
   })
 }
-

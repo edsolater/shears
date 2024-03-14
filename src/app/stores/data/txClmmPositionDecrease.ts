@@ -11,29 +11,29 @@ import { getConnection } from "../../utils/dataStructures/Connection"
 import toPubString from "../../utils/dataStructures/Publickey"
 import { type AmountBN } from "../../utils/dataStructures/TokenAmount"
 import { txHandler } from "../../utils/txHandler"
-import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
+import { getClmmDecreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import { toHumanReadable } from "./utils/toHumanReadable"
 
-export type TxClmmPositionIncreaseParams = {
+export type TxClmmPositionDecreaseParams = {
   rpcUrl: string
   owner: string
   clmmId: string
   positionNftMint: string
-  slippage: Percent // e.g. 0.01
+  slippage?: Percent // e.g. 0.01
 
   amountA?: AmountBN
   amountB?: AmountBN
 }
 
 /** need amountA or amountB */
-export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
+export async function txClmmPositionDecrease(params: TxClmmPositionDecreaseParams) {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
-  console.log("[worker tx core algorithm] start compose tx clmm position increase")
-  assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
+  console.log('amountSide: ', amountSide)
+  console.log("[worker tx core algorithm] start compose tx clmm position decrease")
   assert(isPositive(amount), "amountA should be positive, amountA: " + toFormattedNumber(amount))
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
@@ -46,18 +46,20 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
   assert(sdkClmmInfo, "sdkClmmInfo not ready, sdkClmmInfo: " + sdkClmmInfo)
   assert(sdkClmmPositionInfo, "sdkClmmPositionInfo not ready, sdkClmmPositionInfo: " + sdkClmmPositionInfo)
 
-  const info = await getClmmIncreaseTxLiquidityAndBoundaryFromAmount({
+  const info = await getClmmDecreaseTxLiquidityAndBoundaryFromAmount({
     amount: amount,
     rpcUrl: params.rpcUrl,
     clmmId: params.clmmId,
     positionNftMint: params.positionNftMint,
     amountSide: amountSide,
   })
-  assert(info, `${getClmmIncreaseTxLiquidityAndBoundaryFromAmount.name} fail to work`)
+  assert(info, `${getClmmDecreaseTxLiquidityAndBoundaryFromAmount.name} fail to work`)
   const { liquidity, amountAInfo, amountBInfo } = info
-  const amountA = amountAInfo.amountWithFeeBN
-  const amountB = amountBInfo.amountWithFeeBN
+  const { amountWithFeeBN: amountA, feeBN: feeA } = amountAInfo
+  const { amountWithFeeBN: amountB, feeBN: feeB } = amountBInfo
 
+  console.log('amountA: ', amountA)
+  console.log('amountB: ', amountB)
   const txEventCenter = txHandler(
     {
       connection,
@@ -75,7 +77,7 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
       const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
       const txParams = {
         connection: connection,
-        liquidity: toSDKBN(mul(liquidity, minus(1, params.slippage))),
+        liquidity: toSDKBN(liquidity),
         poolInfo: sdkClmmInfo.state,
         ownerInfo: {
           feePayer: owner,
@@ -86,25 +88,23 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
         ownerPosition: sdkClmmPositionInfo,
         computeBudgetConfig: txBudgetConfig,
         checkCreateATAOwner: true,
-        amountMaxA: toSDKBN(amountA),
-        amountMaxB: toSDKBN(amountB),
+        amountMinA: toSDKBN(feeA ? minus(amountA, feeA) : amountA),
+        amountMinB: toSDKBN(feeB ? minus(amountB, feeB) : amountB),
         makeTxVersion: sdkTxVersion,
         lookupTableCache: sdkLookupTableCache,
       }
-      console.log('[tx] clmm position increase txParams: ', toHumanReadable(txParams))
-      const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams).catch(
-        (e) => {
-          console.error(e)
-          return { innerTransactions: [] }
-        },
-      )
+      console.log("[tx] clmm position decrease txParams: ", toHumanReadable(txParams))
+      const { innerTransactions } = await Clmm.makeDecreaseLiquidityInstructionSimple(txParams).catch((e) => {
+        console.error(e)
+        return { innerTransactions: [] }
+      })
       assert(innerTransactions, "sdk compose innerTransactions failed, innerTransactions: " + innerTransactions)
       return innerTransactions
     },
     { sendMode: "queue" },
   )
-  // assert(options.liquidity, "liquidity not found") // Temp for Dev. // TODO: use getClmmIncreaseTxLiquidityAndBoundaryFromAmount
-  // assert(options.amountB, "amountB not found") // Temp for Dev. // TODO: use getClmmIncreaseTxLiquidityAndBoundaryFromAmount
+  // assert(options.liquidity, "liquidity not found") // Temp for Dev. // TODO: use getClmmDecreaseTxLiquidityAndBoundaryFromAmount
+  // assert(options.amountB, "amountB not found") // Temp for Dev. // TODO: use getClmmDecreaseTxLiquidityAndBoundaryFromAmount
 
   return txEventCenter
 }

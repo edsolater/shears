@@ -216,10 +216,17 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
             })
           }}
         >
-          {" "}
-          +{" "}
-        </Button> 
-        <Button> - </Button>
+          +
+        </Button>
+        <Button
+          onClick={() => {
+            positionAccount.txClmmPositionDecrease({
+              amountB: 100000, // TODO: should be input
+            })
+          }}
+        >
+          -
+        </Button>
       </Row>
     </Row>
   )

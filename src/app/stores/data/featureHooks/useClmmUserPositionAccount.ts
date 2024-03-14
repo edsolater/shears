@@ -1,5 +1,6 @@
 import {
   add,
+  assert,
   asyncMap,
   get,
   gt,
@@ -10,7 +11,6 @@ import {
   toFormattedNumber,
   type Numberish,
   type Optional,
-  assert,
 } from "@edsolater/fnkit"
 import { usePromise } from "@edsolater/pivkit"
 import { createEffect, createMemo, createSignal, on } from "solid-js"
@@ -19,6 +19,9 @@ import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useS
 import { applyDecimal } from "../../../pages/clmm"
 import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
 import type { Price, USDVolume } from "../../../utils/dataStructures/type"
+import type { TxHandlerEventCenter } from "../../../utils/txHandler"
+import { txDispatcher } from "../../../utils/txHandler/txDispatcher_main"
+import { useWalletOwner } from "../../wallet/store"
 import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
 import { getTransferFeeInfo } from "../connection/getTransferFeeInfos"
@@ -26,11 +29,9 @@ import isCurrentToken2022 from "../isCurrentToken2022"
 import { shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
-import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
+import type { TxClmmPositionDecreaseParams } from "../txClmmPositionDecrease"
 import type { TxClmmPositionIncreaseParams } from "../txClmmPositionIncrease"
-import { useWalletOwner } from "../../wallet/store"
-import { txDispatcher } from "../../../utils/txHandler/txDispatcher_main"
-import type { TxHandlerEventCenter } from "../../../utils/txHandler"
+import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 
 type AdditionalClmmUserPositionAccount = {
   rangeName: string
@@ -40,11 +41,17 @@ type AdditionalClmmUserPositionAccount = {
   hasRewardTokenAmount: boolean
   isHarvestable: boolean
   txClmmPositionIncrease: (params: TxClmmPositionIncreaseUIFnParams) => TxHandlerEventCenter
+  txClmmPositionDecrease: (params: TxClmmPositionDecreaseUIFnParams) => TxHandlerEventCenter
 }
 
 /** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionIncrease */
 type TxClmmPositionIncreaseUIFnParams = Optional<
   TxClmmPositionIncreaseParams,
+  "clmmId" | "positionNftMint" | "rpcUrl" | "owner" | "slippage"
+>
+/** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionDecrease */
+type TxClmmPositionDecreaseUIFnParams = Optional<
+  TxClmmPositionDecreaseParams,
   "clmmId" | "positionNftMint" | "rpcUrl" | "owner" | "slippage"
 >
 /**
@@ -212,6 +219,23 @@ export function useClmmUserPositionAccount(
       slippage,
     })
   }
+  function txClmmPositionDecrease(params: TxClmmPositionDecreaseUIFnParams) {
+    const rpcUrl = params.rpcUrl ?? rpc()?.url
+    assert(rpcUrl, "for clmm position decrease, rpc url not ready")
+    const owner = params.owner ?? ownerS()
+    assert(owner, "for clmm position decrease, owner not ready")
+    const clmmId = params.clmmId ?? clmmInfo.id
+    const positionNftMint = params.positionNftMint ?? userPositionAccount.nftMint
+    const slippage = params.slippage ?? slippageS()
+    return txDispatcher("clmm position decrease", {
+      ...params,
+      clmmId,
+      positionNftMint,
+      rpcUrl,
+      owner,
+      slippage,
+    })
+  }
 
   const [userPositionAccountStore, setUserPositionStore] = createStore(
     userPositionAccount as AdditionalClmmUserPositionAccount & ClmmUserPositionAccount,
@@ -232,7 +256,7 @@ export function useClmmUserPositionAccount(
   createEffect(() => setUserPositionStore({ pendingRewardAmountUSD: pendingRewardAmountUSD() }))
   createEffect(() => setUserPositionStore({ hasRewardTokenAmount: hasRewardTokenAmount() }))
   createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
-  createEffect(() => setUserPositionStore({ txClmmPositionIncrease: txClmmPositionIncrease }))
+  createEffect(() => setUserPositionStore({ txClmmPositionIncrease, txClmmPositionDecrease }))
 
   return userPositionAccountStore
 }
