@@ -1,9 +1,8 @@
-import { assert, count, div, eq, gt, type Numberish } from "@edsolater/fnkit"
-import { Box, Col, cssOpacity, Icon, KitProps, Loop, Row, Text, useKitProps } from "@edsolater/pivkit"
-import { createEffect, onMount, Show, type Accessor } from "solid-js"
-import { createStore, reconcile } from "solid-js/store"
+import { count, eq, gt } from "@edsolater/fnkit"
+import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
+import { Show, createEffect, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
-import { Button, parseICSSToClassName, Tab, TabList, Tabs } from "../../packages/pivkit"
+import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
 import {
   DatabaseTable,
@@ -21,16 +20,13 @@ import {
   allClmmTabs,
   createStorePropertySignal,
   shuck_clmmInfos,
-  shuck_rpc,
   shuck_tokenPrices,
   shuck_tokens,
 } from "../stores/data/store"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
-import { useWalletOwner } from "../stores/wallet/store"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
-import { txDispatcher } from "../utils/txHandler/txDispatcher_main"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -229,8 +225,8 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         </Button>
         <Button
           onClick={() => {
-            positionAccount.txClmmPositionSetToUSD({
-              usd: 5, // TODO: should be input
+            positionAccount.txClmmPositionSet({
+              usd: 9, // TODO: should be input
             })
           }}
         >
@@ -253,23 +249,4 @@ function ClmmPageTabBlock(props: { className?: string }) {
 
 function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
-}
-
-// 🔥 already in pivkit
-/** T must is object */
-function createStoreFromAccessor<T extends object>(
-  signal: Accessor<T>,
-  options?: {
-    key: string
-  },
-) {
-  const [store, setStore] = createStore(signal())
-  createEffect(() => {
-    setStore(reconcile(signal(), { key: options?.key }))
-  })
-  return store
-}
-
-export function applyDecimal(n: Numberish, decimal: number): Numberish {
-  return div(n, Math.pow(10, decimal)) // TODO: should be faster
 }
