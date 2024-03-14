@@ -56,7 +56,7 @@ export interface TxSuccessInfo extends TxInfo, MultiTxExtraInfo {
   signatureResult: SignatureResult
   context: Context
 }
-export interface TxSentSuccessInfo extends TxInfo, MultiTxExtraInfo {}
+export interface TxSendSuccessInfo extends TxInfo, MultiTxExtraInfo {}
 export interface TxFinalBatchSuccessInfo {
   allSuccess: true
   txids: string[]
@@ -66,7 +66,7 @@ export interface TxErrorInfo extends TxInfo, MultiTxExtraInfo {
   context: Context
   error?: TransactionError
 }
-export interface TxSentErrorInfo extends Omit<TxInfo, "txid">, Omit<MultiTxExtraInfo, "passedMultiTxids"> {
+export interface TxSendErrorInfo extends Omit<TxInfo, "txid">, Omit<MultiTxExtraInfo, "passedMultiTxids"> {
   err: unknown
 }
 export type TxFinalInfo =
@@ -105,8 +105,8 @@ type TxSuccessCallback = (info: TxSuccessInfo) => void
 type TxErrorCallback = (info: TxErrorInfo) => void
 type TxFinallyCallback = (info: TxFinalInfo) => void
 
-type TxSentSuccessCallback = (info: TxSentSuccessInfo) => void
-type TxSentErrorCallback = (info: TxSentErrorInfo) => void
+type TxSendSuccessCallback = (info: TxSendSuccessInfo) => void
+type TxSendErrorCallback = (info: TxSendErrorInfo) => void
 type TxSentFinallyCallback = () => void
 
 type TxBeforeSendErrorCallback = (err: unknown) => void
@@ -144,8 +144,8 @@ export interface SingleTxCallbacks {
   onTxSuccess?: TxSuccessCallback
   onTxError?: TxErrorCallback
   onTxFinally?: TxFinallyCallback
-  onTxSentSuccess?: TxSentSuccessCallback
-  onTxSentError?: TxSentErrorCallback
+  onTxSendSuccess?: TxSendSuccessCallback
+  onTxSendError?: TxSendErrorCallback
   onTxSentFinally?: TxSentFinallyCallback
 }
 
@@ -201,8 +201,8 @@ export interface TxHandlerEventCenter
   extends EventCenter<{
     txSuccess: TxSuccessCallback
     txError: TxErrorCallback
-    sendSuccess: TxSentSuccessCallback
-    sendError: TxSentErrorCallback
+    sendSuccess: TxSendSuccessCallback
+    sendError: TxSendErrorCallback
 
     beforeSendError: TxBeforeSendErrorCallback
     txAllSuccess: AllSuccessCallback
@@ -263,11 +263,11 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       parsedSignleTxOptions[info.currentIndex]?.onTxFinally?.({ ...info, type: "error" })
     })
     eventCenter.on("sendSuccess", (info) => {
-      parsedSignleTxOptions[info.currentIndex]?.onTxSentSuccess?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onTxSendSuccess?.(info)
       parsedSignleTxOptions[info.currentIndex]?.onTxSentFinally?.()
     })
     eventCenter.on("sendError", (info) => {
-      parsedSignleTxOptions[info.currentIndex]?.onTxSentError?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onTxSendError?.(info)
       parsedSignleTxOptions[info.currentIndex]?.onTxSentFinally?.()
     })
     eventCenter.on("txAllSuccess", (info) => {
@@ -286,6 +286,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     })
     console.log("main thread sign transactions complete: ", allSignedTransactions)
 
+    console.log('compose tx')
     // load send tx function
     const senderFn = composeTransactionSenderWithDifferentSendMode({
       transactions: allSignedTransactions,
@@ -293,11 +294,11 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
       singleOptions: parsedSignleTxOptions,
       payload,
       callbacks: {
-        onSentError: (info) => {
+        onSendError: (info) => {
           console.log("txSendError", info)
           eventCenter.emit("sendError", [info])
         },
-        onSentSuccess(info) {
+        onSendSuccess(info) {
           console.log("txSendSuccess", info)
           eventCenter.emit("sendSuccess", [info])
         },
@@ -348,11 +349,11 @@ function makeMultiOptionIntoSignalOptions({
 
   const parseMultiOptionsIntoSingleOptions = produce(singleOptions, (options) => {
     options.forEach((option) => {
-      option.onTxSentSuccess = mergeFunction(
+      option.onTxSendSuccess = mergeFunction(
         (({ txid }) => {
           txids.push(txid)
-        }) as TxSentSuccessCallback,
-        option.onTxSentSuccess ?? (() => {}),
+        }) as TxSendSuccessCallback,
+        option.onTxSendSuccess ?? (() => {}),
       )
       option.onTxError = mergeFunction(
         (() => {
@@ -386,8 +387,8 @@ function composeTransactionSenderWithDifferentSendMode({
   callbacks: {
     onTxSuccess?: TxSuccessCallback
     onTxError?: TxErrorCallback
-    onSentSuccess?: TxSentSuccessCallback
-    onSentError?: TxSentErrorCallback
+    onSendSuccess?: TxSendSuccessCallback
+    onSendError?: TxSendErrorCallback
   }
 }): () => void {
   const wholeTxidInfo: Omit<MultiTxExtraInfo, "currentIndex"> = {
@@ -455,8 +456,8 @@ async function sendOneTransactionWithOptions({
   callbacks?: {
     onTxSuccess?: TxSuccessCallback
     onTxError?: TxErrorCallback
-    onSentSuccess?: TxSentSuccessCallback
-    onSentError?: TxSentErrorCallback
+    onSendSuccess?: TxSendSuccessCallback
+    onSendError?: TxSendErrorCallback
   }
   payload: TxHandlerPayload
   isBatched?: boolean
@@ -474,7 +475,7 @@ async function sendOneTransactionWithOptions({
       cache: Boolean(singleOption?.cacheTransaction),
     })
     assert(txid, "something went wrong in sending transaction, getted txid empty")
-    callbacks?.onSentSuccess?.({ transaction, txid, ...extraTxidInfo })
+    callbacks?.onSendSuccess?.({ transaction, txid, ...extraTxidInfo })
 
     wholeTxidInfo.passedMultiTxids[currentIndex] = txid //! 💩 bad method! it's mutate method!
     const txEventCenter = subscribeTx({
@@ -492,6 +493,6 @@ async function sendOneTransactionWithOptions({
       callbacks?.onTxError?.({ ...info, ...extraTxidInfo })
     })
   } catch (err) {
-    callbacks?.onSentError?.({ err, transaction, ...extraTxidInfo })
+    callbacks?.onSendError?.({ err, transaction, ...extraTxidInfo })
   }
 }
