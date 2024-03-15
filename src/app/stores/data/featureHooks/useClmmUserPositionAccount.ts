@@ -13,6 +13,7 @@ import {
   type Numberish,
   applyDecimal,
   minus,
+  isExist,
 } from "@edsolater/fnkit"
 import { createLazyMemo, usePromise } from "@edsolater/pivkit"
 import { createEffect, createMemo, createSignal, on } from "solid-js"
@@ -27,7 +28,14 @@ import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
 import { getTransferFeeInfo } from "../connection/getTransferFeeInfos"
 import isCurrentToken2022 from "../isCurrentToken2022"
-import { shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
+import {
+  shuck_balances,
+  shuck_rpc,
+  shuck_slippage,
+  shuck_tokenAccounts,
+  shuck_tokenPrices,
+  shuck_tokens,
+} from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
@@ -69,7 +77,8 @@ export function useClmmUserPositionAccount(
   const rpcS = useShuckValue(shuck_rpc)
   const ownerS = useWalletOwner()
   const slippageS = useShuckValue(shuck_slippage)
-
+  const balancesS = useShuckValue(shuck_balances)
+  const tokenAccountsS = useShuckValue(shuck_tokenAccounts)
   const userLiquidityUSD = createLazyMemo(() => {
     const tokenAPrices = priceA()
     const tokenBPrices = priceB()
@@ -302,8 +311,15 @@ export function useClmmUserPositionAccount(
    */
   function txClmmPositionIncreaseAllWalletRest() {
     const side = getActionSide()
-    // const userWalletTokenAmountA = tokenAm
-    return txClmmPositionIncrease(side === "A" ? { amountA: 0.1 /* TEMPDEV */ } : { amountB: 0.1 })
+    const balances = balancesS()
+    const balanceOfTargetSideRawBN = get(balances, side === "A" ? clmmInfo.base : clmmInfo.quote)
+    const balanceOfTargetSide = isExist(balanceOfTargetSideRawBN)
+      ? toTokenAmount(side === "A" ? tokenA : tokenB, balanceOfTargetSideRawBN, { amountIsBN: true })
+      : undefined
+    assert(balanceOfTargetSide, "balance of target side not ready")
+    return txClmmPositionIncrease(
+      side === "A" ? { amountA: balanceOfTargetSide.amount } : { amountB: balanceOfTargetSide.amount },
+    )
   }
 
   const [userPositionAccountStore, setUserPositionStore] = createStore(

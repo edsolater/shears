@@ -9,12 +9,13 @@ import { parseSDKBN } from "./BN"
 import toPubString, { toPub } from "./Publickey"
 import { TOKEN_PROGRAM_ID } from "../../stores/data/token/utils"
 import { getConnection } from "./Connection"
+import { SOLMint } from "../../configs/wellKnownMints"
 
 export interface TokenAccount {
   programId: string
   isAssociated?: boolean // is ATA
-  mint?: string
-  publicKey?: string
+  mint: string
+  publicKey: string
   amount: bigint
   isNative: boolean // only SOL is true
 }
@@ -100,6 +101,8 @@ export async function getTokenAccounts({
     tokenAccounts.push({
       programId: TOKEN_PROGRAM_ID,
       amount: BigInt(solResp ? solResp.lamports : 0),
+      mint: SOLMint,
+      publicKey: owner,
       isNative: true,
     })
 

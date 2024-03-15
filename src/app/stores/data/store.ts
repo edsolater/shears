@@ -2,7 +2,7 @@
  * only in main thread
  *******************************/
 
-import { createSmartStore } from "@edsolater/pivkit"
+import { addEventListener, createSmartStore } from "@edsolater/pivkit"
 import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
 import { RAYMint, SOLMint } from "../../configs/wellKnownMints"
 import { Mint, Numberish, type Price } from "../../utils/dataStructures/type"
@@ -18,6 +18,9 @@ import type { ClmmJsonInfo } from "./types/clmm"
 import { ClmmInfos } from "./types/clmm"
 import { FarmInfo, FarmJSON } from "./types/farm"
 import { PairInfo } from "./types/pairs"
+import type { TokenAccount } from "../../utils/dataStructures/TokenAccount"
+import type { Items } from "@edsolater/fnkit"
+import { loadOwnerTokenAccounts } from "./portActions/loadOwnerTokenAccounts_main"
 
 export type StoreData = {
   // -------- swap --------
@@ -75,15 +78,20 @@ export const {
 globalThis.document.addEventListener("DOMContentLoaded", () => {
   loadTokens()
   loadTokenPrice()
+  loadOwnerTokenAccounts()
+  console.log('🤔')
 })
 
 // TODO: should all state just use shuck
 // token
 export const shuck_isTokenPricesLoading = createShuck<boolean | undefined>()
 export const shuck_tokenPrices = createShuck<Map<Mint, Price> | undefined>()
+// token accounts & balance
+export const shuck_isTokenAccountsLoading = createShuck<boolean | undefined>()
+export const shuck_tokenAccounts = createShuck<Items<TokenAccount, TokenAccount["publicKey"]> | undefined>()
+export const shuck_balances = createShuck<Items<Numberish, Mint> | undefined>() // TODO: should extends by tokenAccounts
 // wallet
 export const shuck_owner = createShuck<string | undefined>()
-
 // app settings
 export const shuck_txVersion = createShuck<TxVersion | undefined>()
 export const shuck_rpc = createShuck<RPCEndpoint | undefined>()
@@ -92,13 +100,14 @@ export const shuck_slippage = createShuck<Numberish>(0.003)
 // clmm
 export const shuck_isClmmJsonInfoLoading = createShuck<boolean | undefined>()
 export const shuck_clmmInfos = createShuck<ClmmInfos | undefined>()
+// clmm ui
+export const allClmmTabs = ["ALL", "MY POOLS"] as const
+export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
 // token
 export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
 export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()
 export const shuck_tokens = createShuck<Tokens | undefined>()
 
-export const allClmmTabs = ["ALL", "MY POOLS"] as const
-export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 
 // export const {

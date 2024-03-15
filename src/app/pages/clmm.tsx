@@ -242,13 +242,19 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         </Button>
         <Button
           onClick={() => {
-            // positionAccount.txClmmPositionSet({
-            //   usd: 9, // TODO: should be input
-            // })
-            positionAccount.txClmmPositionIncreaseAllWalletRest()
+            positionAccount.txClmmPositionSet({
+              usd: 9, // TODO: should be input
+            })
           }}
         >
           Set To
+        </Button>
+        <Button
+          onClick={() => {
+            positionAccount.txClmmPositionIncreaseAllWalletRest()
+          }}
+        >
+          Rush all
         </Button>
       </Row>
     </Row>
