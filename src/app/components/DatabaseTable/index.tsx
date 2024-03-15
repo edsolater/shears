@@ -295,5 +295,6 @@ export function DatabaseTableItemCollapseContent<T>(
 ) {
   const { props, shadowProps } = useKitProps(kitProps, { name: "DatabaseTableItemCollapseContent" })
   const isFavourite = () => false
-  return <Box icss={databaseTableItemCollapseContentStyle}>{props.innerConfig.render(props.item)}</Box>
+  const renderContent = props.innerConfig.render(props.item)
+  return <Box icss={databaseTableItemCollapseContentStyle}>{renderContent}</Box>
 }

@@ -15,6 +15,7 @@ import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
 import { useClmmUserPositionAccount } from "../stores/data/featureHooks/useClmmUserPositionAccount"
+import { useClmmInfo } from "../stores/data/featureHooks/useClmmInfo"
 import { loadClmmInfos } from "../stores/data/portActions/loadClmmInfos_main"
 import {
   allClmmTabs,
@@ -79,6 +80,9 @@ export default function ClmmsPage() {
     {
       name: "Rewards",
     },
+    {
+      name: "Strategy",
+    },
   ]
   const itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<ClmmInfo> = [
     {
@@ -109,6 +113,24 @@ export default function ClmmsPage() {
           <Loop of={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} size={"sm"} />}</Loop>
         </Row>
       ),
+    },
+    {
+      name: "Strategy",
+      render: (i) => {
+        const clmmInfo = useClmmInfo(i)
+        return (
+          <Row icss={{ gap: "2px" }}>
+            <Button
+              onClick={() => {
+                clmmInfo.txH()
+              }}
+              // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
+            >
+              Apply my strategy
+            </Button>
+          </Row>
+        )
+      },
     },
   ]
   const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
@@ -154,12 +176,8 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
   return (
     <Row
       icss={{
-        display: "grid",
-        gridAutoFlow: "column",
-        gridAutoColumns: "1fr",
-        gap: "20px",
+        gap: "16px",
         margin: "8px 32px",
-        paddingInline: "40px",
         alignItems: "center",
         justifyContent: "space-between",
       }}
@@ -202,7 +220,7 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
       {/* pending yield */}
       <Text icss={{ textAlign: "end" }}>{toUsdVolume(positionAccount.pendingRewardAmountUSD)}</Text>
 
-      <Row icss={{ gap: "10%" }}>
+      <Row icss={{ gap: "8px" }}>
         <Button>Harvest</Button>
         <Button
           onClick={() => {
@@ -224,12 +242,13 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         </Button>
         <Button
           onClick={() => {
-            positionAccount.txClmmPositionSet({
-              usd: 9, // TODO: should be input
-            })
+            // positionAccount.txClmmPositionSet({
+            //   usd: 9, // TODO: should be input
+            // })
+            positionAccount.txClmmPositionIncreaseAllWalletRest()
           }}
         >
-          To
+          Set To
         </Button>
       </Row>
     </Row>

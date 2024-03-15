@@ -42,6 +42,7 @@ type AdditionalClmmUserPositionAccount = {
   txClmmPositionIncrease: (params: TxClmmPositionIncreaseUIFnParams) => TxHandlerEventCenter
   txClmmPositionDecrease: (params: TxClmmPositionDecreaseUIFnParams) => TxHandlerEventCenter
   txClmmPositionSet: (params: TxClmmPositionSetToUIFnParams) => TxHandlerEventCenter | undefined
+  txClmmPositionIncreaseAllWalletRest: () => TxHandlerEventCenter | undefined
 }
 
 /** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionIncrease */
@@ -238,7 +239,7 @@ export function useClmmUserPositionAccount(
   }
 
   /** a shortcut of {@link txClmmPositionDecrease} and {@link txClmmPositionIncrease} */
-  function txClmmPositionSetToUSD(params: TxClmmPositionSetToUIFnParams) {
+  function txClmmPositionSetUSD(params: TxClmmPositionSetToUIFnParams) {
     const rpcUrl = rpcS()?.url
     assert(rpcUrl, "for clmm position decrease, rpc url not ready")
     const owner = ownerS()
@@ -288,6 +289,23 @@ export function useClmmUserPositionAccount(
     }
   }
 
+  function getActionSide(): "A" | "B" {
+    if (gt(clmmInfo.currentPrice, userPositionAccount.priceUpper)) {
+      return "B"
+    } else {
+      return "A"
+    }
+  }
+
+  /**
+   * @todo TEMPDEV currently only support increase out of range position
+   */
+  function txClmmPositionIncreaseAllWalletRest() {
+    const side = getActionSide()
+    // const userWalletTokenAmountA = tokenAm
+    return txClmmPositionIncrease(side === "A" ? { amountA: 0.1 /* TEMPDEV */ } : { amountB: 0.1 })
+  }
+
   const [userPositionAccountStore, setUserPositionStore] = createStore(
     userPositionAccount as AdditionalClmmUserPositionAccount & ClmmUserPositionAccount,
   )
@@ -308,7 +326,12 @@ export function useClmmUserPositionAccount(
   createEffect(() => setUserPositionStore({ hasRewardTokenAmount: hasRewardTokenAmount() }))
   createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
   createEffect(() =>
-    setUserPositionStore({ txClmmPositionIncrease, txClmmPositionDecrease, txClmmPositionSet: txClmmPositionSetToUSD }),
+    setUserPositionStore({
+      txClmmPositionIncrease,
+      txClmmPositionDecrease,
+      txClmmPositionSet: txClmmPositionSetUSD,
+      txClmmPositionIncreaseAllWalletRest,
+    }),
   )
 
   return userPositionAccountStore
