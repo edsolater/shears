@@ -1,4 +1,4 @@
-import { AnyFn } from "@edsolater/fnkit"
+import { AnyFn, createInvoker } from "@edsolater/fnkit"
 import {
   IconProps,
   ItemBoxProps,
@@ -9,7 +9,6 @@ import {
   useKitProps,
 } from "@edsolater/pivkit"
 import { createEffect } from "solid-js"
-import { motivate } from "../../packages/fnkit"
 
 export type AddressItemProps = ItemBoxProps &
   KitProps<{
@@ -48,7 +47,7 @@ export function AddressChip(kitProps: AddressItemProps) {
     ev.stopPropagation()
     if (!isCopied)
       copyToClipboard(props.publicKey)
-        .then(motivate(turnOnCopyState))
+        .then(createInvoker(turnOnCopyState))
         .then(() => props.onCopied?.(props.publicKey))
   }
 

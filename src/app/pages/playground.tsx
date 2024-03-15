@@ -37,7 +37,7 @@ import {
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
-import { motivate } from "../../packages/fnkit"
+import { createInvoker } from "@edsolater/fnkit"
 import { CircularProgress } from "../components/CircularProgress"
 import { ExamplePanel } from "../components/ExamplePanel"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
@@ -279,7 +279,7 @@ function CSSCollapseComponentExample() {
 
   return (
     <>
-      <Button onClick={motivate(toggle)}>Collapse</Button>
+      <Button onClick={createInvoker(toggle)}>Collapse</Button>
       <CollapseBox
         open={isOpen()}
         icss={{
@@ -298,7 +298,7 @@ function CSSAutoSizeTransitionExample() {
   const [isOpen, { toggle }] = createDisclosure()
   return (
     <>
-      <Button onClick={motivate(toggle)}>size change</Button>
+      <Button onClick={createInvoker(toggle)}>size change</Button>
       <Piv
         plugin={plugin}
         icss={{

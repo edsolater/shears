@@ -3,12 +3,12 @@
  * observe user action towards the object|function
  * *********
  */
-import { createSubscribable, shrinkFn } from "@edsolater/fnkit"
+import { createSubscribable, shrinkFn, invoke, asyncInvoke } from "@edsolater/fnkit"
 import { assignObject } from "../../fnkit/assignObject"
 import { Shuck, isShuckVisiable } from "./shuck"
 
 export type TaskRunner = {
-  (): void
+  (): Promise<void>
   relatedShucks: Shuck<any>[]
   readonly visiable: boolean // TODO: need to be a subscribable
 }
@@ -16,6 +16,7 @@ export type TaskManager = {
   // main method of task, run if needed (any of shucks is visiable)
   run(): void
   taskRunner: TaskRunner
+  destory(): void
 }
 
 /**
@@ -41,39 +42,51 @@ export function createTask(
   options?: { visiable?: boolean | ((shucks: Shuck<any>[]) => boolean) },
 ) {
   const isTaskVisiable = createSubscribable(checkAnyDependsVisiable(dependOns))
-  const taskRunner = (() => task()) as TaskRunner
+  const taskRunner = (() => asyncInvoke(task)) as TaskRunner
+  const unsubscribes: Set<() => void> = new Set()
+
   assignObject(taskRunner, {
     relatedShucks: dependOns,
     get visiable() {
       return shrinkFn(options?.visiable, [dependOns]) ?? dependOns.some(isShuckVisiable)
     },
   })
+
   for (const shuck of dependOns) {
-    shuck.visiable.subscribe((v) => {})
     // attachTaskToShuck(taskRunner, shuck) // task is triggered by subscribed shucks, but also attach shack to taskRunner make it easy to debug (easy for human to monitor the app tasks)
-    shuck.subscribe((v) => {
+    const { unsubscribe: unsubscribeShuck } = shuck.subscribe((v) => {
       if (isTaskVisiable()) {
         taskRunner()
       }
     })
-    shuck.visiable.subscribe(() => {
+    unsubscribes.add(unsubscribeShuck)
+    const { unsubscribe: unsubscribeShuckVisiable } = shuck.visiable.subscribe(() => {
       const isAnyVisiable = checkAnyDependsVisiable(dependOns)
       isTaskVisiable.set(isAnyVisiable)
     })
+    unsubscribes.add(unsubscribeShuckVisiable)
   }
-  isTaskVisiable.subscribe((v) => {
+
+  const taskVisiableSubscription = isTaskVisiable.subscribe((v) => {
     if (v) {
       taskRunner()
     }
   })
+
+  unsubscribes.add(taskVisiableSubscription.unsubscribe)
 
   const manager: TaskManager = {
     taskRunner,
     run(config?: { force?: boolean }) {
       if (config?.force ?? taskRunner.visiable) taskRunner()
     },
+    destory() {
+      unsubscribes.forEach(invoke)
+      unsubscribes.clear()
+    },
   }
   manager.run() // initly run the task
+
   return manager
 }
 

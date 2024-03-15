@@ -1,6 +1,6 @@
 import { count, eq, gt } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
-import { Show, createEffect, onMount } from "solid-js"
+import { Show, createEffect, onCleanup, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
@@ -49,10 +49,11 @@ export function ClmmItemFaceTokenAvatarLabel(kitProps: KitProps<{ info?: PairInf
 }
 
 export default function ClmmsPage() {
+  console.count("[clmm page loaded]")
   onMount(() => {
-    loadClmmInfos()
+    const taskManager = loadClmmInfos()
+    onCleanup(taskManager.destory)
   })
-  const clmmJsonInfos = createStorePropertySignal((s) => s.clmmJsonInfos) // start to load clmmJsonInfos
   const clmmInfos = useShuckValue(shuck_clmmInfos)
   createEffect(() => {
     const infos = clmmInfos()
@@ -62,8 +63,6 @@ export default function ClmmsPage() {
       console.log("clmmJson count: ", count(infos))
     }
   })
-  const tokenPrices = useShuckValue(shuck_tokenPrices)
-  const tokens = useShuckValue(shuck_tokens)
   const headerConfig: TabelHeaderConfigs<ClmmInfo> = [
     {
       name: "Pool",

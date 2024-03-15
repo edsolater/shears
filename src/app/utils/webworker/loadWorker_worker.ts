@@ -1,8 +1,7 @@
 /// <reference lib="webworker" />
-import "./worker_polyfill" // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import "./worker_polyfill"; // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { Subscribable, createSubscribable } from "@edsolater/fnkit"
-import { invoke, invokeOnce } from "../../../packages/fnkit"
+import { Subscribable, createSubscribable, invoke, invokeOnce } from "@edsolater/fnkit"
 import { encode } from "../dataTransmit/handlers"
 import { createMessagePortTransforers } from "./createMessagePortTransforers"
 import { isSenderMessage } from "./genMessageSender"

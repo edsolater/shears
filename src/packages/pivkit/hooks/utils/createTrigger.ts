@@ -51,19 +51,17 @@ export function createTrigger({
     off(): void
     toggle(): void
   }>()
-  eventCenter.registEvents({
-    on: () => {
-      setIsTriggerOn(true)
-      callbackOnStack.forEach((cb) => cb())
-    },
-    off: () => {
-      setIsTriggerOn(false)
-      callbackOffStack.forEach((cb) => cb())
-    },
-    toggle: () => {
-      setIsTriggerOn((b) => !b)
-      callbackToggleStack.forEach((cb) => cb())
-    },
+  eventCenter.on("on", () => {
+    setIsTriggerOn(true)
+    callbackOnStack.forEach((cb) => cb())
+  })
+  eventCenter.on("off", () => {
+    setIsTriggerOn(false)
+    callbackOffStack.forEach((cb) => cb())
+  })
+  eventCenter.on("toggle", () => {
+    setIsTriggerOn((b) => !b)
+    callbackToggleStack.forEach((cb) => cb())
   })
 
   function turnTriggerOn() {
