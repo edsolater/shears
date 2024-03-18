@@ -18,7 +18,7 @@ export async function fetchTokenPrices(tokens: TokenListStore["tokens"], raydium
       const coingeckoIdMap = Object.fromEntries(tokens.map((t) => [t.mint, t.extensions?.coingeckoId]))
       const reversedCoingeckoIdMap = new Map(Object.entries(coingeckoIdMap).map(([k, v]) => [v, k]))
       const coingeckoTokenPrices = coingeckoPrices
-        ? mapEntry(coingeckoPrices, (value, key) => ({ key: reversedCoingeckoIdMap.get(key), value: value.usd }))
+        ? mapEntry(coingeckoPrices, (value, key) => [reversedCoingeckoIdMap.get(key), value.usd])
         : undefined
       return coingeckoTokenPrices
     }),

@@ -28,7 +28,7 @@ function txFollowPosition(clmmInfo: ClmmInfo, option?: { mutePositionUSD?: numbe
   const upPositions = [] as ClmmUserPositionAccount[] // out of range
   const downPositions = [] as ClmmUserPositionAccount[] // out of range
 
-  for (const position of positions) {
+  for (const position of positions ?? []) {
     const priceLower = position.priceLower
     const priceUpper = position.priceUpper
 
@@ -111,6 +111,5 @@ function txFollowPosition(clmmInfo: ClmmInfo, option?: { mutePositionUSD?: numbe
     }
   }
 
-  // ---------------- handle tasks ----------------
-  
+  // ---------------- handle tasks (send tx) ----------------
 }

@@ -1,4 +1,4 @@
-import { MayFn, shrinkFn, toList, type Items } from "@edsolater/fnkit"
+import { MayFn, shrinkFn, toList, type Collection } from "@edsolater/fnkit"
 import {
   Accessor,
   For,
@@ -24,7 +24,7 @@ export interface ListController {
 }
 export type ListProps<T> = {
   children(item: T, index: () => number): JSXElement
-  items?: MayFn<Items<T>>
+  items?: MayFn<Collection<T>>
 
   /** lazy render for get init frame faster */
   async?: boolean

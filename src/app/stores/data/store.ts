@@ -19,7 +19,7 @@ import { ClmmInfos } from "./types/clmm"
 import { FarmInfo, FarmJSON } from "./types/farm"
 import { PairInfo } from "./types/pairs"
 import type { TokenAccount } from "../../utils/dataStructures/TokenAccount"
-import type { Items } from "@edsolater/fnkit"
+import type { Collection } from "@edsolater/fnkit"
 import { loadOwnerTokenAccounts } from "./portActions/loadOwnerTokenAccounts_main"
 
 export type StoreData = {
@@ -88,8 +88,8 @@ export const shuck_isTokenPricesLoading = createShuck<boolean | undefined>()
 export const shuck_tokenPrices = createShuck<Map<Mint, Price> | undefined>()
 // token accounts & balance
 export const shuck_isTokenAccountsLoading = createShuck<boolean | undefined>()
-export const shuck_tokenAccounts = createShuck<Items<TokenAccount, TokenAccount["publicKey"]> | undefined>()
-export const shuck_balances = createShuck<Items<Numberish, Mint> | undefined>() // TODO: should extends by tokenAccounts
+export const shuck_tokenAccounts = createShuck<Collection<TokenAccount, TokenAccount["publicKey"]> | undefined>()
+export const shuck_balances = createShuck<Collection<Numberish, Mint> | undefined>() // TODO: should extends by tokenAccounts
 // wallet
 export const shuck_owner = createShuck<string | undefined>()
 // app settings

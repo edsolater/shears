@@ -1,5 +1,6 @@
-import { hasProperty, MayArray, mergeObjects, pipe } from "@edsolater/fnkit"
-import { DeAccessifyProps, getUIKitTheme, hasUIKitTheme, accessifyProps } from ".."
+import { hasProperty, MayArray, mergeObjects, pipeDo } from "@edsolater/fnkit"
+import { accessifyProps, DeAccessifyProps, getUIKitTheme, hasUIKitTheme } from ".."
+import { LazyLoadObj, runtimeObjectFromAccess } from "../fnkit"
 import { getPropsFromAddPropContext } from "../piv/AddProps"
 import { getControllerObjFromControllerContext } from "../piv/ControllerContext"
 import { registerControllerInCreateKit } from "../piv/hooks/useComponentController"
@@ -14,7 +15,6 @@ import { HTMLTag, ValidController, ValidProps } from "../piv/typeTools"
 import { mergeProps } from "../piv/utils"
 import { AddDefaultPivProps, addDefaultPivProps } from "../piv/utils/addDefaultProps"
 import { omitItem } from "./utils"
-import { LazyLoadObj, runtimeObjectFromAccess } from "../fnkit"
 
 /** used for {@link useKitProps}'s option */
 export type KitPropsOptions<
@@ -137,7 +137,7 @@ function getParsedKitProps<
 
   // const startTime = performance.now()
   // merge kit props
-  const methods = pipe(
+  const methods = pipeDo(
     rawProps,
     //handle context props
     (props) => mergeProps(props, getPropsFromPropContextContext({ componentName: options?.name })),
@@ -168,7 +168,7 @@ function getParsedKitProps<
   const controller = methods.innerController ? mergeObjects(proxyController, methods.innerController) : proxyController
   // inject controller to props:innerController (📝!!!important notice, for lazyLoadController props:innerController will always be a prop of any component useKitProps)
   const shadowProps = mergeObjects(methods, { innerController: controller } as PivProps)
-  const accessifiedProps = pipe(methods, (props) => {
+  const accessifiedProps = pipeDo(methods, (props) => {
     const verboseAccessifyProps =
       options?.needAccessify ??
       (options?.noNeedDeAccessifyChildren

@@ -1,4 +1,4 @@
-import { flap, pipe, shakeFalsy, shrinkFn } from "@edsolater/fnkit"
+import { flap, pipe, pipeDo, shakeFalsy, shrinkFn } from "@edsolater/fnkit"
 import { mutateByAdditionalObjectDescriptors } from "../../fnkit"
 import { ValidController } from "../typeTools"
 import { mergeRefs } from "../utils/mergeRefs"
@@ -20,7 +20,7 @@ export type NativeProps = ReturnType<typeof parsePivProps>["props"]
 
 // first step of parse
 function getPropsInfoOfRawPivProps(raw: Partial<PivProps>) {
-  const parsedPivProps = pipe(
+  const parsedPivProps = pipeDo(
     raw as Partial<PivProps>,
 
     // TODO: should recursively handle shadowProps and plugin. DO NOT manually handle them

@@ -1,4 +1,4 @@
-import type { Items, Numberish } from "@edsolater/fnkit"
+import type { Collection, Numberish } from "@edsolater/fnkit"
 import type {
   ApiClmmPoolsItem as SDK_ApiClmmPoolsItem,
   ClmmPoolInfo as SDK_ClmmPoolInfo,
@@ -147,4 +147,4 @@ export interface ClmmUserPositionAccount {
   // tokenFeesOwedA: BN__default; // currently useless
   // tokenFeesOwedB: BN__default; // currently useless
 }
-export type ClmmInfos = Items<ClmmInfo>
+export type ClmmInfos = Collection<ClmmInfo>

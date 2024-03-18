@@ -26,3 +26,4 @@ function signTrancations(transactions: VersionedTransaction[]) {
       | undefined
   )?.(transactions)
 }
+
