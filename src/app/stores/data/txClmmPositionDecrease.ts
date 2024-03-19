@@ -105,6 +105,5 @@ async function createTxClmmPositionDecreaseTransactionShortcut(
     return { innerTransactions: [] }
   })
   assert(innerTransactions, "sdk compose innerTransactions failed, innerTransactions: " + innerTransactions)
-
   return Object.assign(innerTransactions, { connection, owner: params.owner })
 }
