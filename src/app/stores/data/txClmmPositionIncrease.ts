@@ -10,7 +10,8 @@ import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount } from "../../utils/dataStructures/TokenAmount"
-import { getTxHandlerUtils, handleTxFromShortcut, type TransactionShortcut } from "../../utils/txHandler"
+import { getTxHandlerUtils } from "../../utils/txHandler"
+import { handleTxFromShortcut, type TransactionShortcut } from "../../utils/txHandler/handleTxFromShortcut"
 import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
@@ -27,6 +28,7 @@ export type TxClmmPositionIncreaseParams = {
   amountA?: Amount
   amountB?: Amount
 }
+
 
 /** need amountA or amountB */
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
