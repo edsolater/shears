@@ -12,7 +12,7 @@ import {
 import { inNextMainLoop, makeTaskAbortable } from "../../../../packages/fnkit"
 import { getConnection } from "../../../utils/dataStructures/Connection"
 import { toSDKPercent } from "../../../utils/dataStructures/Percent"
-import toPubString from "../../../utils/dataStructures/Publickey"
+import { toPubString } from "../../../utils/dataStructures/Publickey"
 import { toSDKToken } from "../token/utils"
 import { Token } from "../token/type"
 import { TokenAmount, deUITokenAmount } from "../../../utils/dataStructures/TokenAmount"

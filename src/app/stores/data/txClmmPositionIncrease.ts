@@ -17,9 +17,9 @@ import {
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
-import toPubString from "../../utils/dataStructures/Publickey"
+import { toPubString } from "../../utils/dataStructures/Publickey"
 import { type Amount } from "../../utils/dataStructures/TokenAmount"
-import { txHandler } from "../../utils/txHandler"
+import { handleTx } from "../../utils/txHandler"
 import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
@@ -67,7 +67,7 @@ export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParam
   const amountA = amountAInfo.amountWithFeeBN
   const amountB = amountBInfo.amountWithFeeBN
 
-  const txEventCenter = txHandler(
+  const txEventCenter = handleTx(
     {
       connection,
       owner: params.owner,

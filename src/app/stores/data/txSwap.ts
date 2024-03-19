@@ -4,7 +4,7 @@ import { appProgramId } from "../../utils/common/config"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPub } from "../../utils/dataStructures/Publickey"
 import { Token } from "./token/type"
-import { txHandler, type UITxVersion } from "../../utils/txHandler"
+import { handleTx, type UITxVersion } from "../../utils/txHandler"
 import { getTxHandlerBudgetConfig } from "../../utils/txHandler/getTxHandlerBudgetConfig"
 import { getRealSDKTxVersion } from "../../utils/txHandler/txVersion"
 import { getBestCalcResultCache } from "./utils/calculateSwapRouteInfos"
@@ -33,7 +33,7 @@ export function txSwap(options: TxSwapOptions) {
     "inputAmount is not match",
   )
 
-  return txHandler(
+  return handleTx(
     { connection, owner: options.owner },
     async ({ baseUtils: { owner, connection, getSDKTokenAccounts } }) => {
       //TODO: no two fetch await

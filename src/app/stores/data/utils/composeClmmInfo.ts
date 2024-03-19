@@ -3,7 +3,7 @@ import { type ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from "@
 import { parseSDKBN } from "../../../utils/dataStructures/BN"
 import { parseSDKDecimal } from "../../../utils/dataStructures/Decimal"
 import { toPercent } from "../../../utils/dataStructures/Percent"
-import toPubString from "../../../utils/dataStructures/Publickey"
+import { toPubString } from "../../../utils/dataStructures/Publickey"
 import type { PublicKey } from "../../../utils/dataStructures/type"
 import type { ClmmInfo, ClmmJsonInfo, ClmmRewardInfo, ClmmSDKInfo, ClmmUserPositionAccount } from "../types/clmm"
 

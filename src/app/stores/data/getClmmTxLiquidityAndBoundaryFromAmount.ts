@@ -7,7 +7,7 @@
 import { applyDecimal, div, mul, type Numberish, type Percent } from "@edsolater/fnkit"
 import { Clmm } from "@raydium-io/raydium-sdk"
 import { parseSDKBN, toSDKBN } from "../../utils/dataStructures/BN"
-import toPubString from "../../utils/dataStructures/Publickey"
+import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount, AmountBN } from "../../utils/dataStructures/TokenAmount"
 import { getEpochInfo } from "./connection/getEpochInfo"
 import { getMultiMintInfos } from "./connection/getMultiMintInfos"

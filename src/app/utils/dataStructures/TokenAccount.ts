@@ -6,7 +6,7 @@ import {
 } from "@raydium-io/raydium-sdk"
 import { Connection } from "@solana/web3.js"
 import { parseSDKBN } from "./BN"
-import toPubString, { toPub } from "./Publickey"
+import { toPub, toPubString } from "./Publickey"
 import { TOKEN_PROGRAM_ID } from "../../stores/data/token/utils"
 import { getConnection } from "./Connection"
 import { SOLMint } from "../../configs/wellKnownMints"

@@ -30,6 +30,7 @@ import { innerTxCollector } from "./innerTxCollector"
 import { sendTransactionCore } from "./sendTransactionCore"
 import { signAllTransactions } from "./signAllTransactions_worker"
 import { subscribeTx } from "./subscribeTx"
+import { getConnection } from "../dataStructures/Connection"
 
 export type UITxVersion = "V0" | "LEGACY"
 //#region ------------------- basic info -------------------
@@ -82,6 +83,21 @@ export interface TxFinalBatchErrorInfo {
   txids: string[] // before absort
 }
 
+export type TxHandlerUtils = {
+  owner: PublicKey
+  connection: Connection
+  sdkTxVersion: TxVersion
+  getSDKTokenAccounts(): Promise<SDK_TokenAccount[] | undefined>
+  getSDKBudgetConfig(): Promise<ComputeBudgetConfig | undefined>
+  /** just past to sdk method. UI should do nothing with sdkLookupTableCache */
+  sdkLookupTableCache: CacheLTA
+}
+
+export type InnerTransactions = TransactionQueue | SDK_InnerSimpleTransaction
+
+/** use {@link handleTxFromShortcut} to handleTx easier */
+export type ShortcutInnerTransactions = InnerTransactions & { connection: Connection; owner: string }
+
 //#endregion
 
 /**
@@ -89,16 +105,8 @@ export interface TxFinalBatchErrorInfo {
  */
 export type TxFn = (utils: {
   eventCenter: TxHandlerEventCenter
-  baseUtils: {
-    owner: PublicKey
-    connection: Connection
-    sdkTxVersion: TxVersion
-    getSDKTokenAccounts(): Promise<SDK_TokenAccount[] | undefined>
-    getSDKBudgetConfig(): Promise<ComputeBudgetConfig | undefined>
-    /** just past to sdk method. UI should do nothing with sdkLookupTableCache */
-    sdkLookupTableCache: CacheLTA
-  }
-}) => MayPromise<TransactionQueue | SDK_InnerSimpleTransaction>
+  baseUtils: TxHandlerUtils
+}) => MayPromise<InnerTransactions>
 
 //#region ------------------- callbacks -------------------
 type TxSuccessCallback = (info: TxSuccessInfo) => void
@@ -192,7 +200,7 @@ export interface TxHandlerOptions extends MultiTxCallbacks, MultiTxsOption {
 
 export type SignAllTransactionsFunction = <T extends VersionedTransaction>(transactions: T[]) => Promise<T[]>
 
-export interface TxHandlerPayload {
+export type TxHandlerPayload = {
   connection: Connection
   owner: string
 }
@@ -215,10 +223,34 @@ export function isVersionedTransaction(transaction: VersionedTransaction): trans
 
 /** just pass to SDK Methods */
 export const sdkLookupTableCache: CacheLTA = {}
+
+export const getTxHandlerUtils = (
+  payload: { owner: string; rpcUrl: string } | { owner: string; connection: Connection },
+): TxHandlerUtils => {
+  const connection = "connection" in payload ? payload.connection : getConnection(payload.rpcUrl)
+  return {
+    owner: toPub(payload.owner),
+    connection: connection,
+    sdkTxVersion: TxVersion.V0,
+    sdkLookupTableCache,
+    getSDKTokenAccounts: () =>
+      getTokenAccounts({ connection: connection, owner: payload.owner }).then((res) => res.sdkTokenAccounts),
+    getSDKBudgetConfig: getTxHandlerBudgetConfig,
+  }
+}
+
 /**
+ * handle {@link ShortcutInnerTransactions}
+ */
+export function handleTxFromShortcut(txShortcut: ShortcutInnerTransactions) {
+  return handleTx({ connection: txShortcut.connection, owner: txShortcut.owner }, () => txShortcut)
+}
+
+/**
+ *
  *  function for sending transaction
  */
-export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHandlerOptions): TxHandlerEventCenter {
+export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHandlerOptions): TxHandlerEventCenter {
   const {
     transactionCollector,
     collected: { collectedTransactions, singleTxOptions, multiTxOption },
@@ -232,17 +264,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     assert(payload.owner, "wallet not connected")
     const userLoadedTransactionQueue = await txFn({
       eventCenter,
-      baseUtils: {
-        owner: toPub(payload.owner),
-        connection: payload.connection,
-        sdkTxVersion: TxVersion.V0,
-        sdkLookupTableCache,
-        getSDKTokenAccounts: () =>
-          getTokenAccounts({ connection: payload.connection, owner: payload.owner }).then(
-            (res) => res.sdkTokenAccounts,
-          ),
-        getSDKBudgetConfig: getTxHandlerBudgetConfig,
-      },
+      baseUtils: getTxHandlerUtils({ owner: payload.owner, connection: payload.connection }),
     })
     transactionCollector.add(userLoadedTransactionQueue)
     console.log("userLoadedTransactionQueue: ", userLoadedTransactionQueue)
@@ -286,7 +308,7 @@ export function txHandler(payload: TxHandlerPayload, txFn: TxFn, options?: TxHan
     })
     console.log("main thread sign transactions complete: ", allSignedTransactions)
 
-    console.log('compose tx')
+    console.log("compose tx")
     // load send tx function
     const senderFn = composeTransactionSenderWithDifferentSendMode({
       transactions: allSignedTransactions,

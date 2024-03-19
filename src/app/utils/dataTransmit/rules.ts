@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js"
 import BN from "bn.js"
 import { parseSDKBN } from "../dataStructures/BN"
-import toPubString, { toPub } from "../dataStructures/Publickey"
+import { toPub, toPubString } from "../dataStructures/Publickey"
 import { TransmitRule } from "./type"
 
 function encodeBN(rawData: BN) {

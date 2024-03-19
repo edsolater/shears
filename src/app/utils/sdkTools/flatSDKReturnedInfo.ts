@@ -3,7 +3,7 @@ import { FlatSDKBN, isSDKBN, parseSDKBN } from "../dataStructures/BN"
 import { FlatSDKDecimal, isSDKDecimal, parseSDKDecimal } from "../dataStructures/Decimal"
 import { FlatSDKFraction, isSDKFraction, parseSDKFraction } from "../dataStructures/Fraction"
 import { FlatSDKPrice, isSDKPrice, parseSDKPrice } from "../dataStructures/Price"
-import toPubString, { isPublicKey } from "../dataStructures/Publickey"
+import { isPublicKey, toPubString } from "../dataStructures/Publickey"
 import { FlatSDKToken, isSDKToken, parseSDKToken } from "../../stores/data/token/utils"
 import { FlatSDKTokenAmount, isSDKTokenAmount, parseSDKTokenAmount } from "../dataStructures/TokenAmount"
 

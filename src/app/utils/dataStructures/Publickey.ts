@@ -5,10 +5,10 @@ import { PublicKey } from "@solana/web3.js"
 const mintCache = new WeakMap<PublicKey, string>()
 
 //TODO: no token
-export default function toPubString(mint: undefined | null): undefined
-export default function toPubString(mint: PublicKeyish): string
-export default function toPubString(mint: PublicKeyish | undefined | null): string | undefined
-export default function toPubString(mint: PublicKeyish | undefined | null): string | undefined {
+export function toPubString(mint: undefined | null): undefined
+export function toPubString(mint: PublicKeyish): string
+export function toPubString(mint: PublicKeyish | undefined | null): string | undefined
+export function toPubString(mint: PublicKeyish | undefined | null): string | undefined {
   if (!mint) return undefined
   if (isString(mint)) return mint
   if (mintCache.has(mint)) {

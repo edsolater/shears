@@ -4,7 +4,7 @@ import {
 } from "@edsolater/fnkit";
 import { PublicKey } from "@solana/web3.js";
 import { isSDKBN } from "../../../utils/dataStructures/BN";
-import toPubString from "../../../utils/dataStructures/Publickey";
+import { toPubString } from "../../../utils/dataStructures/Publickey";
 
 /** for debug easier and faster */
 export function toHumanReadable(source: unknown, maxDepth = 10 /** to avoid too deep */) {
