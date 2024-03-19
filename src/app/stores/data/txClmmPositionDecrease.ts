@@ -10,7 +10,7 @@ import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount } from "../../utils/dataStructures/TokenAmount"
-import { getTxHandlerUtils, handleTxFromShortcut, type ShortcutInnerTransactions } from "../../utils/txHandler"
+import { getTxHandlerUtils, handleTxFromShortcut, type TransactionShortcut } from "../../utils/txHandler"
 import { getClmmDecreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
@@ -30,13 +30,13 @@ export type TxClmmPositionDecreaseParams = {
 
 /** need amountA or amountB */
 export async function txClmmPositionDecrease(params: TxClmmPositionDecreaseParams) {
-  return handleTxFromShortcut(await createTxClmmPositionDecreaseTransaction(params))
+  return handleTxFromShortcut(await createTxClmmPositionDecreaseTransactionShortcut(params))
 }
 
 /** need amountA or amountB */
-async function createTxClmmPositionDecreaseTransaction(
+async function createTxClmmPositionDecreaseTransactionShortcut(
   params: TxClmmPositionDecreaseParams,
-): Promise<ShortcutInnerTransactions> {
+): Promise<TransactionShortcut> {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
   console.log("amountSide: ", amountSide)

@@ -96,7 +96,7 @@ export type TxHandlerUtils = {
 export type InnerTransactions = TransactionQueue | SDK_InnerSimpleTransaction
 
 /** use {@link handleTxFromShortcut} to handleTx easier */
-export type ShortcutInnerTransactions = InnerTransactions & { connection: Connection; owner: string }
+export type TransactionShortcut = InnerTransactions & { connection: Connection; owner: string }
 
 //#endregion
 
@@ -240,9 +240,9 @@ export const getTxHandlerUtils = (
 }
 
 /**
- * handle {@link ShortcutInnerTransactions}
+ * handle {@link TransactionShortcut}
  */
-export function handleTxFromShortcut(txShortcut: ShortcutInnerTransactions) {
+export function handleTxFromShortcut(txShortcut: TransactionShortcut) {
   return handleTx({ connection: txShortcut.connection, owner: txShortcut.owner }, () => txShortcut)
 }
 
