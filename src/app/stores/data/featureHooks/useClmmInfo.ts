@@ -1,23 +1,26 @@
-import { createStore, type SetStoreFunction } from "solid-js/store"
-import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
-import { assert, isPositive, type AnyFn, isExist, lt, gt, minus } from "@edsolater/fnkit"
-import { mergeTwoStore } from "./mergeTwoStore"
+import { assert, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
 import { untrack } from "solid-js"
+import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
+import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
+import { mergeTwoStore } from "./mergeTwoStore"
 import { useClmmUserPositionAccount } from "./useClmmUserPositionAccount"
 
 type AdditionalClmmInfo = {
-  txH(): Promise<void>
+  buildCustomizedFollowPositionTxConfigs():
+    | {
+        decreaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
+        increaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
+      }
+    | undefined
 }
 
 export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   return mergeTwoStore(clmmInfo, {
-    async txH() {
-      return txFollowPosition(clmmInfo)
-    },
+    buildCustomizedFollowPositionTxConfigs: () => buildCustomizedFollowPositionTxConfigs(clmmInfo),
   })
 }
 
-function txFollowPosition(clmmInfo: ClmmInfo, option?: { mutePositionUSD?: number }) {
+function buildCustomizedFollowPositionTxConfigs(clmmInfo: ClmmInfo) {
   const positions = clmmInfo.userPositionAccounts
   assert(positions && positions.length > 0, "no position to follow; the button shouldn't be clickable")
   const currentPrice = clmmInfo.currentPrice
@@ -47,8 +50,8 @@ function txFollowPosition(clmmInfo: ClmmInfo, option?: { mutePositionUSD?: numbe
     }
   }
 
-  const tasksStack = [] as (() => void)[]
-  const finalTasks = [] as (() => void)[]
+  const decreaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
+  const increaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
   // ---------------- handle up positions ----------------
   if (upPositions.length > 1) {
     let nearestUpPosition = upPositions[0]
@@ -65,18 +68,19 @@ function txFollowPosition(clmmInfo: ClmmInfo, option?: { mutePositionUSD?: numbe
       const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, 10))
       if (needMove) {
         haveMoveAction = true
-        tasksStack.push(() => {
-          // txClmmPositionDecrease action
-          richPosition.txClmmPositionSet({ usd: 6 })
-        })
+        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: 6 })
+        if (txBuilderConfig) {
+          decreaseClmmPositionTxConfigs.push(txBuilderConfig)
+        }
       }
     }
 
     if (haveMoveAction) {
-      finalTasks.push(() => {
-        const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, nearestUpPosition))
-        richPosition.txClmmPositionIncreaseAllWalletRest()
-      })
+      const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, nearestUpPosition))
+      const txBuilderConfig = richPosition.buildPositionIncreaseAllWalletRestTxConfig()
+      if (txBuilderConfig) {
+        increaseClmmPositionTxConfigs.push(txBuilderConfig)
+      }
     }
   }
 
@@ -96,18 +100,24 @@ function txFollowPosition(clmmInfo: ClmmInfo, option?: { mutePositionUSD?: numbe
       const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, 10))
       if (needMove) {
         haveMoveAction = true
-        tasksStack.push(() => {
-          // txClmmPositionDecrease action
-          richPosition.txClmmPositionSet({ usd: 6 })
-        })
+        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: 6 })
+        if (txBuilderConfig) {
+          decreaseClmmPositionTxConfigs.push(txBuilderConfig)
+        }
       }
     }
 
     if (haveMoveAction) {
-      finalTasks.push(() => {
-        const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, nearestDownPosition))
-        richPosition.txClmmPositionIncreaseAllWalletRest()
-      })
+      const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, nearestDownPosition))
+      const txBuilderConfig = richPosition.buildPositionIncreaseAllWalletRestTxConfig()
+      if (txBuilderConfig) {
+        increaseClmmPositionTxConfigs.push(txBuilderConfig)
+      }
+    }
+
+    return {
+      decreaseClmmPositionTxConfigs,
+      increaseClmmPositionTxConfigs,
     }
   }
 

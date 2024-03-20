@@ -1,6 +1,7 @@
 /**************************************************************************
  *
  * @tags CLMM tx
+ * ActionLabel = "clmm position increase"
  *
  **************************************************************************/
 
@@ -11,12 +12,14 @@ import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount } from "../../utils/dataStructures/TokenAmount"
 import { getTxHandlerUtils } from "../../utils/txHandler"
-import { handleTxFromShortcut, type TransactionShortcut } from "../../utils/txHandler/handleTxFromShortcut"
+import { handleTxShortcut, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"
 import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import { toHumanReadable } from "./utils/toHumanReadable"
+
+export type TxClmmPositionIncreaseConfig = ["clmm position increase", TxClmmPositionIncreaseParams]
 
 export type TxClmmPositionIncreaseParams = {
   rpcUrl: string
@@ -29,16 +32,15 @@ export type TxClmmPositionIncreaseParams = {
   amountB?: Amount
 }
 
-
 /** need amountA or amountB */
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
-  return handleTxFromShortcut(await createTxClmmPositionIncreaseTransactionShortcut(params))
+  return handleTxShortcut(await createTxClmmPositionIncreaseTransactionShortcut(params))
 }
 
 /** need amountA or amountB */
 export async function createTxClmmPositionIncreaseTransactionShortcut(
   params: TxClmmPositionIncreaseParams,
-): Promise<TransactionShortcut> {
+): Promise<TransactionModule> {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
   console.log("[worker tx core algorithm] start compose tx clmm position increase")

@@ -1,19 +1,20 @@
 import {
   add,
+  applyDecimal,
   assert,
   asyncMap,
   equal,
   get,
   gt,
+  isExist,
   isPositive,
   lt,
+  minus,
   mul,
   shakeNil,
   toFormattedNumber,
   type Numberish,
-  applyDecimal,
-  minus,
-  isExist,
+  isZero,
 } from "@edsolater/fnkit"
 import { createLazyMemo, usePromise } from "@edsolater/pivkit"
 import { createEffect, createMemo, createSignal, on } from "solid-js"
@@ -22,7 +23,7 @@ import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useS
 import { toTokenAmount, type Amount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
 import type { Price, USDVolume } from "../../../utils/dataStructures/type"
 import type { TxHandlerEventCenter } from "../../../utils/txHandler"
-import { txDispatcher } from "../../../utils/txHandler/txDispatcher_main"
+import { invokeTxConfig } from "../../../utils/txHandler/txDispatcher_main"
 import { useWalletOwner } from "../../wallet/store"
 import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
@@ -38,6 +39,8 @@ import {
 } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
+import type { TxClmmPositionDecreaseConfig } from "../txClmmPositionDecrease"
+import type { TxClmmPositionIncreaseConfig } from "../txClmmPositionIncrease"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 
 type AdditionalClmmUserPositionAccount = {
@@ -47,10 +50,16 @@ type AdditionalClmmUserPositionAccount = {
   pendingRewardAmountUSD: Numberish | undefined
   hasRewardTokenAmount: boolean
   isHarvestable: boolean
-  txClmmPositionIncrease: (params: TxClmmPositionIncreaseUIFnParams) => TxHandlerEventCenter
-  txClmmPositionDecrease: (params: TxClmmPositionDecreaseUIFnParams) => TxHandlerEventCenter
-  txClmmPositionSet: (params: TxClmmPositionSetToUIFnParams) => TxHandlerEventCenter | undefined
-  txClmmPositionIncreaseAllWalletRest: () => TxHandlerEventCenter | undefined
+  txPositionIncrease: (params: TxClmmPositionIncreaseUIFnParams) => TxHandlerEventCenter
+  txPositionDecrease: (params: TxClmmPositionDecreaseUIFnParams) => TxHandlerEventCenter
+  txPositionSet: (params: TxClmmPositionSetToUIFnParams) => TxHandlerEventCenter | undefined
+  txPositionIncreaseAllWalletRest: () => TxHandlerEventCenter | undefined
+  buildPositionIncreaseTxConfig: (params: TxClmmPositionIncreaseUIFnParams) => TxClmmPositionIncreaseConfig
+  buildPositionDecreaseTxConfig: (params: TxClmmPositionDecreaseUIFnParams) => TxClmmPositionDecreaseConfig
+  buildPositionSetTxConfig: (
+    params: TxClmmPositionSetToUIFnParams,
+  ) => TxClmmPositionIncreaseConfig | TxClmmPositionDecreaseConfig | undefined
+  buildPositionIncreaseAllWalletRestTxConfig: () => TxClmmPositionIncreaseConfig | undefined
 }
 
 /** for {@link AdditionalClmmUserPositionAccount}'s method txClmmPositionIncrease */
@@ -210,7 +219,11 @@ export function useClmmUserPositionAccount(
   )
 
   /** to txDispatcher("clmm position increase") */
-  function txClmmPositionIncrease(params: TxClmmPositionIncreaseUIFnParams) {
+  function txPositionIncrease(params: TxClmmPositionIncreaseUIFnParams) {
+    return invokeTxConfig(buildTxClmmPositionIncreaseConfig(params))
+  }
+
+  function buildTxClmmPositionIncreaseConfig(params: TxClmmPositionIncreaseUIFnParams): TxClmmPositionIncreaseConfig {
     const rpcUrl = rpcS()?.url
     assert(rpcUrl, "for clmm position increase, rpc url not ready")
     const owner = ownerS()
@@ -218,18 +231,25 @@ export function useClmmUserPositionAccount(
     const clmmId = clmmInfo.id
     const positionNftMint = userPositionAccount.nftMint
     const slippage = slippageS()
-    return txDispatcher("clmm position increase", {
-      ...params,
-      clmmId,
-      positionNftMint,
-      rpcUrl,
-      owner,
-      slippage,
-    })
+    return [
+      "clmm position increase",
+      {
+        ...params,
+        clmmId,
+        positionNftMint,
+        rpcUrl,
+        owner,
+        slippage,
+      },
+    ]
   }
 
   /** to txDispatcher("clmm position decrease") */
-  function txClmmPositionDecrease(params: TxClmmPositionDecreaseUIFnParams) {
+  function txPositionDecrease(params: TxClmmPositionDecreaseUIFnParams) {
+    return invokeTxConfig(buildTxClmmPositionDecreaseConfig(params))
+  }
+
+  function buildTxClmmPositionDecreaseConfig(params: TxClmmPositionDecreaseUIFnParams): TxClmmPositionDecreaseConfig {
     const rpcUrl = rpcS()?.url
     assert(rpcUrl, "for clmm position decrease, rpc url not ready")
     const owner = ownerS()
@@ -237,18 +257,29 @@ export function useClmmUserPositionAccount(
     const clmmId = clmmInfo.id
     const positionNftMint = userPositionAccount.nftMint
     const slippage = slippageS()
-    return txDispatcher("clmm position decrease", {
-      ...params,
-      clmmId,
-      positionNftMint,
-      rpcUrl,
-      owner,
-      slippage,
-    })
+    return [
+      "clmm position decrease",
+      {
+        ...params,
+        clmmId,
+        positionNftMint,
+        rpcUrl,
+        owner,
+        slippage,
+      },
+    ]
   }
 
-  /** a shortcut of {@link txClmmPositionDecrease} and {@link txClmmPositionIncrease} */
-  function txClmmPositionSetUSD(params: TxClmmPositionSetToUIFnParams) {
+  /** a shortcut of {@link txPositionDecrease} and {@link txPositionIncrease} */
+  function txPositionSetUSD(params: TxClmmPositionSetToUIFnParams) {
+    const txConfig = buildTxClmmPositionSetUSDConfig(params)
+    if (txConfig) {
+      return invokeTxConfig(txConfig)
+    }
+  }
+
+  /** a shortcut of {@link txPositionDecrease} and {@link txPositionIncrease} */
+  function buildTxClmmPositionSetUSDConfig(params: TxClmmPositionSetToUIFnParams) {
     const rpcUrl = rpcS()?.url
     assert(rpcUrl, "for clmm position decrease, rpc url not ready")
     const owner = ownerS()
@@ -268,13 +299,13 @@ export function useClmmUserPositionAccount(
         const price = priceB()
         assert(price, `price of ${tokenB.symbol} not ready`)
         const amount = mul(decreaseUSDAmount, price)
-        return txClmmPositionDecrease({ amountB: amount })
+        return buildTxClmmPositionDecreaseConfig({ amountB: amount })
       } else if (lt(clmmInfo.currentPrice, userPositionAccount.priceLower)) {
         //  amountSide "A"
         const price = priceA()
         assert(price, `price of ${tokenA.symbol} not ready`)
         const amount = mul(decreaseUSDAmount, price)
-        return txClmmPositionDecrease({ amountA: amount })
+        return buildTxClmmPositionDecreaseConfig({ amountA: amount })
       } else {
         throw new Error("//TEMPDEV currently not support in range decrease")
       }
@@ -285,13 +316,13 @@ export function useClmmUserPositionAccount(
         const price = priceB()
         assert(price, `price of ${tokenB.symbol} not ready`)
         const amount = mul(increaseUSDAmount, price)
-        return txClmmPositionIncrease({ amountB: amount })
+        return buildTxClmmPositionIncreaseConfig({ amountB: amount })
       } else if (lt(clmmInfo.currentPrice, userPositionAccount.priceLower)) {
         //  amountSide "A"
         const price = priceA()
         assert(price, `price of ${tokenA.symbol} not ready`)
         const amount = mul(increaseUSDAmount, price)
-        return txClmmPositionIncrease({ amountA: amount })
+        return buildTxClmmPositionIncreaseConfig({ amountA: amount })
       } else {
         throw new Error("//TEMPDEV currently not support in range increase")
       }
@@ -309,15 +340,24 @@ export function useClmmUserPositionAccount(
   /**
    * @todo TEMPDEV currently only support increase out of range position
    */
-  function txClmmPositionIncreaseAllWalletRest() {
+  function txPositionIncreaseAllWalletRest() {
+    const txConfig = buildPositionIncreaseAllWalletRestConfig()
+    if (!txConfig) return
+    return invokeTxConfig(txConfig)
+  }
+  function buildPositionIncreaseAllWalletRestConfig() {
     const side = getActionSide()
     const balances = balancesS()
     const balanceOfTargetSideRawBN = get(balances, side === "A" ? clmmInfo.base : clmmInfo.quote)
+    if (!balanceOfTargetSideRawBN || isZero(balanceOfTargetSideRawBN)) {
+      console.warn(`seems no need to increase, ${side} balance is empty`)
+      return
+    }
     const balanceOfTargetSide = isExist(balanceOfTargetSideRawBN)
       ? toTokenAmount(side === "A" ? tokenA : tokenB, balanceOfTargetSideRawBN, { amountIsBN: true })
       : undefined
-    assert(balanceOfTargetSide, "balance of target side not ready")
-    return txClmmPositionIncrease(
+    assert(balanceOfTargetSide, "balance of target side not exist")
+    return buildTxClmmPositionIncreaseConfig(
       side === "A" ? { amountA: balanceOfTargetSide.amount } : { amountB: balanceOfTargetSide.amount },
     )
   }
@@ -343,10 +383,14 @@ export function useClmmUserPositionAccount(
   createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
   createEffect(() =>
     setUserPositionStore({
-      txClmmPositionIncrease,
-      txClmmPositionDecrease,
-      txClmmPositionSet: txClmmPositionSetUSD,
-      txClmmPositionIncreaseAllWalletRest,
+      txPositionIncrease: txPositionIncrease,
+      txPositionDecrease: txPositionDecrease,
+      txPositionSet: txPositionSetUSD,
+      txPositionIncreaseAllWalletRest: txPositionIncreaseAllWalletRest,
+      buildPositionIncreaseTxConfig: buildTxClmmPositionIncreaseConfig,
+      buildPositionDecreaseTxConfig: buildTxClmmPositionDecreaseConfig,
+      buildPositionSetTxConfig: buildTxClmmPositionSetUSDConfig,
+      buildPositionIncreaseAllWalletRestTxConfig: buildPositionIncreaseAllWalletRestConfig,
     }),
   )
 

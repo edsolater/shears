@@ -14,7 +14,7 @@ import {
 import { TokenAmountInputBox } from "../components/TokenAmountInput"
 import { useToken } from "../stores/data/token/useToken"
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from "../stores/data/featureHooks/useSwapAmountCalculator"
-import { txDispatcher } from "../utils/txHandler/txDispatcher_main"
+import { launchTx } from "../utils/txHandler/txDispatcher_main"
 import { createStorePropertySetter, createStorePropertySignal, setStore, store } from "../stores/data/store"
 import { useWalletOwner } from "../stores/wallet/store"
 import { Token } from "../stores/data/token/type"
@@ -82,7 +82,7 @@ export default function SwapPage() {
               const rpcURL = store.rpc?.url
               assert(rpcURL, "should set url")
 
-              txDispatcher("swap", {
+              launchTx("swap", {
                 owner: walletOwner,
                 checkInfo: {
                   rpcURL,

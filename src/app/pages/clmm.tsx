@@ -28,6 +28,7 @@ import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clm
 import type { PairInfo } from "../stores/data/types/pairs"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
+import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -121,8 +122,13 @@ export default function ClmmsPage() {
         return (
           <Row icss={{ gap: "2px" }}>
             <Button
-              onClick={() => {
-                clmmInfo.txH()
+              onClick={({ ev }) => {
+                const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs()
+                console.log("[txDispatcher] tx configs: ", configs)
+                if (configs) {
+                  invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
+                }
+                ev.stopPropagation()
               }}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
             >
@@ -224,34 +230,40 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         <Button>Harvest</Button>
         <Button
           onClick={() => {
-            positionAccount.txClmmPositionIncrease({
-              amountB: 0.1, // TODO: should be input
-            })
+            invokeTxConfig(
+              positionAccount.buildPositionIncreaseTxConfig({
+                amountB: 0.1, // TODO: should be input
+              }),
+            )
           }}
         >
           +
         </Button>
         <Button
           onClick={() => {
-            positionAccount.txClmmPositionDecrease({
-              amountB: 0.1, // TODO: should be input
-            })
+            invokeTxConfig(
+              positionAccount.buildPositionDecreaseTxConfig({
+                amountB: 0.1, // TODO: should be input
+              }),
+            )
           }}
         >
           -
         </Button>
         <Button
           onClick={() => {
-            positionAccount.txClmmPositionSet({
-              usd: 9, // TODO: should be input
-            })
+            invokeTxConfig(
+              positionAccount.buildPositionSetTxConfig({
+                usd: 9, // TODO: should be input
+              }),
+            )
           }}
         >
           Set To
         </Button>
         <Button
           onClick={() => {
-            positionAccount.txClmmPositionIncreaseAllWalletRest()
+            invokeTxConfig(positionAccount.buildPositionIncreaseAllWalletRestTxConfig())
           }}
         >
           Rush all

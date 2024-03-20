@@ -1,6 +1,7 @@
 /**************************************************************************
  *
  * @tags CLMM tx
+ * ActionLabel = "clmm position decrease"
  *
  **************************************************************************/
 
@@ -11,12 +12,14 @@ import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount } from "../../utils/dataStructures/TokenAmount"
 import { getTxHandlerUtils } from "../../utils/txHandler"
-import { handleTxFromShortcut, type TransactionShortcut } from "../../utils/txHandler/handleTxFromShortcut"
+import { handleTxShortcut, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"
 import { getClmmDecreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import { toHumanReadable } from "./utils/toHumanReadable"
+
+export type TxClmmPositionDecreaseConfig = ["clmm position decrease", TxClmmPositionDecreaseParams]
 
 export type TxClmmPositionDecreaseParams = {
   rpcUrl: string
@@ -31,13 +34,13 @@ export type TxClmmPositionDecreaseParams = {
 
 /** need amountA or amountB */
 export async function txClmmPositionDecrease(params: TxClmmPositionDecreaseParams) {
-  return handleTxFromShortcut(await createTxClmmPositionDecreaseTransactionShortcut(params))
+  return handleTxShortcut(await createTxClmmPositionDecreaseTransactionShortcut(params))
 }
 
 /** need amountA or amountB */
-async function createTxClmmPositionDecreaseTransactionShortcut(
+export async function createTxClmmPositionDecreaseTransactionShortcut(
   params: TxClmmPositionDecreaseParams,
-): Promise<TransactionShortcut> {
+): Promise<TransactionModule> {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
   console.log("amountSide: ", amountSide)

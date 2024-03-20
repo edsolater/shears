@@ -51,15 +51,7 @@ export interface PivProps<TagName extends HTMLTag = HTMLTag, Controller extends 
 
   onClick?: (utils: ClickController<Controller>) => void // for accessifyProps, onClick can't be array
 
-  "merge:onClick"?: (
-    utils: {
-      ev: MouseEvent & {
-        currentTarget: HTMLElement
-        target: Element
-      }
-      el: HTMLElement
-    } & Controller,
-  ) => void // for accessifyProps, "merge:onClick" can't be array
+  "merge:onClick"?: (utils: ClickController<Controller>) => void // for accessifyProps, "merge:onClick" can't be array
 
   /**
    * auto merge by shadowProps

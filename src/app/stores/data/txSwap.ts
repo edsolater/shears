@@ -9,7 +9,9 @@ import { getTxHandlerBudgetConfig } from "../../utils/txHandler/getTxHandlerBudg
 import { getRealSDKTxVersion } from "../../utils/txHandler/txVersion"
 import { getBestCalcResultCache } from "./utils/calculateSwapRouteInfos"
 
-export interface TxSwapOptions {
+export type TxSwapConfig = ["swap", TxSwapParams]
+
+export interface TxSwapParams {
   owner: string
   checkInfo: {
     rpcURL: string
@@ -22,7 +24,7 @@ export interface TxSwapOptions {
   txVersion?: UITxVersion
 }
 
-export function txSwap(options: TxSwapOptions) {
+export function txSwap(options: TxSwapParams) {
   const connection = getConnection(options.checkInfo.rpcURL)
   const neariestSwapBestResultCache = getBestCalcResultCache()
   assert(neariestSwapBestResultCache, "swapInfo not found")
