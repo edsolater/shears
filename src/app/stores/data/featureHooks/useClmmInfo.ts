@@ -1,5 +1,5 @@
 import { assert, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
-import { untrack } from "solid-js"
+import { createRoot, untrack } from "solid-js"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 import { mergeTwoStore } from "./mergeTwoStore"
@@ -15,6 +15,7 @@ type AdditionalClmmInfo = {
 }
 
 export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
+  
   return mergeTwoStore(clmmInfo, {
     buildCustomizedFollowPositionTxConfigs: () => buildCustomizedFollowPositionTxConfigs(clmmInfo),
   })

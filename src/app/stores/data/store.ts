@@ -79,13 +79,16 @@ globalThis.document.addEventListener("DOMContentLoaded", () => {
   loadTokens()
   loadTokenPrice()
   loadOwnerTokenAccounts()
-  console.log('🤔')
+  console.log("🤔")
 })
+
+export type Prices = Map<Mint, Price>
 
 // TODO: should all state just use shuck
 // token
 export const shuck_isTokenPricesLoading = createShuck<boolean | undefined>()
-export const shuck_tokenPrices = createShuck<Map<Mint, Price> | undefined>()
+
+export const shuck_tokenPrices = createShuck<Prices | undefined>()
 // token accounts & balance
 export const shuck_isTokenAccountsLoading = createShuck<boolean | undefined>()
 export const shuck_tokenAccounts = createShuck<Collection<TokenAccount, TokenAccount["publicKey"]> | undefined>()

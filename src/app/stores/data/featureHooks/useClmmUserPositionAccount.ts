@@ -36,12 +36,14 @@ import {
   shuck_tokenAccounts,
   shuck_tokenPrices,
   shuck_tokens,
+  type Prices,
 } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { TxClmmPositionDecreaseConfig } from "../txClmmPositionDecrease"
 import type { TxClmmPositionIncreaseConfig } from "../txClmmPositionIncrease"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
+import type { Tokens } from "../token/type"
 
 type AdditionalClmmUserPositionAccount = {
   rangeName: string
@@ -73,95 +75,44 @@ type TxClmmPositionSetToUIFnParams = {
  * hooks
  * hydrate {@link ClmmUserPositionAccount} to ui used data
  */
+// TODO: should move inner to calcXXX() functions
 export function useClmmUserPositionAccount(
   clmmInfo: ClmmInfo,
-  userPositionAccount: ClmmUserPositionAccount,
+  positionInfo: ClmmUserPositionAccount,
 ): AdditionalClmmUserPositionAccount & ClmmUserPositionAccount {
-  const tokenA = useToken(() => clmmInfo.base)
-  const tokenB = useToken(() => clmmInfo.quote)
-  const priceA = useTokenPrice(() => clmmInfo.base)
-  const priceB = useTokenPrice(() => clmmInfo.quote)
   const pricesMap = useShuckValue(shuck_tokenPrices)
   const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
   const rpcS = useShuckValue(shuck_rpc)
   const ownerS = useWalletOwner()
   const slippageS = useShuckValue(shuck_slippage)
   const balancesS = useShuckValue(shuck_balances)
-  const tokenAccountsS = useShuckValue(shuck_tokenAccounts)
-  const userLiquidityUSD = createLazyMemo(() => {
-    const tokenAPrices = priceA()
-    const tokenBPrices = priceB()
-    if (!tokenAPrices || !tokenBPrices) return undefined
-    const tokenADecimal = tokenA.decimals
-    const tokenBDecimal = tokenB.decimals
-    const amountABN = userPositionAccount.amountBaseBN
-    const amountBBN = userPositionAccount.amountQuoteBN
-    if (amountABN === undefined || amountBBN === undefined) return undefined
-    return getLiquidityVolume(tokenAPrices, tokenBPrices, tokenADecimal, tokenBDecimal, amountABN, amountBBN)
-  })
 
-  const [hasRewardTokenAmount, setHasRewardTokenAmount] = createSignal(false)
+  const tokenA = useToken(() => clmmInfo.base)
+  const tokenB = useToken(() => clmmInfo.quote)
+  const priceA = useTokenPrice(() => clmmInfo.base)
+  const priceB = useTokenPrice(() => clmmInfo.quote)
 
-  const rangeName = createLazyMemo(
-    () =>
-      `${toFormattedNumber(userPositionAccount.priceLower, { decimals: 4 })}-${toFormattedNumber(userPositionAccount.priceUpper, { decimals: 4 })}`,
-  )
+  const userLiquidityUSD = () =>
+    calcUserPositionLiquidityUSD({
+      tokenAPrice: priceA(),
+      tokenBPrice: priceB(),
+      tokenADecimals: tokenA.decimals,
+      tokenBDecimals: tokenB.decimals,
+      userPositionAccountAmountBN_B: positionInfo.amountBaseBN,
+      userPositionAccountAmountBN_A: positionInfo.amountQuoteBN,
+    })
 
-  const inRange = createLazyMemo(
-    () =>
-      gt(clmmInfo.currentPrice, userPositionAccount.priceLower) &&
-      lt(clmmInfo.currentPrice, userPositionAccount.priceUpper),
-  )
-
-  const rewardsAmountsWithFees: () => {
-    tokenAmount: TokenAmount | undefined
-    price: Price | undefined
-  }[] = createLazyMemo(
-    () =>
-      userPositionAccount?.rewardInfos.map((info) => {
-        if (isPositive(info.penddingReward)) {
-          setHasRewardTokenAmount(true)
-        }
-        const price = info.token && pricesMap()?.get(info.token)
-
-        const t = info.token ? get(tokens(), info.token) : undefined
-        return {
-          tokenAmount:
-            t && info.penddingReward ? toTokenAmount(t, info.penddingReward, { amountIsBN: true }) : undefined,
-          price: price,
-        }
-      }) ?? [],
-  )
-
-  const feesAmountsWithFees: () => {
-    tokenAmount: TokenAmount | undefined
-    price: Price | undefined
-  }[] = createLazyMemo(() => {
-    const t1 = userPositionAccount.tokenBase ? get(tokens(), userPositionAccount.tokenBase) : undefined
-    const t2 = userPositionAccount.tokenQuote ? get(tokens(), userPositionAccount.tokenQuote) : undefined
-    return userPositionAccount
-      ? [
-          {
-            tokenAmount:
-              t1 && userPositionAccount.tokenFeeAmountBase
-                ? toTokenAmount(t1, userPositionAccount.tokenFeeAmountBase, { amountIsBN: true })
-                : undefined,
-            price: userPositionAccount.tokenBase && pricesMap()?.get(userPositionAccount.tokenBase),
-          },
-          {
-            tokenAmount:
-              t2 && userPositionAccount.tokenFeeAmountQuote
-                ? toTokenAmount(t2, userPositionAccount.tokenFeeAmountQuote, { amountIsBN: true })
-                : undefined,
-            price: userPositionAccount.tokenQuote && pricesMap()?.get(userPositionAccount.tokenQuote),
-          },
-        ]
-      : []
-  })
-
-  const hasFeeTokenAmount = createLazyMemo(
-    () => isPositive(userPositionAccount.tokenFeeAmountBase) || isPositive(userPositionAccount.tokenFeeAmountQuote),
-  )
+  const hasRewardTokenAmount = () =>
+    positionInfo.rewardInfos.length > 0 && positionInfo.rewardInfos.some((info) => isPositive(info.penddingReward))
+  const rangeName = () =>
+    `${toFormattedNumber(positionInfo.priceLower, { decimals: 4 })}-${toFormattedNumber(positionInfo.priceUpper, { decimals: 4 })}`
+  const inRange = () => calcPositionInRange({ clmmInfo, positionInfo })
+  const rewardsAmountsWithFees = () =>
+    calcPositionRewardsAmount({ clmmInfo, positionInfo, prices: pricesMap(), tokens: tokens() })
+  const feesAmountsWithFees = () =>
+    calcPositionfeesAmounts({ clmmInfo, positionInfo, prices: pricesMap(), tokens: tokens() })
+  const hasFeeTokenAmount = () =>
+    isPositive(positionInfo.tokenFeeAmountBase) || isPositive(positionInfo.tokenFeeAmountQuote)
 
   const pendingTotalWithFees = createLazyMemo(() =>
     rewardsAmountsWithFees()
@@ -229,7 +180,7 @@ export function useClmmUserPositionAccount(
     const owner = ownerS()
     assert(owner, "for clmm position increase, owner not ready")
     const clmmId = clmmInfo.id
-    const positionNftMint = userPositionAccount.nftMint
+    const positionNftMint = positionInfo.nftMint
     const slippage = slippageS()
     return [
       "clmm position increase",
@@ -255,7 +206,7 @@ export function useClmmUserPositionAccount(
     const owner = ownerS()
     assert(owner, "for clmm position decrease, owner not ready")
     const clmmId = clmmInfo.id
-    const positionNftMint = userPositionAccount.nftMint
+    const positionNftMint = positionInfo.nftMint
     const slippage = slippageS()
     return [
       "clmm position decrease",
@@ -294,13 +245,13 @@ export function useClmmUserPositionAccount(
       return
     } else if (lt(params.usd, originalUSD)) {
       const decreaseUSDAmount = minus(originalUSD, params.usd)
-      if (gt(clmmInfo.currentPrice, userPositionAccount.priceUpper)) {
+      if (gt(clmmInfo.currentPrice, positionInfo.priceUpper)) {
         //  amountSide "B"
         const price = priceB()
         assert(price, `price of ${tokenB.symbol} not ready`)
         const amount = mul(decreaseUSDAmount, price)
         return buildTxClmmPositionDecreaseConfig({ amountB: amount })
-      } else if (lt(clmmInfo.currentPrice, userPositionAccount.priceLower)) {
+      } else if (lt(clmmInfo.currentPrice, positionInfo.priceLower)) {
         //  amountSide "A"
         const price = priceA()
         assert(price, `price of ${tokenA.symbol} not ready`)
@@ -311,13 +262,13 @@ export function useClmmUserPositionAccount(
       }
     } else {
       const increaseUSDAmount = minus(params.usd, originalUSD)
-      if (gt(clmmInfo.currentPrice, userPositionAccount.priceUpper)) {
+      if (gt(clmmInfo.currentPrice, positionInfo.priceUpper)) {
         //  amountSide "B"
         const price = priceB()
         assert(price, `price of ${tokenB.symbol} not ready`)
         const amount = mul(increaseUSDAmount, price)
         return buildTxClmmPositionIncreaseConfig({ amountB: amount })
-      } else if (lt(clmmInfo.currentPrice, userPositionAccount.priceLower)) {
+      } else if (lt(clmmInfo.currentPrice, positionInfo.priceLower)) {
         //  amountSide "A"
         const price = priceA()
         assert(price, `price of ${tokenA.symbol} not ready`)
@@ -330,7 +281,7 @@ export function useClmmUserPositionAccount(
   }
 
   function getActionSide(): "A" | "B" {
-    if (gt(clmmInfo.currentPrice, userPositionAccount.priceUpper)) {
+    if (gt(clmmInfo.currentPrice, positionInfo.priceUpper)) {
       return "B"
     } else {
       return "A"
@@ -363,15 +314,15 @@ export function useClmmUserPositionAccount(
   }
 
   const [userPositionAccountStore, setUserPositionStore] = createStore(
-    userPositionAccount as AdditionalClmmUserPositionAccount & ClmmUserPositionAccount,
+    positionInfo as AdditionalClmmUserPositionAccount & ClmmUserPositionAccount,
   )
   // 🤔 really need this? is this really work?
   createEffect(
     on(
-      () => userPositionAccount,
+      () => positionInfo,
       () => {
         //@ts-expect-error no need to check
-        setUserPositionStore(reconcile(userPositionAccount))
+        setUserPositionStore(reconcile(positionInfo))
       },
     ),
   )
@@ -397,19 +348,88 @@ export function useClmmUserPositionAccount(
   return userPositionAccountStore
 }
 
-/**
- * used in {@link useClmmUserPositionAccount}
- */
-function getLiquidityVolume(
-  tokenAPrices: Price,
-  tokenBPrices: Price,
-  tokenADecimal: number,
-  tokenBDecimal: number,
-  amountABN: Numberish,
-  amountBBN: Numberish,
-): USDVolume {
+/** gen a checker to export ClmmUserPositionAccount */
+//TODO: complete it!!!
+export function useClmmUserPositionAccountChecker(options: {
+  clmmInfo: ClmmInfo
+}): (innerOptions: {
+  positionInfo: ClmmUserPositionAccount
+}) => AdditionalClmmUserPositionAccount & ClmmUserPositionAccount {
+  return (innerOptions) => useClmmUserPositionAccount(options.clmmInfo, innerOptions.positionInfo)
+}
+
+function calcUserPositionLiquidityUSD(options: {
+  tokenADecimals: number
+  tokenBDecimals: number
+  tokenAPrice: Price | undefined
+  tokenBPrice: Price | undefined
+  userPositionAccountAmountBN_A: Numberish | undefined
+  userPositionAccountAmountBN_B: Numberish | undefined
+}) {
+  const tokenAPrices = options.tokenAPrice
+  const tokenBPrices = options.tokenBPrice
+  if (!tokenAPrices || !tokenBPrices) return undefined
+  const tokenADecimal = options.tokenADecimals
+  const tokenBDecimal = options.tokenBDecimals
+  const amountABN = options.userPositionAccountAmountBN_B
+  const amountBBN = options.userPositionAccountAmountBN_A
+  if (amountABN === undefined || amountBBN === undefined) return undefined
   const amountA = applyDecimal(amountABN, tokenADecimal)
   const amountB = applyDecimal(amountBBN, tokenBDecimal)
   const wholeLiquidity = add(mul(amountA, tokenAPrices), mul(amountB, tokenBPrices))
   return wholeLiquidity
+}
+
+function calcPositionInRange(options: { clmmInfo: ClmmInfo; positionInfo: ClmmUserPositionAccount }) {
+  return (
+    gt(options.clmmInfo.currentPrice, options.positionInfo.priceLower) &&
+    lt(options.clmmInfo.currentPrice, options.positionInfo.priceUpper)
+  )
+}
+
+function calcPositionRewardsAmount(options: {
+  clmmInfo: ClmmInfo
+  positionInfo: ClmmUserPositionAccount
+  prices: Prices | undefined
+  tokens: Tokens
+}) {
+  return (
+    options.positionInfo?.rewardInfos.map((info) => {
+      const price = info.token && options.prices?.get(info.token)
+
+      const t = info.token ? get(options.tokens, info.token) : undefined
+      return {
+        tokenAmount: t && info.penddingReward ? toTokenAmount(t, info.penddingReward, { amountIsBN: true }) : undefined,
+        price: price,
+      }
+    }) ?? []
+  )
+}
+
+function calcPositionfeesAmounts(options: {
+  clmmInfo: ClmmInfo
+  positionInfo: ClmmUserPositionAccount
+  prices: Prices | undefined
+  tokens: Tokens
+}) {
+  const t1 = options.positionInfo.tokenBase ? get(options.tokens, options.positionInfo.tokenBase) : undefined
+  const t2 = options.positionInfo.tokenQuote ? get(options.tokens, options.positionInfo.tokenQuote) : undefined
+  return options.positionInfo
+    ? [
+        {
+          tokenAmount:
+            t1 && options.positionInfo.tokenFeeAmountBase
+              ? toTokenAmount(t1, options.positionInfo.tokenFeeAmountBase, { amountIsBN: true })
+              : undefined,
+          price: options.positionInfo.tokenBase && options.prices?.get(options.positionInfo.tokenBase),
+        },
+        {
+          tokenAmount:
+            t2 && options.positionInfo.tokenFeeAmountQuote
+              ? toTokenAmount(t2, options.positionInfo.tokenFeeAmountQuote, { amountIsBN: true })
+              : undefined,
+          price: options.positionInfo.tokenQuote && options.prices?.get(options.positionInfo.tokenQuote),
+        },
+      ]
+    : []
 }
