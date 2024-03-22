@@ -470,7 +470,7 @@ function calcBuildTxClmmPositionSetUSDConfig(
         { amountA: amount },
       )
     } else {
-      throw new Error("//TEMPDEV currently not support in range decrease")
+      // throw new Error("//TEMPDEV currently not support in range decrease")
     }
   } else {
     const increaseUSDAmount = minus(params.usd, originalUSD)
@@ -505,7 +505,7 @@ function calcBuildTxClmmPositionSetUSDConfig(
         { amountA: amount },
       )
     } else {
-      throw new Error("//TEMPDEV currently not support in range increase")
+      // throw new Error("//TEMPDEV currently not support in range increase")
     }
   }
 }

@@ -55,6 +55,9 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
       buildCustomizedFollowPositionTxConfigs({
         clmmInfo,
         getPositionInfo,
+        config: {
+          ignoredPositionUsd: 5,
+        },
       }),
   })
 }
@@ -62,9 +65,13 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
 function buildCustomizedFollowPositionTxConfigs({
   clmmInfo,
   getPositionInfo,
+  config,
 }: {
   clmmInfo: ClmmInfo
   getPositionInfo(position: ClmmUserPositionAccount): AdditionalClmmUserPositionAccount
+  config: {
+    ignoredPositionUsd: number
+  }
 }) {
   const positions = clmmInfo.userPositionAccounts
   assert(positions && positions.length > 0, "no position to follow; the button shouldn't be clickable")
@@ -110,10 +117,10 @@ function buildCustomizedFollowPositionTxConfigs({
     for (const position of upPositions.filter((p) => p !== nearestUpPosition)) {
       const richPosition = getPositionInfo(position)
       const originalUSD = richPosition.userLiquidityUSD()
-      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, 10))
+      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, config.ignoredPositionUsd * 1.2))
       if (needMove) {
         haveMoveAction = true
-        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: 6 })
+        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: config.ignoredPositionUsd })
         if (txBuilderConfig) {
           decreaseClmmPositionTxConfigs.push(txBuilderConfig)
         }
@@ -142,10 +149,10 @@ function buildCustomizedFollowPositionTxConfigs({
     for (const position of downPositions.filter((p) => p !== nearestDownPosition)) {
       const richPosition = getPositionInfo(position)
       const originalUSD = richPosition.userLiquidityUSD()
-      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, 10))
+      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, config.ignoredPositionUsd * 1.2))
       if (needMove) {
         haveMoveAction = true
-        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: 6 })
+        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: config.ignoredPositionUsd })
         if (txBuilderConfig) {
           decreaseClmmPositionTxConfigs.push(txBuilderConfig)
         }
@@ -159,12 +166,11 @@ function buildCustomizedFollowPositionTxConfigs({
         increaseClmmPositionTxConfigs.push(txBuilderConfig)
       }
     }
-
-    return {
-      decreaseClmmPositionTxConfigs,
-      increaseClmmPositionTxConfigs,
-    }
   }
 
   // ---------------- handle tasks (send tx) ----------------
+  return {
+    decreaseClmmPositionTxConfigs,
+    increaseClmmPositionTxConfigs,
+  }
 }

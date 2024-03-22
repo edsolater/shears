@@ -12,10 +12,10 @@ export type TxResponse =
   | { name: string; status: "sendError"; payload: TxSendErrorInfo }
 
 export type TxBuilderSingleConfig = TxSwapConfig | TxClmmPositionIncreaseConfig | TxClmmPositionDecreaseConfig
-export type TxBuilderMultiConfig = ["tx multi configs", TxBuilderSingleConfig[]]
-export type TxBuilderConfig = TxBuilderSingleConfig | TxBuilderMultiConfig
+export type TxBuilderMultiConfig = ["complicated tx multi configs", TxBuilderSingleConfig[]]
+export type TxBuilderConfigs = TxBuilderSingleConfig | TxBuilderMultiConfig
 
-export function launchTx(...args: TxBuilderConfig): TxHandlerEventCenter {
+export function launchTx(...args: TxBuilderConfigs): TxHandlerEventCenter {
   const [inputName, txParams] = args
   const { receiver, sender } = getMessagePort<TxResponse>("tx start")
   sender.post([inputName, txParams])
@@ -33,13 +33,7 @@ export function invokeTxConfig(...configs: (TxBuilderSingleConfig | undefined)[]
   if (!configs.length) return undefined
   const validConfigs = shakeUndefinedItem(configs) as unknown as TxBuilderSingleConfig[]
   if (!validConfigs.length) return undefined
-  if (validConfigs.length === 1) {
-    const [txCommandName, txParams] = configs
-    //@ts-expect-error no need to check type
-    return launchTx(txCommandName, txParams)
-  } else {
-    return launchTx("tx multi configs", validConfigs)
-  }
+  return launchTx("complicated tx multi configs", validConfigs)
 }
 
 function isTxConfig(config: any): config is TxBuilderSingleConfig {

@@ -12,7 +12,7 @@ import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount } from "../../utils/dataStructures/TokenAmount"
 import { getTxHandlerUtils } from "../../utils/txHandler"
-import { handleTxShortcut, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"
+import { handleTxModule, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"
 import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./utils/fetchClmmJson"
@@ -34,11 +34,11 @@ export type TxClmmPositionIncreaseParams = {
 
 /** need amountA or amountB */
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
-  return handleTxShortcut(await createTxClmmPositionIncreaseTransactionShortcut(params))
+  return handleTxModule(await createTxClmmPositionIncreaseTransactionModule(params))
 }
 
 /** need amountA or amountB */
-export async function createTxClmmPositionIncreaseTransactionShortcut(
+export async function createTxClmmPositionIncreaseTransactionModule(
   params: TxClmmPositionIncreaseParams,
 ): Promise<TransactionModule> {
   const amount = "amountA" in params ? params.amountA : params.amountB

@@ -1,17 +1,17 @@
 import { createSubscribable, type MayPromise } from "@edsolater/fnkit"
 import {
-  createTxClmmPositionIncreaseTransactionShortcut,
+  createTxClmmPositionIncreaseTransactionModule,
   txClmmPositionIncrease,
 } from "../../stores/data/txClmmPositionIncrease"
-import { txSwap } from "../../stores/data/txSwap"
+import { createTxSwapTransactionModule, txSwap } from "../../stores/data/txSwap"
 import type { PortUtils } from "../webworker/createMessagePortTransforers"
 import type { TxHandlerEventCenter } from "./txHandler"
 import type { TxBuilderMultiConfig, TxBuilderSingleConfig, TxResponse } from "./txDispatcher_main"
 import {
-  createTxClmmPositionDecreaseTransactionShortcut,
+  createTxClmmPositionDecreaseTransactionModule,
   txClmmPositionDecrease,
 } from "../../stores/data/txClmmPositionDecrease"
-import { handleMultiTxShortcuts, type TransactionModule } from "./handleTxFromShortcut"
+import { handleMultiTxModules, type TransactionModule } from "./handleTxFromShortcut"
 
 export async function txDispatcher_worker(
   transformers: PortUtils<TxBuilderSingleConfig | TxBuilderMultiConfig, TxResponse>,
@@ -30,8 +30,8 @@ export async function txDispatcher_worker(
       })
     })
   })
-  receiver.subscribe((config) => {
-    const [name, txParams] = config
+  receiver.subscribe((configs) => {
+    const [name, txParams] = configs
     console.log("[worker txDispatcher] get name: ", name, "txParams: ", txParams)
     switch (name) {
       case "swap": {
@@ -49,27 +49,34 @@ export async function txDispatcher_worker(
         txSubscribable.set({ name, txEventCenter })
         break
       }
-      case "tx multi configs": {
+      case "complicated tx multi configs": {
         const configs = txParams
         const txModules = [] as MayPromise<TransactionModule>[]
-        console.log('[worker txDispatcher] tx multi configs: ', configs)
+        console.log("[worker txDispatcher] complicated tx multi configs: ", configs)
         for (const config of configs) {
           const [name, txParams] = config
           switch (name) {
             case "clmm position increase": {
-              const txEventCenter = createTxClmmPositionIncreaseTransactionShortcut(txParams)
-              txModules.push(txEventCenter)
+              const txModule = createTxClmmPositionIncreaseTransactionModule(txParams)
+              txModules.push(txModule)
               break
             }
             case "clmm position decrease": {
-              const txEventCenter = createTxClmmPositionDecreaseTransactionShortcut(txParams)
-              txModules.push(txEventCenter)
+              const txModule = createTxClmmPositionDecreaseTransactionModule(txParams)
+              txModules.push(txModule)
+              break
+            }
+            case "swap": {
+              const txModule = createTxSwapTransactionModule(txParams)
+              txModules.push(txModule)
               break
             }
           }
         }
-        const txEventCenter = Promise.all(txModules).then((txModules) => handleMultiTxShortcuts(txModules))
-        txSubscribable.set({ name: "tx multi configs", txEventCenter })
+        const txEventCenter = Promise.all(txModules).then((txModules) =>
+          handleMultiTxModules(txModules, { sendMode: "parallel(dangerous-without-order)" }),
+        )
+        txSubscribable.set({ name: "complicated tx multi configs", txEventCenter })
       }
     }
     //🏷️ switchCase has type-error
@@ -79,3 +86,7 @@ export async function txDispatcher_worker(
     // })
   })
 }
+
+// function buildTxFromTxBuilderConfig(configs: TxBuilderSingleConfig[], options?: {}): TxHandlerEventCenter {
+//   return
+// }

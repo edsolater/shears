@@ -124,7 +124,6 @@ export default function ClmmsPage() {
             <Button
               onClick={({ ev }) => {
                 const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs()
-                console.log("[txDispatcher] tx configs: ", configs)
                 if (configs) {
                   invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
                 }
@@ -232,7 +231,7 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
           onClick={() => {
             invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
-                amountB: 0.1, // TODO: should be input
+                amountB: 10, // TODO: should be input
               }),
             )
           }}

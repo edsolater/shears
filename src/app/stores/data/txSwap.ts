@@ -3,10 +3,10 @@ import { TradeV2 } from "@raydium-io/raydium-sdk"
 import { appProgramId } from "../../utils/common/config"
 import { getConnection } from "../../utils/dataStructures/Connection"
 import { toPub } from "../../utils/dataStructures/Publickey"
-import { Token } from "./token/type"
-import { handleTx, type UITxVersion } from "../../utils/txHandler"
-import { getTxHandlerBudgetConfig } from "../../utils/txHandler/getTxHandlerBudgetConfig"
+import { getTxHandlerUtils, type UITxVersion } from "../../utils/txHandler"
+import { handleTxModule, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"
 import { getRealSDKTxVersion } from "../../utils/txHandler/txVersion"
+import { Token } from "./token/type"
 import { getBestCalcResultCache } from "./utils/calculateSwapRouteInfos"
 
 export type TxSwapConfig = ["swap", TxSwapParams]
@@ -24,44 +24,42 @@ export interface TxSwapParams {
   txVersion?: UITxVersion
 }
 
-export function txSwap(options: TxSwapParams) {
-  const connection = getConnection(options.checkInfo.rpcURL)
+export async function txSwap(txParams: TxSwapParams) {
+  return handleTxModule(await createTxSwapTransactionModule(txParams))
+}
+
+export async function createTxSwapTransactionModule(txParams: TxSwapParams): Promise<TransactionModule> {
+  const connection = getConnection(txParams.checkInfo.rpcURL)
   const neariestSwapBestResultCache = getBestCalcResultCache()
   assert(neariestSwapBestResultCache, "swapInfo not found")
-  assert(neariestSwapBestResultCache.params.input.mint === options.checkInfo.coin1.mint, "coin1 is not match")
-  assert(neariestSwapBestResultCache.params.output.mint === options.checkInfo.coin2.mint, "coin2 is not match")
+  assert(neariestSwapBestResultCache.params.input.mint === txParams.checkInfo.coin1.mint, "coin1 is not match")
+  assert(neariestSwapBestResultCache.params.output.mint === txParams.checkInfo.coin2.mint, "coin2 is not match")
   assert(
-    eq(neariestSwapBestResultCache.params.inputAmount.amount, options.checkInfo.amount1),
+    eq(neariestSwapBestResultCache.params.inputAmount.amount, txParams.checkInfo.amount1),
     "inputAmount is not match",
   )
 
-  return handleTx(
-    { connection, owner: options.owner },
-    async ({ baseUtils: { owner, connection, getSDKTokenAccounts } }) => {
-      //TODO: no two fetch await
-      console.log(1)
-      const txBudgetConfig = await getTxHandlerBudgetConfig()
-      console.log(2)
-      const sdkTokenAccounts = await getSDKTokenAccounts()
-      assert(sdkTokenAccounts, "token account can't load")
-      // const { sdkTokenAccounts } = await getTokenAccounts({ connection, owner: toPubString(owner) })
-      console.log(3)
-      const { innerTransactions } = await TradeV2.makeSwapInstructionSimple({
-        connection,
-        swapInfo: neariestSwapBestResultCache.sdkBestResult,
-        ownerInfo: {
-          wallet: owner,
-          tokenAccounts: sdkTokenAccounts,
-          associatedOnly: true,
-          checkCreateATAOwner: true,
-        },
-        routeProgram: toPub(appProgramId.Router),
-        makeTxVersion: getRealSDKTxVersion(options.txVersion),
-        computeBudgetConfig: txBudgetConfig,
-      })
-      console.log("innerTransactions: ", innerTransactions)
-      return innerTransactions
+  const { owner, getSDKBudgetConfig, getSDKTokenAccounts, sdkTxVersion, sdkLookupTableCache } = getTxHandlerUtils({
+    rpcUrl: txParams.checkInfo.rpcURL,
+    owner: txParams.owner,
+  })
+  const [txBudgetConfig, sdkTokenAccounts] = await Promise.all([getSDKBudgetConfig(), getSDKTokenAccounts()])
+  assert(sdkTokenAccounts, "token account can't load")
+  // const { sdkTokenAccounts } = await getTokenAccounts({ connection, owner: toPubString(owner) })
+  console.log(3)
+  const { innerTransactions } = await TradeV2.makeSwapInstructionSimple({
+    connection,
+    swapInfo: neariestSwapBestResultCache.sdkBestResult,
+    ownerInfo: {
+      wallet: owner,
+      tokenAccounts: sdkTokenAccounts,
+      associatedOnly: true,
+      checkCreateATAOwner: true,
     },
-    { sendMode: "queue(continue-without-check-transaction-response)" },
-  )
+    routeProgram: toPub(appProgramId.Router),
+    makeTxVersion: getRealSDKTxVersion(txParams.txVersion),
+    computeBudgetConfig: txBudgetConfig,
+  })
+  console.log("innerTransactions: ", innerTransactions)
+  return Object.assign(innerTransactions, { connection, owner: txParams.owner })
 }
