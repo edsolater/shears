@@ -57,7 +57,7 @@ export function parseSDKToken(token: SDK_Currency | SDK_Token): Token {
     const mint = t.mint.toString()
     return {
       id: mint,
-      mint: mint,
+      mint,
       programId: t.programId.toString(),
       decimals: t.decimals,
       symbol: t.symbol,

@@ -104,8 +104,8 @@ export function calculateSwapRouteInfos({
           connection,
           inputMint: input.mint,
           outputMint: output.mint,
-          apiPoolList: apiPoolList,
-          sdkParsedClmmPoolInfo: sdkParsedClmmPoolInfo,
+          apiPoolList,
+          sdkParsedClmmPoolInfo,
         }),
       )
 

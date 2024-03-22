@@ -74,8 +74,8 @@ export function buildPopover(options?: PopoverPluginOptions) {
         onCleanup(abort)
       })
       const { coorStyle } = usePopoverLocation({
-        buttonDom: buttonDom,
-        panelDom: panelDom,
+        buttonDom,
+        panelDom,
         isTriggerOn,
         ...options,
       })
@@ -120,8 +120,8 @@ export function buildPopover(options?: PopoverPluginOptions) {
     isTriggerOn,
 
     /** open the popover panel */
-    open: open,
-    close: close,
+    open,
+    close,
   }
 
   return {

@@ -10,16 +10,16 @@ export type ICSSSpecialCyberpenkCardOptions = {
 export const icssCyberpenkBorder = createICSS(
   ({ borderWidth = "2px", borderRadius = "16px" }: ICSSSpecialCyberpenkCardOptions = {}) => ({
     position: "relative",
-    borderWidth: borderWidth,
-    borderRadius: borderRadius,
+    borderWidth,
+    borderRadius,
     "&::after": {
       content: '""',
       position: "absolute",
       inset: "0",
       pointerEvents: "none",
-      borderRadius: borderRadius,
+      borderRadius,
       border: "solid transparent",
-      borderWidth: borderWidth,
+      borderWidth,
       background: "linear-gradient(246deg, #da2eef 7.97%, #2b6aff 49.17%, #39d0d8 92.1%)",
       backgroundOrigin: "border-box",
       "-webkit-mask": `linear-gradient(#fff 0 0) padding-box, 

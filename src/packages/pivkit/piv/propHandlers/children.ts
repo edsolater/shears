@@ -5,7 +5,7 @@ import { ValidController } from "../typeTools"
 
 export function loadPropsControllerRef<Controller extends ValidController | unknown>(
   props: Partial<KitProps<{ controllerRef?: (getController: Controller) => void }>>,
-  providedController: Controller,
+  providedController,
 ) {
   if (hasProperty(props, "controllerRef")) {
     props.controllerRef?.(providedController)

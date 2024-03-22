@@ -44,7 +44,7 @@ export function sdkParseSwapAmmInfo({
     const routes = TradeV2.getAllRoute({
       inputMint: toPub(inputMint),
       outputMint: toPub(outputMint),
-      apiPoolList: apiPoolList,
+      apiPoolList,
       clmmList: Object.values(sdkParsedClmmPoolInfo).map((i) => i.state),
     })
     const tickCache = Clmm.fetchMultiplePoolTickArrays({

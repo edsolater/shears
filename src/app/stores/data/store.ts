@@ -60,9 +60,9 @@ export type StoreData = {
 }
 
 export const {
-  store: store,
+  store,
   unwrappedStore: storeData,
-  setStore: setStore,
+  setStore,
   createStorePropertySignal,
   createStorePropertySetter,
 } = createSmartStore<StoreData>(

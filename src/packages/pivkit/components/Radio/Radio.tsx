@@ -45,7 +45,7 @@ export function Radio(kitProps: RadioKitProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(kitProps, {
     name: "Radio",
     defaultProps,
-    selfProps: selfProps,
+    selfProps,
   })
 
   const [isChecked, setIsChecked] = createSyncSignal({

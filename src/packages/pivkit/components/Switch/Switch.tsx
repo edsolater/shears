@@ -52,7 +52,7 @@ export function Switch(rawProps: SwitchProps) {
     name: "Switch",
     defaultProps,
     needAccessify: accessifyPropNames,
-    selfProps: selfProps,
+    selfProps,
   })
 
   const [isChecked, setIsChecked] = createSyncSignal({

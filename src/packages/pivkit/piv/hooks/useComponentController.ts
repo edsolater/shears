@@ -28,7 +28,7 @@ export function registerControllerInCreateKit(
 
 export function recordController<Controller extends ValidController | unknown>(
   id: string,
-  proxyController: Controller,
+  proxyController,
 ) {
   recordedControllers.set((m) => (m ?? new WeakerMap()).set(id, proxyController))
 }

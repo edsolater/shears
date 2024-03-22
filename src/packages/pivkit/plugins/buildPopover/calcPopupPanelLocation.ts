@@ -105,8 +105,8 @@ export const calcPopupPanelLocation = ({
   const arrowLeft = clamp(buttonCenterX, { min: panelLeft, max: panelLeft + panelWidth }) - panelLeft
 
   return {
-    panelLeft: panelLeft,
-    panelTop: panelTop,
+    panelLeft,
+    panelTop,
     arrowLeftRelativeToPanel: arrowLeft,
     arrowTopRelativeToPanel: arrowTop,
   }

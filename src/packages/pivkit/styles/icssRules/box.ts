@@ -99,7 +99,7 @@ export const icssGrid = createICSS(({ items, template, templateColumn, templateR
   gridTemplate: template,
   gridTemplateColumns: templateColumn,
   gridTemplateRows: templateRow,
-  gap: gap,
+  gap,
 }))
 
 export type ICSSGridItemOption = {

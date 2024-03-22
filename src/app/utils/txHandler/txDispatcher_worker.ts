@@ -36,17 +36,17 @@ export async function txDispatcher_worker(
     switch (name) {
       case "swap": {
         const txEventCenter = txSwap(txParams)
-        txSubscribable.set({ name: name, txEventCenter })
+        txSubscribable.set({ name, txEventCenter })
         break
       }
       case "clmm position increase": {
         const txEventCenter = txClmmPositionIncrease(txParams)
-        txSubscribable.set({ name: name, txEventCenter })
+        txSubscribable.set({ name, txEventCenter })
         break
       }
       case "clmm position decrease": {
         const txEventCenter = txClmmPositionDecrease(txParams)
-        txSubscribable.set({ name: name, txEventCenter })
+        txSubscribable.set({ name, txEventCenter })
         break
       }
       case "tx multi configs": {

@@ -59,8 +59,8 @@ export const useWalletStore = createCachedGlobalHook(() => {
     get owner() {
       return owner()
     },
-    connect: connect,
-    disconnect: disconnect,
+    connect,
+    disconnect,
   }
   return store
 })

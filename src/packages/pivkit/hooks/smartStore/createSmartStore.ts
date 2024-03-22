@@ -154,13 +154,13 @@ export function createSmartStore<T extends Record<string, any>>(
   invokeOnStoreInit(store, setStore)
 
   return {
-    store: store,
-    unwrappedStore: unwrappedStore,
-    setStore: setStore,
+    store,
+    unwrappedStore,
+    setStore,
 
     // shortcut
-    createStorePropertySignal: createStorePropertySignal,
-    createStorePropertySetter: createStorePropertySetter,
+    createStorePropertySignal,
+    createStorePropertySetter,
 
     onStoreInit: addListenerStoreInit,
     onPropertyChange: addListenerPropertyChange,

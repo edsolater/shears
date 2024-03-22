@@ -17,5 +17,5 @@ function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerD
     ...((res.official.map((t) => ({ ...t, is: "raydium-official" })) ?? []) as Token[]),
     ...((res.unOfficial.map((t) => ({ ...t, is: "raydium-unofficial" })) ?? []) as Token[]),
   ]
-  return { tokens: tokens, blacklist: res.blacklist }
+  return { tokens, blacklist: res.blacklist }
 }

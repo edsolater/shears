@@ -371,7 +371,7 @@ export function createCSSCollapsePlugin(options?: {
   }
 
   return {
-    plugin: plugin,
+    plugin,
     el,
     controller,
   }

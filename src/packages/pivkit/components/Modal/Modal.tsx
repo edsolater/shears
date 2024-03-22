@@ -64,7 +64,7 @@ export function Modal(kitProps: ModalKitProps) {
     isOpen: innerOpen,
     open: mergeFunction(open, openModal),
     close: mergeFunction(close, closeModal),
-    toggle: toggle,
+    toggle,
   }))
 
   const { props, shadowProps } = useKitProps(kitProps, {

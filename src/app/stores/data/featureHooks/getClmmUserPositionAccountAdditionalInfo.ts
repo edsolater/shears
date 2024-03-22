@@ -258,7 +258,7 @@ function calcPositionRewardsAmount(options: {
       const t = info.token ? get(options.tokens, info.token) : undefined
       return {
         tokenAmount: t && info.penddingReward ? toTokenAmount(t, info.penddingReward, { amountIsBN: true }) : undefined,
-        price: price,
+        price,
       }
     }) ?? []
   )
@@ -321,7 +321,7 @@ async function calcPositionPendingRewardAmountUSD(options: {
   const ams = await asyncMap(rewardsAmounts.concat(feesAmounts), async ({ tokenAmount, ...rest }) => {
     if (!tokenAmount) return
     const feeInfo = await getTransferFeeInfo({
-      rpcUrl: rpcUrl,
+      rpcUrl,
       tokens: tokensMap,
       tokenAmount,
       fetchedEpochInfo: epochInfo,

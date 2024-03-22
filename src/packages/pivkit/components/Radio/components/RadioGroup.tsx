@@ -38,7 +38,7 @@ export function RadioGroup(kitProps: RadioGroupKitProps) {
   const { props, shadowProps, lazyLoadController } = useKitProps(kitProps, {
     name: "RadioGroup",
     defaultProps,
-    selfProps: selfProps,
+    selfProps,
   })
 
   const [selectedOption, setSeletedOption] = createSignal(props.option)

@@ -53,8 +53,8 @@ export function usePopoverLocation({
     if (!buttonElement || !panelElement) return
 
     const coors = calcPopupPanelLocation({
-      buttonElement: buttonElement,
-      panelElement: panelElement,
+      buttonElement,
+      panelElement,
       placement,
       cornerOffset,
       popoverGap,

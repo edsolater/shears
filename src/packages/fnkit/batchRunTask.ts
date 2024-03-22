@@ -19,7 +19,7 @@ const _taskHandlersTimoutids = new WeakMap<TaskHandler, ReturnType<typeof setTim
  */
 export function batchRunTask<Payload extends TaskPayload = TaskPayload, Result extends TaskResult = TaskResult>(
   taskHandler: TaskHandler<Payload, Result>,
-  taskPayload: Payload,
+  taskPayload,
 ): Promise<Result> {
   assert(isObject(taskPayload), "taskPayload must be an object")
 

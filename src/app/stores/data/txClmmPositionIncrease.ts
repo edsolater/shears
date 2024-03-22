@@ -64,11 +64,11 @@ export async function createTxClmmPositionIncreaseTransactionShortcut(
 
   // ------------------ calc amount info ------------------
   const infoPromise = getClmmIncreaseTxLiquidityAndBoundaryFromAmount({
-    amount: amount,
+    amount,
     rpcUrl: params.rpcUrl,
     clmmId: params.clmmId,
     positionNftMint: params.positionNftMint,
-    amountSide: amountSide,
+    amountSide,
   })
 
   // ------------------ build transaction ------------------
@@ -88,7 +88,7 @@ export async function createTxClmmPositionIncreaseTransactionShortcut(
   const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
   const liquidityMin = mul(liquidity, minus(1, params.slippage))
   const txParams = {
-    connection: connection,
+    connection,
     liquidity: toSDKBN(liquidityMin),
     poolInfo: sdkClmmInfo.state,
     ownerInfo: {

@@ -226,11 +226,11 @@ export const getTxHandlerUtils = (
   const connection = "connection" in payload ? payload.connection : getConnection(payload.rpcUrl)
   return {
     owner: toPub(payload.owner),
-    connection: connection,
+    connection,
     sdkTxVersion: TxVersion.V0,
     sdkLookupTableCache,
     getSDKTokenAccounts: () =>
-      getTokenAccounts({ connection: connection, owner: payload.owner }).then((res) => res.sdkTokenAccounts),
+      getTokenAccounts({ connection, owner: payload.owner }).then((res) => res.sdkTokenAccounts),
     getSDKBudgetConfig: getTxHandlerBudgetConfig,
   }
 }

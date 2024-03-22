@@ -18,7 +18,7 @@ export function loadFarmSYNInfos() {
     const { sender, receiver } = getMessagePort<ComposedFarmSYNInfos, ComposeFarmSYNInfoQuery>(
       workerCommands["get raydium farms syn infos"],
     )
-    sender.post({ owner: owner, rpcUrl })
+    sender.post({ owner, rpcUrl })
     const { unsubscribe } = receiver.subscribe((allFarmSYNInfos) => {
       setStore({ isFarmInfosLoading: false, farmInfos: allFarmSYNInfos })
     })

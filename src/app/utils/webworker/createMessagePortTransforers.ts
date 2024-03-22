@@ -71,8 +71,8 @@ export function createMessagePortTransforers(towrardsTarget: MayPromise<Worker |
     const sender = getSender<Query>(command)
     const receiver = getReceiver<Payload>(command)
     return {
-      receiver: receiver,
-      sender: sender,
+      receiver,
+      sender,
       postMessage: sender.post,
       receiveMessage: receiver.subscribe,
     }

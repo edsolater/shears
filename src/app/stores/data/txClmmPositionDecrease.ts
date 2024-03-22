@@ -65,11 +65,11 @@ export async function createTxClmmPositionDecreaseTransactionShortcut(
   const sdkTokenAccountsPromise = getSDKTokenAccounts()
 
   const infoPromise = getClmmDecreaseTxLiquidityAndBoundaryFromAmount({
-    amount: amount,
+    amount,
     rpcUrl: params.rpcUrl,
     clmmId: params.clmmId,
     positionNftMint: params.positionNftMint,
-    amountSide: amountSide,
+    amountSide,
   })
   const [txBudgetConfig, sdkTokenAccounts, info] = await Promise.all([
     txBudgetConfigPromise,
@@ -86,7 +86,7 @@ export async function createTxClmmPositionDecreaseTransactionShortcut(
   assert(sdkTokenAccounts, "token account can't load")
   const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)
   const txParams = {
-    connection: connection,
+    connection,
     liquidity: toSDKBN(liquidity),
     poolInfo: sdkClmmInfo.state,
     ownerInfo: {

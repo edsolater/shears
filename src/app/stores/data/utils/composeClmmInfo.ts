@@ -42,7 +42,7 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
       inRange: checkIsInRange(sdkInfo, userPositionAccount),
       poolId: toPubString(userPositionAccount.poolId),
       nftMint: toPubString(userPositionAccount.nftMint),
-      priceLower: priceLower,
+      priceLower,
       priceUpper: parseSDKDecimal(userPositionAccount.priceUpper),
       amountBaseBN: amountBase,
       amountQuoteBN: amountQuote,
@@ -77,7 +77,7 @@ export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo
     quoteDecimals: jsonInfo.mintDecimalsB,
     userPositionAccounts,
     creator: sdkInfo && toPubString(sdkInfo.state.creator),
-    currentPrice: currentPrice,
+    currentPrice,
     // change to shape
     feeApr: sdkInfo && {
       "24h": toPercent(sdkInfo.state.day.feeApr, { alreadyDecimaled: true }),

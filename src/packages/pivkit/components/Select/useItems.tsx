@@ -111,8 +111,8 @@ export function useItems<T>(options?: {
     items: itemList,
     setItem,
     clearItem: reset,
-    undo: undo,
-    redo: redo,
+    undo,
+    redo,
     selectPrevItem,
     selectNextItem,
 
