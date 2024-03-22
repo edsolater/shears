@@ -263,7 +263,7 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         </Button>
         <Button
           onClick={() => {
-            invokeTxConfig(positionAccount.buildPositionIncreaseAllWalletRestTxConfig())
+            invokeTxConfig(positionAccount.buildPositionShowHandTxConfig())
           }}
         >
           Rush all

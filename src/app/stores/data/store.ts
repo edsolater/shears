@@ -83,6 +83,7 @@ globalThis.document.addEventListener("DOMContentLoaded", () => {
 })
 
 export type Prices = Map<Mint, Price>
+export type Balances = Collection<Numberish, Mint>
 
 // TODO: should all state just use shuck
 // token
@@ -92,7 +93,8 @@ export const shuck_tokenPrices = createShuck<Prices | undefined>()
 // token accounts & balance
 export const shuck_isTokenAccountsLoading = createShuck<boolean | undefined>()
 export const shuck_tokenAccounts = createShuck<Collection<TokenAccount, TokenAccount["publicKey"]> | undefined>()
-export const shuck_balances = createShuck<Collection<Numberish, Mint> | undefined>() // TODO: should extends by tokenAccounts
+
+export const shuck_balances = createShuck<Balances | undefined>() // TODO: should extends by tokenAccounts
 // wallet
 export const shuck_owner = createShuck<string | undefined>()
 // app settings

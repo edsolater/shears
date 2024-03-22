@@ -1,9 +1,16 @@
 import { assert, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
-import { createRoot, untrack } from "solid-js"
+import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
+import { useWalletOwner } from "../../wallet/store"
+import { shuck_balances, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
+import { useToken } from "../token/useToken"
+import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
+import {
+  getClmmUserPositionAccountAdditionalInfo,
+  type AdditionalClmmUserPositionAccount,
+} from "./getClmmUserPositionAccountAdditionalInfo"
 import { mergeTwoStore } from "./mergeTwoStore"
-import { useClmmUserPositionAccount } from "./useClmmUserPositionAccount"
 
 type AdditionalClmmInfo = {
   buildCustomizedFollowPositionTxConfigs():
@@ -15,13 +22,50 @@ type AdditionalClmmInfo = {
 }
 
 export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
-  
+  const pricesMap = useShuckValue(shuck_tokenPrices)
+  const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
+  const rpc = useShuckValue(shuck_rpc)
+  const owner = useWalletOwner()
+  const slippage = useShuckValue(shuck_slippage)
+  const balances = useShuckValue(shuck_balances)
+  const tokenA = useToken(() => clmmInfo.base)
+  const tokenB = useToken(() => clmmInfo.quote)
+  const priceA = useTokenPrice(() => clmmInfo.base)
+  const priceB = useTokenPrice(() => clmmInfo.quote)
+
+  function getPositionInfo(position: ClmmUserPositionAccount) {
+    return getClmmUserPositionAccountAdditionalInfo({
+      clmmInfo,
+      positionInfo: position,
+      pricesMap,
+      tokens,
+      rpcUrl: () => rpc()?.url,
+      owner: owner,
+      slippage: slippage,
+      balances: balances,
+      tokenA: () => tokenA,
+      tokenB: () => tokenB,
+      priceA,
+      priceB,
+    })
+  }
+
   return mergeTwoStore(clmmInfo, {
-    buildCustomizedFollowPositionTxConfigs: () => buildCustomizedFollowPositionTxConfigs(clmmInfo),
+    buildCustomizedFollowPositionTxConfigs: () =>
+      buildCustomizedFollowPositionTxConfigs({
+        clmmInfo,
+        getPositionInfo,
+      }),
   })
 }
 
-function buildCustomizedFollowPositionTxConfigs(clmmInfo: ClmmInfo) {
+function buildCustomizedFollowPositionTxConfigs({
+  clmmInfo,
+  getPositionInfo,
+}: {
+  clmmInfo: ClmmInfo
+  getPositionInfo(position: ClmmUserPositionAccount): AdditionalClmmUserPositionAccount
+}) {
   const positions = clmmInfo.userPositionAccounts
   assert(positions && positions.length > 0, "no position to follow; the button shouldn't be clickable")
   const currentPrice = clmmInfo.currentPrice
@@ -64,8 +108,8 @@ function buildCustomizedFollowPositionTxConfigs(clmmInfo: ClmmInfo) {
 
     let haveMoveAction = false
     for (const position of upPositions.filter((p) => p !== nearestUpPosition)) {
-      const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, position))
-      const originalUSD = richPosition.userLiquidityUSD
+      const richPosition = getPositionInfo(position)
+      const originalUSD = richPosition.userLiquidityUSD()
       const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, 10))
       if (needMove) {
         haveMoveAction = true
@@ -77,8 +121,8 @@ function buildCustomizedFollowPositionTxConfigs(clmmInfo: ClmmInfo) {
     }
 
     if (haveMoveAction) {
-      const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, nearestUpPosition))
-      const txBuilderConfig = richPosition.buildPositionIncreaseAllWalletRestTxConfig()
+      const richPosition = getPositionInfo(nearestUpPosition)
+      const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
       if (txBuilderConfig) {
         increaseClmmPositionTxConfigs.push(txBuilderConfig)
       }
@@ -96,8 +140,8 @@ function buildCustomizedFollowPositionTxConfigs(clmmInfo: ClmmInfo) {
 
     let haveMoveAction = false
     for (const position of downPositions.filter((p) => p !== nearestDownPosition)) {
-      const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, position))
-      const originalUSD = richPosition.userLiquidityUSD
+      const richPosition = getPositionInfo(position)
+      const originalUSD = richPosition.userLiquidityUSD()
       const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, 10))
       if (needMove) {
         haveMoveAction = true
@@ -109,8 +153,8 @@ function buildCustomizedFollowPositionTxConfigs(clmmInfo: ClmmInfo) {
     }
 
     if (haveMoveAction) {
-      const richPosition = untrack(() => useClmmUserPositionAccount(clmmInfo, nearestDownPosition))
-      const txBuilderConfig = richPosition.buildPositionIncreaseAllWalletRestTxConfig()
+      const richPosition = getPositionInfo(nearestDownPosition)
+      const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
       if (txBuilderConfig) {
         increaseClmmPositionTxConfigs.push(txBuilderConfig)
       }
