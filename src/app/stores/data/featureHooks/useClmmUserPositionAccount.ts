@@ -1,12 +1,11 @@
 import { type Numberish } from "@edsolater/fnkit"
-import { createLazyMemo, usePromise } from "@edsolater/pivkit"
+import { usePromise } from "@edsolater/pivkit"
 import { createEffect, on } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import { type Amount } from "../../../utils/dataStructures/TokenAmount"
 import type { USDVolume } from "../../../utils/dataStructures/type"
-import { useWalletOwner } from "../../wallet/store"
-import { shuck_balances, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
+import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
@@ -41,10 +40,10 @@ export function useClmmUserPositionAccount(
 ): AdditionalClmmUserPositionAccountState & ClmmUserPositionAccount {
   const pricesMap = useShuckValue(shuck_tokenPrices)
   const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
-  const rpcS = useShuckValue(shuck_rpc)
-  const ownerS = useWalletOwner()
-  const slippageS = useShuckValue(shuck_slippage)
-  const balancesS = useShuckValue(shuck_balances)
+  const rpc = useShuckValue(shuck_rpc)
+  const owner = useShuckValue(shuck_owner)
+  const slippage = useShuckValue(shuck_slippage)
+  const balances = useShuckValue(shuck_balances)
 
   const tokenA = useToken(() => clmmInfo.base)
   const tokenB = useToken(() => clmmInfo.quote)
@@ -67,10 +66,10 @@ export function useClmmUserPositionAccount(
     positionInfo,
     pricesMap,
     tokens,
-    rpcUrl: () => rpcS()?.url,
-    owner: ownerS,
-    slippage: slippageS,
-    balances: balancesS,
+    rpcUrl: () => rpc()?.url,
+    owner: owner,
+    slippage: slippage,
+    balances: balances,
     tokenA: () => tokenA,
     tokenB: () => tokenB,
     priceA,

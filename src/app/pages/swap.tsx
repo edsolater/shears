@@ -15,12 +15,18 @@ import { TokenAmountInputBox } from "../components/TokenAmountInput"
 import { useToken } from "../stores/data/token/useToken"
 import { useSwapAmountCalculator as useSwapAmountCalculatorEffect } from "../stores/data/featureHooks/useSwapAmountCalculator"
 import { launchTx } from "../utils/txHandler/txDispatcher_main"
-import { createStorePropertySetter, createStorePropertySignal, setStore, store } from "../stores/data/store"
-import { useWalletOwner } from "../stores/wallet/store"
+import {
+  createStorePropertySetter,
+  createStorePropertySignal,
+  setStore,
+  shuck_owner,
+  store,
+} from "../stores/data/store"
 import { Token } from "../stores/data/token/type"
+import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
 
 export default function SwapPage() {
-  const owner = useWalletOwner()
+  const owner = useShuckValue(shuck_owner)
   const token1 = useToken(() => store.swapInputToken1) // it still can work, but why?
   const token2 = useToken(() => store.swapInputToken2) // it still can work, but why?
   const setToken1 = (token: Token | undefined) => {

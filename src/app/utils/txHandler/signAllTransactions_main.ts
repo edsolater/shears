@@ -1,6 +1,6 @@
 import { LedgerWalletAdapter, PhantomWalletAdapter, SolflareWalletAdapter } from "@solana/wallet-adapter-wallets"
 import { VersionedTransaction } from "@solana/web3.js"
-import { useWalletAdapter } from "../../stores/wallet/store"
+import { shuck_walletAdapter } from "../../stores/data/store"
 import { getMessagePort } from "../webworker/loadWorker_main"
 
 export function createSignTransactionPortInMainThread() {
@@ -16,14 +16,15 @@ export function createSignTransactionPortInMainThread() {
 }
 
 function signTrancations(transactions: VersionedTransaction[]) {
-  const core = useWalletAdapter()
-  return (
-    core()?.signAllTransactions as
-      | PhantomWalletAdapter["signAllTransactions"]
-      | SolflareWalletAdapter["signAllTransactions"]
-      | LedgerWalletAdapter["signAllTransactions"]
-      // | TrustWalletAdapter['signAllTransactions'] // trust is not support versioned transaction yet
-      | undefined
-  )?.(transactions)
+  const adapter = shuck_walletAdapter()
+  console.log("adapter: ", adapter)
+  console.log("transactions: ", transactions)
+  const signCore = adapter?.signAllTransactions.bind(adapter) as
+    | PhantomWalletAdapter["signAllTransactions"]
+    | SolflareWalletAdapter["signAllTransactions"]
+    | LedgerWalletAdapter["signAllTransactions"]
+    // | TrustWalletAdapter['signAllTransactions'] // trust is not support versioned transaction yet
+    | undefined
+  console.log("signCore: ", signCore)
+  return signCore?.(transactions)
 }
-

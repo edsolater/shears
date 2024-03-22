@@ -21,6 +21,7 @@ import { PairInfo } from "./types/pairs"
 import type { TokenAccount } from "../../utils/dataStructures/TokenAccount"
 import type { Collection } from "@edsolater/fnkit"
 import { loadOwnerTokenAccounts } from "./portActions/loadOwnerTokenAccounts_main"
+import type { WalletAdapters } from "../wallet/type"
 
 export type StoreData = {
   // -------- swap --------
@@ -96,6 +97,8 @@ export const shuck_tokenAccounts = createShuck<Collection<TokenAccount, TokenAcc
 
 export const shuck_balances = createShuck<Balances | undefined>() // TODO: should extends by tokenAccounts
 // wallet
+export const shuck_walletAdapter = createShuck<WalletAdapters | undefined>()
+export const shuck_walletConnected = createShuck(false)
 export const shuck_owner = createShuck<string | undefined>()
 // app settings
 export const shuck_txVersion = createShuck<TxVersion | undefined>()

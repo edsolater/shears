@@ -1,13 +1,12 @@
-import { createEffect, createMemo, createSignal, Setter } from "solid-js"
 import { createCachedGlobalHook } from "@edsolater/pivkit"
+import { createEffect, createMemo, createSignal, Setter } from "solid-js"
 import { toPubString } from "../../utils/dataStructures/Publickey"
+import { shuck_owner, shuck_walletAdapter, shuck_walletConnected } from "../data/store"
 import { Token } from "../data/token/type"
-import { WalletAdapterInterface } from "./type"
 import { connect } from "./methods/connect"
 import { disconnect } from "./methods/disconnect"
 import { initlyConnectPhantom } from "./methods/initlyConnectPhantom"
-import { shuck_owner } from "../data/store"
-import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
+import { WalletAdapterInterface } from "./type"
 
 export interface WalletStore {
   // for extract method
@@ -38,7 +37,19 @@ export const useWalletStore = createCachedGlobalHook(() => {
   const [currentWallet, setCurrentWallet] = createSignal<WalletAdapterInterface>()
   const owner = createMemo(() => toPubString(currentWallet()?.adapter.publicKey))
   createEffect(() => {
-    shuck_owner.set(owner())
+    const adapter = currentWallet()?.adapter
+    shuck_walletAdapter.set(adapter)
+    if (adapter) {
+      adapter.on("connect", () => {
+        shuck_walletConnected.set(true)
+        setConnected(true)
+      })
+      adapter.on("disconnect", () => {
+        shuck_walletConnected.set(false)
+        setConnected(false)
+      })
+    } 
+    shuck_owner.set(toPubString(adapter?.publicKey))
   })
   createEffect(initlyConnectPhantom)
   const store: WalletStore = {
@@ -64,12 +75,3 @@ export const useWalletStore = createCachedGlobalHook(() => {
   }
   return store
 })
-
-// TODO: use atom-like
-export const useWalletOwner = () => createMemo(() => useWalletStore().owner)
-
-// TODO: use atom-like
-export const useWalletAdapter = () => createMemo(() => useWalletStore().currentWallet?.adapter)
-
-export const shuck_adapter = createShuck<WalletAdapterInterface | undefined>()
-

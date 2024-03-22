@@ -1,8 +1,7 @@
 import { assert, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
-import { useWalletOwner } from "../../wallet/store"
-import { shuck_balances, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
+import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
@@ -25,7 +24,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   const pricesMap = useShuckValue(shuck_tokenPrices)
   const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
   const rpc = useShuckValue(shuck_rpc)
-  const owner = useWalletOwner()
+  const owner = useShuckValue(shuck_owner)
   const slippage = useShuckValue(shuck_slippage)
   const balances = useShuckValue(shuck_balances)
   const tokenA = useToken(() => clmmInfo.base)

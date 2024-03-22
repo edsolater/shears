@@ -1,4 +1,4 @@
-import { count, eq, gt } from "@edsolater/fnkit"
+import { count, eq, get, gt } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
 import { Show, createEffect, onCleanup, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
@@ -60,8 +60,6 @@ export default function ClmmsPage() {
   createEffect(() => {
     const infos = clmmInfos()
     if (infos) {
-      const key = Object.keys(infos)[0]
-      console.log("🧪🧪 first clmmJson: ", { ...infos[key] })
       console.log("clmmJson count: ", count(infos))
     }
   })

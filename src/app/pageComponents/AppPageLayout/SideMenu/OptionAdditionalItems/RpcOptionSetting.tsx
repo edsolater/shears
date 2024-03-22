@@ -195,7 +195,7 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
   onMount(() => {
     // TEST
     const timeoutId = setTimeout(() => {
-      console.log("has set")
+      console.log("rpc has set")
       shuck_rpc.set(availableRpcs[0])
     }, 500)
     onCleanup(() => {

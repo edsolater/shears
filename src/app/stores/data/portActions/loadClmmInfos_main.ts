@@ -21,6 +21,7 @@ export function loadClmmInfos() {
       port.receiveMessage((infos) => {
         // console.log("[main] get clmm infos ", infos)
         shuck_isClmmJsonInfoLoading.set(false)
+        console.log('infos: ', infos)
         shuck_clmmInfos.set(infos)
       })
     },
