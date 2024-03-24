@@ -74,7 +74,7 @@ export async function txDispatcher_worker(
           }
         }
         const txEventCenter = Promise.all(txModules).then((txModules) =>
-          handleMultiTxModules(txModules, { sendMode: "parallel(dangerous-without-order)" }),
+          handleMultiTxModules(txModules, { sendMode: "parallel" }),
         )
         txSubscribable.set({ name: "complicated tx multi configs", txEventCenter })
       }

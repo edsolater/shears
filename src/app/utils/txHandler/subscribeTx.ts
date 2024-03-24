@@ -8,7 +8,7 @@ export interface SubscribeSignatureCallbacks {
   onTxFinally?(ev: TxFinalInfo): void
 }
 
-type TxSubscribeEventCenter = EventCenter<{
+export type TxSubscribeEventCenter = EventCenter<{
   txError: (info: TxErrorInfo) => void
   txSuccess: (info: TxSuccessInfo) => void
   txFinally: (info: TxFinalInfo) => void

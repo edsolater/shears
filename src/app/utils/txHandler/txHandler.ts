@@ -6,6 +6,7 @@ import {
   mergeFunction,
   type EventCenter,
   type MayPromise,
+  shakeNil,
 } from "@edsolater/fnkit"
 import {
   TxVersion,
@@ -23,14 +24,14 @@ import type {
   VersionedTransaction,
 } from "@solana/web3.js"
 import { produce } from "immer"
+import { getConnection } from "../dataStructures/Connection"
 import { toPub } from "../dataStructures/Publickey"
 import { getTokenAccounts, type SDK_TokenAccount } from "../dataStructures/TokenAccount"
 import { getTxHandlerBudgetConfig } from "./getTxHandlerBudgetConfig"
 import { innerTxCollector } from "./innerTxCollector"
-import { sendTransactionCore } from "./sendTransactionCore"
+import { sendSingleTransaction } from "./sendTransactionCore"
 import { signAllTransactions } from "./signAllTransactions_worker"
-import { subscribeTx } from "./subscribeTx"
-import { getConnection } from "../dataStructures/Connection"
+import { subscribeTx, type TxSubscribeEventCenter } from "./subscribeTx"
 
 export type UITxVersion = "V0" | "LEGACY"
 //#region ------------------- basic info -------------------
@@ -44,7 +45,7 @@ export interface MultiTxExtraInfo {
   /** only used in multi mode */
   transactions: VersionedTransaction[]
   /** only used in multi mode */
-  passedMultiTxids: string[]
+  txids: string[]
   /** only used in multi mode */
   currentIndex: number // in multi transactions
   /** only used in multi mode */
@@ -82,6 +83,7 @@ export interface TxFinalBatchErrorInfo {
   errorAt: number
   txids: string[] // before absort
 }
+export type TxDoneInfo = {}
 
 export type TxHandlerUtils = {
   owner: PublicKey
@@ -108,15 +110,14 @@ export type TxFn = (utils: {
 type TxSuccessCallback = (info: TxSuccessInfo) => void
 type TxErrorCallback = (info: TxErrorInfo) => void
 type TxFinallyCallback = (info: TxFinalInfo) => void
-
 type TxSendSuccessCallback = (info: TxSendSuccessInfo) => void
 type TxSendErrorCallback = (info: TxSendErrorInfo) => void
 type TxSentFinallyCallback = () => void
-
+type TxAllDoneCallback = (info: { txids: string[] }) => void
+type TxBeforeSendCallback = () => void
 type TxBeforeSendErrorCallback = (err: unknown) => void
-
-type AllSuccessCallback = (info: { txids: string[] }) => void
-type AnyErrorCallback = (info: { txids: string[] /* error at last txids */ }) => void
+type TxAllSuccessCallback = (info: { txids: string[] }) => void
+type TxAnyErrorCallback = (info: { txids: string[] /* error at last txids */ }) => void
 
 //#endregion
 
@@ -148,9 +149,10 @@ export interface SingleTxCallbacks {
   onTxSuccess?: TxSuccessCallback
   onTxError?: TxErrorCallback
   onTxFinally?: TxFinallyCallback
-  onTxSendSuccess?: TxSendSuccessCallback
-  onTxSendError?: TxSendErrorCallback
-  onTxSentFinally?: TxSentFinallyCallback
+  onSendSuccess?: TxSendSuccessCallback
+  onSendError?: TxSendErrorCallback
+  onSendFinally?: TxSentFinallyCallback
+  onTxAllDone?: TxAllDoneCallback
 }
 
 export interface MultiTxsOption extends MultiTxCallbacks {
@@ -162,13 +164,13 @@ export interface MultiTxsOption extends MultiTxCallbacks {
   sendMode?:
     | "queue"
     | "queue(continue-without-check-transaction-response)"
-    | "parallel(dangerous-without-order)" /* couldn't promise tx's order */
-    | "parallel(batch-transactions)" /* it will in order */
+    | "parallel" /* couldn't promise tx's order */
 }
 
 export interface MultiTxCallbacks {
-  onTxAllSuccess?: AllSuccessCallback
-  onTxAnyError?: AnyErrorCallback
+  onTxAllSuccess?: TxAllSuccessCallback
+  onTxAnyError?: TxAnyErrorCallback
+  onTxDone?: TxAllDoneCallback
 }
 
 export type TransactionQueue = (
@@ -203,14 +205,18 @@ export type TxHandlerPayload = {
 
 export interface TxHandlerEventCenter
   extends EventCenter<{
+    beforeSend: TxBeforeSendCallback
+    beforeSendError: TxBeforeSendErrorCallback
+
+    txSendSuccess: TxSendSuccessCallback
+    txSendError: TxSendErrorCallback
+
     txSuccess: TxSuccessCallback
     txError: TxErrorCallback
-    sendSuccess: TxSendSuccessCallback
-    sendError: TxSendErrorCallback
 
-    beforeSendError: TxBeforeSendErrorCallback
-    txAllSuccess: AllSuccessCallback
-    txAnyError: AnyErrorCallback
+    txAllSuccess: TxAllSuccessCallback
+    txAnyError: TxAnyErrorCallback
+    txAllDone: TxAllDoneCallback
   }> {}
 
 export function isVersionedTransaction(transaction: VersionedTransaction): transaction is VersionedTransaction {
@@ -246,9 +252,7 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
   } = innerTxCollector(options)
 
   const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
-  console.log("start compose tx 1")
   ;(async () => {
-    console.log("start compose tx 2")
     assert(payload.connection, "provided connection not working")
     assert(payload.owner, "wallet not connected")
     const userLoadedTransactionQueue = await txFn({
@@ -265,6 +269,14 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
     })
     console.log("parsedSignleTxOptions: ", parsedSignleTxOptions)
 
+    eventCenter.on("txSendSuccess", (info) => {
+      parsedSignleTxOptions[info.currentIndex]?.onSendSuccess?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onSendFinally?.()
+    })
+    eventCenter.on("txSendError", (info) => {
+      parsedSignleTxOptions[info.currentIndex]?.onSendError?.(info)
+      parsedSignleTxOptions[info.currentIndex]?.onSendFinally?.()
+    })
     eventCenter.on("txSuccess", (info: TxSuccessInfo) => {
       parsedSignleTxOptions[info.currentIndex]?.onTxSuccess?.(info)
       parsedSignleTxOptions[info.currentIndex]?.onTxFinally?.({ ...info, type: "success" })
@@ -273,19 +285,14 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
       parsedSignleTxOptions[info.currentIndex]?.onTxError?.(info)
       parsedSignleTxOptions[info.currentIndex]?.onTxFinally?.({ ...info, type: "error" })
     })
-    eventCenter.on("sendSuccess", (info) => {
-      parsedSignleTxOptions[info.currentIndex]?.onTxSendSuccess?.(info)
-      parsedSignleTxOptions[info.currentIndex]?.onTxSentFinally?.()
-    })
-    eventCenter.on("sendError", (info) => {
-      parsedSignleTxOptions[info.currentIndex]?.onTxSendError?.(info)
-      parsedSignleTxOptions[info.currentIndex]?.onTxSentFinally?.()
-    })
     eventCenter.on("txAllSuccess", (info) => {
       multiTxOption?.onTxAllSuccess?.(info)
     })
     eventCenter.on("txAnyError", (info) => {
       multiTxOption?.onTxAnyError?.(info)
+    })
+    eventCenter.on("txAllDone", (info) => {
+      multiTxOption?.onTxDone?.(info)
     })
     // FIXME: where is onTxAllSuccess?
     console.log("prepare to sign all transactions")
@@ -299,19 +306,19 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
 
     console.log("compose tx")
     // load send tx function
-    const senderFn = composeTransactionSenderWithDifferentSendMode({
+    const senderFn = composeTxLauncher({
       transactions: allSignedTransactions,
       sendMode: multiTxOption.sendMode,
       singleOptions: parsedSignleTxOptions,
       payload,
       callbacks: {
-        onSendError: (info) => {
+        onTxSendError: (info) => {
           console.log("txSendError", info)
-          eventCenter.emit("sendError", [info])
+          eventCenter.emit("txSendError", [info])
         },
-        onSendSuccess(info) {
+        onTxSendSuccess(info) {
           console.log("txSendSuccess", info)
-          eventCenter.emit("sendSuccess", [info])
+          eventCenter.emit("txSendSuccess", [info])
         },
         onTxError(info) {
           console.log("txError", info)
@@ -321,13 +328,25 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
           console.log("txSuccess", info)
           eventCenter.emit("txSuccess", [info])
         },
+        onTxAllSuccess(info) {
+          console.log("txAllSuccess", info)
+          eventCenter.emit("txAllSuccess", [info])
+        },
+        onTxAnyError(info) {
+          console.log("txAnyError", info)
+          eventCenter.emit("txAnyError", [info])
+        },
+        onTxAllDone(info) {
+          console.log("txAllDone", info)
+          eventCenter.emit("txAllDone", [info])
+        },
       },
     })
 
     // send tx
     senderFn()
   })().catch((error) => {
-    eventCenter.emit("beforeSendError", [{ err: error }])
+    eventCenter.emit("beforeSendError", [error])
   })
   return eventCenter
 }
@@ -360,11 +379,11 @@ function makeMultiOptionIntoSignalOptions({
 
   const parseMultiOptionsIntoSingleOptions = produce(singleOptions, (options) => {
     options.forEach((option) => {
-      option.onTxSendSuccess = mergeFunction(
+      option.onSendSuccess = mergeFunction(
         (({ txid }) => {
           txids.push(txid)
         }) as TxSendSuccessCallback,
-        option.onTxSendSuccess ?? (() => {}),
+        option.onSendSuccess ?? (() => {}),
       )
       option.onTxError = mergeFunction(
         (() => {
@@ -380,11 +399,10 @@ function makeMultiOptionIntoSignalOptions({
       )
     })
   })
-  console.log("parseMultiOptionsIntoSingleOptions", parseMultiOptionsIntoSingleOptions)
   return parseMultiOptionsIntoSingleOptions
 }
 
-function composeTransactionSenderWithDifferentSendMode({
+function composeTxLauncher({
   transactions,
   sendMode,
   singleOptions,
@@ -396,58 +414,98 @@ function composeTransactionSenderWithDifferentSendMode({
   singleOptions: TxHandlerOption[]
   payload: TxHandlerPayload
   callbacks: {
+    onBeforeSend?: TxBeforeSendCallback
+
     onTxSuccess?: TxSuccessCallback
     onTxError?: TxErrorCallback
-    onSendSuccess?: TxSendSuccessCallback
-    onSendError?: TxSendErrorCallback
+    onTxFinally?: TxFinallyCallback
+    onTxSendSuccess?: TxSendSuccessCallback
+    onTxSendError?: TxSendErrorCallback
+    onTxAllSuccess?: TxAllSuccessCallback
+    onTxAnyError?: TxAnyErrorCallback
+    onTxAllDone?: TxAllDoneCallback
   }
 }): () => void {
   const wholeTxidInfo: Omit<MultiTxExtraInfo, "currentIndex"> = {
     isMulti: transactions.length > 1,
-    passedMultiTxids: Array.from({ length: transactions.length }),
+    txids: Array.from({ length: transactions.length }),
     multiTransactionLength: transactions.length,
     transactions,
   }
-  if (sendMode === "parallel(dangerous-without-order)" || sendMode === "parallel(batch-transactions)") {
-    const parallelled = () => {
-      transactions.forEach((tx, idx) =>
-        sendOneTransactionWithOptions({
-          transaction: tx,
-          wholeTxidInfo,
-          payload,
-          isBatched: sendMode === "parallel(batch-transactions)",
-          singleOption: singleOptions[idx],
-          callbacks,
-        }),
+  const multiTransactionCallbackControllers = createMultiTxCallbackControllers({
+    txTotalCount: transactions.length,
+    callbacks: {
+      onTxAllSuccess: callbacks.onTxAllSuccess,
+      onTxAnyError: callbacks.onTxAnyError,
+      onTxAllDone: callbacks.onTxAllDone,
+    },
+  })
+
+  const launchTransactions = (() => {
+    if (sendMode === "parallel") {
+      const parallelled = () => {
+        transactions.forEach((tx, idx) => {
+          const txCenter = sendOneTransactionWithOptions({
+            transaction: tx,
+            wholeTxidInfo,
+            payload,
+            singleOption: singleOptions[idx],
+            callbacks: {
+              onBeforeSend: callbacks.onBeforeSend,
+              onSendSuccess: callbacks.onTxSendSuccess,
+              onSendError: callbacks.onTxSendError,
+              onTxSuccess: callbacks.onTxSuccess,
+              onTxError: callbacks.onTxError,
+              onTxFinally: callbacks.onTxFinally,
+            },
+          })
+          txCenter.then((txEventCenter) => {
+            txEventCenter?.on("txFinally", (info) => {
+              multiTransactionCallbackControllers.markTxAsDone(idx, info)
+            })
+          })
+        })
+      }
+      return parallelled
+    } else {
+      const queued = transactions.reduceRight(
+        ({ fn, method }, tx, idx) => {
+          const singleOption = singleOptions[idx]
+          return {
+            fn: () => {
+              const txCenter = sendOneTransactionWithOptions({
+                transaction: tx,
+                wholeTxidInfo,
+                payload,
+                singleOption,
+                callbacks: {
+                  onBeforeSend: callbacks.onBeforeSend,
+                  onSendSuccess: callbacks.onTxSendSuccess,
+                  onSendError: callbacks.onTxSendError,
+                  onTxSuccess: mergeFunction(fn, callbacks?.onTxSuccess ?? emptyFn),
+                  onTxError:
+                    method === "finally" ? mergeFunction(fn, callbacks?.onTxError ?? emptyFn) : callbacks.onTxError,
+                  onTxFinally: callbacks.onTxFinally,
+                },
+              })
+              txCenter.then((txEventCenter) => {
+                txEventCenter?.on("txFinally", (info) => {
+                  multiTransactionCallbackControllers.markTxAsDone(idx, info)
+                })
+              })
+            },
+            method:
+              singleOption.continueWhenPreviousTx ??
+              (sendMode === "queue(continue-without-check-transaction-response)" ? "finally" : "success"),
+          }
+        },
+        { fn: () => {}, method: "success" },
       )
+      return queued.fn
     }
-    return parallelled
-  } else {
-    const queued = transactions.reduceRight(
-      ({ fn, method }, tx, idx) => {
-        const singleOption = singleOptions[idx]
-        return {
-          fn: () =>
-            sendOneTransactionWithOptions({
-              transaction: tx,
-              wholeTxidInfo,
-              payload,
-              singleOption,
-              callbacks: {
-                ...callbacks,
-                onTxSuccess: mergeFunction(fn, callbacks?.onTxSuccess ?? emptyFn),
-                onTxError: mergeFunction(fn, callbacks?.onTxError ?? emptyFn),
-              },
-            }),
-          method:
-            singleOption.continueWhenPreviousTx ??
-            (sendMode === "queue(continue-without-check-transaction-response)" ? "finally" : "success"),
-        }
-      },
-      { fn: () => {}, method: "success" },
-    )
-    return queued.fn
-  }
+  })()
+
+  return launchTransactions
 }
 
 /**
@@ -459,7 +517,6 @@ async function sendOneTransactionWithOptions({
   singleOption,
   callbacks,
   payload,
-  isBatched,
 }: {
   transaction: VersionedTransaction
   wholeTxidInfo: Omit<MultiTxExtraInfo, "currentIndex">
@@ -467,28 +524,27 @@ async function sendOneTransactionWithOptions({
   callbacks?: {
     onTxSuccess?: TxSuccessCallback
     onTxError?: TxErrorCallback
+    onTxFinally?: TxFinallyCallback
+
+    onBeforeSend?: TxBeforeSendCallback
     onSendSuccess?: TxSendSuccessCallback
     onSendError?: TxSendErrorCallback
   }
   payload: TxHandlerPayload
-  isBatched?: boolean
-}) {
+}): Promise<TxSubscribeEventCenter | undefined> {
   const currentIndex = wholeTxidInfo.transactions.indexOf(transaction)
   const extraTxidInfo: MultiTxExtraInfo = {
     ...wholeTxidInfo,
     currentIndex,
   }
   try {
-    const txid = await sendTransactionCore({
-      transaction,
-      payload,
-      batchOptions: isBatched ? { allSignedTransactions: wholeTxidInfo.transactions } : undefined,
-      cache: Boolean(singleOption?.cacheTransaction),
-    })
+    callbacks?.onBeforeSend?.()
+    const txid = await sendSingleTransaction({ transaction, payload, cache: Boolean(singleOption?.cacheTransaction) })
     assert(txid, "something went wrong in sending transaction, getted txid empty")
+    console.log("callbacks.onSendSuccess: ", callbacks?.onSendSuccess) // FIXME:💩
     callbacks?.onSendSuccess?.({ transaction, txid, ...extraTxidInfo })
 
-    wholeTxidInfo.passedMultiTxids[currentIndex] = txid //! 💩 bad method! it's mutate method!
+    wholeTxidInfo.txids[currentIndex] = txid //! 💩 bad method! it's mutate method!
     const txEventCenter = subscribeTx({
       txid,
       transaction,
@@ -503,7 +559,47 @@ async function sendOneTransactionWithOptions({
     txEventCenter.on("txError", (info) => {
       callbacks?.onTxError?.({ ...info, ...extraTxidInfo })
     })
+    txEventCenter.on("txFinally", (info) => {
+      callbacks?.onTxFinally?.({ ...info, ...extraTxidInfo })
+    })
+    return txEventCenter
   } catch (err) {
     callbacks?.onSendError?.({ err, transaction, ...extraTxidInfo })
+  }
+}
+function createMultiTxCallbackControllers(options: {
+  txTotalCount: number
+  callbacks: {
+    onTxAllSuccess?: TxAllSuccessCallback | undefined
+    onTxAnyError?: TxAnyErrorCallback | undefined
+    onTxAllDone?: TxAllDoneCallback | undefined
+  }
+}): {
+  markTxAsDone: (idx: number, info: TxFinalInfo) => void
+} {
+  let hasSendError = false // for onTxAnyError may check multiple times, but it should only fire once
+  const txInfos = [] as TxFinalInfo[]
+  function checkIfAllSuccess() {
+    if (txInfos.length === options.txTotalCount && txInfos.every((info) => info?.type === "success")) {
+      options.callbacks.onTxAllSuccess?.({ txids: txInfos.map((info) => info!.txid) })
+    }
+  }
+  function checkIfAnyError() {
+    if (txInfos.length === options.txTotalCount && !hasSendError && txInfos.some((info) => info?.type === "error")) {
+      options.callbacks.onTxAnyError?.({ txids: shakeNil(txInfos.map((info) => info?.txid)) })
+    }
+  }
+  function checkIfAllDone() {
+    if (txInfos.length === options.txTotalCount && txInfos.every(Boolean)) {
+      options.callbacks.onTxAllDone?.({ txids: txInfos.map((info) => info!.txid) })
+    }
+  }
+  return {
+    markTxAsDone(idx, info) {
+      txInfos[idx] = info
+      checkIfAllSuccess()
+      checkIfAnyError()
+      checkIfAllDone()
+    },
   }
 }
