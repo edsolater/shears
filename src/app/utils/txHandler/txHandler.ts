@@ -541,7 +541,6 @@ async function sendOneTransactionWithOptions({
     callbacks?.onBeforeSend?.()
     const txid = await sendSingleTransaction({ transaction, payload, cache: Boolean(singleOption?.cacheTransaction) })
     assert(txid, "something went wrong in sending transaction, getted txid empty")
-    console.log("callbacks.onSendSuccess: ", callbacks?.onSendSuccess) // FIXME:💩
     callbacks?.onSendSuccess?.({ transaction, txid, ...extraTxidInfo })
 
     wholeTxidInfo.txids[currentIndex] = txid //! 💩 bad method! it's mutate method!

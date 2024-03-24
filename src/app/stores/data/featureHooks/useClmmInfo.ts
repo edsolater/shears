@@ -1,4 +1,4 @@
-import { assert, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
+import { assert, gt, isExist, isPositive, lt, minus, type Numberish } from "@edsolater/fnkit"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
 import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
@@ -12,12 +12,10 @@ import {
 import { mergeTwoStore } from "./mergeTwoStore"
 
 type AdditionalClmmInfo = {
-  buildCustomizedFollowPositionTxConfigs():
-    | {
-        decreaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
-        increaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
-      }
-    | undefined
+  buildCustomizedFollowPositionTxConfigs(options?: { ignoreWhenUsdLessThan?: number }): {
+    decreaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
+    increaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
+  }
 }
 
 export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
@@ -49,16 +47,22 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
     })
   }
 
-  return mergeTwoStore(clmmInfo, {
-    buildCustomizedFollowPositionTxConfigs: () =>
+  const additional: {
+    buildCustomizedFollowPositionTxConfigs: (options: any) => {
+      decreaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
+      increaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
+    }
+  } = {
+    buildCustomizedFollowPositionTxConfigs: (options) =>
       buildCustomizedFollowPositionTxConfigs({
         clmmInfo,
         getPositionInfo,
         config: {
-          ignoredPositionUsd: 5,
+          ignoredPositionUsd: options?.ignoreWhenUsdLessThan ?? 5,
         },
       }),
-  })
+  } as AdditionalClmmInfo
+  return mergeTwoStore(clmmInfo, additional)
 }
 
 function buildCustomizedFollowPositionTxConfigs({
@@ -103,6 +107,7 @@ function buildCustomizedFollowPositionTxConfigs({
 
   const decreaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
   const increaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
+
   // ---------------- handle up positions ----------------
   if (upPositions.length > 1) {
     let nearestUpPosition = upPositions[0]
@@ -126,12 +131,11 @@ function buildCustomizedFollowPositionTxConfigs({
       }
     }
 
-    if (haveMoveAction) {
-      const richPosition = getPositionInfo(nearestUpPosition)
-      const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
-      if (txBuilderConfig) {
-        increaseClmmPositionTxConfigs.push(txBuilderConfig)
-      }
+    // show hand
+    const richPosition = getPositionInfo(nearestUpPosition)
+    const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
+    if (txBuilderConfig) {
+      increaseClmmPositionTxConfigs.push(txBuilderConfig)
     }
   }
 
@@ -158,12 +162,11 @@ function buildCustomizedFollowPositionTxConfigs({
       }
     }
 
-    if (haveMoveAction) {
-      const richPosition = getPositionInfo(nearestDownPosition)
-      const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
-      if (txBuilderConfig) {
-        increaseClmmPositionTxConfigs.push(txBuilderConfig)
-      }
+    // show hand
+    const richPosition = getPositionInfo(nearestDownPosition)
+    const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
+    if (txBuilderConfig) {
+      increaseClmmPositionTxConfigs.push(txBuilderConfig)
     }
   }
 
@@ -173,3 +176,19 @@ function buildCustomizedFollowPositionTxConfigs({
     increaseClmmPositionTxConfigs,
   }
 }
+// /**
+//  * different from {@link pipe}, this function give controller to each task, not prevValue
+//  * and this function can't handle value change also. so if need handle value change, use {@link pipeDo} instead
+//  */
+// function pipeTasks(...tasks: ((controller: { next(): Promise<void> }) => void)[]) {
+//   const initTaskAtom = Promise.resolve()
+//   const controller = {
+//     next: async () => {
+//       for (const task of tasks) {
+//         await new Promise<void>((resolve) => {
+//           task({ next: resolve })
+//         })
+//       }
+//     },
+//   }
+// }

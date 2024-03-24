@@ -120,12 +120,19 @@ export default function ClmmsPage() {
         return (
           <Row icss={{ gap: "2px" }}>
             <Button
-              onClick={({ ev }) => {
+              onClick={async ({ ev }) => {
+                ev.stopPropagation()
                 const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs()
                 if (configs) {
-                  invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
+                  if (!configs.decreaseClmmPositionTxConfigs.length) {
+                    invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                  } else {
+                    const desTx = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
+                    desTx?.on("txAllDone", () => {
+                      invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                    })
+                  }
                 }
-                ev.stopPropagation()
               }}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
             >
@@ -229,7 +236,7 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
           onClick={() => {
             invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
-                amountB: 10, // TODO: should be input
+                amountB: 1, // TODO: should be input
               }),
             )
           }}

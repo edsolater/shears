@@ -17,14 +17,11 @@ export function createSignTransactionPortInMainThread() {
 
 function signTrancations(transactions: VersionedTransaction[]) {
   const adapter = shuck_walletAdapter()
-  console.log("adapter: ", adapter)
-  console.log("transactions: ", transactions)
   const signCore = adapter?.signAllTransactions.bind(adapter) as
     | PhantomWalletAdapter["signAllTransactions"]
     | SolflareWalletAdapter["signAllTransactions"]
     | LedgerWalletAdapter["signAllTransactions"]
     // | TrustWalletAdapter['signAllTransactions'] // trust is not support versioned transaction yet
     | undefined
-  console.log("signCore: ", signCore)
   return signCore?.(transactions)
 }

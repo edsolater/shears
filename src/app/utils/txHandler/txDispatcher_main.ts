@@ -1,4 +1,4 @@
-import { createEventCenter, flapDeep, isArray, isString, shakeUndefinedItem } from "@edsolater/fnkit"
+import { createEventCenter, flapDeep, isArray, isString, shakeNil, shakeUndefinedItem } from "@edsolater/fnkit"
 import { getMessagePort } from "../webworker/loadWorker_main"
 import type { TxErrorInfo, TxHandlerEventCenter, TxSendErrorInfo, TxSendSuccessInfo, TxSuccessInfo } from "./txHandler"
 import { TxClmmPositionDecreaseConfig } from "../../stores/data/txClmmPositionDecrease"
@@ -23,15 +23,13 @@ export function launchTx(...args: TxBuilderConfigs): TxHandlerEventCenter {
   receiver.subscribe(({ name: txName, status, payload }) => {
     if (txName === inputName) txEventCenter.emit(status, [payload] as any)
   })
+console.log('txEventCenter: ', txEventCenter)
   return txEventCenter
 }
 
-export function invokeTxConfig(...configs: undefined[]): undefined
-export function invokeTxConfig(...configs: TxBuilderSingleConfig[]): TxHandlerEventCenter
-export function invokeTxConfig(...configs: (TxBuilderSingleConfig | undefined)[]): TxHandlerEventCenter | undefined
 export function invokeTxConfig(...configs: (TxBuilderSingleConfig | undefined)[]): TxHandlerEventCenter | undefined {
   if (!configs.length) return undefined
-  const validConfigs = shakeUndefinedItem(configs) as unknown as TxBuilderSingleConfig[]
+  const validConfigs = shakeNil(configs)
   if (!validConfigs.length) return undefined
   return launchTx("complicated tx multi configs", validConfigs)
 }
