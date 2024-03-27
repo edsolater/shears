@@ -12,20 +12,17 @@ import type {
 /**
  * collector's aim: use `.add` method to load innerTransactions
  */
-export function innerTxCollector(
-  additionOptions?: Pick<TxHandlerOptions, "additionalMultiOptionCallback" | "additionalSingleOptionCallback">,
-) {
+export function createInnerTxCollector(txHandlerOptions: TxHandlerOptions | undefined) {
+  const { additionalSingleOptionCallbacks, additionalMultiOptionCallbacks, ...multiTxOption } = txHandlerOptions ?? {} // shortcut TODO: test the core
   const singleTxOptions = [] as TxHandlerOption[]
-  const multiTxOption = {} as MultiTxsOption
   const innerTransactions = [] as InnerTransaction[]
-  const { additionalSingleOptionCallback, additionalMultiOptionCallback } = additionOptions ?? {}
 
   /**
    * mutable
    */
   const addSingle = (transaction: InnerTransaction, options?: TxHandlerOption) => {
     innerTransactions.push(transaction)
-    singleTxOptions.push(objectMerge(options ?? {}, additionalSingleOptionCallback ?? {}))
+    singleTxOptions.push(objectMerge(options ?? {}, additionalSingleOptionCallbacks ?? {}))
   }
 
   /**
@@ -36,7 +33,7 @@ export function innerTxCollector(
       const [singelTransation, singelOption] = Array.isArray(transaction) ? transaction : ([transaction] as const)
       addSingle(singelTransation, singelOption)
     })
-    Object.assign(multiTxOption, objectMerge(options ?? {}, additionalMultiOptionCallback ?? {}))
+    Object.assign(multiTxOption, objectMerge(options ?? {}, additionalMultiOptionCallbacks ?? {}))
   }
 
   /**

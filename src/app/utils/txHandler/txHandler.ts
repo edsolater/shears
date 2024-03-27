@@ -4,9 +4,9 @@ import {
   emptyFn,
   isObject,
   mergeFunction,
+  shakeNil,
   type EventCenter,
   type MayPromise,
-  shakeNil,
 } from "@edsolater/fnkit"
 import {
   TxVersion,
@@ -28,7 +28,7 @@ import { getConnection } from "../dataStructures/Connection"
 import { toPub } from "../dataStructures/Publickey"
 import { getTokenAccounts, type SDK_TokenAccount } from "../dataStructures/TokenAccount"
 import { getTxHandlerBudgetConfig } from "./getTxHandlerBudgetConfig"
-import { innerTxCollector } from "./innerTxCollector"
+import { createInnerTxCollector } from "./innerTxCollector"
 import { sendSingleTransaction } from "./sendTransactionCore"
 import { signAllTransactions } from "./signAllTransactions_worker"
 import { subscribeTx, type TxSubscribeEventCenter } from "./subscribeTx"
@@ -191,9 +191,9 @@ export interface TxResponseInfos {
   // txList: (TxSuccessInfo | TxErrorInfo)[]
 }
 
-export interface TxHandlerOptions extends MultiTxCallbacks, MultiTxsOption {
-  additionalSingleOptionCallback?: SingleTxCallbacks
-  additionalMultiOptionCallback?: MultiTxCallbacks
+export interface TxHandlerOptions extends MultiTxsOption {
+  additionalSingleOptionCallbacks?: SingleTxCallbacks
+  additionalMultiOptionCallbacks?: MultiTxCallbacks
 }
 
 export type SignAllTransactionsFunction = <T extends VersionedTransaction>(transactions: T[]) => Promise<T[]>
@@ -249,8 +249,9 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
   const {
     transactionCollector,
     collected: { collectedTransactions, singleTxOptions, multiTxOption },
-  } = innerTxCollector(options)
+  } = createInnerTxCollector(options)
 
+  console.log("multiTxOption: ", multiTxOption, options)
   const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
   ;(async () => {
     assert(payload.connection, "provided connection not working")
