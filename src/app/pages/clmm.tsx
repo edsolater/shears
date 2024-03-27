@@ -1,4 +1,4 @@
-import { count, eq, get, gt } from "@edsolater/fnkit"
+import { count, eq, gt, runTasks } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
 import { Show, createEffect, onCleanup, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
@@ -14,16 +14,10 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
-import { useClmmUserPositionAccount } from "../stores/data/featureHooks/useClmmUserPositionAccount"
 import { useClmmInfo } from "../stores/data/featureHooks/useClmmInfo"
+import { useClmmUserPositionAccount } from "../stores/data/featureHooks/useClmmUserPositionAccount"
 import { loadClmmInfos } from "../stores/data/portActions/loadClmmInfos_main"
-import {
-  allClmmTabs,
-  createStorePropertySignal,
-  shuck_clmmInfos,
-  shuck_tokenPrices,
-  shuck_tokens,
-} from "../stores/data/store"
+import { allClmmTabs, shuck_clmmInfos } from "../stores/data/store"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
 import { toRenderable } from "../utils/common/toRenderable"
@@ -124,14 +118,29 @@ export default function ClmmsPage() {
                 ev.stopPropagation()
                 const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs()
                 if (configs) {
-                  if (!configs.decreaseClmmPositionTxConfigs.length) {
-                    invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
-                  } else {
-                    const desTx = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
-                    desTx?.on("txAllDone", () => {
-                      invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
-                    })
-                  }
+                  runTasks(
+                    ({ next }) => {
+                      if (configs.decreaseClmmPositionTxConfigs.length) {
+                        const d = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
+                        d?.on("txAllDone", next)
+                      } else {
+                        next()
+                      }
+                    },
+                    () => {
+                      if (configs.increaseClmmPositionTxConfigs.length) {
+                        invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                      }
+                    },
+                  )
+                  //   if (!configs.decreaseClmmPositionTxConfigs.length) {
+                  //     invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                  // } else {
+                  //     const desTx = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
+                  //     desTx?.on("txAllDone", () => {
+                  //       invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                  //     })
+                  //   }
                 }
               }}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
@@ -149,8 +158,7 @@ export default function ClmmsPage() {
         current price: {toRenderable(clmmInfo.currentPrice, { decimals: 4 })}
         <ListBox
           of={clmmInfo.userPositionAccounts}
-          // TODO: should be sortBy to more readable
-          sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
+          // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
           Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
         >
           {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}

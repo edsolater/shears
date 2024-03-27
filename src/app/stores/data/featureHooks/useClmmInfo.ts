@@ -1,4 +1,13 @@
-import { assert, gt, isExist, isPositive, lt, minus, type Numberish } from "@edsolater/fnkit"
+import {
+  assert,
+  eq,
+  greaterThan,
+  gt,
+  isExist,
+  isPositive,
+  lt,
+  minus
+} from "@edsolater/fnkit"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
 import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
@@ -86,12 +95,15 @@ function buildCustomizedFollowPositionTxConfigs({
   const upPositions = [] as ClmmUserPositionAccount[] // out of range
   const downPositions = [] as ClmmUserPositionAccount[] // out of range
 
-  for (const position of positions ?? []) {
+  const sortedPositions = positions?.toSorted((a, b) =>
+    greaterThan(a.priceLower, b.priceLower) ? -1 : eq(a.priceLower, b.priceLower) ? 0 : 1,
+  ) // original is already sorted, use this only for ensure the order
+  for (const position of sortedPositions) {
     const priceLower = position.priceLower
     const priceUpper = position.priceUpper
 
-    const isUpperLessThanCurrentPrice = lt(currentPrice, priceUpper)
-    const isLowerGreaterThanCurrentPrice = gt(currentPrice, priceLower)
+    const isUpperLessThanCurrentPrice = lt(priceUpper, currentPrice)
+    const isLowerGreaterThanCurrentPrice = gt(priceLower, currentPrice)
     const isUpperGreaterThanCurrentPrice = !isUpperLessThanCurrentPrice
     const isLowerLessThanCurrentPrice = !isLowerGreaterThanCurrentPrice
     if (isUpperGreaterThanCurrentPrice && isLowerLessThanCurrentPrice) {
@@ -176,19 +188,3 @@ function buildCustomizedFollowPositionTxConfigs({
     increaseClmmPositionTxConfigs,
   }
 }
-// /**
-//  * different from {@link pipe}, this function give controller to each task, not prevValue
-//  * and this function can't handle value change also. so if need handle value change, use {@link pipeDo} instead
-//  */
-// function pipeTasks(...tasks: ((controller: { next(): Promise<void> }) => void)[]) {
-//   const initTaskAtom = Promise.resolve()
-//   const controller = {
-//     next: async () => {
-//       for (const task of tasks) {
-//         await new Promise<void>((resolve) => {
-//           task({ next: resolve })
-//         })
-//       }
-//     },
-//   }
-// }

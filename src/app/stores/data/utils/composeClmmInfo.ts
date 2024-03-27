@@ -1,4 +1,4 @@
-import { add, div, mul } from "@edsolater/fnkit"
+import { add, div, eq, gt, mul } from "@edsolater/fnkit"
 import { type ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from "@raydium-io/raydium-sdk"
 import { parseSDKBN } from "../../../utils/dataStructures/BN"
 import { parseSDKDecimal } from "../../../utils/dataStructures/Decimal"
@@ -25,38 +25,40 @@ export function composeClmmInfos(
 export function composeOneClmmInfo(jsonInfo: ClmmJsonInfo, sdkInfo?: ClmmSDKInfo): ClmmInfo {
   const currentPrice = sdkInfo && parseSDKDecimal(sdkInfo.state.currentPrice)
 
-  const userPositionAccounts = sdkInfo?.positionAccount?.map((userPositionAccount) => {
-    const amountBase = parseSDKBN(userPositionAccount.amountA)
-    const amountQuote = parseSDKBN(userPositionAccount.amountB)
-    const innerVolumeBase = mul(currentPrice!, amountBase) ?? 0
-    const innerVolumeQuote = amountQuote ?? 0
-    const positionPercentBase = toPercent(div(innerVolumeBase, add(innerVolumeBase, innerVolumeQuote)))
-    const positionPercentQuote = toPercent(div(innerVolumeQuote, add(innerVolumeBase, innerVolumeQuote)))
-    const priceLower = parseSDKDecimal(userPositionAccount.priceLower)
-    return {
-      rewardInfos: userPositionAccount.rewardInfos.slice(0, jsonInfo.rewardInfos.length).map((i, idx) => ({
-        token: toPubString(jsonInfo.rewardInfos[idx].mint),
-        penddingReward: parseSDKBN(i.pendingReward),
-      })),
-      liquidity: parseSDKBN(userPositionAccount.liquidity),
-      inRange: checkIsInRange(sdkInfo, userPositionAccount),
-      poolId: toPubString(userPositionAccount.poolId),
-      nftMint: toPubString(userPositionAccount.nftMint),
-      priceLower,
-      priceUpper: parseSDKDecimal(userPositionAccount.priceUpper),
-      amountBaseBN: amountBase,
-      amountQuoteBN: amountQuote,
-      tokenFeeAmountBase: parseSDKBN(userPositionAccount.tokenFeeAmountA),
-      tokenFeeAmountQuote: parseSDKBN(userPositionAccount.tokenFeeAmountB),
-      tokenBase: jsonInfo.mintA,
-      tokenQuote: jsonInfo.mintB,
-      leverage: userPositionAccount.leverage,
-      tickLower: userPositionAccount.tickLower,
-      tickUpper: userPositionAccount.tickUpper,
-      positionPercentBase,
-      positionPercentQuote,
-    } satisfies ClmmUserPositionAccount
-  })
+  const userPositionAccounts = sdkInfo?.positionAccount
+    ?.toSorted((a, b) => (a.priceLower.greaterThan(b.priceLower) ? -1 : a.priceLower.equals(b.priceLower) ? 0 : 1))
+    .map((userPositionAccount) => {
+      const amountBase = parseSDKBN(userPositionAccount.amountA)
+      const amountQuote = parseSDKBN(userPositionAccount.amountB)
+      const innerVolumeBase = mul(currentPrice!, amountBase) ?? 0
+      const innerVolumeQuote = amountQuote ?? 0
+      const positionPercentBase = toPercent(div(innerVolumeBase, add(innerVolumeBase, innerVolumeQuote)))
+      const positionPercentQuote = toPercent(div(innerVolumeQuote, add(innerVolumeBase, innerVolumeQuote)))
+      const priceLower = parseSDKDecimal(userPositionAccount.priceLower)
+      return {
+        rewardInfos: userPositionAccount.rewardInfos.slice(0, jsonInfo.rewardInfos.length).map((i, idx) => ({
+          token: toPubString(jsonInfo.rewardInfos[idx].mint),
+          penddingReward: parseSDKBN(i.pendingReward),
+        })),
+        liquidity: parseSDKBN(userPositionAccount.liquidity),
+        inRange: checkIsInRange(sdkInfo, userPositionAccount),
+        poolId: toPubString(userPositionAccount.poolId),
+        nftMint: toPubString(userPositionAccount.nftMint),
+        priceLower,
+        priceUpper: parseSDKDecimal(userPositionAccount.priceUpper),
+        amountBaseBN: amountBase,
+        amountQuoteBN: amountQuote,
+        tokenFeeAmountBase: parseSDKBN(userPositionAccount.tokenFeeAmountA),
+        tokenFeeAmountQuote: parseSDKBN(userPositionAccount.tokenFeeAmountB),
+        tokenBase: jsonInfo.mintA,
+        tokenQuote: jsonInfo.mintB,
+        leverage: userPositionAccount.leverage,
+        tickLower: userPositionAccount.tickLower,
+        tickUpper: userPositionAccount.tickUpper,
+        positionPercentBase,
+        positionPercentQuote,
+      } satisfies ClmmUserPositionAccount
+    })
   return {
     hasLoadJsonApi: Boolean(jsonInfo),
     hasLoadSdk: Boolean(sdkInfo),
