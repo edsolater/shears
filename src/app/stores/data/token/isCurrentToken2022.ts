@@ -1,6 +1,6 @@
 import { get } from "@edsolater/fnkit"
-import type { Mint } from "../../utils/dataStructures/type"
-import type { Tokens } from "./token/type"
+import type { Mint } from "../../../utils/dataStructures/type"
+import type { Tokens } from "./type"
 
 /**
  * check whether token is Token2022

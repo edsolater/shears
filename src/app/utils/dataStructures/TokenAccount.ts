@@ -8,7 +8,7 @@ import { Connection } from "@solana/web3.js"
 import { parseSDKBN } from "./BN"
 import { toPub, toPubString } from "./Publickey"
 import { TOKEN_PROGRAM_ID } from "../../stores/data/token/utils"
-import { getConnection } from "./Connection"
+import { getConnection } from "../../stores/data/connection/getConnection"
 import { SOLMint } from "../../configs/wellKnownMints"
 
 export interface TokenAccount {

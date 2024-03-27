@@ -1,10 +1,11 @@
 import { toList, toMap } from "@edsolater/fnkit"
-import { getConnection } from "../../../utils/dataStructures/Connection"
+import { getConnection } from "../connection/getConnection"
 import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
-import { composeClmmInfos } from "../utils/composeClmmInfo"
-import { fetchClmmJsonInfo } from "../utils/fetchClmmJson"
+import { composeClmmInfos } from "./composeClmmInfo"
+import { fetchClmmJsonInfo } from "./fetchClmmJson"
 import { sdkParseClmmInfos } from "../utils/sdkParseClmmInfos"
+import { workerThreadWalletInfo } from "../store_worker"
 
 type QueryParams = { force?: boolean; rpcUrl: string; owner?: string }
 
@@ -13,6 +14,8 @@ export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
   console.log("[worker] start loading clmm infos")
   port.receiveMessage((query: QueryParams) => {
     const apiClmmInfos = fetchClmmJsonInfo()
+    workerThreadWalletInfo.owner = query.owner
+    workerThreadWalletInfo.rpcUrl = query.rpcUrl
 
     apiClmmInfos
       .then(log("[worker] get clmm apiClmmInfos"))

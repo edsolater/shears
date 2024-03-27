@@ -5,7 +5,7 @@ import { parseSDKBN, toSDKBN } from "../../../utils/dataStructures/BN"
 import { toTokenAmount, type TokenAmount } from "../../../utils/dataStructures/TokenAmount"
 import { getEpochInfo } from "./getEpochInfo"
 import { getMultiMintInfos } from "./getMultiMintInfos"
-import isCurrentToken2022 from "../isCurrentToken2022"
+import isCurrentToken2022 from "../token/isCurrentToken2022"
 import type { Tokens } from "../token/type"
 
 export type ITransferAmountFee = {

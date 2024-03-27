@@ -10,7 +10,7 @@ import {
   TradeV2,
 } from "@raydium-io/raydium-sdk"
 import { inNextMainLoop, makeTaskAbortable } from "../../../../packages/fnkit"
-import { getConnection } from "../../../utils/dataStructures/Connection"
+import { getConnection } from "../connection/getConnection"
 import { toSDKPercent } from "../../../utils/dataStructures/Percent"
 import { toPubString } from "../../../utils/dataStructures/Publickey"
 import { toSDKToken } from "../token/utils"

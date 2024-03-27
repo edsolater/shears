@@ -1,4 +1,4 @@
-import { add, div, eq, gt, mul } from "@edsolater/fnkit"
+import { add, div, mul } from "@edsolater/fnkit"
 import { type ClmmPoolPersonalPosition as SDK_ClmmPoolPersonalPosition } from "@raydium-io/raydium-sdk"
 import { parseSDKBN } from "../../../utils/dataStructures/BN"
 import { parseSDKDecimal } from "../../../utils/dataStructures/Decimal"

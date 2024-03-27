@@ -1,7 +1,7 @@
 import { assert, eq, Numberish } from "@edsolater/fnkit"
 import { TradeV2 } from "@raydium-io/raydium-sdk"
 import { appProgramId } from "../../utils/common/config"
-import { getConnection } from "../../utils/dataStructures/Connection"
+import { getConnection } from "./connection/getConnection"
 import { toPub } from "../../utils/dataStructures/Publickey"
 import { getTxHandlerUtils, type UITxVersion } from "../../utils/txHandler"
 import { handleTxModule, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"

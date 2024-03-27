@@ -18,7 +18,7 @@ import {
   getClmmUserPositionAccountAdditionalInfo,
   type AdditionalClmmUserPositionAccount,
 } from "./getClmmUserPositionAccountAdditionalInfo"
-import { mergeTwoStore } from "./mergeTwoStore"
+import { mergeTwoStore } from "../featureHooks/mergeTwoStore"
 
 type AdditionalClmmInfo = {
   buildCustomizedFollowPositionTxConfigs(options?: { ignoreWhenUsdLessThan?: number }): {
@@ -74,6 +74,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   return mergeTwoStore(clmmInfo, additional)
 }
 
+// TODO: convenient to  sign at once,but sign in different time
 function buildCustomizedFollowPositionTxConfigs({
   clmmInfo,
   getPositionInfo,

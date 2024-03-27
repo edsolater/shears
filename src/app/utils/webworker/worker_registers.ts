@@ -7,7 +7,7 @@ import { calculateSwapRouteInfosInWorker } from "../../stores/data/portActions/c
 import { txDispatcher_worker } from "../txHandler/txDispatcher_worker"
 import { PortUtils } from "./createMessagePortTransforers"
 import { logMessage } from "../../logger/logMessage"
-import { workerLoadClmmInfos } from "../../stores/data/portActions/loadClmmInfos_worker"
+import { workerLoadClmmInfos } from "../../stores/data/clmm/loadClmmInfos_worker"
 import { loadOwnerTokenAccountsInWorker } from "../../stores/data/portActions/loadOwnerTokenAccounts_worker"
 
 export function applyWebworkerRegisters(messageTransformers: PortUtils) {

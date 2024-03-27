@@ -24,7 +24,7 @@ import type {
   VersionedTransaction,
 } from "@solana/web3.js"
 import { produce } from "immer"
-import { getConnection } from "../dataStructures/Connection"
+import { getConnection } from "../../stores/data/connection/getConnection"
 import { toPub } from "../dataStructures/Publickey"
 import { getTokenAccounts, type SDK_TokenAccount } from "../dataStructures/TokenAccount"
 import { getTxHandlerBudgetConfig } from "./getTxHandlerBudgetConfig"
@@ -251,7 +251,6 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
     collected: { collectedTransactions, singleTxOptions, multiTxOption },
   } = createInnerTxCollector(options)
 
-  console.log("multiTxOption: ", multiTxOption, options)
   const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
   ;(async () => {
     assert(payload.connection, "provided connection not working")
