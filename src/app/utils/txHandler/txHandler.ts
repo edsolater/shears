@@ -203,21 +203,20 @@ export type TxHandlerPayload = {
   owner: string
 }
 
-export interface TxHandlerEventCenter
-  extends EventCenter<{
-    beforeSend: TxBeforeSendCallback
-    beforeSendError: TxBeforeSendErrorCallback
+export type TxHandlerEventCenter = EventCenter<{
+  beforeSend: Parameters<TxBeforeSendCallback>
+  beforeSendError: Parameters<TxBeforeSendErrorCallback>
 
-    txSendSuccess: TxSendSuccessCallback
-    txSendError: TxSendErrorCallback
+  txSendSuccess: Parameters<TxSendSuccessCallback>
+  txSendError: Parameters<TxSendErrorCallback>
 
-    txSuccess: TxSuccessCallback
-    txError: TxErrorCallback
+  txSuccess: Parameters<TxSuccessCallback>
+  txError: Parameters<TxErrorCallback>
 
-    txAllSuccess: TxAllSuccessCallback
-    txAnyError: TxAnyErrorCallback
-    txAllDone: TxAllDoneCallback
-  }> {}
+  txAllSuccess: Parameters<TxAllSuccessCallback>
+  txAnyError: Parameters<TxAnyErrorCallback>
+  txAllDone: Parameters<TxAllDoneCallback>
+}>
 
 export function isVersionedTransaction(transaction: VersionedTransaction): transaction is VersionedTransaction {
   return isObject(transaction) && "version" in transaction

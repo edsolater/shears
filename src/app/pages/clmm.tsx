@@ -1,4 +1,4 @@
-import { count, eq, gt, runTasks } from "@edsolater/fnkit"
+import { count, runTasks } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
 import { Show, createEffect, onCleanup, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
@@ -14,9 +14,9 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
+import { loadClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
-import { loadClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { allClmmTabs, shuck_clmmInfos } from "../stores/data/store"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
@@ -123,6 +123,9 @@ export default function ClmmsPage() {
                       if (configs.decreaseClmmPositionTxConfigs.length) {
                         const d = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
                         d?.on("txAllDone", next)
+                        d?.onTxAllDone(({ txids }) => {
+                          console.log("success to txAllDone")
+                        }, {})
                       } else {
                         next()
                       }

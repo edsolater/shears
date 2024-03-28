@@ -24,7 +24,7 @@ export async function txDispatcher_worker(
   // 🤔 whether should destory after tx is end?
   txSubscribable.subscribe(({ name, txEventCenter }) => {
     Promise.resolve(txEventCenter).then((txEventCenter) => {
-      txEventCenter?.onAnyEvent((eventName, [payload]) => {
+      txEventCenter?.listenWhateverEvent((eventName, [payload]) => {
         // @ts-expect-error no need to check type
         sender.post({ name, status: eventName, payload })
       })

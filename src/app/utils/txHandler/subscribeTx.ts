@@ -9,9 +9,9 @@ export interface SubscribeSignatureCallbacks {
 }
 
 export type TxSubscribeEventCenter = EventCenter<{
-  txError: (info: TxErrorInfo) => void
-  txSuccess: (info: TxSuccessInfo) => void
-  txFinally: (info: TxFinalInfo) => void
+  txError: [info: TxErrorInfo]
+  txSuccess: [info: TxSuccessInfo]
+  txFinally: [info: TxFinalInfo]
 }>
 
 // @ts-ignore
