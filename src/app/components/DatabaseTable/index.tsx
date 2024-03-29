@@ -48,10 +48,11 @@ type DatabaseTableProps<T> = {
   title: string
   subtitle?: string
   subtitleDescription?: string
+
   SubtitleActions?: PivChild
   TopMiddle?: PivChild
   TopRight?: PivChild
-  TableBodyTopLeft?: PivChild
+  // TableBodyTopLeft?: PivChild
   TableBodyTopMiddle?: PivChild
   TableBodyTopRight?: PivChild
 }
@@ -123,10 +124,14 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
           <Box>{props.TopRight}</Box>
         </Box>
         <CyberPanel icss={{ overflow: "hidden", paddingInline: "24px" }}>
-          <Group name="subtitle">
-            <Title>{props.subtitle}</Title>
-            <Text>{props.subtitleDescription}</Text>
-          </Group>
+          <Box icss={icssThreeSlotGrid}>
+            <Box>
+              <Title>{props.subtitle}</Title>
+              <Text>{props.subtitleDescription}</Text>
+            </Box>
+            <Box>{props.TableBodyTopMiddle}</Box>
+            <Box>{props.TableBodyTopRight}</Box>
+          </Box>
 
           <Group
             name="table-header"

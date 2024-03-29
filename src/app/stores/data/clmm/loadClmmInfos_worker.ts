@@ -1,53 +1,55 @@
-import { toList, toMap } from "@edsolater/fnkit"
-import { getConnection } from "../connection/getConnection"
+import { toList } from "@edsolater/fnkit"
 import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
+import { getConnection } from "../connection/getConnection"
+import { workerThreadWalletInfo } from "../store_worker"
+import { sdkParseClmmInfos } from "../utils/sdkParseClmmInfos"
 import { composeClmmInfos } from "./composeClmmInfo"
 import { fetchClmmJsonInfo } from "./fetchClmmJson"
-import { sdkParseClmmInfos } from "../utils/sdkParseClmmInfos"
-import { workerThreadWalletInfo } from "../store_worker"
+import type { ClmmQueryParams } from "./loadClmmInfos_main"
 
-type QueryParams = { force?: boolean; rpcUrl: string; owner?: string }
-
-export function workerLoadClmmInfos({ getMessagePort }: PortUtils) {
-  const port = getMessagePort("fetch raydium clmm info")
+export function workerLoadClmmInfos({ getMessagePort }: PortUtils<ClmmQueryParams>) {
   console.log("[worker] start loading clmm infos")
-  port.receiveMessage((query: QueryParams) => {
-    const apiClmmInfos = fetchClmmJsonInfo()
-    workerThreadWalletInfo.owner = query.owner
-    workerThreadWalletInfo.rpcUrl = query.rpcUrl
+  const port = getMessagePort("fetch raydium clmm info")
+  port.receiveMessage(({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache }) => {
+    workerThreadWalletInfo.owner = owner
+    workerThreadWalletInfo.rpcUrl = rpcUrl
+    const ownerInfo = owner ? getTokenAccounts({ owner: owner, connection: rpcUrl }) : undefined
 
-    apiClmmInfos
-      .then(log("[worker] get clmm apiClmmInfos"))
-      .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
-      .then(port.postMessage)
-      .catch(logError)
+    const apiClmmInfos = fetchClmmJsonInfo(shouldApiCache)
 
-    const ownerInfo = query.owner ? getTokenAccounts({ owner: query.owner, connection: query.rpcUrl }) : undefined
+    if (shouldApi) {
+      apiClmmInfos
+        .then(log("[worker] get clmm apiClmmInfos"))
+        .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
+        .then(port.postMessage)
+        .catch(logError)
+    }
 
-    const sdkClmmInfos = Promise.all([apiClmmInfos, ownerInfo]).then(
-      ([infos, ownerInfo]) =>
-        infos &&
-        sdkParseClmmInfos({
-          connection: getConnection(query.rpcUrl),
-          apiClmmInfos: toList(infos),
-          ownerInfo:
-            ownerInfo && query.owner
-              ? {
-                  owner: query.owner,
-                  tokenAccounts: ownerInfo.sdkTokenAccounts,
-                }
-              : undefined,
-        }),
-    )
+    if (shouldSDK) {
+      const sdkClmmInfos = Promise.all([apiClmmInfos, ownerInfo]).then(
+        ([infos, ownerInfo]) =>
+          infos &&
+          sdkParseClmmInfos({
+            shouldUseCache: shouldSDKCache,
+            connection: getConnection(rpcUrl),
+            apiClmmInfos: toList(infos),
+            ownerInfo:
+              ownerInfo && owner
+                ? {
+                    owner: owner,
+                    tokenAccounts: ownerInfo.sdkTokenAccounts,
+                  }
+                : undefined,
+          }),
+      )
 
-    Promise.all([apiClmmInfos, sdkClmmInfos])
-      .then(log("[worker] start compose clmmInfos"))
-      .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
-      .then((r) => {
-        port.postMessage(toMap(r))
-      })
-      .catch(logError)
+      Promise.all([apiClmmInfos, sdkClmmInfos])
+        .then(log("[worker] start compose clmmInfos"))
+        .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
+        .then(port.postMessage)
+        .catch(logError)
+    }
   })
 }
 

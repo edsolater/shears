@@ -1,15 +1,18 @@
 import { mapEntry, shakeFalsy, shakeNil } from "@edsolater/fnkit"
-import { parallelAsyncTasks, recordToMap } from "../../../../packages/fnkit"
+import { parallelAsyncTasks } from "../../../../packages/fnkit"
 import { jFetch } from "../../../../packages/jFetch"
 import type { Mint, Price } from "../../../utils/dataStructures/type"
 import type { TokenListStore } from "../types/tokenList"
 
-export type TokenPricesMap = Map<Mint, Price>
+export type TokenPricesRecord = Record<Mint, Price>
 
-export async function fetchTokenPrices(tokens: TokenListStore["tokens"], raydiumUrl: string): Promise<TokenPricesMap> {
+export async function fetchTokenPrices(
+  tokens: TokenListStore["tokens"],
+  raydiumUrl: string,
+): Promise<TokenPricesRecord> {
   type CoingeckoPriceFile = Record<string /* coingeckoid */, { usd?: number }>
   type RaydiumPriceFile = Record<string, number>
-  if (!tokens || tokens.length === 0) return new Map()
+  if (!tokens || tokens.length === 0) return {}
   const coingeckoIds = shakeFalsy(Array.from(tokens.values()).map((t) => t?.extensions?.coingeckoId))
   const [coingeckoPrices, raydiumPrices] = await parallelAsyncTasks([
     jFetch<CoingeckoPriceFile>(
@@ -24,6 +27,6 @@ export async function fetchTokenPrices(tokens: TokenListStore["tokens"], raydium
     }),
     jFetch<RaydiumPriceFile>(raydiumUrl),
   ])
-  const prices = recordToMap(shakeNil({ ...coingeckoPrices, ...raydiumPrices }))
+  const prices = shakeNil({ ...coingeckoPrices, ...raydiumPrices })
   return prices
 }

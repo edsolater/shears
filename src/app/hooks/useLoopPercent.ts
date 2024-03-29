@@ -14,7 +14,6 @@ export function useLoopPercent() {
   }
   createEffect(() => {
     const { cancel } = requestLoopAnimationFrame(() => {
-      ;``
       setPercent((percent) => {
         if (percent >= 1) {
           onEnd()

@@ -2,14 +2,17 @@
  * only in main thread
  *******************************/
 
-import { addEventListener, createSmartStore } from "@edsolater/pivkit"
+import { createSmartStore } from "@edsolater/pivkit"
 import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
 import { RAYMint, SOLMint } from "../../configs/wellKnownMints"
-import { Mint, Numberish, type Price } from "../../utils/dataStructures/type"
+import type { TokenAccount } from "../../utils/dataStructures/TokenAccount"
+import { Mint, Numberish, type Price, type PublicKey } from "../../utils/dataStructures/type"
 import { TxVersion } from "../../utils/txHandler/txVersion"
+import type { WalletAdapters } from "../wallet/type"
 import { RPCEndpoint, availableRpcs } from "./RPCEndpoint"
 import { loadFarmJsonInfos } from "./portActions/loadFarmJsonInfos_main"
 import { loadFarmSYNInfos } from "./portActions/loadFarmSYNInfos_main"
+import { loadOwnerTokenAccounts } from "./portActions/loadOwnerTokenAccounts_main"
 import { loadPairs } from "./portActions/loadPairs_main"
 import { loadTokenPrice } from "./portActions/loadTokenPrice_main"
 import { loadTokens } from "./portActions/loadTokens_main"
@@ -18,10 +21,6 @@ import type { ClmmJsonInfo } from "./types/clmm"
 import { ClmmInfos } from "./types/clmm"
 import { FarmInfo, FarmJSON } from "./types/farm"
 import { PairInfo } from "./types/pairs"
-import type { TokenAccount } from "../../utils/dataStructures/TokenAccount"
-import type { Collection } from "@edsolater/fnkit"
-import { loadOwnerTokenAccounts } from "./portActions/loadOwnerTokenAccounts_main"
-import type { WalletAdapters } from "../wallet/type"
 
 export type StoreData = {
   // -------- swap --------
@@ -83,9 +82,9 @@ globalThis.document.addEventListener("DOMContentLoaded", () => {
   console.log("🤔")
 })
 
-export type Prices = Map<Mint, Price>
-export type Balances = Collection<Numberish, Mint>
-export type TokenAccounts = Collection<TokenAccount, TokenAccount["publicKey"]>
+export type Prices = Record<Mint, Price>
+export type Balances = Record<Mint, Numberish>
+export type TokenAccounts = Record<PublicKey, TokenAccount>
 
 // TODO: should all state just use shuck
 // token

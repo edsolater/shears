@@ -1,12 +1,12 @@
-import { add, toIterable, type Collection, type Numberish } from "@edsolater/fnkit"
+import { add, toIterable, type Numberish } from "@edsolater/fnkit"
 import { createTask } from "../../../../packages/conveyor/smartStore/task"
 import type { TokenAccount } from "../../../utils/dataStructures/TokenAccount"
-import type { Mint } from "../../../utils/dataStructures/type"
+import type { Mint, PublicKey } from "../../../utils/dataStructures/type"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_balances, shuck_isTokenAccountsLoading, shuck_owner, shuck_rpc, shuck_tokenAccounts } from "../store"
 
 export type FetchTokenAccountsQueryParams = { rpcUrl: string; owner: string }
-export type TokenAccounts = Collection<TokenAccount>
+export type TokenAccounts = Record<PublicKey, TokenAccount>
 
 export function loadOwnerTokenAccounts() {
   const port = getMessagePort<TokenAccounts, FetchTokenAccountsQueryParams>("fetch owner token accounts")

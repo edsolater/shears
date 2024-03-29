@@ -440,7 +440,6 @@ function composeTxLauncher({
     },
   })
 
-  console.log("compose: ", 122)
   const launchTransactions = (() => {
     if (sendMode === "parallel") {
       const parallelled = () => {
@@ -544,7 +543,6 @@ async function sendOneTransactionWithOptions({
     callbacks?.onBeforeSend?.()
     const txid = await sendSingleTransaction({ transaction, payload, cache: Boolean(singleOption?.cacheTransaction) })
     assert(txid, "something went wrong in sending transaction, getted txid empty")
-    console.log("onSendSuccess: ", 122)
     callbacks?.onSendSuccess?.({ transaction, txid, ...extraTxidInfo })
 
     wholeTxidInfo.txids[currentIndex] = txid //! 💩 bad method! it's mutate method!
@@ -581,7 +579,7 @@ function createMultiTxCallbackControllers(options: {
   markTxAsDone: (idx: number, info: TxFinalInfo) => void
 } {
   let hasSendError = false // for onTxAnyError may check multiple times, but it should only fire once
-  const txInfos = [] as TxFinalInfo[]
+  const txInfos = Array(options.txTotalCount).fill(undefined) as (TxFinalInfo | undefined)[]
   function checkIfAllSuccess() {
     if (txInfos.length === options.txTotalCount && txInfos.every((info) => info?.type === "success")) {
       options.callbacks.onTxAllSuccess?.({ txids: txInfos.map((info) => info!.txid) })
@@ -589,6 +587,7 @@ function createMultiTxCallbackControllers(options: {
   }
   function checkIfAnyError() {
     if (txInfos.length === options.txTotalCount && !hasSendError && txInfos.some((info) => info?.type === "error")) {
+      hasSendError = true
       options.callbacks.onTxAnyError?.({ txids: shakeNil(txInfos.map((info) => info?.txid)) })
     }
   }

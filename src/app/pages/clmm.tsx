@@ -4,6 +4,7 @@ import { Show, createEffect, onCleanup, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
+import { CircularProgressBar } from "../components/CircularProgressBar"
 import {
   DatabaseTable,
   type DatabaseTabelItemCollapseContentRenderConfig,
@@ -14,7 +15,8 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
-import { loadClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
+import { useLoopPercent } from "../hooks/useLoopPercent"
+import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
 import { allClmmTabs, shuck_clmmInfos } from "../stores/data/store"
@@ -116,21 +118,22 @@ export default function ClmmsPage() {
             <Button
               onClick={async ({ ev }) => {
                 ev.stopPropagation()
-                const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 28 })
+                const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 27 })
                 if (configs) {
                   runTasks(
                     ({ next }) => {
                       if (configs.decreaseClmmPositionTxConfigs.length) {
                         const d = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
-                        d?.on("txAllDone", next)
                         d?.onTxAllDone(({ txids }) => {
                           console.log("success to txAllDone")
+                          next()
                         }, {})
                       } else {
                         next()
                       }
                     },
                     () => {
+                      console.log("run tx follow 2")
                       if (configs.increaseClmmPositionTxConfigs.length) {
                         invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
                       }
@@ -169,6 +172,7 @@ export default function ClmmsPage() {
       </Col>
     ),
   }
+  const { percent } = useLoopPercent()
   return (
     <DatabaseTable
       title="Concentrated Pools"
@@ -184,6 +188,14 @@ export default function ClmmsPage() {
       itemContentConfig={itemContentConfig}
       TopMiddle={<ClmmPageTabBlock />}
       TopRight={<ClmmPageActionHandlersBlock />}
+      TableBodyTopRight={
+        <CircularProgressBar
+          percent={percent}
+          onClick={() => {
+            refreshClmmInfos({ shouldApi: false, shouldSDKCache: false })
+          }}
+        />
+      }
     />
   )
 }

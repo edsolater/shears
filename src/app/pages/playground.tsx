@@ -38,7 +38,7 @@ import {
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
 import { createInvoker } from "@edsolater/fnkit"
-import { CircularProgress } from "../components/CircularProgress"
+import { CircularProgressBar } from "../components/CircularProgressBar"
 import { ExamplePanel } from "../components/ExamplePanel"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
 import { useLoopPercent } from "../hooks/useLoopPercent"
@@ -160,7 +160,7 @@ function Foo() {
  */
 function CircularProgressExample() {
   const { percent } = useLoopPercent()
-  return <CircularProgress percent={percent()} />
+  return <CircularProgressBar percent={percent()} />
 }
 
 /**

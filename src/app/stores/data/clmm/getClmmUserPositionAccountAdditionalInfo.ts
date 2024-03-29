@@ -78,7 +78,7 @@ export function getClmmUserPositionAccountAdditionalInfo({
   rpcUrl: () => string | undefined
   owner: () => string | undefined
   slippage: () => Numberish
-  balances: () => Balances
+  balances: () => Balances | undefined
   tokenA: () => Token
   tokenB: () => Token
   priceA: () => Price | undefined
@@ -253,7 +253,7 @@ function calcPositionRewardsAmount(options: {
 }) {
   return (
     options.positionInfo?.rewardInfos.map((info) => {
-      const price = info.token && options.prices?.get(info.token)
+      const price = info.token && options.prices && get(options.prices, info.token)
 
       const t = info.token ? get(options.tokens, info.token) : undefined
       return {
@@ -278,14 +278,16 @@ function calcPositionfeesAmounts(options: {
             t1 && options.positionInfo.tokenFeeAmountBase
               ? toTokenAmount(t1, options.positionInfo.tokenFeeAmountBase, { amountIsBN: true })
               : undefined,
-          price: options.positionInfo.tokenBase && options.prices?.get(options.positionInfo.tokenBase),
+          price:
+            options.positionInfo.tokenBase && options.prices && get(options.prices, options.positionInfo.tokenBase),
         },
         {
           tokenAmount:
             t2 && options.positionInfo.tokenFeeAmountQuote
               ? toTokenAmount(t2, options.positionInfo.tokenFeeAmountQuote, { amountIsBN: true })
               : undefined,
-          price: options.positionInfo.tokenQuote && options.prices?.get(options.positionInfo.tokenQuote),
+          price:
+            options.positionInfo.tokenQuote && options.prices && get(options.prices, options.positionInfo.tokenQuote),
         },
       ]
     : []
@@ -521,7 +523,7 @@ function calcBuildPositionShowHandTxConfig(payload: {
   tokenBPrice: Numberish | undefined
   tokenADecimals: number
   tokenBDecimals: number
-  balances: Balances
+  balances: Balances | undefined
 }) {
   const side = gt(payload.clmmInfo.currentPrice, payload.positionInfo.priceUpper) ? "B" : "A"
   const balanceOfTargetSideRawBN = get(payload.balances, side === "A" ? payload.clmmInfo.base : payload.clmmInfo.quote)

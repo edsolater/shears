@@ -10,6 +10,8 @@ import { toPub, toPubString } from "./Publickey"
 import { TOKEN_PROGRAM_ID } from "../../stores/data/token/utils"
 import { getConnection } from "../../stores/data/connection/getConnection"
 import { SOLMint } from "../../configs/wellKnownMints"
+import type { PublicKey } from "./type"
+import { listToRecord } from "@edsolater/fnkit"
 
 export interface TokenAccount {
   programId: string
@@ -27,7 +29,7 @@ export type SDK_TokenAccount = _TokenAccount
  * @returns The converted _TokenAccount or undefined if the publicKey is null.
  */
 export function toSDKTokenAccount(account: TokenAccount): _TokenAccount | undefined {
-  return account.publicKey != null ? SDKTokenAccountCache.get(toPubString(account.publicKey))?.account : undefined
+  return account.publicKey != null ? SDKTokenAccountCache.get(account.publicKey)?.account : undefined
 }
 
 export function toUITokenAccount(account: _TokenAccount): TokenAccount | undefined {
@@ -35,7 +37,10 @@ export function toUITokenAccount(account: _TokenAccount): TokenAccount | undefin
 }
 
 /** store token account  */
-const queriedOwner = new Map<string /* owner */, { tokenAccounts: TokenAccount[]; sdkTokenAccounts: _TokenAccount[] }>()
+const queriedOwner = new Map<
+  string /* owner */,
+  { tokenAccounts: Record<PublicKey, TokenAccount>; sdkTokenAccounts: _TokenAccount[] }
+>()
 const TokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: TokenAccount }>()
 const SDKTokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: _TokenAccount }>()
 
@@ -55,7 +60,7 @@ export async function getTokenAccounts({
   connection: Connection | string
   owner: string
   config?: GetTokenAccountsByOwnerConfig
-}): Promise<{ tokenAccounts: TokenAccount[]; sdkTokenAccounts: _TokenAccount[] }> {
+}): Promise<{ tokenAccounts: Record<PublicKey, TokenAccount>; sdkTokenAccounts: _TokenAccount[] }> {
   const connection = getConnection(c)
   if (ownerHasStoredTokenAccounts({ owner })) {
     return queriedOwner.get(owner)!
@@ -111,8 +116,8 @@ export async function getTokenAccounts({
       (account) => account.publicKey && TokenAccountCache.set(account.publicKey, { owner, account }),
     )
     sdkTokenAccounts.forEach((account) => SDKTokenAccountCache.set(account.pubkey.toString(), { owner, account }))
-    queriedOwner.set(owner, { tokenAccounts, sdkTokenAccounts })
+    queriedOwner.set(owner, { tokenAccounts: listToRecord(tokenAccounts, (i) => i.publicKey), sdkTokenAccounts })
 
-    return { tokenAccounts, sdkTokenAccounts }
+    return { tokenAccounts: listToRecord(tokenAccounts, (i) => i.publicKey), sdkTokenAccounts }
   }
 }

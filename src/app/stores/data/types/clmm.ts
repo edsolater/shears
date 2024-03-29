@@ -147,4 +147,4 @@ export interface ClmmUserPositionAccount {
   // tokenFeesOwedA: BN__default; // currently useless
   // tokenFeesOwedB: BN__default; // currently useless
 }
-export type ClmmInfos = Collection<ClmmInfo>
+export type ClmmInfos = Record<Mint, ClmmInfo>

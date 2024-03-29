@@ -82,6 +82,7 @@ export function createMessagePortTransforers(towrardsTarget: MayPromise<Worker |
 
 /**
  * get(may auto create) a message receiver
+ * cached
  * @param towardsTarget function to get the worker instance
  * @param receiverCommand an action id
  * @returns a subscribable object, which can be subscribed to get the data from worker
@@ -118,6 +119,7 @@ function createMessageReceiver<R extends ReceiveMessage>(
 
 /**
  *
+ * cached
  * @param towardsTarget function to get the worker instance
  * @param command an action id
  * @returns
