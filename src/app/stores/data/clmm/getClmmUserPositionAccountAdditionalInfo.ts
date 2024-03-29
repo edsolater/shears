@@ -357,9 +357,9 @@ function calcBuildTxClmmPositionIncreaseConfig(
   const clmmId = payload.clmmInfo.id
   const positionNftMint = payload.positionInfo.nftMint
   const slippage = payload.slippage
-  return [
-    "clmm position increase",
-    {
+  return {
+    name: "clmm position increase",
+    params: {
       ...params,
       clmmId,
       positionNftMint,
@@ -367,7 +367,7 @@ function calcBuildTxClmmPositionIncreaseConfig(
       owner,
       slippage,
     },
-  ]
+  }
 }
 /**
  * build tx config: clmm position decrease
@@ -389,9 +389,9 @@ function calcBuildTxClmmPositionDecreaseConfig(
   const clmmId = payload.clmmInfo.id
   const positionNftMint = payload.positionInfo.nftMint
   const slippage = payload.slippage
-  return [
-    "clmm position decrease",
-    {
+  return {
+    name: "clmm position decrease",
+    params: {
       ...params,
       clmmId,
       positionNftMint,
@@ -399,7 +399,7 @@ function calcBuildTxClmmPositionDecreaseConfig(
       owner,
       slippage,
     },
-  ]
+  }
 }
 /** a shortcut of {@link txPositionDecrease} and {@link txPositionIncrease} */
 function calcBuildTxClmmPositionSetUSDConfig(

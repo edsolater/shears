@@ -9,7 +9,7 @@ import { getRealSDKTxVersion } from "../../utils/txHandler/txVersion"
 import { Token } from "./token/type"
 import { getBestCalcResultCache } from "./utils/calculateSwapRouteInfos"
 
-export type TxSwapConfig = ["swap", TxSwapParams]
+export type TxSwapConfig = { name: "swap"; params: TxSwapParams }
 
 export interface TxSwapParams {
   owner: string

@@ -19,7 +19,7 @@ import { jsonClmmInfoCache } from "./clmm/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import { toHumanReadable } from "./utils/toHumanReadable"
 
-export type TxClmmPositionIncreaseConfig = ["clmm position increase", TxClmmPositionIncreaseParams]
+export type TxClmmPositionIncreaseConfig = { name: "clmm position increase"; params: TxClmmPositionIncreaseParams }
 
 export type TxClmmPositionIncreaseParams = {
   rpcUrl: string

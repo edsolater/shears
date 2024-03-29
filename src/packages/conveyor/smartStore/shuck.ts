@@ -2,8 +2,9 @@ import {
   asyncInvoke,
   createSubscribable,
   isSubscribable,
+  type IDNumber,
   type MayFn,
-  type Subscribable
+  type Subscribable,
 } from "@edsolater/fnkit"
 import { isShuckOption, type ShuckOption } from "./shuckOption"
 import { type TaskRunner } from "./task"
@@ -17,7 +18,7 @@ export const shuckOptionTag = Symbol("shuckOptionTag")
 export interface Shuck<T> extends Subscribable<T> {
   /** when detected, it is a Shuck  */
   [shuckTag]: boolean
-  id: string
+  id: IDNumber
   /**
    * used by TaskExecutor to track subscribable's visiability
    *
@@ -37,8 +38,6 @@ export interface CreateShuckOptions<T> {
   onChangeToVisiable?: () => void
 }
 
-let globalShuckId = 0
-
 /** create special subscribable */
 export function createShuck<T>(): Shuck<T | undefined>
 export function createShuck<T>(defaultValue: MayFn<T>, options?: CreateShuckOptions<T>): Shuck<T>
@@ -50,8 +49,6 @@ export function createShuck<T>(
     | [defaultValue: any, options?: CreateShuckOptions<T>]
     | [option: ShuckOption<T>]
 ): Shuck<T> {
-  const id = globalShuckId++
-
   const [subscribable, options] = (
     isSubscribable(args[0]) // already input subscribable
       ? [args[0], args[1]]
@@ -64,7 +61,6 @@ export function createShuck<T>(
 
   const proxiedSubscribable = Object.assign(subscribable, {
     [shuckTag]: true,
-    id: `shuck_${id}`,
     /**
      * only effect exector will auto run if it's any observed Shuck is visiable \
      * visiable, so effect is meaningful for user

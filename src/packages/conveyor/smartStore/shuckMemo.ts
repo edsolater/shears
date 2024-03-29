@@ -6,7 +6,6 @@ export const shuckTag = Symbol("shuckMemoTag")
 interface ShuckMemo<T> extends Subscribable<T> {
   /** when detected, it is a Shuck  */
   [shuckTag]: boolean
-  id: string
   /**
    * used by TaskExecutor to track subscribable's visiability
    *
