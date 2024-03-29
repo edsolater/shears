@@ -2,16 +2,29 @@ import { LedgerWalletAdapter, PhantomWalletAdapter, SolflareWalletAdapter } from
 import { VersionedTransaction } from "@solana/web3.js"
 import { shuck_walletAdapter } from "../../stores/data/store"
 import { getMessagePort } from "../webworker/loadWorker_main"
+import type {
+  SignTransactionErrorInfo,
+  SignTransactionSuccessInfo,
+  UnsignedTransactionInfo,
+} from "./signAllTransactions_worker"
 
 export function createSignTransactionPortInMainThread() {
-  const { sender, receiver } = getMessagePort<any[]>("transform transaction")
-  receiver.subscribe((transactions) => {
+  const { sender, receiver } = getMessagePort<
+    UnsignedTransactionInfo,
+    SignTransactionSuccessInfo | SignTransactionErrorInfo
+  >("transform transaction")
+  receiver.subscribe(({ txs: transactions, id }) => {
     const decodedTransactions = transactions.map((transaction) => VersionedTransaction.deserialize(transaction))
     console.log("[main] receive transactions from worker", transactions, decodedTransactions)
     const signedTransactions = signTrancations(decodedTransactions)
-    signedTransactions?.then((signedTrancation) => {
-      sender.post(signedTrancation.map((tx) => tx.serialize()))
-    })
+    signedTransactions
+      ?.then((signedTrancation) => {
+        sender.post({ id, signedTxs: signedTrancation.map((tx) => tx.serialize()) })
+      })
+      .catch((error) => {
+        console.log("[main] sign failed", error)
+        sender.post({ id, errorReason: "main thread sign failed" })
+      })
   })
 }
 

@@ -170,7 +170,7 @@ export interface MultiTxsOption extends MultiTxCallbacks {
 export interface MultiTxCallbacks {
   onTxAllSuccess?: TxAllSuccessCallback
   onTxAnyError?: TxAnyErrorCallback
-  onTxDone?: TxAllDoneCallback
+  onTxAllDone?: TxAllDoneCallback
 }
 
 export type TransactionQueue = (
@@ -203,20 +203,19 @@ export type TxHandlerPayload = {
   owner: string
 }
 
-export type TxHandlerEventCenter = EventCenter<{
+type TxHandlerEventCenterCallbacks = {
   beforeSend: Parameters<TxBeforeSendCallback>
   beforeSendError: Parameters<TxBeforeSendErrorCallback>
-
   txSendSuccess: Parameters<TxSendSuccessCallback>
   txSendError: Parameters<TxSendErrorCallback>
-
   txSuccess: Parameters<TxSuccessCallback>
   txError: Parameters<TxErrorCallback>
-
   txAllSuccess: Parameters<TxAllSuccessCallback>
   txAnyError: Parameters<TxAnyErrorCallback>
   txAllDone: Parameters<TxAllDoneCallback>
-}>
+}
+
+export type TxHandlerEventCenter = EventCenter<TxHandlerEventCenterCallbacks>
 
 export function isVersionedTransaction(transaction: VersionedTransaction): transaction is VersionedTransaction {
   return isObject(transaction) && "version" in transaction
@@ -250,7 +249,7 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
     collected: { collectedTransactions, singleTxOptions, multiTxOption },
   } = createInnerTxCollector(options)
 
-  const eventCenter = createEventCenter() as unknown as TxHandlerEventCenter
+  const eventCenter = createEventCenter<TxHandlerEventCenterCallbacks>({ destoryAfterEmit: "txAllDone" })
   ;(async () => {
     assert(payload.connection, "provided connection not working")
     assert(payload.owner, "wallet not connected")
@@ -291,7 +290,7 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
       multiTxOption?.onTxAnyError?.(info)
     })
     eventCenter.on("txAllDone", (info) => {
-      multiTxOption?.onTxDone?.(info)
+      multiTxOption?.onTxAllDone?.(info)
     })
     // FIXME: where is onTxAllSuccess?
     console.log("prepare to sign all transactions")
@@ -345,7 +344,8 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
     // send tx
     senderFn()
   })().catch((error) => {
-    eventCenter.emit("beforeSendError", [error])
+    console.warn("[worker] error in handleTx", error) // FIXME: Why not emit error?
+    eventCenter.emit("beforeSendError", [error]) // usually sign rejected by user
   })
   return eventCenter
 }
@@ -440,6 +440,7 @@ function composeTxLauncher({
     },
   })
 
+  console.log("compose: ", 122)
   const launchTransactions = (() => {
     if (sendMode === "parallel") {
       const parallelled = () => {
@@ -461,6 +462,9 @@ function composeTxLauncher({
           txCenter.then((txEventCenter) => {
             txEventCenter?.on("txFinally", (info) => {
               multiTransactionCallbackControllers.markTxAsDone(idx, info)
+              setTimeout(() => {
+                txEventCenter.clear()
+              })
             })
           })
         })
@@ -540,6 +544,7 @@ async function sendOneTransactionWithOptions({
     callbacks?.onBeforeSend?.()
     const txid = await sendSingleTransaction({ transaction, payload, cache: Boolean(singleOption?.cacheTransaction) })
     assert(txid, "something went wrong in sending transaction, getted txid empty")
+    console.log("onSendSuccess: ", 122)
     callbacks?.onSendSuccess?.({ transaction, txid, ...extraTxidInfo })
 
     wholeTxidInfo.txids[currentIndex] = txid //! 💩 bad method! it's mutate method!

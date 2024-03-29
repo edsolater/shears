@@ -73,6 +73,7 @@ export async function txDispatcher_worker(
             }
           }
         }
+        console.log("[🐛worker txDispatcher] complicated tx multi configs txModules: ", txModules)
         const txEventCenter = Promise.all(txModules).then((txModules) =>
           handleMultiTxModules(txModules, { sendMode: "parallel" }),
         )

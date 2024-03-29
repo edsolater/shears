@@ -14,6 +14,7 @@ export function handleTxModule(txShortcut: TransactionModule) {
 
 export function handleMultiTxModules(txShortcuts: TransactionModule[], options?: MultiTxsOption) {
   if (!txShortcuts.length) return
+  console.log("🐛🐛")
   return handleTx(
     { connection: txShortcuts[0].connection, owner: txShortcuts[0].owner },
     () => txShortcuts.flat(),
