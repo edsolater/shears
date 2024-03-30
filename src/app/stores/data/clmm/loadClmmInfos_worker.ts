@@ -11,46 +11,50 @@ import type { ClmmQueryParams } from "./loadClmmInfos_main"
 export function workerLoadClmmInfos({ getMessagePort }: PortUtils<ClmmQueryParams>) {
   console.log("[worker] start loading clmm infos")
   const port = getMessagePort("fetch raydium clmm info")
-  port.receiveMessage(({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache }) => {
-    workerThreadWalletInfo.owner = owner
-    workerThreadWalletInfo.rpcUrl = rpcUrl
-    const ownerInfo = owner ? getTokenAccounts({ owner: owner, connection: rpcUrl }) : undefined
+  port.receiveMessage(
+    ({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache, shouldTokenAccountCache }) => {
+      workerThreadWalletInfo.owner = owner
+      workerThreadWalletInfo.rpcUrl = rpcUrl
+      const ownerTokenAccounts = owner
+        ? getTokenAccounts({ canUseCache: shouldTokenAccountCache, owner: owner, connection: rpcUrl })
+        : undefined
 
-    const apiClmmInfos = fetchClmmJsonInfo(shouldApiCache)
+      const apiClmmInfos = fetchClmmJsonInfo(shouldApiCache)
 
-    if (shouldApi) {
-      apiClmmInfos
-        .then(log("[worker] get clmm apiClmmInfos"))
-        .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
-        .then(port.postMessage)
-        .catch(logError)
-    }
+      if (shouldApi) {
+        apiClmmInfos
+          .then(log("[worker] get clmm apiClmmInfos"))
+          .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
+          .then(port.postMessage)
+          .catch(logError)
+      }
 
-    if (shouldSDK) {
-      const sdkClmmInfos = Promise.all([apiClmmInfos, ownerInfo]).then(
-        ([infos, ownerInfo]) =>
-          infos &&
-          sdkParseClmmInfos({
-            shouldUseCache: shouldSDKCache,
-            connection: getConnection(rpcUrl),
-            apiClmmInfos: toList(infos),
-            ownerInfo:
-              ownerInfo && owner
-                ? {
-                    owner: owner,
-                    tokenAccounts: ownerInfo.sdkTokenAccounts,
-                  }
-                : undefined,
-          }),
-      )
+      if (shouldSDK) {
+        const sdkClmmInfos = Promise.all([apiClmmInfos, ownerTokenAccounts]).then(
+          ([infos, ownerInfo]) =>
+            infos &&
+            sdkParseClmmInfos({
+              shouldUseCache: shouldSDKCache,
+              connection: getConnection(rpcUrl),
+              apiClmmInfos: toList(infos),
+              ownerInfo:
+                ownerInfo && owner
+                  ? {
+                      owner: owner,
+                      tokenAccounts: ownerInfo.sdkTokenAccounts,
+                    }
+                  : undefined,
+            }),
+        )
 
-      Promise.all([apiClmmInfos, sdkClmmInfos])
-        .then(log("[worker] start compose clmmInfos"))
-        .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
-        .then(port.postMessage)
-        .catch(logError)
-    }
-  })
+        Promise.all([apiClmmInfos, sdkClmmInfos])
+          .then(log("[worker] start compose clmmInfos"))
+          .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
+          .then(port.postMessage)
+          .catch(logError)
+      }
+    },
+  )
 }
 
 /**

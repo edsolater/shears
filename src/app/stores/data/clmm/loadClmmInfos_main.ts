@@ -4,17 +4,25 @@ import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_owner, shuck_rpc } 
 import type { ClmmInfos } from "../types/clmm"
 
 export type ClmmQueryParams = {
-  /**@default true */
-  shouldApi?: boolean
-  /**@default true */
-  shouldApiCache?: boolean
-  /**@default true */
-  shouldSDK?: boolean
-  /**@default true */
-  shouldSDKCache?: boolean
-
   rpcUrl: string
   owner?: string
+} & ClmmQueryCacheOptions
+
+export type ClmmQueryCacheOptions = {
+  /** @default true */
+  shouldApi?: boolean
+
+  /** @default true */
+  shouldApiCache?: boolean
+
+  /** @default true */
+  shouldSDK?: boolean
+
+  /** @default true */
+  shouldSDKCache?: boolean
+
+  /** @default true */
+  shouldTokenAccountCache?: boolean
 }
 
 export function loadClmmInfos() {
@@ -30,9 +38,7 @@ export function loadClmmInfos() {
 }
 
 /** can use this action isolatly */
-export function refreshClmmInfos(
-  options?: Pick<ClmmQueryParams, "shouldApi" | "shouldApiCache" | "shouldSDK" | "shouldSDKCache">,
-) {
+export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
   const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
@@ -46,6 +52,7 @@ export function refreshClmmInfos(
     shouldApiCache: options?.shouldApiCache ?? true,
     shouldSDK: options?.shouldSDK ?? true,
     shouldSDKCache: options?.shouldSDKCache ?? true,
+    shouldTokenAccountCache: options?.shouldTokenAccountCache ?? true,
     rpcUrl: url,
     owner,
   })

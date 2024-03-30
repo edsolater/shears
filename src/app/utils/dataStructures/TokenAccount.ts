@@ -10,7 +10,7 @@ import { toPub, toPubString } from "./Publickey"
 import { TOKEN_PROGRAM_ID } from "../../stores/data/token/utils"
 import { getConnection } from "../../stores/data/connection/getConnection"
 import { SOLMint } from "../../configs/wellKnownMints"
-import type { PublicKey } from "./type"
+import type { Address, PublicKey } from "./type"
 import { listToRecord } from "@edsolater/fnkit"
 
 export interface TokenAccount {
@@ -29,23 +29,26 @@ export type SDK_TokenAccount = _TokenAccount
  * @returns The converted _TokenAccount or undefined if the publicKey is null.
  */
 export function toSDKTokenAccount(account: TokenAccount): _TokenAccount | undefined {
-  return account.publicKey != null ? SDKTokenAccountCache.get(account.publicKey)?.account : undefined
+  return account.publicKey != null ? allSDKTokenAccountCache.get(account.publicKey)?.account : undefined
 }
 
 export function toUITokenAccount(account: _TokenAccount): TokenAccount | undefined {
-  return TokenAccountCache.get(toPubString(account.pubkey))?.account ?? undefined
+  return allTokenAccountCache.get(toPubString(account.pubkey))?.account ?? undefined
 }
 
 /** store token account  */
-const queriedOwner = new Map<
-  string /* owner */,
+const tokenAccountCacheByOwner = new Map<
+  Address /* owner */,
   { tokenAccounts: Record<PublicKey, TokenAccount>; sdkTokenAccounts: _TokenAccount[] }
 >()
-const TokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: TokenAccount }>()
-const SDKTokenAccountCache = new Map<string /* tokenAccount pubkey */, { owner: string; account: _TokenAccount }>()
+const allTokenAccountCache = new Map<PublicKey /* tokenAccount pubkey */, { owner: Address; account: TokenAccount }>()
+const allSDKTokenAccountCache = new Map<
+  PublicKey /* tokenAccount pubkey */,
+  { owner: Address; account: _TokenAccount }
+>()
 
 export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
-  return queriedOwner.has(owner)
+  return tokenAccountCacheByOwner.has(owner)
 }
 
 /**
@@ -53,18 +56,21 @@ export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
  * just relay on connection
  */
 export async function getTokenAccounts({
+  canUseCache = true,
   connection: c,
   owner,
   config,
 }: {
+  canUseCache?: boolean
   connection: Connection | string
   owner: string
   config?: GetTokenAccountsByOwnerConfig
 }): Promise<{ tokenAccounts: Record<PublicKey, TokenAccount>; sdkTokenAccounts: _TokenAccount[] }> {
   const connection = getConnection(c)
-  if (ownerHasStoredTokenAccounts({ owner })) {
-    return queriedOwner.get(owner)!
+  if (canUseCache && ownerHasStoredTokenAccounts({ owner })) {
+    return tokenAccountCacheByOwner.get(owner)!
   } else {
+    console.log("[worker] start loading token accounts", owner)
     const solReq = connection.getAccountInfo(toPub(owner), config?.commitment)
     const tokenReq = connection.getTokenAccountsByOwner(
       toPub(owner),
@@ -113,10 +119,13 @@ export async function getTokenAccounts({
 
     // set cache
     tokenAccounts.forEach(
-      (account) => account.publicKey && TokenAccountCache.set(account.publicKey, { owner, account }),
+      (account) => account.publicKey && allTokenAccountCache.set(account.publicKey, { owner, account }),
     )
-    sdkTokenAccounts.forEach((account) => SDKTokenAccountCache.set(account.pubkey.toString(), { owner, account }))
-    queriedOwner.set(owner, { tokenAccounts: listToRecord(tokenAccounts, (i) => i.publicKey), sdkTokenAccounts })
+    sdkTokenAccounts.forEach((account) => allSDKTokenAccountCache.set(account.pubkey.toString(), { owner, account }))
+    tokenAccountCacheByOwner.set(owner, {
+      tokenAccounts: listToRecord(tokenAccounts, (i) => i.publicKey),
+      sdkTokenAccounts,
+    })
 
     return { tokenAccounts: listToRecord(tokenAccounts, (i) => i.publicKey), sdkTokenAccounts }
   }

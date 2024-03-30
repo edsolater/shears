@@ -1,4 +1,4 @@
-import { createSubscribableFromPromise, listToJSMap, map, mul, turncate, toList, toRecord } from "@edsolater/fnkit"
+import { createSubscribableFromPromise, listToMap, map, mul, turncate, toList, toRecord } from "@edsolater/fnkit"
 import { Farm, FarmFetchMultipleInfoParams } from "@raydium-io/raydium-sdk"
 import { abortableAsyncTask } from "../../../../packages/fnkit"
 import { getConnection } from "../connection/getConnection"
@@ -59,9 +59,9 @@ function hydrateFarmSYN({
   pairJsons?: Awaited<ReturnType<typeof fetchPairJsonInfo>>
 }) {
   if (!farmJsons) return
-  const liquidityJsonLpMintMap = liquidityJsons && listToJSMap(liquidityJsons, (i) => i.lpMint)
-  const pairJsonAmmIdMap = pairJsons && listToJSMap(pairJsons, (i) => i.ammId)
-  const pairJsonLpMintMap = pairJsons && listToJSMap(pairJsons, (i) => i.lpMint)
+  const liquidityJsonLpMintMap = liquidityJsons && listToMap(liquidityJsons, (i) => i.lpMint)
+  const pairJsonAmmIdMap = pairJsons && listToMap(pairJsons, (i) => i.ammId)
+  const pairJsonLpMintMap = pairJsons && listToMap(pairJsons, (i) => i.lpMint)
 
   const rawList = map(farmJsons, (farmJson) => {
     const farmSDK = farmSDKs?.[toPubString(farmJson.id)]

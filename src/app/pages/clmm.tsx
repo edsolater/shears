@@ -192,7 +192,7 @@ export default function ClmmsPage() {
         <CircularProgressBar
           percent={percent}
           onClick={() => {
-            refreshClmmInfos({ shouldApi: false, shouldSDKCache: false })
+            refreshClmmInfos({ shouldApi: false, shouldSDKCache: false , shouldTokenAccountCache: false})
           }}
         />
       }
