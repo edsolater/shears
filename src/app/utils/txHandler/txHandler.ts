@@ -89,7 +89,7 @@ export type TxHandlerUtils = {
   owner: PublicKey
   connection: Connection
   sdkTxVersion: TxVersion
-  getSDKTokenAccounts(): Promise<SDK_TokenAccount[] | undefined>
+  getSDKTokenAccounts(options?: { canUseCache?: boolean }): Promise<SDK_TokenAccount[] | undefined>
   getSDKBudgetConfig(): Promise<ComputeBudgetConfig | undefined>
   /** just past to sdk method. UI should do nothing with sdkLookupTableCache */
   sdkLookupTableCache: CacheLTA
@@ -233,8 +233,8 @@ export const getTxHandlerUtils = (
     connection,
     sdkTxVersion: TxVersion.V0,
     sdkLookupTableCache,
-    getSDKTokenAccounts: () =>
-      getTokenAccounts({ connection, owner: payload.owner }).then((res) => res.sdkTokenAccounts),
+    getSDKTokenAccounts: ({ canUseCache = true }: { canUseCache?: true } = {}) =>
+      getTokenAccounts({ canUseCache, connection, owner: payload.owner }).then((res) => res.sdkTokenAccounts),
     getSDKBudgetConfig: getTxHandlerBudgetConfig,
   }
 }

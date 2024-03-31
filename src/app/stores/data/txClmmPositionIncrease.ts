@@ -43,13 +43,12 @@ export async function createTxClmmPositionIncreaseTransactionModule(
 ): Promise<TransactionModule> {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
-  console.log("[worker tx core algorithm] start compose tx clmm position increase")
+  console.log("[worker]{tx clmm position increase} start compose tx clmm position increase")
   assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
   assert(isPositive(amount), "amountA should be positive")
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
-  console.log('params.clmmId: ', params.clmmId, jsonClmmInfoCache, globalThis)
   assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
   const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
   const sdkClmmPositionInfo = sdkClmmInfo?.positionAccount?.find(
@@ -74,7 +73,7 @@ export async function createTxClmmPositionIncreaseTransactionModule(
 
   // ------------------ build transaction ------------------
   const txBudgetConfigPromise = getSDKBudgetConfig()
-  const sdkTokenAccountsPromise = getSDKTokenAccounts()
+  const sdkTokenAccountsPromise = getSDKTokenAccounts({ canUseCache: false })
   const [info, txBudgetConfig, sdkTokenAccounts] = await Promise.all([
     infoPromise,
     txBudgetConfigPromise,
@@ -84,6 +83,7 @@ export async function createTxClmmPositionIncreaseTransactionModule(
   const { liquidity, amountAInfo, amountBInfo } = info
   const amountA = amountAInfo.amountWithFeeBN
   const amountB = amountBInfo.amountWithFeeBN
+  console.log(txBudgetConfig)
   assert(txBudgetConfig, "txBudgetConfig can't load")
   assert(sdkTokenAccounts, "token account can't load")
   const treatWalletSolAsPoolBalance = isTokenSOLWSOL(jsonClmmInfo.mintA) || isTokenSOLWSOL(jsonClmmInfo.mintB)

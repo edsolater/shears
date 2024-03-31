@@ -1,7 +1,7 @@
 import { getConnection } from "../connection/getConnection"
 import { toPub } from "../../../utils/dataStructures/Publickey"
 
-export function addWalletBalanceChangeListener(options: {
+export function addWalletBalanceChangeListenerToRPCConnection(options: {
   owner: string
   rpcUrl: string
   onChange(): void
@@ -30,3 +30,4 @@ export function removeWalletBalanceChangeListener({ listenerId, rpcUrl }: { list
   const connection = getConnection(rpcUrl)
   connection.removeAccountChangeListener(listenerId)
 }
+

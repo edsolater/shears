@@ -2,7 +2,7 @@ import type { AnyFn } from "@edsolater/fnkit"
 import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import type { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
 import type { FetchTokenAccountsQueryParams, TokenAccounts } from "./loadOwnerTokenAccounts_main"
-import { addWalletBalanceChangeListener } from "./walletBalanceChangeListener"
+import { addWalletBalanceChangeListenerToRPCConnection } from "./walletBalanceChangeListener"
 
 export function loadOwnerTokenAccountsInWorker({
   getMessagePort,
@@ -30,7 +30,7 @@ export function loadOwnerTokenAccountsInWorker({
       registeredOwner = query.owner
       registeredRpcUrl = query.rpcUrl
       cleanFn?.()
-      addWalletBalanceChangeListener({
+      addWalletBalanceChangeListenerToRPCConnection({
         owner: query.owner,
         rpcUrl: query.rpcUrl,
         onChange: forcelyRefreshTokenAccounts,

@@ -26,6 +26,8 @@ import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
 import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
+import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceChange"
+import { TokenAmount } from "@raydium-io/raydium-sdk"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -282,14 +284,16 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
           onClick={() => {
             const txBus = invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
-                amountB: 1, // TODO: should be input
+                amountA: 1, // TODO: should be input
               }),
             )
             txBus?.onTxSendSuccess(() => {
-              shuck_balances.subscribe((balances) => {
-                const balance = positionAccount.tokenBase && get(balances, positionAccount.tokenBase)
-                console.log("balance: ", toFormattedNumber(balance, { decimals: 6 }))
-              })
+              if (positionAccount.tokenBase) {
+                onBalanceChange(positionAccount.tokenBase, ({ unsubscribe, balance }) => {
+                  console.log("balance: ", toFormattedNumber(balance, { decimals: 6 }))
+                  // unsubscribe()
+                })
+              }
             })
           }}
         >
