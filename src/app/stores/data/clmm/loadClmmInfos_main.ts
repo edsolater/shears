@@ -42,10 +42,8 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
   const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
-  console.log("🐛🐛🐛 url, owner: ", url, owner)
   if (!url) return
-  console.log("owner: ", owner)
-  console.count("[main loading clmm infos] start")
+  console.count("[main clmm infos] start refreshing")
   shuck_isClmmJsonInfoLoading.set(true)
   port.postMessage({
     shouldApi: options?.shouldApi ?? true,

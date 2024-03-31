@@ -8,7 +8,7 @@ import { composeClmmInfos } from "./composeClmmInfo"
 import { fetchClmmJsonInfo } from "./fetchClmmJson"
 import type { ClmmQueryParams } from "./loadClmmInfos_main"
 
-export function workerLoadClmmInfos({ getMessagePort }: PortUtils<ClmmQueryParams>) {
+export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams>) {
   console.log("[worker] start loading clmm infos")
   const port = getMessagePort("fetch raydium clmm info")
   port.receiveMessage(

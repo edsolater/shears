@@ -25,6 +25,7 @@ import type { PairInfo } from "../stores/data/types/pairs"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
+import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -214,6 +215,7 @@ export default function ClmmsPage() {
           percent={percent}
           onClick={() => {
             refreshClmmInfos({ shouldApi: false, shouldSDKCache: false, shouldTokenAccountCache: false })
+            // refreshTokenAccounts({ canUseCache: false })
           }}
         />
       }
