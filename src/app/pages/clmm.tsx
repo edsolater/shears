@@ -1,4 +1,4 @@
-import { count, runTasks } from "@edsolater/fnkit"
+import { count, get, runTasks, toFormattedNumber } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
 import { Show, createEffect, onCleanup, onMount } from "solid-js"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
@@ -19,7 +19,7 @@ import { useLoopPercent } from "../hooks/useLoopPercent"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
-import { allClmmTabs, shuck_clmmInfos } from "../stores/data/store"
+import { allClmmTabs, shuck_balances, shuck_clmmInfos } from "../stores/data/store"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
 import { toRenderable } from "../utils/common/toRenderable"
@@ -123,19 +123,40 @@ export default function ClmmsPage() {
                   runTasks(
                     ({ next }) => {
                       if (configs.decreaseClmmPositionTxConfigs.length) {
+                        console.log("[main] 1️⃣ run tx follow step 1")
+                        console.log("configs.decreaseClmmPositionTxConfigs: ", configs.decreaseClmmPositionTxConfigs)
                         const d = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
                         d?.onTxAllDone(({ txids }) => {
                           console.log("success to txAllDone")
                           next()
                         }, {})
+                        let haveWatched = false
+                        d?.onTxSendSuccess(() => {
+                          console.log("[🐛main] send success")
+                          shuck_balances.subscribe((balances) => {
+                            console.log("1212: ", 1212)
+                          })
+                        })
                       } else {
                         next()
                       }
                     },
                     () => {
-                      console.log("run tx follow 2")
                       if (configs.increaseClmmPositionTxConfigs.length) {
-                        invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                        console.log("[main] 2️⃣ run tx follow step 2")
+                        const d = invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
+                        d?.onTxSendSuccess(() => {
+                          console.log("[🐛main] send success 2")
+                          shuck_balances.subscribe((balances) => {
+                            console.log("1212: ", 12123)
+                          })
+                        })
+                        d?.on("txSendSuccess", () => {
+                          console.log("33: ", 33)
+                        })
+                        d?.on("txAllDone", () => {
+                          console.log("44:", 44)
+                        })
                       }
                     },
                   )
@@ -192,7 +213,7 @@ export default function ClmmsPage() {
         <CircularProgressBar
           percent={percent}
           onClick={() => {
-            refreshClmmInfos({ shouldApi: false, shouldSDKCache: false , shouldTokenAccountCache: false})
+            refreshClmmInfos({ shouldApi: false, shouldSDKCache: false, shouldTokenAccountCache: false })
           }}
         />
       }
@@ -257,11 +278,17 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
         <Button>Harvest</Button>
         <Button
           onClick={() => {
-            invokeTxConfig(
+            const txBus = invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
                 amountB: 1, // TODO: should be input
               }),
             )
+            txBus?.onTxSendSuccess(() => {
+              shuck_balances.subscribe((balances) => {
+                const balance = positionAccount.tokenBase && get(balances, positionAccount.tokenBase)
+                console.log("balance: ", toFormattedNumber(balance, { decimals: 6 }))
+              })
+            })
           }}
         >
           +

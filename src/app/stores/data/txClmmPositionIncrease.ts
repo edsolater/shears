@@ -49,8 +49,9 @@ export async function createTxClmmPositionIncreaseTransactionModule(
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
   const jsonClmmInfo = jsonClmmInfoCache.get(params.clmmId)
-  const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
+  console.log('params.clmmId: ', params.clmmId, jsonClmmInfoCache, globalThis)
   assert(jsonClmmInfo, "jsonClmmInfo not ready, jsonClmmInfo: " + jsonClmmInfo)
+  const sdkClmmInfo = sdkClmmInfoCache.get(params.clmmId)
   const sdkClmmPositionInfo = sdkClmmInfo?.positionAccount?.find(
     (p) => toPubString(p.nftMint) === params.positionNftMint,
   )

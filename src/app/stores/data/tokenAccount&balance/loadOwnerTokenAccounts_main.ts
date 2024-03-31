@@ -1,4 +1,4 @@
-import { add, toIterable, type Numberish } from "@edsolater/fnkit"
+import { add, setItem, toIterable, type Numberish } from "@edsolater/fnkit"
 import { createTask } from "../../../../packages/conveyor/smartStore/task"
 import type { TokenAccount } from "../../../utils/dataStructures/TokenAccount"
 import type { Mint, PublicKey } from "../../../utils/dataStructures/type"
@@ -8,7 +8,7 @@ import { shuck_balances, shuck_isTokenAccountsLoading, shuck_owner, shuck_rpc, s
 export type FetchTokenAccountsQueryParams = { rpcUrl: string; owner: string }
 export type TokenAccounts = Record<PublicKey, TokenAccount>
 
-export function loadOwnerTokenAccounts() {
+export function loadOwnerTokenAccountsAndBalances() {
   const port = getMessagePort<TokenAccounts, FetchTokenAccountsQueryParams>("fetch owner token accounts")
   const taskManager = createTask(
     [shuck_rpc, shuck_owner],
@@ -27,21 +27,21 @@ export function loadOwnerTokenAccounts() {
       console.count("[main owner token accounts] start")
       shuck_isTokenAccountsLoading.set(true)
       port.postMessage({ owner, rpcUrl: rpcUrl })
-      port.receiveMessage((tokenAccounts) => {
-        console.log("[main] get token accounts ", tokenAccounts)
-        shuck_isTokenAccountsLoading.set(false)
-        shuck_tokenAccounts.set(tokenAccounts)
-        const balances: Record<Mint, Numberish> = {}
-        for (const tokenAccount of toIterable(tokenAccounts)) {
-          const mint = tokenAccount.mint
-          if (balances[mint]) {
-            balances[mint] = add(balances[mint], tokenAccount.amount)
-          } else {
-            balances[mint] = tokenAccount.amount
+      port.receiveMessage(
+        (tokenAccounts) => {
+          console.log("[main] get token accounts ", tokenAccounts)
+          shuck_isTokenAccountsLoading.set(false)
+          shuck_tokenAccounts.set(tokenAccounts)
+          const balances: Record<Mint, Numberish> = {}
+          for (const tokenAccount of toIterable(tokenAccounts)) {
+            setItem(balances, tokenAccount.mint, (balance) =>
+              balance ? add(balance, tokenAccount.amount) : tokenAccount.amount,
+            )
           }
-        }
-        shuck_balances.set(balances)
-      })
+          shuck_balances.set(balances)
+        },
+        { key: "[main] receive tokenAccounts" },
+      )
     },
     { visiable: true },
   )

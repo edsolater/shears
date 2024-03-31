@@ -19,6 +19,7 @@ export type TaskManager = {
   destory(): void
 }
 
+const keyedTasks = new Map<string, TaskManager>()
 /**
  * like solidjs's createEffect, will track all subscribable's getValue option in it
  * try to re-invoke when shunk's value or shuck's visiablity changed
@@ -39,7 +40,11 @@ export type TaskManager = {
 export function createTask(
   dependOns: Shuck<any>[],
   task: () => void,
-  options?: { visiable?: boolean | ((shucks: Shuck<any>[]) => boolean) },
+  options?: {
+    visiable?: boolean | ((shucks: Shuck<any>[]) => boolean)
+    /** if multi same key subscribeFns are registered, only last one will work  */
+    key?: string
+  },
 ) {
   const isTaskVisiable = createSubscribable(checkAnyDependsVisiable(dependOns))
   const taskRunner = (() => asyncInvoke(task)) as TaskRunner
@@ -87,6 +92,12 @@ export function createTask(
   }
   manager.run() // initly run the task
 
+  if (options?.key) {
+    if (keyedTasks.has(options.key)) {
+      keyedTasks.get(options.key)?.destory()
+    }
+    keyedTasks.set(options.key, manager)
+  }
   return manager
 }
 

@@ -1,4 +1,11 @@
-import { createSubscribable, isArray, type MayPromise, type Subscribable } from "@edsolater/fnkit"
+import {
+  createSubscribable,
+  isArray,
+  type ID,
+  type IDNumber,
+  type MayPromise,
+  type Subscribable,
+} from "@edsolater/fnkit"
 import {
   createTxClmmPositionDecreaseTransactionModule,
   txClmmPositionDecrease,
@@ -23,14 +30,14 @@ type TxSubscribable = Subscribable<
 
 export async function txDispatcher_worker(transformers: PortUtils<TxBuilderConfigs, TxResponse>) {
   const port = transformers.getMessagePort("tx start")
-  function buildThreadBridgeOfTxEventCenter(txSubscribable: TxSubscribable, destory: () => void) {
+  function buildThreadBridgeOfTxEventCenter(messageId: ID, txSubscribable: TxSubscribable, destory: () => void) {
     txSubscribable.subscribe(({ name, txEventCenter }) => {
       Promise.resolve(txEventCenter).then((txEventCenter) => {
-        txEventCenter?.listenWhateverEvent((eventName, [payload]) => {
+        txEventCenter?.listenAnyEvent((txStatus, [payload]) => {
           // @ts-expect-error no need to check type
-          port.postMessage({ subscribableId: txSubscribable.id, name, status: eventName, payload })
+          port.postMessage({ messageId, name, txStatus, txInfo: payload })
           // when done clean the subscribabled callbacks
-          if (eventName === "txAllDone") {
+          if (txStatus === "txAllDone") {
             txSubscribable.destroy()
             txEventCenter.clear()
             destory()
@@ -42,7 +49,9 @@ export async function txDispatcher_worker(transformers: PortUtils<TxBuilderConfi
 
   port.receiveMessage((builderConfigs) => {
     const messageId = builderConfigs.messageId
-    const txSubscribable = getTxSubscribableFromId(messageId, buildThreadBridgeOfTxEventCenter)
+    const txSubscribable = getTxSubscribableFromId(messageId, (txSubscribable, destory) =>
+      buildThreadBridgeOfTxEventCenter(messageId, txSubscribable, destory),
+    )
 
     if (!isArray(builderConfigs.config)) {
       const { name, params: txParams } = builderConfigs.config

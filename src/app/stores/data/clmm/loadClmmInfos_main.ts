@@ -61,9 +61,12 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
 export function registerClmmInfosReceiver() {
   const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   console.log("[main] register clmm infos receiver")
-  port.receiveMessage((infos) => {
-    shuck_isClmmJsonInfoLoading.set(false)
-    console.log("[main] clmm infos: ", infos)
-    shuck_clmmInfos.set(infos)
-  })
+  port.receiveMessage(
+    (infos) => {
+      shuck_isClmmJsonInfoLoading.set(false)
+      console.log("[main] clmm infos: ", infos)
+      shuck_clmmInfos.set(infos)
+    },
+    { key: "[main] receive clmm infos" },
+  )
 }

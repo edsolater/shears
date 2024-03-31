@@ -6,21 +6,20 @@ import { createSmartStore } from "@edsolater/pivkit"
 import { createShuck } from "../../../packages/conveyor/smartStore/shuck"
 import { RAYMint, SOLMint } from "../../configs/wellKnownMints"
 import type { TokenAccount } from "../../utils/dataStructures/TokenAccount"
-import { Mint, Numberish, type Price, type PublicKey } from "../../utils/dataStructures/type"
-import { TxVersion } from "../../utils/txHandler/txVersion"
+import type { Mint, Numberish, Price, PublicKey } from "../../utils/dataStructures/type"
+import type { TxVersion } from "../../utils/txHandler/txVersion"
 import type { WalletAdapters } from "../wallet/type"
-import { RPCEndpoint, availableRpcs } from "./RPCEndpoint"
+import { availableRpcs, type RPCEndpoint } from "./RPCEndpoint"
 import { loadFarmJsonInfos } from "./portActions/loadFarmJsonInfos_main"
 import { loadFarmSYNInfos } from "./portActions/loadFarmSYNInfos_main"
-import { loadOwnerTokenAccounts } from "./portActions/loadOwnerTokenAccounts_main"
 import { loadPairs } from "./portActions/loadPairs_main"
 import { loadTokenPrice } from "./portActions/loadTokenPrice_main"
 import { loadTokens } from "./portActions/loadTokens_main"
-import { Token, type Tokens } from "./token/type"
-import type { ClmmJsonInfo } from "./types/clmm"
-import { ClmmInfos } from "./types/clmm"
-import { FarmInfo, FarmJSON } from "./types/farm"
-import { PairInfo } from "./types/pairs"
+import type { Token, Tokens } from "./token/type"
+import { loadOwnerTokenAccountsAndBalances } from "./tokenAccount&balance/loadOwnerTokenAccounts_main"
+import type { ClmmInfos, ClmmJsonInfo } from "./types/clmm"
+import type { FarmInfo, FarmJSON } from "./types/farm"
+import type { PairInfo } from "./types/pairs"
 
 export type StoreData = {
   // -------- swap --------
@@ -78,7 +77,7 @@ export const {
 globalThis.document.addEventListener("DOMContentLoaded", () => {
   loadTokens()
   loadTokenPrice()
-  loadOwnerTokenAccounts()
+  loadOwnerTokenAccountsAndBalances()
   console.log("🤔")
 })
 
