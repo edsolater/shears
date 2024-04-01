@@ -4,6 +4,7 @@ import type { TokenAccount } from "../../../utils/dataStructures/TokenAccount"
 import type { Mint, PublicKey } from "../../../utils/dataStructures/type"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_balances, shuck_isTokenAccountsLoading, shuck_owner, shuck_rpc, shuck_tokenAccounts } from "../store"
+import { reportLog } from "../utils/logger"
 
 export type FetchTokenAccountsQueryParams = { rpcUrl: string; owner: string; canUseCache: boolean }
 export type TokenAccounts = Record<PublicKey, TokenAccount>
@@ -24,7 +25,7 @@ export function registerTokenAccountsReceiver() {
   const port = getMessagePort<TokenAccounts, FetchTokenAccountsQueryParams>("fetch owner token accounts")
   port.receiveMessage(
     (tokenAccounts) => {
-      console.log("[🤖main] get token accounts ", tokenAccounts)
+      reportLog("[🤖main] token accounts ", tokenAccounts)
       shuck_isTokenAccountsLoading.set(false)
       shuck_tokenAccounts.set(tokenAccounts)
       const balances: Record<Mint, Numberish> = {}

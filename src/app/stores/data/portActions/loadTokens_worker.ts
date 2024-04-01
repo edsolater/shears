@@ -4,13 +4,14 @@ import type { PortUtils } from "../../../utils/webworker/createMessagePortTransf
 import { type Token, type Tokens } from "../token/type"
 import { SOLToken } from "../token/utils"
 import { fetchTokenJsonFile } from "../utils/fetchTokenJson"
+import { reportLog } from "../utils/logger"
 
 export let tokensMap: Tokens = new Map<Mint, Token>()
 export function loadTokensInWorker(transformers: PortUtils) {
   const { receiver, sender } = transformers.getMessagePort("fetch raydium supported tokens")
-  console.log("[⚙️worker 🚪port] registered load token")
+  reportLog("[⚙️worker 🚪port] registered load token")
   receiver.subscribe((options) => {
-    console.log("[⚙️worker 🚧task] load tokens")
+    reportLog("[⚙️worker 🚧task] load tokens")
     /* TODO: currently only mainnet raydium token list was supported*/
     fetchTokenJsonFile(options)
       .then((res) => {

@@ -28,6 +28,7 @@ import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
 import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
 import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceChange"
 import { TokenAmount } from "@raydium-io/raydium-sdk"
+import { reportLog } from "../stores/data/utils/logger"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -127,7 +128,7 @@ export default function ClmmsPage() {
                   runTasks(
                     ({ next }) => {
                       if (configs.upDecreaseClmmPositionTxConfigs.length) {
-                        console.log("[🤖main] 1️⃣ run tx follow step 1")
+                        reportLog("[🤖main] 1️⃣ run tx follow step 1")
                         const d = invokeTxConfig(...configs.upDecreaseClmmPositionTxConfigs)
                         if (configs.upShowHandTxConfigs.length) {
                           d?.onTxAllDone(() => {
@@ -147,7 +148,7 @@ export default function ClmmsPage() {
                     },
                     ({ next }) => {
                       if (configs.downDecreaseClmmPositionTxConfigs.length) {
-                        console.log("[🤖main] 2️⃣ run tx follow step 2")
+                        reportLog("[🤖main] 2️⃣ run tx follow step 2")
                         const d = invokeTxConfig(...configs.downDecreaseClmmPositionTxConfigs)
                         if (configs.downShowHandTxConfigs.length) {
                           d?.onTxAllDone(() => {

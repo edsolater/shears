@@ -6,10 +6,11 @@ import { workerThreadWalletInfo } from "../store_worker"
 import { sdkParseClmmInfos } from "../utils/sdkParseClmmInfos"
 import { composeClmmInfos } from "./composeClmmInfo"
 import { fetchClmmJsonInfo } from "./fetchClmmJson"
-import type { ClmmQueryParams } from "./loadClmmInfos_main"
+import type { ClmmQueryParams, ClmmTransferPayload } from "./loadClmmInfos_main"
+import { reportLog } from "../utils/logger"
 
-export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams>) {
-  console.log("[⚙️worker] start loading clmm infos")
+export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams, ClmmTransferPayload>) {
+  reportLog("[⚙️worker] start loading clmm infos")
   const port = getMessagePort("fetch raydium clmm info")
   port.receiveMessage(
     ({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache, shouldTokenAccountCache }) => {
@@ -25,7 +26,7 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
         apiClmmInfos
           .then(log("[⚙️worker] clmm API Infos"))
           .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
-          .then(port.postMessage)
+          .then((infos) => port.postMessage({ list: infos, has: ["API"] }))
           .catch(logError)
       }
 
@@ -50,7 +51,7 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
         Promise.all([apiClmmInfos, sdkClmmInfos])
           .then(log("[⚙️worker] start compose clmmInfos"))
           .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
-          .then(port.postMessage)
+          .then((infos) => port.postMessage({ list: infos, has: ["API", "SDK"] }))
           .catch(logError)
       }
     },

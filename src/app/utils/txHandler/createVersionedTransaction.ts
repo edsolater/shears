@@ -8,6 +8,7 @@ import {
 } from "@raydium-io/raydium-sdk"
 import type { Connection, VersionedTransaction } from "@solana/web3.js"
 import { toPub } from "../dataStructures/Publickey"
+import { reportLog } from "../../stores/data/utils/logger"
 
 export async function composeSDKInnerTransactions({
   connection,
@@ -25,12 +26,12 @@ export async function composeSDKInnerTransactions({
     makeTxVersion: TxVersion.V0, // force
     addLookupTableInfo: SDK_LOOKUP_TABLE_CACHE,
   }
-  console.log("[⚙️worker] params: ", params)
+  reportLog("[⚙️worker] params: ", params)
   const spawnedTransactions = (await buildSimpleTransaction(params).catch((e) => {
     console.error(e)
   })) as VersionedTransaction[]
   if (!spawnedTransactions) return []
-  console.log("[⚙️worker] spawnedTransactions: ", spawnedTransactions)
+  reportLog("[⚙️worker] spawnedTransactions: ", spawnedTransactions)
   return spawnedTransactions
 }
 

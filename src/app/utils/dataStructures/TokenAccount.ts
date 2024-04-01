@@ -12,6 +12,7 @@ import { getConnection } from "../../stores/data/connection/getConnection"
 import { SOLMint } from "../../configs/wellKnownMints"
 import type { Address, PublicKey } from "./type"
 import { listToRecord } from "@edsolater/fnkit"
+import { reportLog } from "../../stores/data/utils/logger"
 
 export interface TokenAccount {
   programId: string
@@ -70,7 +71,7 @@ export async function getTokenAccounts({
   if (canUseCache && ownerHasStoredTokenAccounts({ owner })) {
     return tokenAccountCacheByOwner.get(owner)!
   } else {
-    console.log("[⚙️worker] start loading token accounts", owner)
+    reportLog("[⚙️worker] start loading token accounts", owner)
     const solReq = connection.getAccountInfo(toPub(owner), config?.commitment)
     const tokenReq = connection.getTokenAccountsByOwner(
       toPub(owner),

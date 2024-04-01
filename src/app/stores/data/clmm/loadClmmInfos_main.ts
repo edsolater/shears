@@ -2,6 +2,7 @@ import { createTask } from "../../../../packages/conveyor/smartStore/task"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_owner, shuck_rpc } from "../store"
 import type { ClmmInfos } from "../types/clmm"
+import { reportLog } from "../utils/logger"
 
 export type ClmmQueryParams = {
   rpcUrl: string
@@ -25,6 +26,11 @@ export type ClmmQueryCacheOptions = {
   shouldTokenAccountCache?: boolean
 }
 
+export type ClmmTransferPayload = {
+  list: ClmmInfos
+  has: ("SDK" | "API")[]
+}
+
 export function loadClmmInfos() {
   registerClmmInfosReceiver()
   const taskManager = createTask(
@@ -39,7 +45,7 @@ export function loadClmmInfos() {
 
 /** can use this action isolatly */
 export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
-  const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
+  const port = getMessagePort<ClmmTransferPayload, ClmmQueryParams>("fetch raydium clmm info")
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
   if (!url) return
@@ -57,12 +63,12 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
 }
 
 export function registerClmmInfosReceiver() {
-  const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
-  console.log("[🤖main] register clmm infos receiver")
+  const port = getMessagePort<ClmmTransferPayload, ClmmQueryParams>("fetch raydium clmm info")
+  reportLog("[🤖main] register clmm infos receiver")
   port.receiveMessage(
-    (infos) => {
+    ({ list: infos, has }) => {
       shuck_isClmmJsonInfoLoading.set(false)
-      console.log("[🤖main] clmm infos: ", infos)
+      console.log(`[🤖main] clmm ${has.includes('SDK') ? "SDK" : "API"} infos: `, infos)
       shuck_clmmInfos.set(infos)
     },
     { key: "[🤖main] receive clmm infos" },

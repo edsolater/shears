@@ -19,6 +19,7 @@ import type { PortUtils } from "../webworker/createMessagePortTransforers"
 import { handleMultiTxModules, type TransactionModule } from "./handleTxFromShortcut"
 import type { TxBuilderConfigs, TxResponse } from "./txDispatcher_main"
 import type { TxHandlerEventCenter } from "./txHandler"
+import { reportLog } from "../../stores/data/utils/logger"
 
 type TxSubscribable = Subscribable<
   | {
@@ -55,7 +56,7 @@ export async function txDispatcher_worker(transformers: PortUtils<TxBuilderConfi
 
     if (!isArray(builderConfigs.config)) {
       const { name, params: txParams } = builderConfigs.config
-      console.log("[worker txDispatcher] get name: ", name, "txParams: ", txParams)
+      reportLog("[worker txDispatcher] get name: ", name, "txParams: ", txParams)
       switch (name) {
         case "swap": {
           const txEventCenter = txSwap(txParams)
@@ -76,7 +77,7 @@ export async function txDispatcher_worker(transformers: PortUtils<TxBuilderConfi
     } else {
       // "complicated tx multi configs"
       const txModules = [] as MayPromise<TransactionModule>[]
-      console.log("[worker txDispatcher] complicated tx multi configs: ", builderConfigs)
+      reportLog("[worker txDispatcher] complicated tx multi configs: ", builderConfigs)
       for (const config of builderConfigs.config) {
         const { name, params: txParams } = config
         switch (name) {
@@ -97,7 +98,7 @@ export async function txDispatcher_worker(transformers: PortUtils<TxBuilderConfi
           }
         }
       }
-      console.log("[🐛worker txDispatcher] complicated tx multi configs txModules: ", txModules)
+      reportLog("[🐛worker txDispatcher] complicated tx multi configs txModules: ", txModules)
       const txEventCenter = Promise.all(txModules).then((txModules) =>
         handleMultiTxModules(txModules, { sendMode: "parallel" }),
       )

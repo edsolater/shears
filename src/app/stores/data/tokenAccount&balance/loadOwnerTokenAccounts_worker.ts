@@ -3,12 +3,13 @@ import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import type { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
 import type { FetchTokenAccountsQueryParams, TokenAccounts } from "./loadOwnerTokenAccounts_main"
 import { addWalletBalanceChangeListenerToRPCConnection } from "./walletBalanceChangeListener"
+import { reportLog } from "../utils/logger"
 
 export function loadOwnerTokenAccountsInWorker({
   getMessagePort,
 }: PortUtils<FetchTokenAccountsQueryParams, TokenAccounts>) {
   const port = getMessagePort("fetch owner token accounts")
-  console.log("[⚙️worker] register fetch owner token accounts")
+  reportLog("[⚙️worker] register fetch owner token accounts")
 
   let registeredOwner: string
   let registeredRpcUrl: string

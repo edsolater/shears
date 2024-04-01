@@ -4,6 +4,7 @@ import { getMessagePort } from "../webworker/loadWorker_worker"
 import { composeSDKInnerTransactions } from "./createVersionedTransaction"
 import type { TxHandlerPayload } from "./txHandler"
 import type { ID } from "@edsolater/fnkit"
+import { reportLog } from "../../stores/data/utils/logger"
 
 export type UnsignedTransactionInfo = {
   id: ID
@@ -38,7 +39,7 @@ export async function signAllTransactions({
   // send transaction form worker to main thread
   return new Promise((resolve, reject) => {
     const signId = getSignTransactionId()
-    console.log("[⚙️worker] send transactions to main thread", buildedTransactions)
+    reportLog("[⚙️worker] send transactions to main thread", buildedTransactions)
     port.postMessage({
       id: signId,
       txs: buildedTransactions.map((tx) => tx.serialize()),

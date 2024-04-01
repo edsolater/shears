@@ -18,6 +18,7 @@ import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./clmm/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import { toHumanReadable } from "./utils/toHumanReadable"
+import { reportLog } from "./utils/logger"
 
 export type TxClmmPositionIncreaseConfig = { name: "clmm position increase"; params: TxClmmPositionIncreaseParams }
 
@@ -43,7 +44,7 @@ export async function createTxClmmPositionIncreaseTransactionModule(
 ): Promise<TransactionModule> {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
-  console.log("[⚙️worker]{tx clmm position increase} start compose tx clmm position increase")
+  reportLog("[⚙️worker]{tx clmm position increase} start compose tx clmm position increase")
   assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
   assert(isPositive(amount), "amountA should be positive")
   const connection = getConnection(params.rpcUrl)
@@ -107,7 +108,7 @@ export async function createTxClmmPositionIncreaseTransactionModule(
     lookupTableCache: sdkLookupTableCache,
   }
 
-  console.log("[tx] clmm position increase txParams: ", toHumanReadable(txParams))
+  reportLog("[tx] clmm position increase txParams: ", toHumanReadable(txParams))
   const { innerTransactions } = await Clmm.makeIncreasePositionFromLiquidityInstructionSimple(txParams).catch((e) => {
     console.error(e)
     return { innerTransactions: [] }

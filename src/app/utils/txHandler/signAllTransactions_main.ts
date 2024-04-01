@@ -7,6 +7,7 @@ import type {
   SignTransactionSuccessInfo,
   UnsignedTransactionInfo,
 } from "./signAllTransactions_worker"
+import { reportLog } from "../../stores/data/utils/logger"
 
 export function createSignTransactionPortInMainThread() {
   const { sender, receiver } = getMessagePort<
@@ -15,14 +16,14 @@ export function createSignTransactionPortInMainThread() {
   >("transform transaction")
   receiver.subscribe(({ txs: transactions, id }) => {
     const decodedTransactions = transactions.map((transaction) => VersionedTransaction.deserialize(transaction))
-    console.log("[🤖main] receive transactions from worker", transactions, decodedTransactions)
+    reportLog("[🤖main] receive transactions from worker", transactions, decodedTransactions)
     const signedTransactions = signTrancations(decodedTransactions)
     signedTransactions
       ?.then((signedTrancation) => {
         sender.post({ id, signedTxs: signedTrancation.map((tx) => tx.serialize()) })
       })
       .catch((error) => {
-        console.log("[🤖main] sign failed", error)
+        reportLog("[🤖main] sign failed", error)
         sender.post({ id, errorReason: "main thread sign failed" })
       })
   })

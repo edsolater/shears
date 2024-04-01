@@ -4,6 +4,7 @@ import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_isTokenPricesLoading, shuck_tokenPrices, shuck_tokens } from "../store"
 import type { Token } from "../token/type"
 import type { TokenPricesRecord } from "../utils/fetchTokenPrices"
+import { reportLog } from "../utils/logger"
 
 export function loadTokenPrice() {
   shuck_tokens.subscribe((tokens) => {
@@ -14,7 +15,7 @@ export function loadTokenPrice() {
     const { sender, receiver } = getMessagePort<{ prices: TokenPricesRecord }, { url: string; tokens: Token[] }>(
       "get raydium token prices",
     )
-    console.log("[🤖main] query token prices")
+    reportLog("[🤖main] 📢query token prices")
     sender.post({
       url: appApiUrls.price,
       tokens: toList(tokens),

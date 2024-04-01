@@ -18,6 +18,7 @@ import { isTokenSOLWSOL } from "./token/utils"
 import { jsonClmmInfoCache } from "./clmm/fetchClmmJson"
 import { sdkClmmInfoCache } from "./utils/sdkParseClmmInfos"
 import { toHumanReadable } from "./utils/toHumanReadable"
+import { reportLog } from "./utils/logger"
 
 export type TxClmmPositionDecreaseConfig = { name: "clmm position decrease"; params: TxClmmPositionDecreaseParams }
 
@@ -44,7 +45,7 @@ export async function createTxClmmPositionDecreaseTransactionModule(
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
   console.log("amountSide: ", amountSide)
-  console.log("[worker tx core algorithm] start compose tx clmm position decrease")
+  reportLog("[worker tx core algorithm] start compose tx clmm position decrease")
   assert(isPositive(amount), "amountA should be positive")
   const connection = getConnection(params.rpcUrl)
   assert(connection, "connection not ready, connection: " + connection)
@@ -103,7 +104,7 @@ export async function createTxClmmPositionDecreaseTransactionModule(
     makeTxVersion: sdkTxVersion,
     lookupTableCache: sdkLookupTableCache,
   }
-  console.log("[tx] clmm position decrease txParams: ", toHumanReadable(txParams))
+  reportLog("[tx] clmm position decrease txParams: ", toHumanReadable(txParams))
   const { innerTransactions } = await Clmm.makeDecreaseLiquidityInstructionSimple(txParams).catch((e) => {
     console.error(e)
     return { innerTransactions: [] }
