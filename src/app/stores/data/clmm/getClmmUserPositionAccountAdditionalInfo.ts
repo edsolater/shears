@@ -71,8 +71,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
   priceA,
   priceB,
 }: {
-  clmmInfo: ClmmInfo
-  positionInfo: ClmmUserPositionAccount
+  clmmInfo: () => ClmmInfo
+  positionInfo: () => ClmmUserPositionAccount
   pricesMap: () => Prices | undefined
   tokens: () => Tokens
   rpcUrl: () => string | undefined
@@ -100,26 +100,36 @@ export function getClmmUserPositionAccountAdditionalInfo({
       tokenBPrice: priceB(),
       tokenADecimals: tokenA().decimals,
       tokenBDecimals: tokenB().decimals,
-      userPositionAccountAmountBN_B: positionInfo.amountBaseBN,
-      userPositionAccountAmountBN_A: positionInfo.amountQuoteBN,
+      userPositionAccountAmountBN_B: positionInfo().amountBaseBN,
+      userPositionAccountAmountBN_A: positionInfo().amountQuoteBN,
     })
 
   const hasRewardTokenAmount = () =>
-    positionInfo.rewardInfos.length > 0 && positionInfo.rewardInfos.some((info) => isPositive(info.penddingReward))
+    positionInfo().rewardInfos.length > 0 && positionInfo().rewardInfos.some((info) => isPositive(info.penddingReward))
 
   const rangeName = () =>
-    `${toFormattedNumber(positionInfo.priceLower, { decimals: 4 })}-${toFormattedNumber(positionInfo.priceUpper, { decimals: 4 })}`
+    `${toFormattedNumber(positionInfo().priceLower, { decimals: 4 })}-${toFormattedNumber(positionInfo().priceUpper, { decimals: 4 })}`
 
-  const inRange = () => calcPositionInRange({ clmmInfo, positionInfo })
+  const inRange = () => calcPositionInRange({ clmmInfo: clmmInfo(), positionInfo: positionInfo() })
 
   const rewardsAmountsWithFees = () =>
-    calcPositionRewardsAmount({ clmmInfo, positionInfo, prices: pricesMap(), tokens: tokens() })
+    calcPositionRewardsAmount({
+      clmmInfo: clmmInfo(),
+      positionInfo: positionInfo(),
+      prices: pricesMap(),
+      tokens: tokens(),
+    })
 
   const feesAmountsWithFees = () =>
-    calcPositionfeesAmounts({ clmmInfo, positionInfo, prices: pricesMap(), tokens: tokens() })
+    calcPositionfeesAmounts({
+      clmmInfo: clmmInfo(),
+      positionInfo: positionInfo(),
+      prices: pricesMap(),
+      tokens: tokens(),
+    })
 
   const hasFeeTokenAmount = () =>
-    isPositive(positionInfo.tokenFeeAmountBase) || isPositive(positionInfo.tokenFeeAmountQuote)
+    isPositive(positionInfo().tokenFeeAmountBase) || isPositive(positionInfo().tokenFeeAmountQuote)
 
   const pendingTotalWithFees = () =>
     rewardsAmountsWithFees()
@@ -133,8 +143,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
       )
   const pendingRewardAmountUSD = () =>
     calcPositionPendingRewardAmountUSD({
-      clmmInfo,
-      positionInfo,
+      clmmInfo: clmmInfo(),
+      positionInfo: positionInfo(),
       rpcUrl: rpcUrl(),
       prices: pricesMap(),
       tokens: tokens(),
@@ -150,8 +160,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
         rpcUrl: rpcUrl(),
         owner: owner(),
         slippage: slippage(),
-        clmmInfo,
-        positionInfo,
+        clmmInfo: clmmInfo(),
+        positionInfo: positionInfo(),
       },
       params,
     )
@@ -163,8 +173,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
         rpcUrl: rpcUrl(),
         owner: owner(),
         slippage: slippage(),
-        clmmInfo,
-        positionInfo,
+        clmmInfo: clmmInfo(),
+        positionInfo: positionInfo(),
       },
       params,
     )
@@ -176,8 +186,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
         rpcUrl: rpcUrl(),
         owner: owner(),
         slippage: slippage(),
-        clmmInfo,
-        positionInfo,
+        clmmInfo: clmmInfo(),
+        positionInfo: positionInfo(),
         tokenA: tokenA(),
         tokenB: tokenB(),
         tokenAPrice: priceA(),
@@ -194,8 +204,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
       rpcUrl: rpcUrl(),
       owner: owner(),
       slippage: slippage(),
-      clmmInfo,
-      positionInfo,
+      clmmInfo: clmmInfo(),
+      positionInfo: positionInfo(),
       tokenA: tokenA(),
       tokenB: tokenB(),
       tokenAPrice: priceA(),

@@ -49,7 +49,7 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
   if (!url) return
-  console.count("[🤖main clmm infos] start refreshing")
+  console.count("[🤖♻️main clmm infos] refresh")
   shuck_isClmmJsonInfoLoading.set(true)
   port.postMessage({
     shouldApi: options?.shouldApi ?? true,
@@ -68,7 +68,7 @@ export function registerClmmInfosReceiver() {
   port.receiveMessage(
     ({ list: infos, has }) => {
       shuck_isClmmJsonInfoLoading.set(false)
-      console.log(`[🤖main] clmm ${has.includes('SDK') ? "SDK" : "API"} infos: `, infos)
+      console.log(`[🤖main] clmm ${has.includes("SDK") ? "SDK" : "API"} infos: `)
       shuck_clmmInfos.set(infos)
     },
     { key: "[🤖main] receive clmm infos" },

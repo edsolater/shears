@@ -1,6 +1,7 @@
 import { assert, eq, greaterThan, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
+import { mergeTwoStore } from "../featureHooks/mergeTwoStore"
 import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
@@ -9,8 +10,6 @@ import {
   getClmmUserPositionAccountAdditionalInfo,
   type AdditionalClmmUserPositionAccount,
 } from "./getClmmUserPositionAccountAdditionalInfo"
-import { mergeTwoStore } from "../featureHooks/mergeTwoStore"
-import type { Mint } from "../../../utils/dataStructures/type"
 
 type FollowPositionTxConfigs = {
   // upTokenMint: Mint | undefined
@@ -39,8 +38,8 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
 
   function getPositionInfo(position: ClmmUserPositionAccount) {
     return getClmmUserPositionAccountAdditionalInfo({
-      clmmInfo,
-      positionInfo: position,
+      clmmInfo: () => clmmInfo,
+      positionInfo: () => position,
       pricesMap,
       tokens,
       rpcUrl: () => rpc()?.url,

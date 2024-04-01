@@ -55,6 +55,7 @@ type DatabaseTableProps<T> = {
   // TableBodyTopLeft?: PivChild
   TableBodyTopMiddle?: PivChild
   TableBodyTopRight?: PivChild
+  onClickItem?: (item: T) => void
 }
 
 type RowWidths = number[]
@@ -172,6 +173,7 @@ export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noN
                   itemRowConfig={props.itemRowConfig}
                   itemFaceConfig={props.itemFaceConfig}
                   itemContentConfig={props.itemContentConfig}
+                  onClickItem={props.onClickItem}
                 />
               )}
             </List>
@@ -196,6 +198,7 @@ function DatabaseTableItem<T>(props: {
   itemRowConfig?: DatabaseTabelItemRenderConfig<T>
   itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<any>
   itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<any>
+  onClickItem?: (item: T) => void
 }) {
   return (
     <Box icss={icssClmmItemRow} class="ClmmItemRow">
@@ -210,6 +213,7 @@ function DatabaseTableItem<T>(props: {
         renderContent={() => (
           <DatabaseTableItemCollapseContent item={props.item} innerConfig={props.itemContentConfig} />
         )}
+        onClick={() => props.onClickItem?.(props.item)}
       />
     </Box>
   )

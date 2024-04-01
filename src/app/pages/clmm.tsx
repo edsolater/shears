@@ -1,9 +1,8 @@
-import { count, get, runTasks, toFormattedNumber } from "@edsolater/fnkit"
+import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
-import { Show, createEffect, onCleanup, onMount } from "solid-js"
-import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
+import { For, Show, createEffect, onCleanup, onMount } from "solid-js"
+import { useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
-import { ListBox } from "../../packages/pivkit/components/ListBox"
 import { CircularProgressBar } from "../components/CircularProgressBar"
 import {
   DatabaseTable,
@@ -19,16 +18,14 @@ import { useLoopPercent } from "../hooks/useLoopPercent"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
-import { allClmmTabs, shuck_balances, shuck_clmmInfos } from "../stores/data/store"
+import { allClmmTabs, shuck_clmmInfos } from "../stores/data/store"
+import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceChange"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
+import { reportLog } from "../stores/data/utils/logger"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
-import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
-import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceChange"
-import { TokenAmount } from "@raydium-io/raydium-sdk"
-import { reportLog } from "../stores/data/utils/logger"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -56,9 +53,9 @@ export default function ClmmsPage() {
     const taskManager = loadClmmInfos()
     onCleanup(taskManager.destory)
   })
-  const clmmInfos = useShuckValue(shuck_clmmInfos)
+  const [clmmInfos] = useShuckAsStore(shuck_clmmInfos, {})
   createEffect(() => {
-    const infos = clmmInfos()
+    const infos = clmmInfos
     if (infos) {
       console.log("clmmJson count: ", count(infos))
     }
@@ -180,14 +177,20 @@ export default function ClmmsPage() {
   const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
     render: (clmmInfo) => (
       <Col class="collapse-content">
-        current price: {toRenderable(clmmInfo.currentPrice, { decimals: 4 })}
-        <ListBox
-          of={clmmInfo.userPositionAccounts}
+        current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}
+        <For
+          each={clmmInfo.userPositionAccounts}
+          // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
+        >
+          {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
+        </For>
+        {/* <ListBox
+          of={()=>clmmInfo.userPositionAccounts}
           // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
           Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
         >
           {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
-        </ListBox>
+        </ListBox> */}
       </Col>
     ),
   }
@@ -216,6 +219,9 @@ export default function ClmmsPage() {
           }}
         />
       }
+      onClickItem={(clmmInfo) => {
+        console.log(`click clmm item: ${clmmInfo.id}`)
+      }}
     />
   )
 }

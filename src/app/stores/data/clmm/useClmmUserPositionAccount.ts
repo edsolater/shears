@@ -1,4 +1,4 @@
-import { type Numberish } from "@edsolater/fnkit"
+import { createObjectFromGetters, mergeObjects, type Numberish } from "@edsolater/fnkit"
 import { usePromise } from "@edsolater/pivkit"
 import { createEffect, on } from "solid-js"
 import { createStore, reconcile } from "solid-js/store"
@@ -62,8 +62,8 @@ export function useClmmUserPositionAccount(
     buildPositionSetTxConfig,
     buildPositionShowHandTxConfig,
   } = getClmmUserPositionAccountAdditionalInfo({
-    clmmInfo,
-    positionInfo,
+    clmmInfo: () => clmmInfo,
+    positionInfo: () => positionInfo,
     pricesMap,
     tokens,
     rpcUrl: () => rpc()?.url,
@@ -76,33 +76,19 @@ export function useClmmUserPositionAccount(
     priceB,
   })
   const pendingRewardAmountUSD = usePromise(pendingRewardAmountUSDPromise)
-  const [userPositionAccountStore, setUserPositionStore] = createStore(
-    positionInfo as AdditionalClmmUserPositionAccountState & ClmmUserPositionAccount,
-  )
-  // 🤔 really need this? is this really work?
-  createEffect(
-    on(
-      () => positionInfo,
-      () => {
-        //@ts-expect-error no need to check
-        setUserPositionStore(reconcile(positionInfo))
-      },
-    ),
-  )
-  createEffect(() => setUserPositionStore({ rangeName: rangeName() }))
-  createEffect(() => setUserPositionStore({ inRange: inRange() }))
-  createEffect(() => setUserPositionStore({ userLiquidityUSD: userLiquidityUSD() }))
-  createEffect(() => setUserPositionStore({ pendingRewardAmountUSD: pendingRewardAmountUSD() }))
-  createEffect(() => setUserPositionStore({ hasRewardTokenAmount: hasRewardTokenAmount() }))
-  createEffect(() => setUserPositionStore({ isHarvestable: isHarvestable() }))
-  createEffect(() =>
-    setUserPositionStore({
+  return mergeObjects(
+    positionInfo,
+    createObjectFromGetters({
+      rangeName,
+      inRange,
+      userLiquidityUSD,
+      pendingRewardAmountUSD,
+      hasRewardTokenAmount,
+      isHarvestable,
       buildPositionIncreaseTxConfig,
       buildPositionDecreaseTxConfig,
       buildPositionSetTxConfig,
       buildPositionShowHandTxConfig,
     }),
-  )
-
-  return userPositionAccountStore
+  ) as any
 }
