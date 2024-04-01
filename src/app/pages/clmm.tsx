@@ -26,6 +26,7 @@ import { reportLog } from "../stores/data/utils/logger"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
+import { ListBox } from "../../packages/pivkit/components/ListBox"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -177,20 +178,14 @@ export default function ClmmsPage() {
   const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
     render: (clmmInfo) => (
       <Col class="collapse-content">
-        current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}
-        <For
-          each={clmmInfo.userPositionAccounts}
-          // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
-        >
-          {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
-        </For>
-        {/* <ListBox
-          of={()=>clmmInfo.userPositionAccounts}
+        current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })} 
+        <ListBox
+          of={clmmInfo.userPositionAccounts}
           // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
           Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
         >
           {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
-        </ListBox> */}
+        </ListBox>
       </Col>
     ),
   }

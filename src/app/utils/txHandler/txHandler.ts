@@ -32,6 +32,7 @@ import { createInnerTxCollector } from "./innerTxCollector"
 import { sendSingleTransaction } from "./sendTransactionCore"
 import { signAllTransactions } from "./signAllTransactions_worker"
 import { subscribeTx, type TxSubscribeEventCenter } from "./subscribeTx"
+import { reportLog } from "../../stores/data/utils/logger"
 
 export type UITxVersion = "V0" | "LEGACY"
 //#region ------------------- basic info -------------------
@@ -258,14 +259,12 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
       baseUtils: getTxHandlerUtils({ owner: payload.owner, connection: payload.connection }),
     })
     transactionCollector.add(userLoadedTransactionQueue)
-    console.log("userLoadedTransactionQueue: ", userLoadedTransactionQueue)
 
     const parsedSignleTxOptions = makeMultiOptionIntoSignalOptions({
       transactions: collectedTransactions,
       singleOptions: singleTxOptions,
       multiOption: multiTxOption,
     })
-    console.log("parsedSignleTxOptions: ", parsedSignleTxOptions)
 
     eventCenter.on("txSendSuccess", (info) => {
       parsedSignleTxOptions[info.currentIndex]?.onSendSuccess?.(info)
@@ -292,17 +291,13 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
     eventCenter.on("txAllDone", (info) => {
       multiTxOption?.onTxAllDone?.(info)
     })
-    // FIXME: where is onTxAllSuccess?
-    console.log("prepare to sign all transactions")
 
     // sign all transactions
     const allSignedTransactions = await signAllTransactions({
       transactions: collectedTransactions,
       payload,
     })
-    console.log("main thread sign transactions complete: ", allSignedTransactions)
-
-    console.log("compose tx")
+    reportLog("[⚙️worker] main thread sign transactions complete", allSignedTransactions)
     // load send tx function
     const senderFn = composeTxLauncher({
       transactions: allSignedTransactions,
@@ -414,7 +409,6 @@ function composeTxLauncher({
   payload: TxHandlerPayload
   callbacks: {
     onBeforeSend?: TxBeforeSendCallback
-
     onTxSuccess?: TxSuccessCallback
     onTxError?: TxErrorCallback
     onTxFinally?: TxFinallyCallback
