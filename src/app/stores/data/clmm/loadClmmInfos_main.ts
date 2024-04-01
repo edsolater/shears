@@ -43,7 +43,7 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
   if (!url) return
-  console.count("[main clmm infos] start refreshing")
+  console.count("[🤖main clmm infos] start refreshing")
   shuck_isClmmJsonInfoLoading.set(true)
   port.postMessage({
     shouldApi: options?.shouldApi ?? true,
@@ -58,13 +58,13 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
 
 export function registerClmmInfosReceiver() {
   const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
-  console.log("[main] register clmm infos receiver")
+  console.log("[🤖main] register clmm infos receiver")
   port.receiveMessage(
     (infos) => {
       shuck_isClmmJsonInfoLoading.set(false)
-      console.log("[main] clmm infos: ", infos)
+      console.log("[🤖main] clmm infos: ", infos)
       shuck_clmmInfos.set(infos)
     },
-    { key: "[main] receive clmm infos" },
+    { key: "[🤖main] receive clmm infos" },
   )
 }

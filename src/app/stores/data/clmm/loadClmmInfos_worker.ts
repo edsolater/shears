@@ -9,7 +9,7 @@ import { fetchClmmJsonInfo } from "./fetchClmmJson"
 import type { ClmmQueryParams } from "./loadClmmInfos_main"
 
 export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams>) {
-  console.log("[worker] start loading clmm infos")
+  console.log("[⚙️worker] start loading clmm infos")
   const port = getMessagePort("fetch raydium clmm info")
   port.receiveMessage(
     ({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache, shouldTokenAccountCache }) => {
@@ -23,7 +23,7 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
 
       if (shouldApi) {
         apiClmmInfos
-          .then(log("[worker] get clmm apiClmmInfos"))
+          .then(log("[⚙️worker] clmm API Infos"))
           .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
           .then(port.postMessage)
           .catch(logError)
@@ -48,7 +48,7 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
         )
 
         Promise.all([apiClmmInfos, sdkClmmInfos])
-          .then(log("[worker] start compose clmmInfos"))
+          .then(log("[⚙️worker] start compose clmmInfos"))
           .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
           .then(port.postMessage)
           .catch(logError)

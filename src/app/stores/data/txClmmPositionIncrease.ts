@@ -43,7 +43,7 @@ export async function createTxClmmPositionIncreaseTransactionModule(
 ): Promise<TransactionModule> {
   const amount = "amountA" in params ? params.amountA : params.amountB
   const amountSide = "amountA" in params ? "A" : "B"
-  console.log("[worker]{tx clmm position increase} start compose tx clmm position increase")
+  console.log("[⚙️worker]{tx clmm position increase} start compose tx clmm position increase")
   assert(isLessThanOne(params.slippage), `slippage shouldnot bigger than 1, slippage: ${params.slippage}`)
   assert(isPositive(amount), "amountA should be positive")
   const connection = getConnection(params.rpcUrl)

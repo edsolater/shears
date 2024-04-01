@@ -38,7 +38,7 @@ export async function signAllTransactions({
   // send transaction form worker to main thread
   return new Promise((resolve, reject) => {
     const signId = getSignTransactionId()
-    console.log("[worker] send transactions to main thread", buildedTransactions)
+    console.log("[⚙️worker] send transactions to main thread", buildedTransactions)
     port.postMessage({
       id: signId,
       txs: buildedTransactions.map((tx) => tx.serialize()),

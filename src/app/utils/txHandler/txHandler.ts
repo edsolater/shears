@@ -344,7 +344,7 @@ export function handleTx(payload: TxHandlerPayload, txFn: TxFn, options?: TxHand
     // send tx
     senderFn()
   })().catch((error) => {
-    console.warn("[worker] error in handleTx", error) // FIXME: Why not emit error?
+    console.warn("[⚙️worker] error in handleTx", error) // FIXME: Why not emit error?
     eventCenter.emit("beforeSendError", [error]) // usually sign rejected by user
   })
   return eventCenter

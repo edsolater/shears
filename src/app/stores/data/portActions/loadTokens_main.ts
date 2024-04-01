@@ -5,7 +5,7 @@ import { workerCommands } from "../../../utils/webworker/type"
 import { shuck_isTokenListLoading, shuck_tokens } from "../store"
 
 export function loadTokens() {
-  console.log("[main] start loading tokens")
+  console.log("[🤖main] start loading tokens")
   const { sender, receiver } = getMessagePort<Tokens, { url: string }>(workerCommands["fetch raydium supported tokens"])
   shuck_isTokenListLoading.set(true)
   sender.post({ url: appApiUrls.tokenInfo })

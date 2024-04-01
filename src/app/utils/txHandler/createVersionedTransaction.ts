@@ -25,12 +25,12 @@ export async function composeSDKInnerTransactions({
     makeTxVersion: TxVersion.V0, // force
     addLookupTableInfo: SDK_LOOKUP_TABLE_CACHE,
   }
-  console.log("[worker] params: ", params)
+  console.log("[⚙️worker] params: ", params)
   const spawnedTransactions = (await buildSimpleTransaction(params).catch((e) => {
     console.error(e)
   })) as VersionedTransaction[]
   if (!spawnedTransactions) return []
-  console.log("[worker] spawnedTransactions: ", spawnedTransactions)
+  console.log("[⚙️worker] spawnedTransactions: ", spawnedTransactions)
   return spawnedTransactions
 }
 

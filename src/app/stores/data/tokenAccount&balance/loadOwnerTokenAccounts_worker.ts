@@ -8,7 +8,7 @@ export function loadOwnerTokenAccountsInWorker({
   getMessagePort,
 }: PortUtils<FetchTokenAccountsQueryParams, TokenAccounts>) {
   const port = getMessagePort("fetch owner token accounts")
-  console.log("[worker] register fetch owner token accounts")
+  console.log("[⚙️worker] register fetch owner token accounts")
 
   let registeredOwner: string
   let registeredRpcUrl: string

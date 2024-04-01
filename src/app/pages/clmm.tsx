@@ -123,54 +123,48 @@ export default function ClmmsPage() {
                 ev.stopPropagation()
                 const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 27 })
                 if (configs) {
+                  console.log(33)
                   runTasks(
                     ({ next }) => {
-                      if (configs.decreaseClmmPositionTxConfigs.length) {
-                        console.log("[main] 1️⃣ run tx follow step 1")
-                        console.log("configs.decreaseClmmPositionTxConfigs: ", configs.decreaseClmmPositionTxConfigs)
-                        const d = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
-                        d?.onTxAllDone(({ txids }) => {
-                          console.log("success to txAllDone")
-                          next()
-                        }, {})
-                        let haveWatched = false
-                        d?.onTxSendSuccess(() => {
-                          console.log("[🐛main] send success")
-                          shuck_balances.subscribe((balances) => {
-                            console.log("1212: ", 1212)
+                      if (configs.upDecreaseClmmPositionTxConfigs.length) {
+                        console.log("[🤖main] 1️⃣ run tx follow step 1")
+                        const d = invokeTxConfig(...configs.upDecreaseClmmPositionTxConfigs)
+                        if (configs.upShowHandTxConfigs.length) {
+                          d?.onTxAllDone(() => {
+                            onBalanceChange(clmmInfo.base, ({ unsubscribe, balance }) => {
+                              console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
+                              invokeTxConfig(...configs.upShowHandTxConfigs)
+                              unsubscribe()
+                            })
                           })
-                        })
+                        }
                       } else {
-                        next()
+                        if (configs.upShowHandTxConfigs.length) {
+                          invokeTxConfig(...configs.upShowHandTxConfigs)
+                        }
                       }
+                      next()
                     },
-                    () => {
-                      if (configs.increaseClmmPositionTxConfigs.length) {
-                        console.log("[main] 2️⃣ run tx follow step 2")
-                        const d = invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
-                        d?.onTxSendSuccess(() => {
-                          console.log("[🐛main] send success 2")
-                          shuck_balances.subscribe((balances) => {
-                            console.log("1212: ", 12123)
+                    ({ next }) => {
+                      if (configs.downDecreaseClmmPositionTxConfigs.length) {
+                        console.log("[🤖main] 2️⃣ run tx follow step 2")
+                        const d = invokeTxConfig(...configs.downDecreaseClmmPositionTxConfigs)
+                        if (configs.downShowHandTxConfigs.length) {
+                          d?.onTxAllDone(() => {
+                            onBalanceChange(clmmInfo.quote, ({ unsubscribe, balance }) => {
+                              console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
+                              invokeTxConfig(...configs.downShowHandTxConfigs)
+                              unsubscribe()
+                            })
                           })
-                        })
-                        d?.on("txSendSuccess", () => {
-                          console.log("33: ", 33)
-                        })
-                        d?.on("txAllDone", () => {
-                          console.log("44:", 44)
-                        })
+                        }
+                      } else {
+                        if (configs.downShowHandTxConfigs.length) {
+                          invokeTxConfig(...configs.downShowHandTxConfigs)
+                        }
                       }
                     },
                   )
-                  //   if (!configs.decreaseClmmPositionTxConfigs.length) {
-                  //     invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
-                  // } else {
-                  //     const desTx = invokeTxConfig(...configs.decreaseClmmPositionTxConfigs)
-                  //     desTx?.on("txAllDone", () => {
-                  //       invokeTxConfig(...configs.increaseClmmPositionTxConfigs)
-                  //     })
-                  //   }
                 }
               }}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}

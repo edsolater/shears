@@ -70,7 +70,7 @@ export async function getTokenAccounts({
   if (canUseCache && ownerHasStoredTokenAccounts({ owner })) {
     return tokenAccountCacheByOwner.get(owner)!
   } else {
-    console.log("[worker] start loading token accounts", owner)
+    console.log("[⚙️worker] start loading token accounts", owner)
     const solReq = connection.getAccountInfo(toPub(owner), config?.commitment)
     const tokenReq = connection.getTokenAccountsByOwner(
       toPub(owner),

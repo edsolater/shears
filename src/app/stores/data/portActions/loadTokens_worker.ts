@@ -8,9 +8,9 @@ import { fetchTokenJsonFile } from "../utils/fetchTokenJson"
 export let tokensMap: Tokens = new Map<Mint, Token>()
 export function loadTokensInWorker(transformers: PortUtils) {
   const { receiver, sender } = transformers.getMessagePort("fetch raydium supported tokens")
-  console.log("[👾worker 🚪port] registered load token")
+  console.log("[⚙️worker 🚪port] registered load token")
   receiver.subscribe((options) => {
-    console.log("[👾worker 🚧task] load tokens")
+    console.log("[⚙️worker 🚧task] load tokens")
     /* TODO: currently only mainnet raydium token list was supported*/
     fetchTokenJsonFile(options)
       .then((res) => {

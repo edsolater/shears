@@ -28,3 +28,7 @@ main thread: Composed info ==> UI info (has decimaled) (hook:useXXXInfo)
 3. txDispatcher in main thread // for sdk info is in worker thread, so have to transfer 
 4. txDispatcher in worker thread
 5. core algorithm of transaction(e.g. clmmPositionIncrease)
+
+tx shortcuts:
+- [buildCustomizedFollowPositionTxConfigs](src/app/stores/data/clmm/useClmmInfo.ts#useClmmInfo)
+- 

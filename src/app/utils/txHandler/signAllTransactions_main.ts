@@ -15,14 +15,14 @@ export function createSignTransactionPortInMainThread() {
   >("transform transaction")
   receiver.subscribe(({ txs: transactions, id }) => {
     const decodedTransactions = transactions.map((transaction) => VersionedTransaction.deserialize(transaction))
-    console.log("[main] receive transactions from worker", transactions, decodedTransactions)
+    console.log("[🤖main] receive transactions from worker", transactions, decodedTransactions)
     const signedTransactions = signTrancations(decodedTransactions)
     signedTransactions
       ?.then((signedTrancation) => {
         sender.post({ id, signedTxs: signedTrancation.map((tx) => tx.serialize()) })
       })
       .catch((error) => {
-        console.log("[main] sign failed", error)
+        console.log("[🤖main] sign failed", error)
         sender.post({ id, errorReason: "main thread sign failed" })
       })
   })

@@ -14,7 +14,7 @@ export function loadTokenPrice() {
     const { sender, receiver } = getMessagePort<{ prices: TokenPricesRecord }, { url: string; tokens: Token[] }>(
       "get raydium token prices",
     )
-    console.log("[main] query token prices")
+    console.log("[🤖main] query token prices")
     sender.post({
       url: appApiUrls.price,
       tokens: toList(tokens),

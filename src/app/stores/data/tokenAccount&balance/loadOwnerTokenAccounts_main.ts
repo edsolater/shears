@@ -24,7 +24,7 @@ export function registerTokenAccountsReceiver() {
   const port = getMessagePort<TokenAccounts, FetchTokenAccountsQueryParams>("fetch owner token accounts")
   port.receiveMessage(
     (tokenAccounts) => {
-      console.log("[main] get token accounts ", tokenAccounts)
+      console.log("[🤖main] get token accounts ", tokenAccounts)
       shuck_isTokenAccountsLoading.set(false)
       shuck_tokenAccounts.set(tokenAccounts)
       const balances: Record<Mint, Numberish> = {}
@@ -35,7 +35,7 @@ export function registerTokenAccountsReceiver() {
       }
       shuck_balances.set(balances)
     },
-    { key: "[main] receive tokenAccounts" },
+    { key: "[🤖main] receive tokenAccounts" },
   )
 }
 
@@ -44,7 +44,7 @@ export function refreshTokenAccounts({ canUseCache = true }: { canUseCache?: boo
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
   if (!url || !owner) return
-  console.count("[main owner token accounts] start refreshing")
+  console.count("[🤖main owner token accounts] start refreshing")
   shuck_isTokenAccountsLoading.set(true)
   port.postMessage({
     rpcUrl: url,
