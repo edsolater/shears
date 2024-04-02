@@ -13,7 +13,7 @@ import { getEpochInfo } from "../connection/getEpochInfo"
 import { getMultiMintInfos } from "../connection/getMultiMintInfos"
 import isCurrentToken2022 from "../token/isCurrentToken2022"
 import { getTransferAmountFee, parseSDKTransferAmountFee, type TransferAmountFee } from "../misc/transferAmountFee"
-import { tokensMap } from "../portActions/loadTokens_worker"
+import { workerCache_tokens } from "../portActions/loadTokens_worker"
 import { jsonClmmInfoCache } from "./fetchClmmJson"
 import { sdkClmmInfoCache } from "../utils/sdkParseClmmInfos"
 
@@ -39,7 +39,7 @@ export async function getClmmIncreaseTxLiquidityAndBoundaryFromAmount(payload: {
   const jsonClmmInfo = jsonClmmInfoCache.get(payload.clmmId)
   if (!jsonClmmInfo) return undefined
   const token2022InfosPromise = getMultiMintInfos(
-    [jsonClmmInfo.mintA, jsonClmmInfo.mintA].filter((m) => isCurrentToken2022(m, { tokens: tokensMap })),
+    [jsonClmmInfo.mintA, jsonClmmInfo.mintA].filter((m) => isCurrentToken2022(m, { tokens: workerCache_tokens })),
     { rpcUrl: payload.rpcUrl },
   )
   const sdkClmmInfo = sdkClmmInfoCache.get(payload.clmmId)

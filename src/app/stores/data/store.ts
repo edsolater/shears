@@ -89,6 +89,9 @@ export type TokenAccounts = Record<PublicKey, TokenAccount>
 // token
 export const shuck_isTokenPricesLoading = createShuck<boolean | undefined>()
 export const shuck_tokenPrices = createShuck<Prices | undefined>()
+export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
+export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()
+export const shuck_tokens = createShuck<Tokens | undefined>()
 // token accounts & balance
 export const shuck_isTokenAccountsLoading = createShuck<boolean | undefined>()
 export const shuck_tokenAccounts = createShuck<TokenAccounts | undefined>()
@@ -108,10 +111,6 @@ export const shuck_clmmInfos = createShuck<ClmmInfos | undefined>()
 // clmm ui
 export const allClmmTabs = ["ALL", "MY POOLS"] as const
 export const shuck_uiCurrentClmmTab = createShuck<(typeof allClmmTabs)[number] | undefined>()
-// token
-export const shuck_isTokenListLoading = createShuck<boolean | undefined>()
-export const shuck_isTokenListLoadingError = createShuck<boolean | undefined>()
-export const shuck_tokens = createShuck<Tokens | undefined>()
 
 // export const rpc = createShuck<RPCEndpoint | undefined>(() => availableRpcs[0])
 

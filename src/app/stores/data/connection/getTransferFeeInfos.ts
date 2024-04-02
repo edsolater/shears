@@ -27,7 +27,7 @@ export async function getTransferFeeInfo({
   fetchedMints,
 }: {
   rpcUrl: string
-  tokens: Tokens
+  tokens: Tokens | undefined
   tokenAmount: TokenAmount
   addFee?: boolean
   /** provied for faster fetch */

@@ -1,9 +1,8 @@
 import { count, toList } from "@edsolater/fnkit"
 import { appApiUrls } from "../../../utils/common/config"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
-import { shuck_isTokenPricesLoading, shuck_tokenPrices, shuck_tokens } from "../store"
+import { shuck_isTokenPricesLoading, shuck_tokenPrices, shuck_tokens, type Prices } from "../store"
 import type { Token } from "../token/type"
-import type { TokenPricesRecord } from "../utils/fetchTokenPrices"
 import { reportLog } from "../utils/logger"
 
 export function loadTokenPrice() {
@@ -12,7 +11,7 @@ export function loadTokenPrice() {
     // console.log("tokens: ", tokens)
     if (!hasAnyToken) return
     shuck_isTokenPricesLoading.set(true)
-    const { sender, receiver } = getMessagePort<{ prices: TokenPricesRecord }, { url: string; tokens: Token[] }>(
+    const { sender, receiver } = getMessagePort<{ prices: Prices }, { url: string; tokens: Token[] }>(
       "get raydium token prices",
     )
     reportLog("[🤖main] 📢query token prices")

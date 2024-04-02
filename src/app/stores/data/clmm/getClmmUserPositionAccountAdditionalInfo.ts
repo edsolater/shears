@@ -74,7 +74,7 @@ export function getClmmUserPositionAccountAdditionalInfo({
   clmmInfo: () => ClmmInfo
   positionInfo: () => ClmmUserPositionAccount
   pricesMap: () => Prices | undefined
-  tokens: () => Tokens
+  tokens: () => Tokens | undefined
   rpcUrl: () => string | undefined
   owner: () => string | undefined
   slippage: () => Numberish
@@ -260,7 +260,7 @@ function calcPositionRewardsAmount(options: {
   clmmInfo: ClmmInfo
   positionInfo: ClmmUserPositionAccount
   prices: Prices | undefined
-  tokens: Tokens
+  tokens: Tokens | undefined
 }) {
   return (
     options.positionInfo?.rewardInfos.map((info) => {
@@ -278,7 +278,7 @@ function calcPositionfeesAmounts(options: {
   clmmInfo: ClmmInfo
   positionInfo: ClmmUserPositionAccount
   prices: Prices | undefined
-  tokens: Tokens
+  tokens: Tokens | undefined
 }) {
   const t1 = options.positionInfo.tokenBase ? get(options.tokens, options.positionInfo.tokenBase) : undefined
   const t2 = options.positionInfo.tokenQuote ? get(options.tokens, options.positionInfo.tokenQuote) : undefined
@@ -310,7 +310,7 @@ export async function calcPositionPendingRewardAmountUSD(options: {
   rpcUrl: string | undefined
 
   prices: Prices | undefined
-  tokens: Tokens
+  tokens: Tokens | undefined
   feesAmountsWithFees: () => {
     tokenAmount: TokenAmount | undefined
     price: Numberish | undefined

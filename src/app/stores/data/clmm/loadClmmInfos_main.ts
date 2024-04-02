@@ -26,11 +26,6 @@ export type ClmmQueryCacheOptions = {
   shouldTokenAccountCache?: boolean
 }
 
-export type ClmmTransferPayload = {
-  list: ClmmInfos
-  has: ("SDK" | "API")[]
-}
-
 export function loadClmmInfos() {
   registerClmmInfosReceiver()
   const taskManager = createTask(
@@ -45,7 +40,7 @@ export function loadClmmInfos() {
 
 /** can use this action isolatly */
 export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
-  const port = getMessagePort<ClmmTransferPayload, ClmmQueryParams>("fetch raydium clmm info")
+  const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
   if (!url) return
@@ -63,12 +58,12 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
 }
 
 export function registerClmmInfosReceiver() {
-  const port = getMessagePort<ClmmTransferPayload, ClmmQueryParams>("fetch raydium clmm info")
+  const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   reportLog("[🤖main] register clmm infos receiver")
   port.receiveMessage(
-    ({ list: infos, has }) => {
+    (infos) => {
       shuck_isClmmJsonInfoLoading.set(false)
-      console.log(`[🤖main] clmm ${has.includes("SDK") ? "SDK" : "API"} infos: `)
+      console.log(`[🤖main] clmm ${infos[0] && "liquidity" in infos[0] ? "SDK" : "API"} infos: `)
       shuck_clmmInfos.set(infos)
     },
     { key: "[🤖main] receive clmm infos" },

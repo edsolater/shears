@@ -1,6 +1,5 @@
 import type { Accessor } from "solid-js"
 import type { Mint } from "../../../utils/dataStructures/type"
-import type { Collection } from "@edsolater/fnkit"
 
 export interface TokenBase {
   mint: string // SOL's mint is PublicKey.default.toString() // WSOL(symbol is SOL) is 'So11111111111111111111111111111111111111112'
@@ -35,7 +34,7 @@ export interface Token extends TokenBase {
   hasFreeze?: boolean // online-info
 }
 
-export type Tokens = Collection<Token, Mint>
+export type Tokens = Record<Mint, Token>
 
 /** can transferm to token */
 export type Tokenable = Mint | Token | Accessor<Mint> | Accessor<Token> | Accessor<Mint | Token>

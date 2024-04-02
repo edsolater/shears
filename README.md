@@ -33,7 +33,7 @@ main thread: Composed info ==> UI info (has decimaled) (hook:useXXXInfo)
 
 - [buildCustomizedFollowPositionTxConfigs](src/app/stores/data/clmm/useClmmInfo.ts#useClmmInfo)
 
-# parse data:
+# parse data:(temp in main-thread)
 
 - clmm position in [getClmmUserPositionAccountAdditionalInfo](src/app/stores/data/clmm/getClmmUserPositionAccountAdditionalInfo.ts)
   - calc

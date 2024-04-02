@@ -1,15 +1,18 @@
-import { toList } from "@edsolater/fnkit"
+import { createSubscribable, toList } from "@edsolater/fnkit"
 import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
 import { getConnection } from "../connection/getConnection"
 import { workerThreadWalletInfo } from "../store_worker"
 import { sdkParseClmmInfos } from "../utils/sdkParseClmmInfos"
-import { composeClmmInfos } from "./composeClmmInfo"
+import { hydrateClmmInfos } from "./hydrateClmmInfo"
 import { fetchClmmJsonInfo } from "./fetchClmmJson"
-import type { ClmmQueryParams, ClmmTransferPayload } from "./loadClmmInfos_main"
+import type { ClmmQueryParams } from "./loadClmmInfos_main"
 import { reportLog } from "../utils/logger"
+import type { ClmmInfos } from "../types/clmm"
 
-export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams, ClmmTransferPayload>) {
+const workerCache_clmmInfos = createSubscribable<ClmmInfos>()
+
+export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams, ClmmInfos>) {
   reportLog("[⚙️worker] start loading clmm infos")
   const port = getMessagePort("fetch raydium clmm info")
   port.receiveMessage(
@@ -25,8 +28,13 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
       if (shouldApi) {
         apiClmmInfos
           .then(log("[⚙️worker] clmm API Infos"))
-          .then((apiClmmInfos) => composeClmmInfos(apiClmmInfos))
-          .then((infos) => port.postMessage({ list: infos, has: ["API"] }))
+          .then((apiClmmInfos) => hydrateClmmInfos({ apiInfo: apiClmmInfos }))
+          .then(
+            applyAction((clmmInfos) => {
+              workerCache_clmmInfos.set(clmmInfos)
+            }),
+          )
+          .then(port.postMessage)
           .catch(logError)
       }
 
@@ -50,14 +58,25 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
 
         Promise.all([apiClmmInfos, sdkClmmInfos])
           .then(log("[⚙️worker] start compose clmmInfos"))
-          .then(([apiClmmInfos, sdkClmmInfos]) => composeClmmInfos(apiClmmInfos, sdkClmmInfos))
-          .then((infos) => port.postMessage({ list: infos, has: ["API", "SDK"] }))
+          .then(([apiClmmInfos, sdkClmmInfos]) => hydrateClmmInfos({ apiInfo: apiClmmInfos, sdkInfo: sdkClmmInfos }))
+          .then(
+            applyAction((clmmInfos) => {
+              workerCache_clmmInfos.set(clmmInfos)
+            }),
+          )
+          .then(port.postMessage)
           .catch(logError)
       }
     },
   )
 }
 
+function applyAction<T>(action: (data: T) => void) {
+  return (data: T) => {
+    action(data)
+    return data
+  }
+}
 /**
  * a promise middleware
  * @param label log in first line
