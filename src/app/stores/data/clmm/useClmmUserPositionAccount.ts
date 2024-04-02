@@ -85,10 +85,12 @@ export function useClmmUserPositionAccount(
       pendingRewardAmountUSD,
       hasRewardTokenAmount,
       isHarvestable,
+    }),
+    {
       buildPositionIncreaseTxConfig,
       buildPositionDecreaseTxConfig,
       buildPositionSetTxConfig,
       buildPositionShowHandTxConfig,
-    }),
+    },
   ) as any
 }

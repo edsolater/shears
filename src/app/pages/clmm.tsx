@@ -1,7 +1,7 @@
 import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
 import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
-import { For, Show, createEffect, onCleanup, onMount } from "solid-js"
-import { useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
+import { For, Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
+import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
 import { CircularProgressBar } from "../components/CircularProgressBar"
 import {
@@ -16,9 +16,9 @@ import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
 import { useLoopPercent } from "../hooks/useLoopPercent"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
-import { useClmmInfo } from "../stores/data/clmm/useClmmInfo"
+import { calcTotalClmmLiquidityUSD, useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
-import { allClmmTabs, shuck_clmmInfos } from "../stores/data/store"
+import { allClmmTabs, shuck_clmmInfos, shuck_tokenPrices, shuck_tokens } from "../stores/data/store"
 import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceChange"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
@@ -176,18 +176,24 @@ export default function ClmmsPage() {
     },
   ]
   const itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<ClmmInfo> = {
-    render: (clmmInfo) => (
-      <Col class="collapse-content">
-        current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })} 
-        <ListBox
-          of={clmmInfo.userPositionAccounts}
-          // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
-          Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
-        >
-          {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
-        </ListBox>
-      </Col>
-    ),
+    render: (clmmInfo) => {
+      const [prices] = useShuck(shuck_tokenPrices)
+      const [tokens] = useShuck(shuck_tokens)
+      const total = createMemo(() => calcTotalClmmLiquidityUSD({ clmmInfo, prices: prices(), tokens: tokens() }).totalLiquidityUSD)
+      return (
+        <Col class="collapse-content">
+          current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}
+          total usd: {toRenderable(total(), { decimals: 8 })}
+          <ListBox
+            of={clmmInfo.userPositionAccounts}
+            // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
+            Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
+          >
+            {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
+          </ListBox>
+        </Col>
+      )
+    },
   }
   const { percent } = useLoopPercent()
   return (

@@ -95,7 +95,7 @@ export function getClmmUserPositionAccountAdditionalInfo({
   // const priceA = useTokenPrice(() => clmmInfo.base)
   // const priceB = useTokenPrice(() => clmmInfo.quote)
   const userLiquidityUSD = () =>
-    calcUserPositionLiquidityUSD({
+    calcPositionUserPositionLiquidityUSD({
       tokenAPrice: priceA(),
       tokenBPrice: priceB(),
       tokenADecimals: tokenA().decimals,
@@ -228,7 +228,8 @@ export function getClmmUserPositionAccountAdditionalInfo({
     buildPositionShowHandTxConfig,
   }
 }
-function calcUserPositionLiquidityUSD(options: {
+
+export function calcPositionUserPositionLiquidityUSD(options: {
   tokenADecimals: number
   tokenBDecimals: number
   tokenAPrice: Price | undefined
@@ -303,7 +304,7 @@ function calcPositionfeesAmounts(options: {
     : []
 }
 
-async function calcPositionPendingRewardAmountUSD(options: {
+export async function calcPositionPendingRewardAmountUSD(options: {
   clmmInfo: ClmmInfo
   positionInfo: ClmmUserPositionAccount
   rpcUrl: string | undefined
@@ -437,7 +438,7 @@ function calcBuildTxClmmPositionSetUSDConfig(
   // const clmmId = clmmInfo.id
   // const positionNftMint = userPositionAccount.nftMint
   // const slippage = slippageS()
-  const originalUSD = calcUserPositionLiquidityUSD({
+  const originalUSD = calcPositionUserPositionLiquidityUSD({
     tokenADecimals: payload.tokenADecimals,
     tokenBDecimals: payload.tokenBDecimals,
     tokenAPrice: payload.tokenAPrice,

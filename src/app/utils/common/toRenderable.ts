@@ -8,7 +8,7 @@ export function toRenderable(v: { toString(): string } | { [Symbol.toPrimitive](
 export function toRenderable(
   v: { toString?(): string | undefined } | { [Symbol.toPrimitive]?(): string | number | undefined } | undefined,
 ): string | undefined
-export function toRenderable(v: unknown): string
+export function toRenderable(v: unknown | void, options?: any): string
 export function toRenderable(v: any, options?: any): string | undefined {
   if (v == null) return undefined
   if (isNumberish(v)) {

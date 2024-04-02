@@ -25,10 +25,16 @@ main thread: Composed info ==> UI info (has decimaled) (hook:useXXXInfo)
 
 1. UI click
 2. invoke method exposed by a ui data hooks(e.g. `useClmmPosition()`) // this step make txDispatcher easier to use
-3. txDispatcher in main thread // for sdk info is in worker thread, so have to transfer 
+3. txDispatcher in main thread // for sdk info is in worker thread, so have to transfer
 4. txDispatcher in worker thread
 5. core algorithm of transaction(e.g. clmmPositionIncrease)
 
-tx shortcuts:
+# tx shortcuts:
+
 - [buildCustomizedFollowPositionTxConfigs](src/app/stores/data/clmm/useClmmInfo.ts#useClmmInfo)
-- 
+
+# parse data:
+
+- clmm position in [getClmmUserPositionAccountAdditionalInfo](src/app/stores/data/clmm/getClmmUserPositionAccountAdditionalInfo.ts)
+  - calc
+- clmm position in [useClmmInfo](src/app/stores/data/clmm/useClmmInfo.ts)

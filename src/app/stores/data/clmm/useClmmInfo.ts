@@ -1,15 +1,25 @@
-import { assert, eq, greaterThan, gt, isExist, isPositive, lt, minus } from "@edsolater/fnkit"
+import { add, assert, eq, get, greaterThan, gt, isExist, isPositive, lt, minus, type Numberish } from "@edsolater/fnkit"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
 import { mergeTwoStore } from "../featureHooks/mergeTwoStore"
-import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
+import {
+  shuck_balances,
+  shuck_owner,
+  shuck_rpc,
+  shuck_slippage,
+  shuck_tokenPrices,
+  shuck_tokens,
+  type Prices,
+} from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
 import {
+  calcPositionUserPositionLiquidityUSD,
   getClmmUserPositionAccountAdditionalInfo,
   type AdditionalClmmUserPositionAccount,
 } from "./getClmmUserPositionAccountAdditionalInfo"
+import type { Tokens } from "../token/type"
 
 type FollowPositionTxConfigs = {
   // upTokenMint: Mint | undefined
@@ -21,6 +31,7 @@ type FollowPositionTxConfigs = {
 }
 
 type AdditionalClmmInfo = {
+  totalLiquidityUSD: Numberish | undefined
   buildCustomizedFollowPositionTxConfigs(options?: { ignoreWhenUsdLessThan?: number }): FollowPositionTxConfigs
 }
 
@@ -62,6 +73,8 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
           ignoredPositionUsd: options?.ignoreWhenUsdLessThan ?? 5,
         },
       }),
+    totalLiquidityUSD: calcTotalClmmLiquidityUSD({ clmmInfo, tokens: tokens(), prices: pricesMap() })
+      ?.totalLiquidityUSD,
   } as AdditionalClmmInfo
   return mergeTwoStore(clmmInfo, additional)
 }
@@ -180,4 +193,34 @@ function buildCustomizedFollowPositionTxConfigs({
     upShowHandTxConfigs,
     downShowHandTxConfigs,
   }
+}
+
+export function calcTotalClmmLiquidityUSD({
+  clmmInfo,
+  prices,
+  tokens,
+}: {
+  clmmInfo: ClmmInfo
+  prices: Prices | undefined
+  tokens: Tokens | undefined
+}) {
+  if (!clmmInfo.userPositionAccounts) return {}
+  const priceA = get(prices, clmmInfo.base)
+  const priceB = get(prices, clmmInfo.quote)
+  const tokenA = get(tokens, clmmInfo.base)
+  const tokenB = get(tokens, clmmInfo.quote)
+  if (!priceA || !priceB || !tokenA || !tokenB) return {}
+  const totalLiquidityUSD = clmmInfo.userPositionAccounts.reduce((acc, position) => {
+    const positionUSD = calcPositionUserPositionLiquidityUSD({
+      tokenADecimals: tokenA?.decimals,
+      tokenBDecimals: tokenB?.decimals,
+      tokenAPrice: priceA,
+      tokenBPrice: priceB,
+      userPositionAccountAmountBN_A: position.amountBaseBN,
+      userPositionAccountAmountBN_B: position.amountQuoteBN,
+    })
+    return positionUSD ? add(acc, positionUSD) : acc
+  }, 0 as Numberish)
+
+  return { totalLiquidityUSD }
 }
