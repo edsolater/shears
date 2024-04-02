@@ -1,5 +1,18 @@
 import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
-import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, useKitProps } from "@edsolater/pivkit"
+import {
+  Box,
+  Col,
+  Icon,
+  KitProps,
+  Loop,
+  Row,
+  Text,
+  createICSS,
+  cssOpacity,
+  icssGrid,
+  useKitProps,
+  type ICSSObject,
+} from "@edsolater/pivkit"
 import { For, Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
@@ -179,11 +192,15 @@ export default function ClmmsPage() {
     render: (clmmInfo) => {
       const [prices] = useShuck(shuck_tokenPrices)
       const [tokens] = useShuck(shuck_tokens)
-      const total = createMemo(() => calcTotalClmmLiquidityUSD({ clmmInfo, prices: prices(), tokens: tokens() }).totalLiquidityUSD)
+      const total = createMemo(
+        () => calcTotalClmmLiquidityUSD({ clmmInfo, prices: prices(), tokens: tokens() }).totalLiquidityUSD,
+      )
       return (
         <Col class="collapse-content">
-          current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}
-          total usd: {toRenderable(total(), { decimals: 8 })}
+          <Box icss={[{ margin: "8px 32px" }, icss_fixedSlotGrid.config({ slotCount: 2 })]}>
+            <Box>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
+            <Box>total usd: {toRenderable(total(), { decimals: 8 })}</Box>
+          </Box>
           <ListBox
             of={clmmInfo.userPositionAccounts}
             // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
@@ -348,3 +365,29 @@ function ClmmPageTabBlock(props: { className?: string }) {
 function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
+
+interface ICSSCardOption {
+  slotCount?: number
+  /**
+   * e.g.
+   * - 1 slot, if 1 child item;
+   * - 2 slots, if 2 child items
+   * - else will be 3 slots */
+  autoTrim?: boolean
+}
+
+// should be covered by icss_grid
+const icss_fixedSlotGrid = createICSS(({ slotCount = 3 }: ICSSCardOption = {}) => {
+  const rules :ICSSObject= {
+    display: "grid",
+    gridTemplateColumns: `repeat(${slotCount}, 1fr)`,
+  }
+
+  // core of auto trim
+  for (let i = 1; i <= slotCount; i++) {
+    rules[`&:has(:nth-child(${i}))`] = {
+      gridTemplateColumns: `repeat(${i}, 1fr)`,
+    }
+  }
+  return rules
+})
