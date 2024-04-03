@@ -1,21 +1,9 @@
 import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
-import {
-  Box,
-  Col,
-  Icon,
-  KitProps,
-  Loop,
-  Row,
-  Text,
-  createICSS,
-  cssOpacity,
-  icssGrid,
-  useKitProps,
-  type ICSSObject,
-} from "@edsolater/pivkit"
-import { For, Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
+import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, icssGrid, useKitProps } from "@edsolater/pivkit"
+import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
+import { ListBox } from "../../packages/pivkit/components/ListBox"
 import { CircularProgressBar } from "../components/CircularProgressBar"
 import {
   DatabaseTable,
@@ -39,7 +27,7 @@ import { reportLog } from "../stores/data/utils/logger"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
-import { ListBox } from "../../packages/pivkit/components/ListBox"
+import { colors } from "../theme/colors"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -197,7 +185,18 @@ export default function ClmmsPage() {
       )
       return (
         <Col class="collapse-content">
-          <Box icss={[{ margin: "8px 32px" }, icss_fixedSlotGrid.config({ slotCount: 2 })]}>
+          <Box
+            icss={[
+              {
+                margin: "8px 16px",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                background: cssOpacity(colors.primary, 0.3),
+              },
+              icssGrid.by({ slot: 2 }),
+              
+            ]}
+          >
             <Box>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
             <Box>total usd: {toRenderable(total(), { decimals: 8 })}</Box>
           </Box>
@@ -365,29 +364,3 @@ function ClmmPageTabBlock(props: { className?: string }) {
 function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
-
-interface ICSSCardOption {
-  slotCount?: number
-  /**
-   * e.g.
-   * - 1 slot, if 1 child item;
-   * - 2 slots, if 2 child items
-   * - else will be 3 slots */
-  autoTrim?: boolean
-}
-
-// should be covered by icss_grid
-const icss_fixedSlotGrid = createICSS(({ slotCount = 3 }: ICSSCardOption = {}) => {
-  const rules :ICSSObject= {
-    display: "grid",
-    gridTemplateColumns: `repeat(${slotCount}, 1fr)`,
-  }
-
-  // core of auto trim
-  for (let i = 1; i <= slotCount; i++) {
-    rules[`&:has(:nth-child(${i}))`] = {
-      gridTemplateColumns: `repeat(${i}, 1fr)`,
-    }
-  }
-  return rules
-})

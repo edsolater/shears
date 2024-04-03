@@ -2,6 +2,9 @@ import { cssOpacity, cssVar } from "@edsolater/pivkit"
 
 /** define in [app](./app.css) */
 export const colors = {
+  // base color
+  transparent: "transparent",
+  
   // app main bg color
   primary: "#abc4ff",
   secondary: "#22D1F8",

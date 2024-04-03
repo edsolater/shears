@@ -23,9 +23,12 @@ import {
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
+  cssLinearGradient,
   cssOpacity,
+  cssRepeatingLinearGradient,
   icssCardPanel,
   icssCol,
+  icssGrid,
   icssRow,
   loadModuleAutoSizeTransition,
   loadModuleCSSCollapse,
@@ -42,6 +45,7 @@ import { CircularProgressBar } from "../components/CircularProgressBar"
 import { ExamplePanel } from "../components/ExamplePanel"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
 import { useLoopPercent } from "../hooks/useLoopPercent"
+import { colors } from "../theme/colors"
 
 export default function PlaygroundPage() {
   return (
@@ -61,6 +65,10 @@ function ComponentSpecList() {
         gap: "4vw",
       }}
     >
+      <ExamplePanel name="Temporary">
+        <VerboseExample />
+      </ExamplePanel>
+
       {/* <ExamplePanel name='Drawer'>
         <DrawerExample />
       </ExamplePanel>
@@ -656,6 +664,46 @@ function ViewTransitionSliderBoxExample() {
       >
         Increase Count
       </Button>
+    </Box>
+  )
+}
+
+function VerboseExample() {
+  const gap = "20px"
+  return (
+    <Box
+      icss={[
+        {
+          margin: "8px 16px",
+          padding: "16px 24px",
+          borderRadius: "16px",
+          background: cssOpacity(colors.primary, 0.2),
+          "> *": {
+            padding: "12px 16px",
+            borderRadius: "8px",
+            background: cssOpacity(colors.primary, 0.1),
+          },
+        },
+        icssGrid.by({
+          slot: 4,
+          gap,
+          dividerWidth: "1px",
+          dividerPadding: "2px",
+          dividerBackground: cssRepeatingLinearGradient({
+            colors: [
+              [colors.transparent, "0px"],
+              [colors.transparent, "10px"],
+              [cssOpacity(colors.primary, 0.3), "10px"],
+              [cssOpacity(colors.primary, 0.3), "20px"],
+            ],
+          }),
+        }),
+      ]}
+    >
+      <Box icss={{ height: "13em" }}>Hello</Box>
+      <Box>World</Box>
+      <Box>World</Box>
+      <Box>World</Box>
     </Box>
   )
 }
