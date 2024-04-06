@@ -23,7 +23,9 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
         ? getTokenAccounts({ canUseCache: shouldTokenAccountCache, owner: owner, connection: rpcUrl })
         : undefined
 
-      const apiClmmInfos = fetchClmmJsonInfo(Boolean(onlyClmmId || shouldApiCache))
+      const apiClmmInfos = fetchClmmJsonInfo(Boolean(onlyClmmId || shouldApiCache)).then((infos) =>
+        onlyClmmId ? filter(infos, (_, k) => onlyClmmId.includes(k)) : infos,
+      )
 
       if (!onlyClmmId && shouldApi) {
         apiClmmInfos
@@ -45,7 +47,7 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
             sdkParseClmmInfos({
               shouldUseCache: shouldSDKCache,
               connection: getConnection(rpcUrl),
-              apiClmmInfos: onlyClmmId ? filter(infos, (_, k) => onlyClmmId.includes(k)) : infos,
+              apiClmmInfos: infos,
               ownerInfo:
                 ownerInfo && owner
                   ? {

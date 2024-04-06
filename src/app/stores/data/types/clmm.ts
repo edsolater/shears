@@ -1,4 +1,4 @@
-import type { ID, Numberish } from "@edsolater/fnkit"
+import type { Numberish } from "@edsolater/fnkit"
 import type {
   ApiClmmPoolsItem as SDK_ApiClmmPoolsItem,
   ClmmPoolInfo as SDK_ClmmPoolInfo,

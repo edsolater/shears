@@ -1,3 +1,4 @@
+import { getFirstItem } from "@edsolater/fnkit"
 import { createTask } from "../../../../packages/conveyor/smartStore/task"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_owner, shuck_rpc } from "../store"
@@ -49,7 +50,7 @@ export function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "own
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
   if (!url) return
-  console.count("[🤖♻️main clmm infos] refresh")
+  console.count("[🤖main] refresh clmm infos")
   shuck_isClmmJsonInfoLoading.set(true)
   port.postMessage({
     onlyClmmId: options?.onlyClmmId,
@@ -69,7 +70,10 @@ export function registerClmmInfosReceiver() {
   port.receiveMessage(
     (infos) => {
       shuck_isClmmJsonInfoLoading.set(false)
-      console.log(`[🤖main] clmm ${infos[0] && "liquidity" in infos[0] ? "SDK" : "API"} infos: `)
+      console.log(
+        `[🤖main] clmm ${getFirstItem(infos) && "liquidity" in getFirstItem(infos) ? "SDK" : "API"} infos: `,
+        infos,
+      )
       shuck_clmmInfos.set((o) => ({ ...o, ...infos }))
     },
     { key: "[🤖main] receive clmm infos" },

@@ -27,7 +27,7 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
-import { useLoop } from "../hooks/useLoop"
+import { oneWayInvoke, useIntervalLoop, usePercentLoop } from "../hooks/usePercentLoop"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { calcTotalClmmLiquidityUSD, useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
@@ -128,6 +128,15 @@ export default function ClmmsPage() {
       name: "Strategy",
       render: (rawClmmInfo) => {
         const clmmInfo = useClmmInfo(rawClmmInfo)
+
+        const { startLoop, stopLoop } = useIntervalLoop({
+          cb: () => {
+            refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
+          },
+          delay: 5000,
+        })
+        onCleanup(stopLoop)
+
         return (
           <Row icss={{ gap: "2px" }}>
             <Button
@@ -180,12 +189,12 @@ export default function ClmmsPage() {
               }}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
             >
-              Apply my strategy
+              Apply strategy
             </Button>
             <Button
               onClick={({ ev }) => {
                 ev.stopPropagation()
-                refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
+                startLoop()
               }}
             >
               Refresh

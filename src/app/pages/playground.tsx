@@ -44,7 +44,7 @@ import { createInvoker } from "@edsolater/fnkit"
 import { RefreshCircle } from "../components/RefreshCircle"
 import { ExamplePanel } from "../components/ExamplePanel"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
-import { useLoop } from "../hooks/useLoop"
+import { usePercentLoop } from "../hooks/usePercentLoop"
 import { colors } from "../theme/colors"
 
 export default function PlaygroundPage() {
