@@ -1,6 +1,6 @@
 import { KitProps, useKitProps, Box, createDomRef, icssClickable } from "@edsolater/pivkit"
 import { createEffect, createMemo, on } from "solid-js"
-import { usePercentLoop } from "../hooks/useLoopPercent"
+import { useLoop } from "../hooks/useLoop"
 
 interface RefreshCircleRawProps {
   /** like animation run */
@@ -20,7 +20,7 @@ export function RefreshCircle(kitProps: RefreshCircleProps) {
   const { props, shadowProps } = useKitProps(kitProps, { defaultProps: { svgWidth: 36, strokeWidth: 3, percent: 0.3 } })
   const r = createMemo(() => (0.5 * props.svgWidth) / 2)
   const c = createMemo(() => 2 * r() * Math.PI)
-  const { percent, reset } = usePercentLoop({
+  const { percent, reset } = useLoop({
     onRoundEnd: () => {
       props.onRefresh?.()
     },

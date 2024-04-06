@@ -6,7 +6,7 @@ import { requestLoopAnimationFrame } from "@edsolater/pivkit"
  * mainly for {@link ../components/CircularProgress | CircularProgress}
  * @todo is it possible to use css not js thread?
  */
-export function usePercentLoop({
+export function useLoop({
   canRoundCountOverOne,
   onRoundEnd,
   eachSecondPercent = 1 / 10,
