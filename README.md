@@ -38,3 +38,7 @@ main thread: Composed info ==> UI info (has decimaled) (hook:useXXXInfo)
 - clmm position in [getClmmUserPositionAccountAdditionalInfo](src/app/stores/data/clmm/getClmmUserPositionAccountAdditionalInfo.ts)
   - calc
 - clmm position in [useClmmInfo](src/app/stores/data/clmm/useClmmInfo.ts)
+
+# refresh state data:
+
+use code like: `shuck_balances.set((o) => ({ ...o, ...balances }))` to merge, not cover the data

@@ -27,14 +27,14 @@ export function registerTokenAccountsReceiver() {
     (tokenAccounts) => {
       reportLog("[🤖main] token accounts ", tokenAccounts)
       shuck_isTokenAccountsLoading.set(false)
-      shuck_tokenAccounts.set(tokenAccounts)
+      shuck_tokenAccounts.set((o) => ({ ...o, ...tokenAccounts }))
       const balances: Record<Mint, Numberish> = {}
       for (const tokenAccount of toIterable(tokenAccounts)) {
         setItem(balances, tokenAccount.mint, (balance) =>
           balance ? add(balance, tokenAccount.amount) : tokenAccount.amount,
         )
       }
-      shuck_balances.set(balances)
+      shuck_balances.set((o) => ({ ...o, ...balances }))
     },
     { key: "[🤖main] receive tokenAccounts" },
   )

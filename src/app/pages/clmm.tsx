@@ -135,7 +135,6 @@ export default function ClmmsPage() {
                 ev.stopPropagation()
                 const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 27 })
                 if (configs) {
-                  console.log(33)
                   runTasks(
                     ({ next }) => {
                       if (configs.upDecreaseClmmPositionTxConfigs.length) {
@@ -184,7 +183,7 @@ export default function ClmmsPage() {
               Apply my strategy
             </Button>
             <Button
-              onClick={async ({ ev }) => {
+              onClick={({ ev }) => {
                 ev.stopPropagation()
                 refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
               }}

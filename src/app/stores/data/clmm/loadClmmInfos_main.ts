@@ -70,7 +70,7 @@ export function registerClmmInfosReceiver() {
     (infos) => {
       shuck_isClmmJsonInfoLoading.set(false)
       console.log(`[🤖main] clmm ${infos[0] && "liquidity" in infos[0] ? "SDK" : "API"} infos: `)
-      shuck_clmmInfos.set(infos)
+      shuck_clmmInfos.set((o) => ({ ...o, ...infos }))
     },
     { key: "[🤖main] receive clmm infos" },
   )
