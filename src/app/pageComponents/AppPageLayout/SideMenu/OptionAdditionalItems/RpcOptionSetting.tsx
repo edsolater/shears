@@ -36,7 +36,7 @@ export function RpcSettingFace(kitProps: {
   const { plugins: popoverPlugins } = buildPopover({
     placement: "right",
     triggerBy: "click",
-    defaultOpen: true,
+    defaultOpen: false,
   }) // <-- run on define, not good
   const dotIcss = {
     width: "0.375rem",

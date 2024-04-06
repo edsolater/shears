@@ -77,7 +77,7 @@ export function OptionItemBox(kitProps: KitProps<OptionItemBoxProps>) {
 
   return (
     <Link shadowProps={shadowProps} href={props.href} icss={icssOptionItemBox}>
-      <Row>
+      <Row icss={{ alignItems: "center" }}>
         {subComponentsRender.dot()}
         <Span
           icss={{
