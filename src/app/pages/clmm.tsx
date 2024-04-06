@@ -1,10 +1,22 @@
 import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
-import { Box, Col, Icon, KitProps, Loop, Row, Text, cssOpacity, icssGrid, useKitProps } from "@edsolater/pivkit"
+import {
+  Box,
+  Col,
+  Icon,
+  KitProps,
+  Loop,
+  Row,
+  Text,
+  cssOpacity,
+  cssRepeatingLinearGradient,
+  icssGrid,
+  useKitProps,
+} from "@edsolater/pivkit"
 import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
-import { CircularProgressBar } from "../components/CircularProgressBar"
+import { RefreshCircle } from "../components/RefreshCircle"
 import {
   DatabaseTable,
   type DatabaseTabelItemCollapseContentRenderConfig,
@@ -15,7 +27,7 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
-import { useLoopPercent } from "../hooks/useLoopPercent"
+import { usePercentLoop } from "../hooks/useLoopPercent"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { calcTotalClmmLiquidityUSD, useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
@@ -192,13 +204,21 @@ export default function ClmmsPage() {
                 padding: "8px 16px",
                 borderRadius: "8px",
                 background: cssOpacity(colors.primary, 0.3),
+                "> *": {
+                  padding: "4px 8px",
+                },
               },
-              icssGrid.by({ slot: 2 }),
-              
+              icssGrid.config({
+                slot: 2,
+                gap: "32px",
+                dividerWidth: "1px",
+                dividerPadding: "2px",
+                dividerBackground: cssOpacity(colors.primary, 0.3),
+              }),
             ]}
           >
             <Box>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
-            <Box>total usd: {toRenderable(total(), { decimals: 8 })}</Box>
+            <Box>total staked USD: {toRenderable(total(), { decimals: 8 })}</Box>
           </Box>
           <ListBox
             of={clmmInfo.userPositionAccounts}
@@ -211,7 +231,7 @@ export default function ClmmsPage() {
       )
     },
   }
-  const { percent } = useLoopPercent()
+
   return (
     <DatabaseTable
       title="Concentrated Pools"
@@ -228,8 +248,7 @@ export default function ClmmsPage() {
       TopMiddle={<ClmmPageTabBlock />}
       TopRight={<ClmmPageActionHandlersBlock />}
       TableBodyTopRight={
-        <CircularProgressBar
-          percent={percent}
+        <RefreshCircle
           onClick={() => {
             refreshClmmInfos({ shouldApi: false, shouldSDKCache: false, shouldTokenAccountCache: false })
             // refreshTokenAccounts({ canUseCache: false })

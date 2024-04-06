@@ -6,24 +6,48 @@ import { requestLoopAnimationFrame } from "@edsolater/pivkit"
  * mainly for {@link ../components/CircularProgress | CircularProgress}
  * @todo is it possible to use css not js thread?
  */
-export function useLoopPercent() {
-  const [percent, setPercent] = createSignal(0)
+export function usePercentLoop({
+  canRoundCountOverOne,
+  onRoundEnd,
+  eachSecondPercent = 1 / 10,
+}: {
+  canRoundCountOverOne?: boolean
+  onRoundEnd?: () => void
+  eachSecondPercent?: number
+} = {}) {
+  const [percent, setPercent] = createSignal(0) // 0 ~ 1
 
-  const onEnd = () => {
-    // console.log('onEnd')
-  }
   createEffect(() => {
-    const { cancel } = requestLoopAnimationFrame(() => {
+    const { cancel } = requestLoopAnimationFrame(({ pasedTime }) => {
       setPercent((percent) => {
-        if (percent >= 1) {
-          onEnd()
-          return 0
+        if (pasedTime == null) return 0
+
+        if (canRoundCountOverOne) {
+          const newPercent = percent + eachSecondPercent * (pasedTime / 1000)
+          if (Math.floor(newPercent) !== Math.floor(percent)) {
+            onRoundEnd?.()
+            return newPercent
+          } else {
+            return newPercent
+          }
+        } else {
+          const newPercent = percent + eachSecondPercent * (pasedTime / 1000)
+          if (newPercent >= 1) {
+            onRoundEnd?.()
+            return 0
+          } else {
+            return newPercent
+          }
         }
-        return percent + (1 / 100 / 60) * 20 /** the bigger the faster */
       })
     })
     onCleanup(cancel)
   })
 
-  return { percent }
+  return {
+    percent,
+    reset() {
+      setPercent(0)
+    },
+  }
 }

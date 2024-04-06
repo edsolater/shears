@@ -41,10 +41,10 @@ import {
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
 import { createInvoker } from "@edsolater/fnkit"
-import { CircularProgressBar } from "../components/CircularProgressBar"
+import { RefreshCircle } from "../components/RefreshCircle"
 import { ExamplePanel } from "../components/ExamplePanel"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
-import { useLoopPercent } from "../hooks/useLoopPercent"
+import { usePercentLoop } from "../hooks/useLoopPercent"
 import { colors } from "../theme/colors"
 
 export default function PlaygroundPage() {
@@ -167,8 +167,7 @@ function Foo() {
  * @todo 2. make percent handler to be a hook
  */
 function CircularProgressExample() {
-  const { percent } = useLoopPercent()
-  return <CircularProgressBar percent={percent()} />
+  return <RefreshCircle />
 }
 
 /**
@@ -684,7 +683,7 @@ function VerboseExample() {
             background: cssOpacity(colors.primary, 0.1),
           },
         },
-        icssGrid.by({
+        icssGrid.config({
           slot: 4,
           gap,
           dividerWidth: "1px",
