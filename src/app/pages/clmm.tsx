@@ -126,8 +126,8 @@ export default function ClmmsPage() {
     },
     {
       name: "Strategy",
-      render: (i) => {
-        const clmmInfo = useClmmInfo(i)
+      render: (rawClmmInfo) => {
+        const clmmInfo = useClmmInfo(rawClmmInfo)
         return (
           <Row icss={{ gap: "2px" }}>
             <Button
@@ -182,6 +182,14 @@ export default function ClmmsPage() {
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
             >
               Apply my strategy
+            </Button>
+            <Button
+              onClick={async ({ ev }) => {
+                ev.stopPropagation()
+                refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
+              }}
+            >
+              Refresh
             </Button>
           </Row>
         )

@@ -1,4 +1,4 @@
-import { createSubscribable, toList } from "@edsolater/fnkit"
+import { createSubscribable, filter, toList } from "@edsolater/fnkit"
 import { getTokenAccounts } from "../../../utils/dataStructures/TokenAccount"
 import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
 import { getConnection } from "../connection/getConnection"
@@ -16,16 +16,16 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
   reportLog("[⚙️worker] start loading clmm infos")
   const port = getMessagePort("fetch raydium clmm info")
   port.receiveMessage(
-    ({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache, shouldTokenAccountCache }) => {
+    ({ owner, rpcUrl, shouldApi, shouldApiCache, shouldSDK, shouldSDKCache, shouldTokenAccountCache, onlyClmmId }) => {
       workerThreadWalletInfo.owner = owner
       workerThreadWalletInfo.rpcUrl = rpcUrl
       const ownerTokenAccounts = owner
         ? getTokenAccounts({ canUseCache: shouldTokenAccountCache, owner: owner, connection: rpcUrl })
         : undefined
 
-      const apiClmmInfos = fetchClmmJsonInfo(shouldApiCache)
+      const apiClmmInfos = fetchClmmJsonInfo(Boolean(onlyClmmId || shouldApiCache))
 
-      if (shouldApi) {
+      if (!onlyClmmId && shouldApi) {
         apiClmmInfos
           .then(log("[⚙️worker] clmm API Infos"))
           .then((apiClmmInfos) => hydrateClmmInfos({ apiInfo: apiClmmInfos }))
@@ -38,14 +38,14 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
           .catch(logError)
       }
 
-      if (shouldSDK) {
+      if (onlyClmmId || shouldSDK) {
         const sdkClmmInfos = Promise.all([apiClmmInfos, ownerTokenAccounts]).then(
           ([infos, ownerInfo]) =>
             infos &&
             sdkParseClmmInfos({
               shouldUseCache: shouldSDKCache,
               connection: getConnection(rpcUrl),
-              apiClmmInfos: toList(infos),
+              apiClmmInfos: onlyClmmId ? filter(infos, (_, k) => onlyClmmId.includes(k)) : infos,
               ownerInfo:
                 ownerInfo && owner
                   ? {

@@ -4,10 +4,15 @@ import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_owner, shuck_rpc } 
 import type { ClmmInfos } from "../types/clmm"
 import { reportLog } from "../utils/logger"
 
-export type ClmmQueryParams = {
+type ClmmQueryBaseOptions = {
   rpcUrl: string
   owner?: string
-} & ClmmQueryCacheOptions
+
+  // when set this, means only refetch sdk info
+  onlyClmmId?: string[]
+}
+
+export type ClmmQueryParams = ClmmQueryBaseOptions & ClmmQueryCacheOptions
 
 export type ClmmQueryCacheOptions = {
   /** @default true */
@@ -39,7 +44,7 @@ export function loadClmmInfos() {
 }
 
 /** can use this action isolatly */
-export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
+export function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "owner">) {
   const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
@@ -47,6 +52,7 @@ export function refreshClmmInfos(options?: ClmmQueryCacheOptions) {
   console.count("[🤖♻️main clmm infos] refresh")
   shuck_isClmmJsonInfoLoading.set(true)
   port.postMessage({
+    onlyClmmId: options?.onlyClmmId,
     shouldApi: options?.shouldApi ?? true,
     shouldApiCache: options?.shouldApiCache ?? true,
     shouldSDK: options?.shouldSDK ?? true,
