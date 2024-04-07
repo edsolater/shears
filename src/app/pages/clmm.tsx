@@ -9,6 +9,7 @@ import {
   Text,
   cssOpacity,
   cssRepeatingLinearGradient,
+  icssCenter,
   icssGrid,
   useKitProps,
 } from "@edsolater/pivkit"
@@ -133,7 +134,7 @@ export default function ClmmsPage() {
           cb: () => {
             refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
           },
-          delay: 5000,
+          delay: 10000,
         })
         onCleanup(stopLoop)
 
@@ -233,8 +234,8 @@ export default function ClmmsPage() {
               }),
             ]}
           >
-            <Box>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
-            <Box>total staked USD: {toRenderable(total(), { decimals: 8 })}</Box>
+            <Box icss={icssCenter}>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
+            <Box icss={icssCenter}>total staked USD: {toRenderable(total(), { decimals: 8 })}</Box>
           </Box>
           <ListBox
             of={clmmInfo.userPositionAccounts}

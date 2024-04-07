@@ -27,6 +27,7 @@ import {
   cssOpacity,
   cssRepeatingLinearGradient,
   icssCardPanel,
+  icssCenter,
   icssCol,
   icssGrid,
   icssRow,
@@ -685,6 +686,7 @@ function VerboseExample() {
         },
         icssGrid.config({
           slot: 4,
+          templateColumn: "2fr 1fr 1fr 1fr",
           gap,
           dividerWidth: "1px",
           dividerPadding: "2px",
@@ -699,10 +701,10 @@ function VerboseExample() {
         }),
       ]}
     >
-      <Box icss={{ height: "13em" }}>Hello</Box>
-      <Box>World</Box>
-      <Box>World</Box>
-      <Box>World</Box>
+      <Box icss={[{ height: "13em" }, icssCenter]}>Hello</Box>
+      <Box icss={icssCenter}>World</Box>
+      <Box icss={icssCenter}>World</Box>
+      <Box icss={icssCenter}>World</Box>
     </Box>
   )
 }
