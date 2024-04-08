@@ -17,12 +17,12 @@ import {
   useKeyboardGlobalShortcut,
 } from "@edsolater/pivkit"
 import { RouteSectionProps, useNavigate } from "@solidjs/router"
-import { createMemo } from "solid-js"
+import { createMemo, onMount } from "solid-js"
 import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
 import { createTask } from "../../packages/conveyor/smartStore/task"
 import { globalPageShortcuts } from "../configs/globalPageShortcuts"
-import { useAppThemeMode } from "../hooks/useAppThemeMode"
+import { initAppContextConfig } from "../hooks/useAppThemeMode"
 import { AppPageLayout } from "../pageComponents/AppPageLayout"
 import { routes } from "../routes"
 
@@ -34,9 +34,10 @@ const uikitConfig: UIKitThemeConfig = {
 
 // config uikit theme before render
 configUIKitTheme(uikitConfig)
+initAppContextConfig({ themeMode: "dark" , onlyAltSelect: true})
 
 export function App(props: RouteSectionProps) {
-  useAppThemeMode({ mode: "dark" })
+  onMount(() => {})
   const navigate = useNavigate()
   const location = props.location
 

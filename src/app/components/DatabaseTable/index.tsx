@@ -261,10 +261,10 @@ function DatabaseTableItemCollapseFace<T>(
       </Group>
     </Row>
   )
-} /**
+} 
+/**
  * usually used for detecting user favorite/collected
  */
-
 export function ItemStarIcon() {
   const isFavourite = () => false
   return (
