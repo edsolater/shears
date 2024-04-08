@@ -1,4 +1,5 @@
 import { glob } from "goober"
+
 export function initAppContextConfig(options: { themeMode?: "light" | "dark"; onlyAltSelect?: boolean }) {
   //#region ---------------- themeMode ----------------
 
