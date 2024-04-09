@@ -1,10 +1,9 @@
 import { createObjectFromGetters, mergeObjects, type Numberish } from "@edsolater/fnkit"
 import { usePromise } from "@edsolater/pivkit"
-import { createEffect, on } from "solid-js"
-import { createStore, reconcile } from "solid-js/store"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import { type Amount } from "../../../utils/dataStructures/TokenAmount"
 import type { USDVolume } from "../../../utils/dataStructures/type"
+import type { TxUIParams } from "../../../utils/txHandler"
 import { shuck_balances, shuck_owner, shuck_rpc, shuck_slippage, shuck_tokenPrices, shuck_tokens } from "../store"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
@@ -29,6 +28,7 @@ export type TxClmmPositionIncreaseUIFnParams = { amountA: Amount } | { amountB: 
 /** for {@link AdditionalClmmUserPositionAccountState}'s method txClmmPositionDecrease */
 export type TxClmmPositionDecreaseUIFnParams = { amountA: Amount } | { amountB: Amount }
 export type TxClmmPositionSetToUIFnParams = { usd: Amount }
+
 /**
  * hooks
  * hydrate {@link ClmmUserPositionAccount} to ui used data

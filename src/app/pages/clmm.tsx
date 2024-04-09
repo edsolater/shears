@@ -139,7 +139,7 @@ export default function ClmmsPage() {
         onCleanup(stopLoop)
 
         return (
-          <Row icss={{ gap: "2px" }}>
+          <Row icss={{ gap: "8px" }}>
             <Button
               onClick={async ({ ev }) => {
                 ev.stopPropagation()
@@ -339,7 +339,6 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
             const txBus = invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
                 amountA: 0.1, // TODO: should be input
-                privateKey: localStorage.getItem("privateKey") || undefined,
               }),
             )
             txBus?.onTxSendSuccess(() => {

@@ -41,6 +41,14 @@ export interface TxInfo {
   transaction: VersionedTransaction
 }
 
+// a utils to create TxParams
+export type TxParams<O extends object> = O & {
+  privateKey?: string
+}
+export type TxUIParams<O extends object> = O & {
+  privateKey?: string
+}
+
 export interface MultiTxExtraInfo {
   isMulti: boolean
   /** only used in multi mode */
@@ -202,6 +210,7 @@ export type SignAllTransactionsFunction = <T extends VersionedTransaction>(trans
 export type TxHandlerPayload = {
   connection: Connection
   owner: string
+  privateKey?: string
 }
 
 type TxHandlerEventCenterCallbacks = {

@@ -11,7 +11,7 @@ import { toSDKBN } from "../../utils/dataStructures/BN"
 import { getConnection } from "./connection/getConnection"
 import { toPubString } from "../../utils/dataStructures/Publickey"
 import type { Amount } from "../../utils/dataStructures/TokenAmount"
-import { getTxHandlerUtils } from "../../utils/txHandler"
+import { getTxHandlerUtils, type TxParams } from "../../utils/txHandler"
 import { handleTxModule, type TransactionModule } from "../../utils/txHandler/handleTxFromShortcut"
 import { getClmmIncreaseTxLiquidityAndBoundaryFromAmount } from "./clmm/getClmmTxLiquidityAndBoundaryFromAmount"
 import { isTokenSOLWSOL } from "./token/utils"
@@ -22,7 +22,7 @@ import { reportLog } from "./utils/logger"
 
 export type TxClmmPositionIncreaseConfig = { name: "clmm position increase"; params: TxClmmPositionIncreaseParams }
 
-export type TxClmmPositionIncreaseParams = {
+export type TxClmmPositionIncreaseParams = TxParams<{
   rpcUrl: string
   owner: string
   clmmId: string
@@ -31,7 +31,7 @@ export type TxClmmPositionIncreaseParams = {
 
   amountA?: Amount
   amountB?: Amount
-}
+}>
 
 /** need amountA or amountB */
 export async function txClmmPositionIncrease(params: TxClmmPositionIncreaseParams) {
@@ -114,5 +114,5 @@ export async function createTxClmmPositionIncreaseTransactionModule(
     return { innerTransactions: [] }
   })
   assert(innerTransactions, "sdk compose innerTransactions failed, innerTransactions: " + innerTransactions)
-  return Object.assign(innerTransactions, { connection, owner: params.owner })
+  return Object.assign(innerTransactions, { connection, owner: params.owner, privateKey: params.privateKey })
 }

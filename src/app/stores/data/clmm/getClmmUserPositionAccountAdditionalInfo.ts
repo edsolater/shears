@@ -154,40 +154,27 @@ export function getClmmUserPositionAccountAdditionalInfo({
 
   const isHarvestable = () => isPositive(pendingTotalWithFees()) || hasRewardTokenAmount() || hasFeeTokenAmount()
 
+  const createBaseTxConfig = () => ({
+    rpcUrl: rpcUrl(),
+    owner: owner(),
+    slippage: slippage(),
+    clmmInfo: clmmInfo(),
+    positionInfo: positionInfo(),
+    privateKey: localStorage.getItem("private-key") || undefined,
+  })
+
   const buildPositionIncreaseTxConfig = (params: TxClmmPositionIncreaseUIFnParams) => {
-    return calcBuildTxClmmPositionIncreaseConfig(
-      {
-        rpcUrl: rpcUrl(),
-        owner: owner(),
-        slippage: slippage(),
-        clmmInfo: clmmInfo(),
-        positionInfo: positionInfo(),
-      },
-      params,
-    )
+    return calcBuildTxClmmPositionIncreaseConfig(createBaseTxConfig(), params)
   }
 
   const buildPositionDecreaseTxConfig = (params: TxClmmPositionDecreaseUIFnParams) => {
-    return calcBuildTxClmmPositionDecreaseConfig(
-      {
-        rpcUrl: rpcUrl(),
-        owner: owner(),
-        slippage: slippage(),
-        clmmInfo: clmmInfo(),
-        positionInfo: positionInfo(),
-      },
-      params,
-    )
+    return calcBuildTxClmmPositionDecreaseConfig(createBaseTxConfig(), params)
   }
 
   const buildPositionSetTxConfig = (params: TxClmmPositionSetToUIFnParams) => {
     return calcBuildTxClmmPositionSetUSDConfig(
       {
-        rpcUrl: rpcUrl(),
-        owner: owner(),
-        slippage: slippage(),
-        clmmInfo: clmmInfo(),
-        positionInfo: positionInfo(),
+        ...createBaseTxConfig(),
         tokenA: tokenA(),
         tokenB: tokenB(),
         tokenAPrice: priceA(),
@@ -201,11 +188,7 @@ export function getClmmUserPositionAccountAdditionalInfo({
 
   const buildPositionShowHandTxConfig = () =>
     calcBuildPositionShowHandTxConfig({
-      rpcUrl: rpcUrl(),
-      owner: owner(),
-      slippage: slippage(),
-      clmmInfo: clmmInfo(),
-      positionInfo: positionInfo(),
+      ...createBaseTxConfig(),
       tokenA: tokenA(),
       tokenB: tokenB(),
       tokenAPrice: priceA(),
@@ -360,6 +343,7 @@ function calcBuildTxClmmPositionIncreaseConfig(
     slippage: Numberish
     clmmInfo: ClmmInfo
     positionInfo: ClmmUserPositionAccount
+    privateKey: string | undefined
   },
   params: TxClmmPositionIncreaseUIFnParams,
 ): TxClmmPositionIncreaseConfig {
@@ -370,10 +354,12 @@ function calcBuildTxClmmPositionIncreaseConfig(
   const clmmId = payload.clmmInfo.id
   const positionNftMint = payload.positionInfo.nftMint
   const slippage = payload.slippage
+  const privateKey = payload.privateKey
   return {
     name: "clmm position increase",
     params: {
       ...params,
+      privateKey,
       clmmId,
       positionNftMint,
       rpcUrl,
@@ -392,6 +378,7 @@ function calcBuildTxClmmPositionDecreaseConfig(
     slippage: Numberish
     clmmInfo: ClmmInfo
     positionInfo: ClmmUserPositionAccount
+    privateKey: string | undefined
   },
   params: TxClmmPositionDecreaseUIFnParams,
 ): TxClmmPositionDecreaseConfig {
@@ -402,10 +389,12 @@ function calcBuildTxClmmPositionDecreaseConfig(
   const clmmId = payload.clmmInfo.id
   const positionNftMint = payload.positionInfo.nftMint
   const slippage = payload.slippage
+  const privateKey = payload.privateKey
   return {
     name: "clmm position decrease",
     params: {
       ...params,
+      privateKey,
       clmmId,
       positionNftMint,
       rpcUrl,
@@ -428,6 +417,7 @@ function calcBuildTxClmmPositionSetUSDConfig(
     tokenBPrice: Numberish | undefined
     tokenADecimals: number
     tokenBDecimals: number
+    privateKey: string | undefined
   },
   params: TxClmmPositionSetToUIFnParams,
 ) {
@@ -459,11 +449,9 @@ function calcBuildTxClmmPositionSetUSDConfig(
       const amount = mul(decreaseUSDAmount, price)
       return calcBuildTxClmmPositionDecreaseConfig(
         {
+          ...payload,
           rpcUrl,
           owner,
-          slippage: payload.slippage,
-          clmmInfo: payload.clmmInfo,
-          positionInfo: payload.positionInfo,
         },
         { amountB: amount },
       )
@@ -474,11 +462,9 @@ function calcBuildTxClmmPositionSetUSDConfig(
       const amount = mul(decreaseUSDAmount, price)
       return calcBuildTxClmmPositionDecreaseConfig(
         {
+          ...payload,
           rpcUrl,
           owner,
-          slippage: payload.slippage,
-          clmmInfo: payload.clmmInfo,
-          positionInfo: payload.positionInfo,
         },
         { amountA: amount },
       )
@@ -494,11 +480,9 @@ function calcBuildTxClmmPositionSetUSDConfig(
       const amount = mul(increaseUSDAmount, price)
       return calcBuildTxClmmPositionIncreaseConfig(
         {
+          ...payload,
           rpcUrl,
           owner,
-          slippage: payload.slippage,
-          clmmInfo: payload.clmmInfo,
-          positionInfo: payload.positionInfo,
         },
         { amountB: amount },
       )
@@ -509,11 +493,9 @@ function calcBuildTxClmmPositionSetUSDConfig(
       const amount = mul(increaseUSDAmount, price)
       return calcBuildTxClmmPositionIncreaseConfig(
         {
+          ...payload,
           rpcUrl,
           owner,
-          slippage: payload.slippage,
-          clmmInfo: payload.clmmInfo,
-          positionInfo: payload.positionInfo,
         },
         { amountA: amount },
       )
@@ -535,6 +517,7 @@ function calcBuildPositionShowHandTxConfig(payload: {
   tokenADecimals: number
   tokenBDecimals: number
   balances: Balances | undefined
+  privateKey: string | undefined
 }) {
   const side = gt(payload.clmmInfo.currentPrice, payload.positionInfo.priceUpper) ? "B" : "A"
   const balanceOfTargetSideRawBN = get(payload.balances, side === "A" ? payload.clmmInfo.base : payload.clmmInfo.quote)
