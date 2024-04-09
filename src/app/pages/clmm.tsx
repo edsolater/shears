@@ -338,14 +338,15 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
           onClick={() => {
             const txBus = invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
-                amountA: 1, // TODO: should be input
+                amountA: 0.1, // TODO: should be input
+                privateKey: localStorage.getItem("privateKey") || undefined,
               }),
             )
             txBus?.onTxSendSuccess(() => {
               if (positionAccount.tokenBase) {
                 onBalanceChange(positionAccount.tokenBase, ({ unsubscribe, balance }) => {
                   console.log("balance: ", toFormattedNumber(balance, { decimals: 6 }))
-                  // unsubscribe()
+                  unsubscribe()
                 })
               }
             })
