@@ -70,11 +70,14 @@ export function registerClmmInfosReceiver() {
   port.receiveMessage(
     (infos) => {
       shuck_isClmmJsonInfoLoading.set(false)
-      console.log(
-        `[🤖main] clmm ${getFirstItem(infos) && "liquidity" in getFirstItem(infos) ? "SDK" : "API"} infos: `,
-        infos,
-      )
-      shuck_clmmInfos.set((o) => ({ ...o, ...infos }))
+
+      setTimeout(() => {
+        console.log(
+          `[🤖main] clmm ${getFirstItem(infos) && "liquidity" in getFirstItem(infos) ? "SDK" : "API"} infos: `,
+          infos,
+        )
+        shuck_clmmInfos.set((o) => ({ ...o, ...infos }))
+      })
     },
     { key: "[🤖main] receive clmm infos" },
   )

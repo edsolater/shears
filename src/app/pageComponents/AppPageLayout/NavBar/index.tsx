@@ -1,24 +1,24 @@
-import { Accessor, createEffect } from "solid-js"
 import {
   Accessify,
   Box,
   Fragnment,
+  Group,
   Input,
   ItemBox,
   Modal,
-  ModalController,
   Row,
-  Section,
   Text,
-  createControllerRef,
-  icssClickable,
   createFormField,
+  icssCenter,
+  icssCenterY,
+  icssClickable,
+  useInputController,
 } from "@edsolater/pivkit"
-import { useInputController } from "@edsolater/pivkit"
-import { store } from "../../../stores/data/store"
-import { parseUrl } from "../../../utils/parseUrl"
+import { Accessor, createEffect } from "solid-js"
 import { AppLogo } from "../../../components/AppLogo"
 import { WalletWidget } from "../../../components/WalletWidget"
+import { store } from "../../../stores/data/store"
+import { parseUrl } from "../../../utils/parseUrl"
 import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from "./NavWrapBox"
 
 export type AppPageLayout_NavBarProps = NaBar_NavWrapBoxProps
@@ -29,7 +29,7 @@ export function AppPageLayout_NavBar(props: AppPageLayout_NavBarProps) {
       <Row icss:justify="space-between">
         {/* TODO: not correct for this */}
         <AppLogo />
-        <Row icss:align="end">
+        <Row>
           <SettingButtonTrigger />
           <WalletWidget />
         </Row>
@@ -45,7 +45,7 @@ function SettingButtonTrigger() {
   return (
     <Fragnment>
       <Box
-        icss={[{ padding: "8px", borderRadius: "8px" }, icssClickable]}
+        icss={[icssCenter, { padding: "8px", borderRadius: "8px" }, icssClickable]}
         // onClick={() => {
         //   appSettingsModalControllers()?.open()
         // }}
@@ -64,7 +64,7 @@ function SettingButtonTrigger() {
  */
 function SettingsPanelDialog() {
   return (
-    <Modal  open>
+    <Modal open>
       <SettingsContent />
     </Modal>
   )
@@ -84,10 +84,10 @@ function SettingsContent() {
     console.log("isFocused: ", inputController.isFocused?.())
   })
   return (
-    <Box>
-      <Section>
-        <ItemBox>
-          <Text>RPC:</Text>
+    <Group>
+      <Group name={"section"}>
+        <ItemBox icss={{ gap: "4px" }}>
+          <Text icss={icssCenterY}>RPC:</Text>
           <Input
             id="Input__rpcUrl"
             value={value}
@@ -97,8 +97,8 @@ function SettingsContent() {
             icss={{ borderStyle: "solid", borderColor: isEmpty() ? "gray" : isValid() ? "green" : "crimson" }}
           />
         </ItemBox>
-      </Section>
-    </Box>
+      </Group>
+    </Group>
   )
 }
 

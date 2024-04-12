@@ -15,7 +15,7 @@ import { useLocation } from "@solidjs/router"
 import { Show, createEffect, createMemo, createSelector } from "solid-js"
 import { Loop } from "../../../../packages/pivkit"
 import { Link } from "../../../components/Link"
-import { routes } from "../../../routes"
+import { routes } from "../../../configs/routes"
 
 export function NavRouteItems() {
   const location = useLocation()

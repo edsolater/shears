@@ -12,7 +12,7 @@ import {
   useKitProps,
   type ItemList,
   CollapseBox,
-  icssAlignCenter,
+  icssCenterY,
 } from "@edsolater/pivkit"
 import { Accessor, createContext, createMemo, createSignal, useContext } from "solid-js"
 import {
@@ -241,7 +241,7 @@ function DatabaseTableItemCollapseFace<T>(
   const { props, shadowProps } = useKitProps(kitProps, { name: "DatabaseTableItemCollapseFace" })
   const { databaseTableGridTemplate, setItemPiecesWidth } = useContext(DatabaseTableContext)
   return (
-    <Row shadowProps={shadowProps} icss={[icssAlignCenter,databaseTableRowCollapseFaceStyle]}>
+    <Row shadowProps={shadowProps} icss={[icssCenterY,databaseTableRowCollapseFaceStyle]}>
       <Box icss={{ width: "24px", marginRight: "8px" }}>
         <ItemStarIcon />
       </Box>

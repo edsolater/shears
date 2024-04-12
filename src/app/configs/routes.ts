@@ -1,10 +1,10 @@
 import { JSX } from "solid-js"
-import ClmmsPage from "./pages/clmm"
-import FarmPage from "./pages/farm"
-import HomePage from "./pages/home"
-import PlaygroundPage from "./pages/playground"
-import PoolsPage from "./pages/pool"
-import SwapPage from "./pages/swap"
+import ClmmsPage from "../pages/clmm"
+import FarmPage from "../pages/farm"
+import HomePage from "../pages/home"
+import PlaygroundPage from "../pages/playground"
+import PoolsPage from "../pages/pool"
+import SwapPage from "../pages/swap"
 
 type RouteItem = {
   name: string

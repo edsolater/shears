@@ -35,3 +35,5 @@
 - [store](stores/wallet/store.ts)
 
 # Templates for easy ctrl-C/V ([template](template))
+
+only props:icss props:variant props:style props:class are for component style

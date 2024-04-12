@@ -1,7 +1,7 @@
 import { KeybordShortcutKeys } from "@edsolater/pivkit"
-import { farmsRoutePath, homeRoutePath, poolsRoutePath, swapRoutePath } from "../routes"
+import { clmmRoutePath, farmsRoutePath, homeRoutePath, poolsRoutePath, swapRoutePath } from "./routes"
 
-export const globalPageShortcuts = {
+export const globalShortcuts = {
   "go to home": {
     shortcut: "alt + /",
     to: homeRoutePath,
@@ -17,5 +17,9 @@ export const globalPageShortcuts = {
   "go to farms": {
     shortcut: "alt + f",
     to: farmsRoutePath,
+  },
+  "go to clmm": {
+    shortcut: "alt + c",
+    to: clmmRoutePath,
   },
 } satisfies Record<string, { to: string; shortcut: KeybordShortcutKeys }>

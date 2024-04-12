@@ -1,7 +1,7 @@
 import { Route, Router } from "@solidjs/router"
 import { render } from "solid-js/web"
 import { App } from "./app/pages/App"
-import { routes } from "./app/routes"
+import { routes } from "./app/configs/routes"
 
 const root = document.getElementById("root")
 

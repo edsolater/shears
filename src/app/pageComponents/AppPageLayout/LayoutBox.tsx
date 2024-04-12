@@ -56,7 +56,11 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       <Item name={"top-menu"} icss={{ gridArea: "top" }}>
         {props["render:topBar"]}
       </Item>
-      <Item name={"side-menu"} icss={{ gridArea: "side" }} render:self={renderAsHTMLAside}>
+      <Item
+        name={"side-menu"}
+        icss={{ width: 'auto', overflow: "hidden", gridArea: "side" }}
+        render:self={renderAsHTMLAside}
+      >
         {props["render:sideBar"]}
       </Item>
       <Item name={"content"} icss={[{ gridArea: "content" }, icssGrid]}>
