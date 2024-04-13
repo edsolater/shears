@@ -4,6 +4,7 @@ import {
   KitProps,
   Main,
   PivChild,
+  createDisclosure,
   cssLinearGradient,
   cssVar,
   icssCol,
@@ -11,9 +12,10 @@ import {
   renderAsHTMLAside,
   useKitProps,
 } from "@edsolater/pivkit"
-import { createSignal } from "solid-js"
+import { createEffect, createSignal, on, onCleanup, onMount } from "solid-js"
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
+import { registerShortcut } from "../../pages/App"
 
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
@@ -24,6 +26,22 @@ export type AppPageLayout_LayoutBoxProps = {
   "render:sideBar"?: PivChild
   renderContent?: PivChild
 }
+
+// should feature build-in pivkit's createDisclousure
+function createIntervalSignal(rawOptions?: { run?: boolean; intervalDelay?: number; default?: boolean }) {
+  const { run = true, intervalDelay = 1000, default: init = false } = rawOptions ?? {}
+  const [flag, setFlag] = createSignal(init)
+  createEffect(() => {
+    if (!run) return
+    const intervalId = setInterval(() => {
+      setFlag((b) => !b)
+    }, intervalDelay)
+    onCleanup(() => {
+      clearInterval(intervalId)
+    })
+  })
+  return flag
+}
 /**
  * for easier to code and read
  *
@@ -32,7 +50,20 @@ export type AppPageLayout_LayoutBoxProps = {
 export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutBoxProps>) {
   const { props } = useKitProps(kitProps)
   useMetaTitle(props.metaTitle)
-  const [isSideMenuOpen, setIsSideMenuOpen] = createSignal(false)
+  const [isSideMenuOpen, { set, toggle }] = createDisclosure()
+
+  onMount(() => {
+    const { remove } = registerShortcut({
+      description: "Toggle Side Menu",
+      shortcut: "alt + \\",
+      fn: () => {
+        console.log("🎉 toggle side menu")
+      },
+    })
+    onCleanup(remove)
+  })
+
+  // const isSideMenuOpen = createIntervalSignal({ intervalDelay: 3000, default: true, run: false })
   return (
     <Box
       icss={{
@@ -53,16 +84,25 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       <Item name={"top-banner"} icss={{ gridArea: "ban" }}>
         {props["render:topBarBanner"]}
       </Item>
+
       <Item name={"top-menu"} icss={{ gridArea: "top" }}>
         {props["render:topBar"]}
       </Item>
+
       <Item
         name={"side-menu"}
-        icss={{ width: 'auto', overflow: "hidden", gridArea: "side" }}
+        icss={{
+          width: isSideMenuOpen() ? "clamp(40px, 30vw, 400px)" : "0vw",
+          overflow: "hidden",
+          gridArea: "side",
+          transition: "900ms",
+          containerType: "size",
+        }}
         render:self={renderAsHTMLAside}
       >
         {props["render:sideBar"]}
       </Item>
+
       <Item name={"content"} icss={[{ gridArea: "content" }, icssGrid]}>
         <Main
           icss={[

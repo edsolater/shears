@@ -12,8 +12,8 @@ export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
     <>
       <Col
         icss={{
-          height: "100%",
-          width: "16rem",
+          height: "100cqb",
+          width: "100cqi",
           overflowY: "auto",
         }}
       >

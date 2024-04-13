@@ -8,6 +8,7 @@ import {
   UIKitThemeConfig,
   configUIKitTheme,
   createIncresingAccessor,
+  createShortcutContext,
   cssColors,
   cssVar,
   icssClickable,
@@ -17,14 +18,14 @@ import {
   useKeyboardGlobalShortcut,
 } from "@edsolater/pivkit"
 import { RouteSectionProps, useNavigate } from "@solidjs/router"
-import { createMemo, onMount } from "solid-js"
+import { createMemo } from "solid-js"
 import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
 import { createTask } from "../../packages/conveyor/smartStore/task"
 import { globalShortcuts } from "../configs/globalShortcuts"
+import { routes } from "../configs/routes"
 import { initAppContextConfig } from "../hooks/initAppContextConfig"
 import { AppPageLayout } from "../pageComponents/AppPageLayout"
-import { routes } from "../configs/routes"
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -36,25 +37,27 @@ const uikitConfig: UIKitThemeConfig = {
 configUIKitTheme(uikitConfig)
 initAppContextConfig({ themeMode: "dark", onlyAltSelect: true })
 
+const { ContextProvider, useShortcuts, registerShortcut } = createShortcutContext()
+
+export { registerShortcut, useShortcuts }
+
 export function App(props: RouteSectionProps) {
   const navigate = useNavigate()
   useKeyboardGlobalShortcut(
-    map(globalShortcuts, ({ to, shortcut }) => ({
+    map(globalShortcuts, ({ to, shortcut }, key) => ({
+      description: key,
       fn: () => navigate(to),
-      keyboardShortcut: shortcut,
+      shortcut: shortcut,
     })),
   )
   const location = props.location
-
   const title = createMemo(() =>
     switchCase(location.pathname, { "/": "Home" }, (pathname) => pathname.split("/").map(capitalize).join(" ")),
   )
   const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppPageLayout
-
   useExperimentalCode()
-
   return (
-    <>
+    <ContextProvider>
       {needLayout() ? (
         <>
           <KeyboardShortcutPanel />
@@ -63,7 +66,7 @@ export function App(props: RouteSectionProps) {
       ) : (
         props.children
       )}
-    </>
+    </ContextProvider>
   )
 }
 
@@ -80,14 +83,26 @@ function KeyboardShortcutPanel() {
   }
 
   const increasing = createIncresingAccessor({ eachTime: 2000 })
+
   return (
-    <Box icss={{ position: "fixed", bottom: 0, right: 0, border: "solid", padding: "4px" }}>
+    <Box
+      icss={{
+        position: "fixed",
+        bottom: 0,
+        right: 0,
+        border: "solid",
+        padding: "4px",
+        zIndex: -1,
+        visibility: "hidden",
+        contain: "content",
+      }}
+    >
       <List items={globalShortcutsArray}>
         {([description, rule]) => (
           <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
             <Text icss={cssColors.labelColor}>{description}</Text>
             <Input
-              value={String(rule.keyboardShortcut)}
+              value={String(rule.shortcut)}
               icss={{ border: "solid" }}
               disableUserInput
               plugin={keyboardShortcutObserverPlugin({
