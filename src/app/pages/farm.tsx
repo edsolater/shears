@@ -49,7 +49,7 @@ function FarmList() {
 
   return (
     <List items={farmInfos}>
-      {(info, idx) => (
+      {(info, farmId, idx) => (
         <CollapseBox icss={{ background: idx() % 2 ? "#eeee" : "transparent" }}>
           <CollapseFace>
             {(controller) => (

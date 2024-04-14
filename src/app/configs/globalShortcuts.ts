@@ -1,7 +1,7 @@
 import { KeybordShortcutKeys } from "@edsolater/pivkit"
 import { clmmRoutePath, farmsRoutePath, homeRoutePath, poolsRoutePath, swapRoutePath } from "./routes"
 
-export const globalShortcuts = {
+export const globalRouteShortcuts = {
   "go to home": {
     shortcut: "alt + /",
     to: homeRoutePath,

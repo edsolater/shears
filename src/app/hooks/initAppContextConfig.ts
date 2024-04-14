@@ -17,7 +17,6 @@ export function initAppContextConfig(options: { themeMode?: "light" | "dark"; on
 
   //#region ---------------- onlyAltSelect ----------------
   if ("onlyAltSelect" in options) {
-    console.log("on: ", 3)
     document.addEventListener("keydown", (e) => {
       if (e.altKey) {
         document.documentElement.classList.remove("only-alt-select")

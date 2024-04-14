@@ -10,7 +10,6 @@ import {
   Text,
   icssClickable,
   useKitProps,
-  type ItemList,
   CollapseBox,
   icssCenterY,
 } from "@edsolater/pivkit"
@@ -29,23 +28,23 @@ import { colors } from "../../theme/colors"
 import { scrollbarWidth } from "../../theme/misc"
 import { Title } from "../BoardTitle"
 import { CyberPanel } from "../CyberPanel"
-import { shrinkFn } from "@edsolater/fnkit"
+import { shrinkFn, type Collection, type GetCollectionValue, type Items, type MayFn } from "@edsolater/fnkit"
 
 // for sort and search
-export type TabelHeaderConfigs<T> = {
+export type TabelHeaderConfigs<T extends Collection> = {
   name: string
 }[]
 
-type DatabaseTableProps<T> = {
-  items: ItemList<T>
-  propForList?: ListKitProps<T>
+type DatabaseTableProps<T extends Collection> = {
+  items: MayFn<T | undefined>
+  propForList?: ListKitProps<GetCollectionValue<T>>
   // essiential for collection/favorite system
-  getKey: (item: T) => string
+  getKey: (item: GetCollectionValue<T>) => string
   // config for sort
-  headerConfig: TabelHeaderConfigs<T>
-  itemRowConfig?: DatabaseTabelItemRenderConfig<T>
-  itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<T>
-  itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<T>
+  headerConfig: TabelHeaderConfigs<GetCollectionValue<T>>
+  itemRowConfig?: DatabaseTabelItemRenderConfig<GetCollectionValue<T>>
+  itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<GetCollectionValue<T>>
+  itemContentConfig: DatabaseTabelItemCollapseContentRenderConfig<GetCollectionValue<T>>
   title: string
   subtitle?: string
   subtitleDescription?: string
@@ -56,7 +55,7 @@ type DatabaseTableProps<T> = {
   // TableBodyTopLeft?: PivChild
   TableBodyTopMiddle?: PivChild
   TableBodyTopRight?: PivChild
-  onClickItem?: (item: T) => void
+  onClickItem?: (item: GetCollectionValue<T>) => void
 }
 
 type RowWidths = number[]
@@ -77,7 +76,9 @@ const DatabaseTableContext = createContext<DatabaseTabelContextValue>(
  *
  * show a list of items in CyberPanel
  */
-export function DatabaseTable<T>(kitProps: KitProps<DatabaseTableProps<T>, { noNeedDeAccessifyProps: ["getKey"] }>) {
+export function DatabaseTable<T extends Collection>(
+  kitProps: KitProps<DatabaseTableProps<T>, { noNeedDeAccessifyProps: ["getKey"] }>,
+) {
   const { props, shadowProps } = useKitProps(kitProps, {
     name: "DatabaseTable",
     noNeedDeAccessifyProps: ["getItemKey"],
@@ -241,7 +242,7 @@ function DatabaseTableItemCollapseFace<T>(
   const { props, shadowProps } = useKitProps(kitProps, { name: "DatabaseTableItemCollapseFace" })
   const { databaseTableGridTemplate, setItemPiecesWidth } = useContext(DatabaseTableContext)
   return (
-    <Row shadowProps={shadowProps} icss={[icssCenterY,databaseTableRowCollapseFaceStyle]}>
+    <Row shadowProps={shadowProps} icss={[icssCenterY, databaseTableRowCollapseFaceStyle]}>
       <Box icss={{ width: "24px", marginRight: "8px" }}>
         <ItemStarIcon />
       </Box>
@@ -261,7 +262,7 @@ function DatabaseTableItemCollapseFace<T>(
       </Group>
     </Row>
   )
-} 
+}
 /**
  * usually used for detecting user favorite/collected
  */

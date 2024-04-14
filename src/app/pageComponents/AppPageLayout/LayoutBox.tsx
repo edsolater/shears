@@ -11,11 +11,12 @@ import {
   icssGrid,
   renderAsHTMLAside,
   useKitProps,
+  useShortcutsRegister,
 } from "@edsolater/pivkit"
-import { createEffect, createSignal, on, onCleanup, onMount } from "solid-js"
+import { createEffect, createSignal, onCleanup } from "solid-js"
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
-import { registerShortcut, useShortcuts, useShortcutsRegister } from "../../pages/App"
+import { documentElement } from "../../utils/documentElement"
 
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
@@ -52,11 +53,12 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
   useMetaTitle(props.metaTitle)
   const [isSideMenuOpen, { set, toggle }] = createDisclosure()
 
-  useShortcutsRegister({
-    description: "Toggle Side Menu",
-    shortcut: "alt + w",
-    fn: () => {
-      toggle()
+  useShortcutsRegister(documentElement, {
+    "Toggle Side Menu": {
+      shortcut: "alt + w",
+      fn: () => {
+        toggle()
+      },
     },
   })
 
