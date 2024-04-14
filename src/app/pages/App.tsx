@@ -37,9 +37,14 @@ const uikitConfig: UIKitThemeConfig = {
 configUIKitTheme(uikitConfig)
 initAppContextConfig({ themeMode: "dark", onlyAltSelect: true })
 
-const { ContextProvider, useShortcuts, registerShortcut } = createShortcutContext()
+const {
+  ContextProvider: KeyboardShortcutContext,
+  useShortcuts,
+  registerShortcut,
+  useShortcutsRegister,
+} = createShortcutContext()
 
-export { registerShortcut, useShortcuts }
+export { registerShortcut, useShortcuts, useShortcutsRegister }
 
 export function App(props: RouteSectionProps) {
   const navigate = useNavigate()
@@ -57,7 +62,7 @@ export function App(props: RouteSectionProps) {
   const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppPageLayout
   useExperimentalCode()
   return (
-    <ContextProvider>
+    <KeyboardShortcutContext>
       {needLayout() ? (
         <>
           <KeyboardShortcutPanel />
@@ -66,7 +71,7 @@ export function App(props: RouteSectionProps) {
       ) : (
         props.children
       )}
-    </ContextProvider>
+    </KeyboardShortcutContext>
   )
 }
 

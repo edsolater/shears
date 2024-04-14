@@ -15,7 +15,7 @@ import {
 import { createEffect, createSignal, on, onCleanup, onMount } from "solid-js"
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
-import { registerShortcut } from "../../pages/App"
+import { registerShortcut, useShortcuts, useShortcutsRegister } from "../../pages/App"
 
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
@@ -52,15 +52,12 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
   useMetaTitle(props.metaTitle)
   const [isSideMenuOpen, { set, toggle }] = createDisclosure()
 
-  onMount(() => {
-    const { remove } = registerShortcut({
-      description: "Toggle Side Menu",
-      shortcut: "alt + \\",
-      fn: () => {
-        console.log("🎉 toggle side menu")
-      },
-    })
-    onCleanup(remove)
+  useShortcutsRegister({
+    description: "Toggle Side Menu",
+    shortcut: "alt + w",
+    fn: () => {
+      toggle()
+    },
   })
 
   // const isSideMenuOpen = createIntervalSignal({ intervalDelay: 3000, default: true, run: false })
