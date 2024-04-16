@@ -1,9 +1,9 @@
 import { capitalize, map, switchCase } from "@edsolater/fnkit"
 import {
   Box,
+  InfiniteScrollList,
   Input,
   KeybordShortcutKeys,
-  List,
   Text,
   UIKitThemeConfig,
   configUIKitTheme,
@@ -18,7 +18,7 @@ import {
   useShortcutsRegister,
 } from "@edsolater/pivkit"
 import { RouteSectionProps, useNavigate } from "@solidjs/router"
-import { createMemo } from "solid-js"
+import { createEffect, createMemo, on } from "solid-js"
 import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
 import { createTask } from "../../packages/conveyor/smartStore/task"
@@ -62,7 +62,7 @@ export function App(props: RouteSectionProps) {
 function KeyboardShortcutPanel() {
   const navigate = useNavigate()
   const { shortcuts } = useShortcutsInfo(documentElement)
-  useShortcutsRegister(
+  const { updateShortcut } = useShortcutsRegister(
     documentElement,
     map(globalRouteShortcuts, ({ to, shortcut }) => ({
       shortcut,
@@ -72,7 +72,7 @@ function KeyboardShortcutPanel() {
 
   // utils for update shortcut
   const updateSetting = (description: string, shortcut: KeybordShortcutKeys) => {
-    // setSettings((s) => ({ ...s, [description]: { ...s[description], keyboardShortcut: shortcut } }))
+    updateShortcut(description, { shortcut })
   }
   const increasing = createIncresingAccessor({ eachTime: 2000 })
   return (
@@ -88,23 +88,25 @@ function KeyboardShortcutPanel() {
         backdropFilter: "blur(2px) brightness(0.2)",
       }}
     >
-      <List items={shortcuts}>
-        {(shortcutItem) => (
+      <InfiniteScrollList items={shortcuts()}>
+        {({ description, shortcut }) => (
           <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
-            <Text icss={cssColors.labelColor}>{shortcutItem.description}</Text>
+            <Text icss={cssColors.labelColor}>{description}</Text>
             <Input
-              value={String(shortcutItem.shortcut)}
+              value={String(shortcut)}
               icss={{ border: "solid" }}
               disableUserInput
               plugin={keyboardShortcutObserverPlugin({
-                onRecordShortcut(newShortcut) {
-                  updateSetting(shortcutItem.description, newShortcut)
+                onRecordShortcut({ shortcut: newShortcut, el }) {
+                  if (newShortcut !== shortcut) {
+                    updateSetting(description, newShortcut)
+                  }
                 },
               })}
             />
           </Box>
         )}
-      </List>
+      </InfiniteScrollList>
     </Box>
   )
 }

@@ -5,7 +5,7 @@ import {
   Input,
   InputKitProps,
   KitProps,
-  List,
+  InfiniteScrollList,
   Modal,
   ModalController,
   Panel,
@@ -128,9 +128,9 @@ function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
 
       <Text icss={{ fontSize: "14px", fontWeight: "bold" }}>Token</Text>
 
-      <List items={turncate(tokens, 10)}>
+      <InfiniteScrollList items={turncate(tokens, 10)}>
         {(token) => <TokenSelectorModalContent_TokenItem token={token} onSelect={props.onTokenSelect} />}
-      </List>
+      </InfiniteScrollList>
     </Panel>
   )
 }

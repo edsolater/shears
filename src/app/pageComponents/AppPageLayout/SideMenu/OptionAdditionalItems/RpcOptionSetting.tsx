@@ -7,7 +7,7 @@ import {
   Icon,
   Input,
   KitProps,
-  Loop,
+  List,
   Panel,
   Piv,
   Row,
@@ -76,7 +76,7 @@ function RPCPanel(props: {
 }) {
   return (
     <RPCPanelBox>
-      <Loop of={props.availableRpcs} icss={icssDivider}>
+      <List items={props.availableRpcs} icss={icssDivider}>
         {(rpc) => (
           <RPCPanelItem
             icss={{ paddingBlock: "0.75rem" }}
@@ -87,7 +87,7 @@ function RPCPanel(props: {
             isRecommanded={true}
           />
         )}
-      </Loop>
+      </List>
 
       <RPCPanelInputBox
         icss={{ flex: 1 }}

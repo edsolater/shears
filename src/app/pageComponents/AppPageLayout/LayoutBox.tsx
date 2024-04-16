@@ -94,7 +94,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
           width: isSideMenuOpen() ? "clamp(40px, 30vw, 400px)" : "0vw",
           overflow: "hidden",
           gridArea: "side",
-          transition: "900ms",
+          transition: "500ms",
           containerType: "size",
         }}
         render:self={renderAsHTMLAside}

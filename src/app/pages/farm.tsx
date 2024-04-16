@@ -1,5 +1,5 @@
 import { add, find, toStringNumber } from "@edsolater/fnkit"
-import { Box, CollapseBox, CollapseFace, List, Piv, createCachedGlobalHook } from "@edsolater/pivkit"
+import { Box, CollapseBox, CollapseFace, InfiniteScrollList, Piv, createCachedGlobalHook } from "@edsolater/pivkit"
 import { For, Setter, Show, createMemo, createSignal } from "solid-js"
 import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
@@ -48,7 +48,7 @@ function FarmList() {
   const farmInfos = store.farmInfos
 
   return (
-    <List items={farmInfos}>
+    <InfiniteScrollList items={farmInfos}>
       {(info, farmId, idx) => (
         <CollapseBox icss={{ background: idx() % 2 ? "#eeee" : "transparent" }}>
           <CollapseFace>
@@ -111,6 +111,6 @@ function FarmList() {
           </CollapseBox.Content>
         </CollapseBox>
       )}
-    </List>
+    </InfiniteScrollList>
   )
 }

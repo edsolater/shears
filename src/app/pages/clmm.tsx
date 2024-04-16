@@ -4,7 +4,7 @@ import {
   Col,
   Icon,
   KitProps,
-  Loop,
+  List,
   Row,
   Text,
   cssOpacity,
@@ -121,7 +121,7 @@ export default function ClmmsPage() {
       name: "Rewards",
       render: (i) => (
         <Row icss={{ gap: "2px" }}>
-          <Loop of={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} size={"sm"} />}</Loop>
+          <List items={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} size={"sm"} />}</List>
         </Row>
       ),
     },
@@ -391,7 +391,7 @@ function ClmmPageTabBlock(props: { className?: string }) {
   return (
     <Tabs>
       <TabList icss={{ "& > *": { marginInline: "8px" } }}>
-        <Loop of={allClmmTabs}>{(clmmTab) => <Tab>{clmmTab}</Tab>}</Loop>
+        <List items={allClmmTabs}>{(clmmTab) => <Tab>{clmmTab}</Tab>}</List>
       </TabList>
     </Tabs>
   )
