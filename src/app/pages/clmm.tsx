@@ -8,27 +8,26 @@ import {
   Row,
   Text,
   cssOpacity,
-  cssRepeatingLinearGradient,
   icssCenter,
   icssGrid,
-  useKitProps,
+  useKitProps
 } from "@edsolater/pivkit"
 import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
 import { ListBox } from "../../packages/pivkit/components/ListBox"
-import { RefreshCircle } from "../components/RefreshCircle"
 import {
   DatabaseTable,
   type DatabaseTabelItemCollapseContentRenderConfig,
   type DatabaseTabelItemCollapseFaceRenderConfig,
   type TabelHeaderConfigs,
 } from "../components/DatabaseTable"
+import { RefreshCircle } from "../components/RefreshCircle"
 import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
-import { oneWayInvoke, useIntervalLoop, usePercentLoop } from "../hooks/usePercentLoop"
+import { useIntervalLoop } from "../hooks/usePercentLoop"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { calcTotalClmmLiquidityUSD, useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
@@ -37,10 +36,10 @@ import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceCh
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
 import { reportLog } from "../stores/data/utils/logger"
+import { colors } from "../theme/colors"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
-import { colors } from "../theme/colors"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({

@@ -7,8 +7,8 @@ import { buildPopover, useKeyboardShortcut } from "../../plugins"
 import { cssVar, icssCardPanel, icssClickable, icssRow } from "../../styles"
 import { Box } from "../Boxes"
 import { ItemBox, ItemBoxKitProps } from "../ItemBox"
-import { Loop } from "../Loop"
 import { useItems } from "./useItems"
+import { List } from "@edsolater/pivkit"
 
 type SelectableItem = unknown
 
@@ -163,7 +163,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
         plugin={popoverPlugins.panel}
         icss={[icssCardPanel, { padding: "revert", paddingBlock: "8px" }]}
       >
-        <Loop of={items}>
+        <List items={items}>
           {(i, idx) => {
             const isSelected = () => i === item()
             const itemValue = () => getItemValue(i)
@@ -192,7 +192,7 @@ export function Select<T extends SelectableItem>(rawProps: SelectKitProps<T>) {
               </ItemBox>
             )
           }}
-        </Loop>
+        </List>
       </Box>
     </>
   )

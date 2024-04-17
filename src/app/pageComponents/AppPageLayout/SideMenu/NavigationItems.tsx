@@ -1,9 +1,9 @@
 import {
   Accessify,
   Box,
-  Col,
   Icon,
   KitProps,
+  List,
   Piv,
   Row,
   cssOpacity,
@@ -12,8 +12,7 @@ import {
   useKitProps,
 } from "@edsolater/pivkit"
 import { useLocation } from "@solidjs/router"
-import { Show, createEffect, createMemo, createSelector } from "solid-js"
-import { Loop } from "../../../../packages/pivkit"
+import { Show, createMemo, createSelector } from "solid-js"
 import { Link } from "../../../components/Link"
 import { routes } from "../../../configs/routes"
 
@@ -21,9 +20,9 @@ export function NavRouteItems() {
   const location = useLocation()
   const pathnameSelector = createSelector(() => location.pathname)
   return (
-    <Loop
+    <List
       wrapper={Piv}
-      of={routes}
+      items={routes}
       icss={[
         icssCol(),
         {
@@ -50,7 +49,7 @@ export function NavRouteItems() {
           </LinkItem>
         </Show>
       )}
-    </Loop>
+    </List>
   )
 }
 type LinkItemProps = {

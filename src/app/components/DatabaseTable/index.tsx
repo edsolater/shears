@@ -1,34 +1,30 @@
+import { shrinkFn, type Collection, type GetCollectionValue, type MayFn } from "@edsolater/fnkit"
 import {
   Box,
   Col,
+  CollapseBox,
   Group,
   ICSS,
   Icon,
+  InfiniteScrollList,
   KitProps,
+  List,
   PivChild,
   Row,
   Text,
+  icssCenterY,
   icssClickable,
   useKitProps,
-  CollapseBox,
-  icssCenterY,
+  type InfiniteScrollListKitProps,
 } from "@edsolater/pivkit"
 import { Accessor, createContext, createMemo, createSignal, useContext } from "solid-js"
-import {
-  List,
-  Loop,
-  icssItemRowGrid,
-  icssThreeSlotGrid,
-  parseICSSToClassName,
-  type ListKitProps,
-} from "../../../packages/pivkit"
+import { icssItemRowGrid, icssThreeSlotGrid, parseICSSToClassName } from "../../../packages/pivkit"
 import { icssClmmItemRow, icssClmmItemRowCollapse } from "../../pages/clmm"
 import { DatabaseItemFacePartTextDetail } from "../../pages/pool"
 import { colors } from "../../theme/colors"
 import { scrollbarWidth } from "../../theme/misc"
 import { Title } from "../BoardTitle"
 import { CyberPanel } from "../CyberPanel"
-import { shrinkFn, type Collection, type GetCollectionValue, type Items, type MayFn } from "@edsolater/fnkit"
 
 // for sort and search
 export type TabelHeaderConfigs<T extends Collection> = {
@@ -37,7 +33,7 @@ export type TabelHeaderConfigs<T extends Collection> = {
 
 type DatabaseTableProps<T extends Collection> = {
   items: MayFn<T | undefined>
-  propForList?: ListKitProps<GetCollectionValue<T>>
+  propForList?: InfiniteScrollListKitProps<GetCollectionValue<T>>
   // essiential for collection/favorite system
   getKey: (item: GetCollectionValue<T>) => string
   // config for sort
@@ -150,14 +146,14 @@ export function DatabaseTable<T extends Collection>(
             <Box icss={{ width: "32px" }}></Box>
 
             <Box icss={[{ flexGrow: 1 }, headerICSS()]}>
-              <Loop of={cellNames}>
+              <List items={cellNames}>
                 {(headerLabel) => <Text icss={{ fontWeight: "bold", color: colors.textSecondary }}>{headerLabel}</Text>}
-              </Loop>
+              </List>
             </Box>
           </Group>
 
           <Group name="items">
-            <List
+            <InfiniteScrollList // FIXME why can't be <List> ? 🤔
               shadowProps={props.propForList}
               items={props.items}
               icss={{
@@ -167,7 +163,7 @@ export function DatabaseTable<T extends Collection>(
                 marginRight: `-${scrollbarWidth}px`,
               }}
             >
-              {(item, idx) => (
+              {(item: any) => (
                 <DatabaseTableItem
                   item={item}
                   key={kitProps.getKey(item)}
@@ -178,7 +174,7 @@ export function DatabaseTable<T extends Collection>(
                   onClickItem={props.onClickItem}
                 />
               )}
-            </List>
+            </InfiniteScrollList>
           </Group>
         </CyberPanel>
       </Col>
@@ -248,7 +244,7 @@ function DatabaseTableItemCollapseFace<T>(
       </Box>
 
       <Group name="item-parts" icss={[{ flex: 1 }, databaseTableGridTemplate?.()]}>
-        <Loop of={props.innerConfig}>
+        <List items={props.innerConfig}>
           {(config, idx) => (
             <DatabaseItemFacePartTextDetail
               name={config.name}
@@ -258,7 +254,7 @@ function DatabaseTableItemCollapseFace<T>(
               }}
             />
           )}
-        </Loop>
+        </List>
       </Group>
     </Row>
   )
