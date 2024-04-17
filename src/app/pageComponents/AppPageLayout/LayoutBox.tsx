@@ -1,3 +1,4 @@
+import type { MayArray } from "@edsolater/fnkit"
 import {
   Box,
   Fragnment,
@@ -10,10 +11,13 @@ import {
   icssCol,
   icssGrid,
   renderAsHTMLAside,
+  useComponentContext,
   useKitProps,
   useShortcutsRegister,
+  type KeybordShortcutKeys,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal, onCleanup } from "solid-js"
+import { AppPageLayoutContext } from "."
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
 import { documentElement } from "../../utils/documentElement"
@@ -22,10 +26,11 @@ export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
 
   "render:contentBanner"?: PivChild
-  "render:topBarBanner"?: PivChild
-  "render:topBar"?: PivChild
-  "render:sideBar"?: PivChild
-  renderContent?: PivChild
+  "TopbarBanner"?: PivChild
+  "Topbar"?: PivChild
+  Sidebar?: PivChild
+  sidebarShortcut?: MayArray<KeybordShortcutKeys>
+  Content?: PivChild
 }
 
 // should feature build-in pivkit's createDisclousure
@@ -49,13 +54,15 @@ function createIntervalSignal(rawOptions?: { run?: boolean; intervalDelay?: numb
  * TEMP: add haveData to fix scrolling bug
  */
 export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutBoxProps>) {
-  const { props } = useKitProps(kitProps)
+  const { props } = useKitProps(kitProps, { defaultProps: { sidebarShortcut: "alt + w" } })
   useMetaTitle(props.metaTitle)
+  const [layoutContext, setLayoutContext] = useComponentContext(AppPageLayoutContext)
   const [isSideMenuOpen, { set, toggle }] = createDisclosure()
+  setLayoutContext({ isSideMenuOpen: isSideMenuOpen })
 
   useShortcutsRegister(documentElement, {
     "Toggle Side Menu": {
-      shortcut: "alt + w",
+      shortcut: props.sidebarShortcut,
       fn: () => {
         toggle()
       },
@@ -81,11 +88,11 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
       }}
     >
       <Item name={"top-banner"} icss={{ gridArea: "ban" }}>
-        {props["render:topBarBanner"]}
+        {props["TopbarBanner"]}
       </Item>
 
       <Item name={"top-menu"} icss={{ gridArea: "top" }}>
-        {props["render:topBar"]}
+        {props["Topbar"]}
       </Item>
 
       <Item
@@ -99,7 +106,7 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
         }}
         render:self={renderAsHTMLAside}
       >
-        {props["render:sideBar"]}
+        {props["Sidebar"]}
       </Item>
 
       <Item name={"content"} icss={[{ gridArea: "content" }, icssGrid]}>
