@@ -6,6 +6,7 @@ import {
   Main,
   PivChild,
   createDisclosure,
+  createDomRef,
   cssLinearGradient,
   cssVar,
   icssCol,
@@ -16,20 +17,26 @@ import {
   useShortcutsRegister,
   type KeybordShortcutKeys,
 } from "@edsolater/pivkit"
-import { createEffect, createSignal, onCleanup } from "solid-js"
+import { children, createEffect, createSignal, onCleanup } from "solid-js"
 import { AppPageLayoutContext } from "."
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
 import { documentElement } from "../../utils/documentElement"
+import { colors } from "../../theme/colors"
 
 export type AppPageLayout_LayoutBoxProps = {
   metaTitle?: string
 
   "render:contentBanner"?: PivChild
-  "TopbarBanner"?: PivChild
-  "Topbar"?: PivChild
+  TopbarBanner?: PivChild
+  Topbar?: PivChild
+
   Sidebar?: PivChild
   sidebarShortcut?: MayArray<KeybordShortcutKeys>
+  // feature:
+  sidebarCanFloating?: boolean
+  sidebarFloatingShortcut?: MayArray<KeybordShortcutKeys>
+
   Content?: PivChild
 }
 
@@ -54,21 +61,8 @@ function createIntervalSignal(rawOptions?: { run?: boolean; intervalDelay?: numb
  * TEMP: add haveData to fix scrolling bug
  */
 export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutBoxProps>) {
-  const { props } = useKitProps(kitProps, { defaultProps: { sidebarShortcut: "alt + w" } })
+  const { props } = useKitProps(kitProps)
   useMetaTitle(props.metaTitle)
-  const [layoutContext, setLayoutContext] = useComponentContext(AppPageLayoutContext)
-  const [isSideMenuOpen, { set, toggle }] = createDisclosure()
-  setLayoutContext({ isSideMenuOpen: isSideMenuOpen })
-
-  useShortcutsRegister(documentElement, {
-    "Toggle Side Menu": {
-      shortcut: props.sidebarShortcut,
-      fn: () => {
-        toggle()
-      },
-    },
-  })
-
   // const isSideMenuOpen = createIntervalSignal({ intervalDelay: 3000, default: true, run: false })
   return (
     <Box
@@ -95,19 +89,13 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
         {props["Topbar"]}
       </Item>
 
-      <Item
-        name={"side-menu"}
-        icss={{
-          width: isSideMenuOpen() ? "clamp(40px, 30vw, 400px)" : "0vw",
-          overflow: "hidden",
-          gridArea: "side",
-          transition: "500ms",
-          containerType: "size",
-        }}
-        render:self={renderAsHTMLAside}
+      <SideMenuManager
+        toggleShortcut={props.sidebarShortcut}
+        canFloating={props.sidebarCanFloating}
+        changeToFloatingShortcut={props.sidebarFloatingShortcut}
       >
         {props["Sidebar"]}
-      </Item>
+      </SideMenuManager>
 
       <Item name={"content"} icss={[{ gridArea: "content" }, icssGrid]}>
         <Main
@@ -141,5 +129,91 @@ export function AppPageLayout_LayoutBox(kitProps: KitProps<AppPageLayout_LayoutB
         </Main>
       </Item>
     </Box>
+  )
+}
+
+/** always render */
+function SideMenuManager(
+  kitprops: KitProps<{
+    children?: PivChild
+    toggleShortcut?: MayArray<KeybordShortcutKeys>
+    canFloating?: boolean
+    changeToFloatingShortcut?: MayArray<KeybordShortcutKeys>
+  }>,
+) {
+  const { props, shadowProps } = useKitProps(kitprops, {
+    defaultProps: { toggleShortcut: "alt + \\", changeToFloatingShortcut: "shift + alt + \\" },
+  })
+  const [layoutContext, setLayoutContext] = useComponentContext(AppPageLayoutContext)
+  const [isSideMenuOpen, { toggle: toggleSideMenu }] = createDisclosure(false)
+  const [isSideMenuFloating, { toggle: toggleSideMenuFloating }] = createDisclosure(true)
+  setLayoutContext({ isSideMenuOpen, isSideMenuFloating })
+  useShortcutsRegister(documentElement, {
+    "Toggle Side Menu": {
+      shortcut: props.toggleShortcut,
+      fn: () => {
+        toggleSideMenu()
+      },
+    },
+    "Sidebar Floating Mode": {
+      shortcut: props.changeToFloatingShortcut,
+      fn: () => {
+        toggleSideMenuFloating()
+      },
+    },
+  })
+  createEffect(() => {
+    console.log("isSideMenuOpen(): ", isSideMenuOpen())
+    console.log("isSideMenuFloating(): ", isSideMenuFloating())
+  })
+
+  const { dom: wrapperDOM, setDom } = createDomRef()
+  const sideMenuWidth = "clamp(40px, 30vw, 400px)"
+  // const sideMenuHeight = "80dvh"
+  return (
+    <Item // subcomponent area grid-item
+      domRef={setDom}
+      name={"side-menu"}
+      shadowProps={shadowProps}
+      icss={{
+        gridArea: "side",
+        width: isSideMenuOpen() && !isSideMenuFloating() ? sideMenuWidth : "0vw",
+        transition: "500ms",
+      }}
+      render:self={renderAsHTMLAside}
+    >
+      <Box // size & position placeholder
+        icss={{
+          width: sideMenuWidth,
+          position: "relative",
+          transform: isSideMenuOpen() ? "translateX(0)" : "translateX(-100%)",
+          transition: "500ms",
+          height: "100%",
+          zIndex: 999,
+        }}
+      >
+        <Box // content holder
+          icss={[
+            {
+              background: colors.sidebarBg,
+              position: "absolute",
+              containerType: "size",
+              transition: "200ms",
+            },
+            isSideMenuFloating()
+              ? {
+                  borderRadius: "16px",
+                  top: "8px",
+                  left: "8px",
+                  height: "calc(100% - 16px)",
+                  width: `calc(100% - 8px)`,
+                }
+              : { left: "0", top: "0", width: "100%", height: "100%" },
+          ]}
+        >
+          {props.children}
+        </Box>
+      </Box>
+    </Item>
   )
 }

@@ -1,16 +1,16 @@
 import { cssOpacity, cssVar } from "@edsolater/pivkit"
 
 /** define in [app](./app.css) */
+// https://edsolaters.notion.site/f491339a26f3480f804bda4e1d7ece7d
 export const colors = {
   // base color
   transparent: "transparent",
-  
+
   // app main bg color
   primary: "#abc4ff",
   secondary: "#22D1F8",
   secondary10: "rgba(34, 209, 248, 0.1)",
 
-  // component color
   backgroundDark: "#0b1022",
   backgroundDark50: "#0b102280",
   backgroundMedium: "#161E32",
@@ -20,6 +20,10 @@ export const colors = {
   backgroundTransparent12: "rgba(171, 196, 255, 0.12)",
   backgroundTransparent07: "rgba(171, 196, 255, 0.07)",
   backgroundTransparent10: "rgba(171, 196, 255, 0.1)",
+
+  // component color
+
+  sidebarBg: "#131a35",
 
   // text
   textPrimary: cssVar("--text-primary"),

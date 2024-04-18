@@ -13,7 +13,7 @@ export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
   const [appLayoutContext, setAppLayoutContext] = useComponentContext(AppPageLayoutContext)
   createEffect(() => {
-    console.log("opened: ", appLayoutContext.isSideMenuOpen?.())
+    // console.log("opened: ", appLayoutContext.isSideMenuOpen?.())
   })
   return (
     <Col

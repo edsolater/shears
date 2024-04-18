@@ -11,6 +11,7 @@ type AppPageLayoutProps = {
 
 export const AppPageLayoutContext = createComponentContext<{
   isSideMenuOpen?: Accessor<boolean>
+  isSideMenuFloating?: Accessor<boolean>
   toggleSideMenu?: () => void
 }>()
 

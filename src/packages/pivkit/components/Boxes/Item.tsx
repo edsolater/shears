@@ -8,6 +8,7 @@ export type ItemProps = BoxProps & {
 export type ItemKitProps = KitProps<ItemProps>
 
 /**
+ * extends from `<Box>`
  * for direct sub component of `<GridBox>`
  */
 export function Item(rawProps: ItemKitProps) {
