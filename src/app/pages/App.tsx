@@ -25,7 +25,7 @@ import { createTask } from "../../packages/conveyor/smartStore/task"
 import { globalRouteShortcuts } from "../configs/globalShortcuts"
 import { routes } from "../configs/routes"
 import { initAppContextConfig } from "../hooks/initAppContextConfig"
-import { AppPageLayout } from "../pageComponents/AppPageLayout"
+import { AppMentor } from "../pageComponents/AppMentor"
 import { documentElement } from "../utils/documentElement"
 
 const uikitConfig: UIKitThemeConfig = {
@@ -43,14 +43,14 @@ export function App(props: RouteSectionProps) {
   const title = createMemo(() =>
     switchCase(location.pathname, { "/": "Home" }, (pathname) => pathname.split("/").map(capitalize).join(" ")),
   )
-  const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppPageLayout
+  const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppMentor
   useExperimentalCode()
   return (
     <>
       {needLayout() ? (
         <>
           <KeyboardShortcutPanel />
-          <AppPageLayout metaTitle={title()}>{props.children}</AppPageLayout>
+          <AppMentor metaTitle={title()}>{props.children}</AppMentor>
         </>
       ) : (
         props.children
