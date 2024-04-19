@@ -1,21 +1,21 @@
 import { KitProps, createComponentContext, useKitProps } from "@edsolater/pivkit"
 import { type Accessor } from "solid-js"
 import { useMetaTitle } from "../../hooks/useMetaTitle"
-import { AppManager_LayoutBox, AppManager_LayoutBoxProps } from "./LayoutBox"
-import { AppManager_NavBar } from "./NavBar"
+import { AppKeeper_LayoutBox, AppKeeper_LayoutBoxProps } from "./LayoutBox"
+import { AppKeeper_NavBar } from "./NavBar"
 import { NavSideMenu } from "./SideMenu"
 
-type AppManagerProps = {
-  metaTitle?: AppManager_LayoutBoxProps["metaTitle"]
+type AppKeeperProps = {
+  metaTitle?: AppKeeper_LayoutBoxProps["metaTitle"]
 }
 
-export const AppManagerContext = createComponentContext<{
+export const AppKeeperContext = createComponentContext<{
   isSideMenuOpen?: Accessor<boolean>
   isSideMenuFloating?: Accessor<boolean>
   toggleSideMenu?: () => void
 }>()
 
-export function AppManager(kitProps: KitProps<AppManagerProps>) {
+export function AppKeeper(kitProps: KitProps<AppKeeperProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
 
   // app layout context
@@ -23,15 +23,15 @@ export function AppManager(kitProps: KitProps<AppManagerProps>) {
   useMetaTitle(() => props.metaTitle)
 
   return (
-    <AppManagerContext.Provider value={{}}>
-      <AppManager_LayoutBox
+    <AppKeeperContext.Provider value={{}}>
+      <AppKeeper_LayoutBox
         shadowProps={shadowProps}
         metaTitle={props.metaTitle}
-        Topbar={<AppManager_NavBar />}
+        Topbar={<AppKeeper_NavBar />}
         Sidebar={<NavSideMenu />}
       >
         {props.children}
-      </AppManager_LayoutBox>
-    </AppManagerContext.Provider>
+      </AppKeeper_LayoutBox>
+    </AppKeeperContext.Provider>
   )
 }

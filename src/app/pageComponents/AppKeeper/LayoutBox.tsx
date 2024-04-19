@@ -18,13 +18,13 @@ import {
   type KeybordShortcutKeys,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal, onCleanup } from "solid-js"
-import { AppManagerContext } from "."
+import { AppKeeperContext } from "."
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
 import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
 
-export type AppManager_LayoutBoxProps = {
+export type AppKeeper_LayoutBoxProps = {
   metaTitle?: string
 
   "render:contentBanner"?: PivChild
@@ -60,7 +60,7 @@ function createIntervalSignal(rawOptions?: { run?: boolean; intervalDelay?: numb
  *
  * TEMP: add haveData to fix scrolling bug
  */
-export function AppManager_LayoutBox(kitProps: KitProps<AppManager_LayoutBoxProps>) {
+export function AppKeeper_LayoutBox(kitProps: KitProps<AppKeeper_LayoutBoxProps>) {
   const { props } = useKitProps(kitProps)
   useMetaTitle(props.metaTitle)
   // const isSideMenuOpen = createIntervalSignal({ intervalDelay: 3000, default: true, run: false })
@@ -144,7 +144,7 @@ function SideMenuManager(
   const { props, shadowProps } = useKitProps(kitprops, {
     defaultProps: { toggleShortcut: "alt + \\", changeToFloatingShortcut: "shift + alt + \\" },
   })
-  const [layoutContext, setLayoutContext] = useComponentContext(AppManagerContext)
+  const [layoutContext, setLayoutContext] = useComponentContext(AppKeeperContext)
   const [isSideMenuOpen, { toggle: toggleSideMenu }] = createDisclosure(false)
   const [isSideMenuFloating, { toggle: toggleSideMenuFloating }] = createDisclosure(true)
   setLayoutContext({ isSideMenuOpen, isSideMenuFloating })

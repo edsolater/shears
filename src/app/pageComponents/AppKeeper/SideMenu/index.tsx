@@ -1,7 +1,7 @@
 import { Col, Grid, KitProps, useComponentContext, useKitProps } from "@edsolater/pivkit"
 import { NavRouteItems } from "./NavigationItems"
 import { OptionAdditionalItems } from "./OptionAdditionalItems"
-import { AppManagerContext } from ".."
+import { AppKeeperContext } from ".."
 import { createEffect } from "solid-js"
 
 /**
@@ -11,7 +11,7 @@ export type NavSideMenuProps = {}
 
 export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
-  const [appLayoutContext, setAppLayoutContext] = useComponentContext(AppManagerContext)
+  const [appLayoutContext, setAppLayoutContext] = useComponentContext(AppKeeperContext)
   createEffect(() => {
     
   })

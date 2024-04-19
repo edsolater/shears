@@ -13,7 +13,7 @@ type RouteItem = {
   icon?: string
 
   visiable: boolean
-  needAppManager: boolean
+  needAppKeeper: boolean
 }
 
 function createRouteItem(options: RouteItem): RouteItem {
@@ -23,7 +23,7 @@ function createRouteItem(options: RouteItem): RouteItem {
     component: options.component,
     icon: options.icon,
     visiable: options.visiable,
-    needAppManager: options.needAppManager,
+    needAppKeeper: options.needAppKeeper,
   }
 }
 
@@ -38,7 +38,7 @@ export const homeRouteItem = createRouteItem({
   name: "home",
   path: homeRoutePath,
   component: HomePage,
-  needAppManager: false,
+  needAppKeeper: false,
   visiable: false,
 })
 export const swapRouteItem = createRouteItem({
@@ -47,7 +47,7 @@ export const swapRouteItem = createRouteItem({
   component: SwapPage,
   icon: "/icons/entry-icon-swap.svg",
   visiable: true,
-  needAppManager: true,
+  needAppKeeper: true,
 })
 export const poolsRouteItem = createRouteItem({
   name: "pools",
@@ -55,7 +55,7 @@ export const poolsRouteItem = createRouteItem({
   component: PoolsPage,
   icon: "/icons/entry-icon-pools.svg",
   visiable: true,
-  needAppManager: true,
+  needAppKeeper: true,
 })
 export const farmsRouteItem = createRouteItem({
   name: "farms",
@@ -63,21 +63,21 @@ export const farmsRouteItem = createRouteItem({
   component: FarmPage,
   icon: "/icons/entry-icon-farms.svg",
   visiable: true,
-  needAppManager: true,
+  needAppKeeper: true,
 })
 export const playgroundRouteItem = createRouteItem({
   name: "playground",
   path: playgroundRoutePath,
   component: PlaygroundPage,
   visiable: true,
-  needAppManager: true,
+  needAppKeeper: true,
 })
 export const clmmRouteItem = createRouteItem({
   name: "clmm",
   path: clmmRoutePath,
   component: ClmmsPage,
   visiable: true,
-  needAppManager: true,
+  needAppKeeper: true,
 })
 export const routes = [homeRouteItem, swapRouteItem, poolsRouteItem, farmsRouteItem, playgroundRouteItem, clmmRouteItem]
 
