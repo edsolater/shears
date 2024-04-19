@@ -13,8 +13,9 @@ export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
   const [appLayoutContext, setAppLayoutContext] = useComponentContext(AppManagerContext)
   createEffect(() => {
-    // console.log("opened: ", appLayoutContext.isSideMenuOpen?.())
+    
   })
+  console.log('render side menu')
   return (
     <Col
       shadowProps={shadowProps}

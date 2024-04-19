@@ -17,12 +17,12 @@ import {
   useShortcutsRegister,
   type KeybordShortcutKeys,
 } from "@edsolater/pivkit"
-import { children, createEffect, createSignal, onCleanup } from "solid-js"
+import { createEffect, createSignal, onCleanup } from "solid-js"
 import { AppManagerContext } from "."
 import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
-import { documentElement } from "../../utils/documentElement"
 import { colors } from "../../theme/colors"
+import { documentElement } from "../../utils/documentElement"
 
 export type AppManager_LayoutBoxProps = {
   metaTitle?: string
@@ -167,6 +167,12 @@ function SideMenuManager(
     console.log("isSideMenuFloating(): ", isSideMenuFloating())
   })
 
+  const [haveRenderContent, setHaveRenderContent] = createSignal(isSideMenuOpen()) // one-way of isSideMenuOpen
+  createEffect(() => {
+    if (isSideMenuOpen()) {
+      setHaveRenderContent(true)
+    }
+  })
   const { dom: wrapperDOM, setDom } = createDomRef()
   const sideMenuWidth = "clamp(40px, 30vw, 400px)"
   // const sideMenuHeight = "80dvh"
@@ -176,15 +182,16 @@ function SideMenuManager(
       name={"side-menu"}
       shadowProps={shadowProps}
       icss={{
+        "--side-menu-width": sideMenuWidth,
         gridArea: "side",
-        width: isSideMenuOpen() && !isSideMenuFloating() ? sideMenuWidth : "0vw",
+        width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
         transition: "500ms",
       }}
       render:self={renderAsHTMLAside}
     >
       <Box // size & position placeholder
         icss={{
-          width: sideMenuWidth,
+          width: cssVar("--side-menu-width"),
           position: "relative",
           transform: isSideMenuOpen() ? "translateX(0)" : "translateX(-100%)",
           transition: "500ms",
@@ -211,7 +218,7 @@ function SideMenuManager(
               : { left: "0", top: "0", width: "100%", height: "100%" },
           ]}
         >
-          {props.children}
+          {haveRenderContent() ? props.children : null}
         </Box>
       </Box>
     </Item>
