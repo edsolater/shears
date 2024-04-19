@@ -21,9 +21,9 @@ import { store } from "../../../stores/data/store"
 import { parseUrl } from "../../../utils/parseUrl"
 import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from "./NavWrapBox"
 
-export type AppMentor_NavBarProps = NaBar_NavWrapBoxProps
+export type AppManager_NavBarProps = NaBar_NavWrapBoxProps
 
-export function AppMentor_NavBar(props: AppMentor_NavBarProps) {
+export function AppManager_NavBar(props: AppManager_NavBarProps) {
   return (
     <NaBar_NavWrapBox>
       <Row icss:justify="space-between">
