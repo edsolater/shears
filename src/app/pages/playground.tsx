@@ -716,9 +716,10 @@ function TemporaryExample() {
 
 function DragAndDropExample() {
   const gap = "20px"
+  const { droppablePlugin, draggablePlugin } = useDragAndDrop()
   return (
     <Group>
-      <Box icss={{ border: "solid", height: "20em" }}></Box>
+      <Box icss={{ border: "solid", height: "20em" }} plugin={droppablePlugin}></Box>
       <Box
         icss={[
           {
@@ -749,7 +750,9 @@ function DragAndDropExample() {
           }),
         ]}
       >
-        <Box icss={[{ height: "13em" }, icssCenter]}>Hello</Box>
+        <Box icss={[{ height: "13em" }, icssCenter]} plugin={draggablePlugin}>
+          Drag it!!
+        </Box>
         <Box icss={icssCenter}>World</Box>
         <Box icss={icssCenter}>World</Box>
         <Box icss={icssCenter}>World</Box>
@@ -772,7 +775,7 @@ function useDragAndDrop() {
     htmlProps: {
       draggable: true,
       onDragOver: (ev: DragEvent) => {
-        ev.preventDefault() // in default browser will prevent user drop
+        ev.preventDefault() // By default, browser will prevent user drop
       },
       onDrop: (ev: DragEvent) => {
         ev.preventDefault() // browser may open in another tab(like drag native link text)
