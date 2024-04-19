@@ -38,6 +38,7 @@ import {
   useControllerByID,
   useHoverPlugin,
   useKitProps,
+  Group,
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -66,8 +67,12 @@ function ComponentSpecList() {
         gap: "4vw",
       }}
     >
+      <ExamplePanel name="Drap and Drop">
+        <DragAndDropExample />
+      </ExamplePanel>
+
       <ExamplePanel name="Temporary">
-        <VerboseExample />
+        <TemporaryExample />
       </ExamplePanel>
 
       {/* <ExamplePanel name='Drawer'>
@@ -668,7 +673,7 @@ function ViewTransitionSliderBoxExample() {
   )
 }
 
-function VerboseExample() {
+function TemporaryExample() {
   const gap = "20px"
   return (
     <Box
@@ -707,4 +712,76 @@ function VerboseExample() {
       <Box icss={icssCenter}>World</Box>
     </Box>
   )
+}
+
+function DragAndDropExample() {
+  const gap = "20px"
+  return (
+    <Group>
+      <Box icss={{ border: "solid", height: "20em" }}></Box>
+      <Box
+        icss={[
+          {
+            margin: "8px 16px",
+            padding: "16px 24px",
+            borderRadius: "16px",
+            background: cssOpacity(colors.primary, 0.2),
+            "> *": {
+              padding: "12px 16px",
+              borderRadius: "8px",
+              background: cssOpacity(colors.primary, 0.1),
+            },
+          },
+          icssGrid.config({
+            slot: 4,
+            templateColumn: "2fr 1fr 1fr 1fr",
+            gap,
+            // dividerWidth: "1px",
+            // dividerPadding: "2px",
+            // dividerBackground: cssRepeatingLinearGradient({
+            //   colors: [
+            //     [colors.transparent, "0px"],
+            //     [colors.transparent, "10px"],
+            //     [cssOpacity(colors.primary, 0.3), "10px"],
+            //     [cssOpacity(colors.primary, 0.3), "20px"],
+            //   ],
+            // }),
+          }),
+        ]}
+      >
+        <Box icss={[{ height: "13em" }, icssCenter]}>Hello</Box>
+        <Box icss={icssCenter}>World</Box>
+        <Box icss={icssCenter}>World</Box>
+        <Box icss={icssCenter}>World</Box>
+        <div ondrag={(e) => {}}></div>
+      </Box>
+    </Group>
+  )
+}
+function useDragAndDrop() {
+  const draggablePlugin = createPlugin(() => () => ({
+    htmlProps: {
+      draggable: true,
+      onDragStart: (ev: DragEvent) => {
+        const el = ev.target as HTMLElement
+        ev.dataTransfer?.setData("text/html", el.outerHTML)
+      },
+    },
+  }))
+  const droppablePlugin = createPlugin(() => () => ({
+    htmlProps: {
+      draggable: true,
+      onDragOver: (ev: DragEvent) => {
+        ev.preventDefault() // in default browser will prevent user drop
+      },
+      onDrop: (ev: DragEvent) => {
+        ev.preventDefault() // browser may open in another tab(like drag native link text)
+        const el = ev.target as HTMLElement
+        const data = ev.dataTransfer?.getData("text/html")
+        if (data) el.innerHTML = data
+      },
+    },
+  }))
+
+  return { draggablePlugin, droppablePlugin }
 }

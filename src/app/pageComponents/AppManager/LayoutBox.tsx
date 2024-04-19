@@ -162,10 +162,6 @@ function SideMenuManager(
       },
     },
   })
-  createEffect(() => {
-    console.log("isSideMenuOpen(): ", isSideMenuOpen())
-    console.log("isSideMenuFloating(): ", isSideMenuFloating())
-  })
 
   const [haveRenderContent, setHaveRenderContent] = createSignal(isSideMenuOpen()) // one-way of isSideMenuOpen
   createEffect(() => {
@@ -174,7 +170,6 @@ function SideMenuManager(
     }
   })
   const { dom: wrapperDOM, setDom } = createDomRef()
-  const sideMenuWidth = "clamp(40px, 30vw, 400px)"
   // const sideMenuHeight = "80dvh"
   return (
     <Item // subcomponent area grid-item
@@ -182,7 +177,7 @@ function SideMenuManager(
       name={"side-menu"}
       shadowProps={shadowProps}
       icss={{
-        "--side-menu-width": sideMenuWidth,
+        "--side-menu-width": "clamp(40px, 30vw, 400px)",
         gridArea: "side",
         width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
         transition: "500ms",
@@ -214,6 +209,7 @@ function SideMenuManager(
                   left: "8px",
                   height: "calc(100% - 16px)",
                   width: `calc(100% - 8px)`,
+                  boxShadow: "0 0 16px rgba(0,0,0,0.1)",
                 }
               : { left: "0", top: "0", width: "100%", height: "100%" },
           ]}
