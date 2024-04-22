@@ -1,4 +1,4 @@
-import { MayPromise, switchCase } from "@edsolater/fnkit"
+import { MayPromise, createInvoker, removeItem, switchCase } from "@edsolater/fnkit"
 import {
   AddProps,
   Box,
@@ -6,8 +6,9 @@ import {
   CollapseBox,
   Drawer,
   DrawerController,
-  Input,
+  Group,
   InfiniteScrollList,
+  Input,
   Modal,
   ModalController,
   Piv,
@@ -18,12 +19,13 @@ import {
   Tabs,
   Text,
   ValidProps,
+  attachPointerGrag,
   buildPopover,
   createDisclosure,
+  createDomRef,
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
-  cssLinearGradient,
   cssOpacity,
   cssRepeatingLinearGradient,
   icssCardPanel,
@@ -38,15 +40,16 @@ import {
   useControllerByID,
   useHoverPlugin,
   useKitProps,
-  Group,
+  addEventListener,
+  type ICSS,
+  type ICSSObject,
+  type CSSObject,
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
-import { createInvoker } from "@edsolater/fnkit"
-import { RefreshCircle } from "../components/RefreshCircle"
 import { ExamplePanel } from "../components/ExamplePanel"
+import { RefreshCircle } from "../components/RefreshCircle"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
-import { usePercentLoop } from "../hooks/usePercentLoop"
 import { colors } from "../theme/colors"
 
 export default function PlaygroundPage() {
@@ -716,10 +719,17 @@ function TemporaryExample() {
 
 function DragAndDropExample() {
   const gap = "20px"
-  const { droppablePlugin, draggablePlugin } = useDragAndDrop()
+  const icssGragItem: ICSS = {
+    padding: "12px 16px",
+    borderRadius: "8px",
+    background: cssOpacity(colors.primary, 0.1),
+  }
   return (
     <Group>
-      <Box icss={{ border: "solid", height: "20em" }} plugin={droppablePlugin}></Box>
+      <Box
+        icss={{  height: "20em" }}
+        plugin={droppablePlugin.config({ dragoverIcss: { borderColor: "dodgerblue" } })}
+      ></Box>
       <Box
         icss={[
           {
@@ -727,11 +737,7 @@ function DragAndDropExample() {
             padding: "16px 24px",
             borderRadius: "16px",
             background: cssOpacity(colors.primary, 0.2),
-            "> *": {
-              padding: "12px 16px",
-              borderRadius: "8px",
-              background: cssOpacity(colors.primary, 0.1),
-            },
+            height: "13em",
           },
           icssGrid.config({
             slot: 4,
@@ -750,41 +756,202 @@ function DragAndDropExample() {
           }),
         ]}
       >
-        <Box icss={[{ height: "13em" }, icssCenter]} plugin={draggablePlugin}>
+        <Box icss={[{ height: "100%" }, icssCenter, icssGragItem]} plugin={draggablePlugin}>
           Drag it!!
         </Box>
-        <Box icss={icssCenter}>World</Box>
-        <Box icss={icssCenter}>World</Box>
-        <Box icss={icssCenter}>World</Box>
-        <div ondrag={(e) => {}}></div>
+        <Box icss={[icssCenter, icssGragItem]}>World</Box>
+        <Box icss={[icssCenter, icssGragItem]}>World</Box>
+        <Box icss={[icssCenter, icssGragItem]}>World</Box>
       </Box>
     </Group>
   )
 }
-function useDragAndDrop() {
-  const draggablePlugin = createPlugin(() => () => ({
-    htmlProps: {
-      draggable: true,
-      onDragStart: (ev: DragEvent) => {
-        const el = ev.target as HTMLElement
-        ev.dataTransfer?.setData("text/html", el.outerHTML)
-      },
-    },
-  }))
-  const droppablePlugin = createPlugin(() => () => ({
-    htmlProps: {
-      draggable: true,
-      onDragOver: (ev: DragEvent) => {
-        ev.preventDefault() // By default, browser will prevent user drop
-      },
-      onDrop: (ev: DragEvent) => {
-        ev.preventDefault() // browser may open in another tab(like drag native link text)
-        const el = ev.target as HTMLElement
-        const data = ev.dataTransfer?.getData("text/html")
-        if (data) el.innerHTML = data
-      },
-    },
-  }))
 
-  return { draggablePlugin, droppablePlugin }
+type GestureDragCustomedEventInfo = {
+  dragElement: HTMLElement
+}
+
+// TODO move to pivkit's domkit
+/** a util for easier manage state class */
+const createStateClass = (name: string) => (el: HTMLElement) => ({
+  add: () => el.classList.add(name),
+  remove: () => el.classList.remove(name),
+})
+
+// TODO: move to pivkit
+const draggablePlugin = createPlugin((options?: { draggableIcss?: CSSObject; draggingIcss?: CSSObject }) => () => {
+  const { dom, setDom } = createDomRef()
+  let droppableElements: HTMLElement[] = []
+  createEffect(() => {
+    const el = dom()
+    if (!el) return
+    const draggableStateClassRegistry = createStateClass("_dragging")(el)
+    const draggingStateClassRegistry = createStateClass("_dragging")(el)
+    draggableStateClassRegistry.add()
+    const { remove } = attachPointerGrag(el, {
+      onMoveStart() {
+        draggingStateClassRegistry.add()
+      },
+      onMoving({ ev, el: dragElement }) {
+        const droppables = findValidDroppableAreas(ev)
+        const { newAdded, noLongerExist } = queryDiffInfo(droppableElements, droppables)
+        droppableElements = droppables
+        newAdded.forEach((el) => {
+          dispatchCustomEvent<GestureDragCustomedEventInfo>(el, "customed-dragEnter", { dragElement })
+        })
+        noLongerExist.forEach((el) => {
+          dispatchCustomEvent<GestureDragCustomedEventInfo>(el, "customed-dragLeave", { dragElement })
+        })
+      },
+      onMoveEnd({ ev, el: dragElement }) {
+        draggingStateClassRegistry.remove()
+        findValidDroppableAreas(ev).forEach((el) => {
+          dispatchCustomEvent<GestureDragCustomedEventInfo>(el, "customed-drop", { dragElement })
+        })
+      },
+    })
+    onCleanup(() => {
+      remove()
+      draggableStateClassRegistry.remove()
+    })
+  })
+  return {
+    icss: {
+      "&._draggable": {
+        cursor: "grab",
+        "&._dragging": {
+          cursor: "grabbing",
+          ...options?.draggingIcss,
+        },
+        ...options?.draggableIcss,
+      },
+    },
+    domRef: setDom,
+  }
+})
+
+// TODO: move to pivkit
+const droppablePlugin = createPlugin((options?: { droppableIcss?: CSSObject; dragoverIcss?: CSSObject }) => () => {
+  const { dom, setDom } = createDomRef()
+  createEffect(() => {
+    const el = dom()
+    if (!el) return
+    cacheElementRectInfo(el)
+
+    const { add: addDroppableStateClass, remove: removeDroppableStateClass } = createStateClass("_droppable")(el)
+    const { add: addDragoverStateClass, remove: removeDragoverStateClass } = createStateClass("_dragover")(el)
+
+    addDroppableStateClass()
+    addCustomEventListener<GestureDragCustomedEventInfo>(el, "customed-drop", ({ dragElement }) => {
+      moveElementDOMToNewContiner({ dragElement, container: el })
+      removeDragoverStateClass()
+    })
+    addCustomEventListener<GestureDragCustomedEventInfo>(el, "customed-dragEnter", () => {
+      addDragoverStateClass()
+    })
+    addCustomEventListener<GestureDragCustomedEventInfo>(el, "customed-dragLeave", () => {
+      removeDragoverStateClass()
+    })
+    onCleanup(() => {
+      deleteElementRectInfo(el)
+      removeDroppableStateClass()
+    })
+  })
+  return {
+    domRef: setDom,
+    icss: {
+      "&._droppable": {
+        "&._dragover": {
+          boxShadow: `inset 0 0 32px 16px ${cssOpacity("currentcolor", 0.4)}`,
+          ...options?.dragoverIcss,
+        },
+        ...options?.droppableIcss,
+      },
+    },
+  }
+})
+
+const dropElementsRects = new Map<HTMLElement, DOMRect>()
+
+function deleteElementRectInfo(el: HTMLElement) {
+  dropElementsRects.delete(el)
+}
+
+function cacheElementRectInfo(el: HTMLElement) {
+  dropElementsRects.set(el, el.getBoundingClientRect())
+}
+
+function findValidDroppableAreas(pointer: { x: number; y: number }) {
+  const overedElements: HTMLElement[] = []
+  for (const [el, rect] of dropElementsRects) {
+    if (pointer.x > rect.left && pointer.x < rect.right && pointer.y > rect.top && pointer.y < rect.bottom) {
+      overedElements.push(el)
+    }
+  }
+  return overedElements
+}
+
+function moveElementDOMToNewContiner({ dragElement, container }: { dragElement: HTMLElement; container: HTMLElement }) {
+  dragElement.remove()
+  container.appendChild(dragElement)
+}
+
+function queryDiffInfo<T>(oldArray: T[], newArray: T[]): { newAdded: T[]; noLongerExist: T[]; stayExisted: T[] } {
+  const newItems = new Set(newArray)
+  const removedItems = new Set(oldArray)
+  const sameItems = new Set<T>()
+  for (const item of newArray) {
+    if (removedItems.has(item)) {
+      removedItems.delete(item)
+      sameItems.add(item)
+    } else {
+      newItems.add(item)
+    }
+  }
+  return { newAdded: Array.from(newItems), noLongerExist: Array.from(removedItems), stayExisted: Array.from(sameItems) }
+}
+
+/**
+ * should emit event by {@link dispatchCustomEvent}
+ * @param el
+ * @param eventName
+ * @param listener
+ * @returns
+ */
+// TODO move to pivkit's domkit
+function addCustomEventListener<DetailInfo = any>(
+  el: HTMLElement,
+  eventName: `customed-${string}`,
+  listener: (detail: DetailInfo) => void,
+) {
+  //@ts-expect-error don't worry about type unequal
+  return addEventListener(el, eventName, ({ ev: { detail } }: { ev: CustomEvent<DetailInfo> }) => listener(detail))
+}
+
+/**
+ * should listen by {@link addCustomEventListener}
+ * @param el target element
+ * @param eventName
+ * @param detail
+ * @param options
+ * @returns
+ */
+// TODO move to pivkit's domkit
+function dispatchCustomEvent<DetailInfo = any>(
+  el: HTMLElement,
+  eventName: `customed-${string}`,
+  detail: DetailInfo,
+  options?: {
+    /** when setted, event will fire in next frame by setTimeout*/
+    async?: boolean
+  },
+) {
+  if (options?.async) {
+    setTimeout(() => {
+      el.dispatchEvent(new CustomEvent(eventName, { detail }))
+    }, 0)
+    return
+  } else {
+    el.dispatchEvent(new CustomEvent(eventName, { detail }))
+  }
 }
