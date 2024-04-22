@@ -1,12 +1,12 @@
 import { flap, MayArray, MayFn, shrinkFn, switchCase } from "@edsolater/fnkit"
 import { Accessor, createEffect, createMemo, createSignal, on, onCleanup } from "solid-js"
 import { runtimeObject } from "../fnkit/runtimeObject"
-import { addEventListener } from "../domkit"
 import { createDomRef } from "../hooks"
 import { createRef } from "../hooks/createRef"
 import { createPlugin, CSSObject, mergeProps, PivProps } from "../piv"
 import { Accessify, accessifyProps } from "../utils/accessifyProps"
 import { createController2 } from "../utils/createController"
+import { listenDomEvent } from "@edsolater/pivkit"
 
 type TransitionPhase =
   | "hidden" /* UI unvisiable */
@@ -136,7 +136,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
   createEffect(() => {
     const el = contentDom()
     if (!el) return
-    const subscription = addEventListener(
+    const subscription = listenDomEvent(
       el,
       "transitionend",
       () => {
@@ -144,7 +144,7 @@ export function useCSSTransition(additionalOpts: CSSTransactionOptions = {}) {
       },
       { onlyTargetIsSelf: true /* not event fired by bubbled */ },
     )
-    // const subscription2 = addEventListener(
+    // const subscription2 = addDomEventListener(
     //   el,
     //   'transitioncancel',
     //   () => {

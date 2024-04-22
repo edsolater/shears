@@ -1,6 +1,6 @@
 import { shakeFalsy, toLowerCase, unifyItem } from "@edsolater/fnkit"
-import { addEventListener, EventListenerController } from "./addEventListener"
 import { addTabIndex } from "./addTabIndex"
+import { listenDomEvent, type EventListenerController } from "@edsolater/pivkit"
 
 /**
  * @see https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
@@ -85,7 +85,7 @@ export function bindKeyboardShortcutEventListener(
   options?: { stopPropagation?: boolean },
 ): EventListenerController {
   addTabIndex(el) // keydown must have fousable element
-  const subscription = addEventListener(
+  const subscription = listenDomEvent(
     el,
     "keydown",
     ({ ev }) => {

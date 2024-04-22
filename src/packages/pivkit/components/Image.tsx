@@ -1,10 +1,10 @@
 import { createEffect, createSignal, onCleanup } from "solid-js"
-import { addEventListener } from "../domkit"
 import { createRef } from "../hooks"
 import { renderHTMLDOM } from "../piv/propHandlers/renderHTMLDOM"
 
 import { KitProps, useKitProps } from "../createKit"
 import { Piv } from "../piv"
+import { listenDomEvent } from "@edsolater/pivkit"
 export interface ImageController {}
 
 export interface ImageProps {
@@ -43,7 +43,7 @@ export function Image(rawProps: ImageKitProps) {
   const { props, shadowProps } = useKitProps(rawProps, { name: "Image", defaultProps })
 
   createEffect(() => {
-    const { abort } = addEventListener(dom(), "load", () => {
+    const { abort } = listenDomEvent(dom(), "load", () => {
       setIsLoaded(true)
     })
     onCleanup(abort)

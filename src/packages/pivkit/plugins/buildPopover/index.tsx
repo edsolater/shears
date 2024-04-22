@@ -1,11 +1,11 @@
 import { Accessor, createEffect, onCleanup } from "solid-js"
 import { createRef } from "../.."
-import { addEventListener } from "../../domkit"
 import { useGestureHover } from "../../domkit/hooks/useGestureHover"
 import { createTrigger } from "../../hooks/utils/createTrigger"
 import { ICSS, PivProps, createPlugin } from "../../piv"
 import { PopoverLocationHookOptions, usePopoverLocation } from "./usePopoverLocation"
 import { PopPortal } from "../../components/PopPortal"
+import { listenDomEvent } from "@edsolater/pivkit"
 
 export type PopoverPluginOptions = Omit<PopoverLocationHookOptions, "isTriggerOn" | "buttonDom" | "panelDom"> & {
   /** @default 'hover' */
@@ -62,7 +62,7 @@ export function buildPopover(options?: PopoverPluginOptions) {
       createEffect(() => {
         const el = panelDom()
         if (!el) return
-        const { abort } = addEventListener(el, "toggle", ({ ev }) => {
+        const { abort } = listenDomEvent(el, "toggle", ({ ev }) => {
           // @ts-expect-error force
           const { newState } = ev as { newState: "open" | "closed" }
           if (newState === "open") {
