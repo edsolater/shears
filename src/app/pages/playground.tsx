@@ -1,4 +1,4 @@
-import { MayPromise, createInvoker, removeItem, switchCase } from "@edsolater/fnkit"
+import { MayPromise, createInvoker, switchCase } from "@edsolater/fnkit"
 import {
   AddProps,
   Box,
@@ -19,15 +19,15 @@ import {
   Tabs,
   Text,
   ValidProps,
-  attachPointerGrag,
   buildPopover,
   createDisclosure,
-  createDomRef,
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
   cssOpacity,
   cssRepeatingLinearGradient,
+  draggablePlugin,
+  droppablePlugin,
   icssCardPanel,
   icssCenter,
   icssCol,
@@ -40,12 +40,7 @@ import {
   useControllerByID,
   useHoverPlugin,
   useKitProps,
-  listenDomEvent,
   type ICSS,
-  type ICSSObject,
-  type CSSObject,
-  draggablePlugin,
-  droppablePlugin,
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -719,19 +714,24 @@ function TemporaryExample() {
   )
 }
 
+const SlotBox = Box
+
 function DragAndDropExample() {
   const gap = "20px"
-  const icssGragItem: ICSS = {
+  const icssFlexItem: ICSS = {
     padding: "12px 16px",
     borderRadius: "8px",
     background: cssOpacity(colors.primary, 0.1),
   }
+  const icssSlotBox = { display: "flex", padding: "8px", background: colors.backgroundLight50, gap: '4px' }
+
   return (
     <Group>
       <Box
-        icss={{  height: "20em" }}
+        icss={{ height: "20em" }}
         plugin={droppablePlugin.config({ dragoverIcss: { borderColor: "dodgerblue" } })}
       ></Box>
+      {/* TODO: should can move between different flex slots */}
       <Box
         icss={[
           {
@@ -758,12 +758,26 @@ function DragAndDropExample() {
           }),
         ]}
       >
-        <Box icss={[{ height: "100%" }, icssCenter, icssGragItem]} plugin={draggablePlugin}>
+        <Box icss={[{ height: "100%" }, icssCenter, icssFlexItem]} plugin={draggablePlugin}>
           Drag it!!
         </Box>
-        <Box icss={[icssCenter, icssGragItem]}>World</Box>
-        <Box icss={[icssCenter, icssGragItem]}>World</Box>
-        <Box icss={[icssCenter, icssGragItem]}>World</Box>
+        <Box icss={[icssCenter, icssFlexItem]}>World</Box>
+        <Box icss={[icssCenter, icssFlexItem]}>World</Box>
+        <Box icss={[icssCenter, icssFlexItem]}>World</Box>
+      </Box>
+
+      <Box icss={[{ padding: "8px", background: colors.backgroundLight30 }, icssGrid.config({ slot: 4, gap: "8px" })]}>
+        <SlotBox icss={icssSlotBox} plugin={droppablePlugin}>
+          <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
+            Drag item 1
+          </Box>
+          <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
+            Drag item 2
+          </Box>
+        </SlotBox>
+        <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
+        <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
+        <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
       </Box>
     </Group>
   )
