@@ -715,7 +715,7 @@ function TemporaryExample() {
 }
 
 const SlotBox = Box
-
+const icssSlotBox = { display: "flex", padding: "8px", background: colors.backgroundLight50, gap: "4px" }
 function DragAndDropExample() {
   const gap = "20px"
   const icssFlexItem: ICSS = {
@@ -723,7 +723,6 @@ function DragAndDropExample() {
     borderRadius: "8px",
     background: cssOpacity(colors.primary, 0.1),
   }
-  const icssSlotBox = { display: "flex", padding: "8px", background: colors.backgroundLight50, gap: '4px' }
 
   return (
     <Group>
@@ -757,6 +756,7 @@ function DragAndDropExample() {
             // }),
           }),
         ]}
+        plugin={droppablePlugin}
       >
         <Box icss={[{ height: "100%" }, icssCenter, icssFlexItem]} plugin={draggablePlugin}>
           Drag it!!
@@ -768,17 +768,28 @@ function DragAndDropExample() {
 
       <Box icss={[{ padding: "8px", background: colors.backgroundLight30 }, icssGrid.config({ slot: 4, gap: "8px" })]}>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}>
-          <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
+          {/* <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
             Drag item 1
           </Box>
           <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
             Drag item 2
-          </Box>
+          </Box> */}
         </SlotBox>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
       </Box>
+
+      <Box plugin={droppableSlotsPlugin}></Box>
     </Group>
   )
 }
+const droppableSlotsPlugin = createPlugin(() => () => ({
+  "render:firstChild": [
+    <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,
+    <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,
+    <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,
+    <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,
+  ],
+  icss: [{ padding: "8px", background: colors.backgroundLight30 }, icssGrid.config({ slot: 4, gap: "8px" })],
+}))

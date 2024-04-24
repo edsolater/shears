@@ -92,10 +92,10 @@ export function useKeyboardShortcut(
     if (!isFeatureEnabled()) return
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     els.forEach((el) => {
-      const { abort } = bindKeyboardShortcutEventListener(el, shortcuts, { stopPropagation: true })
+      const { cancel } = bindKeyboardShortcutEventListener(el, shortcuts, { stopPropagation: true })
       const { remove } = registerLocalKeyboardShortcut(el, currentSettings())
       onCleanup(() => {
-        abort()
+        cancel()
         remove()
       })
     })
@@ -120,10 +120,10 @@ export function useKeyboardGlobalShortcut(settings?: DetailKeyboardShortcutSetti
   createEffect(() => {
     const shortcuts = parseShortcutConfigFromSettings(currentSettings())
     const el = globalThis.document.documentElement
-    const { abort } = bindKeyboardShortcutEventListener(el, shortcuts)
+    const { cancel } = bindKeyboardShortcutEventListener(el, shortcuts)
     const { remove } = registerGlobalKeyboardShortcut(currentSettings())
     onCleanup(() => {
-      abort()
+      cancel()
       remove()
     })
   })
