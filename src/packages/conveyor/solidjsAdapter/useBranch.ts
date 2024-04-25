@@ -1,4 +1,4 @@
-import { InfinityObjNode } from "../../fnkit/createInfinityObj"
+import type { InfinityObjNode } from "@edsolater/fnkit"
 import { Shuck } from "../smartStore/shuck"
 import { useShuck } from "./useShuck"
 

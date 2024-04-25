@@ -1,6 +1,14 @@
-import { MayFn, cloneObject, shrinkFn } from "@edsolater/fnkit"
-import { InfinityObjNode, createTreeableInfinityNode, loadInfinityObjNode } from "../../fnkit/createInfinityObj"
-import { getByPath, setByPath, walkThroughObject } from "../../fnkit/walkThroughObject"
+import {
+  MayFn,
+  cloneObject,
+  shrinkFn,
+  getByPath,
+  setByPath,
+  travelWholeObject,
+  InfinityObjNode,
+  createTreeableInfinityNode,
+  loadInfinityObjNode,
+} from "@edsolater/fnkit"
 
 /** user can define their own FakeTree type to get more accurate type */
 export type FakeTreeify<T> = T extends object
@@ -34,7 +42,7 @@ export function createFakeTree<O extends object, FakeNodeTree extends object = F
    */
   function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
     const inputObject = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
-    walkThroughObject(inputObject, ({ keyPaths, value }) => {
+    travelWholeObject(inputObject, ({ keyPaths, value }) => {
       // set raw
       setByPath(rawObj, keyPaths, value)
 

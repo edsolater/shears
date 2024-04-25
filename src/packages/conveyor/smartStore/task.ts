@@ -3,8 +3,7 @@
  * observe user action towards the object|function
  * *********
  */
-import { createSubscribable, shrinkFn, invoke, asyncInvoke } from "@edsolater/fnkit"
-import { assignObject } from "../../fnkit/assignObject"
+import { createSubscribable, shrinkFn, invoke, asyncInvoke, assignObject } from "@edsolater/fnkit"
 import { Shuck, isShuckVisiable } from "./shuck"
 
 export type TaskRunner = {

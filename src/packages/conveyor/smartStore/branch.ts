@@ -1,8 +1,7 @@
-import { AnyObj, MayFn, Primitive, isObject, mergeObjects, shrinkFn } from "@edsolater/fnkit"
+import { MayFn, isObject, mergeObjects, shrinkFn, type InfinityObjNode } from "@edsolater/fnkit"
 import { Accessor } from "solid-js"
-import { Shuck, createShuck } from "./shuck"
 import { createFakeTree } from "./fakeTree"
-import { InfinityObjNode } from "../../fnkit/createInfinityObj"
+import { Shuck, createShuck } from "./shuck"
 
 export type SetBranchStore<T extends object> = (dispatcher: MayFn<Partial<T>, [old: T]>) => void
 
