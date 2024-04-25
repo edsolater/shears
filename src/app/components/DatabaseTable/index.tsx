@@ -12,13 +12,15 @@ import {
   PivChild,
   Row,
   Text,
+  createICSS,
   icssCenterY,
   icssClickable,
+  parseICSSToClassName,
   useKitProps,
   type InfiniteScrollListKitProps,
+  icssThreeSlotGrid,
 } from "@edsolater/pivkit"
 import { Accessor, createContext, createMemo, createSignal, useContext } from "solid-js"
-import { icssItemRowGrid, icssThreeSlotGrid, parseICSSToClassName } from "../../../packages/pivkit"
 import { icssClmmItemRow, icssClmmItemRowCollapse } from "../../pages/clmm"
 import { DatabaseItemFacePartTextDetail } from "../../pages/pool"
 import { colors } from "../../theme/colors"
@@ -97,7 +99,7 @@ export function DatabaseTable<T extends Collection>(
     { equals: (prev, next) => prev.length === next.length && prev.every((v, idx) => v === next[idx]) },
   )
 
-  const databaseTableGridICSS = () => icssItemRowGrid({ itemWidths: cellMaxWidths() })
+  const databaseTableGridICSS = () => icssTableRow({ itemWidths: cellMaxWidths() })
 
   const headerICSS = () => [
     // TODO: should also in createICSS
@@ -305,3 +307,15 @@ export function DatabaseTableItemCollapseContent<T>(
   const renderContent = props.innerConfig.render(props.item)
   return <Box icss={databaseTableItemCollapseContentStyle}>{renderContent}</Box>
 }
+
+const icssTableRow = createICSS((options?: { itemWidths?: number[] }) =>
+  Object.assign(
+    {
+      display: "flex",
+      flexWrap: "wrap",
+      alignItems: "center",
+      "& > *": { flexGrow: "1" },
+    },
+    ...(options?.itemWidths?.map((w, idx) => ({ [`& > *:nth-child(${idx + 1})`]: { flexBasis: `${w}px` } })) ?? []),
+  ),
+)

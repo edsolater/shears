@@ -36,6 +36,7 @@ import {
   loadModuleAutoSizeTransition,
   loadModuleCSSCollapse,
   loadModuleTransition,
+  sortablePlugin,
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
@@ -738,7 +739,8 @@ function DragAndDropExample() {
             padding: "16px 24px",
             borderRadius: "16px",
             background: cssOpacity(colors.primary, 0.2),
-            height: "13em",
+            height: "130px",
+            fontSize: "2em",
           },
           icssGrid.config({
             slot: 4,
@@ -758,22 +760,28 @@ function DragAndDropExample() {
         ]}
         plugin={droppablePlugin}
       >
-        <Box icss={[{ height: "100%" }, icssCenter, icssFlexItem]} plugin={draggablePlugin}>
-          Drag it!!
+        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+          👋
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]}>World</Box>
-        <Box icss={[icssCenter, icssFlexItem]}>World</Box>
-        <Box icss={[icssCenter, icssFlexItem]}>World</Box>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+          2
+        </Box>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+          3
+        </Box>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+          4
+        </Box>
       </Box>
 
       <Box icss={[{ padding: "8px", background: colors.backgroundLight30 }, icssGrid.config({ slot: 4, gap: "8px" })]}>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}>
-          {/* <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
+          <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
             Drag item 1
           </Box>
           <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
             Drag item 2
-          </Box> */}
+          </Box>
         </SlotBox>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>

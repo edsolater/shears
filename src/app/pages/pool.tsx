@@ -1,6 +1,4 @@
-import { Box, KitProps, Row, useKitProps } from "@edsolater/pivkit"
-import { parseICSSToClassName } from "../../packages/pivkit"
-import { useElementResize } from "../../packages/pivkit/domkit/hooks/useElementResize"
+import { Box, KitProps, Row, parseICSSToClassName, useElementResize, useKitProps } from "@edsolater/pivkit"
 import {
   DatabaseTable,
   type DatabaseTabelItemCollapseContentRenderConfig,

@@ -1,21 +1,24 @@
 import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
 import {
   Box,
+  Button,
   Col,
   Icon,
   KitProps,
   List,
   Row,
+  Tab,
+  TabList,
+  Tabs,
   Text,
   cssOpacity,
   icssCenter,
   icssGrid,
-  useKitProps
+  parseICSSToClassName,
+  useKitProps,
 } from "@edsolater/pivkit"
 import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
-import { Button, Tab, TabList, Tabs, parseICSSToClassName } from "../../packages/pivkit"
-import { ListBox } from "../../packages/pivkit/components/ListBox"
 import {
   DatabaseTable,
   type DatabaseTabelItemCollapseContentRenderConfig,
@@ -236,13 +239,13 @@ export default function ClmmsPage() {
             <Box icss={icssCenter}>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
             <Box icss={icssCenter}>total staked USD: {toRenderable(total(), { decimals: 8 })}</Box>
           </Box>
-          <ListBox
-            of={clmmInfo.userPositionAccounts}
+          <List
+            items={clmmInfo.userPositionAccounts}
             // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
             Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
           >
             {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
-          </ListBox>
+          </List>
         </Col>
       )
     },

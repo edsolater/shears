@@ -183,7 +183,7 @@ export const icssLabelTitle = createICSS((options?: { fontSize?: ICSSFontSize })
   { fontWeight: "500", color: "#abc4ff88" },
 ])
 
-export const icssItemRowGrid = createICSS((options?: { itemWidths?: number[] }) =>
+export const icssTableRow = createICSS((options?: { itemWidths?: number[] }) =>
   Object.assign(
     {
       display: "flex",

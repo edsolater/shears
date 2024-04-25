@@ -12,6 +12,7 @@ import {
   icssCol,
   icssGrid,
   renderAsHTMLAside,
+  Item,
   useComponentContext,
   useKitProps,
   useShortcutsRegister,
@@ -19,7 +20,6 @@ import {
 } from "@edsolater/pivkit"
 import { createEffect, createSignal, onCleanup } from "solid-js"
 import { AppKeeperContext } from "."
-import { Item } from "../../../packages/pivkit"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
 import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
