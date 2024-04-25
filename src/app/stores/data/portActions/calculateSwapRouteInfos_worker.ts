@@ -1,5 +1,4 @@
-import { AnyFn } from "@edsolater/fnkit"
-import { inNextMainLoop } from "../../../../packages/fnkit"
+import { AnyFn, inNextMainLoop } from "@edsolater/fnkit"
 import { PortUtils } from "../../../utils/webworker/createMessagePortTransforers"
 import {
   CalculateSwapRouteInfosParams,

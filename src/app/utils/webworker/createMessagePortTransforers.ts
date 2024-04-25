@@ -1,5 +1,4 @@
-import { MayPromise, Subscribable, createSubscribable, hasProperty } from "@edsolater/fnkit"
-import { cacheMapGet } from "../../../packages/fnkit"
+import { MayPromise, Subscribable, createSubscribable, hasProperty, mapGet } from "@edsolater/fnkit"
 
 export interface ReceiveMessage<Data = any> {
   command: string
@@ -112,7 +111,7 @@ function createMessageReceiver<R extends ReceiveMessage>(
     return subscribable
   }
 
-  return cacheMapGet(registeredWorkerMessageReceiver, receiverCommand, () =>
+  return mapGet(registeredWorkerMessageReceiver, receiverCommand, () =>
     createNewMessageReceiver<R>(receiverCommand),
   )
 }
@@ -139,5 +138,5 @@ function createMessageSender<P extends SenderMessage>(
       },
     }
   }
-  return cacheMapGet(registeredWorkerMessageSender, command, () => createNewWorkerMessageSender<P>(command))
+  return mapGet(registeredWorkerMessageSender, command, () => createNewWorkerMessageSender<P>(command))
 }

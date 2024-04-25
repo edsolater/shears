@@ -1,5 +1,4 @@
-import { MayPromise } from "@edsolater/fnkit"
-import { cacheMapGet } from "../../../packages/fnkit"
+import { MayPromise, mapGet } from "@edsolater/fnkit"
 
 interface SenderMessage<Query = any> {
   command: string
@@ -37,5 +36,5 @@ export function createMessageSender<P extends SenderMessage>(
       },
     }
   }
-  return cacheMapGet(registeredWorkerMessageSender, command, () => createNewWorkerMessageSender<P>(command))
+  return mapGet(registeredWorkerMessageSender, command, () => createNewWorkerMessageSender<P>(command))
 }

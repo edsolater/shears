@@ -1,4 +1,4 @@
-import { Numberish, assert, hasProperty, isDateAfter, shakeNil } from "@edsolater/fnkit"
+import { Numberish, assert, hasProperty, isDateAfter, makeTaskAbortable, shakeNil, inNextMainLoop } from "@edsolater/fnkit"
 import {
   ClmmPoolInfo,
   ApiPoolInfoItem,
@@ -9,7 +9,6 @@ import {
   ReturnTypeGetAllRouteComputeAmountOut,
   TradeV2,
 } from "@raydium-io/raydium-sdk"
-import { inNextMainLoop, makeTaskAbortable } from "../../../../packages/fnkit"
 import { getConnection } from "../connection/getConnection"
 import { toSDKPercent } from "../../../utils/dataStructures/Percent"
 import { toPubString } from "../../../utils/dataStructures/Publickey"

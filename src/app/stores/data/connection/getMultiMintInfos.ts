@@ -1,6 +1,5 @@
-import { shakeNil } from "@edsolater/fnkit"
+import { createTimeoutMap, shakeNil } from "@edsolater/fnkit"
 import { fetchMultipleMintInfos, type ReturnTypeFetchMultipleMintInfo } from "@raydium-io/raydium-sdk"
-import { createTimeoutMap } from "../../../../packages/fnkit/createTimeoutMap"
 import { getConnection } from "./getConnection"
 import { toPub } from "../../../utils/dataStructures/Publickey"
 import type { Mint } from "../../../utils/dataStructures/type"

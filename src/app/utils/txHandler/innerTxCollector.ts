@@ -1,6 +1,5 @@
 import { isArray } from "@edsolater/fnkit"
 import type { InnerTransaction } from "@raydium-io/raydium-sdk"
-import { objectMerge } from "../../../packages/fnkit"
 import type {
   MultiTxsOption,
   TransactionCollector,
@@ -8,6 +7,7 @@ import type {
   TxHandlerOption,
   TxHandlerOptions,
 } from "./txHandler"
+import { merge } from "@edsolater/fnkit"
 
 /**
  * collector's aim: use `.add` method to load innerTransactions
@@ -22,7 +22,7 @@ export function createInnerTxCollector(txHandlerOptions: TxHandlerOptions | unde
    */
   const addSingle = (transaction: InnerTransaction, options?: TxHandlerOption) => {
     innerTransactions.push(transaction)
-    singleTxOptions.push(objectMerge(options ?? {}, additionalSingleOptionCallbacks ?? {}))
+    singleTxOptions.push(merge(options ?? {}, additionalSingleOptionCallbacks ?? {}))
   }
 
   /**
@@ -33,7 +33,7 @@ export function createInnerTxCollector(txHandlerOptions: TxHandlerOptions | unde
       const [singelTransation, singelOption] = Array.isArray(transaction) ? transaction : ([transaction] as const)
       addSingle(singelTransation, singelOption)
     })
-    Object.assign(multiTxOption, objectMerge(options ?? {}, additionalMultiOptionCallbacks ?? {}))
+    Object.assign(multiTxOption, merge(options ?? {}, additionalMultiOptionCallbacks ?? {}))
   }
 
   /**
