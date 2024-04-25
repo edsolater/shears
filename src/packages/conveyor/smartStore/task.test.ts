@@ -2,7 +2,7 @@ import { expect, test } from "vitest"
 import { createBranchStore } from "./branch"
 import { setShuckVisiableChecker } from "./shuck"
 import { createTask } from "./task"
-import { asyncInvoke } from "../../pivkit/hooks/createContextStore/utils/asyncInvoke"
+import { asyncInvoke } from "@edsolater/fnkit"
 
 test("basic usage", async () => {
   let effectRunCount = 0

@@ -1,1 +1,0 @@
-export { jFetch } from "./jFetchHandleMiddleware"
