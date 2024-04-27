@@ -42,6 +42,9 @@ import {
   useHoverPlugin,
   useKitProps,
   type ICSS,
+  cssLinearGradient,
+  cssRadialGradient,
+  type ICSSObject,
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -708,7 +711,22 @@ function TemporaryExample() {
       ]}
     >
       <Box icss={[{ height: "13em" }, icssCenter]}>Hello</Box>
-      <Box icss={icssCenter}>World</Box>
+      <Box
+        icss={[
+          icssCenter,
+          {
+            // background: `${cssLinearGradient({ direction: "to bottom", colors: ["transparent", "dodgerblue"] })}, ${cssRadialGradient({ colors: [cssOpacity("crimson", 0.8), "transparent"] })}`,
+            _background_2: `${cssRadialGradient({ colors: [cssOpacity("#33138e", 0.8), "transparent"] })}`,
+            _background_3: `${cssLinearGradient({ direction: "to bottom", colors: ["transparent", "dodgerblue"] })}`,
+            backgroundBlendMode: "multiply",
+            boxShadow: `inset 0 0 32px ${cssOpacity("#33138e", 0.8)}`,
+            scale: ".5",
+            _scale_: "2",
+          },
+        ]}
+      >
+        World
+      </Box>
       <Box icss={icssCenter}>World</Box>
       <Box icss={icssCenter}>World</Box>
     </Box>
@@ -792,6 +810,7 @@ function DragAndDropExample() {
     </Group>
   )
 }
+
 const droppableSlotsPlugin = createPlugin(() => () => ({
   "render:firstChild": [
     <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,

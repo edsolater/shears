@@ -121,7 +121,6 @@ export function calculateSwapRouteInfos({
         assert(awaitedPoolInfosCache)
         assert(awaitedTickCache)
 
-        // TODO: fix it
         // @ts-ignore
         return TradeV2.getAllRouteComputeAmountOut({
           directPath: routes.directPath,
