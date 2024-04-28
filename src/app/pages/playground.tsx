@@ -741,6 +741,7 @@ function DragAndDropExample() {
     padding: "12px 16px",
     borderRadius: "8px",
     background: cssOpacity(colors.primary, 0.1),
+    translate: "8px",
   }
 
   return (
@@ -757,7 +758,7 @@ function DragAndDropExample() {
             padding: "16px 24px",
             borderRadius: "16px",
             background: cssOpacity(colors.primary, 0.2),
-            height: "130px",
+            height: "530px",
             fontSize: "2em",
           },
           icssGrid.config({
@@ -778,16 +779,16 @@ function DragAndDropExample() {
         ]}
         plugin={droppablePlugin}
       >
-        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
           👋
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
           2
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
           3
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]} plugin={[sortablePlugin]}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
           4
         </Box>
       </Box>
