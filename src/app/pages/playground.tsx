@@ -36,7 +36,7 @@ import {
   loadModuleAutoSizeTransition,
   loadModuleCSSCollapse,
   loadModuleTransition,
-  sortablePlugin,
+  itemSortablePlugin,
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
@@ -779,26 +779,32 @@ function DragAndDropExample() {
         ]}
         plugin={droppablePlugin}
       >
-        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={itemSortablePlugin}>
           👋
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={itemSortablePlugin}>
           2
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={itemSortablePlugin}>
           3
         </Box>
-        <Box icss={[icssCenter, icssFlexItem]} plugin={sortablePlugin}>
+        <Box icss={[icssCenter, icssFlexItem]} plugin={itemSortablePlugin}>
           4
         </Box>
       </Box>
 
       <Box icss={[{ padding: "8px", background: colors.backgroundLight30 }, icssGrid.config({ slot: 4, gap: "8px" })]}>
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}>
-          <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
+          <Box
+            icss={[icssCenter, icssFlexItem, { background: "#abc4ff" }]}
+            plugin={[draggablePlugin.config({ canOnlyContent: true }), droppablePlugin.config({ canOnlyContent: true })]}
+          >
             Drag item 1
           </Box>
-          <Box icss={[icssCenter, icssFlexItem]} plugin={draggablePlugin}>
+          <Box
+            icss={[icssCenter, icssFlexItem]}
+            plugin={[draggablePlugin.config({ canOnlyContent: true }), droppablePlugin.config({ canOnlyContent: true })]}
+          >
             Drag item 2
           </Box>
         </SlotBox>
