@@ -32,7 +32,7 @@ type FollowPositionTxConfigs = {
 
 type AdditionalClmmInfo = {
   totalLiquidityUSD: Numberish | undefined
-  buildCustomizedFollowPositionTxConfigs(options?: { ignoreWhenUsdLessThan?: number }): FollowPositionTxConfigs
+  buildTxFollowPositionTxConfigs(options?: { ignoreWhenUsdLessThan?: number }): FollowPositionTxConfigs
 }
 
 export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
@@ -65,7 +65,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   }
 
   const additional = {
-    buildCustomizedFollowPositionTxConfigs: (options) =>
+    buildTxFollowPositionTxConfigs: (options) =>
       buildCustomizedFollowPositionTxConfigs({
         clmmInfo,
         getPositionInfo,

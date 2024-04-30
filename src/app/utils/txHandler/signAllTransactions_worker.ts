@@ -39,45 +39,46 @@ export async function signAllTransactions({
   console.log("buildedTransactions: ", buildedTransactions)
 
   // temporary don't use privateKey to sign
-  // if (payload.privateKey) {
-  // return signWithPrivateKey({ txs: buildedTransactions, privateKey: payload.privateKey })
-  // } else {
-  const port = getMessagePort("transform transaction")
-  // send transaction form worker to main thread
-  return new Promise((resolve, reject) => {
-    const signId = getSignTransactionId()
-    reportLog("[⚙️worker] send transactions to main thread", buildedTransactions)
-    port.postMessage({
-      id: signId,
-      txs: buildedTransactions.map((tx) => tx.serialize()),
-    } as UnsignedTransactionInfo)
-    port.receiveMessage((signedTransactions: SignTransactionSuccessInfo | SignTransactionErrorInfo) => {
-      if (signedTransactions.id !== signId) return
-      if ("signedTxs" in signedTransactions) {
-        const decoded = signedTransactions.signedTxs.map((transaction) => VersionedTransaction.deserialize(transaction))
-        resolve(decoded)
-      } else {
-        reject(signedTransactions.errorReason)
-      }
+  if (payload.privateKey) {
+    const signedTxs = signWithPrivateKey({ txs: buildedTransactions, privateKey: payload.privateKey })
+    return signedTxs
+  } else {
+    const port = getMessagePort("transform transaction")
+    // send transaction form worker to main thread
+    return new Promise((resolve, reject) => {
+      const signId = getSignTransactionId()
+      reportLog("[⚙️worker] send transactions to main thread", buildedTransactions)
+      port.postMessage({
+        id: signId,
+        txs: buildedTransactions.map((tx) => tx.serialize()),
+      } as UnsignedTransactionInfo)
+      port.receiveMessage((signedTransactions: SignTransactionSuccessInfo | SignTransactionErrorInfo) => {
+        if (signedTransactions.id !== signId) return
+        if ("signedTxs" in signedTransactions) {
+          const signedTxs = signedTransactions.signedTxs.map((transaction) =>
+            VersionedTransaction.deserialize(transaction),
+          )
+          resolve(signedTxs)
+        } else {
+          reject(signedTransactions.errorReason)
+        }
+      })
     })
-  })
-  // }
+  }
 }
 
-// FIXME: error here
 async function signWithPrivateKey(payload: { txs: VersionedTransaction[]; privateKey: string }) {
   const keypair = toKeyPair(payload.privateKey)
   for (const tx of payload.txs) {
-    console.log("tx: ", tx)
+    console.log('tx: ', tx)
+    console.log('keypair: ', keypair)
     tx.signatures = []
     tx.sign([keypair])
   }
-  console.log("🎉 sign success!!")
   return payload.txs
 }
 
 function toKeyPair(privateKey: string): Keypair {
   const privateKeyU8 = new Uint8Array(decodeBase58(privateKey))
-  console.log("privateKeyU8: ", privateKeyU8)
   return Keypair.fromSecretKey(privateKeyU8)
 }

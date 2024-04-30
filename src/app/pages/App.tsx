@@ -77,7 +77,12 @@ function KeyboardShortcutPanel() {
   const increasing = createIncresingAccessor({ eachTime: 2000 })
   return (
     <Box
+      class={"keyboard-shortcut-panel"}
       icss={{
+        //TODO: should be on by keyboard , temporary just hidden it!!
+        visibility: "hidden",
+        pointerEvents: "none",
+
         position: "fixed",
         bottom: 0,
         right: 0,

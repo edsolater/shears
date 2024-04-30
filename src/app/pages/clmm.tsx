@@ -145,7 +145,7 @@ export default function ClmmsPage() {
             <Button
               onClick={async ({ ev }) => {
                 ev.stopPropagation()
-                const configs = clmmInfo.buildCustomizedFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
                 if (configs) {
                   runTasks(
                     ({ next }) => {

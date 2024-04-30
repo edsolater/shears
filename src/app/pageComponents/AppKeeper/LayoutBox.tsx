@@ -93,6 +93,7 @@ export function AppKeeper_LayoutBox(kitProps: KitProps<AppKeeper_LayoutBoxProps>
         toggleShortcut={props.sidebarShortcut}
         canFloating={props.sidebarCanFloating}
         changeToFloatingShortcut={props.sidebarFloatingShortcut}
+        defaultOpen
       >
         {props["Sidebar"]}
       </SideMenuManager>
@@ -139,14 +140,16 @@ function SideMenuManager(
     toggleShortcut?: MayArray<KeybordShortcutKeys>
     canFloating?: boolean
     changeToFloatingShortcut?: MayArray<KeybordShortcutKeys>
+    defaultOpen?:boolean
+    defaultFloating?:boolean
   }>,
 ) {
   const { props, shadowProps } = useKitProps(kitprops, {
     defaultProps: { toggleShortcut: "alt + \\", changeToFloatingShortcut: "shift + alt + \\" },
   })
   const [layoutContext, setLayoutContext] = useComponentContext(AppKeeperContext)
-  const [isSideMenuOpen, { toggle: toggleSideMenu }] = createDisclosure(false)
-  const [isSideMenuFloating, { toggle: toggleSideMenuFloating }] = createDisclosure(true)
+  const [isSideMenuOpen, { toggle: toggleSideMenu }] = createDisclosure(props.defaultOpen)
+  const [isSideMenuFloating, { toggle: toggleSideMenuFloating }] = createDisclosure(props.defaultFloating)
   setLayoutContext({ isSideMenuOpen, isSideMenuFloating })
   useShortcutsRegister(documentElement, {
     "Toggle Side Menu": {
