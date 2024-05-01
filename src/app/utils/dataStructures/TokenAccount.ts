@@ -4,16 +4,19 @@ import {
   Spl,
   TokenAccount as _TokenAccount,
 } from "@raydium-io/raydium-sdk"
-import { Connection } from "@solana/web3.js"
+import { Connection, type Commitment } from "@solana/web3.js"
 import { parseSDKBN } from "./BN"
 import { toPub, toPubString } from "./Publickey"
 import { TOKEN_PROGRAM_ID } from "../../stores/data/token/utils"
 import { getConnection } from "../../stores/data/connection/getConnection"
 import { SOLMint } from "../../configs/wellKnownMints"
 import type { Address, PublicKey } from "./type"
-import { listToRecord } from "@edsolater/fnkit"
+import { cache, listToRecord, type AnyFn, type Primitive } from "@edsolater/fnkit"
 import { reportLog } from "../../stores/data/utils/logger"
+import { createIDBStoreManager } from "../../../packages/cacheManager/storageManagers"
+import { createCachedFn } from "../../../packages/cacheManager/createCachedFn"
 
+/** is structure-clone-able */
 export interface TokenAccount {
   programId: string
   isAssociated?: boolean // is ATA
@@ -52,6 +55,18 @@ export function ownerHasStoredTokenAccounts({ owner }: { owner: string }) {
   return tokenAccountCacheByOwner.has(owner)
 }
 
+const tokenAccountStoreManager = createIDBStoreManager<{ owner: Address; account: TokenAccount }>({
+  dbName: "tokenAccount",
+})
+
+// same as `connection.getAccountInfo`
+function createCachedGetAccountInfoFnByConnection(connection: Connection, owner: string) {
+  return createCachedFn(connection.getAccountInfo.bind(connection), {
+    dbName: "tokenAccount_test",
+    dbStoreName: owner,
+    toDBValue: (value) => value,
+  })
+}
 /**
  * core logic
  * just relay on connection
@@ -94,11 +109,13 @@ export async function getTokenAccounts({
       const rawResult = SPL_ACCOUNT_LAYOUT.decode(account.data)
       const { mint, amount } = rawResult
 
-      const associatedTokenAddress = Spl.getAssociatedTokenAccount({
+      //TODO: should cache
+      const associatedTokenAddress = cache(Spl.getAssociatedTokenAccount)({
         mint,
         owner: toPub(owner),
         programId: account.owner,
       })
+
       tokenAccounts.push({
         programId: account.owner.toBase58(),
         publicKey: toPubString(pubkey),

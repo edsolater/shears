@@ -54,12 +54,27 @@ export function createSessionStorageStoreManager<T = unknown>(): StoreManager<T>
     has,
   }
 }
-export function createIndexedDBStoreManager<T = unknown>(
-  dbName: string,
-  storeName: string,
+
+export type IDBStoreManager<V> = {
+  set: (key: IDBValidKey, body: V) => Promise<void>
+  get: (key: IDBValidKey | IDBKeyRange) => Promise<V | undefined>
+  has: (key: IDBValidKey | IDBKeyRange) => Promise<boolean>
+  delete: (key: IDBValidKey | IDBKeyRange) => Promise<void>
+  forEach: (callback: (value: V, key: IDBValidKey) => void) => Promise<void>
+}
+
+export function createIDBStoreManager<T = unknown>({
+  dbName,
+  storeName = "default",
   version = 1,
-): StoreManager<T> {
-  const request = globalThis.indexedDB.open(dbName, version)
+  onStoreLoaded,
+}: {
+  dbName: string
+  storeName?: string
+  version?: number
+  onStoreLoaded?: (payloads: { store: Promise<IDBObjectStore> } & IDBStoreManager<T>) => void
+}): IDBStoreManager<T> {
+  const dbOpenRequest = globalThis.indexedDB.open(dbName, version)
 
   let resolve: (value: IDBDatabase) => void
   let reject: (reason?: any) => void
@@ -67,23 +82,55 @@ export function createIndexedDBStoreManager<T = unknown>(
     resolve = innerResolve
     reject = innerReject
   })
-  request.onerror = (event) => {
+  dbOpenRequest.onerror = (event) => {
     reject((event.target as IDBOpenDBRequest).error)
   }
-  request.onblocked = (event) => {
+  dbOpenRequest.onblocked = (event) => {
     reject((event.target as IDBOpenDBRequest).error)
   }
-  request.onupgradeneeded = (event) => {
+  dbOpenRequest.onupgradeneeded = (event) => {
     const _db = (event.target as IDBOpenDBRequest).result
     resolve(_db)
     _db.createObjectStore(storeName)
   }
-  request.onsuccess = (event) => {
+  dbOpenRequest.onsuccess = (event) => {
     const _db = (event.target as IDBOpenDBRequest).result
     resolve(_db)
   }
 
-  async function set(key: string, body: unknown) {
+  async function forEach(callback: (value: T, key: IDBValidKey) => void) {
+    db.then((db) => {
+      const transaction = db.transaction(storeName, "readonly")
+      const store = transaction.objectStore(storeName)
+      const request = store.openCursor()
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result as IDBCursorWithValue
+        if (cursor) {
+          callback(cursor.value, cursor.key)
+          cursor.continue()
+        }
+      }
+      request.onerror = (event) => {
+        console.error((event.target as IDBRequest).error)
+      }
+    }).catch((e) => {
+      console.error(e)
+    })
+  }
+
+  //init actions
+  onStoreLoaded?.({
+    get store() {
+      return db.then((db) => db.transaction(storeName, "readwrite").objectStore(storeName))
+    },
+    set,
+    get,
+    has,
+    delete: deleteItem,
+    forEach,
+  })
+
+  async function set(key: IDBValidKey, body: T) {
     db.then((db) => {
       const transaction = db.transaction(storeName, "readwrite")
       transaction.objectStore(storeName).put(body, key)
@@ -91,7 +138,7 @@ export function createIndexedDBStoreManager<T = unknown>(
       console.error(e)
     })
   }
-  async function get(key: string) {
+  async function get(key: IDBValidKey | IDBKeyRange) {
     return db
       .then((db) => {
         let resolve: (value: T) => void
@@ -115,7 +162,7 @@ export function createIndexedDBStoreManager<T = unknown>(
         return undefined
       })
   }
-  async function deleteItem(key: string) {
+  async function deleteItem(key: IDBValidKey | IDBKeyRange) {
     db.then((db) => {
       const transaction = db.transaction(storeName, "readwrite")
       transaction.objectStore(storeName).delete(key)
@@ -124,11 +171,12 @@ export function createIndexedDBStoreManager<T = unknown>(
       return undefined
     })
   }
-  async function has(key: string) {
+  async function has(key: IDBValidKey | IDBKeyRange) {
     const v = await get(key)
     return v != null
   }
   return {
+    forEach,
     set,
     get,
     delete: deleteItem,

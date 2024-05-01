@@ -1,12 +1,12 @@
 import { isCurrentDateAfter, switchCase, type MayPromise } from "@edsolater/fnkit"
-import { type JFetchMiddlewareFn } from "../../jFetch"
-import { isResponse } from "../../utils/isResponse"
+import { type JFetchMiddlewareFn } from "../jFetch"
+import { isResponse } from "../utils/isResponse"
 import {
-  createIndexedDBStoreManager,
+  createIDBStoreManager,
   createLocalStorageStoreManager,
   createMemoryStoreManager,
   createSessionStorageStoreManager,
-} from "./storageManagers"
+} from "../../cacheManager/storageManagers"
 
 type ResourceUrl = string
 
@@ -72,7 +72,7 @@ const getResponseCache = (storePlace: "jsMemory" | "localStorage" | "sessionStor
     case "sessionStorage":
       return createSessionStorageStoreManager<JFetchCacheItem>()
     case "indexedDB":
-      return createIndexedDBStoreManager<JFetchCacheItem>("jFetch", "cache")
+      return createIDBStoreManager<JFetchCacheItem>({ dbName: "jFetch", storeName: "cache" })
   }
 }
 
