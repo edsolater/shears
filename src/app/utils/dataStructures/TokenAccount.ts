@@ -14,7 +14,7 @@ import type { Address, PublicKey } from "./type"
 import { cache, listToRecord, type AnyFn, type Primitive } from "@edsolater/fnkit"
 import { reportLog } from "../../stores/data/utils/logger"
 import { createIDBStoreManager } from "../../../packages/cacheManager/storageManagers"
-import { createCachedFn } from "../../../packages/cacheManager/createCachedFn"
+import { createIDBCachedFn } from "../../../packages/cacheManager/createCachedFn"
 import { toStringKey } from "../../../packages/cacheManager/toStringKey"
 
 /** is structure-clone-able */
@@ -65,9 +65,8 @@ function createCachedGetAccountInfoFnByConnection() {
   const originalFn = (connection: Connection, owner: string, commitment?: Commitment) =>
     connection.getAccountInfo(toPub(owner), commitment)
 
-  return createCachedFn(originalFn, {
+  return createIDBCachedFn(originalFn, {
     dbName: "tokenAccount_test",
-    dbStoreName: (_, owner) => owner,
     toCacheKey: (_, owner) => owner,
     toDBValue: (value) => value.then((v) => v?.data),
   })
@@ -75,7 +74,7 @@ function createCachedGetAccountInfoFnByConnection() {
 // same as `connection.getAccountInfo`
 function foo() {
   const originalFn = (options: { name: { say: string } }) => options.name
-  return createCachedFn(originalFn, {
+  return createIDBCachedFn(originalFn, {
     dbName: "foo_test",
   })
 }
