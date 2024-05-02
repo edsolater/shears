@@ -15,6 +15,7 @@ import { cache, listToRecord, type AnyFn, type Primitive } from "@edsolater/fnki
 import { reportLog } from "../../stores/data/utils/logger"
 import { createIDBStoreManager } from "../../../packages/cacheManager/storageManagers"
 import { createCachedFn } from "../../../packages/cacheManager/createCachedFn"
+import { toStringKey } from "../../../packages/cacheManager/toStringKey"
 
 /** is structure-clone-able */
 export interface TokenAccount {
@@ -60,13 +61,36 @@ const tokenAccountStoreManager = createIDBStoreManager<{ owner: Address; account
 })
 
 // same as `connection.getAccountInfo`
-function createCachedGetAccountInfoFnByConnection(connection: Connection, owner: string) {
-  return createCachedFn(connection.getAccountInfo.bind(connection), {
+function createCachedGetAccountInfoFnByConnection() {
+  const originalFn = (connection: Connection, owner: string, commitment?: Commitment) =>
+    connection.getAccountInfo(toPub(owner), commitment)
+
+  return createCachedFn(originalFn, {
     dbName: "tokenAccount_test",
-    dbStoreName: owner,
-    toDBValue: (value) => value,
+    dbStoreName: (_, owner) => owner,
+    toCacheKey: (_, owner) => owner,
+    toDBValue: (value) => value.then((v) => v?.data),
   })
 }
+// same as `connection.getAccountInfo`
+function foo() {
+  const originalFn = (options: { name: { say: string } }) => options.name
+  return createCachedFn(originalFn, {
+    dbName: "foo_test",
+  })
+}
+const cachedFoo = foo()
+
+console.time("r1")
+const r1Promise = cachedFoo({ name: { say: "hello" } })
+const r2Promise = cachedFoo({ name: { say: "hello" } })
+Promise.all([r1Promise, r2Promise]).then(([r1, r2]) => {
+  console.log("r1: ", r1)
+  console.log("r2: ", r2)
+  console.log(r1 === r2)
+})
+console.timeEnd("r1")
+
 /**
  * core logic
  * just relay on connection
