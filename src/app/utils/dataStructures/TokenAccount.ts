@@ -73,7 +73,10 @@ function createCachedGetAccountInfoFnByConnection() {
 }
 // same as `connection.getAccountInfo`
 function foo() {
-  const originalFn = (options: { name: { say: string } }) => options.name
+  const originalFn = (options: { name: { say: string } }) => {
+    console.log("run originalFn")
+    return options.name
+  }
   return createIDBCachedFn(originalFn, {
     dbName: "foo_test",
   })
@@ -110,22 +113,24 @@ export async function getTokenAccounts({
     return tokenAccountCacheByOwner.get(owner)!
   } else {
     reportLog("[⚙️worker] start loading token accounts", owner)
-    const solReq = connection.getAccountInfo(toPub(owner), config?.commitment)
-    const tokenReq = connection.getTokenAccountsByOwner(
+    const solReqPromise = connection.getAccountInfo(toPub(owner), config?.commitment)
+    const ownerTokensReqPromise = connection.getTokenAccountsByOwner(
       toPub(owner),
       { programId: toPub(TOKEN_PROGRAM_ID) },
       config?.commitment,
     )
 
-    const [solResp, tokenResp] = await Promise.all([solReq, tokenReq])
+    const [solRes, ownerTokensRes] = await Promise.all([solReqPromise, ownerTokensReqPromise])
 
+    console.log("solRes: ", solRes)
+    console.log("ownerTokensRes: ", ownerTokensRes)
     const tokenAccounts: TokenAccount[] = []
     const sdkTokenAccounts: _TokenAccount[] = []
 
-    for (const { pubkey, account } of tokenResp.value) {
+    for (const { pubkey, account } of ownerTokensRes.value) {
       // double check layout length
       if (account.data.length !== SPL_ACCOUNT_LAYOUT.span) {
-        console.error("invalid token account layout length", "publicKey", pubkey.toBase58())
+        console.error("invalid token account layout length", "publicKey",toPubString(pubkey))
         break
       }
 
@@ -133,7 +138,7 @@ export async function getTokenAccounts({
       const { mint, amount } = rawResult
 
       //TODO: should cache
-      const associatedTokenAddress = cache(Spl.getAssociatedTokenAccount)({
+      const associatedTokenAddress = Spl.getAssociatedTokenAccount({
         mint,
         owner: toPub(owner),
         programId: account.owner,
@@ -152,7 +157,7 @@ export async function getTokenAccounts({
 
     tokenAccounts.push({
       programId: TOKEN_PROGRAM_ID,
-      amount: BigInt(solResp ? solResp.lamports : 0),
+      amount: BigInt(solRes ? solRes.lamports : 0),
       mint: SOLMint,
       publicKey: owner,
       isNative: true,

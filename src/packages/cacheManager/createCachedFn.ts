@@ -92,7 +92,7 @@ export function createIDBCachedFn<F extends AnyFn>(
     fromDBValue?(value: any): ReturnType<F>
 
     /** if set this, it will not get key by {@link toStringKey}  */
-    toCacheKey?: (...params: Parameters<F>) => string | number
+    toCacheKey?(...params: Parameters<F>): string | number
   },
 ) {
   const storeManager = createIDBStoreManager({
