@@ -1,4 +1,4 @@
-import { ReplaceType, createObjectFrom, deepCloneObject, isString, tryCatch } from "@edsolater/fnkit"
+import { ReplaceType, createObjectFrom, deepCloneObject, isString, travelObject, tryCatch } from "@edsolater/fnkit"
 import { PublicKeyish as _PublicKeyish } from "@raydium-io/raydium-sdk"
 import { PublicKey, PublicKey as _PublicKey } from "@solana/web3.js"
 import { produce } from "immer"
@@ -61,8 +61,9 @@ const defaultPublicKey = PublicKey.default
 const base58Regex = /^[1-9A-HJ-NP-Za-km-z]{10}$/ // don't know it's length
 
 function objectlyToPubString<T extends object>(target: T): ReplaceType<T, _PublicKey, string> {
+  // @ts-expect-error
   return produce(target, (draft) => {
-     createObjectFrom(draft, ({ value }) => {
+    createObjectFrom(draft, ({ value }) => {
       if (isPublicKey(value)) {
         return toPubString(value)
       }
@@ -71,8 +72,9 @@ function objectlyToPubString<T extends object>(target: T): ReplaceType<T, _Publi
 }
 
 function objectlyToPub<T extends object>(target: T): ReplaceType<T, _PublicKey, string> {
+  // @ts-expect-error
   return produce(target, (draft) => {
-     createObjectFrom(draft, ({ value }) => {
+    createObjectFrom(draft, ({ value }) => {
       if (isPublicKeyString(value)) {
         return toPub(value)
       }
