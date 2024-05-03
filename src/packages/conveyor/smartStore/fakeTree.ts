@@ -4,7 +4,7 @@ import {
   shrinkFn,
   getByPath,
   setByPath,
-  travelWholeObject,
+  travelObject,
   InfinityObjNode,
   createTreeableInfinityNode,
   loadInfinityObjNode,
@@ -42,9 +42,9 @@ export function createFakeTree<O extends object, FakeNodeTree extends object = F
    */
   function set(dispatcher: MayFn<Partial<O>, [old: O]>) {
     const inputObject = shrinkFn(dispatcher, [rawObj]) as Partial<O> // TODO: type of `shringFn` is wrong
-    travelWholeObject(inputObject, ({ keyPaths, value }) => {
+    travelObject(inputObject, ({ keyPaths, value }) => {
       // set raw
-      setByPath(rawObj, keyPaths, value)
+      setByPath({ obj: rawObj, path: keyPaths, value })
 
       // set tree
       const rawValue = getByPath(rawObj, keyPaths)
