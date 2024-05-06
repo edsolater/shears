@@ -192,16 +192,6 @@ function RPCPanelInputBox(kitProps: KitProps<{ onSwitchRpc?(url: string): void }
   const applyRPCChange = () => {
     props.onSwitchRpc?.(currentRPCUrl())
   }
-  onMount(() => {
-    // TEST
-    const timeoutId = setTimeout(() => {
-      console.log("rpc has set")
-      shuck_rpc.set(availableRpcs[0])
-    }, 500)
-    onCleanup(() => {
-      clearTimeout(timeoutId)
-    })
-  })
   return (
     <Row>
       <Input

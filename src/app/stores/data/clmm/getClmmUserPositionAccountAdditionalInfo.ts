@@ -84,16 +84,6 @@ export function getClmmUserPositionAccountAdditionalInfo({
   priceA: () => Price | undefined
   priceB: () => Price | undefined
 }): AdditionalClmmUserPositionAccount {
-  // const pricesMap = useShuckValue(shuck_tokenPrices)
-  // const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
-  // const rpcS = useShuckValue(shuck_rpc)
-  // const ownerS = useWalletOwner()
-  // const slippageS = useShuckValue(shuck_slippage)
-  // const balancesS = useShuckValue(shuck_balances)
-  // const tokenA = useToken(() => clmmInfo.base)
-  // const tokenB = useToken(() => clmmInfo.quote)
-  // const priceA = useTokenPrice(() => clmmInfo.base)
-  // const priceB = useTokenPrice(() => clmmInfo.quote)
   const userLiquidityUSD = () =>
     calcPositionUserPositionLiquidityUSD({
       tokenAPrice: priceA(),

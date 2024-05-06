@@ -18,7 +18,7 @@ import {
   useShortcutsRegister,
 } from "@edsolater/pivkit"
 import { RouteSectionProps, useNavigate } from "@solidjs/router"
-import { createEffect, createMemo, on } from "solid-js"
+import { createEffect, createMemo, on, onCleanup, onMount } from "solid-js"
 import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
 import { createTask } from "../../packages/conveyor/smartStore/task"
@@ -27,6 +27,8 @@ import { routes } from "../configs/routes"
 import { initAppContextConfig } from "../hooks/initAppContextConfig"
 import { AppKeeper } from "../pageComponents/AppKeeper"
 import { documentElement } from "../utils/documentElement"
+import { useStorageValue } from "../../packages/cacheManager/hook"
+import { setStore, shuck_rpc } from "../stores/data/store"
 
 const uikitConfig: UIKitThemeConfig = {
   Button: {
@@ -45,6 +47,7 @@ export function App(props: RouteSectionProps) {
   )
   const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppKeeper
   useExperimentalCode()
+  useLocalStorageRpc()
   return (
     <>
       {needLayout() ? (
@@ -57,6 +60,30 @@ export function App(props: RouteSectionProps) {
       )}
     </>
   )
+}
+
+/**
+ * init rpcs from localStorage
+ */
+function useLocalStorageRpc() {
+  const [localStorageRpcs, setlocalStorageRpcs] = useStorageValue({ key: "rpcs" })
+  const rpcs = createMemo(() => localStorageRpcs()?.split(","))
+  const firstUrl = createMemo(() => rpcs()?.at(0))
+  createEffect(() => {
+    const url = firstUrl()
+    if (url) {
+      setStore({ rpc: { url } })
+      shuck_rpc.set({ url })
+    }
+  })
+  onMount(() => {
+    const { unsubscribe } = shuck_rpc.subscribe((rpc) => {
+      if (!rpc) return
+      if (rpcs()?.includes(rpc.url)) return
+      setlocalStorageRpcs((rpcs) => (rpcs ? rpcs + "," + rpc.url : rpc.url))
+    })
+    onCleanup(unsubscribe)
+  })
 }
 
 function KeyboardShortcutPanel() {
