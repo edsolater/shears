@@ -62,30 +62,46 @@ export function useIntervalLoop({
   delay?: number
   immediate?: boolean
 } = {}): {
-  startLoop(): void
+  isRunning: Accessor<boolean>
+  startLoop(): () => void // return stop action
   stopLoop(): void
+  invokeOnce(): void
+  lastInvokeTime: Accessor<number>
 } {
+  const [lastInvokeTime, setLastInvokeTime] = createSignal(0)
+  const [isRunning, setIsRunning] = createSignal(false)
   let intervalId: any = null
-  let isRuning = false
 
   function startLoop() {
-    if (isRuning) return
-    isRuning = true
+    if (isRunning()) return () => {}
+    setIsRunning(true)
     intervalId = setInterval(() => {
-      cb?.()
+      invokeOnce()
     }, delay)
     if (immediate) {
-      cb?.()
+      invokeOnce()
     }
+
+    return stopLoop
   }
 
   function stopLoop() {
-    if (!isRuning) return
-    isRuning = false
+    setIsRunning(false)
     clearInterval(intervalId)
   }
 
+  function invokeOnce() {
+    setLastInvokeTime(Date.now())
+    cb?.()
+  }
+
+  // stop loop when component unmount
+  onCleanup(stopLoop)
+
   return {
+    lastInvokeTime,
+    invokeOnce,
+    isRunning,
     startLoop,
     stopLoop,
   }

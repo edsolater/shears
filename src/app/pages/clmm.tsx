@@ -132,73 +132,135 @@ export default function ClmmsPage() {
       render: (rawClmmInfo) => {
         const clmmInfo = useClmmInfo(rawClmmInfo)
 
-        const { startLoop, stopLoop } = useIntervalLoop({
+        // refresh every 10 mins
+        const {
+          startLoop,
+          stopLoop,
+          isRunning: isRefreshLoopRunning,
+          invokeOnce: forceRefeshThisClmmInfo,
+          lastInvokeTime,
+        } = useIntervalLoop({
           cb: () => {
+            console.log("[main] start refresh clmmInfo: ", clmmInfo.id)
             refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
           },
-          delay: 10000,
+          delay: 1000 * 60 * 12,
+          immediate: false,
         })
-        onCleanup(stopLoop)
+
+        // apply strategy every 10 mins
+        function runTxFollowPosition() {
+          const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+          if (configs) {
+            console.log('[main run tx follow]')
+            runTasks(
+              ({ next }) => {
+                if (configs.upDecreaseClmmPositionTxConfigs.length) {
+                  reportLog("[🤖main] 1️⃣ run tx follow step 1")
+                  const txEventCenter = invokeTxConfig(...configs.upDecreaseClmmPositionTxConfigs)
+                  if (configs.upShowHandTxConfigs.length) {
+                    txEventCenter?.onTxAllDone(() => {
+                      onBalanceChange(clmmInfo.base, ({ unsubscribe, balance }) => {
+                        // console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
+                        const txc = invokeTxConfig(...configs.upShowHandTxConfigs)
+                        txc?.onTxAllDone(() => {
+                          setTimeout(() => {
+                            forceRefeshThisClmmInfo()
+                          }, 3000)
+                        })
+                        unsubscribe()
+                      })
+                    })
+                  }
+                } else {
+                  if (configs.upShowHandTxConfigs.length) {
+                    const txc = invokeTxConfig(...configs.upShowHandTxConfigs)
+                    txc?.onTxAllDone(() => {
+                      setTimeout(() => {
+                        forceRefeshThisClmmInfo()
+                      }, 8000)
+                    })
+                  }
+                }
+                next()
+              },
+              ({ next }) => {
+                if (configs.downDecreaseClmmPositionTxConfigs.length) {
+                  reportLog("[🤖main] 2️⃣ run tx follow step 2")
+                  const txEventCenter = invokeTxConfig(...configs.downDecreaseClmmPositionTxConfigs)
+                  if (configs.downShowHandTxConfigs.length) {
+                    txEventCenter?.onTxAllDone(() => {
+                      onBalanceChange(clmmInfo.quote, ({ unsubscribe, balance }) => {
+                        // console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
+                        const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
+                        txc?.onTxAllDone(() => {
+                          setTimeout(() => {
+                            forceRefeshThisClmmInfo()
+                          }, 8000)
+                        })
+                        unsubscribe()
+                      })
+                    })
+                  }
+                } else {
+                  if (configs.downShowHandTxConfigs.length) {
+                    const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
+                    txc?.onTxAllDone(() => {
+                      setTimeout(() => {
+                        forceRefeshThisClmmInfo()
+                      }, 8000)
+                    })
+                  }
+                }
+              },
+            )
+          }
+        }
+        const {
+          startLoop: startTxFellowLoop,
+          stopLoop: stopTxFellowLoop,
+          isRunning: isTxFellowLoopRuning,
+          invokeOnce: forceInvokeTxFellowLoop,
+        } = useIntervalLoop({
+          cb: () => {
+            console.log("[main] start runTxFollowPosition: ", clmmInfo.id)
+            forceRefeshThisClmmInfo()
+            setTimeout(() => {
+              runTxFollowPosition()
+            }, 1000 * 8)
+          },
+          delay: 1000 * 60 * 5,
+          immediate: false,
+        })
+
+        // start usdc-usdt
+        if (clmmInfo.id === "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU") {
+          onMount(startTxFellowLoop)
+        }
 
         return (
           <Row icss={{ gap: "8px" }}>
             <Button
-              onClick={async ({ ev }) => {
+              onClick={({ ev }) => {
                 ev.stopPropagation()
-                const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
-                if (configs) {
-                  runTasks(
-                    ({ next }) => {
-                      if (configs.upDecreaseClmmPositionTxConfigs.length) {
-                        reportLog("[🤖main] 1️⃣ run tx follow step 1")
-                        const d = invokeTxConfig(...configs.upDecreaseClmmPositionTxConfigs)
-                        if (configs.upShowHandTxConfigs.length) {
-                          d?.onTxAllDone(() => {
-                            onBalanceChange(clmmInfo.base, ({ unsubscribe, balance }) => {
-                              console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                              invokeTxConfig(...configs.upShowHandTxConfigs)
-                              unsubscribe()
-                            })
-                          })
-                        }
-                      } else {
-                        if (configs.upShowHandTxConfigs.length) {
-                          invokeTxConfig(...configs.upShowHandTxConfigs)
-                        }
-                      }
-                      next()
-                    },
-                    ({ next }) => {
-                      if (configs.downDecreaseClmmPositionTxConfigs.length) {
-                        reportLog("[🤖main] 2️⃣ run tx follow step 2")
-                        const d = invokeTxConfig(...configs.downDecreaseClmmPositionTxConfigs)
-                        if (configs.downShowHandTxConfigs.length) {
-                          d?.onTxAllDone(() => {
-                            onBalanceChange(clmmInfo.quote, ({ unsubscribe, balance }) => {
-                              console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                              invokeTxConfig(...configs.downShowHandTxConfigs)
-                              unsubscribe()
-                            })
-                          })
-                        }
-                      } else {
-                        if (configs.downShowHandTxConfigs.length) {
-                          invokeTxConfig(...configs.downShowHandTxConfigs)
-                        }
-                      }
-                    },
-                  )
-                }
+                // if (isTxFellowLoopRuning()) {
+                //   stopTxFellowLoop()
+                // } else {
+                //   startTxFellowLoop()
+                // }
+                forceInvokeTxFellowLoop()
               }}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
+              icss={{ outline: isTxFellowLoopRuning() ? `solid ${colors.primary}` : `solid transparent` }}
             >
               Apply strategy
             </Button>
             <Button
               onClick={({ ev }) => {
                 ev.stopPropagation()
-                startLoop()
+                forceRefeshThisClmmInfo()
               }}
+              icss={{ outline: isRefreshLoopRunning() ? `solid ${colors.primary}` : `solid transparent` }}
             >
               Refresh
             </Button>
@@ -375,11 +437,21 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
             )
           }}
         >
-          Set To
+          Set
         </Button>
         <Button
           onClick={() => {
-            invokeTxConfig(positionAccount.buildPositionShowHandTxConfig())
+            const txEventCenter = invokeTxConfig(positionAccount.buildPositionShowHandTxConfig())
+
+            txEventCenter?.onTxAllDone(() => {
+              setTimeout(() => {
+                refreshClmmInfos({
+                  onlyClmmId: [props.clmmInfo.id],
+                  shouldSDKCache: false,
+                  shouldTokenAccountCache: false,
+                })
+              }, 2000)
+            })
           }}
         >
           Rush all

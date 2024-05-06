@@ -9,16 +9,16 @@ export function loadPairs() {
   sender.post({ force: false })
   receiver.subscribe((allPairJsonInfos) => {
     setStore({ isPairInfoLoading: false, pairInfos: allPairJsonInfos.slice(0, 150) })
-    let count = 0
-    const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
-    const timeoutId = setInterval(() => {
-      const newPairs = clonedAllPairJsonInfos?.slice(0, 150).map((i) => ({ ...i, name: i.name + count }))
-      if (newPairs) {
-        console.log("get pools count", clonedAllPairJsonInfos.length)
-        setStore({ isPairInfoLoading: false, pairInfos: newPairs })
-      }
-      count++
-    }, 4000)
-    return () => clearInterval(timeoutId)
+    // let count = 0
+    // const clonedAllPairJsonInfos = structuredClone(allPairJsonInfos)
+    // const timeoutId = setInterval(() => {
+    //   const newPairs = clonedAllPairJsonInfos?.slice(0, 150).map((i) => ({ ...i, name: i.name + count }))
+    //   if (newPairs) {
+    //     console.log("get pools count", clonedAllPairJsonInfos.length)
+    //     setStore({ isPairInfoLoading: false, pairInfos: newPairs })
+    //   }
+    //   count++
+    // }, 4000)
+    // return () => clearInterval(timeoutId)
   })
 }

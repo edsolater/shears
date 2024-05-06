@@ -17,6 +17,9 @@ import {
   useKitProps,
   useShortcutsRegister,
   type KeybordShortcutKeys,
+  Piv,
+  cssOpacity,
+  draggablePlugin,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal, onCleanup } from "solid-js"
 import { AppKeeperContext } from "."
@@ -140,8 +143,8 @@ function SideMenuManager(
     toggleShortcut?: MayArray<KeybordShortcutKeys>
     canFloating?: boolean
     changeToFloatingShortcut?: MayArray<KeybordShortcutKeys>
-    defaultOpen?:boolean
-    defaultFloating?:boolean
+    defaultOpen?: boolean
+    defaultFloating?: boolean
   }>,
 ) {
   const { props, shadowProps } = useKitProps(kitprops, {
@@ -172,6 +175,7 @@ function SideMenuManager(
       setHaveRenderContent(true)
     }
   })
+  const [sideMenuWidth, setSideMenuWidth] = createSignal(300)
   const { dom: wrapperDOM, setDom } = createDomRef()
   // const sideMenuHeight = "80dvh"
   return (
@@ -180,7 +184,7 @@ function SideMenuManager(
       name={"side-menu"}
       shadowProps={shadowProps}
       icss={{
-        "--side-menu-width": "clamp(40px, 30vw, 400px)",
+        "--side-menu-width": `${sideMenuWidth()}px`,
         gridArea: "side",
         width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
         transition: "500ms",
@@ -197,6 +201,22 @@ function SideMenuManager(
           zIndex: 999,
         }}
       >
+        <Piv // resize vertical handler
+          icss={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            height: "100%",
+            width: "4px",
+            background: cssOpacity("white", 0.3),
+            zIndex: 2,
+          }}
+          plugin={draggablePlugin.config({
+            onMoving({ el, ...rest }) {
+              console.log("rest: ", rest)
+            },
+          })}
+        />
         <Box // content holder
           icss={[
             {
