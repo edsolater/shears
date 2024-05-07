@@ -34,7 +34,7 @@ export function registerTokenAccountsReceiver() {
           balance ? add(balance, tokenAccount.amount) : tokenAccount.amount,
         )
       }
-      shuck_balances.set((o) => ({ ...o, ...balances }))
+      shuck_balances.set(balances)
     },
     { key: "[🤖main] receive tokenAccounts" },
   )

@@ -1,13 +1,13 @@
 import { getConnection } from "../connection/getConnection"
 import { toPub } from "../../../utils/dataStructures/Publickey"
 
-export function addWalletBalanceChangeListenerToRPCConnection(options: {
+export function listenBalanceChangeEvent(options: {
   owner: string
   rpcUrl: string
   onChange(): void
   /** @default "confirmed" */
   commitment?: "confirmed" | "finalized"
-}): { listenerId: number; cancel(): void } | undefined {
+}): { listenerId: number; remove(): void } | undefined {
   const connection = getConnection(options.rpcUrl)
   const owner = options.owner
   if (!connection || !owner) return
@@ -20,7 +20,7 @@ export function addWalletBalanceChangeListenerToRPCConnection(options: {
   )
   return {
     listenerId,
-    cancel() {
+    remove() {
       connection.removeAccountChangeListener(listenerId)
     },
   }
