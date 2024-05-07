@@ -43,7 +43,6 @@ export function useClmmUserPositionAccount(
   const owner = useShuckValue(shuck_owner)
   const slippage = useShuckValue(shuck_slippage)
   const balances = useShuckValue(shuck_balances)
-
   const tokenA = useToken(() => clmmInfo.base)
   const tokenB = useToken(() => clmmInfo.quote)
   const priceA = useTokenPrice(() => clmmInfo.base)
@@ -66,9 +65,9 @@ export function useClmmUserPositionAccount(
     pricesMap,
     tokens,
     rpcUrl: () => rpc()?.url,
-    owner: owner,
-    slippage: slippage,
-    balances: balances,
+    owner,
+    slippage,
+    balances,
     tokenA: () => tokenA,
     tokenB: () => tokenB,
     priceA,

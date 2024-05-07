@@ -20,6 +20,7 @@ import {
   type AdditionalClmmUserPositionAccount,
 } from "./getClmmUserPositionAccountAdditionalInfo"
 import type { Tokens } from "../token/type"
+import { createEffect } from "solid-js"
 
 type FollowPositionTxConfigs = {
   // upTokenMint: Mint | undefined
@@ -47,6 +48,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   const priceA = useTokenPrice(() => clmmInfo.base)
   const priceB = useTokenPrice(() => clmmInfo.quote)
 
+
   function getPositionInfo(position: ClmmUserPositionAccount) {
     return getClmmUserPositionAccountAdditionalInfo({
       clmmInfo: () => clmmInfo,
@@ -66,7 +68,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
 
   const additional = {
     buildTxFollowPositionTxConfigs: (options) =>
-      buildCustomizedFollowPositionTxConfigs({
+      buildTxFollowPositionConfigs({
         clmmInfo,
         getPositionInfo,
         config: {
@@ -80,7 +82,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
 }
 
 // TODO: convenient to  sign at once,but sign in different time
-function buildCustomizedFollowPositionTxConfigs({
+function buildTxFollowPositionConfigs({
   clmmInfo,
   getPositionInfo,
   config,

@@ -43,6 +43,7 @@ import { colors } from "../theme/colors"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
+import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -71,6 +72,7 @@ export default function ClmmsPage() {
     onCleanup(taskManager.destory)
   })
   const [clmmInfos] = useShuckAsStore(shuck_clmmInfos, {})
+
   createEffect(() => {
     const infos = clmmInfos
     if (infos) {
@@ -152,7 +154,7 @@ export default function ClmmsPage() {
         function runTxFollowPosition() {
           const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
           if (configs) {
-            console.log('[main run tx follow]')
+            console.log("[main run tx follow]")
             runTasks(
               ({ next }) => {
                 if (configs.upDecreaseClmmPositionTxConfigs.length) {
@@ -331,9 +333,11 @@ export default function ClmmsPage() {
       TableBodyTopRight={
         <RefreshCircle
           onClick={() => {
-            refreshClmmInfos({ shouldApi: false, shouldSDKCache: false, shouldTokenAccountCache: false })
-            // refreshTokenAccounts({ canUseCache: false })
+            // rpc refresh will cause too much
+            // refreshClmmInfos({ shouldApi: false, shouldSDKCache: false, shouldTokenAccountCache: false })
+            refreshTokenAccounts({ canUseCache: false })
           }}
+          duration={1000 * 60 * 18}
         />
       }
       onClickItem={(clmmInfo) => {

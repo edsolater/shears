@@ -509,6 +509,7 @@ function calcBuildPositionShowHandTxConfig(payload: {
   balances: Balances | undefined
   privateKey: string | undefined
 }) {
+  console.log("balances: ", payload.balances?.["EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"])
   const side = gt(payload.clmmInfo.currentPrice, payload.positionInfo.priceUpper) ? "B" : "A"
   const balanceOfTargetSideRawBN = get(payload.balances, side === "A" ? payload.clmmInfo.base : payload.clmmInfo.quote)
   if (!balanceOfTargetSideRawBN || isZero(balanceOfTargetSideRawBN)) {
