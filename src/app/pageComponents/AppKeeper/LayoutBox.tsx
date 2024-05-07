@@ -20,6 +20,7 @@ import {
   Piv,
   cssOpacity,
   draggablePlugin,
+  resizablePlugin,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal, onCleanup } from "solid-js"
 import { AppKeeperContext } from "."
@@ -177,7 +178,9 @@ function SideMenuManager(
   })
   const [sideMenuWidth, setSideMenuWidth] = createSignal(300)
   const { dom: wrapperDOM, setDom } = createDomRef()
+  const { dom: sizeHolderDOM, setDom: setSizeHolderDOM } = createDomRef()
   // const sideMenuHeight = "80dvh"
+  let tempStartWidthWhenMoveResize = 0
   return (
     <Item // subcomponent area grid-item
       domRef={setDom}
@@ -192,6 +195,7 @@ function SideMenuManager(
       render:self={renderAsHTMLAside}
     >
       <Box // size & position placeholder
+        domRef={setSizeHolderDOM}
         icss={{
           width: cssVar("--side-menu-width"),
           position: "relative",
@@ -200,23 +204,22 @@ function SideMenuManager(
           height: "100%",
           zIndex: 999,
         }}
+        plugin={resizablePlugin.config({
+          onMoveXStart: () => {
+            tempStartWidthWhenMoveResize = sideMenuWidth()
+            sizeHolderDOM()?.style.setProperty("transition", `none`)
+            wrapperDOM()?.style.setProperty("transition", "none")
+          },
+          onMoveX: ({ totalDeltaInPx: { dx } }) => {
+            wrapperDOM()?.style.setProperty("--side-menu-width", `${tempStartWidthWhenMoveResize + dx}px`)
+          },
+          onMoveXEnd: ({ totalDeltaInPx: { dx } }) => {
+            setSideMenuWidth(tempStartWidthWhenMoveResize + dx)
+            sizeHolderDOM()?.style.removeProperty("transition")
+            wrapperDOM()?.style.removeProperty("transition")
+          },
+        })}
       >
-        <Piv // resize vertical handler
-          icss={{
-            position: "absolute",
-            right: 0,
-            top: 0,
-            height: "100%",
-            width: "4px",
-            background: cssOpacity("white", 0.3),
-            zIndex: 2,
-          }}
-          plugin={draggablePlugin.config({
-            onMoving({ el, ...rest }) {
-              console.log("rest: ", rest)
-            },
-          })}
-        />
         <Box // content holder
           icss={[
             {
