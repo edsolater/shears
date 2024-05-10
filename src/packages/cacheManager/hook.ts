@@ -1,4 +1,5 @@
-import { createEffect, createSignal, on, onMount } from "solid-js"
+import { listenDomEvent } from "@edsolater/pivkit"
+import { createEffect, createSignal, on, onMount, type Accessor, type Setter } from "solid-js"
 import { createLocalStorageStoreManager } from "./storageManagers"
 
 /**
@@ -21,4 +22,37 @@ export function useStorageValue(options: { key: string; defaultValue?: string })
     }),
   )
   return [value, setValue] as const
+}
+
+export function useLocalStorageValue(
+  key: string,
+  defaultValue?: string ,
+): [Accessor<string | undefined>, Setter<string | undefined>] {
+  const [value, setValue] = createSignal<string | undefined>(globalThis.localStorage.getItem(key) ?? defaultValue)
+  createEffect(
+    on(value, async (v) => {
+      await 0 // force the action into microtask
+      const storedValue = globalThis.localStorage.getItem(key)
+      if (storedValue !== v) {
+        if (v != null) {
+          globalThis.localStorage.setItem(key, v)
+        } else {
+          globalThis.localStorage.removeItem(key)
+        }
+      }
+    }),
+  )
+  onMount(() => {
+    listenDomEvent(globalThis.window, "storage", ({ ev }) => {
+      const { key: newKey, newValue } = ev as StorageEvent
+      if (key === newKey) {
+        if (newValue != null) {
+          setValue(newValue)
+        } else {
+          setValue(defaultValue)
+        }
+      }
+    })
+  })
+  return [value, setValue]
 }

@@ -2,8 +2,10 @@ import type { MayArray } from "@edsolater/fnkit"
 import {
   Box,
   Fragnment,
+  Item,
   KitProps,
   Main,
+  Piv,
   PivChild,
   createDisclosure,
   createDomRef,
@@ -12,21 +14,20 @@ import {
   icssCol,
   icssGrid,
   renderAsHTMLAside,
-  Item,
+  resizablePlugin,
   useComponentContext,
   useKitProps,
+  usePlugin,
   useShortcutsRegister,
   type KeybordShortcutKeys,
-  Piv,
-  cssOpacity,
-  draggablePlugin,
-  resizablePlugin,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal, onCleanup } from "solid-js"
 import { AppKeeperContext } from "."
+import { useLocalStorageValue } from "../../../packages/cacheManager/hook"
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
 import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
+import { renderAsHTMLDiv } from "@edsolater/pivkit"
 
 export type AppKeeper_LayoutBoxProps = {
   metaTitle?: string
@@ -176,26 +177,46 @@ function SideMenuManager(
       setHaveRenderContent(true)
     }
   })
-  const [sideMenuWidth, setSideMenuWidth] = createSignal(300)
+  const [sideMenuWidth, setSideMenuWidth] = useLocalStorageValue("_side-menu-width", "300")
   const { dom: wrapperDOM, setDom } = createDomRef()
   const { dom: sizeHolderDOM, setDom: setSizeHolderDOM } = createDomRef()
+
   // const sideMenuHeight = "80dvh"
   let tempStartWidthWhenMoveResize = 0
+  const [resizablePluginModule, { resizingHiddenTransactionMask }] = usePlugin(resizablePlugin, {
+    onMoveXStart: () => {
+      tempStartWidthWhenMoveResize = Number(sideMenuWidth())
+    },
+    onMoveX: ({ totalDeltaInPx: { dx } }) => {
+      setSideMenuWidth((tempStartWidthWhenMoveResize + dx).toFixed(3))
+      // FIXME: resize by this will not burn down the computer
+      // wrapperDOM()?.style.setProperty("--side-menu-width", `${tempStartWidthWhenMoveResize + dx}px`)
+    },
+    onMoveXEnd: ({ totalDeltaInPx: { dx } }) => {
+      setSideMenuWidth((tempStartWidthWhenMoveResize + dx).toFixed(3))
+    },
+  })
   return (
-    <Item // subcomponent area grid-item
-      domRef={setDom}
-      name={"side-menu"}
+    <Piv // subcomponent area grid-item
+      domRef={[setDom, resizingHiddenTransactionMask]}
+      class={"side-menu"}
       shadowProps={shadowProps}
-      icss={{
-        "--side-menu-width": `${sideMenuWidth()}px`,
-        gridArea: "side",
-        width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
-        transition: "500ms",
-      }}
+      icss={
+        (console.log("👾👾👾👾👾"), //FIXME shouldn't invoke so many times, shouldn't recalculate this props
+        {
+          gridArea: "side",
+          width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
+          transition: "500ms",
+        })
+      }
       render:self={renderAsHTMLAside}
+      style={{
+        "--side-menu-width": `${sideMenuWidth()}px`,
+      }}
     >
+      {(console.log("load children"), (<Box></Box>))}
       <Box // size & position placeholder
-        domRef={setSizeHolderDOM}
+        domRef={[setSizeHolderDOM, resizingHiddenTransactionMask]}
         icss={{
           width: cssVar("--side-menu-width"),
           position: "relative",
@@ -204,21 +225,10 @@ function SideMenuManager(
           height: "100%",
           zIndex: 999,
         }}
-        plugin={resizablePlugin.config({
-          onMoveXStart: () => {
-            tempStartWidthWhenMoveResize = sideMenuWidth()
-            sizeHolderDOM()?.style.setProperty("transition", `none`)
-            wrapperDOM()?.style.setProperty("transition", "none")
-          },
-          onMoveX: ({ totalDeltaInPx: { dx } }) => {
-            wrapperDOM()?.style.setProperty("--side-menu-width", `${tempStartWidthWhenMoveResize + dx}px`)
-          },
-          onMoveXEnd: ({ totalDeltaInPx: { dx } }) => {
-            setSideMenuWidth(tempStartWidthWhenMoveResize + dx)
-            sizeHolderDOM()?.style.removeProperty("transition")
-            wrapperDOM()?.style.removeProperty("transition")
-          },
-        })}
+        plugin={resizablePluginModule}
+        // style={{
+        //   border: "solid",
+        // }}
       >
         <Box // content holder
           icss={[
@@ -243,6 +253,6 @@ function SideMenuManager(
           {haveRenderContent() ? props.children : null}
         </Box>
       </Box>
-    </Item>
+    </Piv>
   )
 }
