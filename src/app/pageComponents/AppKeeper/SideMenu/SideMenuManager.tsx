@@ -81,7 +81,6 @@ export function SideMenuManager(
       domRef={[setDom, resizingHiddenTransactionMask]}
       shadowProps={shadowProps}
       icss={{
-        gridArea: "side",
         // width: cssVar("--side-menu-width"),
         width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
         transition: "500ms",

@@ -14,6 +14,7 @@ import { createEffect, createSignal, onCleanup } from "solid-js"
 import type { AppKeeperProps } from "."
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
 import { SideMenuManager } from "./SideMenu/SideMenuManager"
+import { TopBarManager } from "./NavBar/TopBarManager"
 
 // should feature build-in pivkit's createDisclousure
 function createIntervalSignal(rawOptions?: { run?: boolean; intervalDelay?: number; default?: boolean }) {
@@ -60,11 +61,18 @@ export function AppKeeper_LayoutBox(kitProps: KitProps<AppKeeperProps>) {
         {props["TopbarBanner"]}
       </Item>
 
-      <Item name={"top-menu"} icss={{ gridArea: "top" }}>
+      <TopBarManager
+        icss={{ gridArea: "top" }}
+        toggleShortcut={props.topbarShortcut}
+        canFloating={props.topbarCanFloating}
+        changeToFloatingShortcut={props.topbarFloatingShortcut}
+        defaultOpen
+      >
         {props["Topbar"]}
-      </Item>
+      </TopBarManager>
 
       <SideMenuManager
+        icss={{ gridArea: "side" }}
         toggleShortcut={props.sidebarShortcut}
         canFloating={props.sidebarCanFloating}
         changeToFloatingShortcut={props.sidebarFloatingShortcut}

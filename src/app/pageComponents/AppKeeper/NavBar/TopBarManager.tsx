@@ -20,6 +20,7 @@ import { AppKeeperContext } from "../AppKeeperContext"
 import { useLocalStorageValue } from "../../../../packages/cacheManager/hook"
 import { colors } from "../../../theme/colors"
 import { documentElement } from "../../../utils/documentElement"
+import { renderAsHTMLNav } from "@edsolater/pivkit"
 
 /** always render */
 export function TopBarManager(
@@ -72,8 +73,8 @@ export function TopBarManager(
       wrapperDOM()?.style.setProperty("--top-bar-height", `${currentVal}px`)
     },
 
-    canResizeY: false,
-    canResizeX: true,
+    canResizeY: true,
+    canResizeX: false,
   })
   return (
     <Piv // subcomponent area grid-item
@@ -81,12 +82,10 @@ export function TopBarManager(
       class={"top-bar"}
       shadowProps={shadowProps}
       icss={{
-        gridArea: "side",
-        width: cssVar("--top-bar-height"),
-        // width: isTopBarOpen() && !isTopBarFloating() ? cssVar("--top-bar-height") : "0vw",
+        height: isTopBarOpen() && !isTopBarFloating() ? cssVar("--top-bar-height") : "0vh",
         transition: "500ms",
       }}
-      render:self={renderAsHTMLAside}
+      render:self={renderAsHTMLNav}
       style={() => ({
         "--top-bar-height": `${topBarHeight()}px`,
       })}
@@ -94,12 +93,12 @@ export function TopBarManager(
       <Box // size & position placeholder
         domRef={[setSizePlaceholderDOM, resizingHiddenTransactionMask]}
         icss={{
-          width: cssVar("--top-bar-height"),
+          height: cssVar("--top-bar-height"),
           position: "relative",
-          transform: isTopBarOpen() ? "translateX(0)" : "translateX(-100%)",
+          transform: isTopBarOpen() ? "translateY(0)" : "translateY(-100%)",
           transition: "500ms",
-          height: "100%",
-          zIndex: 999,
+          width: "100%",
+          zIndex: 1000,
         }}
         plugin={resizablePluginModule}
       >
