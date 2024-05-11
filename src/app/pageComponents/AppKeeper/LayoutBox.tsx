@@ -179,44 +179,37 @@ function SideMenuManager(
   })
   const [sideMenuWidth, setSideMenuWidth] = useLocalStorageValue("_side-menu-width", "300")
   const { dom: wrapperDOM, setDom } = createDomRef()
-  const { dom: sizeHolderDOM, setDom: setSizeHolderDOM } = createDomRef()
+  const { dom: sizePlaceholderDOM, setDom: setSizePlaceholderDOM } = createDomRef()
 
-  // const sideMenuHeight = "80dvh"
-  let tempStartWidthWhenMoveResize = 0
   const [resizablePluginModule, { resizingHiddenTransactionMask }] = usePlugin(resizablePlugin, {
-    onMoveXStart: () => {
-      tempStartWidthWhenMoveResize = Number(sideMenuWidth())
+    onSizeChange({ currentVal }) {
+      setSideMenuWidth(currentVal.toFixed(3))
     },
-    onMoveX: ({ totalDeltaInPx: { dx } }) => {
-      setSideMenuWidth((tempStartWidthWhenMoveResize + dx).toFixed(3))
-      // FIXME: resize by this will not burn down the computer
-      // wrapperDOM()?.style.setProperty("--side-menu-width", `${tempStartWidthWhenMoveResize + dx}px`)
+    onResizing({ currentVal }) {
+      wrapperDOM()?.style.setProperty("--side-menu-width", `${currentVal}px`)
     },
-    onMoveXEnd: ({ totalDeltaInPx: { dx } }) => {
-      setSideMenuWidth((tempStartWidthWhenMoveResize + dx).toFixed(3))
-    },
+
+    canResizeY: false,
+    canResizeX: true,
   })
   return (
     <Piv // subcomponent area grid-item
       domRef={[setDom, resizingHiddenTransactionMask]}
       class={"side-menu"}
       shadowProps={shadowProps}
-      icss={
-        (console.log("👾👾👾👾👾"), //FIXME shouldn't invoke so many times, shouldn't recalculate this props
-        {
-          gridArea: "side",
-          width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
-          transition: "500ms",
-        })
-      }
-      render:self={renderAsHTMLAside}
-      style={{
-        "--side-menu-width": `${sideMenuWidth()}px`,
+      icss={{
+        gridArea: "side",
+        width: cssVar("--side-menu-width"),
+        // width: isSideMenuOpen() && !isSideMenuFloating() ? cssVar("--side-menu-width") : "0vw",
+        transition: "500ms",
       }}
+      render:self={renderAsHTMLAside}
+      style={() => ({
+        "--side-menu-width": `${sideMenuWidth()}px`,
+      })}
     >
-      {(console.log("load children"), (<Box></Box>))}
       <Box // size & position placeholder
-        domRef={[setSizeHolderDOM, resizingHiddenTransactionMask]}
+        domRef={[setSizePlaceholderDOM, resizingHiddenTransactionMask]}
         icss={{
           width: cssVar("--side-menu-width"),
           position: "relative",
