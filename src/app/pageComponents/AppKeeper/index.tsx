@@ -1,29 +1,38 @@
-import { KitProps, createComponentContext, useKitProps } from "@edsolater/pivkit"
-import { type Accessor } from "solid-js"
+import type { MayArray } from "@edsolater/fnkit"
+import { KitProps, useKitProps, type KeybordShortcutKeys, type PivChild } from "@edsolater/pivkit"
 import { useMetaTitle } from "../../hooks/useMetaTitle"
-import { AppKeeper_LayoutBox, AppKeeper_LayoutBoxProps } from "./LayoutBox"
+import { AppKeeperContext } from "./AppKeeperContext"
+import { AppKeeper_LayoutBox } from "./LayoutBox"
 import { AppKeeper_NavBar } from "./NavBar"
 import { NavSideMenu } from "./SideMenu"
 
-type AppKeeperProps = {
-  metaTitle?: AppKeeper_LayoutBoxProps["metaTitle"]
-}
+export type AppKeeperProps = {
+  metaTitle?: string
 
-export const AppKeeperContext = createComponentContext<{
-  isSideMenuOpen?: Accessor<boolean>
-  isSideMenuFloating?: Accessor<boolean>
-  toggleSideMenu?: () => void
-}>()
+  "render:contentBanner"?: PivChild
+  TopbarBanner?: PivChild
+
+  // ---------------- topbar ----------------
+  Topbar?: PivChild
+  topbarShortcut?: MayArray<KeybordShortcutKeys>
+  topbarCanFloating?: boolean
+  topbarFloatingShortcut?: MayArray<KeybordShortcutKeys>
+
+  // ---------------- sidebar ----------------
+  Sidebar?: PivChild
+  sidebarShortcut?: MayArray<KeybordShortcutKeys>
+  sidebarCanFloating?: boolean
+  sidebarFloatingShortcut?: MayArray<KeybordShortcutKeys>
+
+  // ---------------- content ----------------
+  Content?: PivChild
+}
 
 export function AppKeeper(kitProps: KitProps<AppKeeperProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
 
-  // app layout context
-
-  useMetaTitle(() => props.metaTitle)
-
   return (
-    <AppKeeperContext.Provider value={{}}>
+    <AppKeeperContext.Provider value={props}>
       <AppKeeper_LayoutBox
         shadowProps={shadowProps}
         metaTitle={props.metaTitle}

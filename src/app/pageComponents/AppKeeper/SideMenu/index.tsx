@@ -1,7 +1,7 @@
 import { Col, Grid, KitProps, useComponentContext, useKitProps } from "@edsolater/pivkit"
 import { NavRouteItems } from "./NavigationItems"
 import { OptionAdditionalItems } from "./OptionAdditionalItems"
-import { AppKeeperContext } from ".."
+import { AppKeeperContext } from "../AppKeeperContext"
 import { createEffect } from "solid-js"
 
 /**
