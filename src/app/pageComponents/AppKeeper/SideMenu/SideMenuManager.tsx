@@ -7,7 +7,6 @@ import {
   createDisclosure,
   createDomRef,
   cssVar,
-  renderAsHTMLAside,
   resizablePlugin,
   useComponentContext,
   useKitProps,
@@ -16,19 +15,19 @@ import {
   type KeybordShortcutKeys,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal } from "solid-js"
-import { AppKeeperContext } from "../AppKeeperContext"
 import { useLocalStorageValue } from "../../../../packages/cacheManager/hook"
 import { colors } from "../../../theme/colors"
 import { documentElement } from "../../../utils/documentElement"
+import { AppKeeperContext } from "../AppKeeperContext"
 
 export type AppKeeperPanelManagerProps = {
   panelName: string
   canFloating?: boolean
   defaultOpen?: boolean
   defaultFloating?: boolean
-  canWidthResized?: boolean
+  canWidthResized: boolean
   initWidth?: number | string
-  canHeightResized?: boolean
+  canHeightResized: boolean
   initHeight?: number
   toggleShortcut: MayArray<KeybordShortcutKeys>
   changeToFloatingShortcut: MayArray<KeybordShortcutKeys>
@@ -44,19 +43,13 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
   // TODO
   // setKeeperContext({ isPanelOpen: { [panelName]: true }, isPanelFloating: { [panelName]: true } })
   useShortcutsRegister(documentElement, {
-    [`Toggle Panel:${panelName}`]: {
+    [`toggle panel:${panelName}`]: {
       shortcut: props.toggleShortcut,
-      fn: () => {
-        console.log("3: ", 3)
-        togglePanel()
-      },
+      fn: togglePanel,
     },
-    [`Toggle Floating Mode of Panel:${panelName}`]: {
+    [`toggle floating mode of panel:${panelName}`]: {
       shortcut: props.changeToFloatingShortcut,
-      fn: () => {
-        console.log("4: ", 4)
-        togglePanelFloating()
-      },
+      fn: togglePanelFloating,
     },
   })
 
@@ -85,8 +78,8 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
       if (dir === "y") wrapperDOM()?.style.setProperty(`--${panelName}-y`, `${currentVal}px`)
     },
 
-    canResizeY: false,
-    canResizeX: true,
+    canResizeX: props.canWidthResized,
+    canResizeY: props.canHeightResized,
   })
   return (
     <Piv // subcomponent area grid-item
@@ -107,7 +100,7 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
           : "unset",
         transition: "500ms",
       }}
-      render:self={renderAsHTMLAside}
+      // render:self={renderAsHTMLAside}
       style={{
         [`--${panelName}-x`]: props.canWidthResized ? (panelWidth() ? `${panelWidth()}px` : "auto") : undefined,
         [`--${panelName}-y`]: props.canHeightResized ? (panelHeight() ? `${panelHeight()}px` : "auto") : undefined,

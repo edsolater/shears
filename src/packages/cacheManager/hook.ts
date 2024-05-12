@@ -26,21 +26,26 @@ export function useStorageValue(options: { key: string; defaultValue?: string })
 
 export function useLocalStorageValue(
   key: string,
-  defaultValue?: string ,
+  defaultValue?: string,
 ): [Accessor<string | undefined>, Setter<string | undefined>] {
   const [value, setValue] = createSignal<string | undefined>(globalThis.localStorage.getItem(key) ?? defaultValue)
   createEffect(
-    on(value, async (v) => {
-      await 0 // force the action into microtask
-      const storedValue = globalThis.localStorage.getItem(key)
-      if (storedValue !== v) {
-        if (v != null) {
-          globalThis.localStorage.setItem(key, v)
-        } else {
-          globalThis.localStorage.removeItem(key)
-        }
-      }
-    }),
+    on(
+      value,
+      (v) => {
+        Promise.resolve().then(() => {
+          const storedValue = globalThis.localStorage.getItem(key)
+          if (storedValue !== v) {
+            if (v != null) {
+              globalThis.localStorage.setItem(key, v)
+            } else {
+              globalThis.localStorage.removeItem(key)
+            }
+          }
+        })
+      },
+      { defer: true },
+    ),
   )
   onMount(() => {
     listenDomEvent(globalThis.window, "storage", ({ ev }) => {
