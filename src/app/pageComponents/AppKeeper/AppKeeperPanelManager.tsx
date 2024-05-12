@@ -15,10 +15,10 @@ import {
   type KeybordShortcutKeys,
 } from "@edsolater/pivkit"
 import { createEffect, createSignal } from "solid-js"
-import { useLocalStorageValue } from "../../../../packages/cacheManager/hook"
-import { colors } from "../../../theme/colors"
-import { documentElement } from "../../../utils/documentElement"
-import { AppKeeperContext } from "../AppKeeperContext"
+import { useLocalStorageValue } from "../../../packages/cacheManager/hook"
+import { colors } from "../../theme/colors"
+import { documentElement } from "../../utils/documentElement"
+import { AppKeeperContext } from "./AppKeeperContext"
 
 export type AppKeeperPanelManagerProps = {
   panelName: string

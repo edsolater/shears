@@ -13,8 +13,7 @@ import {
 import { createEffect, createSignal, onCleanup } from "solid-js"
 import type { AppKeeperProps } from "."
 import { useMetaTitle } from "../../hooks/useDocumentMetaTitle"
-import { TopBarManager } from "./NavBar/TopBarManager"
-import { AppKeeperPanelManager } from "./SideMenu/SideMenuManager"
+import { AppKeeperPanelManager } from "./AppKeeperPanelManager"
 
 // should feature build-in pivkit's createDisclousure
 function createIntervalSignal(rawOptions?: { run?: boolean; intervalDelay?: number; default?: boolean }) {
