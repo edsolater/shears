@@ -23,7 +23,7 @@ export const colors = {
 
   // component color
 
-  sidebarBg: "#131a35",
+  appPanelBg: "#131a35",
 
   // text
   textPrimary: cssVar("--text-primary"),

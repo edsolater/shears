@@ -105,7 +105,7 @@ export function TopBarManager(
         <Box // content holder
           icss={[
             {
-              background: colors.sidebarBg,
+              background: colors.appPanelBg,
               position: "absolute",
               containerType: "size",
               transition: "200ms",
