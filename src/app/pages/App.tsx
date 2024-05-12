@@ -93,7 +93,7 @@ function KeyboardShortcutPanel() {
     documentElement,
     map(globalRouteShortcuts, ({ to, shortcut }) => ({
       shortcut,
-      fn: () => navigate(to),
+      action: () => navigate(to),
     })),
   )
 

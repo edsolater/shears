@@ -45,11 +45,11 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
   useShortcutsRegister(documentElement, {
     [`toggle panel:${panelName}`]: {
       shortcut: props.toggleShortcut,
-      fn: togglePanel,
+      action: togglePanel,
     },
     [`toggle floating mode of panel:${panelName}`]: {
       shortcut: props.changeToFloatingShortcut,
-      fn: togglePanelFloating,
+      action: togglePanelFloating,
     },
   })
 
@@ -132,15 +132,16 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
             {
               background: colors.appPanelBg,
               position: "absolute",
+              display: "grid",
               containerType: "size",
               transition: "200ms",
             },
             isPanelFloating()
               ? {
-                  top: "8px",
-                  left: "8px",
-                  height: "calc(100% - 16px)",
-                  width: `calc(100% - 8px)`,
+                  top: ".5vh",
+                  left: ".5vw",
+                  height: "calc(100% - 1vh)",
+                  width: `calc(100% - 1vw)`,
                   borderRadius: "16px",
                   boxShadow: "0 0 16px rgba(0,0,0,0.1)",
                 }
