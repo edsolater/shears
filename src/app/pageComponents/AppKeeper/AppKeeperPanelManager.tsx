@@ -135,6 +135,7 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
               display: "grid",
               containerType: "size",
               transition: "200ms",
+              overflow: "hidden",
             },
             isPanelFloating()
               ? {

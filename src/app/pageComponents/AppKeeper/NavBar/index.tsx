@@ -19,22 +19,20 @@ import { AppLogo } from "../../../components/AppLogo"
 import { WalletWidget } from "../../../components/WalletWidget"
 import { store } from "../../../stores/data/store"
 import { parseUrl } from "../../../utils/parseUrl"
-import { NaBar_NavWrapBox, NaBar_NavWrapBoxProps } from "./NavWrapBox"
+import { NaBar_NavWrapBoxProps } from "./NavWrapBox"
 
 export type AppKeeper_NavBarProps = NaBar_NavWrapBoxProps
 
 export function AppKeeper_NavBar(props: AppKeeper_NavBarProps) {
   return (
-    <NaBar_NavWrapBox>
-      <Row icss:justify="space-between">
-        {/* TODO: not correct for this */}
-        <AppLogo />
-        <Row>
-          <SettingButtonTrigger />
-          <WalletWidget />
-        </Row>
+    <Row icss={{ paddingInline: "32px", alignItems: "center", justifyContent: "space-between" }}>
+      {/* TODO: not correct for this */}
+      <AppLogo />
+      <Row>
+        <SettingButtonTrigger />
+        <WalletWidget />
       </Row>
-    </NaBar_NavWrapBox>
+    </Row>
   )
 }
 
