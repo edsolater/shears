@@ -1,4 +1,4 @@
-import type { MayArray } from "@edsolater/fnkit"
+import type { AnyFn, MayArray } from "@edsolater/fnkit"
 import {
   Box,
   KitProps,
@@ -19,10 +19,15 @@ import { useLocalStorageValue } from "../../../packages/cacheManager/hook"
 import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
 import { AppKeeperContext } from "./AppKeeperContext"
+import { useAutoCloseIfNotInterest } from "./useAutoCloseIfNotInterest"
+import { useHoveredDocumentEdge } from "./useHoveredDocumentEdge"
 
 export type AppKeeperPanelManagerProps = {
   panelName: string
+  // can auto close floating panel when set this edge
+  floatingEdge?: "top" | "right" | "bottom" | "left"
   canFloating?: boolean
+  canFloatingAutoClose?: boolean // (default: `true`)
   defaultOpen?: boolean
   defaultFloating?: boolean
   canWidthResized: boolean
@@ -38,7 +43,9 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
   const { props, shadowProps } = useKitProps(kitprops)
   const panelName = props.panelName
   const [keeperContext, setKeeperContext] = useComponentContext(AppKeeperContext)
-  const [isPanelOpen, { toggle: togglePanel }] = createDisclosure(props.defaultOpen)
+  const { dom: wrapperDOM, setDom } = createDomRef()
+  const { dom: sizePlaceholderDOM, setDom: setSizePlaceholderDOM } = createDomRef()
+  const [isPanelOpen, { toggle: togglePanel, open: openPanel, close: closePanel }] = createDisclosure(props.defaultOpen)
   const [isPanelFloating, { toggle: togglePanelFloating }] = createDisclosure(props.defaultFloating)
   // TODO
   // setKeeperContext({ isPanelOpen: { [panelName]: true }, isPanelFloating: { [panelName]: true } })
@@ -53,6 +60,25 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
     },
   })
 
+  if (props.floatingEdge) {
+    useAutoCloseIfNotInterest({
+      el: wrapperDOM,
+      enabled: isPanelFloating,
+      onClose: closePanel,
+      onOpen: openPanel,
+    })
+
+    // fast open
+    const { hoveredEdge } = useHoveredDocumentEdge()
+    createEffect(() => {
+      if (hoveredEdge() === props.floatingEdge) {
+        openPanel()
+      } else {
+        closePanel()
+      }
+    })
+  }
+
   const [haveRenderContent, setHaveRenderContent] = createSignal(isPanelOpen()) // one-way of isPanelOpen
   createEffect(() => {
     if (isPanelOpen()) {
@@ -64,9 +90,6 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
     `__AppKeeper_${panelName}-y`,
     String(props.initHeight ?? 0),
   )
-
-  const { dom: wrapperDOM, setDom } = createDomRef()
-  const { dom: sizePlaceholderDOM, setDom: setSizePlaceholderDOM } = createDomRef()
 
   const [resizablePluginModule, { resizingHiddenTransactionMask }] = usePlugin(resizablePlugin, {
     onSizeChange({ currentVal, dir }) {
@@ -116,11 +139,11 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
           transform: props.canWidthResized
             ? isPanelOpen()
               ? "translateX(0)"
-              : "translateX(-100%)"
+              : "translateX(calc(-100% + 8px))"
             : props.canHeightResized
               ? isPanelOpen()
                 ? "translateY(0)"
-                : "translateY(-100%)"
+                : "translateY(calc(-100% + 8px))"
               : "unset",
           transition: "500ms",
           zIndex: 999,
