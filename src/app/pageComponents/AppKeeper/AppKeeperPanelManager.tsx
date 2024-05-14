@@ -71,6 +71,7 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
     // fast open
     const { hoveredEdge } = useHoveredDocumentEdge()
     createEffect(() => {
+      if (!isPanelFloating()) return
       if (hoveredEdge() === props.floatingEdge) {
         openPanel()
       } else {
