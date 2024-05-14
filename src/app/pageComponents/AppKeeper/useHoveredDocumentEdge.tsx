@@ -30,7 +30,6 @@ registedCallbacks.subscribe((a, prevA) => {
 
 function addGlobalPointerMoveDetector(cb: CallbackFunction): { remove: () => void } {
   registedCallbacks.set((a) => [...a, cb])
-  console.log(12, "registedCallbacks: ", registedCallbacks())
   return {
     remove: () => {
       const index = registedCallbacks().indexOf(cb)

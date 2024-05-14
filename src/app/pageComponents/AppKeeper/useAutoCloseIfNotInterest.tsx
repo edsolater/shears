@@ -15,11 +15,11 @@ type AutoCloseIfNotInterestOptions = {
 }
 
 export function useAutoCloseIfNotInterest(options: AutoCloseIfNotInterestOptions) {
-  const { isHover } = useGestureHover({ el: options.el,  })
+  const { isHover } = useGestureHover({ el: options.el })
   const { isInterested } = useIsElementInterestedChecker({ el: options.el })
 
   createEffect(() => {
-    if ('enabled' in options && !shrinkFn(options.enabled)) return
+    if ("enabled" in options && !shrinkFn(options.enabled)) return
     if (!isHover() && !isInterested()) {
       const timeId = setTimeout(() => {
         options.onClose?.()
@@ -71,18 +71,4 @@ export function useIsElementInterestedChecker(options: ElementInterestedCheckerO
   return {
     isInterested,
   }
-}
-/**
- * don't use innerWidth and innerHeight, because they are not reliable
- * use navigator.userAgent to detect device type  in a more reliable way
- */
-function isInDesktop(): boolean {
-  return (
-    window.navigator.userAgent.includes("Windows NT") ||
-    window.navigator.userAgent.includes("Mac OS") ||
-    window.navigator.userAgent.includes("Linux")
-  )
-}
-function isInMobile(): boolean {
-  return window.navigator.userAgent.includes("Android") || window.navigator.userAgent.includes("iPhone")
 }

@@ -31,6 +31,7 @@ export interface JFetchOption extends JFetchMiddlewareOptions, JFetchMiddlewareC
 
 /**
  * @todo fetcher core should also be a middleware
+ * @todo if too large, cache in indexedDB instead of memory
  */
 export async function jFetch<Shape = any>(input: RequestInfo, options?: JFetchOption): Promise<Shape | undefined> {
   const url = isString(input) ? input : input.url

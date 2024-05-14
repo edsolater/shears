@@ -1,4 +1,4 @@
-import type { AnyFn, MayArray } from "@edsolater/fnkit"
+import type { MayArray } from "@edsolater/fnkit"
 import {
   Box,
   KitProps,
@@ -20,7 +20,7 @@ import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
 import { AppKeeperContext } from "./AppKeeperContext"
 import { useAutoCloseIfNotInterest } from "./useAutoCloseIfNotInterest"
-import { useHoveredDocumentEdge } from "./useHoveredDocumentEdge"
+import { useDocumentEdgeOpen } from "./useDocumentEdgeOpen"
 
 export type AppKeeperPanelManagerProps = {
   panelName: string
@@ -67,16 +67,14 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
       onClose: closePanel,
       onOpen: openPanel,
     })
+  }
 
-    // fast open
-    const { hoveredEdge } = useHoveredDocumentEdge()
-    createEffect(() => {
-      if (!isPanelFloating()) return
-      if (hoveredEdge() === props.floatingEdge) {
-        openPanel()
-      } else {
-        closePanel()
-      }
+  if (props.floatingEdge) {
+    useDocumentEdgeOpen({
+      floatingEdge: props.floatingEdge,
+      enabled: isPanelFloating,
+      onClose: closePanel,
+      onOpen: openPanel,
     })
   }
 
@@ -163,10 +161,10 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
             },
             isPanelFloating()
               ? {
-                  top: ".5vh",
-                  left: ".5vw",
-                  height: "calc(100% - 1vh)",
-                  width: `calc(100% - 1vw)`,
+                  top: "1.5vh",
+                  left: "1.5vw",
+                  height: "calc(100% - 3vh)",
+                  width: `calc(100% - 3vw)`,
                   borderRadius: "16px",
                   boxShadow: "0 0 16px rgba(0,0,0,0.1)",
                 }

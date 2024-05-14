@@ -18,7 +18,8 @@ export function loadTokensInWorker(transformers: PortUtils) {
           .filter((t) => !res?.blacklist.includes(t.mint) || t.name === "Native Solana")
           .concat(SOLToken) // replace api mistakely add SOL
         const tokens = toRecord(availableTokens, (t) => t.mint) as Tokens
-        Object.assign(workerCache_tokens, tokens)
+        workerCache_tokens = tokens
+        console.log('tokens.length: ', availableTokens?.length)
         return tokens
       })
       .then(sender.post)

@@ -82,7 +82,6 @@ export function AppKeeper_LayoutBox(kitProps: KitProps<AppKeeperProps>) {
         toggleShortcut={props.sidebarShortcut ?? "alt + \\"}
         canFloating={props.sidebarCanFloating}
         changeToFloatingShortcut={props.sidebarFloatingShortcut ?? "shift + alt + \\"}
-        defaultOpen
         defaultFloating
         canWidthResized
         initWidth={300}

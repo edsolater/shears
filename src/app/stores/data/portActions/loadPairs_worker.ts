@@ -7,6 +7,9 @@ export function loadPairsInWorker({ getMessagePort }: PortUtils) {
   console.info("loadPairs_worker")
   receiver.subscribe(() => {
     reportLog("[⚙️worker] start fetch pairs info")
-    fetchPairJsonInfo().then(sender.post)
+    fetchPairJsonInfo().then((pairsJSON) => {
+      console.log("pairsJSON.length: ", pairsJSON?.length)
+      return sender.post(pairsJSON)
+    })
   })
 }

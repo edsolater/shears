@@ -15,7 +15,8 @@ export async function fetchTokenJsonFile(options: { url: string }) {
 function handleRaydiumTokenJsonFile(res: RaydiumTokenListJsonFile): TokenWorkerData {
   const tokens = [
     ...((res.official.map((t) => ({ ...t, is: "raydium-official" })) ?? []) as Token[]),
-    ...((res.unOfficial.map((t) => ({ ...t, is: "raydium-unofficial" })) ?? []) as Token[]),
+    // !too much unofficial token(count: 65K), so just support official token(count: 247)
+    // ...((res.unOfficial.map((t) => ({ ...t, is: "raydium-unofficial" })) ?? []) as Token[]),
   ]
   return { tokens, blacklist: res.blacklist }
 }
