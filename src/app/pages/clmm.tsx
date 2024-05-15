@@ -1,4 +1,4 @@
-import { count, runTasks, toFormattedNumber } from "@edsolater/fnkit"
+import { count, runTasks, take, toFormattedNumber } from "@edsolater/fnkit"
 import {
   Box,
   Button,
