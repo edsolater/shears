@@ -104,7 +104,7 @@ export function DatabaseTable<T extends Collection>(
     icssTableRow({
       itemWidths: cellMaxWidths(),
       childrenIcss: {
-        transition: "all 150ms",
+        transition: "150ms",
       },
     })
 
