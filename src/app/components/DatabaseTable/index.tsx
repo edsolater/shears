@@ -27,6 +27,7 @@ import { colors } from "../../theme/colors"
 import { scrollbarWidth } from "../../theme/misc"
 import { Title } from "../BoardTitle"
 import { CyberPanel } from "../CyberPanel"
+import type { ICSSObject } from "@edsolater/pivkit"
 
 // for sort and search
 export type TabelHeaderConfigs<T extends Collection> = {
@@ -99,7 +100,13 @@ export function DatabaseTable<T extends Collection>(
     { equals: (prev, next) => prev.length === next.length && prev.every((v, idx) => v === next[idx]) },
   )
 
-  const databaseTableGridICSS = () => icssTableRow({ itemWidths: cellMaxWidths() })
+  const databaseTableGridICSS = () =>
+    icssTableRow({
+      itemWidths: cellMaxWidths(),
+      childrenIcss: {
+        transition: "all 150ms",
+      },
+    })
 
   const headerICSS = () => [
     // TODO: should also in createICSS
@@ -308,13 +315,13 @@ export function DatabaseTableItemCollapseContent<T>(
   return <Box icss={databaseTableItemCollapseContentStyle}>{renderContent}</Box>
 }
 
-const icssTableRow = createICSS((options?: { itemWidths?: number[] }) =>
+const icssTableRow = createICSS((options?: { itemWidths?: number[]; childrenIcss?: ICSSObject }) =>
   Object.assign(
     {
       display: "flex",
       flexWrap: "wrap",
       alignItems: "center",
-      "& > *": { flexGrow: "1" },
+      "& > *": { ...options?.childrenIcss, flexGrow: "1" },
     },
     ...(options?.itemWidths?.map((w, idx) => ({ [`& > *:nth-child(${idx + 1})`]: { flexBasis: `${w}px` } })) ?? []),
   ),
