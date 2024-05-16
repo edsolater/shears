@@ -62,7 +62,7 @@ export function AppKeeper_LayoutBox(kitProps: KitProps<AppKeeperProps>) {
 
       <AppKeeperPanelManager
         panelName="top-bar"
-        floatingEdge={'top'}
+        floatingEdge={"top"}
         icss={{ gridArea: "top" }}
         toggleShortcut={props.topbarShortcut ?? "alt + '"}
         canFloating={props.topbarCanFloating}
@@ -77,7 +77,7 @@ export function AppKeeper_LayoutBox(kitProps: KitProps<AppKeeperProps>) {
 
       <AppKeeperPanelManager
         panelName="side-menu"
-        floatingEdge={'left'}
+        floatingEdge={"left"}
         icss={{ gridArea: "side" }}
         toggleShortcut={props.sidebarShortcut ?? "alt + \\"}
         canFloating={props.sidebarCanFloating}

@@ -1,10 +1,13 @@
 import { shrinkFn, type AnyFn } from "@edsolater/fnkit"
 import type { Accessify, ElementRefs } from "@edsolater/pivkit"
+import { createDisclosure } from "@edsolater/pivkit"
 import { getElementFromRefs, listenDomEvent, useGestureHover } from "@edsolater/pivkit"
-import { createEffect, createSignal, onCleanup, type Accessor } from "solid-js"
+import { createEffect, createMemo, createSignal, onCleanup, type Accessor } from "solid-js"
+import { useHoveredDocumentEdge } from "./useHoveredDocumentEdge"
 
 type AutoCloseIfNotInterestOptions = {
   el: ElementRefs
+  floatingEdge: Accessify<"top" | "right" | "bottom" | "left">
   enabled?: boolean | Accessify<boolean>
   onClose?: AnyFn
   onOpen?: AnyFn
@@ -14,26 +17,31 @@ type AutoCloseIfNotInterestOptions = {
   delay?: number
 }
 
-export function useAutoCloseIfNotInterest(options: AutoCloseIfNotInterestOptions) {
-  const { isHover } = useGestureHover({ el: options.el })
+export function usePanelFloatingMaster(options: AutoCloseIfNotInterestOptions) {
+  const [isPanelOpened, { close, open }] = createDisclosure(false, {
+    onClose() {
+      // console.log("onClose")
+      options.onClose?.()
+    },
+    onOpen() {
+      // console.log("onOpen")
+      options.onOpen?.()
+    },
+  })
+  const { isHover: isHoveringEl } = useGestureHover({ el: options.el })
   const { isInterested } = useIsElementInterestedChecker({ el: options.el })
+  const { hoveredEdge } = useHoveredDocumentEdge()
+  const isHoveringEdge = createMemo(() => hoveredEdge() === shrinkFn(options.floatingEdge))
 
   createEffect(() => {
-    if ("enabled" in options && !shrinkFn(options.enabled)) return
-    if (!isHover() && !isInterested()) {
-      const timeId = setTimeout(() => {
-        options.onClose?.()
-      }, options.delay ?? 200)
-      onCleanup(() => {
-        clearTimeout(timeId)
-      })
+    const enabled = "enabled" in options ? shrinkFn(options.enabled) : true
+    if (!enabled) return
+    if (!isHoveringEl() && !isInterested() && !isHoveringEdge()) {
+      const { cancel } = close({ delay: options.delay ?? 200 })
+      onCleanup(cancel)
     } else {
-      const timeId = setTimeout(() => {
-        options.onOpen?.()
-      }, options.delay ?? 200)
-      onCleanup(() => {
-        clearTimeout(timeId)
-      })
+      const { cancel } = open()
+      onCleanup(cancel)
     }
   })
 }

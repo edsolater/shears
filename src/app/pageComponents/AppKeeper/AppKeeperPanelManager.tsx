@@ -19,7 +19,7 @@ import { useLocalStorageValue } from "../../../packages/cacheManager/hook"
 import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
 import { AppKeeperContext } from "./AppKeeperContext"
-import { useAutoCloseIfNotInterest } from "./useAutoCloseIfNotInterest"
+import { usePanelFloatingMaster } from "./usePanelFloatingMaster"
 import { useDocumentEdgeOpen } from "./useDocumentEdgeOpen"
 
 export type AppKeeperPanelManagerProps = {
@@ -59,18 +59,12 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
       action: togglePanelFloating,
     },
   })
-
+  createEffect(() => {
+    console.log("isPanelFloating(), panelName: ", isPanelFloating(), panelName)
+  })
   if (props.floatingEdge) {
-    useAutoCloseIfNotInterest({
+    usePanelFloatingMaster({
       el: wrapperDOM,
-      enabled: isPanelFloating,
-      onClose: closePanel,
-      onOpen: openPanel,
-    })
-  }
-
-  if (props.floatingEdge) {
-    useDocumentEdgeOpen({
       floatingEdge: props.floatingEdge,
       enabled: isPanelFloating,
       onClose: closePanel,
@@ -138,11 +132,11 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
           transform: props.canWidthResized
             ? isPanelOpen()
               ? "translateX(0)"
-              : "translateX(calc(-100% + 8px))"
+              : "translateX(-100%)"
             : props.canHeightResized
               ? isPanelOpen()
                 ? "translateY(0)"
-                : "translateY(calc(-100% + 8px))"
+                : "translateY(-100%)"
               : "unset",
           transition: "500ms",
           zIndex: 999,
@@ -161,10 +155,10 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
             },
             isPanelFloating()
               ? {
-                  top: "1.5vh",
-                  left: "1.5vw",
-                  height: "calc(100% - 3vh)",
-                  width: `calc(100% - 3vw)`,
+                  top: ".5vh",
+                  left: ".5vw",
+                  height: "calc(100% - 1vh)",
+                  width: `calc(100% - 1vw)`,
                   borderRadius: "16px",
                   boxShadow: "0 0 16px rgba(0,0,0,0.1)",
                 }
