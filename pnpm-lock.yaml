@@ -19,8 +19,8 @@ dependencies:
     specifier: ^0.1.90
     version: 0.1.90
   '@edsolater/pivkit':
-    specifier: ^0.0.16
-    version: 0.0.16(csstype@3.1.3)(solid-js@1.8.15)
+    specifier: ^0.0.17
+    version: 0.0.17(solid-js@1.8.15)
   '@raydium-io/raydium-sdk':
     specifier: 1.3.1-beta.48
     version: 1.3.1-beta.48(@solana/web3.js@1.90.0)(fastestsmallesttextencoderdecoder@1.0.22)
@@ -1515,16 +1515,15 @@ packages:
     resolution: {integrity: sha512-mwGUq9dGs2TnLNQX7gzJi7auZ/iUyeWhG4A489iFHuK+I4FkIYQffb1O9+KouAiWACj6HUp1WTQSDHuid+tOaw==}
     dev: false
 
-  /@edsolater/pivkit@0.0.16(csstype@3.1.3)(solid-js@1.8.15):
-    resolution: {integrity: sha512-ieOiQ4H03t0r0rNi7qfivilyQ2UhUEl/CoS/oU+mPhCOwxzRtehnQ8nm3jw77tfXzHtWXepklIN8lvM+nJR0hQ==}
+  /@edsolater/pivkit@0.0.17(solid-js@1.8.15):
+    resolution: {integrity: sha512-FmTb8ndZ8n3Vic8lFgIPYuMZ6UYfhndkhBnyD03cDKo8rqZ/C96DxNELTE9EQlqji2ULGMjXTDzWNfLoJ+cTLA==}
     peerDependencies:
       solid-js: ^1.6.0
     dependencies:
       '@edsolater/fnkit': 0.1.90
+      csstype: 3.1.3
       goober: 2.1.14(csstype@3.1.3)
       solid-js: 1.8.15
-    transitivePeerDependencies:
-      - csstype
     dev: false
 
   /@emotion/use-insertion-effect-with-fallbacks@1.0.1(react@18.2.0):
