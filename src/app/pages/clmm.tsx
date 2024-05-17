@@ -44,6 +44,8 @@ import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
 import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
+import { createPlugin } from "@edsolater/pivkit"
+import { createDomRef } from "@edsolater/pivkit"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -252,6 +254,10 @@ export default function ClmmsPage() {
                 // }
                 forceInvokeTxFellowLoop()
               }}
+              // not strightforward
+              plugin={clickPlugin.config({
+                onMiddleMouseClick: () => (isTxFellowLoopRuning() ? stopTxFellowLoop() : startTxFellowLoop()),
+              })}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
               icss={{ outline: isTxFellowLoopRuning() ? `solid ${colors.primary}` : `solid transparent` }}
             >
@@ -478,3 +484,17 @@ function ClmmPageTabBlock(props: { className?: string }) {
 function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
+
+// TODO: too rediculous
+const clickPlugin = createPlugin((options?: { onMiddleMouseClick?: () => void }) => () => {
+  const { dom, setDom } = createDomRef()
+  createEffect(() => {
+    dom()?.addEventListener("click", (ev) => {
+      console.log("ev.button: ", ev.button)
+      if (ev.button === 1) {
+        options?.onMiddleMouseClick?.()
+      }
+    })
+  })
+  return { domRef: setDom }
+})
