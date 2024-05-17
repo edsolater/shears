@@ -1,4 +1,4 @@
-import { count, runTasks, take, toFormattedNumber } from "@edsolater/fnkit"
+import { count, hasProperty, runTasks, toFormattedNumber } from "@edsolater/fnkit"
 import {
   Box,
   Button,
@@ -11,9 +11,12 @@ import {
   TabList,
   Tabs,
   Text,
+  createDomRef,
+  createPlugin,
   cssOpacity,
   icssCenter,
   icssGrid,
+  listenDomEvent,
   parseICSSToClassName,
   useKitProps,
 } from "@edsolater/pivkit"
@@ -35,6 +38,7 @@ import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInf
 import { calcTotalClmmLiquidityUSD, useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
 import { allClmmTabs, shuck_clmmInfos, shuck_tokenPrices, shuck_tokens } from "../stores/data/store"
+import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
 import { onBalanceChange } from "../stores/data/tokenAccount&balance/onBalanceChange"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../stores/data/types/clmm"
 import type { PairInfo } from "../stores/data/types/pairs"
@@ -43,9 +47,6 @@ import { colors } from "../theme/colors"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
-import { refreshTokenAccounts } from "../stores/data/tokenAccount&balance/loadOwnerTokenAccounts_main"
-import { createPlugin } from "@edsolater/pivkit"
-import { createDomRef } from "@edsolater/pivkit"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -238,24 +239,19 @@ export default function ClmmsPage() {
         })
 
         // start usdc-usdt
-        if (clmmInfo.id === "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU") {
-          onMount(startTxFellowLoop)
-        }
+        // if (clmmInfo.id === "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU") {
+        //   onMount(startTxFellowLoop)
+        // }
 
         return (
           <Row icss={{ gap: "8px" }}>
             <Button
               onClick={({ ev }) => {
                 ev.stopPropagation()
-                // if (isTxFellowLoopRuning()) {
-                //   stopTxFellowLoop()
-                // } else {
-                //   startTxFellowLoop()
-                // }
                 forceInvokeTxFellowLoop()
               }}
               // not strightforward
-              plugin={clickPlugin.config({
+              plugin={eventPlugin.config({
                 onMiddleMouseClick: () => (isTxFellowLoopRuning() ? stopTxFellowLoop() : startTxFellowLoop()),
               })}
               // TODO: not reactive // disabled={!("userPositionAccounts" in clmmInfo) || clmmInfo.userPositionAccounts?.length === 0}
@@ -485,16 +481,27 @@ function ClmmPageActionHandlersBlock(props: { className?: string }) {
   return <Text>actions</Text>
 }
 
-// TODO: too rediculous
-const clickPlugin = createPlugin((options?: { onMiddleMouseClick?: () => void }) => () => {
+const eventPlugin = createPlugin((options?: { onMiddleMouseClick?: () => void }) => () => {
   const { dom, setDom } = createDomRef()
-  createEffect(() => {
-    dom()?.addEventListener("click", (ev) => {
-      console.log("ev.button: ", ev.button)
-      if (ev.button === 1) {
-        options?.onMiddleMouseClick?.()
-      }
+
+  if (hasProperty(options, "onMiddleMouseClick")) {
+    createEffect(() => {
+      const el = dom()
+      if (!el) return
+      const { cancel } = listenDomEvent(
+        el,
+        "pointerup",
+        ({ ev }) => {
+          console.log("ev.button: ", ev.button)
+          if (ev.button === 1) {
+            options?.onMiddleMouseClick?.()
+          }
+        },
+        { preventDefault: true, stopPropergation: true },
+      )
+      onCleanup(cancel)
     })
-  })
+  }
+
   return { domRef: setDom }
 })
