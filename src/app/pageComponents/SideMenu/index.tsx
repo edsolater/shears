@@ -1,8 +1,8 @@
 import { Col, Grid, KitProps, useComponentContext, useKitProps } from "@edsolater/pivkit"
 import { NavRouteItems } from "./NavigationItems"
-import { OptionAdditionalItems } from "./OptionAdditionalItems"
-import { AppKeeperContext } from "../AppKeeperContext"
 import { createEffect } from "solid-js"
+import { AppKeeperContext } from "../AppKeeper/AppKeeperContext"
+import { OptionAdditionalItems } from "./OptionAdditionalItems"
 
 /**
  * for easier to code and read
@@ -12,10 +12,8 @@ export type SideMenuProps = {}
 export function SideMenu(kitProps: KitProps<SideMenuProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
   const [appLayoutContext, setAppLayoutContext] = useComponentContext(AppKeeperContext)
-  createEffect(() => {
-    
-  })
-  console.log('render side menu')
+  createEffect(() => {})
+  console.log("render side menu")
   return (
     <Col
       shadowProps={shadowProps}

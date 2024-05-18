@@ -22,8 +22,8 @@ import {
   icssTextColor,
   useKitProps,
 } from "@edsolater/pivkit"
-import { shuck_rpc, setStore, store } from "../../../../stores/data/store"
-import { RPCEndpoint, availableRpcs } from "../../../../stores/data/RPCEndpoint"
+import { shuck_rpc, setStore, store } from "../../../stores/data/store"
+import { RPCEndpoint, availableRpcs } from "../../../stores/data/RPCEndpoint"
 import { OptionItemBox } from "./OptionItem"
 import { unwrap } from "solid-js/store"
 

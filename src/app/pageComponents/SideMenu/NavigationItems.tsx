@@ -13,8 +13,8 @@ import {
 } from "@edsolater/pivkit"
 import { useLocation } from "@solidjs/router"
 import { Show, createMemo, createSelector } from "solid-js"
-import { Link } from "../../../components/Link"
-import { routes } from "../../../configs/routes"
+import { routes } from "../../configs/routes"
+import { Link } from "../../components/Link"
 
 export function NavRouteItems() {
   const location = useLocation()

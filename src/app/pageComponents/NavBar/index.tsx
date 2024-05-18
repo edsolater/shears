@@ -15,10 +15,10 @@ import {
   useInputController,
 } from "@edsolater/pivkit"
 import { Accessor, createEffect } from "solid-js"
-import { AppLogo } from "../../../components/AppLogo"
-import { WalletWidget } from "../../../components/WalletWidget"
-import { store } from "../../../stores/data/store"
-import { parseUrl } from "../../../utils/parseUrl"
+import { AppLogo } from "../../components/AppLogo"
+import { WalletWidget } from "../../components/WalletWidget"
+import { store } from "../../stores/data/store"
+import { parseUrl } from "../../utils/parseUrl"
 import { NaBar_NavWrapBoxProps } from "./NavWrapBox"
 
 export type NavBarProps = NaBar_NavWrapBoxProps

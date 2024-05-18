@@ -11,7 +11,7 @@ import {
   cssVar,
   useKitProps,
 } from "@edsolater/pivkit"
-import { Link } from "../../../../components/Link"
+import { Link } from "../../../components/Link"
 
 export type OptionItemBoxProps = {
   /** @default true */
