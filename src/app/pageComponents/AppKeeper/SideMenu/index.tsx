@@ -7,9 +7,9 @@ import { createEffect } from "solid-js"
 /**
  * for easier to code and read
  */
-export type NavSideMenuProps = {}
+export type SideMenuProps = {}
 
-export function NavSideMenu(kitProps: KitProps<NavSideMenuProps>) {
+export function SideMenu(kitProps: KitProps<SideMenuProps>) {
   const { props, shadowProps } = useKitProps(kitProps)
   const [appLayoutContext, setAppLayoutContext] = useComponentContext(AppKeeperContext)
   createEffect(() => {

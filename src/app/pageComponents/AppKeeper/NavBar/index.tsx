@@ -21,9 +21,9 @@ import { store } from "../../../stores/data/store"
 import { parseUrl } from "../../../utils/parseUrl"
 import { NaBar_NavWrapBoxProps } from "./NavWrapBox"
 
-export type AppKeeper_NavBarProps = NaBar_NavWrapBoxProps
+export type NavBarProps = NaBar_NavWrapBoxProps
 
-export function AppKeeper_NavBar(props: AppKeeper_NavBarProps) {
+export function NavBar(props: NavBarProps) {
   return (
     <Row icss={{ paddingInline: "32px", alignItems: "center", justifyContent: "space-between" }}>
       {/* TODO: not correct for this */}
