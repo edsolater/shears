@@ -1,3 +1,4 @@
+import { cssDarken } from "@edsolater/pivkit"
 import { cssOpacity, cssVar } from "@edsolater/pivkit"
 
 /** define in [app](./app.css) */
@@ -132,4 +133,5 @@ export const colors = {
 
   panelCardShadow: "0px 8px 24px rgba(79, 83, 243, 0.12)",
   panelCardBorder: "unset",
+  panelCardBg: cssDarken('#abc4ff',.5)
 }

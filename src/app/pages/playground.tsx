@@ -24,7 +24,9 @@ import {
   createIncresingAccessor,
   createIntervalEffect,
   createPlugin,
+  cssLinearGradient,
   cssOpacity,
+  cssRadialGradient,
   cssRepeatingLinearGradient,
   draggablePlugin,
   droppablePlugin,
@@ -33,24 +35,22 @@ import {
   icssCol,
   icssGrid,
   icssRow,
+  itemSortablePlugin,
   loadModuleAutoSizeTransition,
   loadModuleCSSCollapse,
   loadModuleTransition,
-  itemSortablePlugin,
   renderSwitchThumb,
   useControllerByID,
   useHoverPlugin,
   useKitProps,
-  type ICSS,
-  cssLinearGradient,
-  cssRadialGradient,
-  type ICSSObject,
+  type ICSS
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
 import { ExamplePanel } from "../components/ExamplePanel"
 import { RefreshCircle } from "../components/RefreshCircle"
 import { ViewTransitionSliderBox } from "../components/ViewTransitionSliderBox"
+import { FloatingInfoPanel } from "../pageComponents/FloatPanel"
 import { colors } from "../theme/colors"
 
 export default function PlaygroundPage() {
@@ -71,12 +71,16 @@ function ComponentSpecList() {
         gap: "4vw",
       }}
     >
-      <ExamplePanel name="Drap and Drop">
+      {/* <ExamplePanel name="Drap and Drop">
         <DragAndDropExample />
       </ExamplePanel>
 
       <ExamplePanel name="Temporary">
         <TemporaryExample />
+      </ExamplePanel> */}
+
+      <ExamplePanel name="Float panel example">
+        <FloatPanelExample />
       </ExamplePanel>
 
       {/* <ExamplePanel name='Drawer'>
@@ -797,13 +801,19 @@ function DragAndDropExample() {
         <SlotBox icss={icssSlotBox} plugin={droppablePlugin}>
           <Box
             icss={[icssCenter, icssFlexItem, { background: "#abc4ff" }]}
-            plugin={[draggablePlugin.config({ canOnlyContent: true }), droppablePlugin.config({ canOnlyContent: true })]}
+            plugin={[
+              draggablePlugin.config({ canOnlyContent: true }),
+              droppablePlugin.config({ canOnlyContent: true }),
+            ]}
           >
             Drag item 1
           </Box>
           <Box
             icss={[icssCenter, icssFlexItem]}
-            plugin={[draggablePlugin.config({ canOnlyContent: true }), droppablePlugin.config({ canOnlyContent: true })]}
+            plugin={[
+              draggablePlugin.config({ canOnlyContent: true }),
+              droppablePlugin.config({ canOnlyContent: true }),
+            ]}
           >
             Drag item 2
           </Box>
@@ -827,3 +837,18 @@ const droppableSlotsPlugin = createPlugin(() => () => ({
   ],
   icss: [{ padding: "8px", background: colors.backgroundLight30 }, icssGrid.config({ slot: 4, gap: "8px" })],
 }))
+
+function FloatPanelExample() {
+  return (
+    <FloatingInfoPanel>
+      <Box
+        icss={{
+          width: "30px",
+          height: "13em",
+        }}
+      >
+        hello world
+      </Box>
+    </FloatingInfoPanel>
+  )
+}
