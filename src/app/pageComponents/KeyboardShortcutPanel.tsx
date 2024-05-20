@@ -40,7 +40,7 @@ export function KeyboardShortcutPanel() {
       class={"keyboard-shortcut-panel"}
       icss={{
         //TODO: should be on by keyboard , temporary just hidden it!!
-        // visibility: "hidden",
+        visibility: "hidden",
         pointerEvents: "none",
 
         position: "fixed",
@@ -50,7 +50,7 @@ export function KeyboardShortcutPanel() {
         padding: "4px",
         zIndex: 10,
         contain: "content",
-        backdropFilter: "blur(2px) brightness(0.2)",
+        backdropFilter: "blur(2px) brightness(0.2)", // may cost performance
       }}
     >
       <InfiniteScrollList items={shortcuts()}>

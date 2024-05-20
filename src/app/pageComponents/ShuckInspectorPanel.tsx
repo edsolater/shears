@@ -1,9 +1,5 @@
-import { isObject, isUndefined } from "@edsolater/fnkit";
-import {
-  Box,
-  InfiniteScrollList,
-  Text, cssColors
-} from "@edsolater/pivkit";
+import { isObject, isUndefined } from "@edsolater/fnkit"
+import { Box, InfiniteScrollList, Text, cssColors } from "@edsolater/pivkit"
 import {
   shuck_balances,
   shuck_clmmInfos,
@@ -20,9 +16,9 @@ import {
   shuck_tokenPrices,
   shuck_tokens,
   shuck_walletAdapter,
-  shuck_walletConnected
-} from "../stores/data/store";
-import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck";
+  shuck_walletConnected,
+} from "../stores/data/store"
+import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
 
 /**
  *
@@ -30,22 +26,22 @@ import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck";
  * show current page valiable shortcut
  */
 export function ShuckInspectorPanel() {
-  const isTokenPricesLoading = useShuckValue(shuck_isTokenPricesLoading);
-  const tokenPrices = useShuckValue(shuck_tokenPrices);
-  const isTokenListLoading = useShuckValue(shuck_isTokenListLoading);
-  const isTokenListLoadingError = useShuckValue(shuck_isTokenListLoadingError);
-  const tokens = useShuckValue(shuck_tokens);
-  const isTokenAccountsLoading = useShuckValue(shuck_isTokenAccountsLoading);
-  const tokenAccounts = useShuckValue(shuck_tokenAccounts);
-  const balances = useShuckValue(shuck_balances);
-  const walletAdapter = useShuckValue(shuck_walletAdapter);
-  const walletConnected = useShuckValue(shuck_walletConnected);
-  const owner = useShuckValue(shuck_owner);
-  const rpc = useShuckValue(shuck_rpc);
-  const isMobile = useShuckValue(shuck_isMobile);
-  const slippage = useShuckValue(shuck_slippage);
-  const isClmmJsonInfoLoading = useShuckValue(shuck_isClmmJsonInfoLoading);
-  const clmmInfos = useShuckValue(shuck_clmmInfos);
+  const isTokenPricesLoading = useShuckValue(shuck_isTokenPricesLoading)
+  const tokenPrices = useShuckValue(shuck_tokenPrices)
+  const isTokenListLoading = useShuckValue(shuck_isTokenListLoading)
+  const isTokenListLoadingError = useShuckValue(shuck_isTokenListLoadingError)
+  const tokens = useShuckValue(shuck_tokens)
+  const isTokenAccountsLoading = useShuckValue(shuck_isTokenAccountsLoading)
+  const tokenAccounts = useShuckValue(shuck_tokenAccounts)
+  const balances = useShuckValue(shuck_balances)
+  const walletAdapter = useShuckValue(shuck_walletAdapter)
+  const walletConnected = useShuckValue(shuck_walletConnected)
+  const owner = useShuckValue(shuck_owner)
+  const rpc = useShuckValue(shuck_rpc)
+  const isMobile = useShuckValue(shuck_isMobile)
+  const slippage = useShuckValue(shuck_slippage)
+  const isClmmJsonInfoLoading = useShuckValue(shuck_isClmmJsonInfoLoading)
+  const clmmInfos = useShuckValue(shuck_clmmInfos)
 
   const allShucks = {
     isTokenPricesLoading,
@@ -64,13 +60,13 @@ export function ShuckInspectorPanel() {
     slippage,
     isClmmJsonInfoLoading,
     clmmInfos,
-  };
+  }
   return (
     <Box
       class={"keyboard-shortcut-panel"}
       icss={{
         //TODO: should be on by keyboard , temporary just hidden it!!
-        // visibility: "hidden",
+        visibility: "hidden", // may cost performance
         pointerEvents: "none",
 
         position: "fixed",
@@ -94,5 +90,5 @@ export function ShuckInspectorPanel() {
         )}
       </InfiniteScrollList>
     </Box>
-  );
+  )
 }
