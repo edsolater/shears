@@ -7,10 +7,12 @@ import {
   cssOpacity,
   draggablePlugin,
   icssCardPanel,
+  icssClickable,
   resizablePlugin,
   useKitProps,
 } from "@edsolater/pivkit"
 import { colors } from "../theme/colors"
+import { Show, createEffect } from "solid-js"
 
 export type FloatPanelProps = {
   thumbnailIcon?: PivChild
@@ -22,47 +24,53 @@ export type FloatPanelProps = {
 export function FloatingInfoPanel(kitProps: KitProps<FloatPanelProps>) {
   const { props, shadowProps } = useKitProps(kitProps, { name: "FloatPanel" })
   const { dom: handler, setDom: setHandlerDom } = createDomRef()
-  const [isOpened, { open, close }] = createDisclosure()
+  const [isOpened, { open, close, toggle }] = createDisclosure()
   return (
     <>
       <Piv // thumbnail
-        icss={{
-          borderRadius: "999vw",
-          width: "8px",
-          height: "8px",
-          background: "dodgerblue",
-          color: "white",
-          display: "grid",
-          placeContent: "center",
-        }}
-      >
-        Pa
-      </Piv>
-      <Box
-        shadowProps={shadowProps}
         icss={[
           {
-            color: "dodgerblue",
-            position: "fixed",
-            borderRadius: "16px",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
+            borderRadius: "999vw",
+            width: "4em",
+            height: "4em",
+            background: "dodgerblue",
+            color: "white",
+            display: "grid",
+            placeContent: "center",
+            fontSize: "2em",
           },
-          icssCardPanel,
-          props.panelIcss,
+          icssClickable,
         ]}
-        plugin={[
-          draggablePlugin.config({ handlerElement: handler }),
-          resizablePlugin.config({
-            canResizeX: true,
-            canResizeY: true,
-          }),
-        ]}
+        onClick={() => toggle()}
       >
-        <DragHandler domRef={setHandlerDom} icss={props.moveHandlerIcss} />
-        <Box>{props.content ?? props.children}</Box>
-      </Box>
+        open
+      </Piv>
+      <Show when={isOpened()}>
+        <Box
+          shadowProps={shadowProps}
+          icss={[
+            {
+              color: "dodgerblue",
+              position: "fixed",
+              borderRadius: "16px",
+              top: "40%",
+              left: "40%",
+            },
+            icssCardPanel,
+            props.panelIcss,
+          ]}
+          plugin={[
+            draggablePlugin.config({ handlerElement: handler }),
+            // resizablePlugin.config({
+            //   canResizeX: true,
+            //   canResizeY: true,
+            // }),
+          ]}
+        >
+          <DragHandler domRef={setHandlerDom} icss={props.moveHandlerIcss} />
+          <Box>{props.content ?? props.children}</Box>
+        </Box>
+      </Show>
     </>
   )
 }

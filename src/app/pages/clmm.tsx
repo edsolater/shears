@@ -239,9 +239,9 @@ export default function ClmmsPage() {
         })
 
         // start usdc-usdt
-        // if (clmmInfo.id === "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU") {
-        //   onMount(startTxFellowLoop)
-        // }
+        if (clmmInfo.id === "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU") {
+          onMount(startTxFellowLoop)
+        }
 
         return (
           <Row icss={{ gap: "8px" }}>

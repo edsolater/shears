@@ -42,7 +42,6 @@ export function KeyboardShortcutPanel() {
         //TODO: should be on by keyboard , temporary just hidden it!!
         visibility: "hidden",
         pointerEvents: "none",
-
         position: "fixed",
         bottom: 0,
         right: 0,

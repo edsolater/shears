@@ -68,7 +68,6 @@ export function ShuckInspectorPanel() {
         //TODO: should be on by keyboard , temporary just hidden it!!
         visibility: "hidden", // may cost performance
         pointerEvents: "none",
-
         position: "fixed",
         bottom: "50vh",
         right: 0,
