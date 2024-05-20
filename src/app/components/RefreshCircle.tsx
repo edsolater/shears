@@ -31,14 +31,14 @@ export function RefreshCircle(kitProps: RefreshCircleProps) {
     eachSecondPercent: 1000 / totalDuration,
     canRoundCountOverOne: true,
   })
-  const dashOffset = () => {
+  const dashOffset = createMemo(() => {
     const mod = percent() % 1
     if (mod === 0) {
       return 0
     } else {
       return c() - mod * c()
     }
-  }
+  })
 
   const manuallyRefresh = () => {
     props.onRefresh?.()
@@ -72,7 +72,11 @@ export function RefreshCircle(kitProps: RefreshCircleProps) {
       shadowProps={shadowProps}
       icss={icssClickable}
       onClick={manuallyRefresh}
-      style={{ width: "100%", height: "100%" }}
+      style={{
+        width: "100%",
+        height: "100%",
+        transform: "translateZ(0)", // to be an isolated render layer
+      }}
     >
       <svg width={props.svgWidth} height={props.svgWidth} viewBox={`0 0 ${props.svgWidth} ${props.svgWidth}`}>
         <circle

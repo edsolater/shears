@@ -1,12 +1,5 @@
 import { capitalize, switchCase } from "@edsolater/fnkit"
-import {
-  UIKitThemeConfig,
-  configUIKitTheme,
-  cssVar,
-  icssClickable,
-  icssFrostedGlass,
-  icssTextColor,
-} from "@edsolater/pivkit"
+import { configUIKitTheme } from "@edsolater/pivkit"
 import { RouteSectionProps } from "@solidjs/router"
 import { createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useStorageValue } from "../../packages/cacheManager/hook"
@@ -14,23 +7,18 @@ import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
 import { createTask } from "../../packages/conveyor/smartStore/task"
 import { routes } from "../configs/routes"
+import { uikitConfig } from "../configs/uikitTheme"
 import { initAppContextConfig } from "../hooks/initAppContextConfig"
 import { AppKeeper } from "../pageComponents/AppKeeper"
-import { NavBar } from "../pageComponents/NavBar"
-import { SideMenu } from "../pageComponents/SideMenu"
 import { KeyboardShortcutPanel } from "../pageComponents/KeyboardShortcutPanel"
+import { NavBar } from "../pageComponents/NavBar"
 import { ShuckInspectorPanel } from "../pageComponents/ShuckInspectorPanel"
+import { SideMenu } from "../pageComponents/SideMenu"
 import { setStore, shuck_rpc } from "../stores/data/store"
 
-const uikitConfig: UIKitThemeConfig = {
-  Button: {
-    icss: [icssFrostedGlass, icssTextColor({ color: cssVar("--ternary") }), icssClickable],
-  },
-}
-
 // config uikit theme before render
-configUIKitTheme(uikitConfig)
 initAppContextConfig({ themeMode: "dark", onlyAltSelect: true })
+configUIKitTheme(uikitConfig)
 
 export function App(props: RouteSectionProps) {
   const location = props.location

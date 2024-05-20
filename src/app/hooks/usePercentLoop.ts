@@ -15,12 +15,18 @@ export function usePercentLoop({
   canRoundCountOverOne?: boolean
   onRoundEnd?: () => void
   eachSecondPercent?: number
-} = {}): { percent: Accessor<number>; reset: () => void } {
-  const [percent, setPercent] = createSignal(0) // 0 ~ 1
+} = {}): {
+  /** only changed in 98%-99% not 98.4%-98.5%for example, because it's, meaningless  */
+  percent: Accessor<number>
+  exactPercent: Accessor<number>
+  reset: () => void
+} {
+  const [exactPercent, setExactPercent] = createSignal(0) // 0 ~ 1
+  const percent = useFlattedPercent(exactPercent, { minimum: 0.01 })
 
   createEffect(() => {
     const { cancel } = requestLoopAnimationFrame(({ pasedTime }) => {
-      setPercent((percent) => {
+      setExactPercent((percent) => {
         if (pasedTime == null) return 0
 
         if (canRoundCountOverOne) {
@@ -46,9 +52,10 @@ export function usePercentLoop({
   })
 
   return {
+    exactPercent,
     percent,
     reset() {
-      setPercent(0)
+      setExactPercent(0)
     },
   }
 }
@@ -120,4 +127,16 @@ export function oneWayInvoke<F extends AnyFn>(fn: F): F {
     }
     return result
   }) as F
+}
+
+function useFlattedPercent(percent: Accessor<number>, options?: { /** default 0.001  */ minimum?: number }) {
+  const [flattedPercent, setFlattedPercent] = createSignal(percent())
+  createEffect(
+    on(percent, (currentPercent) => {
+      if (Math.abs(currentPercent - flattedPercent()) >= (options?.minimum ?? 0.001)) {
+        setFlattedPercent(currentPercent)
+      }
+    }),
+  )
+  return flattedPercent
 }

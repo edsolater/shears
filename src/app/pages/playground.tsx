@@ -43,7 +43,7 @@ import {
   useControllerByID,
   useHoverPlugin,
   useKitProps,
-  type ICSS
+  type ICSS,
 } from "@edsolater/pivkit"
 import { Accessor, JSXElement, createContext, createEffect, createSignal, onCleanup } from "solid-js"
 import { createStore } from "solid-js/store"
@@ -89,19 +89,19 @@ function ComponentSpecList() {
 
       <ExamplePanel name='Modal'>
         <ModalExample />
-      </ExamplePanel>
-
-      <ExamplePanel name='IntervalCircle'>
-        <CircularProgressExample />
       </ExamplePanel> */}
+
+      <ExamplePanel name="IntervalCircle">
+        <CircularProgressExample />
+      </ExamplePanel>
 
       {/* <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
       </ExamplePanel>*/}
-
+{/* 
       <ExamplePanel name="CollapseComponent">
         <CSSCollapseComponentExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       {/* <ExamplePanel name='Input'>
         <InputExample />
@@ -123,13 +123,13 @@ function ComponentSpecList() {
         <RadioExample />
       </ExamplePanel> */}
 
-      <ExamplePanel name="ViewTransitionSliderBox">
+      {/* <ExamplePanel name="ViewTransitionSliderBox">
         <ViewTransitionSliderBoxExample />
       </ExamplePanel>
 
       <ExamplePanel name="Popover">
         <PopoverExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       {/* <ExamplePanel name='ComponentFactory'>
         <ComponentFactoryExample />
@@ -146,10 +146,10 @@ function ComponentSpecList() {
       {/* <ExamplePanel name='PropContext + ControllerContext'>
         <PropContextExample />
       </ExamplePanel> */}
-
+{/* 
       <ExamplePanel name="Select">
         <SelectExample />
-      </ExamplePanel>
+      </ExamplePanel> */}
 
       {/* <Foo /> */}
     </Box>

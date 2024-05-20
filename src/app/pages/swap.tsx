@@ -52,7 +52,7 @@ export default function SwapPage() {
   return (
     <Piv>
       <Section icss={{ display: "grid", justifyContent: "center" }}>
-        <Panel
+        {/* <Panel
           icss={[
             icssCard,
             icssCyberpenkBackground,
@@ -105,7 +105,7 @@ export default function SwapPage() {
           >
             Swap
           </Button>
-        </Panel>
+        </Panel> */}
       </Section>
     </Piv>
   )
