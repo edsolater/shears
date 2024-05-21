@@ -68,7 +68,7 @@ export function ShuckInspectorPanel() {
       thumbnailIcon={
         <Piv // thumbnail
           icss={{
-            borderRadius: "999vw",
+            borderRadius: "50%",
             width: "1.5em",
             height: "1.5em",
             background: colors.buttonPrimary,

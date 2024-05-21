@@ -40,13 +40,12 @@ export function KeyboardShortcutPanel() {
   const updateSetting = (description: string, shortcut: KeybordShortcutKeys) => {
     updateShortcut(description, { shortcut })
   }
-  const increasing = createIncresingAccessor({ eachTime: 2000 })
   return (
     <FloatingInfoPanel
       thumbnailIcon={
         <Piv // thumbnail
           icss={{
-            borderRadius: "999vw",
+            borderRadius: "50%",
             width: "1.5em",
             height: "1.5em",
             background: colors.buttonPrimary,
