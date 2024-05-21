@@ -71,85 +71,85 @@ function ComponentSpecList() {
         gap: "4vw",
       }}
     >
-      {/* <ExamplePanel name="Drap and Drop">
+      <ExamplePanel name="Drap and Drop">
         <DragAndDropExample />
       </ExamplePanel>
 
       <ExamplePanel name="Temporary">
         <TemporaryExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       <ExamplePanel name="Float panel example">
         <FloatPanelExample />
       </ExamplePanel>
 
-      {/* <ExamplePanel name='Drawer'>
+      <ExamplePanel name="Drawer">
         <DrawerExample />
       </ExamplePanel>
 
-      <ExamplePanel name='Modal'>
+      <ExamplePanel name="Modal">
         <ModalExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       <ExamplePanel name="IntervalCircle">
         <CircularProgressExample />
       </ExamplePanel>
 
-      {/* <ExamplePanel name='Collapse'>
+      <ExamplePanel name="Collapse">
         <CSSCollapseExample />
-      </ExamplePanel>*/}
-      {/* 
+      </ExamplePanel>
+
       <ExamplePanel name="CollapseComponent">
         <CSSCollapseComponentExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
-      {/* <ExamplePanel name='Input'>
+      <ExamplePanel name="Input">
         <InputExample />
       </ExamplePanel>
 
-      <ExamplePanel name='Text'>
+      <ExamplePanel name="Text">
         <TextExample />
       </ExamplePanel>
 
-      <ExamplePanel name='List'>
+      <ExamplePanel name="List">
         <ListExample />
       </ExamplePanel>
 
-      <ExamplePanel name='Switch'>
+      <ExamplePanel name="Switch">
         <SwitchExample />
       </ExamplePanel>
 
-      <ExamplePanel name='Radio'>
+      <ExamplePanel name="Radio">
         <RadioExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
-      {/* <ExamplePanel name="ViewTransitionSliderBox">
+      <ExamplePanel name="ViewTransitionSliderBox">
         <ViewTransitionSliderBoxExample />
       </ExamplePanel>
 
       <ExamplePanel name="Popover">
         <PopoverExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
-      {/* <ExamplePanel name='ComponentFactory'>
+      <ExamplePanel name="ComponentFactory">
         <ComponentFactoryExample />
       </ExamplePanel>
 
-      <ExamplePanel name='upload'>
+      <ExamplePanel name="upload">
         <UploadExample />
       </ExamplePanel>
 
-      <ExamplePanel name='Tabs'>
+      <ExamplePanel name="Tabs">
         <TabsExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
-      {/* <ExamplePanel name='PropContext + ControllerContext'>
+      <ExamplePanel name="PropContext + ControllerContext">
         <PropContextExample />
-      </ExamplePanel> */}
-      {/* 
+      </ExamplePanel>
+
       <ExamplePanel name="Select">
         <SelectExample />
-      </ExamplePanel> */}
+      </ExamplePanel>
 
       {/* <Foo /> */}
     </Box>
