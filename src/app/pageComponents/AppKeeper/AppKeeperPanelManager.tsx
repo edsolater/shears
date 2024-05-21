@@ -60,7 +60,9 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
     },
   })
   createEffect(() => {
-    console.log("isPanelFloating(), panelName: ", isPanelFloating(), panelName)
+    setTimeout(() => {
+      console.log("isPanelFloating(), panelName: ", isPanelFloating(), panelName)
+    })
   })
   if (props.floatingEdge) {
     usePanelFloatingMaster({
@@ -162,10 +164,10 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
             },
             isPanelFloating()
               ? {
-                  top: ".5vh",
-                  left: ".5vw",
-                  height: "calc(100% - 1vh)",
-                  width: `calc(100% - 1vw)`,
+                  top: ".5em",
+                  left: ".5em",
+                  height: "calc(100% - 1em)",
+                  width: "calc(100% - 1em)",
                   borderRadius: "16px",
                   boxShadow: "0 0 16px rgba(0,0,0,0.1)",
                 }
