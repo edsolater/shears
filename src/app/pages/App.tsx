@@ -1,7 +1,7 @@
 import { capitalize, switchCase } from "@edsolater/fnkit"
 import { configUIKitTheme } from "@edsolater/pivkit"
 import { RouteSectionProps } from "@solidjs/router"
-import { createEffect, createMemo, onCleanup, onMount } from "solid-js"
+import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
 import { useStorageValue } from "../../packages/cacheManager/hook"
 import { createBranchStore } from "../../packages/conveyor/smartStore/branch"
 import { setShuckVisiableChecker } from "../../packages/conveyor/smartStore/shuck"
@@ -25,26 +25,20 @@ export function App(props: RouteSectionProps) {
   const title = createMemo(() =>
     switchCase(location.pathname, { "/": "Home" }, (pathname) => pathname.split("/").map(capitalize).join(" ")),
   )
-  const needLayout = () => routes.find(({ path }) => path === location.pathname)?.needAppKeeper
+  const needLayout = createMemo(() => routes.find(({ path }) => path === location.pathname)?.needAppKeeper)
   useExperimentalCode()
   useLocalStorageRpc()
   return (
-    <>
-      {needLayout() ? (
-        <>
-          <AppKeeper
-            metaTitle={title()}
-            Topbar={<NavBar />}
-            Sidebar={<SideMenu />}
-            FABs={[<KeyboardShortcutPanel />, <ShuckInspectorPanel />]}
-          >
-            {props.children}
-          </AppKeeper>
-        </>
-      ) : (
-        props.children
-      )}
-    </>
+    <Show when={needLayout()} fallback={props.children}>
+      <AppKeeper
+        metaTitle={title()}
+        Topbar={<NavBar />}
+        Sidebar={<SideMenu />}
+        FABs={[<KeyboardShortcutPanel />, <ShuckInspectorPanel />]} // FIXME: cause performance issue
+      >
+        {props.children}
+      </AppKeeper>
+    </Show>
   )
 }
 

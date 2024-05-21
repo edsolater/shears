@@ -1,4 +1,4 @@
-import type { MayArray } from "@edsolater/fnkit"
+import { toFixedDecimal, type MayArray } from "@edsolater/fnkit"
 import {
   Box,
   KitProps,
@@ -90,10 +90,9 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
       if (dir === "y") setPanelHeight(currentVal.toFixed(3))
     },
     onResizing({ currentVal, dir }) {
-      if (dir === "x") wrapperDOM()?.style.setProperty(`--${panelName}-x`, `${currentVal}px`)
-      if (dir === "y") wrapperDOM()?.style.setProperty(`--${panelName}-y`, `${currentVal}px`)
+      if (dir === "x") wrapperDOM()?.style.setProperty(`--${panelName}-x`, `${toFixedDecimal(currentVal, 3)}px`)
+      if (dir === "y") wrapperDOM()?.style.setProperty(`--${panelName}-y`, `${toFixedDecimal(currentVal, 3)}px`)
     },
-
     canResizeX: props.canWidthResized,
     canResizeY: props.canHeightResized,
   })
@@ -118,8 +117,16 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
       }}
       // render:self={renderAsHTMLAside}
       style={{
-        [`--${panelName}-x`]: props.canWidthResized ? (panelWidth() ? `${panelWidth()}px` : "auto") : undefined,
-        [`--${panelName}-y`]: props.canHeightResized ? (panelHeight() ? `${panelHeight()}px` : "auto") : undefined,
+        [`--${panelName}-x`]: props.canWidthResized
+          ? panelWidth()
+            ? `${toFixedDecimal(panelWidth()!, 3)}px`
+            : "auto"
+          : undefined,
+        [`--${panelName}-y`]: props.canHeightResized
+          ? panelHeight()
+            ? `${toFixedDecimal(panelHeight()!, 3)}px`
+            : "auto"
+          : undefined,
       }}
     >
       <Box // size & position placeholder (always static, so it can hold size info)
