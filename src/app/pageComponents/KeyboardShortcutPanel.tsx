@@ -77,7 +77,7 @@ export function KeyboardShortcutPanel() {
             height: "400px",
           }}
         >
-          {/* <InfiniteScrollList items={shortcuts()}>
+          <InfiniteScrollList items={shortcuts()}>
             {({ description, shortcut }) => (
               <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
                 <Text icss={cssColors.labelColor}>{description}</Text>
@@ -94,7 +94,7 @@ export function KeyboardShortcutPanel() {
                 />
               </Box>
             )}
-          </InfiniteScrollList> */}
+          </InfiniteScrollList>
         </Box>
       }
     ></FloatingInfoPanel>
