@@ -19,8 +19,8 @@ dependencies:
     specifier: ^0.1.90
     version: 0.1.90
   '@edsolater/pivkit':
-    specifier: ^0.0.19
-    version: 0.0.19(solid-js@1.8.17)
+    specifier: ^0.0.20
+    version: 0.0.20(solid-js@1.8.17)
   '@raydium-io/raydium-sdk':
     specifier: 1.3.1-beta.48
     version: 1.3.1-beta.48(@solana/web3.js@1.90.0)(fastestsmallesttextencoderdecoder@1.0.22)
@@ -1790,8 +1790,8 @@ packages:
     resolution: {integrity: sha512-mwGUq9dGs2TnLNQX7gzJi7auZ/iUyeWhG4A489iFHuK+I4FkIYQffb1O9+KouAiWACj6HUp1WTQSDHuid+tOaw==}
     dev: false
 
-  /@edsolater/pivkit@0.0.19(solid-js@1.8.17):
-    resolution: {integrity: sha512-4yZXp0U0E1glnQBhHCKzw9NrkZhdARS4aTCL6rm3uhj5iPEtYPK9IyrhTFO12XfGSvjWlOlqAEErnKcefexUXQ==}
+  /@edsolater/pivkit@0.0.20(solid-js@1.8.17):
+    resolution: {integrity: sha512-RB3T/ty5a7y8NU3zWzHHo890cymYe4UhPMeQGJ4jRFaN0AHcN564wGXgdVQdBd+L3eLHfSKDWqITgwwxi0t6BA==}
     peerDependencies:
       solid-js: ^1.6.0
     dependencies:

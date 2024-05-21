@@ -10,6 +10,7 @@ import {
   icssCardPanel,
   icssClickable,
   useKitProps,
+  usePlugin,
 } from "@edsolater/pivkit"
 import { Show } from "solid-js"
 import { colors } from "../theme/colors"
@@ -28,7 +29,7 @@ export function FloatingInfoPanel(kitProps: KitProps<FloatPanelProps>) {
   const defaultThumbnail = () => (
     <Box
       icss={{
-        borderRadius: "999vw",
+        borderRadius: "50%",
         width: "6em",
         height: "6em",
         background: "dodgerblue",
@@ -40,13 +41,17 @@ export function FloatingInfoPanel(kitProps: KitProps<FloatPanelProps>) {
       open👋
     </Box>
   )
+  const [plugin] = usePlugin(draggablePlugin, {
+    handlerElement: handler,
+    unsetMoveInEnd: false,
+  })
   return (
     <>
       <AddProps icss={[icssClickable]} onClick={() => toggle()}>
         {props.thumbnailIcon ?? defaultThumbnail()}
       </AddProps>
       <Box
-        shadowProps={shadowProps}
+        // shadowProps={shadowProps}
         icss={[
           {
             visibility: isOpened() ? "visible" : "hidden",
@@ -60,7 +65,7 @@ export function FloatingInfoPanel(kitProps: KitProps<FloatPanelProps>) {
           props.panelIcss,
         ]}
         plugin={[
-          draggablePlugin.config({ handlerElement: handler, unsetMoveInEnd: false }), // 🤔 why not work
+          plugin,
           // resizablePlugin.config({
           //   canResizeX: true,
           //   canResizeY: true,
