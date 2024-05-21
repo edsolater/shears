@@ -1,4 +1,4 @@
-import { createEffect, createSignal, on, onCleanup, type Accessor } from "solid-js"
+import { createEffect, createSignal, on, onCleanup, onMount, type Accessor } from "solid-js"
 import { requestLoopAnimationFrame } from "@edsolater/pivkit"
 import type { AnyFn } from "@edsolater/fnkit"
 
@@ -11,51 +11,46 @@ export function usePercentLoop({
   canRoundCountOverOne,
   onRoundEnd,
   eachSecondPercent = 1 / 10,
+  updateEach = 1000,
 }: {
+  updateEach?: number // default 1000ms
   canRoundCountOverOne?: boolean
   onRoundEnd?: () => void
   eachSecondPercent?: number
 } = {}): {
-  /** only changed in 98%-99% not 98.4%-98.5%for example, because it's, meaningless  */
   percent: Accessor<number>
-  exactPercent: Accessor<number>
   reset: () => void
 } {
-  const [exactPercent, setExactPercent] = createSignal(0) // 0 ~ 1
-  const percent = useFlattedPercent(exactPercent, { minimum: 0.01 })
+  const [percent, setPercent] = createSignal(0) // 0 ~ 1
 
-  createEffect(() => {
-    const { cancel } = requestLoopAnimationFrame(({ pasedTime }) => {
-      setExactPercent((percent) => {
-        if (pasedTime == null) return 0
-
-        if (canRoundCountOverOne) {
-          const newPercent = percent + eachSecondPercent * (pasedTime / 1000)
-          if (Math.floor(newPercent) !== Math.floor(percent)) {
-            onRoundEnd?.()
-            return newPercent
-          } else {
-            return newPercent
-          }
-        } else {
-          const newPercent = percent + eachSecondPercent * (pasedTime / 1000)
-          if (newPercent >= 1) {
+  const { startLoop, stopLoop } = useIntervalLoop({
+    cb: () => {
+      setPercent((percent) => {
+        const nextPercent = percent + eachSecondPercent / (updateEach / 1000)
+        if (nextPercent >= 1) {
+          if (canRoundCountOverOne) {
             onRoundEnd?.()
             return 0
           } else {
-            return newPercent
+            return 1
           }
+        } else {
+          return nextPercent
         }
       })
-    })
-    onCleanup(cancel)
+    },
+    delay: updateEach,
+  })
+
+  onMount(() => {
+    startLoop()
+    onCleanup(stopLoop)
   })
 
   return {
-    exactPercent,
     percent,
     reset() {
-      setExactPercent(0)
+      setPercent(0)
     },
   }
 }
@@ -129,7 +124,7 @@ export function oneWayInvoke<F extends AnyFn>(fn: F): F {
   }) as F
 }
 
-function useFlattedPercent(percent: Accessor<number>, options?: { /** default 0.001  */ minimum?: number }) {
+function useFlattedValue(percent: Accessor<number>, options?: { /** default 0.001  */ minimum?: number }) {
   const [flattedPercent, setFlattedPercent] = createSignal(percent())
   createEffect(
     on(percent, (currentPercent) => {
