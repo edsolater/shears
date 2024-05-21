@@ -1,5 +1,5 @@
 import { isObject, isUndefined } from "@edsolater/fnkit"
-import { Box, InfiniteScrollList, Text, cssColors } from "@edsolater/pivkit"
+import { Box, Icon, InfiniteScrollList, Piv, Text, cssColors } from "@edsolater/pivkit"
 import {
   shuck_balances,
   shuck_clmmInfos,
@@ -19,6 +19,8 @@ import {
   shuck_walletConnected,
 } from "../stores/data/store"
 import { useShuckValue } from "../../packages/conveyor/solidjsAdapter/useShuck"
+import { FloatingInfoPanel } from "./FloatPanel"
+import { colors } from "../theme/colors"
 
 /**
  *
@@ -62,32 +64,52 @@ export function ShuckInspectorPanel() {
     clmmInfos,
   }
   return (
-    <Box
-      class={"keyboard-shortcut-panel"}
-      icss={{
-        //TODO: should be on by keyboard , temporary just hidden it!!
-        visibility: "hidden", // may cost performance
-        pointerEvents: "none",
+    <FloatingInfoPanel
+      thumbnailIcon={
+        <Piv // thumbnail
+          icss={{
+            borderRadius: "999vw",
+            width: "1.5em",
+            height: "1.5em",
+            background: colors.buttonPrimary,
+            color: "white",
+            display: "grid",
+            placeContent: "center",
+            fontSize: "2em",
+          }}
+        >
+          <Icon src={"/icons/info.svg"}></Icon>
+        </Piv>
+      }
+      panelIcss={{
+        color: colors.textPrimary,
         position: "fixed",
-        bottom: "50vh",
-        right: 0,
-        border: "solid",
-        padding: "4px",
-        zIndex: 10,
-        contain: "content",
-        backdropFilter: "blur(2px) brightness(0.2)",
+        borderRadius: "16px",
+        top: "40%",
+        left: "40%",
       }}
-    >
-      <InfiniteScrollList items={allShucks}>
-        {(value, name) => (
-          <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
-            <Text icss={cssColors.labelColor}>{name}</Text>
-            <Text>
-              {isObject(value()) ? Object.keys(value()!).length : isUndefined(value()) ? null : String(value())}
-            </Text>
-          </Box>
-        )}
-      </InfiniteScrollList>
-    </Box>
+      content={
+        <Box
+          class={"keyboard-shortcut-panel"}
+          icss={{
+            //TODO: should be on by keyboard , temporary just hidden it!!
+            padding: "4px",
+            zIndex: 10,
+            contain: "content",
+          }}
+        >
+          <InfiniteScrollList items={allShucks}>
+            {(value, name) => (
+              <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
+                <Text icss={cssColors.labelColor}>{name}</Text>
+                <Text>
+                  {isObject(value()) ? Object.keys(value()!).length : isUndefined(value()) ? null : String(value())}
+                </Text>
+              </Box>
+            )}
+          </InfiniteScrollList>
+        </Box>
+      }
+    ></FloatingInfoPanel>
   )
 }

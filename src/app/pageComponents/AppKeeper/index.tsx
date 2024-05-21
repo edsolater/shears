@@ -131,7 +131,9 @@ export function AppKeeper(kitProps: KitProps<AppKeeperProps>) {
           </Main>
         </Item>
 
-        <Box icss={{ position: "absolute", right: "2vw", bottom: "2vh" }}>{props["FABs"]}</Box>
+        <Box icss={{ position: "absolute", right: "2vw", bottom: "2vh", display: "grid", gap: "4px" }}>
+          {props["FABs"]}
+        </Box>
       </Box>
     </AppKeeperContext.Provider>
   )

@@ -98,7 +98,7 @@ function ComponentSpecList() {
       {/* <ExamplePanel name='Collapse'>
         <CSSCollapseExample />
       </ExamplePanel>*/}
-{/* 
+      {/* 
       <ExamplePanel name="CollapseComponent">
         <CSSCollapseComponentExample />
       </ExamplePanel> */}
@@ -146,7 +146,7 @@ function ComponentSpecList() {
       {/* <ExamplePanel name='PropContext + ControllerContext'>
         <PropContextExample />
       </ExamplePanel> */}
-{/* 
+      {/* 
       <ExamplePanel name="Select">
         <SelectExample />
       </ExamplePanel> */}
@@ -845,6 +845,7 @@ function FloatPanelExample() {
         icss={{
           width: "30px",
           height: "13em",
+          padding: "2em",
         }}
       >
         hello world

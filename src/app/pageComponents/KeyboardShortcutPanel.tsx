@@ -1,17 +1,23 @@
-import { map } from "@edsolater/fnkit";
+import { map } from "@edsolater/fnkit"
 import {
   Box,
   InfiniteScrollList,
   Input,
   KeybordShortcutKeys,
-  Text, createIncresingAccessor,
-  cssColors, keyboardShortcutObserverPlugin,
+  Piv,
+  Text,
+  createIncresingAccessor,
+  cssColors,
+  keyboardShortcutObserverPlugin,
   useShortcutsInfo,
-  useShortcutsRegister
-} from "@edsolater/pivkit";
-import { useNavigate } from "@solidjs/router";
-import { globalRouteShortcuts } from "../configs/globalShortcuts";
-import { documentElement } from "../utils/documentElement";
+  useShortcutsRegister,
+} from "@edsolater/pivkit"
+import { useNavigate } from "@solidjs/router"
+import { globalRouteShortcuts } from "../configs/globalShortcuts"
+import { documentElement } from "../utils/documentElement"
+import { FloatingInfoPanel } from "./FloatPanel"
+import { Icon } from "@edsolater/pivkit"
+import { colors } from "../theme/colors"
 
 /**
  *
@@ -20,56 +26,76 @@ import { documentElement } from "../utils/documentElement";
  */
 
 export function KeyboardShortcutPanel() {
-  const navigate = useNavigate();
-  const { shortcuts } = useShortcutsInfo(documentElement);
+  const navigate = useNavigate()
+  const { shortcuts } = useShortcutsInfo(documentElement)
   const { updateShortcut } = useShortcutsRegister(
     documentElement,
     map(globalRouteShortcuts, ({ to, shortcut }) => ({
       shortcut,
       action: () => navigate(to),
-    }))
-  );
+    })),
+  )
 
   // utils for update shortcut
   const updateSetting = (description: string, shortcut: KeybordShortcutKeys) => {
-    updateShortcut(description, { shortcut });
-  };
-  const increasing = createIncresingAccessor({ eachTime: 2000 });
+    updateShortcut(description, { shortcut })
+  }
+  const increasing = createIncresingAccessor({ eachTime: 2000 })
   return (
-    <Box
-      class={"keyboard-shortcut-panel"}
-      icss={{
-        //TODO: should be on by keyboard , temporary just hidden it!!
-        visibility: "hidden",
-        pointerEvents: "none",
+    <FloatingInfoPanel
+      thumbnailIcon={
+        <Piv // thumbnail
+          icss={{
+            borderRadius: "999vw",
+            width: "1.5em",
+            height: "1.5em",
+            background: colors.buttonPrimary,
+            color: "white",
+            display: "grid",
+            placeContent: "center",
+            fontSize: "2em",
+          }}
+        >
+          <Icon src={"/icons/keyboard.svg"}></Icon>
+        </Piv>
+      }
+      panelIcss={{
+        color: colors.textPrimary,
         position: "fixed",
-        bottom: 0,
-        right: 0,
-        border: "solid",
-        padding: "4px",
-        zIndex: 10,
-        contain: "content",
-        backdropFilter: "blur(2px) brightness(0.2)", // may cost performance
+        borderRadius: "16px",
+        top: "40%",
+        left: "40%",
       }}
-    >
-      <InfiniteScrollList items={shortcuts()}>
-        {({ description, shortcut }) => (
-          <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
-            <Text icss={cssColors.labelColor}>{description}</Text>
-            <Input
-              value={String(shortcut)}
-              icss={{ border: "solid" }}
-              disableUserInput
-              plugin={keyboardShortcutObserverPlugin({
-                onRecordShortcut({ shortcut: newShortcut, el }) {
-                  if (newShortcut !== shortcut) {
-                    updateSetting(description, newShortcut);
-                  }
-                },
-              })} />
-          </Box>
-        )}
-      </InfiniteScrollList>
-    </Box>
-  );
+      content={
+        <Box
+          class={"keyboard-shortcut-panel"}
+          icss={{
+            //TODO: should be on by keyboard , temporary just hidden it!!
+            padding: "4px",
+            zIndex: 10,
+            contain: "content",
+          }}
+        >
+          <InfiniteScrollList items={shortcuts()}>
+            {({ description, shortcut }) => (
+              <Box icss={{ display: "grid", gridTemplateColumns: "180px 200px", gap: "8px" }}>
+                <Text icss={cssColors.labelColor}>{description}</Text>
+                <Input
+                  value={String(shortcut)}
+                  disableUserInput
+                  plugin={keyboardShortcutObserverPlugin({
+                    onRecordShortcut({ shortcut: newShortcut, el }) {
+                      if (newShortcut !== shortcut) {
+                        updateSetting(description, newShortcut)
+                      }
+                    },
+                  })}
+                />
+              </Box>
+            )}
+          </InfiniteScrollList>
+        </Box>
+      }
+    ></FloatingInfoPanel>
+  )
 }
