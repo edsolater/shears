@@ -167,13 +167,17 @@ export default function ClmmsPage() {
                     txEventCenter?.onTxAllDone(() => {
                       onBalanceChange(clmmInfo.base, ({ unsubscribe, balance }) => {
                         // console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                        const txc = invokeTxConfig(...configs.upShowHandTxConfigs)
-                        txc?.onTxAllDone(() => {
-                          setTimeout(() => {
-                            forceRefeshThisClmmInfo()
-                          }, 3000)
-                        })
-                        unsubscribe()
+                        setTimeout(() => {
+                          // wait for balance update
+                          const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                          const txc = invokeTxConfig(...newConfigs.upShowHandTxConfigs)
+                          txc?.onTxAllDone(() => {
+                            setTimeout(() => {
+                              forceRefeshThisClmmInfo()
+                            }, 3000)
+                          })
+                          unsubscribe()
+                        }, 1000)
                       })
                     })
                   }
@@ -197,13 +201,17 @@ export default function ClmmsPage() {
                     txEventCenter?.onTxAllDone(() => {
                       onBalanceChange(clmmInfo.quote, ({ unsubscribe, balance }) => {
                         // console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                        const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
-                        txc?.onTxAllDone(() => {
-                          setTimeout(() => {
-                            forceRefeshThisClmmInfo()
-                          }, 8000)
-                        })
-                        unsubscribe()
+                        setTimeout(() => {
+                          // wait for balance update
+                          const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                          const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
+                          txc?.onTxAllDone(() => {
+                            setTimeout(() => {
+                              forceRefeshThisClmmInfo()
+                            }, 4000)
+                          })
+                          unsubscribe()
+                        }, 1000)
                       })
                     })
                   }
