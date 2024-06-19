@@ -111,7 +111,7 @@ function ComponentSpecList() {
         <TextExample />
       </ExamplePanel>
 
-      <ExamplePanel name="List">
+      <ExamplePanel name="Loop">
         <ListExample />
       </ExamplePanel>
 
@@ -349,7 +349,7 @@ function InputExample() {
     <Input
       value={controlledValue}
       icss={{ border: "solid" }}
-      onUserInput={(text) => {
+      onInput={(text) => {
         setControlledValue(text)
       }}
     />

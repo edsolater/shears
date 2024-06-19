@@ -5,7 +5,7 @@ import {
   Col,
   Icon,
   KitProps,
-  List,
+  Loop,
   Row,
   Tab,
   TabList,
@@ -128,7 +128,7 @@ export default function ClmmsPage() {
       name: "Rewards",
       render: (i) => (
         <Row icss={{ gap: "2px" }}>
-          <List items={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} size={"sm"} />}</List>
+          <Loop items={i.rewardInfos}>{(info) => <TokenAvatar token={info.tokenMint} size={"sm"} />}</Loop>
         </Row>
       ),
     },
@@ -147,7 +147,7 @@ export default function ClmmsPage() {
         } = useIntervalLoop({
           cb: () => {
             console.log("[main] start refresh clmmInfo: ", clmmInfo.id)
-            refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, shouldTokenAccountCache: false })
+            refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false})
           },
           delay: 1000 * 60 * 12,
           immediate: false,
@@ -313,13 +313,13 @@ export default function ClmmsPage() {
             <Box icss={icssCenter}>current price: {toRenderable(clmmInfo.currentPrice, { decimals: 8 })}</Box>
             <Box icss={icssCenter}>total staked USD: {toRenderable(total(), { decimals: 8 })}</Box>
           </Box>
-          <List
+          <Loop
             items={clmmInfo.userPositionAccounts}
             // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
             Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
           >
             {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
-          </List>
+          </Loop>
         </Col>
       )
     },
@@ -462,7 +462,6 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
                 refreshClmmInfos({
                   onlyClmmId: [props.clmmInfo.id],
                   shouldSDKCache: false,
-                  shouldTokenAccountCache: false,
                 })
               }, 2000)
             })
@@ -479,7 +478,7 @@ function ClmmPageTabBlock(props: { className?: string }) {
   return (
     <Tabs>
       <TabList icss={{ "& > *": { marginInline: "8px" } }}>
-        <List items={allClmmTabs}>{(clmmTab) => <Tab>{clmmTab}</Tab>}</List>
+        <Loop items={allClmmTabs}>{(clmmTab) => <Tab>{clmmTab}</Tab>}</Loop>
       </TabList>
     </Tabs>
   )

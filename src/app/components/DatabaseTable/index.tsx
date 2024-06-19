@@ -8,7 +8,7 @@ import {
   Icon,
   InfiniteScrollList,
   KitProps,
-  List,
+  Loop,
   PivChild,
   Row,
   Text,
@@ -155,14 +155,14 @@ export function DatabaseTable<T extends Collection>(
             <Box icss={{ width: "32px" }}></Box>
 
             <Box icss={[{ flexGrow: 1 }, headerICSS()]}>
-              <List items={cellNames}>
+              <Loop items={cellNames}>
                 {(headerLabel) => <Text icss={{ fontWeight: "bold", color: colors.textSecondary }}>{headerLabel}</Text>}
-              </List>
+              </Loop>
             </Box>
           </Group>
 
           <Group name="items">
-            <InfiniteScrollList // FIXME why can't be <List> ? 🤔
+            <InfiniteScrollList // FIXME why can't be <Loop> ? 🤔
               shadowProps={props.propForList}
               items={props.items}
               icss={{
@@ -253,7 +253,7 @@ function DatabaseTableItemCollapseFace<T>(
       </Box>
 
       <Group name="item-parts" icss={[{ flex: 1 }, databaseTableGridTemplate?.()]}>
-        <List items={props.innerConfig}>
+        <Loop items={props.innerConfig}>
           {(config, idx) => (
             <DatabaseItemFacePartTextDetail
               name={config.name}
@@ -263,7 +263,7 @@ function DatabaseTableItemCollapseFace<T>(
               }}
             />
           )}
-        </List>
+        </Loop>
       </Group>
     </Row>
   )

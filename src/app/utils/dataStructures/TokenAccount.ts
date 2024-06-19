@@ -130,7 +130,7 @@ export async function getTokenAccounts({
     for (const { pubkey, account } of ownerTokensRes.value) {
       // double check layout length
       if (account.data.length !== SPL_ACCOUNT_LAYOUT.span) {
-        console.error("invalid token account layout length", "publicKey",toPubString(pubkey))
+        console.error("invalid token account layout length", "publicKey", toPubString(pubkey))
         break
       }
 

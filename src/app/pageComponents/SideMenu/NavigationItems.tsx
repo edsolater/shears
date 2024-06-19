@@ -3,7 +3,7 @@ import {
   Box,
   Icon,
   KitProps,
-  List,
+  Loop,
   Piv,
   Row,
   cssOpacity,
@@ -20,8 +20,8 @@ export function NavRouteItems() {
   const location = useLocation()
   const pathnameSelector = createSelector(() => location.pathname)
   return (
-    <List
-      wrapper={Piv}
+    <Loop
+      renderWrapper={Piv}
       items={routes}
       icss={[
         icssCol(),
@@ -49,7 +49,7 @@ export function NavRouteItems() {
           </LinkItem>
         </Show>
       )}
-    </List>
+    </Loop>
   )
 }
 type LinkItemProps = {
