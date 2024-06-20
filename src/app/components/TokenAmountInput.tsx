@@ -11,7 +11,7 @@ import {
   Panel,
   Text,
   TextProps,
-  createIncresingAccessor,
+  createIncreasingSeed,
   createRef,
   createSyncSignal,
   icssClickable,
@@ -117,7 +117,7 @@ type TokenSelectorModalContentProps = KitProps<TokenSelectorModalContentRawProps
 function TokenSelectorModalContent(rawProps: TokenSelectorModalContentProps) {
   const { props, shadowProps } = useKitProps(rawProps)
   const tokens = useShuckValue(shuck_tokens)
-  const increasing = createIncresingAccessor()
+  const increasing = createIncreasingSeed()
   return (
     <Panel shadowProps={shadowProps}>
       <Text plugin={plugin_modalTitle}>{`Select a token ${increasing()}`}</Text>

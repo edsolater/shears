@@ -6,7 +6,7 @@ import {
   KeybordShortcutKeys,
   Piv,
   Text,
-  createIncresingAccessor,
+  createIncreasingSeed,
   cssColors,
   keyboardShortcutObserverPlugin,
   useShortcutsInfo,

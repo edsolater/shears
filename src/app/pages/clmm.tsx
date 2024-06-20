@@ -12,6 +12,7 @@ import {
   Tabs,
   Text,
   createDomRef,
+  createIncreasingSeed,
   createPlugin,
   cssOpacity,
   icssCenter,
@@ -20,7 +21,7 @@ import {
   parseICSSToClassName,
   useKitProps,
 } from "@edsolater/pivkit"
-import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
+import { Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import {
   DatabaseTable,
@@ -136,6 +137,7 @@ export default function ClmmsPage() {
       name: "Strategy",
       render: (rawClmmInfo) => {
         const clmmInfo = useClmmInfo(rawClmmInfo)
+        const increasingSeed = createIncreasingSeed()
 
         // refresh clmm info every 10 mins
         const {
@@ -239,7 +241,8 @@ export default function ClmmsPage() {
 
         // looply apply strategy
 
-        let speedLevel = "normal" as "flush" | "quick" | "normal"
+        const [speedLevel, setSpeedLevel] = createSignal<"quick" | "normal">("normal")
+
         const {
           startLoop: startTxFellowLoop,
           stopLoop: stopTxFellowLoop,
@@ -250,16 +253,16 @@ export default function ClmmsPage() {
             console.log("[main] start tx follow : ", clmmInfo.id)
             forceRefeshThisClmmInfo()?.then(() => {
               const nextTaskSpeedLevel = runTxFollowPosition()
-              speedLevel = nextTaskSpeedLevel
+              console.log("nextTaskSpeedLevel: ", nextTaskSpeedLevel)
+              setSpeedLevel(nextTaskSpeedLevel)
             })
           },
           delay: () => {
-            if (speedLevel === "flush") {
-              return 1000 * 8
-            } else if (speedLevel === "quick") {
+            const speed = speedLevel()
+            if (speed === "quick") {
               return 1000 * 60
             } else {
-              return 1000 * 60 * 10
+              return 1000 * 60 * 5
             }
           },
           immediate: false,

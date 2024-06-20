@@ -1,5 +1,5 @@
 import { shrinkFn, type AnyFn, type MayFn } from "@edsolater/fnkit"
-import { createEffect, createSignal, on, onCleanup, onMount, type Accessor } from "solid-js"
+import { createEffect, createMemo, createSignal, on, onCleanup, onMount, type Accessor } from "solid-js"
 
 /**
  * 0 ~ 1
@@ -77,7 +77,7 @@ export function useLoopTask<R>({
   let intervalId: any = null
 
   function startLoop() {
-    if (isRunning()) return () => {}
+    clearInterval(intervalId)
     setIsRunning(true)
     intervalId = setInterval(() => {
       invokeOnce()
@@ -105,7 +105,6 @@ export function useLoopTask<R>({
       () => shrinkFn(delay),
       () => {
         if (isRunning()) {
-          stopLoop()
           startLoop()
         }
       },
