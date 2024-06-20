@@ -33,7 +33,7 @@ import { TokenAvatar } from "../components/TokenAvatar"
 import { TokenAvatarPair } from "../components/TokenAvatarPair"
 import { Token } from "../components/TokenProps"
 import { TokenSymbolPair } from "../components/TokenSymbolPair"
-import { useIntervalLoop } from "../hooks/usePercentLoop"
+import { useLoopTask } from "../hooks/usePercentLoop"
 import { loadClmmInfos, refreshClmmInfos } from "../stores/data/clmm/loadClmmInfos_main"
 import { calcTotalClmmLiquidityUSD, useClmmInfo } from "../stores/data/clmm/useClmmInfo"
 import { useClmmUserPositionAccount } from "../stores/data/clmm/useClmmUserPositionAccount"
@@ -137,17 +137,17 @@ export default function ClmmsPage() {
       render: (rawClmmInfo) => {
         const clmmInfo = useClmmInfo(rawClmmInfo)
 
-        // refresh every 10 mins
+        // refresh clmm info every 10 mins
         const {
           startLoop,
           stopLoop,
           isRunning: isRefreshLoopRunning,
           invokeOnce: forceRefeshThisClmmInfo,
           lastInvokeTime,
-        } = useIntervalLoop({
+        } = useLoopTask({
           cb: () => {
             console.log("[main] start refresh clmmInfo: ", clmmInfo.id)
-            refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false})
+            return refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false })
           },
           delay: 1000 * 60 * 12,
           immediate: false,
@@ -156,8 +156,8 @@ export default function ClmmsPage() {
         // apply strategy every 10 mins
         function runTxFollowPosition() {
           const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+          console.log("🐛debug tx follow: ", configs)
           if (configs) {
-            console.log("[main run tx follow]")
             runTasks(
               ({ next }) => {
                 if (configs.upDecreaseClmmPositionTxConfigs.length) {
@@ -165,20 +165,23 @@ export default function ClmmsPage() {
                   const txEventCenter = invokeTxConfig(...configs.upDecreaseClmmPositionTxConfigs)
                   if (configs.upShowHandTxConfigs.length) {
                     txEventCenter?.onTxAllDone(() => {
-                      onBalanceChange(clmmInfo.base, ({ unsubscribe, balance }) => {
-                        // console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                        setTimeout(() => {
-                          // wait for balance update
-                          const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
-                          const txc = invokeTxConfig(...newConfigs.upShowHandTxConfigs)
-                          txc?.onTxAllDone(() => {
-                            setTimeout(() => {
-                              forceRefeshThisClmmInfo()
-                            }, 3000)
-                          })
-                          unsubscribe()
-                        }, 1000)
-                      })
+                      onBalanceChange(
+                        clmmInfo.base,
+                        ({ balance }) => {
+                          // console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
+                          setTimeout(() => {
+                            // wait for balance update
+                            const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                            const txc = invokeTxConfig(...newConfigs.upShowHandTxConfigs)
+                            txc?.onTxAllDone(() => {
+                              setTimeout(() => {
+                                forceRefeshThisClmmInfo()
+                              }, 3000)
+                            })
+                          }, 1000)
+                        },
+                        { once: true },
+                      )
                     })
                   }
                 } else {
@@ -187,7 +190,7 @@ export default function ClmmsPage() {
                     txc?.onTxAllDone(() => {
                       setTimeout(() => {
                         forceRefeshThisClmmInfo()
-                      }, 8000)
+                      }, 3000)
                     })
                   }
                 }
@@ -199,20 +202,23 @@ export default function ClmmsPage() {
                   const txEventCenter = invokeTxConfig(...configs.downDecreaseClmmPositionTxConfigs)
                   if (configs.downShowHandTxConfigs.length) {
                     txEventCenter?.onTxAllDone(() => {
-                      onBalanceChange(clmmInfo.quote, ({ unsubscribe, balance }) => {
-                        // console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                        setTimeout(() => {
-                          // wait for balance update
-                          const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
-                          const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
-                          txc?.onTxAllDone(() => {
-                            setTimeout(() => {
-                              forceRefeshThisClmmInfo()
-                            }, 4000)
-                          })
-                          unsubscribe()
-                        }, 1000)
-                      })
+                      onBalanceChange(
+                        clmmInfo.quote,
+                        ({ balance }) => {
+                          // console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
+                          setTimeout(() => {
+                            // wait for balance update
+                            const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                            const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
+                            txc?.onTxAllDone(() => {
+                              setTimeout(() => {
+                                forceRefeshThisClmmInfo()
+                              }, 3000)
+                            })
+                          }, 1000)
+                        },
+                        { once: true },
+                      )
                     })
                   }
                 } else {
@@ -228,21 +234,34 @@ export default function ClmmsPage() {
               },
             )
           }
+          return configs.nextTaskSpeed
         }
+
+        // looply apply strategy
+
+        let speedLevel = "normal" as "flush" | "quick" | "normal"
         const {
           startLoop: startTxFellowLoop,
           stopLoop: stopTxFellowLoop,
           isRunning: isTxFellowLoopRuning,
           invokeOnce: forceInvokeTxFellowLoop,
-        } = useIntervalLoop({
+        } = useLoopTask({
           cb: () => {
-            console.log("[main] start runTxFollowPosition: ", clmmInfo.id)
-            forceRefeshThisClmmInfo()
-            setTimeout(() => {
-              runTxFollowPosition()
-            }, 1000 * 8)
+            console.log("[main] start tx follow : ", clmmInfo.id)
+            forceRefeshThisClmmInfo()?.then(() => {
+              const nextTaskSpeedLevel = runTxFollowPosition()
+              speedLevel = nextTaskSpeedLevel
+            })
           },
-          delay: 1000 * 60 * 5,
+          delay: () => {
+            if (speedLevel === "flush") {
+              return 1000 * 8
+            } else if (speedLevel === "quick") {
+              return 1000 * 60
+            } else {
+              return 1000 * 60 * 10
+            }
+          },
           immediate: false,
         })
 
@@ -343,11 +362,9 @@ export default function ClmmsPage() {
       TableBodyTopRight={
         <RefreshCircle
           onClick={() => {
-            // rpc refresh will cause too much
-            // refreshClmmInfos({ shouldApi: false, shouldSDKCache: false, shouldTokenAccountCache: false })
             refreshTokenAccounts({ canUseCache: false })
           }}
-          duration={1000 * 60 * 18}
+          duration={1000 * 60 * 10}
         />
       }
       onClickItem={(clmmInfo) => {
@@ -416,15 +433,18 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
           onClick={() => {
             const txBus = invokeTxConfig(
               positionAccount.buildPositionIncreaseTxConfig({
-                amountA: 0.1, // TODO: should be input
+                amountA: 0.1, // TODO: should be input() // this is main for test on Balance change
               }),
             )
             txBus?.onTxSendSuccess(() => {
               if (positionAccount.tokenBase) {
-                onBalanceChange(positionAccount.tokenBase, ({ unsubscribe, balance }) => {
-                  console.log("balance: ", toFormattedNumber(balance, { decimals: 6 }))
-                  unsubscribe()
-                })
+                onBalanceChange(
+                  positionAccount.tokenBase,
+                  ({ balance }) => {
+                    console.log("[main] balance change: ", toFormattedNumber(balance, { decimals: 6 }))
+                  },
+                  { once: true },
+                )
               }
             })
           }}
@@ -435,9 +455,19 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
           onClick={() => {
             invokeTxConfig(
               positionAccount.buildPositionDecreaseTxConfig({
-                amountB: 0.1, // TODO: should be input
+                amountB: 0.1, // TODO: should be input // IT!! is B
               }),
-            )
+            )?.onTxSendSuccess(() => {
+              if (positionAccount.tokenQuote) {
+                onBalanceChange(
+                  positionAccount.tokenQuote,
+                  ({ balance }) => {
+                    console.log("[main] balance change22: ", toFormattedNumber(balance, { decimals: 6 }))
+                  },
+                  { once: true },
+                )
+              }
+            })
           }}
         >
           -

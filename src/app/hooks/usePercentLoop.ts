@@ -1,6 +1,5 @@
+import { shrinkFn, type AnyFn, type MayFn } from "@edsolater/fnkit"
 import { createEffect, createSignal, on, onCleanup, onMount, type Accessor } from "solid-js"
-import { requestLoopAnimationFrame } from "@edsolater/pivkit"
-import type { AnyFn } from "@edsolater/fnkit"
 
 /**
  * 0 ~ 1
@@ -23,7 +22,7 @@ export function usePercentLoop({
 } {
   const [percent, setPercent] = createSignal(0) // 0 ~ 1
 
-  const { startLoop, stopLoop } = useIntervalLoop({
+  const { startLoop, stopLoop } = useLoopTask({
     cb: () => {
       setPercent((percent) => {
         const nextPercent = percent + eachSecondPercent / (updateEach / 1000)
@@ -55,19 +54,22 @@ export function usePercentLoop({
   }
 }
 
-export function useIntervalLoop({
+/**
+ * loop task (use setInterval inside)
+ */
+export function useLoopTask<R>({
   cb,
   delay = 1000,
   immediate = true,
 }: {
-  cb?: () => void
-  delay?: number
+  cb: () => R
+  delay?: MayFn<number>
   immediate?: boolean
-} = {}): {
+}): {
   isRunning: Accessor<boolean>
   startLoop(): () => void // return stop action
   stopLoop(): void
-  invokeOnce(): void
+  invokeOnce(): R
   lastInvokeTime: Accessor<number>
 } {
   const [lastInvokeTime, setLastInvokeTime] = createSignal(0)
@@ -79,7 +81,7 @@ export function useIntervalLoop({
     setIsRunning(true)
     intervalId = setInterval(() => {
       invokeOnce()
-    }, delay)
+    }, shrinkFn(delay))
     if (immediate) {
       invokeOnce()
     }
@@ -94,8 +96,22 @@ export function useIntervalLoop({
 
   function invokeOnce() {
     setLastInvokeTime(Date.now())
-    cb?.()
+    return cb?.()
   }
+
+  // restart loop when delay changed
+  createEffect(
+    on(
+      () => shrinkFn(delay),
+      () => {
+        if (isRunning()) {
+          stopLoop()
+          startLoop()
+        }
+      },
+      { defer: true },
+    ),
+  )
 
   // stop loop when component unmount
   onCleanup(stopLoop)
@@ -107,31 +123,4 @@ export function useIntervalLoop({
     startLoop,
     stopLoop,
   }
-}
-
-/**
- * only can invoke once
- */
-export function oneWayInvoke<F extends AnyFn>(fn: F): F {
-  let invoked = false
-  let result = null
-  return ((...args: Parameters<F>) => {
-    if (!invoked) {
-      result = fn(...args)
-      invoked = true
-    }
-    return result
-  }) as F
-}
-
-function useFlattedValue(percent: Accessor<number>, options?: { /** default 0.001  */ minimum?: number }) {
-  const [flattedPercent, setFlattedPercent] = createSignal(percent())
-  createEffect(
-    on(percent, (currentPercent) => {
-      if (Math.abs(currentPercent - flattedPercent()) >= (options?.minimum ?? 0.001)) {
-        setFlattedPercent(currentPercent)
-      }
-    }),
-  )
-  return flattedPercent
 }

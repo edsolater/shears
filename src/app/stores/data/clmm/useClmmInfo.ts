@@ -1,4 +1,17 @@
-import { add, assert, eq, get, greaterThan, gt, isExist, isPositive, lt, minus, type Numberish } from "@edsolater/fnkit"
+import {
+  add,
+  assert,
+  eq,
+  get,
+  greaterThan,
+  gt,
+  isExist,
+  isPositive,
+  lt,
+  minus,
+  mul,
+  type Numberish,
+} from "@edsolater/fnkit"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
 import { mergeTwoStore } from "../featureHooks/mergeTwoStore"
@@ -29,6 +42,7 @@ type FollowPositionTxConfigs = {
   downDecreaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
   upShowHandTxConfigs: TxBuilderSingleConfig[]
   downShowHandTxConfigs: TxBuilderSingleConfig[]
+  nextTaskSpeed: "flush" | "quick" | "normal"
 }
 
 type AdditionalClmmInfo = {
@@ -47,7 +61,6 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   const tokenB = useToken(() => clmmInfo.quote)
   const priceA = useTokenPrice(() => clmmInfo.base)
   const priceB = useTokenPrice(() => clmmInfo.quote)
-
 
   function getPositionInfo(position: ClmmUserPositionAccount) {
     return getClmmUserPositionAccountAdditionalInfo({
@@ -99,9 +112,10 @@ function buildTxFollowPositionConfigs({
   assert(isExist(currentPrice), "current price is not available")
 
   // ---------------- group position ----------------
+
   const currentPositions = [] as ClmmUserPositionAccount[]
-  const upPositions = [] as ClmmUserPositionAccount[] // out of range
-  const downPositions = [] as ClmmUserPositionAccount[] // out of range
+  const priceBiggerPositions = [] as ClmmUserPositionAccount[] // out of range
+  const priceLowerPositions = [] as ClmmUserPositionAccount[] // out of range
 
   const sortedPositions = positions?.toSorted((a, b) =>
     greaterThan(a.priceLower, b.priceLower) ? -1 : eq(a.priceLower, b.priceLower) ? 0 : 1,
@@ -118,82 +132,114 @@ function buildTxFollowPositionConfigs({
       currentPositions.push(position)
     }
     if (isLowerGreaterThanCurrentPrice) {
-      upPositions.push(position)
+      priceBiggerPositions.push(position)
     }
     if (isUpperLessThanCurrentPrice) {
-      downPositions.push(position)
+      priceLowerPositions.push(position)
     }
   }
 
-  const upDecreaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
-  const downDecreaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
-  const upShowHandTxConfigs = [] as TxBuilderSingleConfig[]
-  const downShowHandTxConfigs = [] as TxBuilderSingleConfig[]
+  // ---------------- handle positions ----------------
 
-  // ---------------- handle up positions ----------------
-  if (upPositions.length > 1) {
-    let nearestUpPosition = upPositions[0]
-    for (const position of upPositions) {
-      if (lt(position.priceLower, nearestUpPosition.priceLower)) {
-        nearestUpPosition = position
-      }
-    }
+  const upTxConfigs = handlePositions({
+    boundaryPositions: priceBiggerPositions,
+    currentPosition: currentPositions[0],
+    direction: "priceBigger",
+    currentPrice,
+  })
+  const downTxConfigs = handlePositions({
+    boundaryPositions: priceLowerPositions,
+    currentPosition: currentPositions[0],
+    direction: "priceLower",
+    currentPrice,
+  })
 
-    for (const position of upPositions.filter((p) => p !== nearestUpPosition)) {
-      const richPosition = getPositionInfo(position)
-      const originalUSD = richPosition.userLiquidityUSD()
-      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, config.ignoredPositionUsd * 1.2))
-      if (needMove) {
-        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: config.ignoredPositionUsd })
-        if (txBuilderConfig) {
-          upDecreaseClmmPositionTxConfigs.push(txBuilderConfig)
-        }
-      }
-    }
-
-    // show hand
-    const richPosition = getPositionInfo(nearestUpPosition)
-    const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
-    if (txBuilderConfig) {
-      upShowHandTxConfigs.push(txBuilderConfig)
-    }
-  }
-
-  // ---------------- handle down positions ----------------
-  if (downPositions.length > 1) {
-    let nearestDownPosition = downPositions[0]
-    for (const position of downPositions) {
-      if (gt(position.priceUpper, nearestDownPosition.priceUpper)) {
-        nearestDownPosition = position
-      }
-    }
-
-    for (const position of downPositions.filter((p) => p !== nearestDownPosition)) {
-      const richPosition = getPositionInfo(position)
-      const originalUSD = richPosition.userLiquidityUSD()
-      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, config.ignoredPositionUsd * 1.2))
-      if (needMove) {
-        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: config.ignoredPositionUsd })
-        if (txBuilderConfig) {
-          downDecreaseClmmPositionTxConfigs.push(txBuilderConfig)
-        }
-      }
-    }
-
-    // show hand
-    const richPosition = getPositionInfo(nearestDownPosition)
-    const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
-    if (txBuilderConfig) {
-      downShowHandTxConfigs.push(txBuilderConfig)
-    }
-  }
-
-  // ---------------- handle tasks (send tx) ----------------
   return {
-    upDecreaseClmmPositionTxConfigs,
-    downDecreaseClmmPositionTxConfigs,
-    upShowHandTxConfigs,
-    downShowHandTxConfigs,
+    upDecreaseClmmPositionTxConfigs: upTxConfigs.decreaseClmmPositionTxConfigs,
+    downDecreaseClmmPositionTxConfigs: downTxConfigs.decreaseClmmPositionTxConfigs,
+    upShowHandTxConfigs: upTxConfigs.showHandTxConfigs,
+    downShowHandTxConfigs: downTxConfigs.showHandTxConfigs,
+    nextTaskSpeed:
+      upTxConfigs.needFlashRefresh || downTxConfigs.needFlashRefresh
+        ? "flush"
+        : upTxConfigs.needFastRefresh || downTxConfigs.needFastRefresh
+          ? "quick"
+          : "normal",
+  }
+
+  function handlePositions({
+    boundaryPositions,
+    currentPosition,
+    direction,
+    currentPrice,
+  }: {
+    boundaryPositions: ClmmUserPositionAccount[]
+    currentPosition: ClmmUserPositionAccount
+    direction: "priceBigger" | "priceLower"
+    currentPrice: Numberish
+  }) {
+    const decreaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
+    const showHandTxConfigs = [] as TxBuilderSingleConfig[]
+
+    if (!boundaryPositions.length) return { showHandTxConfigs, decreaseClmmPositionTxConfigs }
+
+    // ---------------- calc nearestPosition ----------------
+    const nearestPosition = (() => {
+      let nearestPosition = boundaryPositions[0]
+      if (direction === "priceBigger") {
+        for (const position of boundaryPositions) {
+          if (lt(position.priceLower, nearestPosition.priceLower)) {
+            nearestPosition = position
+          }
+        }
+      } else {
+        for (const position of boundaryPositions) {
+          if (gt(position.priceUpper, nearestPosition.priceUpper)) {
+            nearestPosition = position
+          }
+        }
+      }
+      return nearestPosition
+    })()
+
+    // currentPrice is bigger than flashPrice, means the price is very like going to change
+    const flashPrice = add(
+      currentPosition.priceLower,
+      mul(direction === "priceBigger" ? 0.1 : 0.9, minus(currentPosition.priceUpper, currentPosition.priceLower)),
+    )
+    // currentPrice is bigger than turnPrice, means the price is going to change
+    const turnPrice = add(
+      currentPosition.priceLower,
+      mul(direction === "priceBigger" ? 0.25 : 0.75, minus(currentPosition.priceUpper, currentPosition.priceLower)),
+    )
+
+    const needFlashRefresh = direction === "priceBigger" ? lt(currentPrice, flashPrice) : gt(currentPrice, flashPrice)
+    const needFastRefresh = direction === "priceBigger" ? lt(currentPrice, turnPrice) : gt(currentPrice, turnPrice)
+    const needShowHand = !needFastRefresh
+
+    // ---------------- decrease ----------------
+    for (const position of needShowHand ? boundaryPositions.filter((p) => p !== nearestPosition) : boundaryPositions) {
+      const richPosition = getPositionInfo(position)
+      const originalUSD = richPosition.userLiquidityUSD()
+      const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, config.ignoredPositionUsd * 1.2))
+      if (needMove) {
+        const txBuilderConfig = richPosition.buildPositionSetTxConfig({ usd: config.ignoredPositionUsd })
+        if (txBuilderConfig) {
+          decreaseClmmPositionTxConfigs.push(txBuilderConfig)
+        }
+      }
+    }
+
+    // ---------------- show hand ----------------
+    if (needShowHand) {
+      const richPosition = getPositionInfo(nearestPosition)
+      const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
+      if (txBuilderConfig) {
+        showHandTxConfigs.push(txBuilderConfig)
+      }
+    }
+
+    return { showHandTxConfigs, decreaseClmmPositionTxConfigs, needFastRefresh, needFlashRefresh }
   }
 }
 

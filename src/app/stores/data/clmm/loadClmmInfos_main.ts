@@ -62,6 +62,16 @@ export function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "own
     rpcUrl: url,
     owner,
   })
+  const { reject, resolve, promise } = Promise.withResolvers<boolean>()
+  port.receiveMessage(
+    () => {
+      setTimeout(() => {
+        resolve(true)
+      }, 100) // leave some time for reflect the data
+    },
+    { once: true },
+  )
+  return promise
 }
 
 export function registerClmmInfosReceiver() {

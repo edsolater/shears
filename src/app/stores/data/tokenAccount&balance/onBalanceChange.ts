@@ -1,4 +1,4 @@
-import { applyDecimal, setItem, type Numberish, type Subscription } from "@edsolater/fnkit"
+import { abs, applyDecimal, gt, minus, type Numberish, type Subscription } from "@edsolater/fnkit"
 import type { Mint } from "../../../utils/dataStructures/type"
 import { shuck_balances } from "../store"
 import { getCurrentToken } from "../token/getCurrentToken"
@@ -10,38 +10,39 @@ type BalanceChangeCallback = (utils: {
   prevBalance: Numberish | undefined
   prevBalanceBN: Numberish | undefined
   token: Token | undefined
-  unsubscribe: () => void
 }) => void
-const onBalanceChangeCallbacks = new Map<Mint, BalanceChangeCallback[]>()
 /**
  * in main thread
  */
-export function onBalanceChange(mint: Mint, onChange: BalanceChangeCallback): Subscription {
-  setItem(onBalanceChangeCallbacks, mint, (callbacks) => (callbacks ? [...callbacks, onChange] : [onChange]))
-  const unsubscribe = () => {
-    setItem(onBalanceChangeCallbacks, mint, (callbacks) => callbacks?.filter((cb) => cb !== onChange))
-  }
-  shuck_balances.subscribe(
+export function onBalanceChange(
+  mint: Mint,
+  onChange: BalanceChangeCallback,
+  options?: { once?: boolean; miniBalanceChangeAmount?: Numberish },
+): Subscription {
+  const subscription = shuck_balances.subscribe(
     (balancesBNs, prevBalancesBNs) => {
-      for (const [mint, callbacks] of onBalanceChangeCallbacks) {
-        const token = getCurrentToken(mint)
-        const balanceBN = balancesBNs[mint]
-        const prevBalanceBN = prevBalancesBNs?.[mint]
-        if (balanceBN !== prevBalanceBN) {
-          callbacks.forEach((cb) =>
-            cb({
-              balanceBN,
-              prevBalanceBN,
-              balance: token && balanceBN != null ? applyDecimal(balanceBN, token.decimals) : undefined,
-              prevBalance: token && prevBalanceBN != null ? applyDecimal(prevBalanceBN, token.decimals) : undefined,
-              token,
-              unsubscribe,
-            }),
-          )
+      const token = getCurrentToken(mint)
+      const balanceBN = balancesBNs[mint]
+      const prevBalanceBN = prevBalancesBNs?.[mint]
+      if (
+        balanceBN !== prevBalanceBN &&
+        gt(abs(minus(balanceBN, prevBalanceBN ?? 0)), options?.miniBalanceChangeAmount ?? 0.01)
+      ) {
+        onChange({
+          balanceBN,
+          prevBalanceBN,
+          balance: token && balanceBN != null ? applyDecimal(balanceBN, token.decimals) : undefined,
+          prevBalance: token && prevBalanceBN != null ? applyDecimal(prevBalanceBN, token.decimals) : undefined,
+          token,
+        })
+        if (options?.once) {
+          setTimeout(() => {
+            subscription.unsubscribe()
+          }, 0)
         }
       }
     },
     { key: "to onBalanceChange" },
   )
-  return { unsubscribe }
+  return subscription
 }
