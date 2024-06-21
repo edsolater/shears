@@ -82,7 +82,7 @@ globalThis.document.addEventListener("DOMContentLoaded", () => {
 })
 
 export type Prices = Record<Mint, Price>
-export type Balances = Record<Mint, Numberish>
+export type Balances = Record<Mint, Numberish /* not supply decimals */>
 export type TokenAccounts = Record<PublicKey, TokenAccount>
 
 // TODO: should all state just use shuck

@@ -1,10 +1,12 @@
 import {
   add,
+  applyDecimal,
   assert,
   eq,
   get,
   greaterThan,
   gt,
+  has,
   isExist,
   isPositive,
   lt,
@@ -34,8 +36,9 @@ import {
   getClmmUserPositionAccountAdditionalInfo,
   type AdditionalClmmUserPositionAccount,
 } from "./getClmmUserPositionAccountAdditionalInfo"
-import type { Tokens } from "../token/type"
+import type { Token, Tokens } from "../token/type"
 import { createEffect, type Accessor } from "solid-js"
+import { getToken } from "../token/getToken"
 
 type FollowPositionTxConfigs = {
   // upTokenMint: Mint | undefined
@@ -44,7 +47,7 @@ type FollowPositionTxConfigs = {
   downDecreaseClmmPositionTxConfigs: TxBuilderSingleConfig[]
   upShowHandTxConfigs: TxBuilderSingleConfig[]
   downShowHandTxConfigs: TxBuilderSingleConfig[]
-  nextTaskSpeed: "quick" | "normal"
+  nextTaskSpeed: "flash" | "quick" | "normal"
 }
 
 type AdditionalClmmInfo = {
@@ -87,6 +90,8 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
         clmmInfo,
         getPositionInfo,
         balances,
+        tokenA,
+        tokenB,
         config: {
           ignoredPositionUsd: options?.ignoreWhenUsdLessThan ?? 5,
         },
@@ -102,11 +107,15 @@ function buildTxFollowPositionConfigs({
   clmmInfo,
   getPositionInfo,
   balances,
+  tokenA,
+  tokenB,
   config,
 }: {
   clmmInfo: ClmmInfo
   getPositionInfo(position: ClmmUserPositionAccount): AdditionalClmmUserPositionAccount
   balances: Accessor<Balances | undefined>
+  tokenA: Token
+  tokenB: Token
   config: {
     ignoredPositionUsd: number
   }
@@ -144,46 +153,58 @@ function buildTxFollowPositionConfigs({
     }
   }
 
-  // ---------------- handle positions ----------------
+  const tokenBalanceA = balances()?.[clmmInfo.base] && applyDecimal(balances()?.[clmmInfo.base]!, tokenA.decimals)
+  const tokenBalanceB = balances()?.[clmmInfo.quote] && applyDecimal(balances()?.[clmmInfo.quote]!, tokenB.decimals)
+  console.log("balances: ", {
+    balanceA: tokenBalanceA,
+    balanceB: tokenBalanceB,
+  })
 
+  // ---------------- handle positions ----------------
   const upTxConfigs = handlePositions({
     boundaryPositions: priceBiggerPositions,
     currentPosition: currentPositions[0],
-    balanceA: balances()?.[clmmInfo.base],
-    balanceB: balances()?.[clmmInfo.quote],
+    tokenBalanceA,
+    tokenBalanceB,
     direction: "priceBigger",
     currentPrice,
   })
   const downTxConfigs = handlePositions({
     boundaryPositions: priceLowerPositions,
     currentPosition: currentPositions[0],
-    balanceA: balances()?.[clmmInfo.base],
-    balanceB: balances()?.[clmmInfo.quote],
+    tokenBalanceA,
+    tokenBalanceB,
     direction: "priceLower",
     currentPrice,
   })
 
-  return {
+  const returnObj = {
     upDecreaseClmmPositionTxConfigs: upTxConfigs.decreaseClmmPositionTxConfigs,
     downDecreaseClmmPositionTxConfigs: downTxConfigs.decreaseClmmPositionTxConfigs,
     upShowHandTxConfigs: upTxConfigs.showHandTxConfigs,
     downShowHandTxConfigs: downTxConfigs.showHandTxConfigs,
-    nextTaskSpeed: upTxConfigs.needQuickRefresh || downTxConfigs.needQuickRefresh ? "quick" : "normal",
-  }
+    nextTaskSpeed:
+      upTxConfigs.needFlashRefresh || downTxConfigs.needFlashRefresh
+        ? "flash"
+        : upTxConfigs.needQuickRefresh || downTxConfigs.needQuickRefresh
+          ? "quick"
+          : "normal",
+  } as const
+  return returnObj
 
   function handlePositions({
     boundaryPositions,
     currentPosition,
-    balanceA,
-    balanceB,
+    tokenBalanceA,
+    tokenBalanceB,
     direction,
     currentPrice,
   }: {
     boundaryPositions: ClmmUserPositionAccount[]
     currentPosition: ClmmUserPositionAccount
     direction: "priceBigger" | "priceLower"
-    balanceA: Numberish | undefined
-    balanceB: Numberish | undefined
+    tokenBalanceA: Numberish | undefined
+    tokenBalanceB: Numberish | undefined
     currentPrice: Numberish
   }) {
     const decreaseClmmPositionTxConfigs = [] as TxBuilderSingleConfig[]
@@ -211,19 +232,29 @@ function buildTxFollowPositionConfigs({
     })()
 
     const hasBalance =
-      direction === "priceBigger" ? gt(balanceA, config.ignoredPositionUsd) : gt(balanceB, config.ignoredPositionUsd)
+      direction === "priceBigger"
+        ? gt(tokenBalanceA, config.ignoredPositionUsd * 2)
+        : gt(tokenBalanceB, config.ignoredPositionUsd * 2)
     // currentPrice is bigger than turnPrice, means the price is going to change
     const turnPrice = add(
       currentPosition.priceLower,
-      mul(direction === "priceBigger" ? 0.15 : 0.85, minus(currentPosition.priceUpper, currentPosition.priceLower)),
+      mul(direction === "priceBigger" ? 0.25 : 0.75, minus(currentPosition.priceUpper, currentPosition.priceLower)),
+    )
+    const flashPrice = add(
+      currentPosition.priceLower,
+      mul(direction === "priceBigger" ? 0.1 : 0.9, minus(currentPosition.priceUpper, currentPosition.priceLower)),
     )
 
     const hasAccrossTurnPrice = direction === "priceBigger" ? lt(currentPrice, turnPrice) : gt(currentPrice, turnPrice)
-    const needQuickRefresh = hasAccrossTurnPrice && hasBalance
-    const needShowHand = !hasAccrossTurnPrice
+    const hasAccrossFlashPrice =
+      direction === "priceBigger" ? lt(currentPrice, flashPrice) : gt(currentPrice, flashPrice)
+
+    console.log("price across info: ", { direction, hasBalance, hasAccrossTurnPrice, hasAccrossFlashPrice })
 
     // ---------------- decrease ----------------
-    for (const position of needShowHand ? boundaryPositions.filter((p) => p !== nearestPosition) : boundaryPositions) {
+    for (const position of hasAccrossTurnPrice
+      ? boundaryPositions
+      : boundaryPositions.filter((p) => p !== nearestPosition)) {
       const richPosition = getPositionInfo(position)
       const originalUSD = richPosition.userLiquidityUSD()
       const needMove = isPositive(originalUSD) && isPositive(minus(originalUSD, config.ignoredPositionUsd * 1.2))
@@ -236,7 +267,7 @@ function buildTxFollowPositionConfigs({
     }
 
     // ---------------- show hand ----------------
-    if (needShowHand) {
+    if (!hasAccrossTurnPrice && hasBalance) {
       const richPosition = getPositionInfo(nearestPosition)
       const txBuilderConfig = richPosition.buildPositionShowHandTxConfig()
       if (txBuilderConfig) {
@@ -244,7 +275,12 @@ function buildTxFollowPositionConfigs({
       }
     }
 
-    return { showHandTxConfigs, decreaseClmmPositionTxConfigs, needQuickRefresh }
+    return {
+      showHandTxConfigs,
+      decreaseClmmPositionTxConfigs,
+      needQuickRefresh: hasAccrossTurnPrice && hasBalance,
+      needFlashRefresh: hasAccrossFlashPrice && hasBalance,
+    }
   }
 }
 

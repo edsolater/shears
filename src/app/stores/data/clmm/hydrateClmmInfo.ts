@@ -40,8 +40,14 @@ type HydrateClmmInfoPayloads = {
   tokens?: Tokens // TODO: load info in worker
 }
 
+// let count = 1
+
 function hydrateOneClmmInfo(payload: HydrateClmmInfoPayloads): ClmmInfo {
-  const currentPrice = payload.sdkInfo && parseSDKDecimal(payload.sdkInfo.state.currentPrice)
+  // const isTargetClmm = payload.jsonInfo.id === "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU"
+  const currentPrice =/* 
+    payload.sdkInfo && isTargetClmm
+      ? add(parseSDKDecimal(payload.sdkInfo.state.currentPrice), count++ * 0.000015)
+      : */ parseSDKDecimal(payload.sdkInfo?.state.currentPrice)
 
   const userPositionAccounts = payload.sdkInfo?.positionAccount
     ?.toSorted((a, b) => (a.priceLower.greaterThan(b.priceLower) ? -1 : a.priceLower.equals(b.priceLower) ? 0 : 1))

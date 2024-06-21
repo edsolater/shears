@@ -241,7 +241,7 @@ export default function ClmmsPage() {
 
         // looply apply strategy
 
-        const [speedLevel, setSpeedLevel] = createSignal<"quick" | "normal">("normal")
+        const [speedLevel, setSpeedLevel] = createSignal<"flash" | "quick" | "normal">("normal")
 
         const {
           startLoop: startTxFellowLoop,
@@ -259,7 +259,9 @@ export default function ClmmsPage() {
           },
           delay: () => {
             const speed = speedLevel()
-            if (speed === "quick") {
+            if (speed === "flash") {
+              return 1000 * 20
+            } else if (speed === "quick") {
               return 1000 * 60
             } else {
               return 1000 * 60 * 5
