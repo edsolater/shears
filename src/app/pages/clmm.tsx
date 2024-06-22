@@ -331,6 +331,7 @@ export default function ClmmsPage() {
                 dividerWidth: "1px",
                 dividerPadding: "2px",
                 dividerBackground: cssOpacity(colors.primary, 0.3),
+                dir: "x",
               }),
             ]}
           >
