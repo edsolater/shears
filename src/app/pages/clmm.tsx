@@ -21,7 +21,7 @@ import {
   parseICSSToClassName,
   useKitProps,
 } from "@edsolater/pivkit"
-import { Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js"
+import { Show, createEffect, createMemo, createSignal, on, onCleanup, onMount } from "solid-js"
 import { useShuck, useShuckAsStore } from "../../packages/conveyor/solidjsAdapter/useShuck"
 import {
   DatabaseTable,
@@ -83,6 +83,26 @@ export default function ClmmsPage() {
       console.log("clmmJson count: ", count(infos))
     }
   })
+
+  // const [testSpeedLevel, settestSpeedLevel] = createSignal<"flash" | "quick" | "normal">("normal")
+
+  // const { startLoop: startTest } = useLoopTask({
+  //   cb: () => {
+  //     console.log("[main] test use Loop", testSpeedLevel())
+  //     settestSpeedLevel((s) => (s === "flash" ? "quick" : s === "quick" ? "normal" : "flash"))
+  //   },
+  //   delay: () => {
+  //     const speed = testSpeedLevel()
+  //     if (speed === "flash") {
+  //       return 1000
+  //     } {
+  //       return 1000 * 3
+  //     }
+  //   },
+  //   immediate: false,
+  // })
+  // onMount(startTest)
+
   const headerConfig: TabelHeaderConfigs<ClmmInfo> = [
     {
       name: "Pool",
@@ -103,6 +123,8 @@ export default function ClmmsPage() {
       name: "Strategy",
     },
   ]
+  const [speedLevel, setSpeedLevel] = createSignal<"flash" | "quick" | "normal">("normal") // strategy may render multiple times, so popup the signal
+
   const itemFaceConfig: DatabaseTabelItemCollapseFaceRenderConfig<ClmmInfo> = [
     {
       name: "Pool",
@@ -241,8 +263,6 @@ export default function ClmmsPage() {
 
         // looply apply strategy
 
-        const [speedLevel, setSpeedLevel] = createSignal<"flash" | "quick" | "normal">("normal")
-
         const {
           startLoop: startTxFellowLoop,
           stopLoop: stopTxFellowLoop,
@@ -259,6 +279,7 @@ export default function ClmmsPage() {
           },
           delay: () => {
             const speed = speedLevel()
+            console.log("speed: ", speed)
             if (speed === "flash") {
               return 1000 * 20
             } else if (speed === "quick") {
