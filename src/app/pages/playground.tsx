@@ -367,7 +367,7 @@ function SwitchExample() {
     <>
       <Piv
         class={checked() ? "checked" : ""}
-        render:firstChild={
+        defineFirstChild={
           <Piv
             icss={{
               color: checked() ? "dodgerblue" : "crimson",
@@ -539,7 +539,7 @@ function PropContextExample() {
       <Box icss={{ border: "solid" }}>
         <Piv innerController={{ say: () => "ControllerContext should can receive the message" }}>
           <Box
-            merge:onClick={() => {
+            onClick={() => {
               console.log("click PropContext description")
             }}
             icss={{ cursor: "pointer", border: "dashed", borderColor: cssOpacity("currentcolor", 0.6) }}
@@ -829,7 +829,7 @@ function DragAndDropExample() {
 }
 
 const droppableSlotsPlugin = createPlugin(() => () => ({
-  "render:firstChild": [
+  "defineFirstChild": [
     <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,
     <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,
     <SlotBox icss={icssSlotBox} plugin={droppablePlugin}></SlotBox>,

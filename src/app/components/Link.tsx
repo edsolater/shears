@@ -19,7 +19,7 @@ export function Link(rawProps: LinkProps) {
   return (
     <Piv<"a">
       icss={{ textDecoration: "none", transition: "150ms", cursor: "pointer" }}
-      render:self={(selfProps) =>
+      defineSelf={(selfProps) =>
         props.innerRoute
           ? renderHTMLDOM("span", selfProps)
           : renderHTMLDOM("a", selfProps, { href: props.href, rel: "nofollow noopener noreferrer", target: "_blank" })

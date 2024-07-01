@@ -14,11 +14,11 @@ export function OptionAdditionalItems() {
       <RpcSettingFace />
 
       <Col icss={{ marginBlockTop: "0.5rem" }}>
-        <OptionItemBox render:arrow href="https://raydium.gitbook.io/raydium/" iconSrc="/icons/msic-docs.svg">
+        <OptionItemBox defineArrow href="https://raydium.gitbook.io/raydium/" iconSrc="/icons/msic-docs.svg">
           Docs
         </OptionItemBox>
 
-        <OptionItemBox render:arrow href="https://forms.gle/DvUS4YknduBgu2D7A" iconSrc="/icons/misc-feedback.svg">
+        <OptionItemBox defineArrow href="https://forms.gle/DvUS4YknduBgu2D7A" iconSrc="/icons/misc-feedback.svg">
           Feedback
         </OptionItemBox>
       </Col>

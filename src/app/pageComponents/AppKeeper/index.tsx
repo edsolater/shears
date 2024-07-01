@@ -20,7 +20,7 @@ import { AppKeeperPanelManager } from "./AppKeeperPanelManager"
 export type AppKeeperProps = {
   metaTitle?: string
 
-  "render:contentBanner"?: PivChild
+  "defineContentBanner"?: PivChild
   TopbarBanner?: PivChild
 
   // ---------------- topbar ----------------
@@ -110,7 +110,7 @@ export function AppKeeper(kitProps: KitProps<AppKeeperProps>) {
               },
             ]}
           >
-            <Fragnment>{props["render:contentBanner"]}</Fragnment>
+            <Fragnment>{props["defineContentBanner"]}</Fragnment>
             <Box
               icss={[
                 icssCol({ childItems: "none" }),

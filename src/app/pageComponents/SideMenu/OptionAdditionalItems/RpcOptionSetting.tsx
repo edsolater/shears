@@ -50,8 +50,8 @@ export function RpcSettingFace(kitProps: {
     <>
       <OptionItemBox
         plugin={popoverPlugins.trigger}
-        render:arrow
-        render:dot={<Piv icss={dotIcss}></Piv>}
+        defineArrow
+        defineDot={<Piv icss={dotIcss}></Piv>}
         shadowProps={shadowProps}
       >
         RPC:({store.rpc?.url ?? "none"})
