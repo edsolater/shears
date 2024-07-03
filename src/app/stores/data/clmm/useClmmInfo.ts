@@ -251,6 +251,7 @@ function buildTxFollowPositionConfigs({
 
     console.log("price across info: ", { direction, hasBalance, hasAccrossTurnPrice, hasAccrossFlashPrice })
 
+    let willHaveBalance = false
     // ---------------- decrease ----------------
     for (const position of hasAccrossTurnPrice
       ? boundaryPositions
@@ -263,6 +264,7 @@ function buildTxFollowPositionConfigs({
         if (txBuilderConfig) {
           decreaseClmmPositionTxConfigs.push(txBuilderConfig)
         }
+        willHaveBalance = true
       }
     }
 
@@ -273,13 +275,14 @@ function buildTxFollowPositionConfigs({
       if (txBuilderConfig) {
         showHandTxConfigs.push(txBuilderConfig)
       }
+      willHaveBalance = false
     }
 
     return {
       showHandTxConfigs,
       decreaseClmmPositionTxConfigs,
-      needQuickRefresh: hasAccrossTurnPrice && hasBalance,
-      needFlashRefresh: hasAccrossFlashPrice && hasBalance,
+      needQuickRefresh: hasAccrossTurnPrice && (hasBalance || willHaveBalance),
+      needFlashRefresh: hasAccrossFlashPrice && (hasBalance || willHaveBalance),
     }
   }
 }
