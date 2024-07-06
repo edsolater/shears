@@ -57,7 +57,7 @@ type AdditionalClmmInfo = {
 
 export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
   const pricesMap = useShuckValue(shuck_tokenPrices)
-  const tokens = useShuckValue(shuck_tokens) // TODO let still invisiable unless actual use this value
+  const tokens = useShuckValue(shuck_tokens) // TODO let still invisible unless actual use this value
   const rpc = useShuckValue(shuck_rpc)
   const owner = useShuckValue(shuck_owner)
   const slippage = useShuckValue(shuck_slippage)

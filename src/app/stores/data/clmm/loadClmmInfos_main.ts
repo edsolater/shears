@@ -39,7 +39,7 @@ export function loadClmmInfos() {
     () => {
       refreshClmmInfos()
     },
-    { visiable: true },
+    { visible: true },
   )
   return taskManager
 }

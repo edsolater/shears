@@ -12,7 +12,7 @@ type RouteItem = {
   component: () => JSX.Element
   icon?: string
 
-  visiable: boolean
+  visible: boolean
   needAppKeeper: boolean
 }
 
@@ -22,7 +22,7 @@ function createRouteItem(options: RouteItem): RouteItem {
     path: options.path,
     component: options.component,
     icon: options.icon,
-    visiable: options.visiable,
+    visible: options.visible,
     needAppKeeper: options.needAppKeeper,
   }
 }
@@ -39,14 +39,14 @@ export const homeRouteItem = createRouteItem({
   path: homeRoutePath,
   component: HomePage,
   needAppKeeper: false,
-  visiable: false,
+  visible: false,
 })
 export const swapRouteItem = createRouteItem({
   name: "swap",
   path: swapRoutePath,
   component: SwapPage,
   icon: "/icons/entry-icon-swap.svg",
-  visiable: true,
+  visible: true,
   needAppKeeper: true,
 })
 export const poolsRouteItem = createRouteItem({
@@ -54,7 +54,7 @@ export const poolsRouteItem = createRouteItem({
   path: poolsRoutePath,
   component: PoolsPage,
   icon: "/icons/entry-icon-pools.svg",
-  visiable: true,
+  visible: true,
   needAppKeeper: true,
 })
 export const farmsRouteItem = createRouteItem({
@@ -62,21 +62,21 @@ export const farmsRouteItem = createRouteItem({
   path: farmsRoutePath,
   component: FarmPage,
   icon: "/icons/entry-icon-farms.svg",
-  visiable: true,
+  visible: true,
   needAppKeeper: true,
 })
 export const playgroundRouteItem = createRouteItem({
   name: "playground",
   path: playgroundRoutePath,
   component: PlaygroundPage,
-  visiable: true,
+  visible: true,
   needAppKeeper: true,
 })
 export const clmmRouteItem = createRouteItem({
   name: "clmm",
   path: clmmRoutePath,
   component: ClmmsPage,
-  visiable: true,
+  visible: true,
   needAppKeeper: true,
 })
 export const routes = [homeRouteItem, swapRouteItem, poolsRouteItem, farmsRouteItem, playgroundRouteItem, clmmRouteItem]

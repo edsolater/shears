@@ -16,7 +16,7 @@ import { Link } from "../../../components/Link"
 export type OptionItemBoxProps = {
   /** @default true */
   ["defineDot"]?: boolean | PivChild | (() => PivChild)
-  // NOTE: when start with 'visiable' this part of component can be shown, 🤔 just whether 'render:' exist is enough ?
+  // NOTE: when start with 'visible' this part of component can be shown, 🤔 just whether 'render:' exist is enough ?
   /** @default false */
   ["defineArrow"]?: boolean | PivChild | (() => PivChild)
   iconSrc?: string

@@ -16,7 +16,7 @@ export function loadOwnerTokenAccountsAndBalances() {
     () => {
       refreshTokenAccounts()
     },
-    { visiable: true },
+    { visible: true },
   )
   return taskManager
 }
