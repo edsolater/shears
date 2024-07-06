@@ -161,7 +161,7 @@ export function DatabaseTable<T extends Collection>(
             </Box>
           </Group>
 
-          <Group name="items">
+          <Group name="items" icss={{ display: "contents" }}>
             <InfiniteScrollList // FIXME why can't be <Loop> ? 🤔
               shadowProps={props.propForList}
               items={props.items}
