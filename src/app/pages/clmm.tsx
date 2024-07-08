@@ -48,6 +48,7 @@ import { colors } from "../theme/colors"
 import { toRenderable } from "../utils/common/toRenderable"
 import toUsdVolume from "../utils/format/toUsdVolume"
 import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
+import { autoRetry } from "../utils/retryMaster"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
 export const icssClmmItemRowCollapse = parseICSSToClassName({
@@ -178,9 +179,21 @@ export default function ClmmsPage() {
         })
 
         // apply strategy every 10 mins
-        function runTxFollowPosition() {
+        function runTxFollowPosition(): {
+          actionHasDone: Promise<boolean>
+          nextTaskSpeed: "flash" | "quick" | "normal"
+          needSendTx: boolean
+        } {
+          const { promise: actionHasDone, resolve, reject } = Promise.withResolvers<boolean>()
           const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
           console.log("🐛debug tx follow: ", configs)
+
+          const needSendTx = Boolean(
+            configs?.upDecreaseClmmPositionTxConfigs.length ||
+              configs?.downDecreaseClmmPositionTxConfigs.length ||
+              configs?.upShowHandTxConfigs.length ||
+              configs?.downShowHandTxConfigs.length,
+          )
           if (configs) {
             runTasks(
               ({ next }) => {
@@ -198,9 +211,7 @@ export default function ClmmsPage() {
                             const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
                             const txc = invokeTxConfig(...newConfigs.upShowHandTxConfigs)
                             txc?.onTxAllDone(() => {
-                              setTimeout(() => {
-                                forceRefeshThisClmmInfo()
-                              }, 3000)
+                              resolve(true)
                             })
                           }, 1000)
                         },
@@ -212,9 +223,7 @@ export default function ClmmsPage() {
                   if (configs.upShowHandTxConfigs.length) {
                     const txc = invokeTxConfig(...configs.upShowHandTxConfigs)
                     txc?.onTxAllDone(() => {
-                      setTimeout(() => {
-                        forceRefeshThisClmmInfo()
-                      }, 3000)
+                      resolve(true)
                     })
                   }
                 }
@@ -235,9 +244,7 @@ export default function ClmmsPage() {
                             const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
                             const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
                             txc?.onTxAllDone(() => {
-                              setTimeout(() => {
-                                forceRefeshThisClmmInfo()
-                              }, 3000)
+                              resolve(true)
                             })
                           }, 1000)
                         },
@@ -249,16 +256,18 @@ export default function ClmmsPage() {
                   if (configs.downShowHandTxConfigs.length) {
                     const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
                     txc?.onTxAllDone(() => {
-                      setTimeout(() => {
-                        forceRefeshThisClmmInfo()
-                      }, 8000)
+                      resolve(true)
                     })
                   }
                 }
               },
             )
           }
-          return configs.nextTaskSpeed
+          return {
+            actionHasDone: actionHasDone,
+            nextTaskSpeed: configs.nextTaskSpeed,
+            needSendTx,
+          }
         }
 
         // looply apply strategy
@@ -271,11 +280,27 @@ export default function ClmmsPage() {
         } = useLoopTask({
           cb: () => {
             console.log("[main] start tx follow : ", clmmInfo.id)
-            forceRefeshThisClmmInfo()?.then(() => {
-              const nextTaskSpeedLevel = runTxFollowPosition()
-              console.log("nextTaskSpeedLevel: ", nextTaskSpeedLevel)
-              setSpeedLevel(nextTaskSpeedLevel)
-            })
+            autoRetry(
+              ({ retryCount, flagActionHasSuccess }) => {
+                const preAction =
+                  retryCount === 0 || retryCount === 4 ? forceRefeshThisClmmInfo : () => Promise.resolve()
+                preAction()?.then(() => {
+                  const { nextTaskSpeed: nextTaskSpeedLevel, actionHasDone, needSendTx } = runTxFollowPosition()
+                  if (!needSendTx) {
+                    flagActionHasSuccess(true)
+                    return
+                  }
+                  setSpeedLevel(nextTaskSpeedLevel)
+                  actionHasDone.then((hasDone) => {
+                    flagActionHasSuccess(hasDone)
+                    setTimeout(() => {
+                      forceRefeshThisClmmInfo()
+                    }, 3000)
+                  })
+                })
+              },
+              { retryFrequency: (c) => (c < 4 ? 1000 * 12 : 1000 * 24), maxRetryCount: 8 },
+            )
           },
           delay: () => {
             const speed = speedLevel()
