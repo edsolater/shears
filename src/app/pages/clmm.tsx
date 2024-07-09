@@ -282,7 +282,6 @@ export default function ClmmsPage() {
                   refreshClmmInfos({
                     onlyClmmId: [clmmInfo.id],
                     shouldSDKCache: false,
-                    smartRefreshDuration: 1000 * 60 * 1,
                   })
                 preAction()?.then(() => {
                   const { nextTaskSpeed: nextTaskSpeedLevel, actionHasDone, needSendTx } = runTxFollowPosition()
