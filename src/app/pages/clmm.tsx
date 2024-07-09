@@ -1,4 +1,4 @@
-import { count, hasProperty, runTasks, toFormattedNumber } from "@edsolater/fnkit"
+import { count, hasProperty, isCurrentDateAfter, runTasks, toFormattedNumber } from "@edsolater/fnkit"
 import {
   Box,
   Button,
@@ -162,6 +162,8 @@ export default function ClmmsPage() {
         const clmmInfo = useClmmInfo(rawClmmInfo)
         const increasingSeed = createIncreasingSeed()
 
+        let lastClmmRefreshTimestamp = 0
+
         // refresh clmm info every 10 mins
         const {
           startLoop,
@@ -170,9 +172,14 @@ export default function ClmmsPage() {
           invokeOnce: forceRefeshThisClmmInfo,
           lastInvokeTime,
         } = useLoopTask({
-          cb: () => {
-            console.log("[main] start refresh clmmInfo: ", clmmInfo.id)
-            return refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false })
+          cb: async () => {
+            if (isCurrentDateAfter(lastClmmRefreshTimestamp + 1000 * 60 * 1)) {
+              const returnedValue = refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false })
+              lastClmmRefreshTimestamp = Date.now()
+              return returnedValue
+            } else {
+              return true
+            }
           },
           delay: 1000 * 60 * 12,
           immediate: false,

@@ -26,7 +26,7 @@ export function autoRetry<F extends (payloads: RetriableTaskFnPayloads) => any>(
      */
     maxRetryCount: Int<1>
   },
-): Promise<Awaited<ReturnType<F>>> {
+): Promise<unknown> {
   let retryTimes = 0
   let hasEnded = false
 
