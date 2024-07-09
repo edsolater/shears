@@ -44,8 +44,15 @@ export function loadClmmInfos() {
   return taskManager
 }
 
+let lastClmmRefreshTimestamp = 0
+let lastClmmRefreshPromise: Promise<boolean> | undefined
+
 /** can use this action isolatly */
-export function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "owner">) {
+export async function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "owner">) {
+  if (Date.now() - lastClmmRefreshTimestamp < 1000 * 60 && lastClmmRefreshPromise) {
+    return lastClmmRefreshPromise
+  }
+
   const port = getMessagePort<ClmmInfos, ClmmQueryParams>("fetch raydium clmm info")
   const url = shuck_rpc()?.url
   const owner = shuck_owner()
@@ -71,6 +78,13 @@ export function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "own
     },
     { once: true },
   )
+
+  lastClmmRefreshTimestamp = Date.now()
+  // record cache
+  promise.catch(() => {
+    lastClmmRefreshPromise = undefined
+  })
+  lastClmmRefreshPromise = promise
   return promise
 }
 

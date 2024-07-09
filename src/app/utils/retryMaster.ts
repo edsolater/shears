@@ -2,7 +2,7 @@ import { shrinkFn, type Int } from "@edsolater/fnkit"
 
 type RetriableTaskFnPayloads = {
   retryCount: number
-  flagActionHasSuccess(value: any): void
+  flagActionHasSuccess(value?: any): void
 }
 
 /** usually task is async  */

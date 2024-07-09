@@ -160,9 +160,6 @@ export default function ClmmsPage() {
       name: "Strategy",
       render: (rawClmmInfo) => {
         const clmmInfo = useClmmInfo(rawClmmInfo)
-        const increasingSeed = createIncreasingSeed()
-
-        let lastClmmRefreshTimestamp = 0
 
         // refresh clmm info every 10 mins
         const {
@@ -172,15 +169,7 @@ export default function ClmmsPage() {
           invokeOnce: forceRefeshThisClmmInfo,
           lastInvokeTime,
         } = useLoopTask({
-          cb: async () => {
-            if (isCurrentDateAfter(lastClmmRefreshTimestamp + 1000 * 60 * 1)) {
-              const returnedValue = refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false })
-              lastClmmRefreshTimestamp = Date.now()
-              return returnedValue
-            } else {
-              return true
-            }
-          },
+          cb: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
           delay: 1000 * 60 * 12,
           immediate: false,
         })
@@ -294,19 +283,19 @@ export default function ClmmsPage() {
                 preAction()?.then(() => {
                   const { nextTaskSpeed: nextTaskSpeedLevel, actionHasDone, needSendTx } = runTxFollowPosition()
                   if (!needSendTx) {
-                    flagActionHasSuccess(true)
+                    flagActionHasSuccess()
                     return
                   }
                   setSpeedLevel(nextTaskSpeedLevel)
                   actionHasDone.then((hasDone) => {
-                    flagActionHasSuccess(hasDone)
+                    flagActionHasSuccess()
                     setTimeout(() => {
                       forceRefeshThisClmmInfo()
                     }, 3000)
                   })
                 })
               },
-              { retryFrequency: (c) => (c < 4 ? 1000 * 12 : 1000 * 24), maxRetryCount: 8 },
+              { retryFrequency: (c) => (c < 3 ? 1000 * 12 : 1000 * 24), maxRetryCount: 6 },
             )
           },
           delay: () => {
