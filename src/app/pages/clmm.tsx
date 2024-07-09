@@ -169,7 +169,8 @@ export default function ClmmsPage() {
           invokeOnce: forceRefeshThisClmmInfo,
           lastInvokeTime,
         } = useLoopTask({
-          cb: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
+          cb: async () =>
+            refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, smartRefreshDuration: 1000 * 60 * 1 }),
           delay: 1000 * 60 * 12,
           immediate: false,
         })
@@ -336,7 +337,7 @@ export default function ClmmsPage() {
             <Button
               onClick={({ ev }) => {
                 ev.stopPropagation()
-                forceRefeshThisClmmInfo()
+                refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false })
               }}
               icss={{ outline: isRefreshLoopRunning() ? `solid ${colors.primary}` : `solid transparent` }}
             >

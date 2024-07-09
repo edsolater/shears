@@ -1,4 +1,4 @@
-import { getFirstItem } from "@edsolater/fnkit"
+import { getFirstItem, isCurrentDateAfter } from "@edsolater/fnkit"
 import { createTask } from "../../../../packages/conveyor/smartStore/task"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_owner, shuck_rpc } from "../store"
@@ -44,12 +44,25 @@ export function loadClmmInfos() {
   return taskManager
 }
 
+// TODO: it should be just a util
 let lastClmmRefreshTimestamp = 0
 let lastClmmRefreshPromise: Promise<boolean> | undefined
 
 /** can use this action isolatly */
-export async function refreshClmmInfos(options?: Omit<ClmmQueryParams, "rpcUrl" | "owner">) {
-  if (Date.now() - lastClmmRefreshTimestamp < 1000 * 60 && lastClmmRefreshPromise) {
+export async function refreshClmmInfos(
+  options?: Omit<ClmmQueryParams, "rpcUrl" | "owner"> & {
+    /**
+     * only after this, can refresh, or it will use cache
+     * if result is empty, it will always can refresh
+     */
+    smartRefreshDuration?: number
+  },
+) {
+  if (
+    options?.smartRefreshDuration &&
+    isCurrentDateAfter(lastClmmRefreshTimestamp + options.smartRefreshDuration) &&
+    lastClmmRefreshPromise
+  ) {
     return lastClmmRefreshPromise
   }
 
