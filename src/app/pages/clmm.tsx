@@ -169,8 +169,7 @@ export default function ClmmsPage() {
           invokeOnce: forceRefeshThisClmmInfo,
           lastInvokeTime,
         } = useLoopTask({
-          cb: async () =>
-            refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false, smartRefreshDuration: 1000 * 60 * 1 }),
+          cb: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
           delay: 1000 * 60 * 12,
           immediate: false,
         })
@@ -279,8 +278,12 @@ export default function ClmmsPage() {
             console.log("[main] start tx follow : ", clmmInfo.id)
             autoRetry(
               ({ retryCount, flagActionHasSuccess }) => {
-                const preAction =
-                  retryCount === 0 || retryCount === 4 ? forceRefeshThisClmmInfo : () => Promise.resolve()
+                const preAction = () =>
+                  refreshClmmInfos({
+                    onlyClmmId: [clmmInfo.id],
+                    shouldSDKCache: false,
+                    smartRefreshDuration: 1000 * 60 * 1,
+                  })
                 preAction()?.then(() => {
                   const { nextTaskSpeed: nextTaskSpeedLevel, actionHasDone, needSendTx } = runTxFollowPosition()
                   if (!needSendTx) {
