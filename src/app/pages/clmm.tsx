@@ -307,7 +307,7 @@ export default function ClmmsPage() {
             if (speed === "flash") {
               return 1000 * 30
             } else if (speed === "quick") {
-              return 1000 * 60 * 1.5
+              return 1000 * 60 * 2
             } else {
               return 1000 * 60 * 5
             }
