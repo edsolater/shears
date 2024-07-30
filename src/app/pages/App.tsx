@@ -1,4 +1,4 @@
-import { capitalize, switchCase } from "@edsolater/fnkit"
+import { capitalize, setTimeoutWithSecondes, switchCase } from "@edsolater/fnkit"
 import { configUIKitTheme } from "@edsolater/pivkit"
 import { RouteSectionProps } from "@solidjs/router"
 import { Show, createEffect, createMemo, onCleanup, onMount } from "solid-js"
@@ -78,7 +78,7 @@ function useExperimentalCode() {
   testCount.set((n) => n + 1)
   setShuckVisiableChecker(testCount, true, undefined)
   testCount.set((n) => n + 1)
-  setTimeout(() => {
+  setTimeoutWithSecondes(() => {
     console.log("effectRunCount: ", effectRunCount)
   })
 }

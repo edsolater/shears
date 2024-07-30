@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
-import "./worker_polyfill"; // for DeFi base on Buffer, but it's nodejs build-in Buffer
+import "./worker_polyfill" // for DeFi base on Buffer, but it's nodejs build-in Buffer
 
-import { Subscribable, createSubscribable, invoke, invokeOnce } from "@edsolater/fnkit"
+import { Subscribable, createSubscribable, invoke } from "@edsolater/fnkit"
 import { encode } from "../dataTransmit/handlers"
 import { createMessagePortTransforers } from "./createMessagePortTransforers"
 import { isSenderMessage } from "./genMessageSender"
@@ -29,7 +29,7 @@ function initMessageReceiver() {
     const subscribable = createSubscribable()
     returnValueMap.set(onMessage, subscribable)
 
-    invoke(onMessage, { payload, resolve: subscribable.set })
+    invoke(onMessage, [{ payload, resolve: subscribable.set }])
     returnValueMap.get(onMessage)?.subscribe((outputData) => {
       /**  need {@link encode}, so not `encode(returnData)` */
       const encodedData = outputData
@@ -41,5 +41,5 @@ function initMessageReceiver() {
 }
 
 // only need to regist once in the worker thread
-invokeOnce(initMessageReceiver)
-invokeOnce(applyWebworkerRegisters, { getMessagePort, getMessageReceiver, getMessageSender })
+invoke(initMessageReceiver, [], { once: true })
+invoke(applyWebworkerRegisters, [{ getMessagePort, getMessageReceiver, getMessageSender }], { once: true })

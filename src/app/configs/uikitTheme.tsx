@@ -2,6 +2,6 @@ import { UIKitThemeConfig, cssVar, icssClickable, icssFrostedGlass, icssTextColo
 
 export const uikitConfig: UIKitThemeConfig = {
   Button: {
-    icss: [icssFrostedGlass, icssTextColor({ color: cssVar("--ternary") }), icssClickable],
+    icss: [icssFrostedGlass(), icssTextColor({ color: cssVar("--ternary") }), icssClickable()],
   },
 }

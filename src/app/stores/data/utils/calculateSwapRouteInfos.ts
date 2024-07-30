@@ -1,4 +1,4 @@
-import { Numberish, assert, hasProperty, isDateAfter, makeTaskAbortable, shakeNil, inNextMainLoop } from "@edsolater/fnkit"
+import { Numberish, assert, hasProperty, isDateAfter, makeTaskAbortable, shakeNil, inNextMainLoop, getNow } from "@edsolater/fnkit"
 import {
   ClmmPoolInfo,
   ApiPoolInfoItem,
@@ -90,7 +90,7 @@ export function calculateSwapRouteInfos({
         return apiPoolList
       })
     const connection = getConnection(rpcUrl)
-    const chainTime = Date.now() / 1000
+    const chainTime = getNow()
 
     const sdkParsedClmmPoolInfoPromise = ClmmPromise.then(inNextMainLoop(canContinueAsyncChecker)).then(
       (clmmPoolInfos) => sdkParseClmmInfos({ connection, apiClmmInfos: clmmPoolInfos }),
@@ -161,7 +161,7 @@ export function calculateSwapRouteInfos({
           rpcUrl,
         },
         sdkBestResult,
-        timestamp: Date.now(),
+        timestamp: getNow(),
       }
       swapBestResultCache.set(cacheKey, bestResultItem)
       neariestSwapBestResultCache = bestResultItem
@@ -206,7 +206,7 @@ function getBestCalcResult(
       const ammId = toPubString(i.id)
       const poolAccountInfo = i.version === 6 ? i : poolInfosCache[ammId]
       if (!poolAccountInfo) return undefined
-      const startTime = Number(poolAccountInfo.startTime) * 1000
+      const startTime = Number(poolAccountInfo.startTime)
       const isPoolOpen = isDateAfter(chainTime, startTime)
       if (isPoolOpen) return undefined
       return { ammId, startTime, poolType: i, poolInfo: getPoolInfoFromPoolType(i) }

@@ -1,4 +1,11 @@
-import { count, hasProperty, isCurrentDateAfter, runTasks, toFormattedNumber } from "@edsolater/fnkit"
+import {
+  count,
+  hasProperty,
+  isCurrentDateAfter,
+  runTasks,
+  setTimeoutWithSecondes,
+  toFormattedNumber,
+} from "@edsolater/fnkit"
 import {
   Box,
   Button,
@@ -95,9 +102,9 @@ export default function ClmmsPage() {
   //   delay: () => {
   //     const speed = testSpeedLevel()
   //     if (speed === "flash") {
-  //       return 1000
+  //       return 1
   //     } {
-  //       return 1000 * 3
+  //       return 3
   //     }
   //   },
   //   immediate: false,
@@ -170,7 +177,7 @@ export default function ClmmsPage() {
           lastInvokeTime,
         } = useLoopTask({
           cb: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
-          delay: 1000 * 60 * 12,
+          delay: 60 * 12,
           immediate: false,
         })
 
@@ -202,14 +209,14 @@ export default function ClmmsPage() {
                         clmmInfo.base,
                         ({ balance }) => {
                           // console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                          setTimeout(() => {
+                          setTimeoutWithSecondes(() => {
                             // wait for balance update
                             const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
                             const txc = invokeTxConfig(...newConfigs.upShowHandTxConfigs)
                             txc?.onTxAllDone(() => {
                               resolve(true)
                             })
-                          }, 1000)
+                          }, 1)
                         },
                         { once: true },
                       )
@@ -235,14 +242,14 @@ export default function ClmmsPage() {
                         clmmInfo.quote,
                         ({ balance }) => {
                           // console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
-                          setTimeout(() => {
+                          setTimeoutWithSecondes(() => {
                             // wait for balance update
                             const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
                             const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
                             txc?.onTxAllDone(() => {
                               resolve(true)
                             })
-                          }, 1000)
+                          }, 1)
                         },
                         { once: true },
                       )
@@ -292,24 +299,24 @@ export default function ClmmsPage() {
                   setSpeedLevel(nextTaskSpeedLevel)
                   actionHasDone.then((hasDone) => {
                     flagActionHasSuccess()
-                    setTimeout(() => {
+                    setTimeoutWithSecondes(() => {
                       forceRefeshThisClmmInfo()
-                    }, 3000)
+                    }, 3)
                   })
                 })
               },
-              { retryFrequency: (c) => 1000 * (12 + c * 6), maxRetryCount: 6 },
+              { retryFrequency: (c) => 12 + c * 6, maxRetryCount: 6 },
             )
           },
           delay: () => {
             const speed = speedLevel()
             console.log("speed: ", speed)
             if (speed === "flash") {
-              return 1000 * 30
+              return 30
             } else if (speed === "quick") {
-              return 1000 * 60 * 2
+              return 60 * 2
             } else {
-              return 1000 * 60 * 5
+              return 60 * 5
             }
           },
           immediate: false,
@@ -386,7 +393,7 @@ export default function ClmmsPage() {
           <Loop
             items={clmmInfo.userPositionAccounts}
             // sortCompareFn={(a, b) => (gt(a.priceLower, b.priceLower) ? 1 : eq(a.priceLower, b.priceLower) ? 0 : -1)}
-            Divider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
+            renderDivider={<Box icss={{ borderTop: `solid ${cssOpacity("currentcolor", 0.3)}` }}></Box>}
           >
             {(account) => <ClmmUserPositionAccountRow clmmInfo={clmmInfo} account={account} />}
           </Loop>
@@ -415,7 +422,7 @@ export default function ClmmsPage() {
           onClick={() => {
             refreshTokenAccounts({ canUseCache: false })
           }}
-          duration={1000 * 60 * 10}
+          duration={60 * 10}
         />
       }
       onClickItem={(clmmInfo) => {
@@ -539,12 +546,12 @@ function ClmmUserPositionAccountRow(props: { clmmInfo: ClmmInfo; account: ClmmUs
             const txEventCenter = invokeTxConfig(positionAccount.buildPositionShowHandTxConfig())
 
             txEventCenter?.onTxAllDone(() => {
-              setTimeout(() => {
+              setTimeoutWithSecondes(() => {
                 refreshClmmInfos({
                   onlyClmmId: [props.clmmInfo.id],
                   shouldSDKCache: false,
                 })
-              }, 2000)
+              }, 2)
             })
           }}
         >

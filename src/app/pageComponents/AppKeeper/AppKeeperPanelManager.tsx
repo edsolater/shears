@@ -1,4 +1,4 @@
-import { toFixedDecimal, type MayArray } from "@edsolater/fnkit"
+import { setTimeoutWithSecondes, toFixedDecimal, type MayArray } from "@edsolater/fnkit"
 import {
   Box,
   KitProps,
@@ -20,7 +20,6 @@ import { colors } from "../../theme/colors"
 import { documentElement } from "../../utils/documentElement"
 import { AppKeeperContext } from "./AppKeeperContext"
 import { usePanelFloatingMaster } from "./usePanelFloatingMaster"
-import { useDocumentEdgeOpen } from "./useDocumentEdgeOpen"
 
 export type AppKeeperPanelManagerProps = {
   panelName: string
@@ -60,7 +59,7 @@ export function AppKeeperPanelManager(kitprops: KitProps<AppKeeperPanelManagerPr
     },
   })
   createEffect(() => {
-    setTimeout(() => {
+    setTimeoutWithSecondes(() => {
       console.log("isPanelFloating(), panelName: ", isPanelFloating(), panelName)
     })
   })

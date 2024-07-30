@@ -6,7 +6,7 @@ import type { Mint } from "../../../utils/dataStructures/type"
 
 // cache for 10 mins
 const mintInfoCache = createTimeoutMap<string, Promise<ReturnTypeFetchMultipleMintInfo>>({
-  maxAgeMs: 10 * 60 * 1000,
+  maxAge: 10 * 60,
 })
 
 export async function getMultiMintInfos(

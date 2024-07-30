@@ -54,14 +54,14 @@ export function TokenAmountInputBox(rawProps: TokenAmountInputBoxProps) {
   })
 
   const [token, setToken] = createSyncSignal({
-    getValueFromOutside: () => props.token,
-    onInvokeSetter: (token) => {
+    value: () => props.token,
+    onSetByInner: (token) => {
       props.onSelectToken?.(token)
     },
   })
   const [amount, setAmount] = createSyncSignal({
-    getValueFromOutside: () => (props.amount != null ? toStringNumber(props.amount) : undefined),
-    onInvokeSetter: (amount) => {
+    value: () => (props.amount != null ? toStringNumber(props.amount) : undefined),
+    onSetByInner: (amount) => {
       props.onAmountChange?.(amount)
     },
   })

@@ -4,6 +4,7 @@ import {
   emptyFn,
   isObject,
   mergeFunction,
+  setTimeoutWithSecondes,
   shakeNil,
   type EventCenter,
   type MayPromise,
@@ -464,7 +465,7 @@ function composeTxLauncher({
           txCenter.then((txEventCenter) => {
             txEventCenter?.on("txFinally", (info) => {
               multiTransactionCallbackControllers.markTxAsDone(idx, info)
-              setTimeout(() => {
+              setTimeoutWithSecondes(() => {
                 txEventCenter.clear()
               })
             })

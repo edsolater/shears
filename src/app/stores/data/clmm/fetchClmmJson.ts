@@ -10,7 +10,7 @@ console.log(globalThis)
 export async function fetchClmmJsonInfo(canUseCache = true): Promise<StoreData["clmmJsonInfos"]> {
   // console.log('clmmJsonFile: ', 11)
   const clmmJsonFile = await jFetch<ClmmJsonFile>(appApiUrls.clmmPools, {
-    cacheFreshTime: canUseCache ? 5 * 60 * 1000 : 0,
+    cacheFreshTime: canUseCache ? 5 * 60  : 0,
   })
   // console.log('clmmJsonFile: ', clmmJsonFile)
   if (!clmmJsonFile) return

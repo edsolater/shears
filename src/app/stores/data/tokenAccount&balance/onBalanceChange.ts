@@ -1,4 +1,12 @@
-import { abs, applyDecimal, gt, minus, type Numberish, type Subscription } from "@edsolater/fnkit"
+import {
+  abs,
+  applyDecimal,
+  gt,
+  minus,
+  setTimeoutWithSecondes,
+  type Numberish,
+  type Subscription,
+} from "@edsolater/fnkit"
 import type { Mint } from "../../../utils/dataStructures/type"
 import { shuck_balances } from "../store"
 import { getCurrentToken } from "../token/getCurrentToken"
@@ -36,9 +44,9 @@ export function onBalanceChange(
           token,
         })
         if (options?.once) {
-          setTimeout(() => {
+          setTimeoutWithSecondes(() => {
             subscription.unsubscribe()
-          }, 0)
+          })
         }
       }
     },

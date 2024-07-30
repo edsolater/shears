@@ -64,7 +64,7 @@ export function getTransferAmountFee(
   const maxFee = nowFeeConfig.maximumFee
   const expirationTime: number | undefined =
     epochInfo.epoch < feeConfig.newerTransferFee.epoch
-      ? ((Number(feeConfig.newerTransferFee.epoch) * epochInfo.slotsInEpoch - epochInfo.absoluteSlot) * 400) / 1000
+      ? (Number(feeConfig.newerTransferFee.epoch) * epochInfo.slotsInEpoch - epochInfo.absoluteSlot) * 400
       : undefined
 
   if (addFee) {

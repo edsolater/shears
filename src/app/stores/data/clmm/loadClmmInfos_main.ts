@@ -1,4 +1,4 @@
-import { getFirstItem, isCurrentDateAfter } from "@edsolater/fnkit"
+import { getFirstItem, getNow, isCurrentDateAfter, setTimeoutWithSecondes } from "@edsolater/fnkit"
 import { createTask } from "../../../../packages/conveyor/smartStore/task"
 import { getMessagePort } from "../../../utils/webworker/loadWorker_main"
 import { shuck_clmmInfos, shuck_isClmmJsonInfoLoading, shuck_owner, shuck_rpc } from "../store"
@@ -85,14 +85,14 @@ export async function refreshClmmInfos(
   const { reject, resolve, promise } = Promise.withResolvers<boolean>()
   port.receiveMessage(
     () => {
-      setTimeout(() => {
+      setTimeoutWithSecondes(() => {
         resolve(true)
-      }, 100) // leave some time for reflect the data
+      }, 0.1) // leave some time for reflect the data
     },
     { once: true },
   )
 
-  lastClmmRefreshTimestamp = Date.now()
+  lastClmmRefreshTimestamp = getNow()
   // record cache
   promise.catch(() => {
     lastClmmRefreshPromise = undefined
@@ -108,7 +108,7 @@ export function registerClmmInfosReceiver() {
     (infos) => {
       shuck_isClmmJsonInfoLoading.set(false)
 
-      setTimeout(() => {
+      setTimeoutWithSecondes(() => {
         console.log(
           `[🤖main] clmm ${getFirstItem(infos) && "liquidity" in getFirstItem(infos) ? "SDK" : "API"} infos: `,
           infos,

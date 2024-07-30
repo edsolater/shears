@@ -5,7 +5,7 @@ import { composeSDKInnerTransactions } from "./createVersionedTransaction"
 import type { TxHandlerPayload } from "./txHandler"
 import type { ID } from "@edsolater/fnkit"
 import { reportLog } from "../../stores/data/utils/logger"
-import { decode as decodeBase58 } from "bs58"
+import bs58 from "bs58"
 
 export type UnsignedTransactionInfo = {
   id: ID
@@ -40,7 +40,7 @@ export async function signAllTransactions({
 
   // temporary don't use privateKey to sign
   if (payload.privateKey) {
-    console.log('payload.privateKey: ', payload.privateKey)
+    console.log("payload.privateKey: ", payload.privateKey)
     const signedTxs = signWithPrivateKey({ txs: buildedTransactions, privateKey: payload.privateKey })
     return signedTxs
   } else {
@@ -71,8 +71,8 @@ export async function signAllTransactions({
 async function signWithPrivateKey(payload: { txs: VersionedTransaction[]; privateKey: string }) {
   const keypair = toKeyPair(payload.privateKey)
   for (const tx of payload.txs) {
-    console.log('tx: ', tx)
-    console.log('keypair: ', keypair)
+    console.log("tx: ", tx)
+    console.log("keypair: ", keypair)
     tx.signatures = []
     tx.sign([keypair])
   }
@@ -80,6 +80,6 @@ async function signWithPrivateKey(payload: { txs: VersionedTransaction[]; privat
 }
 
 function toKeyPair(privateKey: string): Keypair {
-  const privateKeyU8 = new Uint8Array(decodeBase58(privateKey))
+  const privateKeyU8 = new Uint8Array(bs58.decode(privateKey))
   return Keypair.fromSecretKey(privateKeyU8)
 }

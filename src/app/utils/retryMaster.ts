@@ -1,4 +1,4 @@
-import { shrinkFn, type Int } from "@edsolater/fnkit"
+import { setTimeoutWithSecondes, shrinkFn, type Int } from "@edsolater/fnkit"
 
 type RetriableTaskFnPayloads = {
   retryCount: number
@@ -52,7 +52,7 @@ export function autoRetry<F extends (payloads: RetriableTaskFnPayloads) => any>(
 
     const nextDelay = shrinkFn(options.retryFrequency, [retryTimes])
     task({ retryCount: retryTimes, flagActionHasSuccess })
-    setTimeout(() => {
+    setTimeoutWithSecondes(() => {
       tryAgain()
     }, nextDelay)
   }

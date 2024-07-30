@@ -1,4 +1,4 @@
-import { shrinkFn, type AnyFn, type MayFn } from "@edsolater/fnkit"
+import { getNow, setIntervalWithSecondes, shrinkFn, type AnyFn, type MayFn } from "@edsolater/fnkit"
 import { createEffect, createMemo, createSignal, on, onCleanup, onMount, type Accessor } from "solid-js"
 
 /**
@@ -10,9 +10,9 @@ export function usePercentLoop({
   canRoundCountOverOne,
   onRoundEnd,
   eachSecondPercent = 1 / 10,
-  updateEach = 1000,
+  updateEach = 1,
 }: {
-  updateEach?: number // default 1000ms
+  updateEach?: number // default 1s
   canRoundCountOverOne?: boolean
   onRoundEnd?: () => void
   eachSecondPercent?: number
@@ -25,7 +25,7 @@ export function usePercentLoop({
   const { startLoop, stopLoop } = useLoopTask({
     cb: () => {
       setPercent((percent) => {
-        const nextPercent = percent + eachSecondPercent / (updateEach / 1000)
+        const nextPercent = percent + eachSecondPercent / (updateEach / 1)
         if (nextPercent >= 1) {
           if (canRoundCountOverOne) {
             onRoundEnd?.()
@@ -59,7 +59,7 @@ export function usePercentLoop({
  */
 export function useLoopTask<R>({
   cb,
-  delay = 1000,
+  delay = 1,
   immediate = true,
 }: {
   cb: () => R
@@ -79,7 +79,7 @@ export function useLoopTask<R>({
   function startLoop() {
     clearInterval(intervalId)
     setIsRunning(true)
-    intervalId = setInterval(() => {
+    intervalId = setIntervalWithSecondes(() => {
       invokeOnce()
     }, shrinkFn(delay))
     if (immediate) {
@@ -95,7 +95,7 @@ export function useLoopTask<R>({
   }
 
   function invokeOnce() {
-    setLastInvokeTime(Date.now())
+    setLastInvokeTime(getNow())
     return cb?.()
   }
 

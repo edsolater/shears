@@ -1,4 +1,14 @@
-import { createSubscribableFromPromise, listToMap, map, mul, turncate, toList, toRecord, abortableAsyncTask } from "@edsolater/fnkit"
+import {
+  createSubscribableFromPromise,
+  listToMap,
+  map,
+  mul,
+  turncate,
+  toList,
+  toRecord,
+  abortableAsyncTask,
+  getNow,
+} from "@edsolater/fnkit"
 import { Farm, FarmFetchMultipleInfoParams } from "@raydium-io/raydium-sdk"
 import { getConnection } from "../connection/getConnection"
 import { toPub, toPubString } from "../../../utils/dataStructures/Publickey"
@@ -30,7 +40,7 @@ export function composeFarmSYN(query: ComposeFarmSYNInfoQuery) {
         pools: toList(farmJsonInfos).map(jsonInfo2PoolKeys),
         owner: toPub(query.owner),
         config: { batchRequest: true, commitment: "confirmed" },
-        chainTime: Date.now() / 1000, // TEMP for not create chainTime system yet
+        chainTime: getNow(), // TEMP for not create chainTime system yet
       }
       return Farm.fetchMultipleInfoAndUpdate(paramOptions)
     })

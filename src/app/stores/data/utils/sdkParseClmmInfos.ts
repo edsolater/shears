@@ -1,4 +1,4 @@
-import { listToRecord, toList } from "@edsolater/fnkit"
+import { getNow, listToRecord, toList } from "@edsolater/fnkit"
 import { Clmm as SDK_Clmm } from "@raydium-io/raydium-sdk"
 import type { Connection } from "@solana/web3.js"
 import { toPub, toPubString } from "../../../utils/dataStructures/Publickey"
@@ -32,7 +32,7 @@ export async function sdkParseClmmInfos({
       poolKeys: needRefetchApiAmmPools,
       connection,
       batchRequest: true,
-      chainTime: (Date.now() + chainTimeOffset) / 1000,
+      chainTime: getNow() + chainTimeOffset,
       ownerInfo: ownerInfo && {
         wallet: toPub(ownerInfo.owner),
         tokenAccounts: ownerInfo.tokenAccounts,

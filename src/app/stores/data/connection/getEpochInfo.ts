@@ -2,7 +2,7 @@ import { assert, createTimeoutMap } from "@edsolater/fnkit"
 import { EpochInfo } from "@solana/web3.js"
 import { getConnection } from "./getConnection"
 
-const epochInfoCache = createTimeoutMap<"epochInfo", Promise<EpochInfo>>({ maxAgeMs: 30 * 1000 })
+const epochInfoCache = createTimeoutMap<"epochInfo", Promise<EpochInfo>>({ maxAge: 30 })
 
 /**
  *

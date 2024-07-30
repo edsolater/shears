@@ -85,7 +85,7 @@ export function createTask(
       if (config?.force ?? taskRunner.visible) taskRunner()
     },
     destory() {
-      unsubscribes.forEach(invoke)
+      unsubscribes.forEach((f) => invoke(f))
       unsubscribes.clear()
     },
   }

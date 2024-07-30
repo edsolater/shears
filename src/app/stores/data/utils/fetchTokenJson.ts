@@ -7,7 +7,7 @@ import { Token } from "../token/type"
  */
 export async function fetchTokenJsonFile(options: { url: string }) {
   const res = await jFetch<RaydiumTokenListJsonFile>(options.url, {
-    cacheFreshTime: 5 * 60 * 1000,
+    cacheFreshTime: 5 * 60,
   })
   return res && handleRaydiumTokenJsonFile(res)
 }

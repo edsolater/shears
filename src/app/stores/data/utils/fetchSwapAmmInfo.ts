@@ -15,11 +15,11 @@ export function clearApiCache() {
 }
 
 async function fetchClmmPoolInfo(): Promise<ClmmJsonInfo[] | undefined> {
-  return jFetch<ClmmJsonFile>(appApiUrls.clmmPools, { cacheFreshTime: 1000 * 60 * 5 }).then((r) => r?.data) // note: previously Rudy has Test API for dev
+  return jFetch<ClmmJsonFile>(appApiUrls.clmmPools, { cacheFreshTime: 60 * 5 }).then((r) => r?.data) // note: previously Rudy has Test API for dev
 }
 
 async function fetchOldAmmPoolInfo() {
-  return jFetch<PoolJsonFile>(appApiUrls.poolInfo, { cacheFreshTime: 1000 * 60 * 5 })
+  return jFetch<PoolJsonFile>(appApiUrls.poolInfo, { cacheFreshTime: 60 * 5 })
 }
 
 /**
