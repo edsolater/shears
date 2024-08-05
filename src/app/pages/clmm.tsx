@@ -296,6 +296,7 @@ export default function ClmmsPage() {
                     flagActionHasSuccess()
                     return
                   }
+                  console.log('nextTaskSpeedLevel: ', nextTaskSpeedLevel)
                   setSpeedLevel(nextTaskSpeedLevel)
                   actionHasDone.then((hasDone) => {
                     flagActionHasSuccess()
@@ -314,9 +315,9 @@ export default function ClmmsPage() {
             if (speed === "flash") {
               return 30
             } else if (speed === "quick") {
-              return 60 * 2
+              return 60 * 1
             } else {
-              return 60 * 5
+              return 60 * 3
             }
           },
           immediate: false,
