@@ -313,7 +313,7 @@ export default function ClmmsPage() {
             const speed = speedLevel()
             console.log("speed: ", speed)
             if (speed === "flash") {
-              return 30
+              return 20
             } else if (speed === "quick") {
               return 60 * 1
             } else {
