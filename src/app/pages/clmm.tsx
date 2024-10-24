@@ -58,6 +58,7 @@ import { invokeTxConfig } from "../utils/txHandler/txDispatcher_main"
 import { autoRetry } from "../utils/retryMaster"
 
 export const icssClmmItemRow = parseICSSToClassName({ paddingBlock: "4px" })
+
 export const icssClmmItemRowCollapse = parseICSSToClassName({
   borderRadius: "20px",
   overflow: "hidden",
@@ -176,7 +177,7 @@ export default function ClmmsPage() {
           invokeOnce: forceRefeshThisClmmInfo,
           lastInvokeTime,
         } = useLoopTask({
-          cb: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
+          onRun: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
           delay: 60 * 12,
           immediate: false,
         })
@@ -281,7 +282,7 @@ export default function ClmmsPage() {
           isRunning: isTxFellowLoopRuning,
           invokeOnce: forceInvokeTxFellowLoop,
         } = useLoopTask({
-          cb: () => {
+          onRun: () => {
             console.log("[main] start tx follow : ", clmmInfo.id)
             autoRetry(
               ({ retryCount, flagActionHasSuccess }) => {

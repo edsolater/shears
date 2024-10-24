@@ -1,4 +1,5 @@
 import { getNow, setIntervalWithSecondes, shrinkFn, type AnyFn, type MayFn } from "@edsolater/fnkit"
+import { useKitProps, type KitProps } from "@edsolater/pivkit"
 import { createEffect, createMemo, createSignal, on, onCleanup, onMount, type Accessor } from "solid-js"
 
 /**
@@ -23,7 +24,7 @@ export function usePercentLoop({
   const [percent, setPercent] = createSignal(0) // 0 ~ 1
 
   const { startLoop, stopLoop } = useLoopTask({
-    cb: () => {
+    onRun: () => {
       setPercent((percent) => {
         const nextPercent = percent + eachSecondPercent / (updateEach / 1)
         if (nextPercent >= 1) {
@@ -57,21 +58,14 @@ export function usePercentLoop({
 /**
  * loop task (use setInterval inside)
  */
-export function useLoopTask<R>({
-  cb,
-  delay = 1,
-  immediate = true,
-}: {
-  cb: () => R
-  delay?: MayFn<number>
-  immediate?: boolean
-}): {
+export function useLoopTask<R>(opts: KitProps<{ onRun: () => R; delay?: number; immediate?: boolean }>): {
   isRunning: Accessor<boolean>
   startLoop(): () => void // return stop action
   stopLoop(): void
   invokeOnce(): R
   lastInvokeTime: Accessor<number>
 } {
+  const { props: options } = useKitProps(opts, { defaultProps: { delay: 1, immediate: true } })
   const [lastInvokeTime, setLastInvokeTime] = createSignal(0)
   const [isRunning, setIsRunning] = createSignal(false)
   let intervalId: any = null
@@ -81,8 +75,8 @@ export function useLoopTask<R>({
     setIsRunning(true)
     intervalId = setIntervalWithSecondes(() => {
       invokeOnce()
-    }, shrinkFn(delay))
-    if (immediate) {
+    }, shrinkFn(options.delay))
+    if (options.immediate) {
       invokeOnce()
     }
 
@@ -96,17 +90,18 @@ export function useLoopTask<R>({
 
   function invokeOnce() {
     setLastInvokeTime(getNow())
-    return cb?.()
+    return options.onRun?.() as R
   }
 
   // restart loop when delay changed
   createEffect(
     on(
-      () => shrinkFn(delay),
+      () => options.delay,
       () => {
         if (isRunning()) {
           startLoop()
         }
+        onCleanup(stopLoop)
       },
       { defer: true },
     ),
