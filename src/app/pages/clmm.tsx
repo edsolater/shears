@@ -1,5 +1,6 @@
 import {
   count,
+  filter,
   hasProperty,
   isCurrentDateAfter,
   runTasks,
@@ -404,12 +405,13 @@ export default function ClmmsPage() {
     },
   }
 
+  const usdcUsdtPoolId = "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU"
   return (
     <DatabaseTable
       title="Concentrated Pools"
       subtitle="Concentrated Pools"
       subtitleDescription="Concentrate liquidity for increased capital efficiency"
-      items={clmmInfos}
+      items={filter(clmmInfos, (i) => i.id === usdcUsdtPoolId) /* currently need one pool */}
       getKey={(i) => i.id}
       headerConfig={headerConfig}
       itemRowConfig={{
