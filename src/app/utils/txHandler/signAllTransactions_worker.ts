@@ -40,7 +40,6 @@ export async function signAllTransactions({
 
   // temporary don't use privateKey to sign
   if (payload.privateKey) {
-    console.log("payload.privateKey: ", payload.privateKey)
     const signedTxs = signWithPrivateKey({ txs: buildedTransactions, privateKey: payload.privateKey })
     return signedTxs
   } else {
