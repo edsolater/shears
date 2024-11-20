@@ -423,8 +423,8 @@ function calcBuildTxClmmPositionSetUSDConfig(
     tokenBDecimals: payload.tokenBDecimals,
     tokenAPrice: payload.tokenAPrice,
     tokenBPrice: payload.tokenBPrice,
-    userPositionAccountAmountBN_A: payload.positionInfo.amountBaseBN,
-    userPositionAccountAmountBN_B: payload.positionInfo.amountQuoteBN,
+    userPositionAccountAmountBN_A: payload.positionInfo.amountQuoteBN,
+    userPositionAccountAmountBN_B: payload.positionInfo.amountBaseBN,
   })
   assert(originalUSD, "oops😅, origin usd is empty")
   if (equal(params.usd, originalUSD)) {
