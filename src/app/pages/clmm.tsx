@@ -308,7 +308,7 @@ export default function ClmmsPage() {
                   })
                 })
               },
-              { retryFrequency: (c) => 12 + c * 6, maxRetryCount: 6 },
+              { retryFrequency: (c) => 20 + c * 6, maxRetryCount: 3 },
             )
           },
           delay: () => {

@@ -22,11 +22,11 @@ type SolanaFeeInfoJson = {
  * increase SDK performance
  */
 export async function getTxHandlerBudgetConfig(): Promise<ComputeBudgetConfig | undefined> {
-  const json = await jFetch<SolanaFeeInfoJson>("https://solanacompass.com/api/fees", { cacheFreshTime:  5 * 60 })
+  const json = await jFetch<SolanaFeeInfoJson>("https://solanacompass.com/api/fees", { cacheFreshTime: 5 * 60 })
   const { avg } = json?.[15] ?? {}
   if (!avg) return undefined // fetch error
   return {
     units: 600000,
-    microLamports: Math.min(Math.ceil((avg * 1000000) / 600000), 25000)
+    microLamports: Math.min(Math.ceil((avg * 1000000) / 600000), 25000) * 2,
   } as ComputeBudgetConfig
 }
