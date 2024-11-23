@@ -10,6 +10,7 @@ import type { ClmmQueryParams } from "./loadClmmInfos_main"
 import { reportLog } from "../utils/logger"
 import type { ClmmInfos } from "../types/clmm"
 
+const usdcUsdtPoolId = "BZtgQEyS6eXUXicYPHecYQ7PybqodXQMvkjUbP4R8mUU"
 const workerCache_clmmInfos = createSubscribable<ClmmInfos>()
 
 export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryParams, ClmmInfos>) {
@@ -23,8 +24,9 @@ export function loadClmmInfosInWorker({ getMessagePort }: PortUtils<ClmmQueryPar
         ? getTokenAccounts({ canUseCache: shouldTokenAccountCache, owner: owner, connection: rpcUrl })
         : undefined
 
-      const apiClmmInfos = fetchClmmJsonInfo(Boolean(onlyClmmId || shouldApiCache)).then((infos) =>
-        onlyClmmId ? filter(infos, (_, k) => onlyClmmId.includes(k)) : infos,
+      const apiClmmInfos = fetchClmmJsonInfo(Boolean(onlyClmmId || shouldApiCache)).then(
+        (infos) => filter(infos, (_, k) => k === usdcUsdtPoolId), // currently only one pool
+        // onlyClmmId ? filter(infos, (_, k) => onlyClmmId.includes(k)) : infos,
       )
 
       if (!onlyClmmId && shouldApi) {

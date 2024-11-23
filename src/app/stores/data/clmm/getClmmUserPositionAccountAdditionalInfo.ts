@@ -426,6 +426,9 @@ function calcBuildTxClmmPositionSetUSDConfig(
     userPositionAccountAmountBN_A: payload.positionInfo.amountQuoteBN,
     userPositionAccountAmountBN_B: payload.positionInfo.amountBaseBN,
   })
+  if (gt(originalUSD, 1000)) {
+    console.log("originalUSD: ", toFormattedNumber(originalUSD))
+  }
   assert(originalUSD, "oops😅, origin usd is empty")
   if (equal(params.usd, originalUSD)) {
     console.warn(`seems no need to increase/decrease, liuidity is already $${toFormattedNumber(params.usd)} `)
