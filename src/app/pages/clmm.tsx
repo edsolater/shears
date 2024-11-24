@@ -179,7 +179,7 @@ export default function ClmmsPage() {
           lastInvokeTime,
         } = useLoopTask({
           onRun: async () => refreshClmmInfos({ onlyClmmId: [clmmInfo.id], shouldSDKCache: false }),
-          delay: 60 * 12,
+          delay: 60 * 5,
           immediate: false,
         })
 
