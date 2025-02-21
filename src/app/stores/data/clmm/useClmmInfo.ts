@@ -6,15 +6,14 @@ import {
   get,
   greaterThan,
   gt,
-  has,
   isExist,
   isPositive,
   lt,
   minus,
   mul,
-  toStringNumber,
-  type Numberish,
+  type Numberish
 } from "@edsolater/fnkit"
+import { type Accessor } from "solid-js"
 import { useShuckValue } from "../../../../packages/conveyor/solidjsAdapter/useShuck"
 import type { TxBuilderSingleConfig } from "../../../utils/txHandler/txDispatcher_main"
 import { mergeTwoStore } from "../featureHooks/mergeTwoStore"
@@ -28,6 +27,7 @@ import {
   type Balances,
   type Prices,
 } from "../store"
+import type { Token, Tokens } from "../token/type"
 import { useToken } from "../token/useToken"
 import { useTokenPrice } from "../tokenPrice/useTokenPrice"
 import type { ClmmInfo, ClmmUserPositionAccount } from "../types/clmm"
@@ -36,9 +36,6 @@ import {
   getClmmUserPositionAccountAdditionalInfo,
   type AdditionalClmmUserPositionAccount,
 } from "./getClmmUserPositionAccountAdditionalInfo"
-import type { Token, Tokens } from "../token/type"
-import { createEffect, type Accessor } from "solid-js"
-import { getToken } from "../token/getToken"
 
 type FollowPositionTxConfigs = {
   // upTokenMint: Mint | undefined
@@ -93,7 +90,7 @@ export function useClmmInfo(clmmInfo: ClmmInfo): AdditionalClmmInfo & ClmmInfo {
         tokenA,
         tokenB,
         config: {
-          ignoredPositionUsd: options?.ignoreWhenUsdLessThan ?? 5,
+          ignoredPositionUsd: options?.ignoreWhenUsdLessThan ?? 500,
         },
       }),
     totalLiquidityUSD: calcTotalClmmLiquidityUSD({ clmmInfo, tokens: tokens(), prices: pricesMap() })

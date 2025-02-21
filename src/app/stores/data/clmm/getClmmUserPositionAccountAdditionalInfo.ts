@@ -215,8 +215,8 @@ export function calcPositionUserPositionLiquidityUSD(options: {
   if (!tokenAPrices || !tokenBPrices) return undefined
   const tokenADecimal = options.tokenADecimals
   const tokenBDecimal = options.tokenBDecimals
-  const amountABN = options.userPositionAccountAmountBN_B
-  const amountBBN = options.userPositionAccountAmountBN_A
+  const amountABN = options.userPositionAccountAmountBN_A
+  const amountBBN = options.userPositionAccountAmountBN_B
   if (amountABN === undefined || amountBBN === undefined) return undefined
   const amountA = applyDecimal(amountABN, tokenADecimal)
   const amountB = applyDecimal(amountBBN, tokenBDecimal)
@@ -423,8 +423,8 @@ function calcBuildTxClmmPositionSetUSDConfig(
     tokenBDecimals: payload.tokenBDecimals,
     tokenAPrice: payload.tokenAPrice,
     tokenBPrice: payload.tokenBPrice,
-    userPositionAccountAmountBN_A: payload.positionInfo.amountQuoteBN,
-    userPositionAccountAmountBN_B: payload.positionInfo.amountBaseBN,
+    userPositionAccountAmountBN_A: payload.positionInfo.amountBaseBN,
+    userPositionAccountAmountBN_B: payload.positionInfo.amountQuoteBN,
   })
   if (gt(originalUSD, 1000)) {
     console.log("originalUSD: ", toFormattedNumber(originalUSD))

@@ -27,6 +27,6 @@ export async function getTxHandlerBudgetConfig(): Promise<ComputeBudgetConfig | 
   if (!avg) return undefined // fetch error
   return {
     units: 600000,
-    microLamports: Math.min(Math.ceil((avg * 1000000) / 600000), 25000) * 10,
+    microLamports: Math.min(Math.ceil((avg * 1000000) / 600000), 25000) * 2,
   } as ComputeBudgetConfig
 }

@@ -190,7 +190,7 @@ export default function ClmmsPage() {
           needSendTx: boolean
         } {
           const { promise: actionHasDone, resolve, reject } = Promise.withResolvers<boolean>()
-          const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+          const configs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 500 })
           console.log("🐛debug tx follow: ", configs)
 
           const needSendTx = Boolean(
@@ -213,7 +213,7 @@ export default function ClmmsPage() {
                           // console.log("balance1️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
                           setTimeoutWithSecondes(() => {
                             // wait for balance update
-                            const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                            const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 500 })
                             const txc = invokeTxConfig(...newConfigs.upShowHandTxConfigs)
                             txc?.onTxAllDone(() => {
                               resolve(true)
@@ -246,7 +246,7 @@ export default function ClmmsPage() {
                           // console.log("balance2️⃣: ", toFormattedNumber(balance, { decimals: 6 }))
                           setTimeoutWithSecondes(() => {
                             // wait for balance update
-                            const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 5 })
+                            const newConfigs = clmmInfo.buildTxFollowPositionTxConfigs({ ignoreWhenUsdLessThan: 500 })
                             const txc = invokeTxConfig(...configs.downShowHandTxConfigs)
                             txc?.onTxAllDone(() => {
                               resolve(true)
