@@ -140,7 +140,7 @@ function buildTxFollowPositionConfigs({
     const isUpperGreaterThanCurrentPrice = !isUpperLessThanCurrentPrice
     const isLowerLessThanCurrentPrice = !isLowerGreaterThanCurrentPrice
     if (isUpperGreaterThanCurrentPrice && isLowerLessThanCurrentPrice) {
-      currentPositions.push(position)
+      currentPositions.push(position)   
     }
     if (isLowerGreaterThanCurrentPrice) {
       priceBiggerPositions.push(position)
